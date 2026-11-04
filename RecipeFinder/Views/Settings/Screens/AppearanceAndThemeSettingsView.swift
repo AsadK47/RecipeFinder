@@ -78,6 +78,8 @@ struct AppearanceAndThemeSettingsView: View {
                 Text(theme.rawValue)
                     .font(.subheadline)
                     .adaptiveForegroundColor()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)   // the selected checkmark used to squeeze "Purple" into "Purpl/e"
 
                 Spacer(minLength: AppTheme.spacing4)
 

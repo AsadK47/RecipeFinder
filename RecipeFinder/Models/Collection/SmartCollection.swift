@@ -53,7 +53,7 @@ enum SmartCollection: String, CaseIterable, Identifiable {
                         + TimeExtractor.extractMinutes(from: recipe.cookingTime)
             return minutes > 0 && minutes <= 30
         case .easyRecipes:
-            return recipe.difficulty.lowercased() == "easy"
+            return RecipeWizardBuilder.normalizeDifficulty(recipe.difficulty) == "Basic"
         case .vegetarian:
             return recipe.dietaryInfo.isVegetarian
         case .highRated:

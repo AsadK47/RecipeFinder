@@ -1,21 +1,10 @@
+import Testing
 import XCTest
 @testable import RecipeFinder
 
 final class ShoppingListModelTests: XCTestCase {
 
     // MARK: - Default init values
-
-    // Regression: id-only == made SwiftUI skip redrawing a row after check-off / quantity change.
-    func testEquality_detectsCheckAndQuantityChanges() {
-        let item = ShoppingListModel(name: "Lemon")
-        var checked = item
-        checked.isChecked = true
-        var more = item
-        more.quantity = 2
-        XCTAssertNotEqual(item, checked)
-        XCTAssertNotEqual(item, more)
-        XCTAssertEqual(item, item)
-    }
 
     func testInit_defaultQuantity_isOne() {
         let item = ShoppingListModel(name: "Milk")
@@ -118,5 +107,20 @@ final class ShoppingListModelTests: XCTestCase {
         """
         let decoded = try JSONDecoder().decode(ShoppingListModel.self, from: Data(legacy.utf8))
         XCTAssertFalse(decoded.isRecurring)
+    }
+}
+
+@Suite("ShoppingListModel equality")
+struct ShoppingListModelEqualityTests {
+    @Test("Equality sees check-off and quantity changes (id-only == skipped row redraws)")
+    func detectsCheckAndQuantityChanges() {
+        let item = ShoppingListModel(name: "Lemon")
+        var checked = item
+        checked.isChecked = true
+        var more = item
+        more.quantity = 2
+        #expect(item != checked)
+        #expect(item != more)
+        #expect(item == item)
     }
 }

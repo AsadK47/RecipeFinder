@@ -48,6 +48,9 @@ struct RecipeIngredientsSection: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .adaptiveForegroundColor()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)   // shrink rather than hyphenate ("Ingredi-ents") beside the header buttons
+                        .layoutPriority(1)
                 }
             }
             .buttonStyle(PlainButtonStyle())

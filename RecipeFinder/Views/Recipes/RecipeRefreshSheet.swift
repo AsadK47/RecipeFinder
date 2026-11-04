@@ -98,6 +98,7 @@ struct RecipeRefreshSheet: View {
                 }
             ))
             .labelsHidden()
+            .tint(AppTheme.accentColor)   // default tint rendered "on" as a dark, off-looking track on the gradient
         }
         .padding(.vertical, AppTheme.spacing4)
     }

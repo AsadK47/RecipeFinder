@@ -13,7 +13,7 @@ struct RecipeImportBuilder {
         return RecipeModel(
             name: data.name,
             category: data.category ?? "Main",
-            difficulty: data.difficulty ?? "Medium",
+            difficulty: RecipeWizardBuilder.normalizeDifficulty(data.difficulty ?? ""),
             prepTime: data.prepTimeMinutes.map { "\($0) minutes" } ?? "0 minutes",
             cookingTime: data.cookTimeMinutes.map { "\($0) minutes" } ?? "0 minutes",
             baseServings: data.servings ?? 4,

@@ -11,6 +11,8 @@ struct RecipeImportView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var loadingStage: LoadingStage = .idle
     @State private var pendingRecipe: RecipeModel?
+    /// A clean import opens in the editor for review (like paste/photo imports) instead of saving blind.
+    @State private var reviewPrefill: RecipeWizardView.PrefilledRecipeData?
     @State private var showDuplicateAlert = false
     @State private var showIncompleteAlert = false
     private let builder = RecipeImportBuilder()
@@ -222,6 +224,12 @@ struct RecipeImportView: View {
                 }
             }
         }
+        .sheet(item: $reviewPrefill) { prefill in
+            RecipeWizardView(prefilledData: prefill) { reviewed in
+                onImport(reviewed)
+                dismiss()
+            }
+        }
         .alert(
             "Recipe Already Saved",
             isPresented: $showDuplicateAlert,
@@ -316,8 +324,8 @@ struct RecipeImportView: View {
                     loadingStage = .idle
                     showIncompleteAlert = true
                 } else {
-                    onImport(recipe)
-                    dismiss()
+                    loadingStage = .idle
+                    reviewPrefill = RecipeWizardView.PrefilledRecipeData(recipe: recipe)
                 }
             } else {
                 loadingStage = .idle

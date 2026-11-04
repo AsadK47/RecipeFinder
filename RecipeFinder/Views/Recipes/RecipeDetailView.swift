@@ -141,17 +141,20 @@ struct RecipeDetailView: View {
         .onChange(of: instructionsState) { _, newValue in
             checkForCompletion(newValue)
         }
-        .onChange(of: recipe) { _, newRecipe in
+        .onChange(of: recipe) { oldRecipe, newRecipe in
             galleryImageNames = RecipeDetailView.galleryNames(for: newRecipe)
-            if ingredientsState.count != newRecipe.ingredients.count {
-                ingredientsState = Array(repeating: false, count: newRecipe.ingredients.count)
-            }
-            if instructionsState.count != newRecipe.instructions.count {
-                instructionsState = Array(repeating: false, count: newRecipe.instructions.count)
-            }
-            if prePrepState.count != newRecipe.prePrepInstructions.count {
-                prePrepState = Array(repeating: false, count: newRecipe.prePrepInstructions.count)
-            }
+            // Ticks follow their item, not their row: after an edit removes "Chicken", "Butter" stays ticked.
+            ingredientsState = ChecklistState.remap(
+                ingredientsState,
+                from: oldRecipe.ingredients.map(ChecklistState.key),
+                to: newRecipe.ingredients.map(ChecklistState.key)
+            )
+            instructionsState = ChecklistState.remap(
+                instructionsState, from: oldRecipe.instructions, to: newRecipe.instructions
+            )
+            prePrepState = ChecklistState.remap(
+                prePrepState, from: oldRecipe.prePrepInstructions, to: newRecipe.prePrepInstructions
+            )
         }
         .onChange(of: recipeStore.recipes) { _, newRecipes in
             // Reflect edits made to this recipe elsewhere (favourite/cook/rating/edit on another screen, or the

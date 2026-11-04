@@ -31,11 +31,15 @@ enum RecipeWizardBuilder {
     }
 
     /// Non-empty ingredient rows as domain `Ingredient`s; blank quantity falls back to 1.0, matching the wizard's original behaviour.
+    /// Fractions ("1/2", "1 1/2", "⅓") parse via the shared line parser — `Double(_:)` alone saved them as 1.
     static func makeIngredients(from items: [RecipeWizardView.IngredientItem]) -> [Ingredient] {
         items
             .filter { !$0.name.isEmpty }
             .map { item in
-                let quantity = Double(item.quantity) ?? 1.0
+                let text = item.quantity.trimmingCharacters(in: .whitespaces)
+                let quantity = text.isEmpty
+                    ? 1.0
+                    : IngredientLineParser.parseQuantity(IngredientLineParser.normaliseUnicodeFractions(text))
                 return Ingredient(baseQuantity: quantity, unit: item.unit, name: item.name)
             }
     }

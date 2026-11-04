@@ -197,4 +197,38 @@ struct RecipeWizardBuilderTests {
         // Regression: an edited bundled recipe must not start re-checking its source site.
         #expect(!merged.shouldAutoRefreshFromSource)
     }
+
+    @Test("Fraction quantities parse instead of silently saving as 1", arguments: [
+        ("1/2", 0.5), ("1 1/2", 1.5), ("⅓", 1.0 / 3.0), ("0.44", 0.44), ("", 1.0),
+    ])
+    func parsesFractionQuantities(text: String, expected: Double) {
+        let item = RecipeWizardView.IngredientItem(quantity: text, unit: "cup", name: "flour")
+        let quantity = RecipeWizardBuilder.makeIngredients(from: [item]).first?.baseQuantity ?? -1
+        #expect(abs(quantity - expected) < 0.0001)
+    }
+
+    @Test("Edit round-trip: a ⅓ cup ingredient keeps its amount through the editor")
+    func fractionRoundTripsThroughEditor() {
+        let line = "\(FractionFormatter.format(1.0 / 3.0)) cup sugar"
+        let parsed = WizardIngredientParser.parse(line)
+        let item = RecipeWizardView.IngredientItem(quantity: parsed.quantity, unit: parsed.unit, name: parsed.name)
+        let quantity = RecipeWizardBuilder.makeIngredients(from: [item]).first?.baseQuantity ?? -1
+        #expect(abs(quantity - 1.0 / 3.0) < 0.0001)
+    }
+
+    @Test("Editor prefill from a recipe keeps its fields (shared by Edit and URL-import review)")
+    func prefillFromRecipe() {
+        let recipe = RecipeModel(name: "Scones", category: "Baking", difficulty: "Basic", prepTime: "0 minutes",
+                                 cookingTime: "20 minutes", baseServings: 6,
+                                 ingredients: [Ingredient(baseQuantity: 1.0 / 3.0, unit: "cup", name: "sugar")],
+                                 prePrepInstructions: [], instructions: ["Bake."],
+                                 notes: "https://example.com/scones", imageName: "https://example.com/scones.jpg")
+        let prefill = RecipeWizardView.PrefilledRecipeData(recipe: recipe)
+        #expect(prefill.name == "Scones")
+        #expect(prefill.prepTime == 0)          // unknown stays unknown — no invented 15 min
+        #expect(prefill.cookTime == 20)
+        #expect(prefill.servings == 6)
+        #expect(prefill.imageURL == "https://example.com/scones.jpg")
+        #expect(prefill.ingredients?.first?.hasPrefix(FractionFormatter.format(1.0 / 3.0)) == true)
+    }
 }

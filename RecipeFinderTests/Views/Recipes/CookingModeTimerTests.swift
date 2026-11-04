@@ -30,4 +30,15 @@ struct CookingModeTimerTests {
     func abbreviations() {
         #expect(CookingModeView.cookTimerMinutes(in: "Bake 25 mins") == 25)
     }
+
+    @Test("separate mentions aren't summed — the first duration wins (regression: 6h + 48h became a 3240-min timer)")
+    func separateMentionsNotSummed() {
+        #expect(CookingModeView.cookTimerMinutes(in: "Marinate for at least 6 hours, up to 48 hours") == 360)
+        #expect(CookingModeView.cookTimerMinutes(in: "Broil for 4-5 minutes, then serve within 6 minutes") == 5)
+    }
+
+    @Test("compound durations joined by 'and' still combine")
+    func compoundWithAnd() {
+        #expect(CookingModeView.cookTimerMinutes(in: "Roast 1 hr and 15 mins") == 75)
+    }
 }

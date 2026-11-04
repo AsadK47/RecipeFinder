@@ -13,6 +13,7 @@ struct DataManagementSettingsView: View {
     @State private var exportDocument: BackupDocument?
     @State private var backupMessage: String?
     @State private var backupMessageIsError = false
+    @State private var isPreparingBackup = false
 
     // On-device import availability, read on appear.
     @State private var importStatus: OnDeviceRecipeImportStatus = .unknown
@@ -98,21 +99,17 @@ struct DataManagementSettingsView: View {
                 .background(Capsule().fill(.green))
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
-
-            if let backupMessage {
-                HStack(spacing: AppTheme.spacing8) {
-                    Image(systemName: backupMessageIsError ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
-                        .foregroundStyle(backupMessageIsError ? .orange : .green)
-                    Text(backupMessage)
-                        .font(.caption)
-                        .foregroundStyle(backupMessageIsError ? .orange : .green)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
         }
         .animation(.spring(response: 0.3), value: dataCleared)
-        .animation(.spring(response: 0.3), value: backupMessage)
+        // An alert, not an inline label: the label rendered below the fold and auto-hid, so users saw no feedback.
+        .alert(
+            backupMessageIsError ? "Backup Problem" : "Done",
+            isPresented: Binding(get: { backupMessage != nil }, set: { if !$0 { backupMessage = nil } })
+        ) {
+            Button("OK", role: .cancel) { backupMessage = nil }
+        } message: {
+            Text(backupMessage ?? "")
+        }
         .onAppear { importStatus = OnDeviceRecipeImport.currentStatus() }
         .fileExporter(
             isPresented: $isExporting,
@@ -204,9 +201,19 @@ struct DataManagementSettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     Button(action: exportBackup) {
-                        actionLabel(icon: "square.and.arrow.up", title: "Export Backup", color: .blue)
+                        if isPreparingBackup {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, AppTheme.spacing12)
+                                .background(Color.blue)
+                                .cornerRadius(AppTheme.cornerRadius12)
+                        } else {
+                            actionLabel(icon: "square.and.arrow.up", title: "Export Backup", color: .blue)
+                        }
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .disabled(isPreparingBackup)
+                    .accessibilityLabel(isPreparingBackup ? "Preparing backup" : "Export Backup")
 
                     Button(action: { isImporting = true }) {
                         actionLabel(icon: "square.and.arrow.down", title: "Import Backup", color: .green)
@@ -242,11 +249,17 @@ struct DataManagementSettingsView: View {
     }
 
     private func exportBackup() {
-        do {
-            exportDocument = BackupDocument(data: try BackupService().exportData())
-            isExporting = true
-        } catch {
-            showBackupMessage("Couldn't create the backup.", isError: true)
+        isPreparingBackup = true
+        Task {
+            // Yield so the spinner renders before the (multi-second) export work runs.
+            await Task.yield()
+            defer { isPreparingBackup = false }
+            do {
+                exportDocument = BackupDocument(data: try BackupService().exportData())
+                isExporting = true
+            } catch {
+                showBackupMessage("Couldn't create the backup.", isError: true)
+            }
         }
     }
 
@@ -261,7 +274,7 @@ struct DataManagementSettingsView: View {
             // Core Data recipe list only reloads on a scope-change signal — nudge it to re-fetch the merged recipes.
             NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
 
-            showBackupMessage("Backup restored.", isError: false)
+            showBackupMessage("Backup restored. New recipes and items were added to your library.", isError: false)
             HapticManager.shared.success()
         } catch let error as BackupError {
             showBackupMessage(error.errorDescription ?? "That backup couldn't be restored.", isError: true)
@@ -273,11 +286,8 @@ struct DataManagementSettingsView: View {
     }
 
     private func showBackupMessage(_ message: String, isError: Bool) {
-        backupMessage = message
         backupMessageIsError = isError
-        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
-            backupMessage = nil
-        }
+        backupMessage = message
     }
 
     private func resetToDefault() {

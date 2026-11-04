@@ -180,12 +180,9 @@ struct RecipeWizardView: View {
             self.category = category
         }
 
-        if let prepTime = data.prepTime {
-            self.prepTime = prepTime
-        }
-        if let cookTime = data.cookTime {
-            self.cookTime = cookTime
-        }
+        // Unknown times stay 0 (unset) — keeping the 15 + 30 min defaults invented a "45 minutes" the source never said.
+        self.prepTime = data.prepTime ?? 0
+        self.cookTime = data.cookTime ?? 0
 
         if let servings = data.servings {
             self.servings = servings

@@ -48,13 +48,15 @@ struct RecipeCard: View {
                     .minimumScaleFactor(Layout.nameMinScaleFactor)
 
                 HStack(spacing: AppTheme.spacing10) {
-                    HStack(spacing: AppTheme.spacing5) {
-                        Image(systemName: "clock.fill")
-                            .font(.system(size: AppTheme.fontSize12, weight: .medium))
-                            .foregroundStyle(.orange)
-                        Text(recipe.totalTime)
-                            .font(.system(size: AppTheme.fontSize13, weight: .medium))
-                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                    if recipe.hasTotalTime {
+                        HStack(spacing: AppTheme.spacing5) {
+                            Image(systemName: "clock.fill")
+                                .font(.system(size: AppTheme.fontSize12, weight: .medium))
+                                .foregroundStyle(.orange)
+                            Text(recipe.totalTime)
+                                .font(.system(size: AppTheme.fontSize13, weight: .medium))
+                                .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                        }
                     }
 
                     HStack(spacing: AppTheme.spacing6) {

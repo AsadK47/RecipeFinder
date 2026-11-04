@@ -2,6 +2,9 @@ import SwiftUI
 
 /// Single shopping-list row: checkbox, name/store, quantity steppers, and a store/category/delete menu.
 struct ShoppingListItemRow: View {
+    /// Matches `ShoppingListManager`'s 999 cap; the row used 99, so + went dead at 200 g.
+    static let maxQuantity = 999
+
     let item: ShoppingListModel
     let isInKitchen: Bool
     let onToggle: () -> Void
@@ -129,20 +132,22 @@ struct ShoppingListItemRow: View {
                         .buttonStyle(PlainButtonStyle())
                         .disabled(item.quantity <= 1)
                         
-                        Text("\(item.quantity)")
+                        // Show the unit too — "200" alone (for 200 g) read as 200 items.
+                        Text(item.unit.isEmpty ? "\(item.quantity)" : "\(item.quantity) \(item.unit)")
                             .font(.callout)
                             .fontWeight(.semibold)
                             .adaptiveForegroundColor()
+                            .lineLimit(1)
                             .frame(minWidth: AppTheme.iconSize20)
                         
                         Button(action: {
-                            if item.quantity < 99 {
+                            if item.quantity < ShoppingListItemRow.maxQuantity {
                                 onQuantityChange(item.quantity + 1)
                             }
                         }) {
                             Image(systemName: "plus")
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                                .foregroundStyle(item.quantity < 99 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
+                                .foregroundStyle(item.quantity < ShoppingListItemRow.maxQuantity ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: AppTheme.iconSize28, height: AppTheme.iconSize28)
                                 .background {
                                     if cardStyle == .solid {
@@ -155,7 +160,7 @@ struct ShoppingListItemRow: View {
                                 }
                         }
                         .buttonStyle(PlainButtonStyle())
-                        .disabled(item.quantity >= 99)
+                        .disabled(item.quantity >= ShoppingListItemRow.maxQuantity)
                     }
                     .opacity(item.isChecked ? 0.5 : 1)
                     

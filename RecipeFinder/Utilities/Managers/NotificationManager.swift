@@ -29,6 +29,18 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         }
     }
     
+    /// Asks for permission in context (the system only prompts the first time; afterwards it returns the saved
+    /// choice), then schedules. Replaces the old ask-on-every-launch prompt.
+    private func addAskingPermissionFirst(_ request: UNNotificationRequest, failureLabel: String) {
+        requestPermission { _ in }
+        // Scheduled regardless of the answer: iOS delivers it only if notifications are allowed when it fires.
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                logger.error("❌ Failed to schedule \(failureLabel): \(error.localizedDescription)")
+            }
+        }
+    }
+
     func checkAuthorizationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { @Sendable settings in
             let authStatus = settings.authorizationStatus
@@ -162,11 +174,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                logger.error("❌ Failed to schedule streak reminder: \(error.localizedDescription)")
-            }
-        }
+        addAskingPermissionFirst(request, failureLabel: "streak reminder")
     }
 
     @discardableResult
@@ -260,14 +268,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         components.hour = 18
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                logger.error("❌ Failed to schedule expiry notification: \(error.localizedDescription)")
-            } else {
-                logger.debug("✅ Expiry notification scheduled for \(item.name)")
-            }
-        }
+        addAskingPermissionFirst(request, failureLabel: "expiry notification")
         return identifier
     }
 

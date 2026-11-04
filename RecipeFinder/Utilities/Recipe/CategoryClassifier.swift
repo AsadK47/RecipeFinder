@@ -290,6 +290,8 @@ enum CategoryClassifier {
         ("Nuts & Seeds",              kitchenIngredientKeywords["Nuts & Seeds"]             ?? []),
         ("Legumes & Pulses",          kitchenIngredientKeywords["Legumes & Pulses"]         ?? []),
         ("Canned & Jarred",           ["canned", "jarred"]),
+        // Cooking citrus juice is bought as fruit, not as a drink — must precede the generic "juice" rule.
+        ("Produce",                   ["lemon juice", "lime juice"]),
         ("Beverages",                 ["juice", "water", "soda", "coffee", "tea", "beer", "wine",
                                        "vodka", "whiskey", "rum", "lemonade", "smoothie"]),
         ("Produce",                   (kitchenIngredientKeywords["Fruits"]     ?? []) +

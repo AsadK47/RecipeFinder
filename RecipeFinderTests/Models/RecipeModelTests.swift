@@ -364,17 +364,6 @@ final class RecipeModelTests: XCTestCase {
         XCTAssertEqual(recipe.importedFromURL, URL(string: "https://food.com/pasta"))
     }
 
-    func testShouldAutoRefreshFromSource_onlyForUserURLImports() {
-        var imported = makeRecipe(notes: "Imported · 14 Sep 2026\nhttps://example.com/recipe")
-        XCTAssertTrue(imported.shouldAutoRefreshFromSource)
-
-        // Bundled recipes carry a source link for credit/photos but must not hit the site on every open.
-        imported.isSampleRecipe = true
-        XCTAssertFalse(imported.shouldAutoRefreshFromSource)
-
-        XCTAssertFalse(makeRecipe(notes: "Just a personal note").shouldAutoRefreshFromSource)
-    }
-
     func testImportedFromURL_noURL_returnsNil() {
         let recipe = makeRecipe(notes: "Just a personal note")
         XCTAssertNil(recipe.importedFromURL)
@@ -462,5 +451,35 @@ final class RecipeModelTests: XCTestCase {
     @Test("Cooked yesterday ⇒ not cooked today")
     func cookedYesterday() {
         #expect(!recipe(lastCookedAt: now.addingTimeInterval(-86_400)).wasCookedToday(now: now, calendar: calendar))
+    }
+}
+
+@Suite("RecipeModel display & source rules")
+struct RecipeModelDisplayTests {
+    private func recipe(prep: String = "10 min", cook: String = "20 min", notes: String = "") -> RecipeModel {
+        RecipeModel(name: "Test", category: "Main", difficulty: "Basic", prepTime: prep, cookingTime: cook,
+                    baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: notes)
+    }
+
+    @Test("Total time over an hour reads as hours and minutes (was \"585 minutes\")")
+    func totalTimeOverAnHour() {
+        #expect(recipe(prep: "45 min", cook: "540 min").totalTime == "9 hr 45 min")
+        #expect(recipe(prep: "30 min", cook: "30 min").totalTime == "1 hr")
+    }
+
+    @Test("No known time means no clock on the card (imports without timings)")
+    func hasTotalTime() {
+        #expect(!recipe(prep: "0 minutes", cook: "0 minutes").hasTotalTime)
+        #expect(recipe(prep: "0 minutes", cook: "20 minutes").hasTotalTime)
+    }
+
+    @Test("Only the user's own URL imports re-check their source on open")
+    func autoRefreshOnlyForUserImports() {
+        var imported = recipe(notes: "Imported · 14 Sep 2026\nhttps://example.com/recipe")
+        #expect(imported.shouldAutoRefreshFromSource)
+        // Bundled recipes carry a source link for credit/photos but must not hit the site on every open.
+        imported.isSampleRecipe = true
+        #expect(!imported.shouldAutoRefreshFromSource)
+        #expect(!recipe(notes: "Just a personal note").shouldAutoRefreshFromSource)
     }
 }

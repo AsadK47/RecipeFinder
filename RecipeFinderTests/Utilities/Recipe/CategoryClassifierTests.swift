@@ -1,3 +1,4 @@
+import Testing
 import XCTest
 @testable import RecipeFinder
 
@@ -175,5 +176,16 @@ final class CategoryClassifierTests: XCTestCase {
         let first = CategoryClassifier.categorize("salmon")
         let second = CategoryClassifier.categorize("salmon")
         XCTAssertEqual(first, second)
+    }
+
+}
+
+@Suite("CategoryClassifier citrus juice")
+struct CategoryClassifierCitrusTests {
+    @Test("Cooking citrus juice is Produce; orange juice stays a Beverage")
+    func citrusJuice() {
+        #expect(CategoryClassifier.categorize("Lemon Juice") == "Produce")
+        #expect(CategoryClassifier.categorize("lime juice") == "Produce")
+        #expect(CategoryClassifier.categorize("orange juice") == "Beverages")
     }
 }

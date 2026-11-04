@@ -41,14 +41,14 @@ struct BundledRecipeCatalogTests {
     }
 
     private static func makeModel(from prefill: RecipeWizardView.PrefilledRecipeData, entry: SourceEntry, images: [String: String]) -> RecipeModel {
-        let name = prefill.name
+        let rawName = prefill.name
             .flatMap { $0.trimmingCharacters(in: .whitespaces).isEmpty ? nil : $0 }
             ?? entry.name
+        let name = cleanTitle(rawName)
         let key = normalised(name)
         let source = sourceURL(in: entry.rawText)
 
-        let ingredients = (prefill.ingredients ?? [])
-            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        let ingredients = cleanIngredientLines(prefill.ingredients ?? [])
             .enumerated()
             .map { index, line -> Ingredient in
                 let parsed = IngredientLineParser.parse(line)
@@ -59,7 +59,7 @@ struct BundledRecipeCatalogTests {
             id: stableUUID(key),
             name: name,
             category: prefill.category ?? "Main",
-            difficulty: prefill.difficulty ?? "Medium",
+            difficulty: RecipeWizardBuilder.normalizeDifficulty(prefill.difficulty ?? ""),
             prepTime: prefill.prepTime.map { "\($0) minutes" } ?? "10 minutes",
             cookingTime: prefill.cookTime.map { "\($0) minutes" } ?? "30 minutes",
             baseServings: prefill.servings ?? 4,
@@ -67,12 +67,66 @@ struct BundledRecipeCatalogTests {
                 ? [Ingredient(id: stableUUID("\(key)#0"), baseQuantity: 1, unit: "", name: "See recipe")]
                 : ingredients,
             prePrepInstructions: prefill.prePrepInstructions ?? [],
-            instructions: prefill.instructions ?? [],
+            instructions: cleanSteps(prefill.instructions ?? []),
             notes: notes(prefill.notes ?? "", sourceURL: source),
             imageName: source.flatMap { images[$0] },
             isSampleRecipe: true,
             cuisine: prefill.cuisine
         )
+    }
+
+    /// Strips paste junk from titles: URLs/domains, recipe-card labels ("PREP TIME"), serving numbers, a trailing
+    /// "Video", and a description glued onto the name. A title that was only a URL becomes its slug.
+    static func cleanTitle(_ raw: String) -> String {
+        var title = raw
+        let slug = sourceURL(in: raw).flatMap { URL(string: $0)?.pathComponents.last(where: { $0 != "/" }) }
+        let patterns = [
+            #"https?://\S+"#,                                        // full URLs
+            #"\S+\.(com|co\.uk|net|org)\S*"#,                       // bare domains
+            #"\b(PREP|COOK|ADDITIONAL|TOTAL) TIME\b"#,               // recipe-card labels
+            #"\s+Serves\s+[\d.\s]+$"#,                              // "Serves 2.0 0.71…"
+            #"\s+[\d.]+\s+bites?\s+serving$"#,                      // "18.0 bites serving"
+            #"\s+Video$"#,
+            #"[\u0E00-\u0E7F]+"#,                                    // garbled Thai combining glyphs from the paste
+        ]
+        for pattern in patterns {
+            title = title.replacingOccurrences(of: pattern, with: " ", options: [.regularExpression, .caseInsensitive])
+        }
+        // A description glued on ("Apam Balik A delicious Malaysian…"): cut at the sentence start.
+        if title.count > 60, let cut = title.range(of: #"\s(A|An|This)\s[a-z]"#, options: .regularExpression),
+           title.distance(from: title.startIndex, to: cut.lowerBound) >= 10 {
+            title = String(title[..<cut.lowerBound])
+        }
+        title = title.replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: "-–|")))
+        if title.isEmpty, let slug {
+            title = slug.replacingOccurrences(of: "-", with: " ").capitalized
+        }
+        return title.isEmpty ? raw : title
+    }
+
+    /// Drops pasted section headers ("Optional:", "For Serving:") and the equipment/notes list that some recipe cards
+    /// append after the ingredients — they showed up as tickable, add-to-cart ingredients.
+    static func cleanIngredientLines(_ lines: [String]) -> [String] {
+        var kept: [String] = []
+        for raw in lines {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            guard !line.isEmpty else { continue }
+            if line.range(of: #"^(equipment|notes?)\b"#, options: [.regularExpression, .caseInsensitive]) != nil { break }
+            if line.hasSuffix(":") { continue }
+            kept.append(line)
+        }
+        return kept
+    }
+
+    /// Cuts the recipe card's trailing Notes / Video / Nutrition blocks, which the paste turned into cooking steps.
+    static func cleanSteps(_ steps: [String]) -> [String] {
+        let tail = #"^(notes?|video|nutrition|calories)\b"#
+        guard let cut = steps.firstIndex(where: {
+            $0.trimmingCharacters(in: .whitespaces).range(of: tail, options: [.regularExpression, .caseInsensitive]) != nil
+        }) else { return steps }
+        // Keep at least one step — a recipe whose first "step" is a note still needs something to cook from.
+        return cut == 0 ? steps : Array(steps[..<cut])
     }
 
     /// Moves the source URL to the last notes line so `RecipeModel.importedFromURL` picks it up (credit + photo).
@@ -183,6 +237,34 @@ struct BundledRecipeCatalogTests {
         let recipes = Self.generate(from: entries, images: ["https://example.com/rice": "https://example.com/rice.jpg"])
         #expect(recipes.first { $0.name == "Rice" }?.imageName == "https://example.com/rice.jpg")
         #expect(recipes.first { $0.name == "Noodles" }?.imageName == nil)
+    }
+
+    @Test("Junk pasted into titles is cleaned", arguments: [
+        ("Chapati PREP TIME COOK TIME ADDITIONAL TIME TOTAL TIME", "Chapati"),
+        ("Seafood paella recipe Serves 2.0 0.7111111111 0.5555555556", "Seafood paella recipe"),
+        ("Chocolate cornflake clusters 18.0 bites serving", "Chocolate cornflake clusters"),
+        ("Red Velvet Cupcakes https://www.nigella.com/recipes/red-velvet-cupcakes", "Red Velvet Cupcakes"),
+        ("https://www.japanesecooking101.com/matcha-pound-cake-recipe/", "Matcha Pound Cake Recipe"),
+        ("Easy & Simple Apam Balik A delicious Malaysian street food pancake filled with sweet creamed corn", "Easy & Simple Apam Balik"),
+        ("Tarka Dhal", "Tarka Dhal"),
+    ])
+    func cleansTitles(raw: String, expected: String) {
+        #expect(Self.cleanTitle(raw) == expected)
+    }
+
+    @Test("Section headers are dropped and the trailing equipment list is cut from ingredients")
+    func cleansIngredientLines() {
+        let lines = ["Tandoori Marinade:", "500 g chicken", "1 tbsp oil", "For Serving:", "1 lemon",
+                     "Equipment", "Baking Rack", "Instant Pot"]
+        #expect(Self.cleanIngredientLines(lines) == ["500 g chicken", "1 tbsp oil", "1 lemon"])
+    }
+
+    @Test("Trailing Notes / Video / Nutrition blocks are cut from the steps")
+    func cleansSteps() {
+        let steps = ["Marinate the chicken.", "Grill for 10 minutes.", "Notes Note 1: use thighs",
+                     "Nutrition Serving: 1 serving | Calories: 439kcal"]
+        #expect(Self.cleanSteps(steps) == ["Marinate the chicken.", "Grill for 10 minutes."])
+        #expect(Self.cleanSteps(["Notes: only a note"]) == ["Notes: only a note"])
     }
 
     // MARK: - Bundled output (what the app ships)

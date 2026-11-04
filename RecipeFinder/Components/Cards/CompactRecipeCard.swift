@@ -47,13 +47,15 @@ struct CompactRecipeCard: View {
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
 
-                HStack(spacing: AppTheme.spacing4) {
-                    Image(systemName: "clock.fill")
-                        .font(.system(size: AppTheme.fontSize11))
-                        .foregroundStyle(.orange)
-                    Text(recipe.totalTime)
-                        .font(.system(size: AppTheme.fontSize11))
-                        .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                if recipe.hasTotalTime {
+                    HStack(spacing: AppTheme.spacing4) {
+                        Image(systemName: "clock.fill")
+                            .font(.system(size: AppTheme.fontSize11))
+                            .foregroundStyle(.orange)
+                        Text(recipe.totalTime)
+                            .font(.system(size: AppTheme.fontSize11))
+                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                    }
                 }
 
                 HStack(spacing: AppTheme.spacing6) {

@@ -137,11 +137,19 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return photoNames.first
     }
 
+    /// False when no time is known (imports without timings) — cards hide the clock rather than show "0 minutes".
+    var hasTotalTime: Bool {
+        TimeExtractor.extractMinutes(from: prepTime) + TimeExtractor.extractMinutes(from: cookingTime) > 0
+    }
+
     var totalTime: String {
         let prepMinutes = TimeExtractor.extractMinutes(from: prepTime)
         let cookMinutes = TimeExtractor.extractMinutes(from: cookingTime)
         let total = prepMinutes + cookMinutes
-        return "\(total) minutes"
+        // "585 minutes" is unreadable — show hours once past an hour.
+        guard total >= 60 else { return "\(total) minutes" }
+        let hours = total / 60, minutes = total % 60
+        return minutes == 0 ? "\(hours) hr" : "\(hours) hr \(minutes) min"
     }
     
     var scaleFactor: Double {

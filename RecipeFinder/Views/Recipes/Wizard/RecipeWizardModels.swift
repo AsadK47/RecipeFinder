@@ -53,3 +53,28 @@ extension RecipeWizardView.PrefilledRecipeData {
         )
     }
 }
+
+extension RecipeWizardView.PrefilledRecipeData {
+    /// Editor prefill for a saved or just-imported recipe — one mapping shared by "Edit" and URL-import review.
+    init(recipe: RecipeModel) {
+        self.init(
+            name: recipe.name,
+            description: nil,
+            // FractionFormatter shows ⅓ rather than "0.333333"; the editor's save path parses fractions back.
+            ingredients: recipe.ingredients.map { "\(FractionFormatter.format($0.baseQuantity)) \($0.unit) \($0.name)" },
+            instructions: recipe.instructions,
+            prePrepInstructions: recipe.prePrepInstructions,
+            prepTime: TimeExtractor.extractMinutes(from: recipe.prepTime),
+            cookTime: TimeExtractor.extractMinutes(from: recipe.cookingTime),
+            servings: recipe.baseServings,
+            difficulty: recipe.difficulty,
+            notes: recipe.notes.isEmpty ? nil : recipe.notes,
+            category: recipe.category,
+            isFavorite: recipe.isFavorite,
+            imageURL: recipe.imageName,
+            tags: recipe.tags.isEmpty ? nil : recipe.tags,
+            cuisine: recipe.cuisine,
+            galleryImageURLs: recipe.photoNames.isEmpty ? nil : recipe.photoNames
+        )
+    }
+}

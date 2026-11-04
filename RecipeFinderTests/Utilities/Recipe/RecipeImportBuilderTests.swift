@@ -1,3 +1,4 @@
+import Testing
 import XCTest
 @testable import RecipeFinder
 
@@ -61,8 +62,10 @@ final class RecipeImportBuilderTests: XCTestCase {
     func testBuild_usesDefaultDifficultyWhenNil() {
         let data = makeData(difficulty: nil)
         let recipe = builder.build(from: data)
-        XCTAssertEqual(recipe.difficulty, "Medium")
+        // The app's vocabulary is Basic/Intermediate/Expert; "Medium" matched no filter chip or smart collection.
+        XCTAssertEqual(recipe.difficulty, "Intermediate")
     }
+
 
     func testBuild_usesDefaultServingsWhenNil() {
         let data = makeData(servings: nil)
@@ -290,5 +293,21 @@ final class RecipeImportBuilderTests: XCTestCase {
         let notes = builder.buildNotes(from: data)
         XCTAssertFalse(notes.contains("Perfect for pairing"))
         XCTAssertFalse(notes.contains("naan"))
+    }
+}
+
+@Suite("RecipeImportBuilder difficulty")
+struct RecipeImportBuilderDifficultyTests {
+    @Test("Site difficulty labels map onto the app's Basic/Intermediate/Expert", arguments: [
+        ("Easy", "Basic"), ("Hard", "Expert"), ("Medium", "Intermediate"),
+    ])
+    func normalisesDifficulty(site: String, expected: String) {
+        guard let source = URL(string: "https://example.com/recipe") else { Issue.record("bad URL"); return }
+        let data = RecipeImporter.ExtractedRecipeData(
+            name: "Pancakes", description: nil, matchedIngredients: [], rawIngredients: [], rawText: "",
+            instructions: ["Cook it."], sourceURL: source, cookTimeMinutes: nil, prepTimeMinutes: nil,
+            servings: nil, difficulty: site, category: nil, cuisine: nil, imageURL: nil
+        )
+        #expect(RecipeImportBuilder().build(from: data).difficulty == expected)
     }
 }

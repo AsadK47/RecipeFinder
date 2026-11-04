@@ -64,7 +64,8 @@ struct RecipeFilterCriteria: Hashable {
         }
 
         if !selectedDifficulties.isEmpty {
-            results = results.filter { selectedDifficulties.contains($0.difficulty) }
+            // Normalise so legacy/imported labels ("Medium", "Easy") still match the Basic/Intermediate/Expert filter chips.
+            results = results.filter { selectedDifficulties.contains(RecipeWizardBuilder.normalizeDifficulty($0.difficulty)) }
         }
 
         if !selectedCookTimes.isEmpty {

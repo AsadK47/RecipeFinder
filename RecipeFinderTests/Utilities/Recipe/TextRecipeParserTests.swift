@@ -1,3 +1,4 @@
+import Testing
 import XCTest
 @testable import RecipeFinder
 
@@ -28,24 +29,6 @@ final class TextRecipeParserTests: XCTestCase {
         XCTAssertEqual(result?.instructions?.first, "Dice the onion and fry until soft.")
     }
 
-    func testDecimalAmountsAreNotStrippedAsListMarkers() {
-        let text = """
-        Aloo Gosht
-
-        Ingredients
-        0.44 cup neutral oil
-        1.75 tbsp ghee
-
-        Method
-        1. Heat the oil and ghee.
-        """
-
-        let result = TextRecipeParser.parse(text)
-
-        // Regression: "1.75" lost its "1." to the numbered-step stripper and imported as 75 tbsp.
-        XCTAssertEqual(result?.ingredients, ["0.44 cup neutral oil", "1.75 tbsp ghee"])
-        XCTAssertEqual(result?.instructions, ["Heat the oil and ghee."])
-    }
 
     /// Regression (scanned page): OCR interleaves a SERVES/TIME/Prep/Cook sidebar and GARNISH header into the ingredients — sidebar lines must not become ingredients, garnish items stay, servings/times extract. Mirrors RecipeFinder/Images/PhotoRecipe.jpeg.
     func testFencesSidebarMetadataAndGarnishHeader() {
@@ -196,5 +179,26 @@ final class TextRecipeParserTests: XCTestCase {
         - 1 loaf of bread
         """
         XCTAssertNil(TextRecipeParser.parse(text))
+    }
+}
+
+@Suite("TextRecipeParser decimals")
+struct TextRecipeParserDecimalTests {
+    @Test("Decimal amounts aren't stripped as numbered-list markers")
+    func decimalAmountsSurvive() {
+        let text = """
+        Aloo Gosht
+
+        Ingredients
+        0.44 cup neutral oil
+        1.75 tbsp ghee
+
+        Method
+        1. Heat the oil and ghee.
+        """
+        let result = TextRecipeParser.parse(text)
+        // Regression: "1.75" lost its "1." to the numbered-step stripper and imported as 75 tbsp.
+        #expect(result?.ingredients == ["0.44 cup neutral oil", "1.75 tbsp ghee"])
+        #expect(result?.instructions == ["Heat the oil and ghee."])
     }
 }

@@ -13,6 +13,9 @@ struct ContentView: View {
     @Environment(\.auth) private var authManager
     @Environment(\.badges) private var badgeManager
     @State private var showAccountFromBadge = false
+    /// Set by "View all badges"; the Account sheet opens only once the badge sheet has fully dismissed (presenting
+    /// it mid-dismissal was silently dropped, so the button appeared to do nothing).
+    @State private var openAccountAfterBadge = false
     @State private var pendingFileImport: RecipeModel?
     @State private var fileImportError: String?
 
@@ -54,7 +57,6 @@ struct ContentView: View {
             if store.recipes.isEmpty {
                 store.load(isAuthenticated: authManager.isAuthenticated)
             }
-            NotificationManager.shared.requestPermission { _ in }
         }
         .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
             if isAuthenticated {
@@ -108,12 +110,17 @@ struct ContentView: View {
         .sheet(item: Binding(
             get: { badgeManager.pendingCelebration },
             set: { if $0 == nil { badgeManager.dismissCelebration() } }
-        )) { badge in
+        ), onDismiss: {
+            if openAccountAfterBadge {
+                openAccountAfterBadge = false
+                showAccountFromBadge = true
+            }
+        }) { badge in
             BadgeEarnedSheet(badge: badge, onDismiss: {
                 badgeManager.dismissCelebration()
             }, onViewAllBadges: {
+                openAccountAfterBadge = true
                 badgeManager.dismissCelebration()
-                showAccountFromBadge = true
             })
             .presentationDetents([.height(380)])
             .presentationDragIndicator(.visible)
