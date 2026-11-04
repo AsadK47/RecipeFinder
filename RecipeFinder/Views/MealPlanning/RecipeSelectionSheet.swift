@@ -18,7 +18,7 @@ struct RecipeSelectionSheet: View {
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
-            SearchBar(text: $searchText, placeholder: "Search Recipes...")
+            AppSearchField(text: $searchText, placeholder: "Search Recipes...")
                 .padding(.horizontal)
 
             if filteredRecipes.isEmpty {

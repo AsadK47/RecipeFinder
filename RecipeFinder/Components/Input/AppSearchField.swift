@@ -1,14 +1,32 @@
 import SwiftUI
 
-// Screen-header search field with external focus (parent owns it to drive keyboard toolbars/submit); `SearchBar` is the sibling for sheets that own focus themselves.
+/// The app's search field. Pass `isFocused` when the parent needs to drive focus (keyboard toolbars, submit);
+/// omit it in sheets and the field manages its own.
 struct AppSearchField: View {
     @Binding var text: String
     var placeholder: String
-    var isFocused: FocusState<Bool>.Binding
     var onSubmit: (() -> Void)?
     /// Applied to the inner `TextField` only, so UI tests can target it without matching other screens' fields.
     var accessibilityID: String?
 
+    private let externalFocus: FocusState<Bool>.Binding?
+    @FocusState private var ownFocus: Bool
+
+    private var isFocused: FocusState<Bool>.Binding { externalFocus ?? $ownFocus }
+
+    init(
+        text: Binding<String>,
+        placeholder: String,
+        isFocused: FocusState<Bool>.Binding? = nil,
+        onSubmit: (() -> Void)? = nil,
+        accessibilityID: String? = nil
+    ) {
+        _text = text
+        self.placeholder = placeholder
+        self.externalFocus = isFocused
+        self.onSubmit = onSubmit
+        self.accessibilityID = accessibilityID
+    }
 
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {

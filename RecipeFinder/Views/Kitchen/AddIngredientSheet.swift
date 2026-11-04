@@ -22,7 +22,7 @@ struct AddIngredientSheet: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            SearchBar(text: $searchText, placeholder: "Search Foods...")
+            AppSearchField(text: $searchText, placeholder: "Search Foods...")
                 .padding(.horizontal, AppTheme.spacing20)
                 .padding(.top, AppTheme.spacing16)
                 .padding(.bottom, AppTheme.spacing12)
