@@ -3,13 +3,6 @@ import Foundation
 /// WP Recipe Maker parsing for `RecipeParser`; extracts structured fields from `wprm-recipe-*` markup, falling back to text heuristics for instructions.
 extension RecipeParser {
 
-    /// Inner HTML → plain text (strip tags, collapse whitespace). WPRM wraps ingredient names/units in `<a>` glossary links, so a `[^<]+` capture returns empty and the name is lost.
-    private static func strippedInner(_ s: String) -> String {
-        s.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-            .trimmingCharacters(in: .whitespaces)
-    }
-
     static func extractWPRM(from html: String) -> ParsedRecipe? {
         guard html.contains("wprm-recipe") || html.contains("wp-recipe-maker") else {
             return nil
@@ -124,13 +117,9 @@ extension RecipeParser {
                    let firstMatch = amountRegex.firstMatch(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length)),
                    firstMatch.numberOfRanges > 1 {
                     let amountRange = firstMatch.range(at: 1)
-                    var rawAmount = (liContent as NSString).substring(with: amountRange)
-                    // Replace tags with a space so mixed numbers like 1<span>1/4</span> become "1 1/4"
-                    rawAmount = rawAmount.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
+                    let rawAmount = (liContent as NSString).substring(with: amountRange)
                     // Normalise spaces around fraction slashes: "1 / 4" → "1/4"
-                    rawAmount = rawAmount.replacingOccurrences(of: #"\s*/\s*"#, with: "/", options: .regularExpression)
-                    rawAmount = rawAmount.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-                    amount = rawAmount.trimmingCharacters(in: .whitespaces)
+                    amount = inlineText(rawAmount).replacingOccurrences(of: #"\s*/\s*"#, with: "/", options: .regularExpression)
                 }
 
                 // Fallback for plain-text amounts with no sibling span (e.g. a bare <span>2</span></li>)
@@ -148,7 +137,7 @@ extension RecipeParser {
                 if let unitRegex = try? NSRegularExpression(pattern: unitPattern, options: []) {
                     let unitMatches = unitRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
                     if let firstMatch = unitMatches.first, firstMatch.numberOfRanges > 1 {
-                        unit = Self.strippedInner((liContent as NSString).substring(with: firstMatch.range(at: 1)))
+                        unit = inlineText((liContent as NSString).substring(with: firstMatch.range(at: 1)))
                     }
                 }
 
@@ -156,7 +145,7 @@ extension RecipeParser {
                 if let nameRegex = try? NSRegularExpression(pattern: namePattern, options: []) {
                     let nameMatches = nameRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
                     if let firstMatch = nameMatches.first, firstMatch.numberOfRanges > 1 {
-                        name = Self.strippedInner((liContent as NSString).substring(with: firstMatch.range(at: 1)))
+                        name = inlineText((liContent as NSString).substring(with: firstMatch.range(at: 1)))
                     }
                 }
 
@@ -164,7 +153,7 @@ extension RecipeParser {
                 if let notesRegex = try? NSRegularExpression(pattern: notesPattern, options: []) {
                     let notesMatches = notesRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
                     if let firstMatch = notesMatches.first, firstMatch.numberOfRanges > 1 {
-                        notes = Self.strippedInner((liContent as NSString).substring(with: firstMatch.range(at: 1)))
+                        notes = inlineText((liContent as NSString).substring(with: firstMatch.range(at: 1)))
                     }
                 }
 
@@ -211,10 +200,7 @@ extension RecipeParser {
                         let textRange = textMatch.range(at: 1)
                         var instruction = (liContent as NSString).substring(with: textRange)
 
-                        instruction = instruction.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
-                        instruction = instruction.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-                        instruction = decodeHTMLEntities(instruction)
-                        instruction = instruction.trimmed
+                        instruction = decodeHTMLEntities(inlineText(instruction)).trimmed
 
                         if !instruction.isEmpty && instruction.count >= 10 {
                             instructions.append(instruction)
@@ -235,7 +221,7 @@ extension RecipeParser {
 
         if result.name != nil && !result.ingredients.isEmpty {
             let text = cleanHTML(html)
-            let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            let lines = nonBlankLines(text)
             let fallbackInstructions = extractInstructions(from: text, lines: lines)
 
             if !fallbackInstructions.isEmpty {

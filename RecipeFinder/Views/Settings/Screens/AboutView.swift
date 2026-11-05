@@ -100,24 +100,6 @@ struct AboutView: View {
     }
 }
 
-struct AboutFeatureRow: View {
-    let icon: String
-    let text: String
-    let color: Color
-
-    var body: some View {
-        HStack(spacing: AppTheme.spacing12) {
-            Image(systemName: icon)
-                .foregroundStyle(color)
-                .frame(width: AppTheme.iconSize20)
-
-            Text(text)
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.adaptiveEmphasis(level: AppTheme.cardLightOpacity))
-        }
-    }
-}
-
 #Preview {
     NavigationStack {
         AboutView()

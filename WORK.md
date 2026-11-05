@@ -38,7 +38,18 @@ BUG-FIX BATCH (user: fix all 10 bugs → commit as one, then the 17 dedupes) —
      autocomplete maps catalog names; KitchenItemRow menu = known names only (+3 tests). Sim-found extras fixed in batch:
      catalog browse-group icons (displayCategory) and pantry row not redrawing on remove (itemNameSet was @ObservationIgnored) (+2 tests)
  Sim: Planning empty-state button OK Light+Dark; kitchen groups no duplicates. 🟢 noted: "Back to Categories" teal-on-teal (Light).
-**Next action (after batch):** user picks order. Recommended (bugs first, smallest first): M6, M4, U8, L5, L3, L1, U1, M2, M1, M3; then pure dedupe
+BUG BATCH COMMITTED 63bf68f (1838 green).
+DEDUPE BATCH (17) — in progress, uncommitted, build + parser suites green:
+ [x] L9 RecipeParser.parse loops over structured strategies (og:image once)   [x] L8 RecipeParser.nonBlankLines
+ [x] L6 RecipeParser.inlineText (tags→space; WPRM strippedInner + amount/instruction + Microdata)   [x] U6 dead PrivacyInfoRow/AboutFeatureRow deleted
+ [ ] L2 first-capture regex helpers (lift Microdata allCaptures/firstCapture into RecipeParser.swift; WPRM ×12 inline)
+ [ ] U3 .errorAlert + Binding.isPresent  [ ] U2 CircleMenuButton (MealPlannerHeader gains circle + a11y label)
+ [ ] M5 NotificationManager schedule(id:content:trigger:) + NotificationKind enum  [ ] U4/U5 IconBadge (+ collection dot)
+ [ ] M7 BackupMerge returns added items  [ ] M8 date helpers onto models  [ ] L4 bullet glyph set  [ ] L7 section-header keywords
+ [ ] L10 time-unit alternations  [ ] U7 hand-built capsule buttons → PrimaryButton(size:)  [ ] U9 raw Color.white fills (FilterSheet ×10)
+ [ ] U8b display DateFormatters → Date.FormatStyle (MealPlanningView ×3, MealTimeSelectorSheet)
+**Next action:** L2 — move `allCaptures`/`firstCapture` from RecipeParser+Microdata.swift (private) to RecipeParser.swift (internal),
+then replace WPRM's inline NSRegularExpression capture blocks. Run RecipeParserTests + RecipeImportFixtureTests per item; full suite before commit. Recommended (bugs first, smallest first): M6, M4, U8, L5, L3, L1, U1, M2, M1, M3; then pure dedupe
 (L2, U3, U2, M5, U4/U5/U6, M7, M8, L4, L6–L9, U7, U9).
 
 # WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 d151d9a committed; #4 28fc2d0 committed; #5 a2e03cb committed; #6 durations DONE (uncommitted, 1816 green) — CAMPAIGN COMPLETE

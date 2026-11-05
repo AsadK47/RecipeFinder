@@ -27,50 +27,21 @@ struct RecipeParser {
         var confidenceScore = 0.0
         let maxScore = 8.0
 
-        if let jsonLD = extractJSONLD(from: html) {
-            var enriched = jsonLD
-            if enriched.imageURL == nil {
-                enriched.imageURL = extractOGImage(from: html)
+        // Structured strategies, most reliable first; the first hit wins and borrows og:image if it has no image.
+        let structured: [(String) -> ParsedRecipe?] = [
+            extractJSONLD, extractWPRM, extractMicrodata,
+            extractRDFa,     // RDFa Lite (vocab/typeof/property) — see RecipeParser+RDFa.
+            extractDOMList,  // Generic semantic-list fallback (BBC Good Food etc.) before free-text heuristics.
+        ]
+        for strategy in structured {
+            if var found = strategy(html) {
+                if found.imageURL == nil { found.imageURL = extractOGImage(from: html) }
+                return found
             }
-            return enriched
-        }
-
-        if let wprm = extractWPRM(from: html) {
-            var enriched = wprm
-            if enriched.imageURL == nil {
-                enriched.imageURL = extractOGImage(from: html)
-            }
-            return enriched
-        }
-
-        if let microdata = extractMicrodata(from: html) {
-            var enriched = microdata
-            if enriched.imageURL == nil {
-                enriched.imageURL = extractOGImage(from: html)
-            }
-            return enriched
-        }
-
-        // RDFa Lite (vocab/typeof/property) — see RecipeParser+RDFa.
-        if let rdfa = extractRDFa(from: html) {
-            var enriched = rdfa
-            if enriched.imageURL == nil {
-                enriched.imageURL = extractOGImage(from: html)
-            }
-            return enriched
-        }
-
-        // Generic semantic-list fallback (BBC Good Food etc.) before free-text heuristics.
-        if let domList = extractDOMList(from: html) {
-            var enriched = domList
-            if enriched.imageURL == nil {
-                enriched.imageURL = extractOGImage(from: html)
-            }
-            return enriched
         }
 
         let text = cleanHTML(html)
-        let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        let lines = nonBlankLines(text)
 
         if let name = extractRecipeName(from: html, text: text) {
             result.name = name
@@ -116,7 +87,7 @@ struct RecipeParser {
 
         // Social/caption fallback: TikTok/Instagram pages carry no recipe body text, but the creator's caption lives in og:description.
         if result.ingredients.isEmpty, let caption = extractMetaContent(property: "og:description", from: html) {
-            let capLines = caption.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            let capLines = nonBlankLines(caption)
             let capIngredients = extractIngredients(from: caption, lines: capLines)
             if !capIngredients.isEmpty {
                 result.ingredients = capIngredients
@@ -162,6 +133,19 @@ struct RecipeParser {
         text = text.replacingOccurrences(of: "\\n\\s*\\n\\s*\\n+", with: "\n\n", options: .regularExpression)
 
         return text.trimmed
+    }
+
+    /// An element's inner HTML as one line of text: tags become spaces (so "a</a>b" can't glue into "ab" and
+    /// 1<span>1/4</span> reads "1 1/4"), whitespace collapses, ends trimmed. Entities are left to the caller.
+    static func inlineText(_ innerHTML: String) -> String {
+        innerHTML.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmed
+    }
+
+    /// Non-blank lines of `text` — the split every text strategy starts from.
+    static func nonBlankLines(_ text: String) -> [String] {
+        text.components(separatedBy: .newlines).filter { !$0.isBlank }
     }
 
     /// A yield every parser accepts: 1–100. Rejects "Serves: 0" and "Makes 999999" typos that would poison scaling.

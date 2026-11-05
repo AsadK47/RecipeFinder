@@ -28,7 +28,7 @@ extension RecipeParser {
             "data-tr-instruction"
         ]).filter { $0.count >= 10 }
         if steps.isEmpty {
-            let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            let lines = nonBlankLines(text)
             steps = extractInstructions(from: text, lines: lines)
         }
         result.instructions = steps
@@ -49,9 +49,7 @@ extension RecipeParser {
             guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { continue }
             for m in regex.matches(in: html, range: NSRange(location: 0, length: ns.length)) where m.numberOfRanges > 1 {
                 let inner = ns.substring(with: m.range(at: 1))
-                let decoded = decodeHTMLEntities(inner.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression))
-                    .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-                    .trimmed
+                let decoded = decodeHTMLEntities(inlineText(inner)).trimmed
                 if !decoded.isEmpty, seen.insert(decoded.lowercased()).inserted {
                     results.append(decoded)
                 }
