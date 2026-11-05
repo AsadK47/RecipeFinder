@@ -355,8 +355,7 @@ final class MealPlanningManager: MealPlanningManaging {
     }
     
     private func loadMealPlans() {
-        if let data = storage.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([MealPlanModel].self, from: data) {
+        if let decoded = storage.decodable([MealPlanModel].self, forKey: saveKey) {
             mealPlans = decoded
         } else {
             mealPlans = []

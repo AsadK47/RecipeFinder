@@ -18,17 +18,7 @@ extension RecipeParser {
         var result = ParsedRecipe()
         result.confidence = 0.95
 
-        if let nameMatch = html.range(of: "class=\"wprm-recipe-name[^\"]*\">([^<]+)<", options: .regularExpression) {
-            let matched = String(html[nameMatch])
-            if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
-                var name = String(matched[contentRange])
-                    .replacingOccurrences(of: ">", with: "")
-                    .replacingOccurrences(of: "<", with: "")
-                    .trimmed
-                name = decodeHTMLEntities(name)
-                result.name = name
-            }
-        }
+        result.name = wprmText(#"class="wprm-recipe-name[^"]*">([^<]+)<"#, in: html)
 
         let prepTimePattern = #"wprm-recipe-prep_time-minutes[^>]*>(\d+)<"#
         if let regex = try? NSRegularExpression(pattern: prepTimePattern, options: []) {
@@ -89,7 +79,7 @@ extension RecipeParser {
                 if match.numberOfRanges > 1 {
                     let servingsRange = match.range(at: 1)
                     let servingsStr = nsString.substring(with: servingsRange)
-                    if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
+                    if let servings = plausibleServings(Int(servingsStr)) {
                         result.servings = servings
                     }
                 }
@@ -104,7 +94,7 @@ extension RecipeParser {
                     if match.numberOfRanges > 1 {
                         let servingsRange = match.range(at: 1)
                         let servingsStr = nsString.substring(with: servingsRange)
-                        if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
+                        if let servings = plausibleServings(Int(servingsStr)) {
                             result.servings = servings
                         }
                     }
@@ -236,27 +226,8 @@ extension RecipeParser {
 
         result.instructions = instructions
 
-        if let cuisineMatch = html.range(of: "wprm-recipe-cuisine[^>]*>([^<]+)<", options: .regularExpression) {
-            let matched = String(html[cuisineMatch])
-            if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
-                let cuisine = String(matched[contentRange])
-                    .replacingOccurrences(of: ">", with: "")
-                    .replacingOccurrences(of: "<", with: "")
-                    .trimmed
-                result.cuisine = cuisine
-            }
-        }
-
-        if let courseMatch = html.range(of: "wprm-recipe-course[^>]*>([^<]+)<", options: .regularExpression) {
-            let matched = String(html[courseMatch])
-            if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
-                let course = String(matched[contentRange])
-                    .replacingOccurrences(of: ">", with: "")
-                    .replacingOccurrences(of: "<", with: "")
-                    .trimmed
-                result.category = course
-            }
-        }
+        if let cuisine = wprmText("wprm-recipe-cuisine[^>]*>([^<]+)<", in: html) { result.cuisine = cuisine }
+        if let course = wprmText("wprm-recipe-course[^>]*>([^<]+)<", in: html) { result.category = course }
 
         if result.name != nil && !result.ingredients.isEmpty && !result.instructions.isEmpty {
             return result
@@ -274,5 +245,15 @@ extension RecipeParser {
         }
 
         return nil
+    }
+
+    /// Text of the first element matching `pattern` (its text in the first `>…<`), entity-decoded and trimmed — one
+    /// path for name/cuisine/course so none of them skips decoding ("Caf&eacute;").
+    private static func wprmText(_ pattern: String, in html: String) -> String? {
+        guard let match = html.range(of: pattern, options: .regularExpression) else { return nil }
+        let matched = html[match]
+        guard let content = matched.range(of: ">([^<]+)<", options: .regularExpression) else { return nil }
+        let text = decodeHTMLEntities(String(matched[content].dropFirst().dropLast())).trimmed
+        return text.isEmpty ? nil : text
     }
 }

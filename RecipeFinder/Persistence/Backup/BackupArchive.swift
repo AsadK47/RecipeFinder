@@ -72,6 +72,21 @@ enum BackupError: LocalizedError, Equatable {
 enum BackupCodec {
     static let fileExtension = "recipefinderbackup"
 
+    /// "RecipeFinder-Backup-2026-11-05" (local date). Fixed Gregorian calendar + POSIX locale so the name doesn't follow
+    /// the device calendar — a Buddhist-calendar device produced "2569-…".
+    static func defaultFilename(for date: Date = Date()) -> String {
+        "RecipeFinder-Backup-\(filenameDateFormatter.string(from: date))"
+    }
+
+    private static let filenameDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .gregorian)
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = .current
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+
     static func makeEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601

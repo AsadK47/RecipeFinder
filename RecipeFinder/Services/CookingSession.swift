@@ -1,12 +1,5 @@
 import Foundation
 
-// MARK: - Notification names
-
-extension Notification.Name {
-    static let cookingModeNextStep     = Notification.Name("CookingMode.nextStep")
-    static let cookingModePreviousStep = Notification.Name("CookingMode.previousStep")
-}
-
 // MARK: - CookingSession
 
 /// Shared active-cooking-session state driven by voice AppIntents; `CookingModeView` syncs via `setIndex(_:)`, intents call `advance()`/`retreat()` which post notifications so the view follows.

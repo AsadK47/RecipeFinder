@@ -10,6 +10,18 @@ final class UnitConversionTests: XCTestCase {
 
     // MARK: - Input normalisation
 
+    func testCanonicalUnit_collapsesEverySpelling() {
+        for (spelling, canonical) in [("Litres", "l"), ("millilitres", "ml"), ("Tbs", "tbsp"), ("lb", "lbs"),
+                                      ("grammes", "g"), (" Cups ", "cup"), ("fluid ounces", "fl oz"), ("handful", "handful")] {
+            XCTAssertEqual(UnitConversion.canonicalUnit(spelling), canonical, spelling)
+        }
+    }
+
+    func testGetUnitType_recognisesBritishSpellings() {
+        XCTAssertEqual(UnitConversion.getUnitType("litres"), .volume)
+        XCTAssertEqual(UnitConversion.getUnitType("grammes"), .weight)
+    }
+
     func testCaseInsensitiveConversion() {
         XCTAssertEqual(UnitConversion.convertWeight(value: Weight.gramsPerKg, from: "G", to: "KG"), 1.0)
     }

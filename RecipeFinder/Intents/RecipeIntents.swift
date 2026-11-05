@@ -82,7 +82,7 @@ struct OpenRecipeIntent: AppIntent {
         }
         await MainActor.run {
             NotificationCenter.default.post(
-                name: NSNotification.Name("OpenRecipe"),
+                name: .openRecipe,
                 object: nil,
                 userInfo: ["recipeId": recipe.id.uuidString]
             )
@@ -121,7 +121,7 @@ struct StartCookingIntent: AppIntent {
         }
         await MainActor.run {
             NotificationCenter.default.post(
-                name: NSNotification.Name("OpenRecipe"),
+                name: .openRecipe,
                 object: nil,
                 userInfo: ["recipeId": recipe.id.uuidString]
             )

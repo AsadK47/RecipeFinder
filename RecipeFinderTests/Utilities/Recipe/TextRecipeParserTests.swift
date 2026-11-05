@@ -108,6 +108,20 @@ final class TextRecipeParserTests: XCTestCase {
 
     // MARK: - Metadata
 
+    func testRejectsImplausibleServings() {
+        let text = """
+        Beef Stew
+        Serves: 0
+
+        Ingredients:
+        - 500g beef
+
+        Method:
+        1. Brown the beef and simmer.
+        """
+        XCTAssertNil(TextRecipeParser.parse(text)?.servings)
+    }
+
     func testExtractsServingsAndTimes() {
         let text = """
         Beef Stew

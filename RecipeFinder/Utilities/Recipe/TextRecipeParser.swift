@@ -11,7 +11,7 @@ enum TextRecipeParser {
 
         guard lines.count >= 3 else { return nil }
 
-        let servings = firstIntMatch(#"(?:serves|servings?|yield)\s*:?\s*(\d+)"#, in: text)
+        let servings = RecipeParser.plausibleServings(firstIntMatch(#"(?:serves|servings?|yield)\s*:?\s*(\d+)"#, in: text))
         // "time" optional so "Prep 20 minutes" resolves; extractMinutes handles hours so "2 hours" → 120, not 2.
         let prepTime = extractMinutes(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
         let cookTime = extractMinutes(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
@@ -192,7 +192,7 @@ enum TextRecipeParser {
 
     private static func looksLikeIngredient(_ line: String) -> Bool {
         // Quantity-led ("2 cups flour"), bulleted ("- flour"), or emoji-led ("🧄 garlic").
-        line.range(of: #"^[-•*]?\s*(\d|[¼½¾⅓⅔⅛⅜⅝⅞⅕⅖⅗⅘⅙⅚])"#, options: .regularExpression) != nil
+        line.range(of: #"^[-•*]?\s*(\d|["# + RecipeParser.unicodeFractionCharacters + "])", options: .regularExpression) != nil
             || line.range(of: #"^[-•*]\s+\S"#, options: .regularExpression) != nil
             || startsWithBullet(line)
     }

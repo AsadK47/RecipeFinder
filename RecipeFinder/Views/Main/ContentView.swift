@@ -4,6 +4,7 @@ private let logger = AppLogger.logger(category: "ContentView")
 
 struct ContentView: View {
     @Environment(\.recipeStore) private var store
+    @State private var showTimer = false
     @State private var selectedTab: Int = 0
     @State private var sidebarSelection: SidebarItem? = .recipes
     @Environment(\.colorScheme) var colorScheme
@@ -54,21 +55,28 @@ struct ContentView: View {
                 store.load()
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipes"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .openRecipes)) { _ in
             selectedTab = 0
             sidebarSelection = .recipes
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenGroceries"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .openGroceries)) { _ in
             selectedTab = 1
             sidebarSelection = .groceries
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenMealPlan"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .openMealPlan)) { _ in
             selectedTab = 3
             sidebarSelection = .planning
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipe"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .openRecipe)) { _ in
             selectedTab = 0
             sidebarSelection = .recipes
+        }
+        // Tapping a finished-timer notification opens the timer (it shows the shared RecipeTimerManager state).
+        .onReceive(NotificationCenter.default.publisher(for: .openTimer)) { _ in
+            showTimer = true
+        }
+        .sheet(isPresented: $showTimer) {
+            CookTimerView()
         }
         .onOpenURL { url in
             guard url.pathExtension == "recipefinderrecipe" else { return }

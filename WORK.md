@@ -1,3 +1,46 @@
+# WORK: Duplication sweep #2 (2026-11-04) — sweep COMPLETE, findings only, NO code changes
+Batch 2 (#1–#6) fully committed; tree clean apart from this file.
+Sweep = 2 Explore agents, read-only; BOTH PARTIAL. Logic sweep still owes: Persistence/Managers, LocalStore, notifications,
+Models, Services, Intents, UnitConversion/CategoryClassifier/NutritionDatabase, AppErrors. UI sweep skipped toolbars,
+onAppear loaders, section headers, wizard-step layouts, FilterSheet structure.
+UI findings (verify before editing):
+ U1 Empty states hand-rolled ×3 vs EmptyStateView (MealPlanEmptyStates :24,:62; RecipeEmptyStateView :10); BUG :92 white fill in Light.
+ U2 Overflow menu ×4 (RecipeSearchHeader:42, KitchenShoppingView:200, GroceriesHeader:13, MealPlannerHeader:10 — no a11y label) → CircleMenuButton.
+ U3 OK-only error alerts ×7 + optional→Bool Binding ×4 → `.errorAlert` + `Binding.isPresent`.
+ U4 Icon-in-tinted-circle ×8 → IconBadge. U5 Collection dot ×3 (drifted font). U6 dead PrivacyInfoRow + AboutFeatureRow.
+ U7 Hand-built capsule buttons ×4 → PrimaryButton(size:). U8 Fixed-format DateFormatters ×4 (locale) + backup filename BUG (no POSIX).
+ U9 Raw Color.white fills ×16 (FilterSheet ×10 etc.) — near-invisible in Light? unverified.
+Logic findings (parsers; extension compiles only RecipeParser*.swift + listed files):
+ L1 Servings plausibility 1–100 applied in 3 places, missing in JSON-LD/Microdata/Text (BUG). L2 first-capture regex ×~20 → lift Microdata helpers.
+ L3 Unicode fraction sets disagree (9 vs 15 chars) BUG. L4 bullet glyph sets ×4 disagree. L5 WPRM cuisine/course not entity-decoded BUG.
+ L6 strip-tags ×4 (no-space variant glues words). L7 section-header keyword lists ×4 drift. L8 split-lines ×4. L9 og:image fallback ×5. L10 unit tables (unfinished).
+Logic sweep part 2 (managers/models/services) DONE 2026-11-05:
+ M1 Unit spellings/factors ×13 (UnitConversion ×12 + NutritionCalculator own factors) vs IngredientLineParser.unitCanonical; BUG "lb" (wizard
+    picker) not in nutrition (counted as 1 piece) + shopping merges lb/lbs separately. Home: UnitConversion.canonicalUnit.
+ M2 Manager load `try? JSONDecoder` ×7 — corrupt data silently → empty → overwritten. Home: LocalStore.decodable (logs).
+ M3 Two grocery category vocabularies (CategoryClassifier vs FoodsList) BUG: pantry splits "Herbs & Spices"/"Herbs & Fresh Spices",
+    default icons. Needs saved-data migration.
+ M4 Name comparison ×12 inconsistent trim BUG: toggleItem(" Eggs") fails to remove. Home: String.nameKey (replaces BackupMerge.normalizedName).
+ M5 Notification request building ×7, 3 add paths (permission only asked for streak/expiry). M6 Notification names as strings; BUG
+    "OpenTimer" posted, never observed → timer notification tap does nothing.
+ M7 Restore merge re-derived ×4 (CollectionManager doesn't dedupe incoming). M8 Same-day/expiry date checks ×8 re-implement model helpers.
+ Minor: plural rules disagree (KitchenRecipeMatcher "ies" vs IngredientWordMatcher no "ies").
+BUG-FIX BATCH (user: fix all 10 bugs → commit as one, then the 17 dedupes) — uncommitted, each build+suite green:
+ [x] M6 Notification+Names.swift (typed names) + ContentView .openTimer → CookTimerView sheet
+ [x] M4 String.nameKey (String+Trimming) in Kitchen/Shopping managers + BackupMerge (+2 toggle tests)
+ [x] U8 BackupCodec.defaultFilename (gregorian/POSIX) (+test)   [x] L5 WPRM wprmText helper decodes name/cuisine/course (+test)
+ [x] L3 RecipeParser.unicodeFractionCharacters shared (+2 tests) [x] L1 RecipeParser.plausibleServings everywhere (+2 tests)
+ [x] U1 empty-state buttons → PrimaryButton (sim check pending)   [x] M2 LocalStore.decodable keeps "<key>.corrupt" (+2 tests)
+ [x] M1 UnitConversion.unitSynonyms/canonicalUnit = the one unit table (moved from IngredientLineParser); UnitConversion
+     switches pruned to canonical; NutritionCalculator uses canonical + shared factors (cup 236.6 not 240, ~1.4% shift);
+     shopping merge by canonical unit (+4 tests)
+ [x] M3 CategoryClassifier.normalizedCategory + knownCategories; on-load migration in Kitchen + Shopping managers (saved);
+     autocomplete maps catalog names; KitchenItemRow menu = known names only (+3 tests). Sim-found extras fixed in batch:
+     catalog browse-group icons (displayCategory) and pantry row not redrawing on remove (itemNameSet was @ObservationIgnored) (+2 tests)
+ Sim: Planning empty-state button OK Light+Dark; kitchen groups no duplicates. 🟢 noted: "Back to Categories" teal-on-teal (Light).
+**Next action (after batch):** user picks order. Recommended (bugs first, smallest first): M6, M4, U8, L5, L3, L1, U1, M2, M1, M3; then pure dedupe
+(L2, U3, U2, M5, U4/U5/U6, M7, M8, L4, L6–L9, U7, U9).
+
 # WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 d151d9a committed; #4 28fc2d0 committed; #5 a2e03cb committed; #6 durations DONE (uncommitted, 1816 green) — CAMPAIGN COMPLETE
 Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours → 4 search fields → 5 ingredient normalisers → 6 duration code.
 1. [x] `Components/Sheets/SheetScaffold.swift`: `.sheetScaffold(title)` (NavigationStack + AppBackground + appNavigationChrome) and

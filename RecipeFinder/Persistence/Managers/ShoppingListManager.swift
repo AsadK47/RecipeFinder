@@ -65,8 +65,14 @@ final class ShoppingListManager: ShoppingListManaging {
     }
     
     private func loadItems() {
-        if let data = storage.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
+        if var decoded = storage.decodable([ShoppingListModel].self, forKey: saveKey) {
+            // One-time migration: items saved under catalog/legacy category names were split into parallel groups.
+            var changed = false
+            for index in decoded.indices {
+                let normalized = CategoryClassifier.normalizedCategory(decoded[index].category, for: decoded[index].name)
+                if normalized != decoded[index].category { decoded[index].category = normalized; changed = true }
+            }
+            if changed { storage.setEncodable(decoded, forKey: saveKey) }
             items = decoded
         } else {
             items = []
@@ -125,8 +131,8 @@ final class ShoppingListManager: ShoppingListManaging {
         
         // Merge only when name AND unit match — summing across units ("200 g" + "2 cups") would be meaningless, so differing units stay as separate lines.
         if let existingIndex = items.firstIndex(where: {
-            $0.name.lowercased() == trimmedName.lowercased()
-                && $0.unit.lowercased() == trimmedUnit.lowercased()
+            $0.name.nameKey == trimmedName.nameKey
+                && UnitConversion.canonicalUnit($0.unit) == UnitConversion.canonicalUnit(trimmedUnit)
         }) {
             logger.debug("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
             let newQuantity = items[existingIndex].quantity + quantity
@@ -136,7 +142,7 @@ final class ShoppingListManager: ShoppingListManaging {
             return
         }
         
-        let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
+        let detectedCategory = CategoryClassifier.normalizedCategory(category, for: trimmedName)
         let newItem = ShoppingListModel(name: trimmedName, quantity: quantity, unit: trimmedUnit, category: detectedCategory)
         items.append(newItem)
         logger.debug("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")

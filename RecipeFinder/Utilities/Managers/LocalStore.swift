@@ -53,6 +53,19 @@ final class LocalStore: @unchecked Sendable {
         }
     }
 
+    /// Decodes JSON written by `setEncodable`. A blob that fails to decode is logged and copied to `"<key>.corrupt"`
+    /// before returning nil — callers fall back to empty and their next save would otherwise destroy the only copy.
+    func decodable<T: Decodable>(_ type: T.Type, forKey key: String) -> T? {
+        guard let data = data(forKey: key) else { return nil }
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            logger.error("❌ Failed to decode \(String(describing: T.self)) for key \(key), kept as \(key).corrupt: \(error.localizedDescription)")
+            set(data, forKey: key + ".corrupt")
+            return nil
+        }
+    }
+
     func bool(forKey key: String) -> Bool {
         userDefaults.bool(forKey: storedKey(key))
     }

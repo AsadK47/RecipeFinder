@@ -44,10 +44,10 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 
     private(set) var items: [KitchenItem] = []
     private(set) var inventoryItems: [KitchenInventoryModel] = []
-    // O(1) name lookup — kept in sync with items on every save/load
-    @ObservationIgnored private var itemNameSet: Set<String> = []
-    // O(1) inventory name lookup — mirrors inventoryItems.
-    @ObservationIgnored private var inventoryNameSet: Set<String> = []
+    // O(1) name lookups, kept in sync with items on every save/load. Observed (not @ObservationIgnored): views call
+    // hasItem() in body, and an ignored set meant a removal never redrew the row that showed the item as stocked.
+    private var itemNameSet: Set<String> = []
+    private var inventoryNameSet: Set<String> = []
     // Pre-grouped and sorted once per save/load; reading it in body is O(1).
     private(set) var groupedItemsCache: [(category: String, items: [KitchenItem])] = []
 
@@ -70,10 +70,11 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
     }
 
     private func loadItems() {
-        if let data = storage.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([KitchenItem].self, from: data) {
+        if var decoded = storage.decodable([KitchenItem].self, forKey: saveKey) {
+            // One-time migration: items saved under catalog/legacy category names were split into parallel groups.
+            if migrateCategories(&decoded) { storage.setEncodable(decoded, forKey: saveKey) }
             items = decoded
-            itemNameSet = Set(decoded.map { $0.name.lowercased() })
+            itemNameSet = Set(decoded.map { $0.name.nameKey })
             groupedItemsCache = computeGroupedItems()
         } else {
             items = []
@@ -82,11 +83,20 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
         }
     }
     
+    /// Re-files items whose stored category isn't a current name; returns whether anything changed.
+    private func migrateCategories(_ items: inout [KitchenItem]) -> Bool {
+        var changed = false
+        for index in items.indices {
+            let normalized = CategoryClassifier.normalizedCategory(items[index].category, for: items[index].name)
+            if normalized != items[index].category { items[index].category = normalized; changed = true }
+        }
+        return changed
+    }
+
     private func loadInventoryItems() {
-        if let data = storage.data(forKey: inventorySaveKey),
-           let decoded = try? JSONDecoder().decode([KitchenInventoryModel].self, from: data) {
+        if let decoded = storage.decodable([KitchenInventoryModel].self, forKey: inventorySaveKey) {
             inventoryItems = decoded
-            inventoryNameSet = Set(decoded.map { $0.name.lowercased() })
+            inventoryNameSet = Set(decoded.map { $0.name.nameKey })
         } else {
             inventoryItems = []
             inventoryNameSet = []
@@ -102,7 +112,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
 	
 	func addInventoryItem(_ item: KitchenInventoryModel) {
-		guard !inventoryItems.contains(where: { $0.name.lowercased() == item.name.lowercased() }) else {
+		guard !inventoryItems.contains(where: { $0.name.nameKey == item.name.nameKey }) else {
 			HapticManager.shared.warning()
 			logger.debug("⚠️ Duplicate item '\(item.name)' not added")
 			return
@@ -167,7 +177,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
 	
 	func hasInventoryItem(_ name: String) -> Bool {
-		inventoryNameSet.contains(name.lowercased())
+		inventoryNameSet.contains(name.nameKey)
 	}
 	
 	func expiredItems() -> [KitchenInventoryModel] {
@@ -201,11 +211,11 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	private func migrateOldDataIfNeeded() {
 		guard !storage.bool(forKey: migrationKey) else { return }
 		
-		let validFoods = Set(FoodsList.getAllFoods().map { $0.lowercased() })
+		let validFoods = Set(FoodsList.getAllFoods().map(\.nameKey))
 		
 		let oldCount = items.count
 		let filteredItems = items.filter { item in
-			validFoods.contains(item.name.lowercased())
+			validFoods.contains(item.name.nameKey)
 		}
 		
 		let removedCount = oldCount - filteredItems.count
@@ -228,7 +238,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 		guard !trimmedName.isEmpty else { return }
 		guard quantity > 0 else { return }
 		
-		let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
+		let detectedCategory = CategoryClassifier.normalizedCategory(category, for: trimmedName)
 		let newItem = KitchenItem(
 			name: trimmedName,
 			category: detectedCategory,
@@ -236,7 +246,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 			unit: unit
 		)
         
-		guard !items.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) else {
+		guard !items.contains(where: { $0.name.nameKey == trimmedName.nameKey }) else {
 			HapticManager.shared.warning()
 			return
 		}
@@ -263,7 +273,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
     
 	func toggleItem(_ name: String, category: String? = nil) {
-		if let index = items.firstIndex(where: { $0.name.lowercased() == name.lowercased() }) {
+		if let index = items.firstIndex(where: { $0.name.nameKey == name.nameKey }) {
 			var updatedItems = items
 			updatedItems.remove(at: index)
 			HapticManager.shared.light()
@@ -295,7 +305,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
     
 	func hasItem(_ name: String) -> Bool {
-		itemNameSet.contains(name.lowercased())
+		itemNameSet.contains(name.nameKey)
 	}
     
 	func clearAll() {
@@ -318,14 +328,14 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
     
     private func saveItems(_ newItems: [KitchenItem]) {
         items = newItems
-        itemNameSet = Set(newItems.map { $0.name.lowercased() })
+        itemNameSet = Set(newItems.map { $0.name.nameKey })
         groupedItemsCache = computeGroupedItems()
         storage.setEncodable(newItems, forKey: saveKey)
     }
 
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
         inventoryItems = newInventoryItems
-        inventoryNameSet = Set(newInventoryItems.map { $0.name.lowercased() })
+        inventoryNameSet = Set(newInventoryItems.map { $0.name.nameKey })
         storage.setEncodable(newInventoryItems, forKey: inventorySaveKey)
 	}
 }

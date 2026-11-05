@@ -164,6 +164,15 @@ struct RecipeParser {
         return text.trimmed
     }
 
+    /// A yield every parser accepts: 1–100. Rejects "Serves: 0" and "Makes 999999" typos that would poison scaling.
+    static func plausibleServings(_ value: Int?) -> Int? {
+        value.flatMap { (1...100).contains($0) ? $0 : nil }
+    }
+
+    /// Every vulgar-fraction glyph the parsers recognise — one list so no path silently misses "⅕" etc.
+    /// (IngredientLineParser.normaliseUnicodeFractions maps each of these; a test keeps the two in step.)
+    static let unicodeFractionCharacters = "¼½¾⅓⅔⅛⅜⅝⅞⅕⅖⅗⅘⅙⅚"
+
     static func decodeHTMLEntities(_ text: String) -> String {
         // NSAttributedString decodes named + numeric HTML entities (&eacute; → é, &amp; → &, &#233; → é).
         let wrapped = "<html><body>\(text)</body></html>"

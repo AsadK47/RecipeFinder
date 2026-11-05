@@ -124,7 +124,7 @@ struct RecipeSearchView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             checkSharedImportInbox()
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipe"))) { notification in
+        .onReceive(NotificationCenter.default.publisher(for: .openRecipe)) { notification in
             guard let idString = notification.userInfo?["recipeId"] as? String,
                   let recipeId = UUID(uuidString: idString) else { return }
             // Remember the target and open it now if loaded, else when `recipes` arrives — a deep link that

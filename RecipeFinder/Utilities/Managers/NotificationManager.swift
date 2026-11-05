@@ -318,28 +318,28 @@ extension NotificationManager {
         switch notificationType {
         case "timer":
             NotificationCenter.default.post(
-                name: NSNotification.Name("OpenTimer"),
+                name: .openTimer,
                 object: nil,
                 userInfo: userInfo
             )
             
         case "meal":
             NotificationCenter.default.post(
-                name: NSNotification.Name("OpenMealPlan"),
+                name: .openMealPlan,
                 object: nil,
                 userInfo: userInfo
             )
             
         case "expiry":
             NotificationCenter.default.post(
-                name: NSNotification.Name("OpenGroceries"),
+                name: .openGroceries,
                 object: nil,
                 userInfo: userInfo
             )
 
         case "daily-reminder":
             NotificationCenter.default.post(
-                name: NSNotification.Name("OpenRecipes"),
+                name: .openRecipes,
                 object: nil
             )
 

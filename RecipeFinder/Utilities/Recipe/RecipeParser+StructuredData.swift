@@ -118,12 +118,12 @@ extension RecipeParser {
         if let yield = data["recipeYield"] as? String {
             result.servings = extractServingsFromYield(yield)
         } else if let yieldInt = data["recipeYield"] as? Int {
-            result.servings = yieldInt
+            result.servings = plausibleServings(yieldInt)
         } else if let yieldArray = data["recipeYield"] as? [Any], let first = yieldArray.first {
             if let str = first as? String {
                 result.servings = extractServingsFromYield(str)
             } else if let num = first as? Int {
-                result.servings = num
+                result.servings = plausibleServings(num)
             }
         }
 
@@ -227,7 +227,7 @@ extension RecipeParser {
         let pattern = #"(\d+)"#
         if let range = yieldString.range(of: pattern, options: .regularExpression),
            let servings = Int(yieldString[range]) {
-            return servings
+            return plausibleServings(servings)
         }
         return nil
     }

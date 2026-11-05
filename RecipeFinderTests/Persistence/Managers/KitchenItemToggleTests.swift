@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import os
 @testable import RecipeFinder
 
 // KitchenInventoryManager.toggleItem / hasItem — the pantry-toggle path behind RecipeDetailView's house icon; confirms toggleItem never crashes on its own.
@@ -29,6 +30,29 @@ import Foundation
     }
 
     // MARK: - toggleItem: remove path
+
+    @Test func hasItem_isObserved_soARowRedrawsWhenTheItemIsRemoved() {
+        let sut = makeSUT()
+        sut.toggleItem("Banana")
+        let changed = OSAllocatedUnfairLock(initialState: false)
+        withObservationTracking { _ = sut.hasItem("Banana") } onChange: { changed.withLock { $0 = true } }
+        sut.toggleItem("Banana")
+        #expect(changed.withLock { $0 })
+    }
+
+    @Test func toggleItem_removesItem_whenNameHasStraySpaces() {
+        let sut = makeSUT()
+        sut.toggleItem("Eggs")
+        sut.toggleItem(" Eggs ")
+        #expect(!sut.hasItem("Eggs"))
+        #expect(sut.items.isEmpty)
+    }
+
+    @Test func hasItem_ignoresStraySpaces() {
+        let sut = makeSUT()
+        sut.toggleItem("Eggs")
+        #expect(sut.hasItem("  eggs"))
+    }
 
     @Test func toggleItem_removesItem_whenPresent() {
         let sut = makeSUT()

@@ -69,8 +69,7 @@ final class CookingStreakManager: CookingStreakTracking {
     }
 
     private func load() {
-        if let data = storage.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([Date].self, from: data) {
+        if let decoded = storage.decodable([Date].self, forKey: saveKey) {
             cookDates = decoded
         } else {
             cookDates = []

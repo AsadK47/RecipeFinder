@@ -21,6 +21,31 @@ enum CategoryClassifier {
         "Oils & Fats", "Sauces & Condiments", "Sweeteners"
     ]
     
+    /// Every category name an item may be stored under (shopping list uses `categoryOrder`, kitchen `kitchenCategories`).
+    static let knownCategories = Set(categoryOrder + kitchenCategories)
+
+    /// The food catalog's browse-group names (`FoodsList.categories`) and older stored names → the names above.
+    /// nil = ambiguous ("Meat & Poultry"): decided from the item name instead.
+    private static let categoryAliases: [String: String?] = [
+        "Meat & Poultry": nil, "Herbs & Spices": nil,
+        "Grains & Bread": "Grains & Pasta", "Legumes & Beans": "Legumes & Pulses",
+        "Condiments & Sauces": "Sauces & Condiments", "Baking": "Baking Supplies",
+        "Frozen Foods": "Frozen", "Canned Goods": "Canned & Jarred",
+    ]
+
+    /// The one category name to store for `itemName`: known names pass through, catalog/legacy names are mapped, and
+    /// anything else is classified from the name — so the same food never lands in two parallel groups.
+    static func normalizedCategory(_ category: String?, for itemName: String) -> String {
+        guard let category = category?.trimmed, !category.isEmpty else { return categorize(itemName) }
+        if knownCategories.contains(category) { return category }
+        if let alias = categoryAliases[category] {
+            if let mapped = alias { return mapped }
+            let classified = categorize(itemName)
+            return classified == "Other" ? (category == "Meat & Poultry" ? "Meat" : "Dried Spices & Seasonings") : classified
+        }
+        return categorize(itemName)
+    }
+
     static let descriptorWords = [
         "large", "small", "medium", "fresh", "dried", "frozen", "canned",
         "chopped", "sliced", "diced", "minced", "whole", "ground", "raw", "cooked",
@@ -212,8 +237,17 @@ enum CategoryClassifier {
         ]
     ]
 
-    static func categoryIcon(for category: String) -> String {
+    /// Catalog/legacy names resolve to their current name first, so they share its icon and colour.
+    private static func displayCategory(_ category: String) -> String {
         switch category {
+        case "Meat & Poultry": return "Meat"
+        case "Herbs & Spices": return "Herbs & Fresh Spices"
+        default: return (categoryAliases[category] ?? nil) ?? category
+        }
+    }
+
+    static func categoryIcon(for category: String) -> String {
+        switch displayCategory(category) {
         case "Produce": return "leaf.fill"
         case "Meat": return "fork.knife.circle.fill"
         case "Poultry": return "bird.fill"
@@ -226,7 +260,7 @@ enum CategoryClassifier {
         case "Herbs & Fresh Spices": return "leaf.fill"
         case "Dried Spices & Seasonings": return "sparkles"
         case "Oils & Fats": return "drop.circle.fill"
-        case "Sauces & Condiments", "Condiments & Sauces": return "drop.fill"
+        case "Sauces & Condiments": return "drop.fill"
         case "Canned & Jarred": return "cylinder.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
@@ -245,7 +279,7 @@ enum CategoryClassifier {
     }
     
     static func categoryColor(for category: String) -> Color {
-        switch category {
+        switch displayCategory(category) {
         case "Produce": return .green
         case "Meat": return .red
         case "Poultry": return .orange
@@ -258,7 +292,7 @@ enum CategoryClassifier {
         case "Herbs & Fresh Spices": return .green
         case "Dried Spices & Seasonings": return .orange
         case "Oils & Fats": return .yellow
-        case "Sauces & Condiments", "Condiments & Sauces": return .purple
+        case "Sauces & Condiments": return .purple
         case "Canned & Jarred": return .gray
         case "Frozen": return .cyan
         case "Beverages": return .blue

@@ -75,11 +75,14 @@ extension RecipeParser {
             "clove", "cloves", "pinch", "dash", "sprig", "bunch", "piece", "pieces", "slice", "slices",
             "diced", "chopped", "sliced", "minced", "crushed", "grated", "shredded",
             "fresh", "dried", "frozen", "canned", "whole", "ground",
-            "optional", "to taste", "as needed", "for serving",
-            "½", "¼", "¾", "⅓", "⅔", "⅛", "⅜", "⅝", "⅞"
+            "optional", "to taste", "as needed", "for serving"
         ]
 
         let lowercased = trimmed.lowercased()
+
+        if lowercased.contains(where: unicodeFractionCharacters.contains) {
+            return true
+        }
 
         for indicator in indicators {
             if lowercased.contains(indicator) {
@@ -87,7 +90,7 @@ extension RecipeParser {
             }
         }
 
-        let numberPattern = "^[0-9]|\\s[0-9]|^[½¼¾⅓⅔⅛⅜⅝⅞]|\\s[½¼¾⅓⅔⅛⅜⅝⅞]"
+        let numberPattern = "^[0-9]|\\s[0-9]"
         if lowercased.range(of: numberPattern, options: .regularExpression) != nil {
             return true
         }

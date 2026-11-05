@@ -55,8 +55,7 @@ final class CollectionManager: CollectionManaging {
     }
 
     private func loadCollections() {
-        if let data = storage.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([RecipeCollection].self, from: data) {
+        if let decoded = storage.decodable([RecipeCollection].self, forKey: saveKey) {
             collections = decoded
         } else {
             collections = []

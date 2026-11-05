@@ -4,6 +4,30 @@ import XCTest
 
 final class CategoryClassifierTests: XCTestCase {
 
+    // MARK: - One category vocabulary
+
+    func testEveryCatalogBrowseGroup_hasASpecificIcon() {
+        for category in FoodsList.categories {
+            XCTAssertNotEqual(CategoryClassifier.categoryIcon(for: category), "shippingbox.fill", category)
+        }
+    }
+
+    func testNormalizedCategory_mapsCatalogAndLegacyNames() {
+        XCTAssertEqual(CategoryClassifier.normalizedCategory("Grains & Bread", for: "bread"), "Grains & Pasta")
+        XCTAssertEqual(CategoryClassifier.normalizedCategory("Condiments & Sauces", for: "ketchup"), "Sauces & Condiments")
+        XCTAssertEqual(CategoryClassifier.normalizedCategory("Meat & Poultry", for: "chicken thighs"), "Poultry")
+        XCTAssertEqual(CategoryClassifier.normalizedCategory("Meat & Poultry", for: "zzz"), "Meat")
+        XCTAssertEqual(CategoryClassifier.normalizedCategory("Seafood", for: "salmon"), "Seafood")
+        XCTAssertEqual(CategoryClassifier.normalizedCategory(nil, for: "beef"), "Meat")
+    }
+
+    func testEveryCatalogFood_filesUnderAKnownCategory() {
+        for food in FoodsList.getAllFoods() {
+            let category = CategoryClassifier.normalizedCategory(FoodsList.getCategoryForFood(food), for: food)
+            XCTAssertTrue(CategoryClassifier.knownCategories.contains(category) || category == "Other", "\(food) → \(category)")
+        }
+    }
+
     // MARK: - Meat
 
     func testCategorize_beef_returnsMeat() {

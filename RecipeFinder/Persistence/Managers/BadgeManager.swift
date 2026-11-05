@@ -152,8 +152,7 @@ final class BadgeManager: BadgeManaging {
     }
 
     private func loadBadges() {
-        if let data = storage.data(forKey: badgesKey),
-           let decoded = try? JSONDecoder().decode([String: Badge].self, from: data) {
+        if let decoded = storage.decodable([String: Badge].self, forKey: badgesKey) {
             unlockedBadges = decoded
         } else {
             unlockedBadges = [:]

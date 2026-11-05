@@ -112,7 +112,7 @@ enum IngredientLineParser {
             .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
         let rawUnit = ns.substring(with: m.range(at: 2)).lowercased()
             .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
-        let unit = unitCanonical[rawUnit] ?? rawUnit
+        let unit = UnitConversion.unitSynonyms[rawUnit] ?? rawUnit
 
         let before = ns.substring(to: m.range.location)
         let after = ns.substring(from: m.range.location + m.range.length)
@@ -128,7 +128,7 @@ enum IngredientLineParser {
 
     /// Non-anchored "<number> <unit>" for the name-first fallback; units longest-first so "grams" beats "g".
     private static let embeddedAmountPattern: String = {
-        let alternatives = unitCanonical.keys
+        let alternatives = UnitConversion.unitSynonyms.keys
             .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }
             .map { NSRegularExpression.escapedPattern(for: $0) }
             .joined(separator: "|")
@@ -184,44 +184,14 @@ enum IngredientLineParser {
             return ("", text)
         }
         let matched = m.group(1).lowercased().replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
-        let canonical = unitCanonical[matched] ?? matched
+        let canonical = UnitConversion.unitSynonyms[matched] ?? matched
         return (canonical, m.remainder)
     }
 
-    /// Synonym → canonical token; abbreviations and spelled-out forms collapse to one, count units keep a literal singular.
-    private static let unitCanonical: [String: String] = [
-        "teaspoon": "tsp", "teaspoons": "tsp", "tsp": "tsp",
-        "tablespoon": "tbsp", "tablespoons": "tbsp", "tbsp": "tbsp", "tbs": "tbsp",
-        "cup": "cup", "cups": "cup",
-        "milliliter": "ml", "milliliters": "ml", "millilitre": "ml", "millilitres": "ml", "ml": "ml",
-        "liter": "l", "liters": "l", "litre": "l", "litres": "l", "l": "l",
-        "deciliter": "dl", "deciliters": "dl", "dl": "dl",
-        "centiliter": "cl", "centiliters": "cl", "cl": "cl",
-        "fl oz": "fl oz", "fluid ounce": "fl oz", "fluid ounces": "fl oz",
-        "pint": "pt", "pints": "pt", "pt": "pt",
-        "quart": "qt", "quarts": "qt", "qt": "qt",
-        "gallon": "gal", "gallons": "gal", "gal": "gal",
-        "gram": "g", "grams": "g", "gramme": "g", "grammes": "g", "g": "g",
-        "kilogram": "kg", "kilograms": "kg", "kg": "kg",
-        "ounce": "oz", "ounces": "oz", "oz": "oz",
-        "pound": "lbs", "pounds": "lbs", "lb": "lbs", "lbs": "lbs",
-        "clove": "clove", "cloves": "clove",
-        "piece": "piece", "pieces": "piece",
-        "slice": "slice", "slices": "slice",
-        "pinch": "pinch", "pinches": "pinch",
-        "dash": "dash", "dashes": "dash",
-        "stick": "stick", "sticks": "stick",
-        "can": "can", "cans": "can", "tin": "can", "tins": "can",
-        "package": "package", "packages": "package", "pkg": "package",
-        "bunch": "bunch", "bunches": "bunch",
-        "sprig": "sprig", "sprigs": "sprig",
-        "handful": "handful", "handfuls": "handful",
-        "inch": "inch", "inches": "inch"
-    ]
 
     /// Anchored synonym alternation, longest-first ("tablespoons" beats "tbsp", "lb" beats "l"), trailed by \s/end so a unit never eats a name ("l" vs "lemon").
     private static let unitPattern: String = {
-        let alternatives = unitCanonical.keys
+        let alternatives = UnitConversion.unitSynonyms.keys
             .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }
             .map { NSRegularExpression.escapedPattern(for: $0) }
             .joined(separator: "|")

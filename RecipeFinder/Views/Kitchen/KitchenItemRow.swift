@@ -5,7 +5,7 @@ struct KitchenItemRow: View {
     let item: KitchenItem
 
     private var allCategoryChoices: [String] {
-        let merged = Array(Set(CategoryClassifier.categoryOrder + FoodsList.categories + [item.category]))
+        let merged = Array(CategoryClassifier.knownCategories.union([item.category]))
         return merged.sorted { lhs, rhs in
             let lhsIndex = CategoryClassifier.categoryOrder.firstIndex(of: lhs)
             let rhsIndex = CategoryClassifier.categoryOrder.firstIndex(of: rhs)

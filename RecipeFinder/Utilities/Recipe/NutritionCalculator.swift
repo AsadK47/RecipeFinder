@@ -57,22 +57,27 @@ enum NutritionCalculator {
         unit: String,
         entry: NutritionDatabase.Entry
     ) -> Double {
+        // Canonical unit + the shared UnitConversion factors, so "lb", "pounds" and "litres" all convert (a bare "lb"
+        // used to fall through to the per-piece weight).
+        let unit = UnitConversion.canonicalUnit(unit)
+        typealias W = UnitConversion.Weight
+        typealias V = UnitConversion.Volume
         switch unit {
         case "g":     return quantity
-        case "kg":    return quantity * 1_000
-        case "oz":    return quantity * 28.3495
-        case "lbs":   return quantity * 453.592
+        case "kg":    return quantity * W.gramsPerKg
+        case "oz":    return quantity * W.gramsPerOunce
+        case "lbs":   return quantity * W.gramsPerPound
         case "ml":    return quantity * entry.gramsPerMl
-        case "l":     return quantity * 1_000 * entry.gramsPerMl
-        case "dl":    return quantity * 100   * entry.gramsPerMl
-        case "cl":    return quantity * 10    * entry.gramsPerMl
-        case "fl oz": return quantity * 29.5735 * entry.gramsPerMl
-        case "cup":   return quantity * 240   * entry.gramsPerMl
-        case "tbsp":  return quantity * 15    * entry.gramsPerMl
-        case "tsp":   return quantity * 5     * entry.gramsPerMl
-        case "pt":    return quantity * 473.2 * entry.gramsPerMl
-        case "qt":    return quantity * 946.4 * entry.gramsPerMl
-        case "gal":   return quantity * 3_785 * entry.gramsPerMl
+        case "l":     return quantity * V.mlPerL      * entry.gramsPerMl
+        case "dl":    return quantity * V.mlPerDL     * entry.gramsPerMl
+        case "cl":    return quantity * V.mlPerCL     * entry.gramsPerMl
+        case "fl oz": return quantity * V.mlPerFlOz   * entry.gramsPerMl
+        case "cup":   return quantity * V.mlPerCup    * entry.gramsPerMl
+        case "tbsp":  return quantity * V.mlPerTbsp   * entry.gramsPerMl
+        case "tsp":   return quantity * V.mlPerTsp    * entry.gramsPerMl
+        case "pt":    return quantity * V.mlPerPint   * entry.gramsPerMl
+        case "qt":    return quantity * V.mlPerQuart  * entry.gramsPerMl
+        case "gal":   return quantity * V.mlPerGallon * entry.gramsPerMl
         default:
             // Count-based or unitless: look up the specific unit, then fall back to "piece"
             if let w = entry.gramsPerUnit[unit] { return quantity * w }

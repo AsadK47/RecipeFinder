@@ -17,10 +17,10 @@ enum BackupMerge {
     /// Dedupe by id AND normalized name — re-imports often get a fresh UUID, so id-only would create visible duplicates.
     static func mergedRecipes(existing: [RecipeModel], incoming: [RecipeModel]) -> [RecipeModel] {
         var seenIDs = Set(existing.map(\.id))
-        var seenNames = Set(existing.map { normalizedName($0.name) })
+        var seenNames = Set(existing.map { $0.name.nameKey })
         var result = existing
         for recipe in incoming {
-            let name = normalizedName(recipe.name)
+            let name = recipe.name.nameKey
             guard !seenIDs.contains(recipe.id), !seenNames.contains(name) else { continue }
             result.append(recipe)
             seenIDs.insert(recipe.id)
@@ -32,9 +32,5 @@ enum BackupMerge {
     /// On id collision keep the held badge — its `dateEarned` reflects this device's history.
     static func mergedBadges(existing: [String: Badge], incoming: [String: Badge]) -> [String: Badge] {
         existing.merging(incoming) { current, _ in current }
-    }
-
-    private static func normalizedName(_ name: String) -> String {
-        name.trimmed.lowercased()
     }
 }

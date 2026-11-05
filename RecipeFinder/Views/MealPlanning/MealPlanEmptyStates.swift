@@ -36,20 +36,7 @@ struct SelectedDayEmptyStateView: View {
                     .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                     .multilineTextAlignment(.center)
                 
-                Button(action: onAddMeal) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add Meal")
-                            .fontWeight(.semibold)
-                    }
-                    .adaptiveForegroundColor()
-                    .padding(.horizontal, AppTheme.spacing24)
-                    .padding(.vertical, AppTheme.spacing14)
-                    .background(
-                        Capsule()
-                            .fill(AppTheme.adaptive(light: Color.black.opacity(0.15), dark: Color.white.opacity(AppTheme.overlayLightOpacity)))
-                    )
-                }
+                PrimaryButton("Add Meal", systemImage: "plus.circle.fill", action: onAddMeal)
             }
             .frame(maxWidth: .infinity)
             .padding(AppTheme.spacing40)
@@ -78,20 +65,7 @@ struct MealPlanEmptyStateView: View {
                 .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 .multilineTextAlignment(.center)
             
-            Button(action: onPlanMeal) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Plan a Meal")
-                        .fontWeight(.semibold)
-                }
-                .adaptiveForegroundColor()
-                .padding(.horizontal, AppTheme.spacing24)
-                .padding(.vertical, AppTheme.spacing14)
-                .background(
-                    Capsule()
-                        .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
-                )
-            }
+            PrimaryButton("Plan a Meal", systemImage: "plus.circle.fill", action: onPlanMeal)
         }
         .frame(maxWidth: .infinity)
         .padding(AppTheme.spacing48)

@@ -114,7 +114,7 @@ struct DataManagementSettingsView: View {
             isPresented: $isExporting,
             document: exportDocument,
             contentType: BackupDocument.backupType,
-            defaultFilename: Self.defaultBackupFilename()
+            defaultFilename: BackupCodec.defaultFilename()
         ) { result in
             if case .failure = result {
                 showBackupMessage("Couldn't save the backup.", isError: true)
@@ -237,14 +237,6 @@ struct DataManagementSettingsView: View {
         .padding(.vertical, AppTheme.spacing12)
         .background(color)
         .cornerRadius(AppTheme.cornerRadius12)
-    }
-
-    private static let backupDateFormatter: DateFormatter = {
-        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; return f
-    }()
-
-    private static func defaultBackupFilename() -> String {
-        "RecipeFinder-Backup-\(backupDateFormatter.string(from: Date()))"
     }
 
     private func exportBackup() {

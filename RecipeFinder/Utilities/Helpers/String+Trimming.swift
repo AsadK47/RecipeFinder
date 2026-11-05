@@ -10,4 +10,10 @@ extension StringProtocol {
     var isBlank: Bool {
         trimmed.isEmpty
     }
+
+    /// Identity key for "is this the same named thing?" — trimmed and lowercased, so " Eggs" and "eggs" are one item.
+    /// (Not `IngredientNameFormatter.matchKey`, which also strips qualifiers for fuzzy ingredient matching.)
+    var nameKey: String {
+        trimmed.lowercased()
+    }
 }

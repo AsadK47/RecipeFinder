@@ -90,8 +90,9 @@ enum IngredientAutocompleteEngine {
     }
 
     private static func category(for candidate: String) -> String {
+        // Catalog browse-group names are mapped onto the classifier's, so a suggestion files where `categorize` would.
         if let foodCategory = FoodsList.getCategoryForFood(candidate) {
-            return foodCategory
+            return CategoryClassifier.normalizedCategory(foodCategory, for: candidate)
         }
 
         let suggested = CategoryClassifier.suggestCategory(for: candidate)

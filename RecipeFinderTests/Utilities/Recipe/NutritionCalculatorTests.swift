@@ -137,6 +137,13 @@ import Foundation
         #expect(result.fat < 8)
     }
 
+    @Test("Every spelling of pounds converts by weight (a bare \"lb\" used to count as one piece)", arguments: ["lb", "lbs", "pound", "Pounds"])
+    func poundSpellingsConvertByWeight(unit: String) throws {
+        let byPound = try #require(NutritionCalculator.calculate(ingredients: [Ingredient(baseQuantity: 1, unit: unit, name: "chicken breast")], servings: 1))
+        let byGrams = try #require(NutritionCalculator.calculate(ingredients: [Ingredient(baseQuantity: 453.59237, unit: "g", name: "chicken breast")], servings: 1))
+        #expect(byPound.calories == byGrams.calories)
+    }
+
     // MARK: - Coverage
 
     @Test func partialCoverageReflectedInResult() throws {

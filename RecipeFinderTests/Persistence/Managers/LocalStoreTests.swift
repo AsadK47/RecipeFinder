@@ -13,6 +13,24 @@ import Foundation
 
     // MARK: - Typed accessors round-trip
 
+    @Test func decodable_roundTripsWhatSetEncodableWrote() throws {
+        let store = LocalStore(userDefaults: try freshDefaults())
+        store.setEncodable(["a", "b"], forKey: "list")
+        #expect(store.decodable([String].self, forKey: "list") == ["a", "b"])
+        #expect(store.decodable([String].self, forKey: "missing") == nil)
+    }
+
+    @Test func decodable_keepsCorruptBlobAside_soTheNextSaveCantDestroyIt() throws {
+        let store = LocalStore(userDefaults: try freshDefaults())
+        let garbage = Data("not json".utf8)
+        store.set(garbage, forKey: "list")
+
+        #expect(store.decodable([String].self, forKey: "list") == nil)
+        store.setEncodable([String](), forKey: "list")   // what a manager does next
+
+        #expect(store.data(forKey: "list.corrupt") == garbage)
+    }
+
     @Test func string_roundTrips_andNilRemoves() throws {
         let store = LocalStore(userDefaults: try freshDefaults())
 

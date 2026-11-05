@@ -111,4 +111,12 @@ import Foundation
     @Test func fileExtension_isStable() {
         #expect(BackupCodec.fileExtension == "recipefinderbackup")
     }
+
+    @Test func defaultFilename_usesGregorianDateWhateverTheDeviceCalendar() throws {
+        var components = DateComponents()
+        components.calendar = Calendar(identifier: .gregorian)
+        components.year = 2026; components.month = 11; components.day = 5; components.hour = 12
+        let date = try #require(components.date)
+        #expect(BackupCodec.defaultFilename(for: date) == "RecipeFinder-Backup-2026-11-05")
+    }
 }

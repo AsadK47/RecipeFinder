@@ -84,6 +84,13 @@ final class ShoppingListManagerTests: XCTestCase {
         XCTAssertEqual(sut.items[0].quantity, 5)
     }
 
+    func testAddItem_sameUnitDifferentSpelling_merges() {
+        sut.addItem(name: "Beef", quantity: 1, unit: "lb")
+        sut.addItem(name: "Beef", quantity: 2, unit: "lbs")
+        XCTAssertEqual(sut.items.count, 1)
+        XCTAssertEqual(sut.items[0].quantity, 3)
+    }
+
     func testAddItem_existingNameCaseInsensitive_merges() {
         sut.addItem(name: "sugar", quantity: 1)
         sut.addItem(name: "Sugar", quantity: 1)
@@ -177,10 +184,10 @@ final class ShoppingListManagerTests: XCTestCase {
     func testGroupedItems_groupsByCategory() {
         sut.addItem(name: "Apples", category: "Produce")
         sut.addItem(name: "Bananas", category: "Produce")
-        sut.addItem(name: "Milk", category: "Dairy")
+        sut.addItem(name: "Milk", category: "Dairy & Eggs")
         let groups = sut.groupedItems()
         XCTAssertEqual(groups.count, 2)
-        let dairyGroup = groups.first { $0.category == "Dairy" }
+        let dairyGroup = groups.first { $0.category == "Dairy & Eggs" }
         XCTAssertEqual(dairyGroup?.items.count, 1)
     }
 

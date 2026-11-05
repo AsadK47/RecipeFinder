@@ -14,6 +14,45 @@ enum MeasurementSystem: String, CaseIterable, Codable {
 
 struct UnitConversion {
 
+    /// The one place unit spellings live. Every unit comparison in the app goes through `canonicalUnit(_:)`, so
+    /// "litres", "Tbs" and "lb" behave like "l", "tbsp" and "lbs" everywhere (parsing, conversion, nutrition, merging).
+    /// Synonym → canonical token; abbreviations and spelled-out forms collapse to one, count units keep a literal singular.
+    static let unitSynonyms: [String: String] = [
+        "teaspoon": "tsp", "teaspoons": "tsp", "tsp": "tsp",
+        "tablespoon": "tbsp", "tablespoons": "tbsp", "tbsp": "tbsp", "tbs": "tbsp",
+        "cup": "cup", "cups": "cup",
+        "milliliter": "ml", "milliliters": "ml", "millilitre": "ml", "millilitres": "ml", "ml": "ml",
+        "liter": "l", "liters": "l", "litre": "l", "litres": "l", "l": "l",
+        "deciliter": "dl", "deciliters": "dl", "dl": "dl",
+        "centiliter": "cl", "centiliters": "cl", "cl": "cl",
+        "fl oz": "fl oz", "fluid ounce": "fl oz", "fluid ounces": "fl oz",
+        "pint": "pt", "pints": "pt", "pt": "pt",
+        "quart": "qt", "quarts": "qt", "qt": "qt",
+        "gallon": "gal", "gallons": "gal", "gal": "gal",
+        "gram": "g", "grams": "g", "gramme": "g", "grammes": "g", "g": "g",
+        "kilogram": "kg", "kilograms": "kg", "kg": "kg",
+        "ounce": "oz", "ounces": "oz", "oz": "oz",
+        "pound": "lbs", "pounds": "lbs", "lb": "lbs", "lbs": "lbs",
+        "clove": "clove", "cloves": "clove",
+        "piece": "piece", "pieces": "piece",
+        "slice": "slice", "slices": "slice",
+        "pinch": "pinch", "pinches": "pinch",
+        "dash": "dash", "dashes": "dash",
+        "stick": "stick", "sticks": "stick",
+        "can": "can", "cans": "can", "tin": "can", "tins": "can",
+        "package": "package", "packages": "package", "pkg": "package",
+        "bunch": "bunch", "bunches": "bunch",
+        "sprig": "sprig", "sprigs": "sprig",
+        "handful": "handful", "handfuls": "handful",
+        "inch": "inch", "inches": "inch"
+    ]
+
+    /// Canonical token for any spelling ("Tablespoons" → "tbsp", "lb" → "lbs"); unknown units come back lowercased/trimmed.
+    static func canonicalUnit(_ unit: String) -> String {
+        let key = unit.trimmed.lowercased()
+        return unitSynonyms[key] ?? key
+    }
+
     enum Weight {
         static let gramsPerKg     = 1000.0
         static let gramsPerPound  = 453.59237
@@ -41,32 +80,32 @@ struct UnitConversion {
     }
 
     static func convertWeight(value: Double, from fromUnit: String, to toUnit: String) -> Double {
-        let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
-        let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalizedFrom = canonicalUnit(fromUnit)
+        let normalizedTo = canonicalUnit(toUnit)
         
         var grams: Double = 0
         
         switch normalizedFrom {
-        case "g", "grams", "gram":
+        case "g":
             grams = value
-        case "kg", "kilograms", "kilogram":
+        case "kg":
             grams = value * Weight.gramsPerKg
-        case "lbs", "lb", "pounds", "pound":
+        case "lbs":
             grams = value * Weight.gramsPerPound
-        case "oz", "ounces", "ounce":
+        case "oz":
             grams = value * Weight.gramsPerOunce
         default:
             return value
         }
         
         switch normalizedTo {
-        case "g", "grams", "gram":
+        case "g":
             return grams
-        case "kg", "kilograms", "kilogram":
+        case "kg":
             return grams / Weight.gramsPerKg
-        case "lbs", "lb", "pounds", "pound":
+        case "lbs":
             return grams / Weight.gramsPerPound
-        case "oz", "ounces", "ounce":
+        case "oz":
             return grams / Weight.gramsPerOunce
         default:
             return value
@@ -74,60 +113,60 @@ struct UnitConversion {
     }
     
     static func convertVolume(value: Double, from fromUnit: String, to toUnit: String) -> Double {
-        let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
-        let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalizedFrom = canonicalUnit(fromUnit)
+        let normalizedTo = canonicalUnit(toUnit)
         
         var ml: Double = 0
         
         switch normalizedFrom {
-        case "ml", "milliliters", "milliliter":
+        case "ml":
             ml = value
-        case "cl", "centiliters", "centiliter":
+        case "cl":
             ml = value * Volume.mlPerCL
-        case "dl", "deciliters", "deciliter":
+        case "dl":
             ml = value * Volume.mlPerDL
-        case "l", "liters", "liter":
+        case "l":
             ml = value * Volume.mlPerL
-        case "cup", "cups":
+        case "cup":
             ml = value * Volume.mlPerCup
-        case "tbsp", "tablespoon", "tablespoons":
+        case "tbsp":
             ml = value * Volume.mlPerTbsp
-        case "tsp", "teaspoon", "teaspoons":
+        case "tsp":
             ml = value * Volume.mlPerTsp
-        case "fl oz", "fluid ounce", "fluid ounces":
+        case "fl oz":
             ml = value * Volume.mlPerFlOz
-        case "pt", "pint", "pints":
+        case "pt":
             ml = value * Volume.mlPerPint
-        case "qt", "quart", "quarts":
+        case "qt":
             ml = value * Volume.mlPerQuart
-        case "gal", "gallon", "gallons":
+        case "gal":
             ml = value * Volume.mlPerGallon
         default:
             return value
         }
         
         switch normalizedTo {
-        case "ml", "milliliters", "milliliter":
+        case "ml":
             return ml
-        case "cl", "centiliters", "centiliter":
+        case "cl":
             return ml / Volume.mlPerCL
-        case "dl", "deciliters", "deciliter":
+        case "dl":
             return ml / Volume.mlPerDL
-        case "l", "liters", "liter":
+        case "l":
             return ml / Volume.mlPerL
-        case "cup", "cups":
+        case "cup":
             return ml / Volume.mlPerCup
-        case "tbsp", "tablespoon", "tablespoons":
+        case "tbsp":
             return ml / Volume.mlPerTbsp
-        case "tsp", "teaspoon", "teaspoons":
+        case "tsp":
             return ml / Volume.mlPerTsp
-        case "fl oz", "fluid ounce", "fluid ounces":
+        case "fl oz":
             return ml / Volume.mlPerFlOz
-        case "pt", "pint", "pints":
+        case "pt":
             return ml / Volume.mlPerPint
-        case "qt", "quart", "quarts":
+        case "qt":
             return ml / Volume.mlPerQuart
-        case "gal", "gallon", "gallons":
+        case "gal":
             return ml / Volume.mlPerGallon
         default:
             return value
@@ -135,20 +174,20 @@ struct UnitConversion {
     }
     
     static func getUnitType(_ unit: String) -> UnitType {
-        let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalized = canonicalUnit(unit)
         
         switch normalized {
-        case "g", "grams", "gram", "kg", "kilograms", "kilogram",
-             "lbs", "lb", "pounds", "pound", "oz", "ounces", "ounce":
+        case "g", "kg",
+             "lbs", "oz":
             return .weight
             
-        case "ml", "milliliters", "milliliter",
-             "cl", "centiliters", "centiliter",
-             "dl", "deciliters", "deciliter",
-             "l", "liters", "liter",
-             "cup", "cups", "tbsp", "tablespoon", "tablespoons",
-             "tsp", "teaspoon", "teaspoons", "fl oz", "fluid ounce", "fluid ounces",
-             "pt", "pint", "pints", "qt", "quart", "quarts", "gal", "gallon", "gallons":
+        case "ml",
+             "cl",
+             "dl",
+             "l",
+             "cup", "tbsp",
+             "tsp", "fl oz",
+             "pt", "qt", "gal":
             return .volume
             
         default:
@@ -163,10 +202,10 @@ struct UnitConversion {
         ingredientName: String? = nil
     ) -> (quantity: Double, unit: String) {
         let unitType = getUnitType(unit)
-        let normalizedUnit = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalizedUnit = canonicalUnit(unit)
         // Spoons and pinches are the same measure in both systems. Converting them produced "½ g" of cumin,
         // "2½ ml" of lemon juice and inconsistent results (1 tbsp garlic → 15 g, but ginger stayed in tbsp).
-        let spoonUnits: Set<String> = ["tsp", "teaspoon", "teaspoons", "tbsp", "tablespoon", "tablespoons", "pinch", "pinches"]
+        let spoonUnits: Set<String> = ["tsp", "tbsp", "pinch"]
         if spoonUnits.contains(normalizedUnit) { return (value, unit) }
         
         switch unitType {
@@ -254,7 +293,7 @@ struct UnitConversion {
 
     private static func getDensityConversion(ingredientName: String, unit: String) -> Double? {
         let nameWords = IngredientWordMatcher.words(in: ingredientName)
-        let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalized = canonicalUnit(unit)
 
         let densityMap: [String: (tsp: Double, tbsp: Double, cup: Double)] = [
             "salt": (tsp: 6, tbsp: 18, cup: 288),
@@ -293,11 +332,11 @@ struct UnitConversion {
         for (ingredient, densities) in orderedDensities
         where IngredientWordMatcher.matches(textWords: nameWords, keyword: ingredient) {
             switch normalized {
-            case "tsp", "teaspoon", "teaspoons":
+            case "tsp":
                 return densities.tsp
-            case "tbsp", "tablespoon", "tablespoons":
+            case "tbsp":
                 return densities.tbsp
-            case "cup", "cups":
+            case "cup":
                 return densities.cup
             default:
                 return nil
@@ -313,7 +352,7 @@ struct UnitConversion {
         system: MeasurementSystem,
         ingredientName: String
     ) -> (quantity: Double, unit: String) {
-        let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalized = canonicalUnit(unit)
         
         switch system {
         case .imperial:
@@ -334,11 +373,11 @@ struct UnitConversion {
             var grams: Double = 0
 
             switch normalized {
-            case "tsp", "teaspoon", "teaspoons":
+            case "tsp":
                 grams = value * SolidDensity.gramsPerTsp
-            case "tbsp", "tablespoon", "tablespoons":
+            case "tbsp":
                 grams = value * SolidDensity.gramsPerTbsp
-            case "cup", "cups":
+            case "cup":
                 grams = value * SolidDensity.gramsPerCup
             default:
                 return convertVolumeToSystem(value: value, unit: unit, system: system)
@@ -353,11 +392,11 @@ struct UnitConversion {
     }
     
     private static func convertWeightToSystem(value: Double, unit: String, system: MeasurementSystem) -> (quantity: Double, unit: String) {
-        let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalized = canonicalUnit(unit)
         
         switch system {
         case .metric:
-            if ["g", "grams", "gram", "kg", "kilograms", "kilogram"].contains(normalized) {
+            if ["g", "kg"].contains(normalized) {
                 return (value, unit)
             }
             let grams = convertWeight(value: value, from: unit, to: "g")
@@ -368,7 +407,7 @@ struct UnitConversion {
             }
             
         case .imperial:
-            if ["lbs", "lb", "pounds", "pound", "oz", "ounces", "ounce"].contains(normalized) {
+            if ["lbs", "oz"].contains(normalized) {
                 return (value, unit)
             }
             let oz = convertWeight(value: value, from: unit, to: "oz")
@@ -381,14 +420,14 @@ struct UnitConversion {
     }
     
     private static func convertVolumeToSystem(value: Double, unit: String, system: MeasurementSystem) -> (quantity: Double, unit: String) {
-        let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        let normalized = canonicalUnit(unit)
         
         switch system {
         case .metric:
-            if ["ml", "milliliters", "milliliter",
-                "cl", "centiliters", "centiliter",
-                "dl", "deciliters", "deciliter",
-                "l", "liters", "liter"].contains(normalized) {
+            if ["ml",
+                "cl",
+                "dl",
+                "l"].contains(normalized) {
                 return (value, unit)
             }
             let ml = convertVolume(value: value, from: unit, to: "ml")
@@ -399,9 +438,9 @@ struct UnitConversion {
             }
             
         case .imperial:
-            if ["cup", "cups", "tbsp", "tablespoon", "tablespoons",
-                "tsp", "teaspoon", "teaspoons", "fl oz", "fluid ounce", "fluid ounces",
-                "pt", "pint", "pints", "qt", "quart", "quarts", "gal", "gallon", "gallons"].contains(normalized) {
+            if ["cup", "tbsp",
+                "tsp", "fl oz",
+                "pt", "qt", "gal"].contains(normalized) {
                 return (value, unit)
             }
             let ml = convertVolume(value: value, from: unit, to: "ml")

@@ -20,6 +20,21 @@ final class KitchenInventoryManagerTests: XCTestCase {
 
     // MARK: - Initial state
 
+    func testLoad_migratesLegacyCategoryNames_andPersistsThem() throws {
+        struct Legacy: Encodable { let id = UUID(); let name: String; let category: String; let quantity = 1.0; let unit = "item"; let dateAdded = Date() }
+        storage.setEncodable([Legacy(name: "Basil", category: "Herbs & Spices"), Legacy(name: "Bread", category: "Grains & Bread")],
+                             forKey: Constants.UserDefaultsKeys.kitchenItems)
+
+        let reloaded = KitchenInventoryManager(storage: storage)
+        let categories = Set(reloaded.items.map(\.category))
+        XCTAssertTrue(categories.isSubset(of: CategoryClassifier.knownCategories), "\(categories)")
+        XCTAssertFalse(categories.contains("Herbs & Spices"))
+
+        let again = KitchenInventoryManager(storage: storage)   // migration was saved, not just applied in memory
+        XCTAssertEqual(Set(again.items.map(\.category)), categories)
+    }
+
+
     func testInitialState_isEmpty() {
         XCTAssertTrue(sut.inventoryItems.isEmpty)
     }

@@ -248,6 +248,39 @@ final class RecipeParserTests: XCTestCase {
         XCTAssertEqual(result.category, "Main Course")
     }
 
+    func testParse_wprm_decodesEntitiesInCuisineAndCourse() {
+        let html = wprmHTML(
+            name: "Caf&eacute; Au Lait Cake",
+            cuisine: "Caf&eacute;",
+            course: "Dessert &amp; Snacks",
+            ingredients: [wprmIngredientLI(plainAmount: "1", unit: "cup", name: "flour")],
+            instructions: ["Whisk everything together and bake for thirty minutes."]
+        )
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.name, "Café Au Lait Cake")
+        XCTAssertEqual(result.cuisine, "Café")
+        XCTAssertEqual(result.category, "Dessert & Snacks")
+    }
+
+    func testIsIngredientLine_recognisesEveryFractionGlyph() {
+        for glyph in RecipeParser.unicodeFractionCharacters {
+            XCTAssertTrue(RecipeParser.isIngredientLine("\(glyph) onion"), "missed \(glyph)")
+        }
+    }
+
+    func testFractionGlyphs_allNormalisedByIngredientLineParser() {
+        for glyph in RecipeParser.unicodeFractionCharacters {
+            XCTAssertNotEqual(IngredientLineParser.normaliseUnicodeFractions(String(glyph)), String(glyph), "\(glyph) not mapped")
+        }
+    }
+
+    func testParse_jsonLD_rejectsImplausibleServings() {
+        for yield in ["0", "999999", "\"0 servings\"", "[\"250 cookies\"]"] {
+            XCTAssertNil(RecipeParser.parse(html: jsonLDHTML(recipeYield: yield)).servings, "accepted \(yield)")
+        }
+        XCTAssertEqual(RecipeParser.parse(html: jsonLDHTML(recipeYield: "\"Serves 6\"")).servings, 6)
+    }
+
     func testParse_wprm_extractsCookTime() {
         let html = wprmHTML(
             cookMinutes: 135,
