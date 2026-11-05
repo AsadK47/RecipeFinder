@@ -143,6 +143,31 @@ struct RecipeParser {
             .trimmed
     }
 
+    /// Group 1 of every match of `pattern` (case-insensitive, `.` spans newlines by default) — the one regex-capture
+    /// helper for the HTML strategies, instead of hand-rolled NSRegularExpression/NSRange blocks per field.
+    static func allCaptures(
+        _ pattern: String,
+        in text: String,
+        options: NSRegularExpression.Options = [.caseInsensitive, .dotMatchesLineSeparators]
+    ) -> [String] {
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: options) else { return [] }
+        let ns = text as NSString
+        return regex.matches(in: text, range: NSRange(location: 0, length: ns.length)).compactMap { match in
+            guard match.numberOfRanges > 1 else { return nil }
+            let range = match.range(at: 1)
+            guard range.location != NSNotFound else { return nil }
+            return ns.substring(with: range)
+        }
+    }
+
+    static func firstCapture(
+        _ pattern: String,
+        in text: String,
+        options: NSRegularExpression.Options = [.caseInsensitive, .dotMatchesLineSeparators]
+    ) -> String? {
+        allCaptures(pattern, in: text, options: options).first
+    }
+
     /// Non-blank lines of `text` — the split every text strategy starts from.
     static func nonBlankLines(_ text: String) -> [String] {
         text.components(separatedBy: .newlines).filter { !$0.isBlank }

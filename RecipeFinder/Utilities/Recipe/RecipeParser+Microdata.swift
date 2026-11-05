@@ -161,23 +161,6 @@ extension RecipeParser {
         return nil
     }
 
-    private static func allCaptures(_ pattern: String, in text: String) -> [String] {
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else {
-            return []
-        }
-        let ns = text as NSString
-        return regex.matches(in: text, range: NSRange(location: 0, length: ns.length)).compactMap { match in
-            guard match.numberOfRanges > 1 else { return nil }
-            let range = match.range(at: 1)
-            guard range.location != NSNotFound else { return nil }
-            return ns.substring(with: range)
-        }
-    }
-
-    private static func firstCapture(_ pattern: String, in text: String) -> String? {
-        allCaptures(pattern, in: text).first
-    }
-
     /// Steps from a single `recipeInstructions` container: isolate its inner HTML (balanced-tag scan) and split the cleaned text.
     private static func containerInstructions(attr: String, in html: String) -> [String] {
         guard let inner = innerHTML(prop: "recipeInstructions", attr: attr, in: html) else { return [] }

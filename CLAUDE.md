@@ -7,8 +7,8 @@ Proprietary — RecipeFinder Limited. GitHub: https://github.com/RecipeFinderLim
 These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** answer concisely: lead with the result/answer; cut preamble, recaps, and reasoning the user didn't ask for. Detail only on request.
-- **MUST** run `BuildProject` + `RunAllTests` before committing.
-- **MUST NOT** commit partial or unverified work — write `WORK.md` instead.
+- **MUST NOT** `git commit`, branch or push — ever, even when the user says "let's commit" (that means *they* will). Leave verified-green work uncommitted and end with a ready-to-paste commit subject.
+- **MUST** run `BuildProject` + `RunAllTests` before handing work over for the user to commit; unfinished state goes in `WORK.md`.
 - **MUST** keep one task active at a time (WIP=1): finish it (`BuildProject` + `RunAllTests` green — "looks fine" is not done) before starting the next, and never "also refactor" B while doing A — record B as the next `WORK.md` action. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
 - **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 14`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 14.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
@@ -80,11 +80,11 @@ When a new failure class appears or a convention changes, update the relevant se
 **Replace or refine, don't append.** When a failure tempts you to "add a new rule," first ask whether an existing rule should be sharpened instead. Each CLAUDE.md file has a line budget: root ≤100, RecipeFinder/ ≤100, RecipeFinderTests/ ≤50. Exceeding budget is a signal to consolidate, not to keep adding.
 
 ## Commit messages & branch policy
-Claude MAY `git commit` verified-green work to a **non-`main` branch** (never `main`; never `git push` unless asked). Gate per commit: `BuildProject` + affected `RunSomeTests` green; one logical fix per commit. Partial/unverified state must not be committed — update `WORK.md` instead.
+The user reviews the raw diff and commits/pushes themselves. Claude never runs `git commit`/`push`/branch and never rewrites history. *(2026-11-05: Claude committed after "let's commit that"; the user wants to see changes first.)*
 
-**Batch before review.** Keep per-fix commits, but do NOT push/surface a PR after each small fix — accumulate commits on the branch and open the PR only once a **logically complete unit** (whole feature/area) is done. A one-file PR isn't worth reviewing; the user rubber-stamps it. The user reviews the branch/PR as a whole, not each diff.
+**Hand over in logical units.** One verified-green area per handover (build + affected tests, full suite before the user commits), not one tiny diff at a time.
 
-Conventional-commit subjects only. No body, no Co-Authored-By, no preamble.
+Suggested subjects: conventional-commit only. No body, no Co-Authored-By, no preamble.
 `fix(import): fix grey text in ImportView header`
 
 ## Git / auth
