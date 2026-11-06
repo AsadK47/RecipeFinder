@@ -185,6 +185,9 @@
 		F3AEF8E9309B85F300A9C5E0 /* View+AppNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8E8309B85F300A9C5E0 /* View+AppNavigation.swift */; };
 		F3AEF8EB309B890700A9C5E0 /* SheetScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8EA309B890700A9C5E0 /* SheetScaffold.swift */; };
 		F3AEF8F7309C8BE500A9C5E0 /* Notification+Names.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8F6309C8BE500A9C5E0 /* Notification+Names.swift */; };
+		F3AEF8F9309C93AD00A9C5E0 /* View+ErrorAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8F8309C93AD00A9C5E0 /* View+ErrorAlert.swift */; };
+		F3AEF8FB309C93F400A9C5E0 /* CircleMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8FA309C93F400A9C5E0 /* CircleMenuButton.swift */; };
+		F3AEF8FD309C977800A9C5E0 /* IconBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8FC309C977800A9C5E0 /* IconBadge.swift */; };
 		F3B7D8DC30684E5900991908 /* RecipeImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DB30684E5900991908 /* RecipeImageViewTests.swift */; };
 		F3B7D8DE30684FC800991908 /* PhotoSourcePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DD30684FC800991908 /* PhotoSourcePicker.swift */; };
 		F3B7D8E0306947ED00991908 /* MealTimeReorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */; };
@@ -644,6 +647,9 @@
 		F3AEF8E8309B85F300A9C5E0 /* View+AppNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AppNavigation.swift"; sourceTree = "<group>"; };
 		F3AEF8EA309B890700A9C5E0 /* SheetScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetScaffold.swift; sourceTree = "<group>"; };
 		F3AEF8F6309C8BE500A9C5E0 /* Notification+Names.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Names.swift"; sourceTree = "<group>"; };
+		F3AEF8F8309C93AD00A9C5E0 /* View+ErrorAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+ErrorAlert.swift"; sourceTree = "<group>"; };
+		F3AEF8FA309C93F400A9C5E0 /* CircleMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleMenuButton.swift; sourceTree = "<group>"; };
+		F3AEF8FC309C977800A9C5E0 /* IconBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconBadge.swift; sourceTree = "<group>"; };
 		F3B7D8DB30684E5900991908 /* RecipeImageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImageViewTests.swift; sourceTree = "<group>"; };
 		F3B7D8DD30684FC800991908 /* PhotoSourcePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSourcePicker.swift; sourceTree = "<group>"; };
 		F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeReorderTests.swift; sourceTree = "<group>"; };
@@ -988,6 +994,7 @@
 				F3AD2EF030657D2100274E33 /* View+AppInputField.swift */,
 				F3AEF8DA309B80FC00A9C5E0 /* ThemeStore.swift */,
 				F3AEF8E8309B85F300A9C5E0 /* View+AppNavigation.swift */,
+				F3AEF8F8309C93AD00A9C5E0 /* View+ErrorAlert.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -1189,6 +1196,7 @@
 				9E5B39812FABC2C700C96DB3 /* CircleButton.swift */,
 				9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */,
 				F3AD2EE1306414B500274E33 /* PrimaryButton.swift */,
+				F3AEF8FA309C93F400A9C5E0 /* CircleMenuButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -1232,6 +1240,7 @@
 				9E6DEA522EF5EF47001E7B24 /* InfoPairView.swift */,
 				F3E9D263304A1DFB008BF231 /* ScreenTitleHeader.swift */,
 				F3AD2EDB30640A6300274E33 /* EmptyStateView.swift */,
+				F3AEF8FC309C977800A9C5E0 /* IconBadge.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -2295,6 +2304,7 @@
 				F3E9D1543043EB98008BF231 /* KitchenItemRow.swift in Sources */,
 				F3E9D290304E196E008BF231 /* IngredientLineParser.swift in Sources */,
 				9E6DEA882EF5EFE8001E7B24 /* UnitConversion.swift in Sources */,
+				F3AEF8FD309C977800A9C5E0 /* IconBadge.swift in Sources */,
 				9E6DEA892EF5EFE8001E7B24 /* HapticManager.swift in Sources */,
 				9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */,
 				F36AED6F3043392200935A3C /* RecipeFilterButton.swift in Sources */,
@@ -2381,6 +2391,7 @@
 				F3E9D18030444FC0008BF231 /* RecipeIngredientsSection.swift in Sources */,
 				9E6DEA682EF5EF47001E7B24 /* InfoPairView.swift in Sources */,
 				9E6DEA6B2EF5EF47001E7B24 /* RecipeCard.swift in Sources */,
+				F3AEF8F9309C93AD00A9C5E0 /* View+ErrorAlert.swift in Sources */,
 				F3D40568305860C20076834D /* CollectionCard.swift in Sources */,
 				9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */,
 				9E6DEA6E2EF5EF47001E7B24 /* RecipeImageView.swift in Sources */,
@@ -2413,6 +2424,7 @@
 				F3D4054530560A330076834D /* OnboardingContent.swift in Sources */,
 				F3B7D9113074FCFF00991908 /* StreakChip.swift in Sources */,
 				9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */,
+				F3AEF8FB309C93F400A9C5E0 /* CircleMenuButton.swift in Sources */,
 				9E87BC922EF54E17003F9157 /* DietaryInfo.swift in Sources */,
 				F3D04F2A305EC6D5005A930D /* CookingSession.swift in Sources */,
 				F3D40556305636B40076834D /* SeedRecipeProvider.swift in Sources */,

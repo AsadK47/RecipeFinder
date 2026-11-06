@@ -27,6 +27,12 @@ extension AppTheme {
 
     static let adaptiveMediumEmphasis = adaptive(light: .black.opacity(lowEmphasisOpacity), dark: .white.opacity(mediumEmphasisOpacity))
 
+    /// Chip / secondary-button fill. Dark keeps the original white wash; light needs a dark wash, as white vanished on the light gradient.
+    static let subtleFill = adaptive(light: .black.opacity(0.06), dark: .white.opacity(cardDarkOpacity))
+
+    /// Hairlines, dividers, outlines and grabbers — the stronger partner of `subtleFill`.
+    static let subtleStroke = adaptive(light: .black.opacity(0.12), dark: .white.opacity(shadowDarkOpacity))
+
     static let adaptiveSubtitle = adaptive(light: .black.opacity(mediumEmphasisOpacity), dark: .white.opacity(0.7))
 
     static let adaptiveCardTextEmphasis = adaptive(

@@ -23,18 +23,7 @@ struct RecipeEmptyStateView: View {
                     .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 
                 if activeFilterCount > 0 {
-                    Button(action: onClearFilters, label: {
-                        HStack(spacing: AppTheme.spacing8) {
-                            Image(systemName: "xmark.circle.fill")
-                            Text("Clear All Filters")
-                        }
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .adaptiveForegroundColor()
-                        .padding(.horizontal, AppTheme.spacing20)
-                        .padding(.vertical, AppTheme.spacing12)
-                        .appCard(in: Capsule())
-                    })
+                    PrimaryButton("Clear All Filters", systemImage: "xmark.circle.fill", variant: .secondary, action: onClearFilters)
                 }
             }
             .padding(.top, AppTheme.spacing40)

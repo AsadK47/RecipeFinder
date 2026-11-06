@@ -8,14 +8,7 @@ struct CollectionCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
             HStack {
-                Circle()
-                    .fill(collection.colorName.swiftUIColor)
-                    .frame(width: 28, height: 28)
-                    .overlay(
-                        Image(systemName: "rectangle.stack.fill")
-                            .font(.caption2)
-                            .foregroundStyle(.white)
-                    )
+                CollectionDot(color: collection.colorName.swiftUIColor)
                 Spacer()
             }
 

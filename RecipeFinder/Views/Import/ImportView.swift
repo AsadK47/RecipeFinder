@@ -10,7 +10,7 @@ struct ImportView: View {
     @State private var showPasteImport = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
-    @State private var saveErrorRecipeName: String?
+    @State private var saveError: String?
 
     var body: some View {
         NavigationStack {
@@ -86,25 +86,14 @@ struct ImportView: View {
         .sheet(isPresented: $showWizard) {
             RecipeWizardView(prefilledData: nil) { store($0, source: .wizard) }
         }
-        .alert(
-            "Couldn't Save Recipe",
-            isPresented: Binding(
-                get: { saveErrorRecipeName != nil },
-                set: { if !$0 { saveErrorRecipeName = nil } }
-            ),
-            presenting: saveErrorRecipeName
-        ) { _ in
-            Button("OK", role: .cancel) {}
-        } message: { name in
-            Text("\"\(name)\" couldn't be saved. Please try again.")
-        }
+        .errorAlert("Couldn't Save Recipe", message: $saveError)
     }
 
     /// Appends and persists a recipe; shared by every import route. On save failure the optimistic insert is rolled back and the user alerted.
     private func store(_ recipe: RecipeModel, source: ImportSource = .wizard) {
         switch RecipeImportStore.outcome(didPersist: recipeStore.add(recipe), recipeName: recipe.name, source: source) {
         case .failed(let name):
-            saveErrorRecipeName = name
+            saveError = "\"\(name)\" couldn't be saved. Please try again."
         case .saved(let badge):
             HapticManager.shared.success()
             if let badge { BadgeManager.shared.unlockBadge(badge) }
@@ -117,13 +106,8 @@ struct ImportView: View {
             action()
         }) {
             HStack(spacing: AppTheme.spacing16) {
-                ZStack {
-                    Circle().fill(color).frame(width: 44, height: 44)
-                    Image(systemName: icon)
-                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-                .accessibilityHidden(true)
+                IconBadge(systemName: icon, tint: color, diameter: 44, iconSize: AppTheme.fontSize18, style: .solid)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                     Text(title)

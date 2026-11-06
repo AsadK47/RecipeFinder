@@ -33,10 +33,7 @@ struct CollectionsInlineView: View {
         .sheet(item: $collectionToEdit) { collection in
             EditCollectionSheet(collection: collection, manager: manager)
         }
-        .alert("Delete Collection", isPresented: Binding(
-            get: { collectionToDelete != nil },
-            set: { if !$0 { collectionToDelete = nil } }
-        )) {
+        .alert("Delete Collection", isPresented: .isPresent($collectionToDelete)) {
             Button("Delete", role: .destructive) {
                 if let c = collectionToDelete { manager.delete(c) }
                 collectionToDelete = nil
@@ -137,14 +134,7 @@ private struct SmartCollectionCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
             HStack {
-                Circle()
-                    .fill(collection.color)
-                    .frame(width: 28, height: 28)
-                    .overlay(
-                        Image(systemName: collection.systemImage)
-                            .font(.caption2)
-                            .foregroundStyle(.white)
-                    )
+                CollectionDot(color: collection.color, systemImage: collection.systemImage)
                 Spacer()
                 Image(systemName: "sparkles")
                     .font(.system(size: AppTheme.fontSize8, weight: .semibold))

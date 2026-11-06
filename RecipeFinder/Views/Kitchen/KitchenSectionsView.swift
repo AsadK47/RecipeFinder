@@ -16,19 +16,7 @@ struct KitchenSectionsView: View {
                     .font(.caption)
                     .foregroundStyle(AppTheme.adaptiveSubtitle)
                 Spacer()
-                Button(action: {
-                    onAddMore()
-                    HapticManager.shared.light()
-                }) {
-                    HStack(spacing: AppTheme.spacing6) {
-                        Image(systemName: "plus.circle.fill").font(.caption)
-                        Text("Add More").font(.caption).fontWeight(.semibold)
-                    }
-                    .adaptiveForegroundColor()
-                    .padding(.horizontal, AppTheme.spacing12)
-                    .padding(.vertical, AppTheme.spacing6)
-                    .background(Capsule().fill(AppTheme.accentColor))
-                }
+                PrimaryButton("Add More", systemImage: "plus.circle.fill", size: .compact, action: onAddMore)
             }
             .padding(.horizontal, AppTheme.spacing4)
         }

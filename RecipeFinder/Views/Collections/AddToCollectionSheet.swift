@@ -38,14 +38,7 @@ struct AddToCollectionSheet: View {
                 manager.toggle(recipeID: recipe.id, in: collection)
             } label: {
                 HStack(spacing: AppTheme.spacing12) {
-                    Circle()
-                        .fill(collection.colorName.swiftUIColor)
-                        .frame(width: 28, height: 28)
-                        .overlay(
-                            Image(systemName: "rectangle.stack.fill")
-                                .font(.caption)
-                                .foregroundStyle(.white)
-                        )
+                    CollectionDot(color: collection.colorName.swiftUIColor, iconFont: .caption)
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                         Text(collection.name)

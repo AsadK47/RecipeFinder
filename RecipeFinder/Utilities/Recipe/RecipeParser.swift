@@ -105,6 +105,51 @@ struct RecipeParser {
         return result
     }
 
+    // MARK: - Section headers
+
+    /// Top-level ingredient headers. Kept apart from sub-section headers because the HTML text path treats a
+    /// repeat top-level header as the end of the recipe, which a "For the sauce" sub-heading must not trigger.
+    static let ingredientSectionHeaderWords = [
+        "ingredients", "you will need", "you'll need", "what you need", "what you'll need",
+        // Alternative terms used on international and content-creator recipe sites
+        "material", "materials"
+    ]
+    static let ingredientSubsectionHeaderWords = [
+        "garnish", "for the garnish", "to serve", "to garnish",
+        "marinade", "for the marinade", "sauce", "for the sauce",
+        "filling", "for the filling", "dough", "for the dough",
+        "batter", "for the batter", "topping", "toppings",
+        "frosting", "icing", "glaze", "crust", "base", "coating"
+    ]
+    /// Every ingredient header, shared by the HTML and pasted-text parsers so the vocabularies can't drift.
+    static let ingredientHeaderWords = ingredientSectionHeaderWords + ingredientSubsectionHeaderWords
+    static let instructionHeaderWords = [
+        "instructions", "method", "directions", "steps", "preparation",
+        "direction",          // singular — seen in some scraped recipes
+        "before you start",   // bosh.tv recipe format
+        "how to make", "how to", "procedure",
+        "to cook", "to prepare", "to make", "make it",
+        "cooking order",      // used on some Chinese/Korean recipe sites
+        "method of preparation"
+    ]
+
+    /// Whole-line match after reducing to letters/spaces, so "INGREDIENTS 👇"/"Method:" match but a longer phrase like "Ingredients you'll need for the base" doesn't.
+    static func isHeader(_ line: String, in words: [String]) -> Bool {
+        let normalized = normalizedHeader(line)
+        guard !normalized.isEmpty else { return false }
+        return words.contains { normalizedHeader($0) == normalized }
+    }
+
+    static func normalizedHeader(_ line: String) -> String {
+        let lettersAndSpaces = String(String.UnicodeScalarView(
+            line.unicodeScalars.map { CharacterSet.letters.contains($0) ? $0 : " " }
+        ))
+        return lettersAndSpaces
+            .lowercased()
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespaces)
+    }
+
     // MARK: - Shared utilities
 
     static func cleanHTML(_ html: String) -> String {
@@ -181,6 +226,22 @@ struct RecipeParser {
     /// Every vulgar-fraction glyph the parsers recognise — one list so no path silently misses "⅕" etc.
     /// (IngredientLineParser.normaliseUnicodeFractions maps each of these; a test keeps the two in step.)
     static let unicodeFractionCharacters = "¼½¾⅓⅔⅛⅜⅝⅞⅕⅖⅗⅘⅙⅚"
+
+    /// Every list/checkbox glyph sites and captions prepend to rows (bullets, dashes, arrows, WPRM "▢" boxes) — one set so every
+    /// parser strips the same markers. Emoji bullets are TextRecipeParser-only (captions).
+    static let listMarkerCharacters = "•-*▪▫◦‣·∙●○▶►➤➥➢▢□☐◻◽◾◼"
+
+    /// Regex fragments for duration unit words, so every time pattern accepts the same spellings (TimeExtractor only checks the
+    /// "h" prefix). Single letters are deliberately left out: a site that wants "2h"/"45m" appends `|h` / `|m` behind a `\b`,
+    /// otherwise a bare "m" would start matching "medium".
+    static let hoursUnitPattern = "(?:hours?|hrs?)"
+    static let minutesUnitPattern = "(?:minutes?|mins?)"
+
+    /// Drops one leading list marker and the whitespace after it; lines without one are returned unchanged.
+    static func droppingLeadingListMarker(_ line: String) -> String {
+        guard let first = line.first, listMarkerCharacters.contains(first) else { return line }
+        return String(line.dropFirst().drop(while: \.isWhitespace))
+    }
 
     static func decodeHTMLEntities(_ text: String) -> String {
         // NSAttributedString decodes named + numeric HTML entities (&eacute; → é, &amp; → &, &#233; → é).

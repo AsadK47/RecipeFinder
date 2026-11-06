@@ -9,7 +9,7 @@ struct PostCookPhotoSheet: View {
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var showCamera = false
-    @State private var loadFailed = false
+    @State private var loadError: String?
 
     var body: some View {
         ZStack {
@@ -40,26 +40,15 @@ struct PostCookPhotoSheet: View {
                     dismiss()
                 } else {
                     // Don't fail silently — tell the user the photo didn't load.
-                    loadFailed = true
+                    loadError = "That photo couldn't be loaded. Please try another."
                 }
             }
         }
-        .alert("Couldn't load photo", isPresented: $loadFailed) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("That photo couldn't be loaded. Please try another.")
-        }
+        .errorAlert("Couldn't load photo", message: $loadError)
     }
 
     private var cookIcon: some View {
-        ZStack {
-            Circle()
-                .fill(Color.green.opacity(0.15))
-                .frame(width: 80, height: 80)
-            Image(systemName: "checkmark")
-                .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(.green)
-        }
+        IconBadge(systemName: "checkmark", tint: .green, diameter: 80, iconSize: 32, weight: .bold)
     }
 
     private var headerText: some View {

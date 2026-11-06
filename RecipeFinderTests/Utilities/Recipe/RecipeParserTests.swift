@@ -124,6 +124,30 @@ final class RecipeParserTests: XCTestCase {
         XCTAssertLessThan(result.confidence, 0.5)
     }
 
+    // MARK: - Free-text section headers
+
+    // "Procedure" was only known to the pasted-text parser; the HTML text path now shares its header words.
+    func testParse_textPath_procedureHeader_yieldsInstructions() {
+        let html = """
+        <html><head><title>Lemon Cake</title></head><body>
+        <h1>Lemon Cake</h1>
+        <h2>Ingredients</h2>
+        <p>2 cups flour</p>
+        <p>1 cup sugar</p>
+        <p>3 large eggs</p>
+        <h2>Procedure</h2>
+        <p>Mix the flour and sugar in a large bowl until combined.</p>
+        <p>Beat in the eggs and bake for 30 minutes at 180 degrees.</p>
+        </body></html>
+        """
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.instructions, [
+            "Mix the flour and sugar in a large bowl until combined.",
+            "Beat in the eggs and bake for 30 minutes at 180 degrees."
+        ])
+        XCTAssertFalse(result.ingredients.contains { $0.localizedCaseInsensitiveContains("procedure") })
+    }
+
     // MARK: - Image URL extraction
 
     func testParse_jsonLD_extractsImageURL_fromStringValue() {
@@ -266,6 +290,17 @@ final class RecipeParserTests: XCTestCase {
         for glyph in RecipeParser.unicodeFractionCharacters {
             XCTAssertTrue(RecipeParser.isIngredientLine("\(glyph) onion"), "missed \(glyph)")
         }
+    }
+
+    // The text path and IngredientLineParser share RecipeParser.listMarkerCharacters; WPRM "▢" used to survive the text path.
+    func testCheckboxMarker_treatedAsIngredientOnTextPathAndByLineParser() {
+        XCTAssertTrue(RecipeParser.isIngredientLine("▢ 2 eggs"))
+        let lines = ["Ingredients", "▢ 2 eggs", "▢ 1 cup flour"]
+        XCTAssertEqual(RecipeParser.extractIngredients(from: lines.joined(separator: "\n"), lines: lines), ["2 eggs", "1 cup flour"])
+
+        let parsed = IngredientLineParser.parse("▢ 2 eggs")
+        XCTAssertEqual(parsed.quantity, 2)
+        XCTAssertEqual(parsed.name, "eggs")
     }
 
     func testFractionGlyphs_allNormalisedByIngredientLineParser() {

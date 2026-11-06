@@ -16,21 +16,14 @@ struct RecipeDeleteConfirmationSheet: View {
                 
                 VStack(spacing: 0) {
                     RoundedRectangle(cornerRadius: AppTheme.cornerRadius3)
-                        .fill(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                        .fill(AppTheme.subtleStroke)
                         .frame(width: AppTheme.iconSize40, height: 5)
                         .padding(.top, AppTheme.spacing12)
                     
                     VStack(spacing: AppTheme.spacing32) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.orange.opacity(AppTheme.cardDarkOpacity))
-                                .frame(width: AppTheme.width80, height: 80)
-                            
-                            Image(systemName: "fork.knife.circle.fill")
-                                .font(.system(size: AppTheme.fontSize50))
-                                .foregroundStyle(.orange)
-                        }
-                        .padding(.top, AppTheme.spacing20)
+                        IconBadge(systemName: "fork.knife.circle.fill", tint: .orange, diameter: AppTheme.width80,
+                                  iconSize: AppTheme.fontSize50, weight: .regular)
+                            .padding(.top, AppTheme.spacing20)
                         
                         VStack(spacing: AppTheme.spacing12) {
                             Text("Remove this recipe?")
@@ -100,7 +93,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                     .adaptiveForegroundColor()
                                     .frame(maxWidth: contentMaxWidth)
                                     .padding(.vertical, AppTheme.spacing16)
-                                    .background(Color.white.opacity(AppTheme.cardDarkOpacity))
+                                    .background(AppTheme.subtleFill)
                                     .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())

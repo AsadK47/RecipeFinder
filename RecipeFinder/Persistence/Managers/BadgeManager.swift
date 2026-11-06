@@ -64,13 +64,10 @@ final class BadgeManager: BadgeManaging {
 
     /// Non-destructive restore: unions by id (held badge wins on collision, preserving `dateEarned`); restored badges never trigger celebration sheets.
     func merge(_ incoming: [String: Badge]) {
-        let previousIds = Set(unlockedBadges.keys)
-        unlockedBadges = BackupMerge.mergedBadges(existing: unlockedBadges, incoming: incoming)
+        let (merged, addedIDs) = BackupMerge.mergedBadgesWithAdditions(existing: unlockedBadges, incoming: incoming)
+        unlockedBadges = merged
         // Mark all newly-merged badges as already-shown so they don't pop a sheet.
-        let newIds = Set(unlockedBadges.keys).subtracting(previousIds)
-        for id in newIds {
-            shownCelebrationIds.insert(id)
-        }
+        shownCelebrationIds.formUnion(addedIDs)
         saveShownCelebrations()
         saveBadges()
     }

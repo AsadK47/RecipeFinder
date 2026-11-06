@@ -3,6 +3,15 @@ import UserNotifications
 
 private let logger = AppLogger.logger(category: "Notification")
 
+/// The userInfo "type" a notification is tagged with; the tap handler routes on it.
+enum NotificationKind: String {
+    case timer
+    case meal
+    case expiry
+    case streak
+    case dailyReminder = "daily-reminder"
+}
+
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
     static let shared = NotificationManager()
 
@@ -34,11 +43,38 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     private func addAskingPermissionFirst(_ request: UNNotificationRequest, failureLabel: String) {
         requestPermission { _ in }
         // Scheduled regardless of the answer: iOS delivers it only if notifications are allowed when it fires.
+        add(request, failureLabel: failureLabel)
+    }
+
+    /// The single path every request is added through, so no failure goes unlogged.
+    private func add(_ request: UNNotificationRequest, failureLabel: String, successMessage: String? = nil) {
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 logger.error("❌ Failed to schedule \(failureLabel): \(error.localizedDescription)")
+            } else if let successMessage {
+                logger.debug("✅ \(successMessage)")
             }
         }
+    }
+
+    private func schedule(
+        id: String,
+        content: UNNotificationContent,
+        trigger: UNNotificationTrigger?,
+        failureLabel: String,
+        successMessage: String? = nil
+    ) {
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        add(request, failureLabel: failureLabel, successMessage: successMessage)
+    }
+
+    /// Exact-minute components for a one-shot calendar trigger.
+    private static func oneShotComponents(for date: Date) -> DateComponents {
+        Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+    }
+
+    static func expiryIdentifier(for itemId: UUID) -> String {
+        "expiry-\(itemId.uuidString)"
     }
 
     func checkAuthorizationStatus() {
@@ -72,26 +108,19 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.sound = .default
         content.badge = 1
         
-        content.userInfo = ["type": "timer", "identifier": notificationId]
+        content.userInfo = ["type": NotificationKind.timer.rawValue, "identifier": notificationId]
         
         let trigger = UNTimeIntervalNotificationTrigger(
             timeInterval: timeInterval,
             repeats: false
         )
-        
-        let request = UNNotificationRequest(
-            identifier: notificationId,
+        schedule(
+            id: notificationId,
             content: content,
-            trigger: trigger
+            trigger: trigger,
+            failureLabel: "notification",
+            successMessage: "Notification scheduled: \(title) in \(timeInterval)s"
         )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                logger.error("❌ Failed to schedule notification: \(error.localizedDescription)")
-            } else {
-                logger.debug("✅ Notification scheduled: \(title) in \(timeInterval)s")
-            }
-        }
         
         return notificationId
     }
@@ -103,18 +132,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.title = title
         content.body = body
         content.sound = .default
-        
-        let request = UNNotificationRequest(
-            identifier: notificationId,
-            content: content,
-            trigger: nil
-        )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                logger.error("❌ Failed to send immediate notification: \(error)")
-            }
-        }
+        schedule(id: notificationId, content: content, trigger: nil, failureLabel: "immediate notification")
     }
     
     @discardableResult
@@ -132,31 +150,23 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.body = "Time for \(mealName): \(recipeName)"
         content.sound = .default
         content.badge = 1
-        content.userInfo = ["type": "meal", "identifier": notificationId]
+        content.userInfo = ["type": NotificationKind.meal.rawValue, "identifier": notificationId]
         
         // Weekly repeat matches on weekday+time only; a one-off fires at the exact date.
-        let fields: Set<Calendar.Component> = repeatsWeekly
-            ? [.weekday, .hour, .minute]
-            : [.year, .month, .day, .hour, .minute]
-        let dateComponents = Calendar.current.dateComponents(fields, from: date)
+        let dateComponents = repeatsWeekly
+            ? Calendar.current.dateComponents([.weekday, .hour, .minute], from: date)
+            : Self.oneShotComponents(for: date)
         let trigger = UNCalendarNotificationTrigger(
             dateMatching: dateComponents,
             repeats: repeatsWeekly
         )
-        
-        let request = UNNotificationRequest(
-            identifier: notificationId,
+        schedule(
+            id: notificationId,
             content: content,
-            trigger: trigger
+            trigger: trigger,
+            failureLabel: "meal reminder",
+            successMessage: "Meal reminder scheduled for \(date)"
         )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                logger.error("❌ Failed to schedule meal reminder: \(error)")
-            } else {
-                logger.debug("✅ Meal reminder scheduled for \(date)")
-            }
-        }
         
         return notificationId
     }
@@ -169,10 +179,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
             ? "Cook something this week to keep your streak going."
             : "Your \(weeks)-week cooking streak ends soon — cook this week to keep it."
         content.sound = .default
-        content.userInfo = ["type": "streak", "identifier": identifier]
+        content.userInfo = ["type": NotificationKind.streak.rawValue, "identifier": identifier]
 
-        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: Self.oneShotComponents(for: date), repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         addAskingPermissionFirst(request, failureLabel: "streak reminder")
     }
@@ -187,7 +196,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.title = "👨‍🍳 Time to Cook!"
         content.body = "Check your meal plan and start preparing your delicious meal"
         content.sound = .default
-        content.userInfo = ["type": "daily-reminder"]
+        content.userInfo = ["type": NotificationKind.dailyReminder.rawValue]
         
         var dateComponents = DateComponents()
         dateComponents.hour = hour
@@ -197,20 +206,13 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
             dateMatching: dateComponents,
             repeats: true
         )
-        
-        let request = UNNotificationRequest(
-            identifier: identifier,
+        schedule(
+            id: identifier,
             content: content,
-            trigger: trigger
+            trigger: trigger,
+            failureLabel: "daily reminder",
+            successMessage: "Daily reminder scheduled for \(hour):\(minute)"
         )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                logger.error("❌ Failed to schedule daily reminder: \(error)")
-            } else {
-                logger.debug("✅ Daily reminder scheduled for \(hour):\(minute)")
-            }
-        }
         
         return identifier
     }
@@ -220,14 +222,12 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.title = "🛒 Groceries Updated"
         content.body = "You have \(itemsCount) items in your groceries"
         content.sound = .default
-        
-        let request = UNNotificationRequest(
-            identifier: "shopping-list-\(UUID().uuidString)",
+        schedule(
+            id: "shopping-list-\(UUID().uuidString)",
             content: content,
-            trigger: nil
+            trigger: nil,
+            failureLabel: "groceries update notification"
         )
-        
-        UNUserNotificationCenter.current().add(request)
     }
     
     func cancelNotification(identifier: String) {
@@ -238,7 +238,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     func cancelAllTimerNotifications() {
         UNUserNotificationCenter.current().getPendingNotificationRequests { @Sendable requests in
             let timerIds = requests
-                .filter { ($0.content.userInfo["type"] as? String) == "timer" }
+                .filter { ($0.content.userInfo["type"] as? String) == NotificationKind.timer.rawValue }
                 .map { $0.identifier }
             
             Task {
@@ -257,12 +257,12 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         guard let notifyDate = Calendar.current.date(byAdding: .day, value: -1, to: expiryDate),
               notifyDate > Date() else { return nil }
 
-        let identifier = "expiry-\(item.id.uuidString)"
+        let identifier = Self.expiryIdentifier(for: item.id)
         let content = UNMutableNotificationContent()
         content.title = "Expiring Tomorrow"
         content.body = "\(item.name) expires tomorrow — use it up tonight."
         content.sound = .default
-        content.userInfo = ["type": "expiry", "itemId": item.id.uuidString]
+        content.userInfo = ["type": NotificationKind.expiry.rawValue, "itemId": item.id.uuidString]
 
         var components = Calendar.current.dateComponents([.year, .month, .day], from: notifyDate)
         components.hour = 18
@@ -274,7 +274,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
 
     func cancelExpiryNotification(for itemId: UUID) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(
-            withIdentifiers: ["expiry-\(itemId.uuidString)"]
+            withIdentifiers: [Self.expiryIdentifier(for: itemId)]
         )
     }
 
@@ -311,39 +311,39 @@ extension NotificationManager {
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
-        let notificationType = userInfo["type"] as? String ?? "unknown"
+        let rawType = userInfo["type"] as? String ?? "unknown"
         
-        logger.debug("👆 User tapped notification of type: \(notificationType)")
+        logger.debug("👆 User tapped notification of type: \(rawType)")
         
-        switch notificationType {
-        case "timer":
+        switch NotificationKind(rawValue: rawType) {
+        case .timer:
             NotificationCenter.default.post(
                 name: .openTimer,
                 object: nil,
                 userInfo: userInfo
             )
             
-        case "meal":
+        case .meal:
             NotificationCenter.default.post(
                 name: .openMealPlan,
                 object: nil,
                 userInfo: userInfo
             )
             
-        case "expiry":
+        case .expiry:
             NotificationCenter.default.post(
                 name: .openGroceries,
                 object: nil,
                 userInfo: userInfo
             )
 
-        case "daily-reminder":
+        case .dailyReminder:
             NotificationCenter.default.post(
                 name: .openRecipes,
                 object: nil
             )
 
-        default:
+        case .streak, nil:
             break
         }
         

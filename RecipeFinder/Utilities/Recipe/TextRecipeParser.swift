@@ -96,11 +96,11 @@ enum TextRecipeParser {
         var current: Section?
 
         for line in lines {
-            if matchesHeader(line, keywords: ingredientHeaderKeywords) {
+            if RecipeParser.isHeader(line, in: RecipeParser.ingredientHeaderWords) {
                 current = .ingredients
                 continue
             }
-            if matchesHeader(line, keywords: instructionHeaderKeywords) {
+            if RecipeParser.isHeader(line, in: RecipeParser.instructionHeaderWords) {
                 current = .instructions
                 continue
             }
@@ -121,46 +121,8 @@ enum TextRecipeParser {
         case instructions
     }
 
-    private static let ingredientHeaderKeywords = [
-        "ingredients", "you will need", "you'll need", "what you need", "what you'll need",
-        "garnish", "for the garnish", "to serve", "to garnish",
-        // Alternative terms used on international and content-creator recipe sites
-        "material", "materials",
-        // Common recipe sub-sections (exact-match after normalization is safe here)
-        "marinade", "for the marinade", "sauce", "for the sauce",
-        "filling", "for the filling", "dough", "for the dough",
-        "batter", "for the batter", "topping", "toppings",
-        "frosting", "icing", "glaze", "crust", "base", "coating"
-    ]
-    private static let instructionHeaderKeywords = [
-        "instructions", "method", "directions", "steps", "preparation",
-        "direction",          // singular — seen in some scraped recipes
-        "before you start",   // bosh.tv recipe format
-        "how to make", "how to", "procedure",
-        "to cook", "to prepare", "to make", "make it",
-        "cooking order",      // used on some Chinese/Korean recipe sites
-        "method of preparation"
-    ]
-
     private static func isSectionHeader(_ line: String) -> Bool {
-        matchesHeader(line, keywords: ingredientHeaderKeywords + instructionHeaderKeywords)
-    }
-
-    /// Loose match: reduce line to letters/spaces and compare to keyword, so "INGREDIENTS 👇"/"Method:" match but a longer phrase like "Ingredients you'll need for the base" doesn't.
-    private static func matchesHeader(_ line: String, keywords: [String]) -> Bool {
-        let normalized = normalizedHeader(line)
-        guard !normalized.isEmpty else { return false }
-        return keywords.map(normalizedHeader).contains(normalized)
-    }
-
-    private static func normalizedHeader(_ line: String) -> String {
-        let lettersAndSpaces = String(String.UnicodeScalarView(
-            line.unicodeScalars.map { CharacterSet.letters.contains($0) ? $0 : " " }
-        ))
-        return lettersAndSpaces
-            .lowercased()
-            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
-            .trimmingCharacters(in: .whitespaces)
+        RecipeParser.isHeader(line, in: RecipeParser.ingredientHeaderWords + RecipeParser.instructionHeaderWords)
     }
 
     // MARK: - Line-classification strategy
@@ -239,7 +201,7 @@ enum TextRecipeParser {
     /// A leading decoration (dash/star bullet or emoji), never a letter/digit/fraction (those are content to keep).
     private static func isBulletCharacter(_ c: Character) -> Bool {
         if c.isLetter || c.isNumber { return false }
-        if "-•*▪◦‣·▫●○▶►➤➥➢▢□☐◻◽◾◼".contains(c) { return true }
+        if RecipeParser.listMarkerCharacters.contains(c) { return true }
         // Emoji, but not low-codepoint symbols like fractions or punctuation.
         return c.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
     }
@@ -258,7 +220,7 @@ enum TextRecipeParser {
             #"^\d+$"#,                                                   // lone number ("2" under SERVES)
             #"^(time|serves|servings?)$"#,                               // lone label
             #"^(serves|servings?|yield)\b"#,                             // "Serves 2", "Yield: 4"
-            #"^(prep(?:aration)?|cook(?:ing)?|total)\b.*\b(min|mins|minute|minutes|hour|hours|hr|hrs)\b"#  // "Prep 20 minutes"
+            #"^(prep(?:aration)?|cook(?:ing)?|total)\b.*\b"# + "(\(RecipeParser.minutesUnitPattern)|\(RecipeParser.hoursUnitPattern))" + #"\b"#  // "Prep 20 minutes"
         ]
         return patterns.contains {
             trimmed.range(of: $0, options: [.regularExpression, .caseInsensitive]) != nil
@@ -294,7 +256,9 @@ enum TextRecipeParser {
     /// Time in minutes after a label (pattern must capture the number in group 1): the regex only finds the duration's span
     /// ("2 hours", "1 hr 30 min", bare "45"); `TimeExtractor` does the unit maths.
     private static func extractMinutes(_ pattern: String, in text: String) -> Int? {
-        let withUnit = pattern + #"(?:\s*(?:h(?:r|rs|our|ours)?|m(?:in|ins|inute|inutes)?)\b)?(?:\s*\d+\s*m(?:in|ins|inute|inutes)?\b)?"#
+        // Single letters allowed here ("2h 30m") — the trailing \b stops "m" matching into "medium".
+        let hours = "(?:\(RecipeParser.hoursUnitPattern)|h)", minutes = "(?:\(RecipeParser.minutesUnitPattern)|m)"
+        let withUnit = pattern + #"(?:\s*(?:"# + hours + "|" + minutes + #")\b)?(?:\s*\d+\s*"# + minutes + #"\b)?"#
         guard let regex = try? NSRegularExpression(pattern: withUnit, options: .caseInsensitive),
               let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..., in: text)),
               let numRange = Range(match.range(at: 1), in: text),

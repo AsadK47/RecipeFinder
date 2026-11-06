@@ -491,7 +491,7 @@ extension RecipeDetailView {
                 recipe = updatedRecipe
                 guard recipeStore.save(updatedRecipe) else {
                     recipe = previous
-                    showSaveError = true
+                    saveError = Self.saveErrorMessage
                     return
                 }
                 HapticManager.shared.success()

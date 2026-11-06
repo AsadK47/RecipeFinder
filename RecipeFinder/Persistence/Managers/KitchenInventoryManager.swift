@@ -118,13 +118,10 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 			return
 		}
 		
-		if let expiryDate = item.expiryDate {
-			let calendar = Calendar.current
-			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
-				logger.debug("⚠️ Cannot add item '\(item.name)' with past expiry date")
-				HapticManager.shared.error()
-				return
-			}
+		if item.isExpired {
+			logger.debug("⚠️ Cannot add item '\(item.name)' with past expiry date")
+			HapticManager.shared.error()
+			return
 		}
 		
 		guard item.quantity > 0 else {
@@ -142,13 +139,10 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
 	
 	func updateInventoryItem(_ item: KitchenInventoryModel) {
-		if let expiryDate = item.expiryDate {
-			let calendar = Calendar.current
-			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
-				logger.debug("⚠️ Cannot update item '\(item.name)' with past expiry date")
-				HapticManager.shared.error()
-				return
-			}
+		if item.isExpired {
+			logger.debug("⚠️ Cannot update item '\(item.name)' with past expiry date")
+			HapticManager.shared.error()
+			return
 		}
 		
 		guard item.quantity > 0 else {

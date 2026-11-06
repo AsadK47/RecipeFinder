@@ -409,20 +409,10 @@ struct MealPlanningView: View {
 
     // MARK: - Derived date values
 
-    // DateFormatter init is expensive; static lets are built once and reused since body runs on every change.
-    private static let monthYearFormatter: DateFormatter = {
-        let f = DateFormatter(); f.dateFormat = "MMMM yyyy"; return f
-    }()
-    private static let mediumDateFormatter: DateFormatter = {
-        let f = DateFormatter(); f.dateFormat = "MMM d, yyyy"; return f
-    }()
-    private static let shortDateFormatter: DateFormatter = {
-        let f = DateFormatter(); f.dateFormat = "MMM d"; return f
-    }()
-
-    private var monthYearString: String { Self.monthYearFormatter.string(from: selectedDate) }
-    private var selectedDateString: String { Self.mediumDateFormatter.string(from: selectedDate) }
-    private var shortDateString: String { Self.shortDateFormatter.string(from: selectedDate) }
+    // FormatStyle follows the user's locale (field order, month names); fixed dateFormat strings didn't.
+    private var monthYearString: String { selectedDate.formatted(.dateTime.month(.wide).year()) }
+    private var selectedDateString: String { selectedDate.formatted(.dateTime.month(.abbreviated).day().year()) }
+    private var shortDateString: String { selectedDate.formatted(.dateTime.month(.abbreviated).day()) }
 
     private var currentWeekStart: Date? {
         mealCalendar.weekRange(containing: selectedDate)?.start

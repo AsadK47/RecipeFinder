@@ -110,11 +110,7 @@ struct MealTimeSelectorSheet: View {
             }
         }
         
-        private static let dateFormatter: DateFormatter = {
-            let f = DateFormatter(); f.dateFormat = "EEEE, MMM d, yyyy"; return f
-        }()
-
         private var dateString: String {
-            Self.dateFormatter.string(from: selectedDate)
+            selectedDate.formatted(.dateTime.weekday(.wide).month(.abbreviated).day().year())
         }
     }

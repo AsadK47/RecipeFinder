@@ -7,7 +7,7 @@ struct MealPlannerHeader: View {
 
     var body: some View {
         ScreenTitleHeader("Meal Planner") {
-            Menu {
+            CircleMenuButton(accessibilityLabel: "More options") {
                 Button(action: onAddMeal) {
                     Label("Add Meal", systemImage: "plus.circle")
                 }
@@ -17,11 +17,6 @@ struct MealPlannerHeader: View {
                 Button(role: .destructive, action: onClearOldPlans) {
                     Label("Clear Old Plans", systemImage: "trash")
                 }
-            } label: {
-                Image(systemName: "line.3.horizontal")
-                    .font(.system(size: AppTheme.fontSize20))
-                    .adaptiveForegroundColor()
-                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
             }
         }
     }

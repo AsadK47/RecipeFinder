@@ -17,11 +17,11 @@ struct RecipeFilterButton: View {
                 .frame(height: AppTheme.height44)
                 .background(
                     Capsule()
-                        .fill(isSelected ? AppTheme.accentColor : Color.white.opacity(0.15))
+                        .fill(isSelected ? AppTheme.accentColor : AppTheme.subtleFill)
                 )
                 .overlay(
                     Capsule()
-                        .strokeBorder(Color.white.opacity(isSelected ? 0 : 0.3), lineWidth: 1)
+                        .strokeBorder(isSelected ? Color.clear : AppTheme.subtleStroke, lineWidth: 1)
                 )
         })
         .buttonStyle(.plain)

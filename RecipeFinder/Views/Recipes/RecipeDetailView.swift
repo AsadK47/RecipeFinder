@@ -16,7 +16,8 @@ struct RecipeDetailView: View {
     @State private var confettiCounter = 0
     @State private var showAddToCollection = false
     @State private var showCookingMode = false
-    @State var showSaveError = false
+    @State var saveError: String?
+    static let saveErrorMessage = "Your changes couldn't be saved. Please try again."
     @State var showTimerSheet = false
     @State var substitutingIngredientIndex: Int?
     @State private var showPostCookPhotoPrompt = false
@@ -88,11 +89,7 @@ struct RecipeDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Couldn't Save Changes", isPresented: $showSaveError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Your changes couldn't be saved. Please try again.")
-        }
+        .errorAlert("Couldn't Save Changes", message: $saveError)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -295,13 +292,13 @@ struct RecipeDetailView: View {
         let newPaths = store.persistGallery([image], recipeId: recipe.id, startingIndex: recipe.photoNames.count)
         // Surface the failure (e.g. disk full) instead of dropping the photo.
         guard !newPaths.isEmpty else {
-            showSaveError = true
+            saveError = Self.saveErrorMessage
             return
         }
         recipe.photoNames.append(contentsOf: newPaths)
         guard recipeStore.save(recipe) else {
             recipe.photoNames.removeLast(newPaths.count)
-            showSaveError = true
+            saveError = Self.saveErrorMessage
             return
         }
         HapticManager.shared.success()
@@ -341,7 +338,7 @@ struct RecipeDetailView: View {
         recipe = updated
         guard recipeStore.save(updated) else {
             recipe = previous
-            showSaveError = true
+            saveError = Self.saveErrorMessage
             return
         }
         HapticManager.shared.success()

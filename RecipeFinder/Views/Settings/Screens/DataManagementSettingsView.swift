@@ -101,14 +101,7 @@ struct DataManagementSettingsView: View {
         }
         .animation(.appSpring, value: dataCleared)
         // An alert, not an inline label: the label rendered below the fold and auto-hid, so users saw no feedback.
-        .alert(
-            backupMessageIsError ? "Backup Problem" : "Done",
-            isPresented: Binding(get: { backupMessage != nil }, set: { if !$0 { backupMessage = nil } })
-        ) {
-            Button("OK", role: .cancel) { backupMessage = nil }
-        } message: {
-            Text(backupMessage ?? "")
-        }
+        .errorAlert(backupMessageIsError ? "Backup Problem" : "Done", message: $backupMessage)
         .onAppear { importStatus = OnDeviceRecipeImport.currentStatus() }
         .fileExporter(
             isPresented: $isExporting,

@@ -45,7 +45,7 @@ struct FilterSheet: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .background(AppTheme.subtleStroke)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     HStack {
@@ -62,7 +62,7 @@ struct FilterSheet: View {
 
                 if !availableCollections.isEmpty {
                     Divider()
-                        .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                        .background(AppTheme.subtleStroke)
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Collection")
@@ -83,7 +83,7 @@ struct FilterSheet: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .background(AppTheme.subtleStroke)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     HStack {
@@ -111,7 +111,7 @@ struct FilterSheet: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .background(AppTheme.subtleStroke)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     Text("Search by Ingredient")
@@ -129,7 +129,7 @@ struct FilterSheet: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .background(AppTheme.subtleStroke)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     Text("Dietary Preferences")
@@ -149,7 +149,7 @@ struct FilterSheet: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .background(AppTheme.subtleStroke)
 
                 if !availableTags.isEmpty {
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -170,7 +170,7 @@ struct FilterSheet: View {
                     }
 
                     Divider()
-                        .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                        .background(AppTheme.subtleStroke)
                 }
 
                 if !availableCuisines.isEmpty {
@@ -192,7 +192,7 @@ struct FilterSheet: View {
                     }
 
                     Divider()
-                        .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                        .background(AppTheme.subtleStroke)
                 }
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -213,7 +213,7 @@ struct FilterSheet: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .background(AppTheme.subtleStroke)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     Text("Difficulty")
@@ -233,7 +233,7 @@ struct FilterSheet: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .background(AppTheme.subtleStroke)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     Text("Max Cooking Time")

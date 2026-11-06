@@ -9,7 +9,7 @@ struct RecipePhotoManagerSheet: View {
 
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var showCamera = false
-    @State private var showSaveError = false
+    @State private var saveError: String?
     @State private var photoViewer: PhotoViewerSource?
     @Environment(\.recipeStore) private var recipeStore
 
@@ -41,11 +41,7 @@ struct RecipePhotoManagerSheet: View {
             guard !items.isEmpty else { return }
             Task { await addPickedItems(items) }
         }
-        .alert("Couldn't Save Photos", isPresented: $showSaveError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Your photo change couldn't be saved. Please try again.")
-        }
+        .errorAlert("Couldn't Save Photos", message: $saveError)
         .sheetScaffold("Photos")
     }
 
@@ -173,7 +169,7 @@ struct RecipePhotoManagerSheet: View {
     private func persist(onFailure: () -> Void, onSuccess: () -> Void = {}) {
         guard recipeStore.save(recipe) else {
             onFailure()
-            showSaveError = true
+            saveError = "Your photo change couldn't be saved. Please try again."
             return
         }
         onSuccess()

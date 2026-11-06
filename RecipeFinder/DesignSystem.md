@@ -17,7 +17,10 @@ inputs **blend** into the glass via translucent fills, not solid fills.
 | `.shimmering(active:)` | loading skeleton sweep | `Components/Recipe/Shimmer.swift` |
 | `AppBackground()` | every screen backdrop (`ZStack { AppBackground(); content }`); sheets use `.sheetScaffold(title)` + `.sheetDismissButton()` (`Components/Sheets/SheetScaffold.swift`) instead | `Theme/ThemeStore.swift` — themed gradient, ignores safe area |
 | `AppTheme.accentColor` | the user's theme colour | reads `ThemeStore.shared` (single source; Observation re-renders readers on change) |
-| `PrimaryButton` | primary CTAs (capsule) | existing component |
+| `PrimaryButton` | CTA capsules; `size: .compact` for inline pills (caption, 12/6 padding); `variant: .secondary` for lesser actions (frosted `.appCard(in: Capsule())`, adaptive text) | `Components/Buttons/PrimaryButton.swift` |
+| `IconBadge` | SF Symbol in a circle — `.tinted` (tint @ 0.15 behind tint icon) or `.solid` (tint fill, white icon); never hand-build `ZStack { Circle(); Image }` | `Components/Layout/IconBadge.swift` |
+| `CollectionDot` | a collection's 28pt colour dot with white glyph | `Components/Layout/IconBadge.swift` — wraps `IconBadge(.solid)` |
+| `AppTheme.subtleFill` / `.subtleStroke` | chip / secondary-button fills, and dividers / outlines / grabbers — instead of `Color.white.opacity(...)`, which vanishes in Light | `Theme/AppTheme+Colors.swift` — dark = white 0.15 / 0.3, light = black 0.06 / 0.12 |
 
 ## Hard rules (violations are the bugs we keep re-fixing)
 - **Never** keep a per-view theme copy (`@AppStorage("appTheme")`, a `selectedTheme`

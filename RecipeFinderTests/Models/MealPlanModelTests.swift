@@ -17,6 +17,21 @@ final class MealPlanModelTests: XCTestCase {
         XCTAssertFalse(makePlan(date: daysFromNow(1)).isToday)
     }
 
+    // MARK: - isOn / isSlot
+
+    func testIsOn_matchesAnyTimeOnSameDay() {
+        let plan = makePlan(date: Date())
+        XCTAssertTrue(plan.isOn(Calendar.current.startOfDay(for: Date())))
+        XCTAssertFalse(plan.isOn(daysFromNow(1)))
+    }
+
+    func testIsSlot_requiresSameDayAndMealTime() {
+        let plan = makePlan(date: Date())
+        XCTAssertTrue(plan.isSlot(Date(), .dinner))
+        XCTAssertFalse(plan.isSlot(Date(), .lunch))
+        XCTAssertFalse(plan.isSlot(daysFromNow(1), .dinner))
+    }
+
     // MARK: - isPast
 
     func testIsPast_trueForYesterday() {

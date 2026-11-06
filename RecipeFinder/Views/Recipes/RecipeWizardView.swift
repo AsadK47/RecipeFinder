@@ -58,8 +58,7 @@ struct RecipeWizardView: View {
     @State private var recipeTags: [String] = []
     @State private var recipeCuisine = ""
 
-    @State private var showError = false
-    @State private var errorMessage = ""
+    @State private var errorMessage: String?
     @AppStorage("hasSeenWizardIntro") private var hasSeenWizardIntro = false
     @State private var showIntro = false
     @State private var showPhotoPicker = false
@@ -134,11 +133,7 @@ struct RecipeWizardView: View {
                 showIntro = false
             }
         }
-        .alert("Validation Error", isPresented: $showError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(errorMessage)
-        }
+        .errorAlert("Validation Error", message: $errorMessage)
         .photoSourcePicker(isPresented: $showPhotoPicker) { image in
             selectedRecipeImage = image
         }
@@ -325,7 +320,6 @@ struct RecipeWizardView: View {
             )
         } catch {
             errorMessage = error.localizedDescription
-            showError = true
             HapticManager.shared.error()
             return
         }

@@ -17,7 +17,7 @@ struct RecipeServingsCard: View {
             }
 
             Divider()
-                .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                .background(AppTheme.subtleStroke)
 
             quickScaleButtons
         }
@@ -96,7 +96,7 @@ struct RecipeServingsCard: View {
                 .frame(height: AppTheme.height36)
                 .background(
                     RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                        .fill(isActive ? AppTheme.accentColor : Color.white.opacity(0.15))
+                        .fill(isActive ? AppTheme.accentColor : AppTheme.subtleFill)
                 )
         }
         .accessibilityLabel("Scale to \(label)")

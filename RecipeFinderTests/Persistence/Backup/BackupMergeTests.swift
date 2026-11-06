@@ -38,6 +38,17 @@ import Foundation
         #expect(result.map(\.title) == ["A", "B", "C"]) // dupe id skipped; new appended in order
     }
 
+    @Test func mergedWithAdditions_returnsOnlyAppendedItems() {
+        let dupeID = UUID()
+        let existing = [Self.sample("A", id: dupeID)]
+        let incoming = [Self.sample("A-again", id: dupeID), Self.sample("B"), Self.sample("C")]
+
+        let result = BackupMerge.mergedWithAdditions(existing: existing, incoming: incoming)
+
+        #expect(result.merged.map(\.title) == ["A", "B", "C"])
+        #expect(result.added.map(\.title) == ["B", "C"])
+    }
+
     @Test func merged_intoEmpty_returnsIncoming() {
         let incoming = [Self.sample("A"), Self.sample("B")]
         #expect(BackupMerge.merged(existing: [Sample](), incoming: incoming).map(\.title) == ["A", "B"])
@@ -83,5 +94,11 @@ import Foundation
         let result = BackupMerge.mergedBadges(existing: existing, incoming: incoming)
         #expect(Set(result.keys) == ["first", "second"])
         #expect(result["first"]?.dateEarned == mine) // existing preserved
+    }
+
+    @Test func mergedBadgesWithAdditions_reportsOnlyNewIDs() {
+        let existing = ["first": Self.badge("first", earned: Date())]
+        let incoming = ["first": Self.badge("first"), "second": Self.badge("second")]
+        #expect(BackupMerge.mergedBadgesWithAdditions(existing: existing, incoming: incoming).addedIDs == ["second"])
     }
 }

@@ -13,7 +13,7 @@ enum IngredientLineParser {
 
     /// Leading list/checkbox glyphs recipe sites prepend to ingredient rows (WordPress Recipe Maker "▢",
     /// ballot boxes, bullets). Stripped so the quantity is seen instead of swallowed into the name.
-    private static let leadingMarkers = CharacterSet(charactersIn: "▢□☐◻◽◾◼▪▫◦‣·•●○∙-*")
+    private static let leadingMarkers = CharacterSet(charactersIn: RecipeParser.listMarkerCharacters)
 
     static func parse(_ line: String) -> Parsed {
         // 0. Strip a leading marker/checkbox glyph + whitespace so "▢100 g flour" parses as 100 g, not a bare name.

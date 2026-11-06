@@ -82,22 +82,23 @@ extension RecipeParser {
 
     static func extractTime(from text: String, type: TimeType) -> Int? {
         let patterns: [String]
+        let unit = "(\(minutesUnitPattern)|\(hoursUnitPattern))"
 
         switch type {
         case .prep:
             patterns = [
-                "prep time:?\\s*([0-9]+)\\s*(min|minute|minutes|hour|hours|hr|hrs)",
-                "preparation time:?\\s*([0-9]+)\\s*(min|minute|minutes|hour|hours|hr|hrs)"
+                "prep time:?\\s*([0-9]+)\\s*" + unit,
+                "preparation time:?\\s*([0-9]+)\\s*" + unit
             ]
         case .cook:
             patterns = [
-                "cook time:?\\s*([0-9]+)\\s*(min|minute|minutes|hour|hours|hr|hrs)",
-                "cooking time:?\\s*([0-9]+)\\s*(min|minute|minutes|hour|hours|hr|hrs)",
-                "bake time:?\\s*([0-9]+)\\s*(min|minute|minutes|hour|hours|hr|hrs)"
+                "cook time:?\\s*([0-9]+)\\s*" + unit,
+                "cooking time:?\\s*([0-9]+)\\s*" + unit,
+                "bake time:?\\s*([0-9]+)\\s*" + unit
             ]
         case .total:
             patterns = [
-                "total time:?\\s*([0-9]+)\\s*(min|minute|minutes|hour|hours|hr|hrs)"
+                "total time:?\\s*([0-9]+)\\s*" + unit
             ]
         }
 

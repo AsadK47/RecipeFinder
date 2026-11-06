@@ -191,6 +191,13 @@ struct CollectionManagerTests {
         #expect(sut.collections.count == 1)
     }
 
+    @Test func merge_dropsDuplicateIDsWithinIncoming() {
+        let sut = makeSUT()
+        let id = UUID()
+        sut.merge([RecipeCollection(id: id, name: "First"), RecipeCollection(id: id, name: "Second")])
+        #expect(sut.collections.map(\.name) == ["First"])
+    }
+
     // MARK: - persistence round-trip
 
     @Test func roundTrip_survivesReload() {

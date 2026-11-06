@@ -137,15 +137,7 @@ struct ComplianceBadge: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.spacing12) {
-            ZStack {
-                Circle()
-                    .fill(color.opacity(AppTheme.cardDarkOpacity))
-                    .frame(width: 40, height: AppTheme.height40)
-                
-                Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                    .foregroundStyle(color)
-            }
+            IconBadge(systemName: icon, tint: color, diameter: AppTheme.height40, iconSize: AppTheme.fontSize18)
             
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(title)

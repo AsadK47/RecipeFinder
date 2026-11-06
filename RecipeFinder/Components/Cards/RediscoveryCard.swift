@@ -9,13 +9,8 @@ struct RediscoveryCard: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: AppTheme.spacing12) {
-                ZStack {
-                    Circle().fill(Color.purple.opacity(0.15)).frame(width: 44, height: 44)
-                    Image(systemName: "clock.arrow.circlepath")
-                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                        .foregroundStyle(.purple)
-                }
-                .accessibilityHidden(true)
+                IconBadge(systemName: "clock.arrow.circlepath", tint: .purple, diameter: 44, iconSize: AppTheme.fontSize18)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                     Text("Cook it again")

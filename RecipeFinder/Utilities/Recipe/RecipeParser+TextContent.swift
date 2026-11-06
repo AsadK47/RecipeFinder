@@ -25,7 +25,8 @@ extension RecipeParser {
                 emptyLineCount = 0
             }
 
-            if trimmed.lowercased().contains("ingredient") && trimmed.count < 50 {
+            if (trimmed.lowercased().contains("ingredient") || isHeader(trimmed, in: ingredientSectionHeaderWords))
+                && trimmed.count < 50 {
                 if ingredients.count > 5 {
                     break
                 }
@@ -38,6 +39,7 @@ extension RecipeParser {
                 if lower.contains("instruction") || 
                    lower.contains("method") ||
                    lower.contains("direction") ||
+                   isHeader(trimmed, in: instructionHeaderWords) ||
                    lower.contains("notes") ||
                    lower.contains("nutrition") ||
                    lower.contains("calories:") ||
@@ -110,7 +112,7 @@ extension RecipeParser {
     private static func cleanIngredientLine(_ line: String) -> String {
         var cleaned = line
 
-        cleaned = cleaned.replacingOccurrences(of: "^[•\\-*]\\s*", with: "", options: .regularExpression)
+        cleaned = droppingLeadingListMarker(cleaned)
         cleaned = cleaned.replacingOccurrences(of: "^[0-9]+\\.\\s*", with: "", options: .regularExpression)
 
         return cleaned.trimmed
@@ -140,7 +142,8 @@ extension RecipeParser {
 
             if (trimmed.lowercased().contains("instruction") || 
                 trimmed.lowercased().contains("method") ||
-                trimmed.lowercased().contains("direction")) && trimmed.count < 50 {
+                trimmed.lowercased().contains("direction") ||
+                isHeader(trimmed, in: instructionHeaderWords)) && trimmed.count < 50 {
                 if instructions.count > 3 {
                     break
                 }
@@ -182,9 +185,7 @@ extension RecipeParser {
         let lowercased = trimmed.lowercased()
 
         // Reject bare section header labels that sometimes appear inside the section
-        let headers = ["instructions", "method", "directions", "steps", "preparation"]
-        let stripped = lowercased.replacingOccurrences(of: ":", with: "").trimmingCharacters(in: .whitespaces)
-        if headers.contains(stripped) { return false }
+        if isHeader(trimmed, in: instructionHeaderWords) { return false }
 
         // Numbered steps are always instructions regardless of content
         if trimmed.range(of: #"^(step\s*\d+|\d+[.)])\s*"#,
@@ -209,7 +210,7 @@ extension RecipeParser {
     private static func cleanInstructionLine(_ line: String) -> String {
         var cleaned = line
 
-        cleaned = cleaned.replacingOccurrences(of: "^[•\\-*]\\s*", with: "", options: .regularExpression)
+        cleaned = droppingLeadingListMarker(cleaned)
         cleaned = cleaned.replacingOccurrences(of: "^Step\\s*[0-9]+[:.)]?\\s*", with: "", options: [.regularExpression, .caseInsensitive])
         cleaned = cleaned.replacingOccurrences(of: "^[0-9]+[:.)]\\s*", with: "", options: .regularExpression)
 

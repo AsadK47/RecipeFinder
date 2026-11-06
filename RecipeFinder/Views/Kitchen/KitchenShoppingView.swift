@@ -197,13 +197,9 @@ private struct KitchenInventorySheet: View {
 
                 VStack(spacing: 0) {
                     ScreenTitleHeader("Kitchen") {
-                        Menu {
+                        CircleMenuButton(accessibilityLabel: "Kitchen options") {
                             overflowMenu
-                        } label: {
-                            CircleButton(icon: "line.3.horizontal") {}
-                                .allowsHitTesting(false)
                         }
-                        .accessibilityLabel("Kitchen options")
                     }
 
                     if manager.items.isEmpty {

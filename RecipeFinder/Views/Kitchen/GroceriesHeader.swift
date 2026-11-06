@@ -10,13 +10,7 @@ struct GroceriesHeader<MenuContent: View>: View {
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
             ScreenTitleHeader("Groceries") {
-                Menu {
-                    menuContent()
-                } label: {
-                    CircleButton(icon: "line.3.horizontal") {}
-                        .allowsHitTesting(false)
-                }
-                .accessibilityLabel("More options")
+                CircleMenuButton(accessibilityLabel: "More options", content: menuContent)
             }
 
             searchBar

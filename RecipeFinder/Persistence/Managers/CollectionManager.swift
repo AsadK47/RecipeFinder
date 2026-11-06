@@ -160,11 +160,6 @@ final class CollectionManager: CollectionManaging {
     // MARK: - Backup
 
     func merge(_ incoming: [RecipeCollection]) {
-        var updated = collections
-        let existingIDs = Set(updated.map(\.id))
-        for collection in incoming where !existingIDs.contains(collection.id) {
-            updated.append(collection)
-        }
-        saveCollections(updated)
+        saveCollections(BackupMerge.merged(existing: collections, incoming: incoming))
     }
 }

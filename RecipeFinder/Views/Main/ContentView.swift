@@ -89,14 +89,7 @@ struct ContentView: View {
                 fileImportError = "This recipe file couldn't be opened. It may be damaged or from a newer version."
             }
         }
-        .alert("Couldn't Open Recipe", isPresented: Binding(
-            get: { fileImportError != nil },
-            set: { if !$0 { fileImportError = nil } }
-        )) {
-            Button("OK", role: .cancel) { fileImportError = nil }
-        } message: {
-            Text(fileImportError ?? "")
-        }
+        .errorAlert("Couldn't Open Recipe", message: $fileImportError)
         .sheet(item: Binding(
             get: { badgeManager.pendingCelebration },
             set: { if $0 == nil { badgeManager.dismissCelebration() } }

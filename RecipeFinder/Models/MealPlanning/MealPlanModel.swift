@@ -68,6 +68,15 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
     var isToday: Bool {
         Calendar.current.isDateInToday(date)
     }
+
+    func isOn(_ day: Date, calendar: Calendar = .current) -> Bool {
+        calendar.isDate(date, inSameDayAs: day)
+    }
+
+    /// Same day and meal time — the identity of a planner slot.
+    func isSlot(_ day: Date, _ slotMealTime: MealTime, calendar: Calendar = .current) -> Bool {
+        mealTime == slotMealTime && isOn(day, calendar: calendar)
+    }
     
     var isPast: Bool {
         date < Date()

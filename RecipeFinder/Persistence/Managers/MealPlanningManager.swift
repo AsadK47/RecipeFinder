@@ -67,18 +67,15 @@ final class MealPlanningManager: MealPlanningManaging {
     
     /// Non-destructive restore: unions incoming plans by id without collapsing same-slot entries.
     func merge(_ incoming: [MealPlanModel]) {
-        let previousIds = Set(mealPlans.map(\.id))
-        mealPlans = BackupMerge.merged(existing: mealPlans, incoming: incoming)
+        let (merged, added) = BackupMerge.mergedWithAdditions(existing: mealPlans, incoming: incoming)
+        mealPlans = merged
         saveMealPlans()
         // Re-arm reminders for newly-restored plans so they survive a device migration.
-        for plan in mealPlans where !previousIds.contains(plan.id) { syncReminder(for: plan) }
+        for plan in added { syncReminder(for: plan) }
     }
 
     func addMealPlan(_ mealPlan: MealPlanModel) {
-        if let existingIndex = mealPlans.firstIndex(where: {
-            Calendar.current.isDate($0.date, inSameDayAs: mealPlan.date) &&
-            $0.mealTime == mealPlan.mealTime
-        }) {
+        if let existingIndex = mealPlans.firstIndex(where: { $0.isSlot(mealPlan.date, mealPlan.mealTime) }) {
             // The replaced occupant has a different id, so cancel its reminder before it's overwritten.
             cancelReminder(for: mealPlans[existingIndex])
             mealPlans[existingIndex] = mealPlan
@@ -109,13 +106,10 @@ final class MealPlanningManager: MealPlanningManaging {
     }
     
     func removeMealPlan(for date: Date, mealTime: MealTime) {
-        for plan in mealPlans where Calendar.current.isDate(plan.date, inSameDayAs: date) && plan.mealTime == mealTime {
+        for plan in mealPlans where plan.isSlot(date, mealTime) {
             cancelReminder(for: plan)
         }
-        mealPlans.removeAll {
-            Calendar.current.isDate($0.date, inSameDayAs: date) &&
-            $0.mealTime == mealTime
-        }
+        mealPlans.removeAll { $0.isSlot(date, mealTime) }
         HapticManager.shared.light()
         saveMealPlans()
     }
@@ -209,22 +203,15 @@ final class MealPlanningManager: MealPlanningManaging {
     }
     
     func mealPlan(for date: Date, mealTime: MealTime) -> MealPlanModel? {
-        mealPlans.first {
-            Calendar.current.isDate($0.date, inSameDayAs: date) &&
-            $0.mealTime == mealTime
-        }
+        mealPlans.first { $0.isSlot(date, mealTime) }
     }
     
     func mealPlans(for date: Date) -> [MealPlanModel] {
-        mealPlans.filter {
-            Calendar.current.isDate($0.date, inSameDayAs: date)
-        }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
+        mealPlans.filter { $0.isOn(date) }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
     }
     
     func hasMealPlans(for date: Date) -> Bool {
-        mealPlans.contains {
-            Calendar.current.isDate($0.date, inSameDayAs: date)
-        }
+        mealPlans.contains { $0.isOn(date) }
     }
     
     func mealPlansForWeek(starting startDate: Date) -> WeeklyMealPlan {
