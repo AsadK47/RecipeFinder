@@ -367,4 +367,27 @@ struct RecipeFilterCriteriaTests {
         // noMatch is 0 of 4 (0%) — filtered; fullMatch is 1 of 1 (100%) — passes
         #expect(criteria.apply(to: [noMatch, fullMatch]).map(\.name) == ["Zzz"])
     }
+
+    // MARK: - Clear action title
+
+    @Test("No search and no filters offers no clear action")
+    func clearActionTitleNilWhenNothingActive() {
+        #expect(RecipeFilterCriteria().clearActionTitle == nil)
+    }
+
+    @Test("Search alone offers Clear Search")
+    func clearActionTitleSearchOnly() {
+        var criteria = RecipeFilterCriteria()
+        criteria.searchText = "zzqx"
+        #expect(criteria.clearActionTitle == "Clear Search")
+    }
+
+    @Test("Filters (with or without a search) offer Clear All Filters")
+    func clearActionTitleWithFilters() {
+        var criteria = RecipeFilterCriteria()
+        criteria.showFavoritesOnly = true
+        #expect(criteria.clearActionTitle == "Clear All Filters")
+        criteria.searchText = "zzqx"
+        #expect(criteria.clearActionTitle == "Clear All Filters")
+    }
 }

@@ -314,7 +314,7 @@ struct RecipeSearchView: View {
             if isLoading && recipes.isEmpty {
                 RecipeListSkeleton()
             } else if current.isEmpty {
-                RecipeEmptyStateView(activeFilterCount: activeFilterCount, onClearFilters: clearAllFilters)
+                RecipeEmptyStateView(clearActionTitle: filterCriteria.clearActionTitle, onClearFilters: clearAllFilters)
             } else {
                 RecipeResultsList(
                     filteredRecipes: current,
@@ -432,7 +432,9 @@ struct RecipeSearchView: View {
     
     private func clearAllFilters() {
         HapticManager.shared.medium()
+        isSearchFocused = false
         withAnimation {
+            searchText = ""
             selectedCategories.removeAll()
             selectedDifficulties.removeAll()
             selectedCookTimes.removeAll()

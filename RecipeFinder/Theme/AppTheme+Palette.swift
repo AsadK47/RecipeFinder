@@ -62,6 +62,8 @@ extension AppTheme {
     static let success = Color.green
     static let warning = Color.orange
     static let error = Color.red
+    /// Fixed deep red behind white text for destructive buttons; `.red`/`.orange` drop white text below 4.5:1 in Dark mode.
+    static let destructiveFill = Color(red: 196/255, green: 40/255, blue: 40/255)
     
     static let dividerColor = Color(red: 60/255, green: 60/255, blue: 67/255).opacity(0.36)
     static let borderColor = Color(red: 72/255, green: 72/255, blue: 74/255)

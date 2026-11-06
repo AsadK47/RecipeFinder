@@ -507,3 +507,24 @@ struct RecurringMealPlanTests {
         #expect(decoded.isRecurring == false)
     }
 }
+
+// MARK: - Removal persistence
+
+@MainActor
+@Suite("Meal plan removal persistence")
+struct MealPlanRemovalPersistenceTests {
+
+    @Test("Removing a slot persists, so a fresh manager on the same store doesn't see it")
+    func removeBySlot_persistsAcrossReload() throws {
+        let storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+        let date = Date()
+        let sut = MealPlanningManager(storage: storage)
+        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Porridge", date: date, mealTime: .breakfast))
+        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Soup", date: date, mealTime: .lunch))
+
+        sut.removeMealPlan(for: date, mealTime: .breakfast)
+
+        let reloaded = MealPlanningManager(storage: storage)
+        #expect(reloaded.mealPlans.map(\.recipeName) == ["Soup"])
+    }
+}

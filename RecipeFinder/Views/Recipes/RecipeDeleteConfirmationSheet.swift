@@ -76,10 +76,10 @@ struct RecipeDeleteConfirmationSheet: View {
                             }) {
                                 Text("Remove Recipe")
                                     .font(.headline)
-                                    .adaptiveForegroundColor()
+                                    .foregroundStyle(.white)
                                     .frame(maxWidth: contentMaxWidth)
                                     .padding(.vertical, AppTheme.spacing16)
-                                    .background(AppTheme.warning)
+                                    .background(AppTheme.destructiveFill)
                                     .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())

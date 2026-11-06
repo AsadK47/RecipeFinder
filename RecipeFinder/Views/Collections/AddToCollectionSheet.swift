@@ -57,9 +57,16 @@ struct AddToCollectionSheet: View {
                         .foregroundStyle(isMember ? collection.colorName.swiftUIColor : .secondary.opacity(0.4))
                         .font(.title3)
                 }
+                // Frosted card row, matching KitchenItemRow / ShoppingSectionsView.
+                .padding(.horizontal, AppTheme.spacing12)
+                .padding(.vertical, AppTheme.spacing10)
+                .appCard(elevated: true)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)

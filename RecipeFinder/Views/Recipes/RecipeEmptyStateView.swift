@@ -1,10 +1,10 @@
 import SwiftUI
 
-// Empty state for no search/filter matches, with a clear-filters shortcut.
+// Empty state for no search/filter matches, with a clear search/filters shortcut.
 struct RecipeEmptyStateView: View {
-    let activeFilterCount: Int
+    /// From `RecipeFilterCriteria.clearActionTitle`; nil hides the button.
+    let clearActionTitle: String?
     let onClearFilters: () -> Void
-
 
     var body: some View {
         ScrollView {
@@ -22,8 +22,8 @@ struct RecipeEmptyStateView: View {
                     .font(.subheadline)
                     .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 
-                if activeFilterCount > 0 {
-                    PrimaryButton("Clear All Filters", systemImage: "xmark.circle.fill", variant: .secondary, action: onClearFilters)
+                if let clearActionTitle {
+                    PrimaryButton(clearActionTitle, systemImage: "xmark.circle.fill", variant: .secondary, action: onClearFilters)
                 }
             }
             .padding(.top, AppTheme.spacing40)

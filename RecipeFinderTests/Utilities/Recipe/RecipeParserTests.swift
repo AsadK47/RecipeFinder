@@ -1,4 +1,5 @@
 import XCTest
+import Testing
 @testable import RecipeFinder
 
 final class RecipeParserTests: XCTestCase {
@@ -736,5 +737,32 @@ final class RecipeParserTests: XCTestCase {
         </script>
         </head><body></body></html>
         """
+    }
+}
+
+// MARK: - DOM-list fallback header filtering
+
+@Suite("RecipeParser DOM-list header filtering")
+struct RecipeParserDOMListHeaderTests {
+
+    private func html(items: [String]) -> String {
+        let lis = items.map { "<li class=\"recipe-ingredient\">\($0)</li>" }.joined()
+        return "<html><head><title>Pasta Bake</title></head><body><ul>\(lis)</ul></body></html>"
+    }
+
+    @Test("Header-only lines from the shared vocabulary are dropped")
+    func dropsHeaderLines() throws {
+        let result = try #require(RecipeParser.extractDOMList(from: html(items: [
+            "Ingredients", "For the sauce:", "200g pasta", "Method", "Advertisement", "1 onion"
+        ])))
+        #expect(result.ingredients == ["200g pasta", "1 onion"])
+    }
+
+    @Test("Ingredients containing a header word are kept (exact-line match only)")
+    func keepsIngredientsContainingHeaderWords() throws {
+        let result = try #require(RecipeParser.extractDOMList(from: html(items: [
+            "400g tomato sauce", "1 pizza base", "Sauce"
+        ])))
+        #expect(result.ingredients == ["400g tomato sauce", "1 pizza base"])
     }
 }

@@ -43,6 +43,12 @@ struct RecipeFilterCriteria: Hashable {
         (selectedCollectionRecipeIDs != nil ? 1 : 0)
     }
 
+    /// No-results clear-button label, or nil when nothing narrows the list; "Clear Search" only when the search is the sole narrowing.
+    var clearActionTitle: String? {
+        if activeCount > 0 { return "Clear All Filters" }
+        return searchText.isEmpty ? nil : "Clear Search"
+    }
+
     /// Applies every active filter, then ranks by ingredient match when "can make now" is on; filter order mirrors the original view to stay behavior-preserving.
     func apply(to recipes: [RecipeModel]) -> [RecipeModel] {
         var results = recipes

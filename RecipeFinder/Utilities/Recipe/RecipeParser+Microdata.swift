@@ -61,9 +61,12 @@ extension RecipeParser {
     private static func isPlausibleIngredientLine(_ s: String) -> Bool {
         let t = s.trimmingCharacters(in: .whitespaces)
         guard t.count >= 2, t.count <= 180, t.rangeOfCharacter(from: .letters) != nil else { return false }
-        let banned: Set<String> = ["ingredients", "method", "you will need", "advertisement", "subscribe"]
-        return !banned.contains(t.lowercased())
+        // Exact-line header match (shared vocabulary), so "Sauce" is dropped but "tomato sauce" is kept.
+        return !isHeader(t, in: listNoiseLines)
     }
+
+    /// Section headers plus ad/CTA labels that sites render as ingredient-classed `<li>`s.
+    private static let listNoiseLines = ingredientHeaderWords + instructionHeaderWords + ["advertisement", "subscribe"]
 
     static func extractMicrodata(from html: String) -> ParsedRecipe? {
         // Require an explicit schema.org Recipe scope to avoid false positives.

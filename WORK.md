@@ -48,7 +48,12 @@ DEDUPE BATCH (17) — ALL DONE 2026-11-05, uncommitted (A+B+C by agents, full su
  search-only no-results has no action; AddToCollectionSheet rows solid not frosted; LegalInformationView title white in Light
  (.toolbarColorScheme(.dark)); "Remove Recipe" low contrast in Dark. Also: MealPlanningManager.removeMealPlan saves twice;
  Microdata isPlausibleIngredientLine has its own header list.
-**Next action:** user reviews + commits; then pick from the 🟡 backlog above.
+BACKLOG FIXED 2026-11-06 (uncommitted, 1851 green, sim-checked): clear-search, search-only no-results button
+ (RecipeFilterCriteria.clearActionTitle), AddToCollection frosted rows, Legal nav chrome, AppTheme.destructiveFill, Microdata
+ shared header vocab. removeMealPlan double-save was a false finding (test added).
+ Next 🟡: forced .toolbarColorScheme(.dark) also on MealPlanningView/ProfileView/SmartCollectionDetailView; "1 active filters"
+ plural; "Don't ask again" checkbox a11y state; delete only via long-press.
+**Next action:** user reviews + commits.
 
 # WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 d151d9a committed; #4 28fc2d0 committed; #5 a2e03cb committed; #6 durations DONE (uncommitted, 1816 green) — CAMPAIGN COMPLETE
 Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours → 4 search fields → 5 ingredient normalisers → 6 duration code.

@@ -190,7 +190,6 @@ struct LegalInformationView: View {
             }
         }
         .appNavigationTitle("Legal Information")
-        .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicyView()
         }
