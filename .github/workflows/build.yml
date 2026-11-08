@@ -14,7 +14,9 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Pushes to main queue rather than cancel each other, so every commit gets tested and the build cache gets
+  # saved; superseded PR runs are still cancelled.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
@@ -48,7 +50,7 @@ jobs:
           defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
       - name: Restore build cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: DerivedData
           key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
@@ -70,6 +72,15 @@ jobs:
             -resultBundlePath TestResults.xcresult \
             $SKIP \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
+
+      # Saved even when tests fail or the run is cancelled after building: the compiled output is still valid,
+      # and a save that only happened on success meant the cache was never written.
+      - name: Save build cache
+        if: always() && hashFiles('DerivedData/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: DerivedData
+          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
 
       - name: Keep logs if it fails
         if: failure()
