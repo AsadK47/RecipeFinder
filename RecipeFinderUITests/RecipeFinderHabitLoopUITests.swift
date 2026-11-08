@@ -58,6 +58,17 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
             // left it non-hittable (hit point {-1,-1}). Scroll it up first, then tap via the shared helper.
             // Not masking: a tap that misses still fails the isEnabled check below.
             app.swipeUp()
+
+            // TEMP diagnostic: if the button still isn't hittable, dump what is on screen so CI shows what covers it.
+            if !markCooked.isHittable {
+                print("DIAG markCooked frame: \(markCooked.frame) window: \(app.windows.firstMatch.frame)")
+                print("DIAG hierarchy:\n\(app.debugDescription)")
+                let diag = XCTAttachment(screenshot: app.screenshot())
+                diag.name = "DIAG — Mark as Cooked not hittable"
+                diag.lifetime = .keepAlways
+                add(diag)
+            }
+
             tapWhenReady(markCooked, "Mark as Cooked should be tappable.")
 
             // A post-cook photo sheet auto-presents ~0.8s later — dismiss it.
