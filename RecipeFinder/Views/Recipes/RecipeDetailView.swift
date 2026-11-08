@@ -129,7 +129,12 @@ struct RecipeDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $showCookingMode) {
-            CookingModeView(recipe: recipe, onFinish: recordCook)
+            CookingModeView(recipe: recipe, onFinish: recordCook) {
+                // Delay lets the cooking-mode cover finish dismissing before the photo sheet presents.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                    showPostCookPhotoPrompt = true
+                }
+            }
         }
         .toast($showAddedFeedback)
         .confettiCannon(trigger: $confettiCounter, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
@@ -281,10 +286,8 @@ struct RecipeDetailView: View {
         refreshCookingBadges()
         // Third cook = genuine fan; ask for a review exactly once.
         if ReviewPrompt.shouldRequestReview(afterCookCount: recipe.cookCount) { requestReview() }
-        // Delay lets any active fullScreenCover dismiss before the sheet appears.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            showPostCookPhotoPrompt = true
-        }
+        // No auto-presented photo sheet: it interrupted every cook. Photos are offered as an optional
+        // "Add a photo" on cooking mode's done screen, and stay available via ⋯ → Manage Photos.
     }
 
     private func addCookPhoto(_ image: UIImage) {

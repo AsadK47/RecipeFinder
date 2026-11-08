@@ -4,10 +4,14 @@ import SwiftUI
 struct CookingModeView: View {
     let recipe: RecipeModel
     var onFinish: (() -> Void)?
+    /// Offered on the done screen; the caller presents its photo sheet once this cover has dismissed.
+    var onAddPhoto: (() -> Void)?
 
     // MARK: - State
 
     @State private var currentIndex: Int = 0
+    /// Set when the cook is logged — swaps the steps for a done screen instead of closing abruptly.
+    @State private var isFinished = false
     @State private var completedItems: Set<Int> = []
     @State private var showTimerSheet = false
     @Environment(\.recipeTimer) private var timerManager
@@ -78,20 +82,27 @@ struct CookingModeView: View {
     /// Records the cook (streak + badges, via `onFinish`) and leaves. Shared by the "Finish" button and by
     /// "Done" when the user is already on the last step, so reaching the end credits the cook either way.
     private func finishCooking() {
+        guard !isFinished else { return }
         BadgeManager.shared.unlockBadge(.headChef)
         onFinish?()
-        dismiss()
+        withAnimation(.appSpring) { isFinished = true }
     }
 
     // MARK: - Body
 
     var body: some View {
         VStack(spacing: 0) {
-            progressBar
-            Spacer(minLength: 0)
-            contentCard
-            Spacer(minLength: 0)
-            navigationRow
+            if isFinished {
+                Spacer(minLength: 0)
+                finishedCard
+                Spacer(minLength: 0)
+            } else {
+                progressBar
+                Spacer(minLength: 0)
+                contentCard
+                Spacer(minLength: 0)
+                navigationRow
+            }
         }
         .padding(.horizontal, AppTheme.spacing20)
         .padding(.bottom, AppTheme.spacing32)
@@ -99,7 +110,9 @@ struct CookingModeView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 // On the last step, Done counts as finishing — otherwise a user who cooked all the way
                 // through but tapped Done (not the green Finish) would silently lose streak/badge credit.
-                Button("Done") { isLast ? finishCooking() : dismiss() }
+                Button("Done") {
+                    if isFinished { dismiss() } else if isLast { finishCooking() } else { dismiss() }
+                }
                     .font(.body.weight(.semibold))
                     .adaptiveForegroundColor()
             }
@@ -331,6 +344,43 @@ struct CookingModeView: View {
             .buttonStyle(.plain)
         }
         .padding(.top, AppTheme.spacing16)
+    }
+
+    // MARK: - Done screen
+
+    /// The end of the cook gets its own moment (peak-end) rather than the cover just vanishing.
+    private var finishedCard: some View {
+        VStack(spacing: AppTheme.spacing20) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 72))
+                .foregroundStyle(.green)
+                .accessibilityHidden(true)
+
+            VStack(spacing: AppTheme.spacing8) {
+                Text("Nice cooking!")
+                    .font(.title.weight(.bold))
+                    .adaptiveForegroundColor()
+                Text("\(recipe.name) is logged to your cook history.")
+                    .font(.body)
+                    .adaptiveSecondaryForeground()
+                    .multilineTextAlignment(.center)
+            }
+
+            VStack(spacing: AppTheme.spacing12) {
+                PrimaryButton("Done", systemImage: "checkmark", fillWidth: true) {
+                    dismiss()
+                }
+                if onAddPhoto != nil {
+                    PrimaryButton("Add a photo", systemImage: "camera", fillWidth: true, variant: .secondary) {
+                        onAddPhoto?()
+                        dismiss()
+                    }
+                }
+            }
+            .padding(.top, AppTheme.spacing8)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("cooking.finished")
     }
 
     // MARK: - Timer toolbar button
