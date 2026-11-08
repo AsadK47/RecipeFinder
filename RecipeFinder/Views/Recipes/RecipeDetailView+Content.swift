@@ -1,5 +1,4 @@
 import SwiftUI
-import TipKit
 
 // 1–5 star rating; tap the active star to clear to 0 (unrated).
 private struct StarRatingView: View {
@@ -87,8 +86,7 @@ extension RecipeDetailView {
 
     var recipeInfoCardsView: some View {
         VStack(spacing: AppTheme.spacing16) {
-            timeInfoCard
-            detailsInfoCard
+            factsCard
             RecipeServingsCard(recipe: $recipe)
             if !recipe.tags.isEmpty {
                 tagsCard
@@ -251,34 +249,52 @@ extension RecipeDetailView {
         .appCard(elevated: true)
     }
 
-    var timeInfoCard: some View {
-        InfoPairView(
-            label1: "Prep time", value1: recipe.prepTimeDisplay, icon1: "clock",
-            label2: "Cook time", value2: recipe.cookTimeDisplay, icon2: "flame"
-        )
-        .padding()
+    /// Prep, cook, difficulty, category (and cuisine) in one slim card. These used to be two tall cards
+    /// that, with servings, pushed the ingredients most of a screen down.
+    var factsCard: some View {
+        HStack(alignment: .top, spacing: 0) {
+            fact(icon: "clock", tint: .orange, value: shortTime(recipe.prepTimeDisplay), label: "Prep")
+            fact(icon: "flame", tint: .red, value: shortTime(recipe.cookTimeDisplay), label: "Cook")
+            fact(icon: "chart.bar", tint: .blue, value: recipe.difficulty, label: "Difficulty")
+            fact(icon: "fork.knife", tint: .green, value: recipe.category, label: "Category")
+            if let cuisine = recipe.cuisine, !cuisine.isEmpty {
+                fact(icon: "globe", tint: .teal, value: cuisine, label: "Cuisine")
+            }
+        }
+        .padding(.vertical, AppTheme.spacing12)
+        .padding(.horizontal, AppTheme.spacing8)
         .appCard(elevated: true)
-        .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit prep and cook time")
+        .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit times, difficulty, category and cuisine")
         .accessibilityIdentifier("recipe.card.time")
     }
 
-    var detailsInfoCard: some View {
-        VStack(spacing: 0) {
-            InfoPairView(
-                label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
-                label2: "Category", value2: recipe.category, icon2: "fork.knife"
-            )
-            if let cuisine = recipe.cuisine, !cuisine.isEmpty {
-                Divider()
-                    .padding(.horizontal, AppTheme.spacing24)
-                    .padding(.top, AppTheme.spacing12)
-                InfoItem(icon: "globe", label: "Cuisine", value: cuisine)
-                    .padding(.top, AppTheme.spacing12)
-            }
+    private func fact(icon: String, tint: Color, value: String, label: String) -> some View {
+        VStack(spacing: AppTheme.spacing4) {
+            Image(systemName: icon)
+                .font(.subheadline)
+                .foregroundStyle(tint)
+                .accessibilityHidden(true)
+            Text(value)
+                .font(.subheadline.weight(.semibold))
+                .adaptiveForegroundColor()
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(label)
+                .font(.caption2)
+                .adaptiveSecondaryForeground()
+                .lineLimit(1)
         }
-        .padding()
-        .appCard(elevated: true)
-        .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit difficulty, category and cuisine")
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// "15 minutes" → "15 min" so four or five facts fit across one row.
+    private func shortTime(_ display: String) -> String {
+        display
+            .replacingOccurrences(of: " minutes", with: " min")
+            .replacingOccurrences(of: " minute", with: " min")
+            .replacingOccurrences(of: " hours", with: " hr")
+            .replacingOccurrences(of: " hour", with: " hr")
     }
 
     // Opens the pre-filled editor; `section` deep-links to those fields (else top).
@@ -551,7 +567,6 @@ extension RecipeDetailView {
                 showCookingMode = true
             }
             .accessibilityLabel("Start Cooking Mode")
-            .popoverTip(CookingModeTip(), arrowEdge: .top)
 
             PrimaryButton("Shop", systemImage: "cart.badge.plus", fillWidth: true, variant: .secondary,
                           action: addAllIngredientsToShoppingList)
