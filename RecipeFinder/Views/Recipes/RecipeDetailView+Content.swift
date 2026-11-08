@@ -1,7 +1,7 @@
 import SwiftUI
 
-// 1–5 star rating; tap the active star to clear to 0 (unrated).
-private struct StarRatingView: View {
+// 1–5 star rating; tap the active star to clear to 0 (unrated). Shared with the Made it sheet.
+struct StarRatingView: View {
     let rating: Int
     let onTap: (Int) -> Void
 

@@ -403,3 +403,22 @@ enum BadgeType: String, CaseIterable, Identifiable {
         return (min(metrics.value(for: metric), criterion.threshold), criterion.threshold)
     }
 }
+
+/// How far the user is from the next cooking-volume badge — the "2 more to *Seasoned*" line after a cook.
+struct CookingMilestoneProgress: Equatable {
+    let badge: BadgeType
+    let remaining: Int
+
+    var text: String { "\(remaining) more to \(badge.badge.title)" }
+}
+
+extension BadgeType {
+    /// The lowest cooking-volume badge not yet reached at `totalCooks`; nil once all are earned.
+    static func nextCookingMilestone(totalCooks: Int) -> CookingMilestoneProgress? {
+        allCases
+            .filter { $0.criterion.metric == .recipesCooked }
+            .sorted { $0.criterion.threshold < $1.criterion.threshold }
+            .first { $0.criterion.threshold > totalCooks }
+            .map { CookingMilestoneProgress(badge: $0, remaining: $0.criterion.threshold - totalCooks) }
+    }
+}

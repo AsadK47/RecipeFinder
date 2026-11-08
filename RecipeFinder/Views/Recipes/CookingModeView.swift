@@ -3,9 +3,8 @@ import SwiftUI
 // Full-screen cooking mode: large text, screen stays awake, per-step timers.
 struct CookingModeView: View {
     let recipe: RecipeModel
+    /// Logs the cook; the caller follows up with its Made it sheet (rating + photo) once this cover dismisses.
     var onFinish: (() -> Void)?
-    /// Offered on the done screen; the caller presents its photo sheet once this cover has dismissed.
-    var onAddPhoto: (() -> Void)?
 
     // MARK: - State
 
@@ -369,12 +368,6 @@ struct CookingModeView: View {
             VStack(spacing: AppTheme.spacing12) {
                 PrimaryButton("Done", systemImage: "checkmark", fillWidth: true) {
                     dismiss()
-                }
-                if onAddPhoto != nil {
-                    PrimaryButton("Add a photo", systemImage: "camera", fillWidth: true, variant: .secondary) {
-                        onAddPhoto?()
-                        dismiss()
-                    }
                 }
             }
             .padding(.top, AppTheme.spacing8)

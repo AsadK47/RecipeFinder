@@ -21,7 +21,9 @@ struct RecipeDetailView: View {
     static let saveErrorMessage = "Your changes couldn't be saved. Please try again."
     @State var showTimerSheet = false
     @State var substitutingIngredientIndex: Int?
-    @State private var showPostCookPhotoPrompt = false
+    // The post-cook "Made it" sheet; parked in `pendingMadeIt` while cooking mode's cover is still up.
+    @State private var madeItSummary: MadeItSummary?
+    @State private var pendingMadeIt: MadeItSummary?
     @State private var showPhotoManager = false
     @State var photoViewer: PhotoViewerSource?
     // Drives the editor sheet; `section` deep-links to those fields (nil = full editor). Presented via `.sheet(item:)` so content rebuilds from the target — avoids the stale-first-render race of `.sheet(isPresented:)` + separate state.
@@ -120,10 +122,8 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showTimerSheet) {
             CookTimerView()
         }
-        .sheet(isPresented: $showPostCookPhotoPrompt) {
-            PostCookPhotoSheet { image in
-                addCookPhoto(image)
-            }
+        .sheet(item: $madeItSummary) { summary in
+            MadeItSheet(summary: summary, onRate: updateRating, onPhotoSelected: addCookPhoto)
         }
         .sheet(isPresented: $showPhotoManager) {
             RecipePhotoManagerSheet(recipe: $recipe)
@@ -135,13 +135,12 @@ struct RecipeDetailView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showCookingMode) {
-            CookingModeView(recipe: recipe, onFinish: recordCook) {
-                // Delay lets the cooking-mode cover finish dismissing before the photo sheet presents.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                    showPostCookPhotoPrompt = true
-                }
-            }
+        .fullScreenCover(isPresented: $showCookingMode, onDismiss: {
+            // Present only once the cover is gone — a sheet can't present over a dismissing cover.
+            madeItSummary = pendingMadeIt
+            pendingMadeIt = nil
+        }) {
+            CookingModeView(recipe: recipe, onFinish: recordCook)
         }
         .toast($showAddedFeedback)
         .confettiCannon(trigger: $confettiCounter, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
@@ -289,19 +288,27 @@ struct RecipeDetailView: View {
         confettiCounter += 1
         HapticManager.shared.celebrate()
 
-        // Feed the weekly cooking-streak habit loop; the toast is the milestone when this cook EXTENDS it.
-        if cookingStreak.recordCookToday() {
-            let weeks = cookingStreak.streak.currentWeeks
-            showAddedFeedback = weeks <= 1 ? "🔥 Cooking streak started!" : "🔥 \(weeks)-week cooking streak!"
-        }
+        // Feed the weekly cooking-streak habit loop; the Made it sheet shows the resulting streak.
+        _ = cookingStreak.recordCookToday()
 
         // Cooking is now the main path to badges: volume (10/25/50/100), streak, cuisines, and mastery all
         // key off this choke point.
-        refreshCookingBadges()
+        let totalCooks = refreshCookingBadges().recipesCooked
         // Third cook = genuine fan; ask for a review exactly once.
         if ReviewPrompt.shouldRequestReview(afterCookCount: recipe.cookCount) { requestReview() }
-        // No auto-presented photo sheet: it interrupted every cook. Photos are offered as an optional
-        // "Add a photo" on cooking mode's done screen, and stay available via ⋯ → Manage Photos.
+
+        // One celebratory sheet replaces the scattered toast / photo prompt / scroll-down rating.
+        let summary = MadeItSummary(
+            cookNumber: totalCooks,
+            streakWeeks: cookingStreak.streak.currentWeeks,
+            rating: recipe.rating,
+            milestone: BadgeType.nextCookingMilestone(totalCooks: totalCooks)
+        )
+        if showCookingMode {
+            pendingMadeIt = summary
+        } else {
+            madeItSummary = summary
+        }
     }
 
     private func addCookPhoto(_ image: UIImage) {
@@ -332,9 +339,11 @@ struct RecipeDetailView: View {
 
     /// Re-evaluate cooking/collection badges from the current library + streak. Safe after any action that
     /// changes a metric (cook, cook photo, rating); unlocking is idempotent.
-    private func refreshCookingBadges() {
+    @discardableResult
+    private func refreshCookingBadges() -> BadgeMetrics {
         let metrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
         BadgeManager.shared.checkAndUnlockBadges(metrics: metrics)
+        return metrics
     }
 
     // Auto-runs on open; discards network errors silently, shows diff sheet only on real changes.

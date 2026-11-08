@@ -177,4 +177,35 @@ struct BadgeModelTests {
     func cookingBadges_haveZeroRequiredCount(type: BadgeType) {
         #expect(type.requiredCount == 0)  // not collection badges → excluded from the recipe-count path
     }
+
+    // MARK: - nextCookingMilestone(totalCooks:) — the "Made it" sheet's badge progress line
+
+    @Test(arguments: [
+        (0,  BadgeType.headChef,         1),
+        (1,  BadgeType.cookedTen,        9),
+        (9,  BadgeType.cookedTen,        1),
+        (10, BadgeType.cookedTwentyFive, 15),
+        (23, BadgeType.cookedTwentyFive, 2),
+        (25, BadgeType.cookedFifty,      25),
+        (99, BadgeType.cookedHundred,    1),
+    ])
+    func nextCookingMilestone_targetsNextUnearnedVolumeBadge(totalCooks: Int, badge: BadgeType, remaining: Int) {
+        let next = BadgeType.nextCookingMilestone(totalCooks: totalCooks)
+        #expect(next?.badge == badge)
+        #expect(next?.remaining == remaining)
+    }
+
+    @Test(arguments: [100, 250])
+    func nextCookingMilestone_isNilOnceEveryVolumeBadgeIsEarned(totalCooks: Int) {
+        #expect(BadgeType.nextCookingMilestone(totalCooks: totalCooks) == nil)
+    }
+
+    @Test(arguments: [
+        (23, "2 more to Seasoned"),
+        (9,  "1 more to Home Cook"),
+        (0,  "1 more to Head Chef"),
+    ])
+    func nextCookingMilestone_textNamesRemainingAndBadge(totalCooks: Int, expected: String) {
+        #expect(BadgeType.nextCookingMilestone(totalCooks: totalCooks)?.text == expected)
+    }
 }

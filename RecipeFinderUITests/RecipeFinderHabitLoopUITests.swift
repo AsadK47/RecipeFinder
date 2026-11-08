@@ -81,11 +81,10 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
             XCTAssertTrue(markCooked.isHittable, "Mark as Cooked should be on screen after scrolling.")
             markCooked.tap()
 
-            // A post-cook photo sheet auto-presents ~0.8s later — dismiss it.
-            let skip = app.buttons["Skip"]
-            if skip.waitForExistence(timeout: 4) {
-                skip.tap()
-            }
+            // The Made it sheet presents straight away — close it.
+            let done = app.buttons["madeIt.done"]
+            XCTAssertTrue(done.waitForExistence(timeout: 4), "Marking as cooked should open the Made it sheet.")
+            done.tap()
         }
         XCTAssertFalse(markCooked.isEnabled, "After a cook today, 'Mark as Cooked' must be disabled (no double count).")
 
