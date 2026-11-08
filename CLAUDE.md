@@ -79,7 +79,7 @@ When a new failure class appears or a convention changes, update the relevant se
 **Replace or refine, don't append.** When a failure tempts you to "add a new rule," first ask whether an existing rule should be sharpened instead. Each CLAUDE.md file has a line budget: root ≤100, RecipeFinder/ ≤100, RecipeFinderTests/ ≤50. Exceeding budget is a signal to consolidate, not to keep adding.
 
 ## Commit messages & branch policy
-Claude may commit, branch and push. *(2026-11-08: user lifted the earlier "user commits" rule.)* `main` is guarded by the "NA" ruleset (Repository admin bypass): put work on a branch and open a PR so CI runs before merge.
+Claude commits and pushes straight to `main` — no feature branches or PRs (solo project, 2026-11-08). Every push to `main` runs unit tests (~4 min) and, if app code changed, uploads a TestFlight build, so only push work that builds and passes tests. UI tests run nightly; check that run when touching UI.
 
 **Commit in logical units.** One verified-green area per commit (build + affected tests, full suite before committing), not one tiny diff at a time.
 
