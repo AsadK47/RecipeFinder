@@ -64,6 +64,7 @@
 		9E6C2C632FB4A4BE0083A08B /* AdaptiveSpacingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C5D2FB4A4BE0083A08B /* AdaptiveSpacingTests.swift */; };
 		9E6C2C712FB4C8450083A08B /* BadgeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C692FB4C8450083A08B /* BadgeManagerTests.swift */; };
 		9E6C2C732FB4C8450083A08B /* ShoppingListManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C6E2FB4C8450083A08B /* ShoppingListManagerTests.swift */; };
+		3AA3C5F9558C84CABD7AD75E /* GroceryStoresTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 258B851DFF596BA4B5D280E2 /* GroceryStoresTests.swift */; };
 		9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C6B2FB4C8450083A08B /* KitchenInventoryManagerTests.swift */; };
 		9E6C2C752FB4C8450083A08B /* MealPlanningManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C6C2FB4C8450083A08B /* MealPlanningManagerTests.swift */; };
 		9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA572EF5EF47001E7B24 /* DifficultyBarsView.swift */; };
@@ -314,6 +315,7 @@
 		F3E9D16630444D9A008BF231 /* GrocerySearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D16530444D9A008BF231 /* GrocerySearchResultsView.swift */; };
 		F3E9D16830444DA5008BF231 /* ShoppingCategoryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D16730444DA5008BF231 /* ShoppingCategoryHeader.swift */; };
 		F3E9D16A30444E1C008BF231 /* ShoppingProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D16930444E1C008BF231 /* ShoppingProgressBar.swift */; };
+		898E384F50FCC09ABA5DC9FD /* GroceryStoreViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7645821A8814EE558B96CA09 /* GroceryStoreViews.swift */; };
 		F3E9D17430444F55008BF231 /* RecipeNotesFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D17330444F55008BF231 /* RecipeNotesFormatter.swift */; };
 		F3E9D17630444F5E008BF231 /* RecipeNotesFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D17530444F5E008BF231 /* RecipeNotesFormatterTests.swift */; };
 		F3E9D17830444F74008BF231 /* RecipeServingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D17730444F74008BF231 /* RecipeServingsCard.swift */; };
@@ -524,6 +526,7 @@
 		9E6C2C6B2FB4C8450083A08B /* KitchenInventoryManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryManagerTests.swift; sourceTree = "<group>"; };
 		9E6C2C6C2FB4C8450083A08B /* MealPlanningManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanningManagerTests.swift; sourceTree = "<group>"; };
 		9E6C2C6E2FB4C8450083A08B /* ShoppingListManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListManagerTests.swift; sourceTree = "<group>"; };
+		258B851DFF596BA4B5D280E2 /* GroceryStoresTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryStoresTests.swift; sourceTree = "<group>"; };
 		9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedHeartButton.swift; sourceTree = "<group>"; };
 		9E6DEA472EF5EF47001E7B24 /* CompactRecipeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactRecipeCard.swift; sourceTree = "<group>"; };
 		9E6DEA482EF5EF47001E7B24 /* RecipeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCard.swift; sourceTree = "<group>"; };
@@ -769,6 +772,7 @@
 		F3E9D16530444D9A008BF231 /* GrocerySearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrocerySearchResultsView.swift; sourceTree = "<group>"; };
 		F3E9D16730444DA5008BF231 /* ShoppingCategoryHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingCategoryHeader.swift; sourceTree = "<group>"; };
 		F3E9D16930444E1C008BF231 /* ShoppingProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingProgressBar.swift; sourceTree = "<group>"; };
+		7645821A8814EE558B96CA09 /* GroceryStoreViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryStoreViews.swift; sourceTree = "<group>"; };
 		F3E9D17330444F55008BF231 /* RecipeNotesFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeNotesFormatter.swift; sourceTree = "<group>"; };
 		F3E9D17530444F5E008BF231 /* RecipeNotesFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeNotesFormatterTests.swift; sourceTree = "<group>"; };
 		F3E9D17730444F74008BF231 /* RecipeServingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeServingsCard.swift; sourceTree = "<group>"; };
@@ -1162,6 +1166,7 @@
 				9E6C2C6B2FB4C8450083A08B /* KitchenInventoryManagerTests.swift */,
 				9E6C2C6C2FB4C8450083A08B /* MealPlanningManagerTests.swift */,
 				9E6C2C6E2FB4C8450083A08B /* ShoppingListManagerTests.swift */,
+				258B851DFF596BA4B5D280E2 /* GroceryStoresTests.swift */,
 				F3B837C83055CD5A0003AEF8 /* ProfileNameFormatterTests.swift */,
 				F3B837DE3055F17C0003AEF8 /* CollectionManagerTests.swift */,
 				F3D40561305855180076834D /* BadgeTriggerIntegrationTests.swift */,
@@ -1508,6 +1513,7 @@
 				F3E9D16530444D9A008BF231 /* GrocerySearchResultsView.swift */,
 				F3E9D16730444DA5008BF231 /* ShoppingCategoryHeader.swift */,
 				F3E9D16930444E1C008BF231 /* ShoppingProgressBar.swift */,
+				7645821A8814EE558B96CA09 /* GroceryStoreViews.swift */,
 			);
 			path = Shopping;
 			sourceTree = "<group>";
@@ -2280,6 +2286,7 @@
 				F3D4056E305994EF0076834D /* IngredientSubstituteProvider.swift in Sources */,
 				F3AEF8C7309B569600A9C5E0 /* LocalStore.swift in Sources */,
 				F3E9D16A30444E1C008BF231 /* ShoppingProgressBar.swift in Sources */,
+				898E384F50FCC09ABA5DC9FD /* GroceryStoreViews.swift in Sources */,
 				F3D4054C305620510076834D /* NutritionInfo.swift in Sources */,
 				9E6C2C1C2FB394290083A08B /* BadgeManager.swift in Sources */,
 				9E5B39972FACFF9000C96DB3 /* KitchenQuickAddSheet.swift in Sources */,
@@ -2542,6 +2549,7 @@
 				F3B7D8F4306E8D4000991908 /* MealReminderSchedulingTests.swift in Sources */,
 				F36AED653043342300935A3C /* PerformanceBudgetTests.swift in Sources */,
 				9E6C2C732FB4C8450083A08B /* ShoppingListManagerTests.swift in Sources */,
+				3AA3C5F9558C84CABD7AD75E /* GroceryStoresTests.swift in Sources */,
 				9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */,
 				F3AEF8B9309B48D900A9C5E0 /* ChecklistStateTests.swift in Sources */,
 				F3E9D294304FF7D7008BF231 /* TextRecipeFixtures.swift in Sources */,

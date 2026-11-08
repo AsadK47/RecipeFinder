@@ -4,6 +4,7 @@ enum Constants {
     
     enum UserDefaultsKeys {
         static let shoppingListItems = "ShoppingListItems"
+        static let groceryStores = "GroceryStores"
         static let kitchenItems = "KitchenItems"
         static let collections = "RecipeCollections"
     }

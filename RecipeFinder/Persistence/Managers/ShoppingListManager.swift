@@ -6,9 +6,14 @@ private let logger = AppLogger.logger(category: "ShoppingList")
 @MainActor
 protocol ShoppingListManaging: AnyObject, Observable {
     var items: [ShoppingListModel] { get }
+    /// The user's own stores, in the order they added them.
+    var stores: [String] { get }
     func addItem(name: String, quantity: Int, unit: String, category: String?)
     func updateCategory(at index: Int, category: String)
-    func updateStore(at index: Int, store: String?)
+    @discardableResult func addStore(_ name: String) -> Bool
+    @discardableResult func renameStore(_ store: String, to newName: String) -> Bool
+    func deleteStore(_ store: String)
+    func setStore(_ store: String, assigned: Bool, forItemIDs ids: Set<UUID>)
     func updateQuantity(at index: Int, quantity: Int)
     func toggleItem(at index: Int)
     func toggleRecurring(at index: Int)
@@ -43,10 +48,12 @@ final class ShoppingListManager: ShoppingListManaging {
     static let shared = ShoppingListManager()
 
     @ObservationIgnored private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
+    @ObservationIgnored private let storesKey = Constants.UserDefaultsKeys.groceryStores
     @ObservationIgnored private let storage: LocalStore
     @ObservationIgnored private let badgeManager: BadgeManager
 
     private(set) var items: [ShoppingListModel] = []
+    private(set) var stores: [String] = []
 
     private init() {
         self.storage = .shared
@@ -77,6 +84,25 @@ final class ShoppingListManager: ShoppingListManaging {
         } else {
             items = []
         }
+        loadStores()
+    }
+
+    /// First run after stores became user-defined: seed the list from tags items already carry, so nothing disappears.
+    private func loadStores() {
+        if let saved = storage.decodable([String].self, forKey: storesKey) {
+            stores = saved
+            return
+        }
+        var seeded: [String] = []
+        for store in items.flatMap(\.stores) where !seeded.contains(store) {
+            seeded.append(store)
+        }
+        saveStores(seeded)
+    }
+
+    private func saveStores(_ newStores: [String]) {
+        stores = newStores
+        storage.setEncodable(newStores, forKey: storesKey)
     }
     
     func getItems() -> [ShoppingListModel] {
@@ -91,6 +117,12 @@ final class ShoppingListManager: ShoppingListManaging {
     /// Non-destructive restore: unions incoming items by id, without the name-merge or re-classify that `addItem` applies.
     func merge(_ incoming: [ShoppingListModel]) {
         saveItems(BackupMerge.merged(existing: items, incoming: incoming))
+        // Restored tags must exist as stores, or their filter chips would be missing.
+        var merged = stores
+        for store in items.flatMap(\.stores) where !merged.contains(store) {
+            merged.append(store)
+        }
+        if merged != stores { saveStores(merged) }
     }
 
     /// Adds a recipe's ingredients, merging duplicates by name; fractional quantities round to nearest whole (min 1).
@@ -158,11 +190,50 @@ final class ShoppingListManager: ShoppingListManaging {
         saveItems(items)
     }
     
-    func updateStore(at index: Int, store: String?) {
-        var items = getItems()
-        guard index < items.count else { return }
-        items[index].preferredStore = store
-        saveItems(items)
+    /// Adds a store; false (nothing saved) when the name is blank or already used.
+    @discardableResult
+    func addStore(_ name: String) -> Bool {
+        guard let valid = GroceryStoreNames.validated(name, existing: stores) else { return false }
+        saveStores(stores + [valid])
+        return true
+    }
+
+    /// Renames a store and every item tagged with it; false (nothing saved) when the new name is blank or taken.
+    @discardableResult
+    func renameStore(_ store: String, to newName: String) -> Bool {
+        guard let index = stores.firstIndex(of: store),
+              let valid = GroceryStoreNames.validated(newName, existing: stores.filter { $0 != store }) else { return false }
+        var renamed = stores
+        renamed[index] = valid
+        saveStores(renamed)
+        saveItems(items.map { item in
+            var updated = item
+            updated.stores = item.stores.map { $0 == store ? valid : $0 }
+            return updated
+        })
+        return true
+    }
+
+    /// Removes a store; its items stay on the list, untagged from it.
+    func deleteStore(_ store: String) {
+        saveStores(stores.filter { $0 != store })
+        saveItems(items.map { item in
+            var updated = item
+            updated.stores.removeAll { $0 == store }
+            return updated
+        })
+    }
+
+    /// Tags (or untags) every item in `ids` with `store` in one save.
+    func setStore(_ store: String, assigned: Bool, forItemIDs ids: Set<UUID>) {
+        saveItems(items.map { item in
+            guard ids.contains(item.id) else { return item }
+            var updated = item
+            updated.stores.removeAll { $0 == store }
+            if assigned { updated.stores.append(store) }
+            return updated
+        })
+        HapticManager.shared.selection()
     }
     
     func updateName(at index: Int, name: String) {

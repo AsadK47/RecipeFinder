@@ -11,6 +11,10 @@ struct KitchenShoppingView: View {
     @State private var showShoppingQuickAdd = false
     @State private var showClearShopping = false
     @State private var showKitchenSheet = false
+    @State private var showManageStores = false
+    @State private var assigningStore: GroceryStoreSelection?
+    /// Last store filter, remembered between launches; "" means All.
+    @AppStorage("groceriesStoreFilter") private var storeFilter = ""
 
 
     private var searchResults: [String] {
@@ -24,6 +28,12 @@ struct KitchenShoppingView: View {
 
     private var checkedCount: Int { shopping.items.filter { $0.isChecked }.count }
     private var totalCount: Int { shopping.items.count }
+
+    /// The filter's store, or nil (All) when none is picked or the picked one was renamed/deleted.
+    private var activeStore: String? {
+        shopping.stores.contains(storeFilter) ? storeFilter : nil
+    }
+    private var visibleItems: [ShoppingListModel] { shopping.items.filter { $0.isAvailable(at: activeStore) } }
     private var isAllCollapsed: Bool {
         shoppingCollapsed.count == CategoryClassifier.categoryOrder.count
     }
@@ -40,6 +50,16 @@ struct KitchenShoppingView: View {
                         onSubmit: addShoppingItem,
                         menuContent: { overflowMenu }
                     )
+
+                    if !shopping.stores.isEmpty && !showingSearchResults {
+                        GroceryStoreFilterBar(
+                            stores: shopping.stores,
+                            selected: activeStore,
+                            onSelect: { storeFilter = $0 ?? "" },
+                            onAssign: { assigningStore = GroceryStoreSelection(name: $0) },
+                            onManage: { showManageStores = true }
+                        )
+                    }
 
                     content
                 }
@@ -74,6 +94,8 @@ struct KitchenShoppingView: View {
         }
         .sheet(isPresented: $showShoppingQuickAdd) { ShoppingQuickAddSheet() }
         .sheet(isPresented: $showKitchenSheet) { KitchenInventorySheet() }
+        .sheet(isPresented: $showManageStores) { GroceryStoresSheet() }
+        .sheet(item: $assigningStore) { AssignStoreSheet(store: $0.name) }
     }
 
     @ViewBuilder
@@ -89,6 +111,8 @@ struct KitchenShoppingView: View {
             )
         } else if shopping.items.isEmpty {
             emptyState
+        } else if let activeStore, visibleItems.isEmpty {
+            storeEmptyState(activeStore)
         } else {
             shoppingList
         }
@@ -96,11 +120,18 @@ struct KitchenShoppingView: View {
 
     private var shoppingList: some View {
         List {
-            ShoppingProgressBar(checkedCount: checkedCount, totalCount: totalCount)
+            ShoppingProgressBar(
+                checkedCount: visibleItems.filter(\.isChecked).count,
+                totalCount: visibleItems.count
+            )
                 .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
-            ShoppingSectionsView(collapsedCategories: $shoppingCollapsed)
+            ShoppingSectionsView(
+                collapsedCategories: $shoppingCollapsed,
+                store: activeStore,
+                onManageStores: { showManageStores = true }
+            )
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
@@ -119,11 +150,24 @@ struct KitchenShoppingView: View {
         }
     }
 
+    private func storeEmptyState(_ store: String) -> some View {
+        ScrollView {
+            EmptyStateView(
+                icon: "storefront",
+                title: "Nothing to buy at \(store)",
+                message: "Every item on your list is set to another store.",
+                actionTitle: "Choose Items",
+                onAction: { assigningStore = GroceryStoreSelection(name: store) }
+            )
+        }
+    }
+
     @ViewBuilder
     private var overflowMenu: some View {
         Button { showKitchenSheet = true } label: { Label("Kitchen", systemImage: "refrigerator") }
         Divider()
         Button { showShoppingQuickAdd = true } label: { Label("Quick Add", systemImage: "plus.circle") }
+        Button { showManageStores = true } label: { Label("Stores", systemImage: "storefront") }
         Button(action: shareShoppingList) { Label("Share Groceries", systemImage: "square.and.arrow.up") }
         Button(action: toggleCollapseAll) {
             Label(isAllCollapsed ? "Expand All" : "Collapse All",

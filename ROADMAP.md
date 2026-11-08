@@ -93,7 +93,7 @@ The test **suite + CI** remain the source of truth for *coverage detail*; this i
 | **Search & filter** — text, category/difficulty/dietary, available-ingredients ("can make now"), tag, collection, sort orders | ✅ | ✅ |
 | **Collections & tags** — user CRUD + membership + batch-add; smart collections (6 rules) | ✅ | ✅ |
 | **Meal planning** — slots, overwrite, recurring weekly, pantry-aware suggestions, calendar, add-week-to-shopping | ✅ | ✅ |
-| **Shopping list** — add/remove/check, add-from-recipe, aisle categorisation, grouping + text share | ✅ | ✅ |
+| **Shopping list** — add/remove/check, add-from-recipe, aisle categorisation, grouping + text share, user stores + "shop at" filter + bulk assign | ✅ | ✅ |
 | **Kitchen / pantry** — inventory CRUD, expiry/low-stock alerts, recipe matching, expiry notifications | ✅ | ✅ |
 | **Cooking mode** — step nav, per-step timer, screen-awake; timer fires in background | ✅ | ⚠️ timer ✅, step UI 🧪 |
 | **Backup / restore** — `.recipefinderbackup` round-trip, per-store merge | ✅ | ✅ |

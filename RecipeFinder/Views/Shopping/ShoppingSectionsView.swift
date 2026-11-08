@@ -3,6 +3,9 @@ import SwiftUI
 /// Shopping list as bare `List` `Section`s (no own `List`/title) so Groceries hosts it in one scroll; row actions go straight to `ShoppingListManager.shared`.
 struct ShoppingSectionsView: View {
     @Binding var collapsedCategories: Set<String>
+    /// Store being shopped at; nil shows every item.
+    let store: String?
+    let onManageStores: () -> Void
 
     @Environment(\.shopping) private var manager
     @Environment(\.kitchen) private var kitchen
@@ -14,7 +17,7 @@ struct ShoppingSectionsView: View {
     }
 
     private var groupedItems: [(key: String, value: [ShoppingListModel])] {
-        ShoppingListGrouping.grouped(manager.items)
+        ShoppingListGrouping.grouped(manager.items.filter { $0.isAvailable(at: store) })
     }
 
     var body: some View {
@@ -77,11 +80,11 @@ struct ShoppingSectionsView: View {
                         manager.updateCategory(at: index, category: newCategory)
                     }
                 },
-                onStoreChange: { newStore in
-                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                        manager.updateStore(at: index, store: newStore)
-                    }
+                availableStores: manager.stores,
+                onToggleStore: { store in
+                    manager.setStore(store, assigned: !item.stores.contains(store), forItemIDs: [item.id])
                 },
+                onManageStores: onManageStores,
                 onToggleRecurring: {
                     if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
                         manager.toggleRecurring(at: index)

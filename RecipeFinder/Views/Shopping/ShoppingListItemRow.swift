@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Single shopping-list row: checkbox, name/store, quantity steppers, and a store/category/delete menu.
+/// Single shopping-list row: checkbox, name/stores, quantity steppers, and a stores/category/delete menu.
 struct ShoppingListItemRow: View {
     /// Matches `ShoppingListManager`'s 999 cap; the row used 99, so + went dead at 200 g.
     static let maxQuantity = 999
@@ -11,10 +11,12 @@ struct ShoppingListItemRow: View {
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void
     let onCategoryChange: (String) -> Void
-    let onStoreChange: (String?) -> Void
+    /// The user's stores, offered as toggles in the row menu.
+    let availableStores: [String]
+    let onToggleStore: (String) -> Void
+    let onManageStores: () -> Void
     let onToggleRecurring: () -> Void
     let allCategories: [String]
-    let availableStores: [String] = ["ASDA", "Tesco", "Sainsbury's", "Lidl", "Aldi", "Morrisons", "Waitrose"]
     
 
     private var defaultCategory: String {
@@ -95,9 +97,9 @@ struct ShoppingListItemRow: View {
                         }
                     }
                     
-                    if let store = item.preferredStore {
+                    if !item.stores.isEmpty {
                         // Scheme-aware secondary colour — teal accent text was unreadable on the frosted card.
-                        Text(store)
+                        Text(item.stores.joined(separator: ", "))
                             .font(.caption2)
                             .fontWeight(.semibold)
                             .adaptiveSecondaryForeground()
@@ -146,22 +148,19 @@ struct ShoppingListItemRow: View {
                 .opacity(item.isChecked ? 0.5 : 1)
                 
                 Menu {
-                    Menu("Change Store") {
-                        Button(action: { onStoreChange(nil) }) {
-                            if item.preferredStore == nil {
-                                Label("None", systemImage: "checkmark")
-                            } else {
-                                Text("None")
-                            }
-                        }
+                    Menu("Stores") {
                         ForEach(availableStores, id: \.self) { store in
-                            Button(action: { onStoreChange(store) }) {
-                                if item.preferredStore == store {
+                            Button(action: { onToggleStore(store) }) {
+                                if item.stores.contains(store) {
                                     Label(store, systemImage: "checkmark")
                                 } else {
                                     Text(store)
                                 }
                             }
+                        }
+                        if !availableStores.isEmpty { Divider() }
+                        Button(action: onManageStores) {
+                            Label(availableStores.isEmpty ? "Add a Store…" : "Manage Stores…", systemImage: "storefront")
                         }
                     }
                     Menu("Change Category") {

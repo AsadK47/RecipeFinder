@@ -31,9 +31,9 @@ final class ShoppingListModelTests: XCTestCase {
         XCTAssertFalse(item.isCompleted)
     }
 
-    func testInit_defaultPreferredStore_isNil() {
+    func testInit_defaultStores_isEmpty() {
         let item = ShoppingListModel(name: "Milk")
-        XCTAssertNil(item.preferredStore)
+        XCTAssertTrue(item.stores.isEmpty)
     }
 
     // MARK: - isChecked / isCompleted sync on init
@@ -63,9 +63,9 @@ final class ShoppingListModelTests: XCTestCase {
         XCTAssertEqual(item.unit, "cups")
     }
 
-    func testInit_customPreferredStore() {
-        let item = ShoppingListModel(name: "Butter", preferredStore: "Whole Foods")
-        XCTAssertEqual(item.preferredStore, "Whole Foods")
+    func testInit_customStores() {
+        let item = ShoppingListModel(name: "Butter", stores: ["Whole Foods"])
+        XCTAssertEqual(item.stores, ["Whole Foods"])
     }
 
     // MARK: - Identifiable / Hashable
