@@ -75,26 +75,52 @@ final class BadgeManager: BadgeManaging {
     /// Legacy library-size path (import/add trigger sites). Only unlocks collection badges — cooking/streak/
     /// breadth badges go through `checkAndUnlockBadges(metrics:)` so they can't unlock on a zero threshold.
     func checkAndUnlockBadges(recipeCount: Int, silent: Bool = false) {
-        for badgeType in BadgeType.allCases {
-            guard badgeType.criterion.metric == .recipesCollected,
-                  recipeCount >= badgeType.criterion.threshold,
-                  !isBadgeUnlocked(badgeType.rawValue) else { continue }
-            // welcomeAboard fires silently — a "you joined" pop mid-session would be confusing.
-            let shouldBeSilent = silent || badgeType == .welcomeAboard
-            unlockBadge(badgeType, silent: shouldBeSilent)
+        let earned = BadgeType.allCases.filter {
+            $0.criterion.metric == .recipesCollected
+                && recipeCount >= $0.criterion.threshold
+                && !isBadgeUnlocked($0.rawValue)
         }
+        unlockBatch(earned, silent: silent)
     }
 
     /// Unified metrics path: unlocks every threshold badge whose metric has reached its target. A superset of
     /// the recipe-count path (it also catches collection badges), driven from the cook choke point.
     func checkAndUnlockBadges(metrics: BadgeMetrics, silent: Bool = false) {
-        for badgeType in BadgeType.allCases {
-            guard let metric = badgeType.criterion.metric,
-                  metrics.value(for: metric) >= badgeType.criterion.threshold,
-                  !isBadgeUnlocked(badgeType.rawValue) else { continue }
-            let shouldBeSilent = silent || badgeType == .welcomeAboard
-            unlockBadge(badgeType, silent: shouldBeSilent)
+        let earned = BadgeType.allCases.filter { badgeType in
+            guard let metric = badgeType.criterion.metric else { return false }
+            return metrics.value(for: metric) >= badgeType.criterion.threshold && !isBadgeUnlocked(badgeType.rawValue)
         }
+        unlockBatch(earned, silent: silent)
+    }
+
+    /// Unlocks every badge in `earned`, but celebrates at most one: when several cross at once (e.g. a jump in the
+    /// library size) the user saw a parade of sheets. The highest-threshold badge gets the sheet; the rest are
+    /// saved quietly and marked shown so they never pop later. welcomeAboard is always silent.
+    private func unlockBatch(_ earned: [BadgeType], silent: Bool) {
+        let celebrated = silent ? nil : earned
+            .filter { $0 != .welcomeAboard }
+            .max { $0.criterion.threshold < $1.criterion.threshold }
+        for badgeType in earned where badgeType != celebrated {
+            unlockBadge(badgeType, silent: true)
+            shownCelebrationIds.insert(badgeType.rawValue)
+        }
+        if let celebrated { unlockBadge(celebrated) }
+        if earned.count > 1 { saveShownCelebrations() }
+    }
+
+    /// Removes collection badges the library no longer earns. Used once after repairing legacy sample recipes that
+    /// had been miscounted as user-collected (which had unlocked every collection badge at once).
+    func revokeUnearnedCollectionBadges(collectedCount: Int) {
+        var changed = false
+        for badgeType in BadgeType.allCases
+        where badgeType.criterion.metric == .recipesCollected
+            && badgeType != .welcomeAboard
+            && collectedCount < badgeType.criterion.threshold
+            && isBadgeUnlocked(badgeType.rawValue) {
+            unlockedBadges[badgeType.rawValue] = nil
+            changed = true
+        }
+        if changed { saveBadges() }
     }
 
     /// Unlock a badge; `silent: true` persists without a celebration sheet (used for welcome/seed badges at launch).

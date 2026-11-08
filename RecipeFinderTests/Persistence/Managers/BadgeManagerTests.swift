@@ -319,4 +319,24 @@ struct BadgeManagerTests {
         #expect(!sut.isBadgeUnlocked(BadgeType.streakTwoWeeks.rawValue))
         #expect(sut.isBadgeUnlocked(BadgeType.hundredRecipes.rawValue))  // collection still unlocks
     }
+
+    // MARK: - Batch unlocks celebrate once
+
+    @Test func checkAndUnlock_manyAtOnce_celebratesOnlyTheHighest() {
+        let sut = makeSUT()
+        sut.checkAndUnlockBadges(recipeCount: 10)
+        #expect(sut.pendingCelebration == .tenRecipes)
+        sut.dismissCelebration()
+        #expect(sut.pendingCelebration == nil)   // firstRecipe / fiveRecipes saved quietly, no parade
+    }
+
+    @Test func revokeUnearnedCollectionBadges_removesOnlyBadgesAboveTheCount() {
+        let sut = makeSUT()
+        sut.checkAndUnlockBadges(recipeCount: 10)
+        sut.revokeUnearnedCollectionBadges(collectedCount: 1)
+        #expect(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.fiveRecipes.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.tenRecipes.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.welcomeAboard.rawValue))
+    }
 }

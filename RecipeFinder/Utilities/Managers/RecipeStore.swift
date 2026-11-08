@@ -72,9 +72,37 @@ final class RecipeStore: RecipeStoring {
             }
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
-            recipes = removeDuplicateCopies(from: fetched)
+            let deduped = removeDuplicateCopies(from: fetched)
+            recipes = await repairLegacySampleFlags(in: deduped)
             isLoading = false
         }
+    }
+
+    /// One-time repair: older builds saved the bundled/starter samples without `isSampleRecipe`, so they counted
+    /// as user-collected and unlocked every collection badge on the first cook. Re-flag copies matching a sample
+    /// by name (never imported ones), then drop the collection badges that only those copies had earned.
+    private func repairLegacySampleFlags(in library: [RecipeModel]) async -> [RecipeModel] {
+        let key = "legacySampleFlagsRepaired_v1"
+        guard !LocalStore.shared.bool(forKey: key) else { return library }
+        LocalStore.shared.set(true, forKey: key)
+
+        let bundled = await Task.detached(priority: .utility) { BundledRecipeCatalog.load() }.value
+        let sampleNames = Set((bundled + SeedRecipeProvider.recipes).map { $0.name.nameKey })
+        var repaired = library
+        var fixedCount = 0
+        for index in repaired.indices
+        where !repaired[index].isSampleRecipe
+            && repaired[index].importedFromURL == nil
+            && sampleNames.contains(repaired[index].name.nameKey) {
+            repaired[index].isSampleRecipe = true
+            if persistence.updateRecipe(repaired[index]) { fixedCount += 1 }
+        }
+        let collected = repaired.filter { !$0.isSampleRecipe }.count
+        BadgeManager.shared.revokeUnearnedCollectionBadges(collectedCount: collected)
+        if fixedCount > 0 {
+            Self.logger.info("Re-flagged \(fixedCount) legacy sample recipes; \(collected) user recipes remain")
+        }
+        return repaired
     }
 
     /// Deletes exact duplicate copies (see `BackupMerge.duplicateRecipeIDs`) and returns the cleaned library.
