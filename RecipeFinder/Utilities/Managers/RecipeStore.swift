@@ -72,10 +72,25 @@ final class RecipeStore: RecipeStoring {
             }
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
-            recipes = fetched
+            recipes = removeDuplicateCopies(from: fetched)
             isLoading = false
         }
     }
+
+    /// Deletes exact duplicate copies (see `BackupMerge.duplicateRecipeIDs`) and returns the cleaned library.
+    /// Idempotent: a no-op once the store is clean. Goes straight to persistence rather than `delete(id:)` so
+    /// image files shared with the kept copy are never removed.
+    private func removeDuplicateCopies(from library: [RecipeModel]) -> [RecipeModel] {
+        let duplicates = BackupMerge.duplicateRecipeIDs(in: library)
+        guard !duplicates.isEmpty else { return library }
+        for id in duplicates {
+            persistence.deleteRecipe(withId: id)
+        }
+        Self.logger.info("Removed \(duplicates.count) duplicate recipe copies")
+        return library.filter { !duplicates.contains($0.id) }
+    }
+
+    private static let logger = AppLogger.logger(category: "RecipeStore")
 
     /// One-time seeding: starters for an empty library, plus the bundled collection (once, even for existing
     /// libraries — ids already present are skipped). Returns the refetched library, or nil if nothing was seeded.

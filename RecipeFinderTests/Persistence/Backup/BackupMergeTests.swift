@@ -101,4 +101,43 @@ import Foundation
         let incoming = ["first": Self.badge("first"), "second": Self.badge("second")]
         #expect(BackupMerge.mergedBadgesWithAdditions(existing: existing, incoming: incoming).addedIDs == ["second"])
     }
+
+    // MARK: - duplicateRecipeIDs(in:)
+
+    private static func copy(_ name: String, ingredients: [String] = ["egg"], cookCount: Int = 0,
+                             isFavorite: Bool = false, isSample: Bool = true) -> RecipeModel {
+        RecipeModel(name: name, category: "Main", difficulty: "Basic", prepTime: "5 min", cookingTime: "10 min",
+                    baseServings: 2,
+                    ingredients: ingredients.map { Ingredient(baseQuantity: 1, unit: "", name: $0) },
+                    prePrepInstructions: [], instructions: ["step"], notes: "",
+                    isFavorite: isFavorite, isSampleRecipe: isSample, cookCount: cookCount)
+    }
+
+    @Test func duplicateRecipeIDs_keepsTheCookedCopyAndRemovesTheRest() {
+        let plain1 = Self.copy("Pancakes")
+        let cooked = Self.copy("Pancakes", cookCount: 2)
+        let plain2 = Self.copy("pancakes ")   // same content, different case/spacing
+        let remove = BackupMerge.duplicateRecipeIDs(in: [plain1, cooked, plain2])
+        #expect(remove == [plain1.id, plain2.id])
+    }
+
+    @Test func duplicateRecipeIDs_ignoresSameNameWithDifferentIngredients() {
+        let a = Self.copy("Curry", ingredients: ["chicken"])
+        let b = Self.copy("Curry", ingredients: ["chickpeas"])
+        #expect(BackupMerge.duplicateRecipeIDs(in: [a, b]).isEmpty)
+    }
+
+    @Test func duplicateRecipeIDs_prefersFavouriteThenUsersOwnOverSample() {
+        let sample = Self.copy("Soup")
+        let own = Self.copy("Soup", isSample: false)
+        let favourite = Self.copy("Soup", isFavorite: true)
+        #expect(BackupMerge.duplicateRecipeIDs(in: [sample, own, favourite]) == [sample.id, own.id])
+        #expect(BackupMerge.duplicateRecipeIDs(in: [sample, own]) == [sample.id])
+    }
+
+    @Test func duplicateRecipeIDs_tieKeepsTheFirstCopy() {
+        let first = Self.copy("Toast")
+        let second = Self.copy("Toast")
+        #expect(BackupMerge.duplicateRecipeIDs(in: [first, second]) == [second.id])
+    }
 }
