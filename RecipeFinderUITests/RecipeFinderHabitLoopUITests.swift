@@ -47,7 +47,9 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
     private func scrollIntoView(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 10) {
         let window = app.windows.firstMatch.frame
         let visible = CGRect(x: 0, y: window.minY + 120, width: window.width, height: window.height - 240)
-        let scrollView = app.scrollViews.firstMatch
+        // The page's own scroll view — the one holding `element`. `scrollViews.firstMatch` picked a small
+        // horizontal strip near the top of the detail page, so swipes never moved the page.
+        let scrollView = app.scrollViews.containing(.button, identifier: element.identifier).firstMatch
         for _ in 0..<maxSwipes {
             let frame = element.frame
             if visible.contains(frame) { return }
