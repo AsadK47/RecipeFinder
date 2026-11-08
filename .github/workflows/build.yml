@@ -1,88 +1,46 @@
-name: Build & Test iOS App
+name: Build & Test
+
+# Pushes and PRs: build + unit tests (~4 min).
+# Nightly and "Run workflow": everything, including the slow UI tests (~12 min).
 
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'RecipeFinder/**'
-      - 'RecipeFinderTests/**'
-      - 'RecipeFinderUITests/**'
-      - 'RecipeShareExtension/**'
-      - '*.xcodeproj/**'
-      - 'Package.swift'
-      - '.github/workflows/build.yml'
   pull_request:
-    branches: [ main ]
+  schedule:
+    - cron: '0 3 * * *'
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  SCHEME: RecipeFinder
-
 jobs:
-  build-and-test:
+  test:
     name: Build & Test
-    # macOS 26 image ships Xcode 26 (Swift 6.3), matching the local dev
-    # toolchain. Older images (Swift 6.0) miscompile @MainActor XCTestCase
-    # async lifecycle with a "sending non-Sendable XCTestCase" error that was
-    # fixed in Swift 6.2+.
     runs-on: macos-26
     timeout-minutes: 30
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      - name: Detect available simulator
-        id: simulator
-        run: |
-          UDID=$(xcrun simctl list devices available --json | jq -r 'first(.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.isAvailable and (.name | test("iPhone"))) | .udid) // ""')
-          if [ -z "$UDID" ]; then
-            echo "::error::No available iOS iPhone simulator found"
-            xcrun simctl list devices available
-            exit 1
-          fi
-          echo "Using simulator UDID: $UDID"
-          echo "DESTINATION=platform=iOS Simulator,id=$UDID" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Swift Package Manager
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: ${{ runner.os }}-spm-
-
-      - name: Resolve dependencies
-        run: xcodebuild -resolvePackageDependencies -scheme "$SCHEME"
+      - uses: actions/checkout@v4
 
       - name: Build & test
         env:
-          # Push to main runs unit tests only to conserve macOS minutes (billed
-          # at 10x); the slow simulator UI tests run on PRs and manual dispatch.
-          EVENT_NAME: ${{ github.event_name }}
+          EVENT: ${{ github.event_name }}
         run: |
           set -o pipefail
-          SKIP_ARGS=""
-          if [ "$EVENT_NAME" = "push" ]; then
-            echo "Push event: running unit tests only (skipping UI tests)."
-            SKIP_ARGS="-skip-testing:RecipeFinderUITests"
-          else
-            echo "Running full suite including UI tests."
-          fi
+          SKIP="-skip-testing:RecipeFinderUITests"
+          if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "workflow_dispatch" ]; then SKIP=""; fi
+          SIM=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
           xcodebuild test \
-            -scheme "$SCHEME" \
-            -destination '${{ steps.simulator.outputs.DESTINATION }}' \
+            -scheme RecipeFinder \
+            -destination "id=$SIM" \
             -resultBundlePath TestResults.xcresult \
-            $SKIP_ARGS \
+            $SKIP \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
-      - name: Upload logs and results
+      - name: Keep logs if it fails
         if: failure()
         uses: actions/upload-artifact@v4
         with:
