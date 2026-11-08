@@ -42,6 +42,26 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
         }
     }
 
+    /// Swipes the page up until `element` sits fully inside the visible window (clear of the tab bar).
+    @MainActor
+    private func scrollIntoView(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 10) {
+        let window = app.windows.firstMatch.frame
+        let visible = CGRect(x: 0, y: window.minY + 120, width: window.width, height: window.height - 240)
+        // The page's own scroll view — the one holding `element`. `scrollViews.firstMatch` picked a small
+        // horizontal strip near the top of the detail page, so swipes never moved the page.
+        let scrollView = app.scrollViews.containing(.button, identifier: element.identifier).firstMatch
+        for _ in 0..<maxSwipes {
+            let frame = element.frame
+            if visible.contains(frame) { return }
+            // Overshot (element above the visible band) → scroll back down; otherwise keep scrolling up.
+            if frame.minY < visible.minY {
+                scrollView.swipeDown(velocity: .slow)
+            } else {
+                scrollView.swipeUp(velocity: .slow)
+            }
+        }
+    }
+
     @MainActor
     func testCookingShowsRatingAndStreakChip() {
         let app = launchApp()
@@ -54,6 +74,11 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
 
         // Cook it — unless an earlier run (state isn't reset) already logged a cook today, which disables the button.
         if markCooked.isEnabled {
+            // The button sits ~1,800pt down a ~3,100pt detail page, and XCUITest's automatic
+            // scroll-to-visible doesn't work in this SwiftUI ScrollView (hit point {-1,-1}), so scroll it
+            // into view ourselves before tapping.
+            scrollIntoView(markCooked, in: app)
+            XCTAssertTrue(markCooked.isHittable, "Mark as Cooked should be on screen after scrolling.")
             markCooked.tap()
 
             // A post-cook photo sheet auto-presents ~0.8s later — dismiss it.
