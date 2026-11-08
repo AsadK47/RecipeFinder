@@ -245,13 +245,13 @@ struct RecipeSearchView: View {
     private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
-            rediscoverySection
             activeFiltersSection
             recipeContentArea
         }
     }
 
     /// "Cook it again" nudge for a loved recipe gone cold — only on the plain browse home (no search/filter).
+    /// Rendered as the first row of the results list so it scrolls away rather than pinning screen space.
     @ViewBuilder
     private var rediscoverySection: some View {
         if searchText.isEmpty, activeFilterCount == 0, let pick = RecipeRediscovery.pick(from: recipes) {
@@ -259,8 +259,6 @@ struct RecipeSearchView: View {
                 HapticManager.shared.light()
                 navigationPath.append(pick.id)
             }
-            .padding(.horizontal, AppTheme.spacing16)
-            .padding(.bottom, AppTheme.spacing8)
         }
     }
 
@@ -320,7 +318,9 @@ struct RecipeSearchView: View {
                     filteredRecipes: current,
                     onRequestDelete: requestDelete,
                     onRefresh: refreshRecipesAsync
-                )
+                ) {
+                    rediscoverySection
+                }
             }
         }
     }
