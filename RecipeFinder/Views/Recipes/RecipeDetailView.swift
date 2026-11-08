@@ -88,6 +88,8 @@ struct RecipeDetailView: View {
                     .padding(.bottom, AppTheme.spacing100)
                     .frame(width: geometry.size.width)
                 }
+
+                NavigationBarScrollFade()
             }
         }
         .navigationBarTitleDisplayMode(.inline)

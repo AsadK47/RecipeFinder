@@ -32,3 +32,35 @@ struct AppBackground: View {
             .ignoresSafeArea()
     }
 }
+
+/// Repaints the backdrop over the transparent navigation bar, fading out at its bottom edge, so content scrolling up
+/// disappears behind the toolbar buttons instead of showing through them. Invisible at rest: it draws the same
+/// pixels as the `AppBackground` beneath it (the opaque base matches the window colour the translucent gradient
+/// sits on). Place it above the ScrollView in the screen's ZStack.
+struct NavigationBarScrollFade: View {
+    var body: some View {
+        GeometryReader { proxy in
+            // Fade ends at the bar's bottom edge so content resting just below it (the hero photo) is never dimmed.
+            let barHeight = max(proxy.safeAreaInsets.top, 1)
+            let solidEnd = max(barHeight - AppTheme.spacing16, 0) / barHeight
+            ZStack {
+                Color(uiColor: .systemBackground).ignoresSafeArea()
+                AppBackground()
+            }
+            .mask(alignment: .top) {
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: solidEnd),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: barHeight)
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}

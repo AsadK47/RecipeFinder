@@ -40,6 +40,10 @@ inputs **blend** into the glass via translucent fills, not solid fills.
   (segmented pickers) look left-aligned. See the Details section.
 
 ## Lessons (dated — newest first)
+- **2026-11-08 — A transparent nav bar needs a scroll fade.** With `.toolbarBackground(.hidden)`
+  and a transparent bar appearance, scrolled content showed straight through the floating
+  toolbar buttons (recipe detail). Fix: put `NavigationBarScrollFade()` above the ScrollView in
+  the screen's ZStack — it repaints `AppBackground` over the bar only, so it's invisible at rest.
 - **2026-09-24 — A translucent fill alone isn't a visible boundary on a gradient.**
   `white.opacity(0.1)` read fine on the darker blue but vanished on the light teal,
   so the notes field looked like unstyled floating text. Fix: keep the translucent
