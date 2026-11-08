@@ -9,7 +9,7 @@ struct TermsOfServiceView: View {
                 SectionTitle("1. Interpretation and General")
                 
                 BodyText("1.1 Definitions. In these Terms:")
-                LegalBulletPoint("\"Developer\" means Asad Ullah Khan, an individual based in England and Wales.")
+                LegalBulletPoint("\"Developer\" means Asad Khan, an individual based in England and Wales.")
                 LegalBulletPoint("\"Application\" means the RecipeFinder mobile application and associated website located at recipefinder.uk.")
                 LegalBulletPoint("\"User\" or \"you\" means any person who accesses, downloads, installs or uses the Application.")
                 LegalBulletPoint("\"Terms\" means these Terms of Service, as amended from time to time.")
@@ -92,7 +92,7 @@ struct TermsOfServiceView: View {
                 SectionTitle("15. Contact")
                 
                 BodyText("For enquiries regarding these Terms, you may contact:")
-                BodyText("Asad Ullah Khan")
+                BodyText("Asad Khan")
                 BodyText("Email: recipefinderuk@gmail.com")
                 BodyText("Website: recipefinder.uk")
             }

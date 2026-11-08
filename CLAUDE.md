@@ -1,7 +1,7 @@
 # RecipeFinder
 
 Privacy-first, offline-first iOS recipe manager (SwiftUI, iOS 17.5+, Swift 6).
-Proprietary — Asad Ullah Khan. GitHub: https://github.com/AsadK47/RecipeFinder
+Proprietary — Asad Khan. GitHub: https://github.com/AsadK47/RecipeFinder
 
 ## Hard constraints
 These are non-negotiable. Violations are bugs, not style choices.
@@ -17,8 +17,8 @@ These are non-negotiable. Violations are bugs, not style choices.
 - `RecipeFinderTests/CLAUDE.md` — Testing framework, conventions, coverage. Read when editing tests.
 
 ## Apple Developer
-- Paid individual Apple Developer account (Asad Ullah Khan); TestFlight is live — `testflight.yml` uploads a build on every app-code push to `main`.
-- No company entity: the legal owner is Asad Ullah Khan as an individual — never add a company name or number. Contact: `recipefinderuk@gmail.com`.
+- Paid individual Apple Developer account (Asad Khan); TestFlight is live — `testflight.yml` uploads a build on every app-code push to `main`.
+- No company entity: the legal owner is Asad Khan as an individual — never add a company name or number. Contact: `recipefinderuk@gmail.com`.
 
 ## Architecture
 Clean Architecture — dependencies point inward:

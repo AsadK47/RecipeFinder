@@ -10,7 +10,7 @@ struct PrivacyPolicyView: View {
                 SectionTitle("1. Interpretation and Definitions")
 
                 BodyText("1.1 In this Privacy Policy:")
-                LegalBulletPoint("\"Developer\", \"we\", \"us\" or \"our\" means Asad Ullah Khan, an individual based in England and Wales.")
+                LegalBulletPoint("\"Developer\", \"we\", \"us\" or \"our\" means Asad Khan, an individual based in England and Wales.")
                 LegalBulletPoint("\"Application\" means the RecipeFinder mobile application software.")
                 LegalBulletPoint("\"User\", \"you\" or \"your\" means the individual accessing or using the Application.")
                 LegalBulletPoint("\"Personal Information\" means any information relating to an identified or identifiable natural person.")
@@ -99,7 +99,7 @@ struct PrivacyPolicyView: View {
                 SectionTitle("13. Contact Information")
 
                 BodyText("13.1 For enquiries regarding this Privacy Policy, you may contact:")
-                BodyText("Asad Ullah Khan")
+                BodyText("Asad Khan")
                 BodyText("Email: recipefinderuk@gmail.com")
                 BodyText("Website: recipefinder.uk")
             }

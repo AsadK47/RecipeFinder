@@ -85,7 +85,7 @@ struct LegalInformationView: View {
                         Text("Version 1.0.0 (Build 1)")
                             .font(.caption2)
                             .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
-                        Text("© 2025 Asad Ullah Khan")
+                        Text("© 2025 Asad Khan")
                             .font(.caption2)
                             .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                     }

@@ -129,7 +129,7 @@ RecipeFinder/
 
 ## ⚖️ License & Legal
 
-**Copyright © 2024-2026 Asad Ullah Khan. All Rights Reserved.**
+**Copyright © 2024-2026 Asad Khan. All Rights Reserved.**
 
 This software is proprietary.
 
@@ -144,7 +144,7 @@ For licensing inquiries: recipefinderuk@gmail.com
 
 ---
 
-**© 2024-2026 Asad Ullah Khan • All Rights Reserved**
+**© 2024-2026 Asad Khan • All Rights Reserved**
 
 Made with ❤️ in the UK • [recipefinder.uk](https://recipefinder.uk)
 
