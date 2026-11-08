@@ -31,7 +31,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             snap(app, "02-recipe")
 
             // Fill the shopping list from this recipe so the Groceries shot isn't empty.
-            let addAll = app.buttons["Add all ingredients to groceries"]
+            let addAll = app.buttons["Add all ingredients to groceries"].firstMatch
             if addAll.waitForExistence(timeout: 5) {
                 addAll.tap()
                 settle()

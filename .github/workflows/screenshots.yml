@@ -42,6 +42,7 @@ jobs:
           ls -la "$RUNNER_TEMP/shots"
 
       - name: Make web-sized copies
+        if: success() || failure()
         run: |
           # Full-size PNGs are ~3 MB each; the website uses 660px-wide JPEGs (~100 KB).
           for f in "$RUNNER_TEMP"/shots/*.png; do
@@ -50,6 +51,7 @@ jobs:
           done
 
       - name: Publish to the "screenshots" release
+        if: success() || failure()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
