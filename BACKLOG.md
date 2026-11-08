@@ -57,7 +57,6 @@ Log, and add review findings under **Inbox**. Each item says what "done" means �
   toolbar; apply `NavigationBarScrollFade` (see DesignSystem.md lesson 2026-11-08) where it does.
 
 ## Needs owner
-- 🙋 TestFlight CI mints a new "Created via API" Apple Development certificate per run; Apple caps them (~10), then uploads fail. Owner revokes them at developer.apple.com → Certificates when that happens (last cleared 2026-11-08). Fix candidate needing owner OK: a workflow step that revokes the run's dev certificate via the App Store Connect API (forcing "Apple Distribution" failed: conflicts with automatic signing).
 - 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 

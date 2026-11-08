@@ -18,6 +18,7 @@ on:
       - 'RecipeShareExtension/**'
       - '*.xcodeproj/**'
       - '.github/workflows/testflight.yml'
+      - '.github/scripts/revoke_ci_dev_certs.py'
   workflow_dispatch:
 
 concurrency:
@@ -50,6 +51,16 @@ jobs:
           printf '%s\n' "$ASC_KEY_P8" > "$KEY_PATH"
           chmod 600 "$KEY_PATH"
           echo "ASC_KEY_PATH=$KEY_PATH" >> "$GITHUB_ENV"
+
+      # Xcode's cloud signing mints an Apple Development certificate on every fresh runner and Apple caps them, so
+      # clear CI-made ones before archiving (headroom) and after the run (no build-up). Never touches distribution
+      # certificates or the owner's own Mac certificate. See .github/scripts/revoke_ci_dev_certs.py.
+      - name: Revoke CI development certificates (before)
+        continue-on-error: true
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: python3 .github/scripts/revoke_ci_dev_certs.py
 
       - name: Archive
         env:
@@ -100,6 +111,14 @@ jobs:
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" | tee export.log
+
+      - name: Revoke CI development certificates (after)
+        if: always()
+        continue-on-error: true
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: python3 .github/scripts/revoke_ci_dev_certs.py
 
       - name: Remove API key
         if: always()
