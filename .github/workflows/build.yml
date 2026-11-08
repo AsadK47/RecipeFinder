@@ -1,7 +1,8 @@
 name: Build & Test
 
-# Pushes and PRs: build + unit tests (~4 min).
-# Nightly and "Run workflow": everything, including the slow UI tests (~12 min).
+# Pushes and PRs: build + unit tests.
+# Nightly and "Run workflow": everything, including the slow UI tests.
+# Xcode's build folder is cached between runs so only changed files recompile.
 
 on:
   push:
@@ -23,6 +24,35 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history, so file dates can be restored below
+
+      # A fresh checkout stamps every file "now", which makes Xcode recompile everything even with a
+      # cached build folder. Reset each file to its last commit time so unchanged files stay up to date.
+      - name: Restore file dates
+        run: |
+          python3 - <<'EOF'
+          import os, subprocess
+          out = subprocess.run(["git", "log", "--format=@%ct", "--name-only"],
+                               capture_output=True, text=True, check=True).stdout
+          seen, ts = set(), None
+          for line in out.splitlines():
+              if line.startswith("@"):
+                  ts = int(line[1:])
+              elif line and line not in seen and os.path.isfile(line):
+                  seen.add(line)
+                  os.utime(line, (ts, ts))
+          print(f"restored {len(seen)} file dates")
+          EOF
+          # Runners get new disk inodes each time; tell Xcode not to treat that as a change.
+          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
+
+      - name: Restore build cache
+        uses: actions/cache@v4
+        with:
+          path: DerivedData
+          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
+          restore-keys: deriveddata-test-${{ runner.os }}-
 
       - name: Build & test
         env:
@@ -36,6 +66,7 @@ jobs:
           xcodebuild test \
             -scheme RecipeFinder \
             -destination "id=$SIM" \
+            -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult \
             $SKIP \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
