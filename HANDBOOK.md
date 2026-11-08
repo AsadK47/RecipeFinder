@@ -5,7 +5,7 @@ keeps its own lifecycle (stable rules, slow-moving roadmap, throwaway plans) so 
 stays fresh. Follow the links.
 
 RecipeFinder is a privacy-first, offline-first iOS recipe manager
-(SwiftUI · iOS 17.5+ · Swift 6), owned by RecipeFinder Limited.
+(SwiftUI · iOS 17.5+ · Swift 6), owned by Asad Ullah Khan.
 
 ---
 

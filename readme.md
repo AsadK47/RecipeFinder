@@ -5,7 +5,7 @@
 **Sophisticated recipe management with stunning design**  
 *All your culinary treasures, beautifully organised. Completely private.*
 
-[![Build & Test](https://github.com/RecipeFinderLimited/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/RecipeFinderLimited/RecipeFinder/actions/workflows/build.yml)
+[![Build & Test](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
 [![Platform](https://img.shields.io/badge/platform-iOS%2017.5%2B-blue.svg)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org/)
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
@@ -40,7 +40,7 @@
 ### For Developers
 
 ```bash
-git clone https://github.com/RecipeFinderLimited/RecipeFinder.git
+git clone https://github.com/AsadK47/RecipeFinder.git
 cd RecipeFinder
 open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ```
@@ -120,31 +120,31 @@ RecipeFinder/
 
 ## 💬 Support & Contact
 
-- 🐛 **Report Bugs**: [GitHub Issues](https://github.com/RecipeFinderLimited/RecipeFinder/issues)
-- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/RecipeFinderLimited/RecipeFinder/discussions)
-- 📧 **Email**: recipefinderlimited@icloud.com
+- 🐛 **Report Bugs**: [GitHub Issues](https://github.com/AsadK47/RecipeFinder/issues)
+- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/AsadK47/RecipeFinder/discussions)
+- 📧 **Email**: recipefinderuk@gmail.com
 - 🌐 **Website**: [recipefinder.uk](https://recipefinder.uk)
 
 > **Note**: This is proprietary software. Pull requests are not accepted.
 
 ## ⚖️ License & Legal
 
-**Copyright © 2024-2026 RECIPEFINDER LIMITED. All Rights Reserved.**
+**Copyright © 2024-2026 Asad Ullah Khan. All Rights Reserved.**
 
-This software is proprietary. Company No. 16833243 (England and Wales).
+This software is proprietary.
 
 For complete terms, see:
 - 📄 [Full License Agreement](./LICENSE)
 - 🔒 [Privacy Policy](https://recipefinder.uk/privacy.html)
 - 📋 [Terms of Service](https://recipefinder.uk/terms.html)
 
-For licensing inquiries: recipefinderlimited@icloud.com
+For licensing inquiries: recipefinderuk@gmail.com
 
 <div align="center">
 
 ---
 
-**© 2024-2026 RECIPEFINDER LIMITED • All Rights Reserved**
+**© 2024-2026 Asad Ullah Khan • All Rights Reserved**
 
 Made with ❤️ in the UK • [recipefinder.uk](https://recipefinder.uk)
 

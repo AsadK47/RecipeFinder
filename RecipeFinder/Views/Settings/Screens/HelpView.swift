@@ -130,9 +130,9 @@ struct HelpView: View {
 
             SettingsSection(title: "Contact Support", items: [
                 .init(
-                    row: SettingsRow(icon: "envelope.fill", iconColor: .teal, title: "Email Support", subtitle: "recipefinderlimited@icloud.com", accessory: .externalLink),
+                    row: SettingsRow(icon: "envelope.fill", iconColor: .teal, title: "Email Support", subtitle: "recipefinderuk@gmail.com", accessory: .externalLink),
                     action: {
-                        if let url = URL(string: "mailto:recipefinderlimited@icloud.com?subject=RecipeFinder%20Support") {
+                        if let url = URL(string: "mailto:recipefinderuk@gmail.com?subject=RecipeFinder%20Support") {
                             UIApplication.shared.open(url)
                         }
                     }

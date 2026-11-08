@@ -3,7 +3,6 @@ import SwiftUI
 struct LegalInformationView: View {
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
-    @State private var showCompanyCompliance = false
 
     var body: some View {
         ZStack {
@@ -11,32 +10,6 @@ struct LegalInformationView: View {
 
             ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                            HStack {
-                                Image(systemName: "building.2.fill")
-                                    .font(.title2)
-                                    .adaptiveForegroundColor()
-
-                                Text("Company Information")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .adaptiveForegroundColor()
-                            }
-
-                            Divider()
-                                .padding(.vertical, AppTheme.spacing4)
-
-                            CompanyInfoRow(label: "Legal Name", value: "RECIPEFINDER LIMITED")
-                            CompanyInfoRow(label: "Company Number", value: "16833243")
-                            CompanyInfoRow(label: "Registered", value: "England and Wales")
-                            CompanyInfoRow(label: "Incorporation Date", value: "5 November 2025")
-                            CompanyInfoRow(label: "Company Type", value: "Private Limited Company")
-                            CompanyInfoRow(label: "Status", value: "Active", valueColor: AppTheme.success)
-                        }
-                        .padding(AppTheme.spacing24)
-                    }
-
                     LegalContactCard()
 
                     SettingsCard {
@@ -66,22 +39,6 @@ struct LegalInformationView: View {
                                     iconColor: AppTheme.textColor(),
                                     title: "Terms of Service",
                                     subtitle: "Terms and conditions of use"
-                                )
-                            }
-                            .buttonStyle(PlainButtonStyle())
-
-                            Divider()
-                                .padding(.leading, AppTheme.spacing62)
-
-                            Button(action: {
-                                showCompanyCompliance = true
-                                HapticManager.shared.light()
-                            }) {
-                                LegalDocRow(
-                                    icon: "checkmark.shield.fill",
-                                    iconColor: AppTheme.textColor(),
-                                    title: "UK Company Compliance",
-                                    subtitle: "Companies Act 2006 compliance"
                                 )
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -117,57 +74,6 @@ struct LegalInformationView: View {
                                 description: "Adherence to UK data protection legislation",
                                 color: AppTheme.textColor()
                             )
-
-                            ComplianceBadge(
-                                icon: "building.columns.fill",
-                                title: "Companies Act 2006",
-                                description: "Registered and compliant with UK company law",
-                                color: AppTheme.textColor()
-                            )
-
-                            ComplianceBadge(
-                                icon: "doc.text.fill",
-                                title: "Companies House",
-                                description: "Active registration in England and Wales",
-                                color: AppTheme.textColor()
-                            )
-                        }
-                        .padding(AppTheme.spacing24)
-                    }
-
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                            HStack {
-                                Image(systemName: "person.crop.circle.badge.checkmark")
-                                    .font(.title2)
-                                    .adaptiveForegroundColor()
-
-                                Text("Company Directors")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .adaptiveForegroundColor()
-                            }
-
-                            Divider()
-                                .padding(.vertical, AppTheme.spacing4)
-
-                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                                Text("Asad Khan")
-                                    .font(.headline)
-                                    .adaptiveForegroundColor()
-
-                                Label("Director", systemImage: "briefcase.fill")
-                                    .font(.caption)
-                                    .adaptiveSecondaryForeground()
-
-                                Label("Appointed: 5 November 2025", systemImage: "calendar")
-                                    .font(.caption)
-                                    .adaptiveSecondaryForeground()
-                            }
-                            .padding(AppTheme.spacing12)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(AppTheme.adaptive(light: Color.white.opacity(0.05), dark: Color.white.opacity(AppTheme.dividerOpacity)))
-                            .cornerRadius(AppTheme.cornerRadius12)
                         }
                         .padding(AppTheme.spacing24)
                     }
@@ -179,7 +85,7 @@ struct LegalInformationView: View {
                         Text("Version 1.0.0 (Build 1)")
                             .font(.caption2)
                             .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
-                        Text("© 2025 RECIPEFINDER LIMITED")
+                        Text("© 2025 Asad Ullah Khan")
                             .font(.caption2)
                             .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                     }
@@ -195,9 +101,6 @@ struct LegalInformationView: View {
         }
         .sheet(isPresented: $showTermsOfService) {
             TermsOfServiceView()
-        }
-        .sheet(isPresented: $showCompanyCompliance) {
-            CompanyComplianceView()
         }
     }
 }

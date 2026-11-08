@@ -302,7 +302,6 @@
 		F3E9D1463043AA7F008BF231 /* LegalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1453043AA7F008BF231 /* LegalComponents.swift */; };
 		F3E9D1483043AA96008BF231 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1473043AA96008BF231 /* PrivacyPolicyView.swift */; };
 		F3E9D14A3043AAB0008BF231 /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1493043AAB0008BF231 /* TermsOfServiceView.swift */; };
-		F3E9D14C3043AAC2008BF231 /* CompanyComplianceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D14B3043AAC2008BF231 /* CompanyComplianceView.swift */; };
 		F3E9D14E3043AAD4008BF231 /* LegalContactCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D14D3043AAD4008BF231 /* LegalContactCard.swift */; };
 		F3E9D1503043EB63008BF231 /* KitchenRecipeMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D14F3043EB63008BF231 /* KitchenRecipeMatcher.swift */; };
 		F3E9D1523043EB86008BF231 /* KitchenRecipeMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1513043EB86008BF231 /* KitchenRecipeMatcherTests.swift */; };
@@ -758,7 +757,6 @@
 		F3E9D1453043AA7F008BF231 /* LegalComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalComponents.swift; sourceTree = "<group>"; };
 		F3E9D1473043AA96008BF231 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		F3E9D1493043AAB0008BF231 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
-		F3E9D14B3043AAC2008BF231 /* CompanyComplianceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyComplianceView.swift; sourceTree = "<group>"; };
 		F3E9D14D3043AAD4008BF231 /* LegalContactCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalContactCard.swift; sourceTree = "<group>"; };
 		F3E9D14F3043EB63008BF231 /* KitchenRecipeMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenRecipeMatcher.swift; sourceTree = "<group>"; };
 		F3E9D1513043EB86008BF231 /* KitchenRecipeMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenRecipeMatcherTests.swift; sourceTree = "<group>"; };
@@ -1918,7 +1916,6 @@
 				F3E9D1453043AA7F008BF231 /* LegalComponents.swift */,
 				F3E9D1473043AA96008BF231 /* PrivacyPolicyView.swift */,
 				F3E9D1493043AAB0008BF231 /* TermsOfServiceView.swift */,
-				F3E9D14B3043AAC2008BF231 /* CompanyComplianceView.swift */,
 				F3E9D14D3043AAD4008BF231 /* LegalContactCard.swift */,
 			);
 			path = Legal;
@@ -2339,7 +2336,6 @@
 				9E6DEA942EF5EFE8001E7B24 /* Constants.swift in Sources */,
 				9E1E26142FBA09F80002A220 /* RecipeImportBuilder.swift in Sources */,
 				9E97EEA83007962900D35FAB /* HelpView.swift in Sources */,
-				F3E9D14C3043AAC2008BF231 /* CompanyComplianceView.swift in Sources */,
 				F3B837D13055F0E80003AEF8 /* CollectionManager.swift in Sources */,
 				F3E9D15E30444D41008BF231 /* ShoppingListGrouping.swift in Sources */,
 				F3E9D12F3043A5BE008BF231 /* RecipeParser+StructuredData.swift in Sources */,

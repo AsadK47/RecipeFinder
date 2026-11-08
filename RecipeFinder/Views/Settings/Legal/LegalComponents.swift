@@ -53,48 +53,6 @@ struct LegalBulletPoint: View {
     }
 }
 
-struct CompanyDetailRow: View {
-    let label: String
-    let value: String
-    
-    var body: some View {
-        HStack {
-            Text(label + ":")
-                .font(.subheadline)
-                .adaptiveSecondaryForeground()
-            Spacer()
-            Text(value)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .adaptiveForegroundColor()
-        }
-        .padding(.vertical, AppTheme.spacing2)
-    }
-}
-
-struct CompanyInfoRow: View {
-    let label: String
-    let value: String
-    var valueColor: Color = .primary
-    
-    
-    var body: some View {
-        HStack(alignment: .top) {
-            Text(label)
-                .font(.subheadline)
-                .adaptiveSecondaryForeground()
-                .frame(width: AppTheme.width140, alignment: .leading)
-            
-            Text(value)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundStyle(valueColor == .primary ? AppTheme.textColor() : valueColor)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.vertical, AppTheme.spacing4)
-    }
-}
-
 struct LegalDocRow: View {
     let icon: String
     let iconColor: Color

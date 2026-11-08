@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// "Contact Information" card (company email and website links) on the legal screen.
+/// "Contact Information" card (email and website links) on the legal screen.
 struct LegalContactCard: View {
 
     var body: some View {
@@ -21,7 +21,7 @@ struct LegalContactCard: View {
                     .padding(.vertical, AppTheme.spacing4)
                 
                 Button(action: {
-                    if let url = URL(string: "mailto:recipefinderlimited@icloud.com") {
+                    if let url = URL(string: "mailto:recipefinderuk@gmail.com") {
                         UIApplication.shared.open(url)
                     }
                 }) {
@@ -31,10 +31,10 @@ struct LegalContactCard: View {
                             .font(.title3)
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                            Text("Company Email")
+                            Text("Email")
                                 .font(.caption)
                                 .adaptiveSecondaryForeground()
-                            Text("recipefinderlimited@icloud.com")
+                            Text("recipefinderuk@gmail.com")
                                 .font(.subheadline)
                                 .adaptiveForegroundColor()
                         }

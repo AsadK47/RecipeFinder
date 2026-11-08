@@ -66,7 +66,7 @@ well → decide what to cook next.* Anything not serving that loop is secondary.
 **One hard constraint.** iCloud sync is **blocked until paid Apple Developer
 Program enrollment** — CloudKit needs the iCloud capability and a container,
 unavailable on a free personal team (dev stays on the free team until
-TestFlight/App Store; enrolling RecipeFinder Limited still needs a D-U-N-S).
+TestFlight/App Store).
 Durability therefore splits: the **backup/export round-trip is pure local file
 I/O and is done**; **iCloud sync is deferred**, but the Core Data model is kept
 CloudKit-ready (no unique constraints, optional relationships, defaults) so
@@ -268,7 +268,7 @@ The question "should we store to S3 or equivalent?" resolves to *no* for persona
 libraries. CloudKit's **private database is the S3 equivalent**, hosted in the
 *user's own* iCloud: we never see the data, it costs us nothing per user, and
 recipe images ride along as `CKAsset`s. Running our own S3/backend would make us
-the data controller (GDPR liability for a UK Ltd), add per-user cost for zero
+the data controller (GDPR liability for us), add per-user cost for zero
 revenue, and contradict the privacy wedge. A real backend earns its place **only
 if** we later build *public/social* sharing (see Recipe Sharing) — and even then
 CloudKit's **public** database or CloudKit Sharing likely covers it server-lessly.
