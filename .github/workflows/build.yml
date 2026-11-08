@@ -6,7 +6,7 @@ name: Build & Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 'agent/**' ]   # agent/** = scheduled agent loop branches (see BACKLOG.md)
   pull_request:
   schedule:
     - cron: '0 3 * * *'
