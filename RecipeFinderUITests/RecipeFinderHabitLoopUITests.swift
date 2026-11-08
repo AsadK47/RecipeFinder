@@ -42,6 +42,24 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
         }
     }
 
+    /// Swipes the page up until `element` sits fully inside the visible window (clear of the tab bar).
+    @MainActor
+    private func scrollIntoView(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 10) {
+        let window = app.windows.firstMatch.frame
+        let visible = CGRect(x: 0, y: window.minY + 120, width: window.width, height: window.height - 240)
+        let scrollView = app.scrollViews.firstMatch
+        for _ in 0..<maxSwipes {
+            let frame = element.frame
+            if visible.contains(frame) { return }
+            // Overshot (element above the visible band) → scroll back down; otherwise keep scrolling up.
+            if frame.minY < visible.minY {
+                scrollView.swipeDown(velocity: .slow)
+            } else {
+                scrollView.swipeUp(velocity: .slow)
+            }
+        }
+    }
+
     @MainActor
     func testCookingShowsRatingAndStreakChip() {
         let app = launchApp()
@@ -54,22 +72,12 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
 
         // Cook it — unless an earlier run (state isn't reset) already logged a cook today, which disables the button.
         if markCooked.isEnabled {
-            // The button sits near the bottom of a long detail page; on CI, XCUITest's own scroll-to-visible
-            // left it non-hittable (hit point {-1,-1}). Scroll it up first, then tap via the shared helper.
-            // Not masking: a tap that misses still fails the isEnabled check below.
-            app.swipeUp()
-
-            // TEMP diagnostic: if the button still isn't hittable, dump what is on screen so CI shows what covers it.
-            if !markCooked.isHittable {
-                print("DIAG markCooked frame: \(markCooked.frame) window: \(app.windows.firstMatch.frame)")
-                print("DIAG hierarchy:\n\(app.debugDescription)")
-                let diag = XCTAttachment(screenshot: app.screenshot())
-                diag.name = "DIAG — Mark as Cooked not hittable"
-                diag.lifetime = .keepAlways
-                add(diag)
-            }
-
-            tapWhenReady(markCooked, "Mark as Cooked should be tappable.")
+            // The button sits ~1,800pt down a ~3,100pt detail page, and XCUITest's automatic
+            // scroll-to-visible doesn't work in this SwiftUI ScrollView (hit point {-1,-1}), so scroll it
+            // into view ourselves before tapping.
+            scrollIntoView(markCooked, in: app)
+            XCTAssertTrue(markCooked.isHittable, "Mark as Cooked should be on screen after scrolling.")
+            markCooked.tap()
 
             // A post-cook photo sheet auto-presents ~0.8s later — dismiss it.
             let skip = app.buttons["Skip"]
