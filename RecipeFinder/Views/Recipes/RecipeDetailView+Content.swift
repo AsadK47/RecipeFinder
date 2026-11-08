@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 // 1–5 star rating; tap the active star to clear to 0 (unrated).
 private struct StarRatingView: View {
@@ -502,7 +503,7 @@ extension RecipeDetailView {
     var cookHistoryCard: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             // Rating only appears once the recipe has actually been cooked — you rate what you've made,
-            // not a recipe you've never tried. Before the first cook the card leads with "Mark as Cooked".
+            // not a recipe you've never tried. Logging a cook is the "Made it" button in the action row.
             if recipe.cookCount > 0 {
                 HStack {
                     Label("Rating", systemImage: "star")
@@ -535,27 +536,40 @@ extension RecipeDetailView {
                 }
             }
 
-            let cookedToday = recipe.wasCookedToday()
-            Button(action: recordCook) {
-                Label(cookedToday ? "Cooked today" : "Mark as Cooked", systemImage: "checkmark.circle.fill")
-                    .font(.subheadline.weight(.semibold))
-                    .adaptiveForegroundColor()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, AppTheme.spacing10)
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                            .fill(AppTheme.accentColor.opacity(0.15))
-                    )
-            }
-            .buttonStyle(.plain)
-            .disabled(cookedToday)
-            .accessibilityIdentifier("recipe.markCooked")
-            .opacity(cookedToday ? AppTheme.glassLightOpacity : 1)
-            .accessibilityHint(cookedToday ? "Already logged today" : "Increments the cook count and records today")
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .appCard(elevated: true)
+    }
+
+    /// The recipe's main actions in one row under the title, so nothing important is a scroll away:
+    /// Cook (the one accent-filled primary), Shop, and Made it (logs a cook — was buried ~2 screens down).
+    var primaryActionsRow: some View {
+        let cookedToday = recipe.wasCookedToday()
+        return HStack(spacing: AppTheme.spacing8) {
+            PrimaryButton("Cook", systemImage: "frying.pan.fill", fillWidth: true) {
+                showCookingMode = true
+            }
+            .accessibilityLabel("Start Cooking Mode")
+            .popoverTip(CookingModeTip(), arrowEdge: .top)
+
+            PrimaryButton("Shop", systemImage: "cart.badge.plus", fillWidth: true, variant: .secondary,
+                          action: addAllIngredientsToShoppingList)
+                .disabled(recipe.ingredients.isEmpty)
+                .accessibilityLabel("Add all ingredients to groceries")
+
+            PrimaryButton(cookedToday ? "Made" : "Made it", systemImage: "checkmark.circle", fillWidth: true,
+                          variant: .secondary, action: recordCook)
+                .disabled(cookedToday)
+                .opacity(cookedToday ? AppTheme.glassLightOpacity : 1)
+                .accessibilityIdentifier("recipe.markCooked")
+                .accessibilityLabel(cookedToday ? "Cooked today" : "Mark as Cooked")
+                .accessibilityHint(cookedToday ? "Already logged today" : "Increments the cook count and records today")
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
+        .padding(.horizontal, AppTheme.spacing20)
+        .padding(.bottom, AppTheme.spacing16)
     }
 
 }

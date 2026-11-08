@@ -15,7 +15,7 @@ struct RecipeDetailView: View {
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
     @State private var showAddToCollection = false
-    @State private var showCookingMode = false
+    @State var showCookingMode = false
     @State var saveError: String?
     static let saveErrorMessage = "Your changes couldn't be saved. Please try again."
     @State var showTimerSheet = false
@@ -60,6 +60,7 @@ struct RecipeDetailView: View {
                 ScrollView([.vertical], showsIndicators: true) {
                     VStack(spacing: 0) {
                         recipeTitleView
+                        primaryActionsRow
                         recipeInfoCardsView
                         ingredientsSection
 
@@ -98,7 +99,6 @@ struct RecipeDetailView: View {
                     onEdit: { beginEdit() },
                     onToggleFavorite: toggleFavorite,
                     onAddToCollection: { showAddToCollection = true },
-                    onStartCooking: { showCookingMode = true },
                     onManagePhotos: { showPhotoManager = true },
                     onPrint: { RecipePrintFormatter.present(for: recipe) }
                 )

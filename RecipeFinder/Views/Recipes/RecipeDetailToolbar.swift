@@ -1,28 +1,17 @@
 import SwiftUI
-import TipKit
 
-// Trailing detail toolbar: minimal — Favorite toggle + overflow menu; contextual actions live inline in the content.
+// Trailing detail toolbar: minimal — Favorite toggle + overflow menu; Cook / Shop / Made it live in the
+// action row under the title (RecipeDetailView.primaryActionsRow).
 struct RecipeDetailToolbar: View {
     let recipe: RecipeModel
     let onEdit: () -> Void
     let onToggleFavorite: () -> Void
     let onAddToCollection: () -> Void
-    let onStartCooking: () -> Void
     let onManagePhotos: () -> Void
     let onPrint: () -> Void
 
-    private let cookingModeTip = CookingModeTip()
-
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
-            Button(action: onStartCooking) {
-                Image(systemName: "frying.pan.fill")
-                    .font(.title3)
-                    .adaptiveForegroundColor()
-            }
-            .accessibilityLabel("Start Cooking Mode")
-            .popoverTip(cookingModeTip, arrowEdge: .top)
-
             AnimatedHeartButton(isFavorite: .constant(recipe.isFavorite), action: onToggleFavorite)
 
             Button(action: onAddToCollection) {
