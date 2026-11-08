@@ -54,7 +54,11 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
 
         // Cook it — unless an earlier run (state isn't reset) already logged a cook today, which disables the button.
         if markCooked.isEnabled {
-            markCooked.tap()
+            // The button sits near the bottom of a long detail page; on CI, XCUITest's own scroll-to-visible
+            // left it non-hittable (hit point {-1,-1}). Scroll it up first, then tap via the shared helper.
+            // Not masking: a tap that misses still fails the isEnabled check below.
+            app.swipeUp()
+            tapWhenReady(markCooked, "Mark as Cooked should be tappable.")
 
             // A post-cook photo sheet auto-presents ~0.8s later — dismiss it.
             let skip = app.buttons["Skip"]
