@@ -36,4 +36,29 @@ import Foundation
     @Test func emptyNameReturnsNil() {
         #expect(RecipeShoppingList.item(from: ing("", qty: 1, unit: "")) == nil)
     }
+
+    // MARK: - Cupboard measures, unit step-down, scaling
+
+    @Test func cupboardMeasureBecomesOneUnitlessItem() throws {
+        let item = try #require(RecipeShoppingList.item(from: ing("salt", qty: 0.125, unit: "tsp")))
+        #expect(item.quantity == 1)
+        #expect(item.unit == "")   // "Salt", not "1 tsp" rounded up from ⅛
+    }
+
+    @Test func fractionalKilogramsStepDownToGrams() throws {
+        let item = try #require(RecipeShoppingList.item(from: ing("potatoes", qty: 0.5, unit: "kg")))
+        #expect(item.quantity == 500)
+        #expect(item.unit == "g")
+    }
+
+    @Test func wholeKilogramsKeepTheirUnit() throws {
+        let item = try #require(RecipeShoppingList.item(from: ing("potatoes", qty: 2, unit: "kg")))
+        #expect(item.quantity == 2)
+        #expect(item.unit == "kg")
+    }
+
+    @Test func scaleFactorAppliesToTheAmount() throws {
+        let item = try #require(RecipeShoppingList.item(from: ing("flour", qty: 200, unit: "g"), scaleFactor: 2))
+        #expect(item.quantity == 400)
+    }
 }

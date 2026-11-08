@@ -213,7 +213,7 @@ struct RecipeDetailView: View {
     func addIngredientToShoppingList(_ ingredient: Ingredient) {
         HapticManager.shared.light()
 
-        guard let item = RecipeShoppingList.item(from: ingredient) else { return }
+        guard let item = RecipeShoppingList.item(from: ingredient, scaleFactor: recipe.scaleFactor) else { return }
 
         ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
 
@@ -242,7 +242,7 @@ struct RecipeDetailView: View {
 
         var addedCount = 0
         for ingredient in ingredients {
-            guard let item = RecipeShoppingList.item(from: ingredient) else { continue }
+            guard let item = RecipeShoppingList.item(from: ingredient, scaleFactor: recipe.scaleFactor) else { continue }
 
             ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
             addedIngredients.insert(ingredient.name)
