@@ -1,14 +1,13 @@
 # RecipeFinder
 
 Privacy-first, offline-first iOS recipe manager (SwiftUI, iOS 17.5+, Swift 6).
-Proprietary — RecipeFinder Limited. GitHub: https://github.com/RecipeFinderLimited/RecipeFinder
+Proprietary — RecipeFinder Limited. GitHub: https://github.com/AsadK47/RecipeFinder
 
 ## Hard constraints
 These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** answer concisely: lead with the result/answer; cut preamble, recaps, and reasoning the user didn't ask for. Detail only on request.
-- **MUST NOT** `git commit`, branch or push — ever, even when the user says "let's commit" (that means *they* will). Leave verified-green work uncommitted and end with a ready-to-paste commit subject.
-- **MUST** run `BuildProject` + `RunAllTests` before handing work over for the user to commit; unfinished state goes in `WORK.md`.
+- **MUST** run `BuildProject` + `RunAllTests` before committing; unfinished state goes in `WORK.md`.
 - **MUST** keep one task active at a time (WIP=1): finish it (`BuildProject` + `RunAllTests` green — "looks fine" is not done) before starting the next, and never "also refactor" B while doing A — record B as the next `WORK.md` action. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
 - **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 14`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 14.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
@@ -38,7 +37,7 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 1. `XcodeRefreshCodeIssuesInFile` — type-check a single file (seconds); run after every edit
 2. `RunSomeTests <SuiteName>` — run the directly affected test suite after adding/changing logic
 3. `BuildProject` — full compile; run before marking any task done
-4. `RunAllTests` — full suite; run ONCE before the user commits, or when a change plausibly affects unrelated areas. Do NOT re-run it per slice/iteration.
+4. `RunAllTests` — full suite; run ONCE before committing, or when a change plausibly affects unrelated areas. Do NOT re-run it per slice/iteration.
 
 **Per slice/iteration:** `BuildProject` + `RunSomeTests <affected suite>` is enough. Reserve `RunAllTests` for the pre-commit gate. CI catches anything missed on push.
 
@@ -80,11 +79,11 @@ When a new failure class appears or a convention changes, update the relevant se
 **Replace or refine, don't append.** When a failure tempts you to "add a new rule," first ask whether an existing rule should be sharpened instead. Each CLAUDE.md file has a line budget: root ≤100, RecipeFinder/ ≤100, RecipeFinderTests/ ≤50. Exceeding budget is a signal to consolidate, not to keep adding.
 
 ## Commit messages & branch policy
-The user reviews the raw diff and commits/pushes themselves. Claude never runs `git commit`/`push`/branch and never rewrites history. *(2026-11-05: Claude committed after "let's commit that"; the user wants to see changes first.)*
+Claude may commit, branch and push. *(2026-11-08: user lifted the earlier "user commits" rule.)* `main` is guarded by the "NA" ruleset (Repository admin bypass): put work on a branch and open a PR so CI runs before merge.
 
-**Hand over in logical units.** One verified-green area per handover (build + affected tests, full suite before the user commits), not one tiny diff at a time.
+**Commit in logical units.** One verified-green area per commit (build + affected tests, full suite before committing), not one tiny diff at a time.
 
-Suggested subjects: conventional-commit only. No body, no Co-Authored-By, no preamble.
+Subjects: conventional-commit only, saying *what* changes, not why. No body, no Co-Authored-By, no preamble.
 `fix(import): fix grey text in ImportView header`
 
 ## Git / auth
