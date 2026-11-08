@@ -35,6 +35,13 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             if addAll.waitForExistence(timeout: 5) {
                 addAll.tap()
                 settle()
+                snap(app, "07-add-to-groceries")
+                // The sheet pre-ticks every ingredient; confirm adds them all.
+                let confirm = app.buttons["shop.confirm"]
+                if confirm.waitForExistence(timeout: 5) {
+                    confirm.tap()
+                    settle()
+                }
             }
             app.navigationBars.buttons.element(boundBy: 0).tap()
             settle()

@@ -16,6 +16,7 @@ struct RecipeDetailView: View {
     @State private var confettiCounter = 0
     @State private var showAddToCollection = false
     @State var showCookingMode = false
+    @State var shopSheetRecipe: RecipeModel?
     @State var saveError: String?
     static let saveErrorMessage = "Your changes couldn't be saved. Please try again."
     @State var showTimerSheet = false
@@ -106,6 +107,10 @@ struct RecipeDetailView: View {
         }
         .sheet(item: $editTarget) { target in
             editRecipeSheet(focus: target.section)
+        }
+        .sheet(item: $shopSheetRecipe) { shopRecipe in
+            ShopIngredientsSheet(recipe: shopRecipe, measurementSystem: measurementSystem,
+                                 onAdd: addIngredientsToShoppingList)
         }
         .sheet(isPresented: $showAddToCollection) {
             AddToCollectionSheet(recipe: recipe)
@@ -223,13 +228,20 @@ struct RecipeDetailView: View {
         }
     }
 
+    /// Opens the pre-ticked "Add to Groceries" sheet (Shop button and the ingredients header's cart button).
     func addAllIngredientsToShoppingList() {
         guard !recipe.ingredients.isEmpty else { return }
+        shopSheetRecipe = recipe
+    }
+
+    /// Adds the ingredients confirmed in the shop sheet.
+    func addIngredientsToShoppingList(_ ingredients: [Ingredient]) {
+        guard !ingredients.isEmpty else { return }
 
         HapticManager.shared.success()
 
         var addedCount = 0
-        for ingredient in recipe.ingredients {
+        for ingredient in ingredients {
             guard let item = RecipeShoppingList.item(from: ingredient) else { continue }
 
             ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
@@ -243,7 +255,7 @@ struct RecipeDetailView: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation {
-                recipe.ingredients.forEach { ingredient in
+                ingredients.forEach { ingredient in
                     _ = addedIngredients.remove(ingredient.name)
                 }
             }
