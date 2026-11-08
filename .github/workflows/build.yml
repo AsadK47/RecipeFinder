@@ -1,78 +1,38 @@
-name: Build & Test iOS App
+name: Build & Test
+
+# Builds the app and runs every test (unit + UI) on an iPhone simulator.
+# The repo is public, so macOS minutes are free.
 
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'RecipeFinder/**'
-      - 'RecipeFinderTests/**'
-      - 'RecipeFinderUITests/**'
-      - 'RecipeShareExtension/**'
-      - '*.xcodeproj/**'
-      - 'Package.swift'
-      - '.github/workflows/build.yml'
   pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  SCHEME: RecipeFinder
-
 jobs:
-  build-and-test:
-    name: Build & Test
-    # macOS 26 image ships Xcode 26 (Swift 6.3), matching the local dev
-    # toolchain. Older images (Swift 6.0) miscompile @MainActor XCTestCase
-    # async lifecycle with a "sending non-Sendable XCTestCase" error that was
-    # fixed in Swift 6.2+.
+  test:
     runs-on: macos-26
     timeout-minutes: 30
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      - name: Detect available simulator
-        id: simulator
-        run: |
-          UDID=$(xcrun simctl list devices available --json | jq -r 'first(.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.isAvailable and (.name | test("iPhone"))) | .udid) // ""')
-          if [ -z "$UDID" ]; then
-            echo "::error::No available iOS iPhone simulator found"
-            xcrun simctl list devices available
-            exit 1
-          fi
-          echo "Using simulator UDID: $UDID"
-          echo "DESTINATION=platform=iOS Simulator,id=$UDID" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Swift Package Manager
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: ${{ runner.os }}-spm-
-
-      - name: Resolve dependencies
-        run: xcodebuild -resolvePackageDependencies -scheme "$SCHEME"
+      - uses: actions/checkout@v4
 
       - name: Build & test
-        # The repo is public, so GitHub-hosted macOS minutes are free: every
-        # event (push, PR, manual dispatch) runs the full suite, UI tests included.
         run: |
           set -o pipefail
+          SIM=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
           xcodebuild test \
-            -scheme "$SCHEME" \
-            -destination '${{ steps.simulator.outputs.DESTINATION }}' \
+            -scheme RecipeFinder \
+            -destination "id=$SIM" \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
-      - name: Upload logs and results
+      - name: Keep logs if it fails
         if: failure()
         uses: actions/upload-artifact@v4
         with:
