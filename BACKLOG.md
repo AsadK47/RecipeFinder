@@ -53,7 +53,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   original" when `sourceText != nil` → run `RecipeTextImportRouter` on it → reuse the Refresh-from-source per-field
   accept sheet (`RecipeDiff`), personal data preserved. *Done when:* tests for 14→15 migration (store opens, data
   intact), Codable + backup round-trip with `sourceText`, router→diff path; screenshot of the menu; CI green.
-- [ ] **Import 2/5 — Low-confidence warning.** Pure `ImportQuality.assess(_ prefill:) -> (score: Double,
+- [ ] **Import 2/5 — Low-confidence warning.** — 🚧 builder agent 2026-11-09 Pure `ImportQuality.assess(_ prefill:) -> (score: Double,
   missing: Set<Field>)` (fields: name, ingredients, steps, amounts, times); URL path uses the parser's confidence,
   text path scores from what was found (on-device AI result counts as high). In `RecipeWizardView`, when score < 0.6:
   a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
