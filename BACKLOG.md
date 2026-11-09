@@ -36,7 +36,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 ## Queue
 - [ ] **Import 1/5 — Keep the original import text** (owner OK incl. Core Data change, 2026-11-09). ✅ Slice 1 merged
   (9a6c119): model v15 + `RecipeModel.sourceText` persisted, backed up, migration-tested. ✅ Slice 2 (cad2d44): paste,
-  photo OCR and share keep `sourceText`. ✅ Slice 3 (449dff9): link imports keep page text (≤50 KB). **Left:** the "Re-import from original" menu + router→diff test + menu screenshot. Original spec: New model version
+  photo OCR and share keep `sourceText`. ✅ Slice 3 (449dff9): link imports keep page text (≤50 KB). ✅ Slice 4 (9123388): ⋯ "Re-import from original" → router → per-field sheet, tested. **Left:** menu screenshot. Original spec: New model version
   `RecipeModel 15` (copy 14, add optional String `sourceText` to the recipe entity, lightweight migration, point
   `.xccurrentversion` at 15, and update every "RecipeModel 14" mention in CLAUDE.md files to 15 in the same commit).
   `RecipeModel.sourceText: String?` (decodeIfPresent; included in backup/restore). Set it on every import path: link
@@ -135,3 +135,4 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - 2026-11-09 · Import 1/5 slice 1 · 9a6c119 · Core Data `RecipeModel 15` (adds optional `sourceText`), `.xccurrentversion` → 15, pbxproj version-group entry, CLAUDE.md refs → 15. Nothing visible yet; check the app opens with your existing recipes intact after updating.
 - 2026-11-09 · Import 1/5 slice 2 · cad2d44 · Pasted, photo and shared imports now keep their original text (stored, not shown yet).
 - 2026-11-09 · Import 1/5 slice 3 · 449dff9 · Link imports now keep the page's readable text (≤50 KB, stored only). Next: Re-import menu.
+- 2026-11-09 · Import 1/5 slice 4 · 9123388 · On a recipe you pasted/photographed/shared/imported after this update: ⋯ → Re-import from original → review sheet (or "Already matches the original"). Bundled/older recipes don't show it (no original text).
