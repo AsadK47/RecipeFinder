@@ -34,9 +34,9 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
-- [ ] **Import 1/5 — Keep the original import text** (owner OK incl. Core Data change, 2026-11-09). ✅ Slice 1 merged
+- [x] **Import 1/5 — Keep the original import text** (owner OK incl. Core Data change, 2026-11-09). ✅ Slice 1 merged
   (9a6c119): model v15 + `RecipeModel.sourceText` persisted, backed up, migration-tested. ✅ Slice 2 (cad2d44): paste,
-  photo OCR and share keep `sourceText`. ✅ Slice 3 (449dff9): link imports keep page text (≤50 KB). ✅ Slice 4 (9123388): ⋯ "Re-import from original" → router → per-field sheet, tested. **Left:** menu screenshot. Original spec: New model version
+  photo OCR and share keep `sourceText`. ✅ Slice 3 (449dff9): link imports keep page text (≤50 KB). ✅ Slice 4 (9123388): ⋯ "Re-import from original" → router → per-field sheet, tested. ✅ Slice 5 (27d2243): `08-reimport-menu` screenshot (Screenshots workflow, DEBUG `-seed-reimport-recipe`). Original spec: New model version
   `RecipeModel 15` (copy 14, add optional String `sourceText` to the recipe entity, lightweight migration, point
   `.xccurrentversion` at 15, and update every "RecipeModel 14" mention in CLAUDE.md files to 15 in the same commit).
   `RecipeModel.sourceText: String?` (decodeIfPresent; included in backup/restore). Set it on every import path: link
@@ -136,3 +136,4 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - 2026-11-09 · Import 1/5 slice 2 · cad2d44 · Pasted, photo and shared imports now keep their original text (stored, not shown yet).
 - 2026-11-09 · Import 1/5 slice 3 · 449dff9 · Link imports now keep the page's readable text (≤50 KB, stored only). Next: Re-import menu.
 - 2026-11-09 · Import 1/5 slice 4 · 9123388 · On a recipe you pasted/photographed/shared/imported after this update: ⋯ → Re-import from original → review sheet (or "Already matches the original"). Bundled/older recipes don't show it (no original text).
+- 2026-11-09 · Import 1/5 done · 27d2243 · Screenshots workflow now captures `08-reimport-menu` (test asserts the item exists; image not viewable from the cloud agent — glance at it in the screenshots release). DEBUG-only `-seed-reimport-recipe` launch flag seeds "1-Pot Tomato Soup" for it.
