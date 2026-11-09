@@ -19,5 +19,14 @@ has no page text today — rawText is ingredients). Slice 4: detail ⋯ "Re-impo
 Slice 2 MERGED cad2d44. Slice 3 (branch agent/import-source-text-3): ExtractedRecipeData.pageText via
 RecipeImportPipeline.pageText(fromHTML:) (reuses RecipeParser.cleanHTML, 50 KB cap), builder → sourceText.
 
+Slice 4 plan (not started): pure `RecipeDiff.reimport(stored:prefill:)` in RecipeDiff.swift — upstream = stored with
+each field replaced only when the prefill has it (name, ingredients via RecipeImportBuilder().parseIngredient,
+instructions, prep/cook "N minutes", difficulty via RecipeWizardBuilder.normalizeDifficulty, category, cuisine);
+image kept. RecipeRefreshSheet.sourceURL → URL? (header "from the original text" when nil); detail sheet no longer
+gated on importedFromURL. Toolbar `onReimport: (() -> Void)?` shown when recipe.sourceText != nil ("Re-import from
+original", arrow.triangle.2.circlepath). Detail: router.prefill(for: sourceText) → diff → pendingRefreshDiff, or toast
+"Already up to date" / "Couldn't read a recipe from the original". Tests in RecipeDiffTests (+ router→diff with stub).
+Slice 5: UI screenshot of the menu (needs a recipe with sourceText — paste-import in UI test or launch arg).
+
 ## Next action
-Check CI for slice 3, merge, then slice 4 (Re-import menu).
+Check CI for slice 3 (run 42695274892), merge, then slice 4.
