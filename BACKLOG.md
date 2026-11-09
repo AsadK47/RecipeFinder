@@ -49,6 +49,15 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - [ ] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
   anything else. Audit result: 3 🔴 (photo overwrite after delete; duplicate cleanup deleting user copies every launch; restore losing user state on samples/photos/streak — all data loss), 14 🟡, 28 🟢; CI green. Also merge the
   already-green `agent/fix-madeit-presenter` (5c414a6) after rebasing — it fixes the Made it sheet 🟡.
+- [ ] **Sample recipes stop loading third-party photos** (🟡 privacy/copyright, owner OK 2026-11-09). ~164 bundled
+  recipes hotlink hero images from recipe sites (`recipes_source_images.json`, applied in `BundledRecipeCatalogTests`),
+  leaking the user's IP to those sites while browsing and showing others' copyrighted photos. Stop applying that
+  mapping so bundled recipes have no remote `imageName` (the existing `RecipePlaceholderView` gradient shows instead);
+  regenerate `recipes_seed.json` exactly as the drift test would; for existing installs, clear remote `imageName` on
+  `isSampleRecipe` recipes the user hasn't given their own photo (part of the stale-sample refresh — regenerate history,
+  bump `sampleRefreshVersion`). Keep "View original" links (credit). Never touch user-imported recipes' images.
+  *Done when:* no bundled recipe has an http(s) image, refresh test for existing installs, Screenshots of the library,
+  CI green.
 - [ ] **Manual 2/3 — Paste-and-type ingredients & steps** (owner OK 2026-11-09; wizard review). Replace per-row
   ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
   block — parsed live by `IngredientLineParser` into an editable preview (amount, unit, name) so manual entry and
@@ -189,7 +198,13 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - [ ] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — handled by Manual 2/3; tick both together.
 
 ## Needs owner
-- 🙋 Privacy policy accuracy (🟡, readiness audit): ~164 bundled sample-recipe photos load from third-party recipe sites while browsing, but in-app Privacy Policy 5.2 only mentions images for recipes the user imports. Either bundle/cache those images or add a sentence to 5.2 — owner to choose (legal text).
+- 🙋 Starter photos (optional, nice-to-have): pick ~6 photos you own or free-licensed ones (e.g. Unsplash, licence
+  allows bundling in a free app) for the 6 starter recipes; drop the files in and agents will bundle them in
+  `Assets.xcassets` — shipped inside the app, no runtime API calls.
+- 🙋 Before public App Store launch: the 332 bundled recipes' method text comes from blogs/sites (ingredient lists are
+  generally fine; written steps may be protected — not legal advice). Recommended: agents rewrite every method in our
+  own words in batches (same curated-JSON + seed + drift-test process), or trim the bundled set. Owner to confirm
+  before agents start.
 - 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
