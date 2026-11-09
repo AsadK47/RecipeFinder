@@ -29,7 +29,7 @@ Log, and add review findings under **Inbox**. Each item says what "done" means �
   stars, optional photo (reuse `PostCookPhotoSheet` logic), and progress to the next cooking badge ("2 more to
   *Seasoned*"). Replaces the scattered rate/photo flow (CORE_LOOP_AUDIT "Track"). *Done when:* one sheet, rating +
   photo saved from it, badge progress text unit-tested, CI green.
-- [ ] **Refresh stale bundled recipes.** Sample recipes are seeded once (`RecipeStore.seedIfNeeded`), so devices keep
+- [x] **Refresh stale bundled recipes.** Sample recipes are seeded once (`RecipeStore.seedIfNeeded`), so devices keep
   pre-curation copies (e.g. old "鷄肉炒麵" with steps as ingredients). Add a versioned one-time refresh that replaces
   content of `isSampleRecipe` recipes the user hasn't edited with the bundled version, preserving favourite, rating,
   cook history, photos, tags. *Done when:* tested for edited vs unedited, version bump re-runs it, CI green.
@@ -65,3 +65,4 @@ Log, and add review findings under **Inbox**. Each item says what "done" means �
 ## Log
 - 2026-11-08 · loop set up · CI now also runs on `agent/**` branches.
 - 2026-11-09 · "Made it" moment · ef1c7f1 · Tap *Made it* (and finish cooking mode → Done): one sheet shows Cook #N (total cooks), streak, stars, Add/Take photo, "N more to <badge>"; rate + add photo, check both saved. Renamed PostCookPhotoSheet.swift→MadeItSheet.swift in pbxproj. Streak toast + cooking-mode "Add a photo" removed. Remote branch not deleted (proxy refused) — delete agent/made-it-sheet by hand.
+- 2026-11-09 · Refresh stale bundled recipes · 8abbcc1 · On first launch after update, old bundled copies (e.g. 鷄肉炒麵) show curated steps/ingredients; favourites, ratings, cooks, photos, tags kept; any recipe you edited is unchanged. Unedited = matches a shipped version in new recipes_seed_history.json (2.85 MB, from git via tools/seed-history.py; registered in pbxproj Resources). Future seed fixes: rerun script + bump BundledRecipeCatalog.sampleRefreshVersion. Remote branch delete refused by proxy — delete agent/refresh-stale-samples (and agent/made-it-sheet) by hand.
