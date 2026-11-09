@@ -83,7 +83,8 @@ struct RecipeDiff: Identifiable {
             lastCookedAt:        stored.lastCookedAt,
             rating:              stored.rating,
             cuisine:             selections.contains(.cuisine)      ? upstream.cuisine      : stored.cuisine,
-            photoNames:          stored.photoNames
+            photoNames:          stored.photoNames,
+            sourceText:          stored.sourceText
         )
     }
 }

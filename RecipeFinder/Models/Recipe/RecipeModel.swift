@@ -24,13 +24,15 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     var rating: Int         // 0 = unrated, 1–5
     var cuisine: String?
     var photoNames: [String]
+    /// The raw text a recipe was imported from (page text, paste or OCR), kept so it can be re-imported later.
+    var sourceText: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name, category, difficulty, prepTime, cookingTime
         case baseServings, currentServings, ingredients
         case prePrepInstructions, instructions, notes
         case imageName, isFavorite, tags, dietaryInfo, isSampleRecipe
-        case cookCount, lastCookedAt, rating, cuisine, photoNames
+        case cookCount, lastCookedAt, rating, cuisine, photoNames, sourceText
     }
 
     init(
@@ -55,7 +57,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lastCookedAt: Date? = nil,
         rating: Int = 0,
         cuisine: String? = nil,
-        photoNames: [String] = []
+        photoNames: [String] = [],
+        sourceText: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -79,6 +82,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.rating = rating
         self.cuisine = cuisine
         self.photoNames = photoNames
+        self.sourceText = sourceText
     }
 
     // Custom decoder so pre-v13 backups lacking new keys decode with safe defaults instead of throwing .keyNotFound.
@@ -106,6 +110,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         rating              = (try? c.decodeIfPresent(Int.self,        forKey: .rating))      ?? 0
         cuisine             =  try? c.decodeIfPresent(String.self,     forKey: .cuisine)
         photoNames          = (try? c.decodeIfPresent([String].self,   forKey: .photoNames))  ?? []
+        sourceText          =  try? c.decodeIfPresent(String.self,     forKey: .sourceText)
     }
     
     // Mirror the fields `==` compares, not just `id`, so content-keyed caches invalidate on rating/photo changes.
@@ -270,6 +275,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.rating = 0
         self.cuisine = nil
         self.photoNames = []
+        self.sourceText = nil
     }
 }
 

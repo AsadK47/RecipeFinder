@@ -58,4 +58,37 @@ import CoreData
         let decoded = try JSONDecoder().decode([Ingredient].self, from: reloaded)
         #expect(decoded.first?.name == "Flour")  // Ingredient capitalises on construction.
     }
+
+    // MARK: - sourceText (the original import text, model v15)
+
+    private static func importedRecipe(sourceText: String?) -> RecipeModel {
+        RecipeModel(
+            name: "Pasted Soup", category: "Main", difficulty: "Basic", prepTime: "5 min", cookingTime: "20 min",
+            baseServings: 2, ingredients: [Ingredient(baseQuantity: 1, unit: "", name: "onion")],
+            prePrepInstructions: [], instructions: ["Simmer."], notes: "", sourceText: sourceText
+        )
+    }
+
+    @Test func sourceTextSurvivesSaveAndFetch() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let recipe = Self.importedRecipe(sourceText: "Pasted Soup\n1 onion\nSimmer.")
+        #expect(persistence.saveRecipeModel(recipe))
+        let fetched = await persistence.fetchRecipesAsync().first { $0.id == recipe.id }
+        #expect(fetched?.sourceText == "Pasted Soup\n1 onion\nSimmer.")
+    }
+
+    @Test func sourceTextSurvivesBackupCodableRoundTrip() throws {
+        let recipe = Self.importedRecipe(sourceText: "original text")
+        let decoded = try JSONDecoder().decode(RecipeModel.self, from: JSONEncoder().encode(recipe))
+        #expect(decoded.sourceText == "original text")
+    }
+
+    @Test func backupWithoutSourceTextDecodesAsNil() throws {
+        var json = try #require(
+            try JSONSerialization.jsonObject(with: JSONEncoder().encode(Self.importedRecipe(sourceText: "x"))) as? [String: Any]
+        )
+        json.removeValue(forKey: "sourceText")
+        let decoded = try JSONDecoder().decode(RecipeModel.self, from: JSONSerialization.data(withJSONObject: json))
+        #expect(decoded.sourceText == nil)
+    }
 }

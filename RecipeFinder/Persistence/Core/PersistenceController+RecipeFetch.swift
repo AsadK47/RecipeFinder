@@ -141,6 +141,7 @@ extension PersistenceController {
         let rating       = object.value(forKey: RecipeKey.rating)       as? Int ?? 0
         let cuisine      = object.value(forKey: RecipeKey.cuisine)      as? String
         let photoNames   = (object.value(forKey: RecipeKey.photoNames)  as? [String]) ?? []
+        let sourceText   =  object.value(forKey: RecipeKey.sourceText)  as? String
 
         return RecipeModel(
             id: id,
@@ -164,7 +165,8 @@ extension PersistenceController {
             lastCookedAt: lastCookedAt,
             rating: rating,
             cuisine: cuisine,
-            photoNames: photoNames
+            photoNames: photoNames,
+            sourceText: sourceText
         )
     }
 }

@@ -10,7 +10,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 - **MUST** run `BuildProject` + `RunAllTests` before committing; unfinished state goes in `WORK.md`.
 - **MUST** keep one task active at a time (WIP=1): finish it (`BuildProject` + `RunAllTests` green — "looks fine" is not done) before starting the next, and never "also refactor" B while doing A — record B as the next `WORK.md` action. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
-- **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 14`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 14.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
+- **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 15`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 15.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
 
 ## Topic docs (loaded automatically by directory)
 - `RecipeFinder/CLAUDE.md` — Swift/SwiftUI rules, design principles, security, DI, UX checklist. Read when editing any app source file.
@@ -52,7 +52,7 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 | Test hits real `UserDefaults` | Task definition | DI requirement not stated |
 | Agent re-implements existing utility | Insufficient context | Skipped `XcodeGrep` for prior art |
 | New file not found by Xcode | Misconfigured env | Used `Write` instead of `XcodeWrite` |
-| Core Data crash `valueForUndefinedKey: isSampleRecipe` | Misconfigured env | `.xccurrentversion` reverted off RecipeModel 14 |
+| Core Data crash `valueForUndefinedKey: isSampleRecipe` | Misconfigured env | `.xccurrentversion` reverted off RecipeModel 15 |
 | SwiftUI view crashes on empty data | Missing verification | Empty-state path not covered by a test |
 | Verification skipped or simpler fix chosen near session end | Context pressure | Agent sensed low context → rushed finish; write WORK.md Decisions before this happens |
 
@@ -60,7 +60,7 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 1. Read `WORK.md` — if it has content, resume from "Next action" without repeating completed work.
 2. If `WORK.md` is empty, orient via `git log --oneline -10` and `ROADMAP.md` before starting work.
 3. `git status` — no unexpected staged/unstaged changes from a prior partial run.
-4. Check `.xccurrentversion` points at `RecipeModel 14` if Core Data was recently touched.
+4. Check `.xccurrentversion` points at `RecipeModel 15` if Core Data was recently touched.
 
 ## Session end checklist
 1. Update `WORK.md` Decisions — options rejected, tradeoffs accepted, constraints discovered.

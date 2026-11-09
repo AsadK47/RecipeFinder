@@ -38,6 +38,7 @@ final class PersistenceController {
         static let lastCookedAt = "lastCookedAt"
         static let rating = "rating"
         static let cuisine = "cuisine"
+        static let sourceText = "sourceText"
         static let photoNames = "photoNames"
     }
 

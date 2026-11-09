@@ -27,6 +27,7 @@ extension PersistenceController {
         let rating: Int
         let cuisine: String?
         let photoNames: [String]
+        let sourceText: String?
 
         init(
             id: UUID? = nil,
@@ -50,7 +51,8 @@ extension PersistenceController {
             lastCookedAt: Date? = nil,
             rating: Int = 0,
             cuisine: String? = nil,
-            photoNames: [String] = []
+            photoNames: [String] = [],
+            sourceText: String? = nil
         ) {
             self.id = id
             self.name = name
@@ -74,6 +76,7 @@ extension PersistenceController {
             self.rating = rating
             self.cuisine = cuisine
             self.photoNames = photoNames
+            self.sourceText = sourceText
         }
 
         init(from recipe: RecipeModel) {
@@ -99,6 +102,7 @@ extension PersistenceController {
             self.rating = recipe.rating
             self.cuisine = recipe.cuisine
             self.photoNames = recipe.photoNames
+            self.sourceText = recipe.sourceText
         }
     }
     
@@ -159,6 +163,7 @@ extension PersistenceController {
         recipe.setValue(parameters.rating, forKey: RecipeKey.rating)
         recipe.setValue(parameters.cuisine, forKey: RecipeKey.cuisine)
         recipe.setValue(parameters.photoNames as NSArray, forKey: RecipeKey.photoNames)
+        recipe.setValue(parameters.sourceText, forKey: RecipeKey.sourceText)
         if let dietaryData = try? JSONEncoder().encode(parameters.dietaryInfo) {
             recipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
         }
@@ -288,6 +293,7 @@ extension PersistenceController {
             managedRecipe.setValue(recipe.rating, forKey: RecipeKey.rating)
             managedRecipe.setValue(recipe.cuisine, forKey: RecipeKey.cuisine)
             managedRecipe.setValue(recipe.photoNames as NSArray, forKey: RecipeKey.photoNames)
+            managedRecipe.setValue(recipe.sourceText, forKey: RecipeKey.sourceText)
             if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
                 managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
             }

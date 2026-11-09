@@ -110,6 +110,7 @@ enum RecipeWizardBuilder {
         merged.dietaryInfo = stored.dietaryInfo
         merged.cookCount = stored.cookCount
         merged.lastCookedAt = stored.lastCookedAt
+        merged.sourceText = edited.sourceText ?? stored.sourceText
         return merged
     }
 }
