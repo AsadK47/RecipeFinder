@@ -3,12 +3,13 @@ import SwiftUI
 /// Field-by-field diff of saved vs. freshly-fetched upstream recipe; user toggles fields to accept, personal data always preserved.
 struct RecipeRefreshSheet: View {
     let diff: RecipeDiff
-    let sourceURL: URL
+    /// nil for "Re-import from original" on a pasted/photo recipe; the header then names the original text.
+    let sourceURL: URL?
     @State private var selectedFields: Set<RecipeDiffField>
     let onApply: (RecipeModel) -> Void
     @Environment(\.dismiss) private var dismiss
 
-    init(diff: RecipeDiff, sourceURL: URL, onApply: @escaping (RecipeModel) -> Void) {
+    init(diff: RecipeDiff, sourceURL: URL?, onApply: @escaping (RecipeModel) -> Void) {
         self.diff = diff
         self.sourceURL = sourceURL
         _selectedFields = State(initialValue: diff.changed)
@@ -20,7 +21,7 @@ struct RecipeRefreshSheet: View {
             Section {
                 Label {
                     Text("\(diff.changed.count) update\(diff.changed.count == 1 ? "" : "s") from ")
-                    + Text(sourceURL.host ?? "source").bold()
+                    + Text(sourceURL.map { $0.host ?? "source" } ?? "the original text").bold()
                 } icon: {
                     Image(systemName: "arrow.clockwise.circle.fill")
                         .foregroundStyle(AppTheme.accentColor)

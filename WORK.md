@@ -28,5 +28,7 @@ original", arrow.triangle.2.circlepath). Detail: router.prefill(for: sourceText)
 "Already up to date" / "Couldn't read a recipe from the original". Tests in RecipeDiffTests (+ router→diff with stub).
 Slice 5: UI screenshot of the menu (needs a recipe with sourceText — paste-import in UI test or launch arg).
 
+Slice 3 MERGED 449dff9. Slice 4 implemented on agent/import-reimport (RecipeDiff.reimport, toolbar menu, sheet URL optional).
+
 ## Next action
-Check CI for slice 3 (run 42695274892), merge, then slice 4.
+Check slice 4 CI, merge; then slice 5 = menu screenshot (UI test needs a recipe with sourceText).

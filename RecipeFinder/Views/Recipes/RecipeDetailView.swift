@@ -104,7 +104,8 @@ struct RecipeDetailView: View {
                     onToggleFavorite: toggleFavorite,
                     onAddToCollection: { showAddToCollection = true },
                     onManagePhotos: { showPhotoManager = true },
-                    onPrint: { RecipePrintFormatter.present(for: recipe) }
+                    onPrint: { RecipePrintFormatter.present(for: recipe) },
+                    onReimport: recipe.sourceText == nil ? nil : { reimportFromOriginal() }
                 )
             }
         }
@@ -125,10 +126,8 @@ struct RecipeDetailView: View {
             RecipePhotoManagerSheet(recipe: $recipe)
         }
         .sheet(item: $pendingRefreshDiff) { diff in
-            if let url = recipe.importedFromURL {
-                RecipeRefreshSheet(diff: diff, sourceURL: url) { updated in
-                    applyRefresh(updated)
-                }
+            RecipeRefreshSheet(diff: diff, sourceURL: recipe.importedFromURL) { updated in
+                applyRefresh(updated)
             }
         }
         .fullScreenCover(isPresented: $showCookingMode, onDismiss: {
@@ -352,6 +351,23 @@ struct RecipeDetailView: View {
         let diff = RecipeDiff.compute(stored: recipe, upstream: upstream)
         if diff.hasChanges {
             pendingRefreshDiff = diff
+        }
+    }
+
+    /// Re-parses the saved original import text with today's parser and offers the per-field accept sheet.
+    func reimportFromOriginal() {
+        guard let text = recipe.sourceText else { return }
+        Task {
+            guard let prefill = await RecipeTextImportRouter().prefill(for: text) else {
+                showAddedFeedback = "Couldn't read a recipe from the original text"
+                return
+            }
+            let diff = RecipeDiff.reimport(stored: recipe, prefill: prefill)
+            if diff.hasChanges {
+                pendingRefreshDiff = diff
+            } else {
+                showAddedFeedback = "Already matches the original"
+            }
         }
     }
 

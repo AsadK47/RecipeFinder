@@ -9,6 +9,8 @@ struct RecipeDetailToolbar: View {
     let onAddToCollection: () -> Void
     let onManagePhotos: () -> Void
     let onPrint: () -> Void
+    /// Shown only for recipes that kept their original import text.
+    var onReimport: (() -> Void)? = nil
 
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
@@ -36,6 +38,12 @@ struct RecipeDetailToolbar: View {
                 }
                 Button(action: onPrint) {
                     Label("Print", systemImage: "printer")
+                }
+                if let onReimport {
+                    Button(action: onReimport) {
+                        Label("Re-import from original", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .accessibilityIdentifier("recipe.reimport")
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")

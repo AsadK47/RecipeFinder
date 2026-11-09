@@ -138,4 +138,57 @@ import Foundation
         let result = diff.applying(selections: [.ingredients])
         #expect(result.ingredients.count == 2)
     }
+
+    // MARK: - Re-import from original (Import 1/5)
+
+    private func prefill(
+        name: String? = "Test Recipe", ingredients: [String]? = nil, instructions: [String]? = nil,
+        prepTime: Int? = nil, cookTime: Int? = nil
+    ) -> RecipeWizardView.PrefilledRecipeData {
+        RecipeWizardView.PrefilledRecipeData(
+            name: name, description: nil, ingredients: ingredients, instructions: instructions,
+            prepTime: prepTime, cookTime: cookTime, servings: nil, difficulty: nil, notes: nil,
+            category: nil, isFavorite: nil, imageURL: nil
+        )
+    }
+
+    @Test func reimportProposesOnlyTheFieldsTheNewParseChanged() {
+        let stored = recipe(ingredients: [Ingredient(baseQuantity: 1, unit: "", name: "Fry the onions")],
+                            instructions: ["Fry the onions"])
+        let diff = RecipeDiff.reimport(stored: stored, prefill: prefill(ingredients: ["1 onion"], instructions: ["Fry the onions"]))
+        #expect(diff.changed == [.ingredients])
+        #expect(diff.upstream.ingredients.first?.name == "Onion")
+    }
+
+    @Test func reimportNeverProposesBlankingFieldsTheParseMissed() {
+        let stored = recipe(ingredients: [Ingredient(baseQuantity: 1, unit: "", name: "onion")], instructions: ["Fry."])
+        let diff = RecipeDiff.reimport(stored: stored, prefill: prefill(name: nil, prepTime: 0))
+        #expect(!diff.hasChanges)
+    }
+
+    @Test func reimportKeepsPersonalDataWhenApplied() {
+        var stored = recipe(instructions: ["Old step"])
+        stored.rating = 5
+        stored.sourceText = "the original"
+        let applied = RecipeDiff.reimport(stored: stored, prefill: prefill(instructions: ["New step"]))
+            .applying(selections: [.instructions])
+        #expect(applied.instructions == ["New step"])
+        #expect(applied.rating == 5)
+        #expect(applied.notes == stored.notes)
+        #expect(applied.sourceText == "the original")
+    }
+
+    private struct DecliningInterpreter: RecipeTextInterpreting {
+        func interpret(_ text: String) async throws -> InterpretedRecipe? { nil }
+    }
+
+    @MainActor
+    @Test func routerOutputOnTheOriginalTextFeedsTheDiff() async throws {
+        let original = "Tomato Soup\nIngredients\n2 tomatoes\n1 onion\nMethod\nSimmer everything for 20 minutes"
+        let stored = recipe(name: "Tomato Soup", instructions: ["Simmer everything for 20 minutes"])
+        let parsed = try #require(await RecipeTextImportRouter(interpreter: DecliningInterpreter()).prefill(for: original))
+        let diff = RecipeDiff.reimport(stored: stored, prefill: parsed)
+        #expect(diff.changed.contains(.ingredients))
+        #expect(!diff.changed.contains(.name))
+    }
 }

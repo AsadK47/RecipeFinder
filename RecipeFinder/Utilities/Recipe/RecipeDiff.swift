@@ -88,3 +88,40 @@ struct RecipeDiff: Identifiable {
         )
     }
 }
+
+extension RecipeDiff {
+    /// Diff for "Re-import from original": the stored recipe vs a fresh parse of its saved `sourceText`. A field the
+    /// parse didn't find keeps the stored value, so a weaker parse never proposes blanking something.
+    static func reimport(stored: RecipeModel, prefill: RecipeWizardView.PrefilledRecipeData) -> RecipeDiff {
+        let ingredientParser = RecipeImportBuilder()
+        let ingredients = (prefill.ingredients ?? [])
+            .filter { !$0.trimmed.isEmpty }
+            .map { ingredientParser.parseIngredient($0) }
+        let instructions = (prefill.instructions ?? []).filter { !$0.trimmed.isEmpty }
+        let name = prefill.name?.trimmed ?? ""
+        let category = prefill.category?.trimmed ?? ""
+        let cuisine = prefill.cuisine?.trimmed ?? ""
+        let difficulty = prefill.difficulty?.trimmed ?? ""
+        func minutes(_ value: Int?, else fallback: String) -> String {
+            guard let value, value > 0 else { return fallback }
+            return "\(value) minutes"
+        }
+
+        let upstream = RecipeModel(
+            id: stored.id,
+            name: name.isEmpty ? stored.name : name,
+            category: category.isEmpty ? stored.category : category,
+            difficulty: difficulty.isEmpty ? stored.difficulty : RecipeWizardBuilder.normalizeDifficulty(difficulty),
+            prepTime: minutes(prefill.prepTime, else: stored.prepTime),
+            cookingTime: minutes(prefill.cookTime, else: stored.cookingTime),
+            baseServings: stored.baseServings,
+            ingredients: ingredients.isEmpty ? stored.ingredients : ingredients,
+            prePrepInstructions: stored.prePrepInstructions,
+            instructions: instructions.isEmpty ? stored.instructions : instructions,
+            notes: stored.notes,
+            imageName: stored.imageName,
+            cuisine: cuisine.isEmpty ? stored.cuisine : cuisine
+        )
+        return compute(stored: stored, upstream: upstream)
+    }
+}
