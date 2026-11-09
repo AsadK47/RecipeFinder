@@ -47,7 +47,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 
 ## Queue
 - [ ] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
-  anything else. Audit result: 1 🔴 (photo overwrite after delete — data loss), 14 🟡, 28 🟢; CI green. Also merge the
+  anything else. Audit result: 3 🔴 (photo overwrite after delete; duplicate cleanup deleting user copies every launch; restore losing user state on samples/photos/streak — all data loss), 14 🟡, 28 🟢; CI green. Also merge the
   already-green `agent/fix-madeit-presenter` (5c414a6) after rebasing — it fixes the Made it sheet 🟡.
 - [ ] **Manual 2/3 — Paste-and-type ingredients & steps** (owner OK 2026-11-09; wizard review). Replace per-row
   ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
@@ -189,10 +189,13 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - [ ] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — handled by Manual 2/3; tick both together.
 
 ## Needs owner
+- 🙋 Privacy policy accuracy (🟡, readiness audit): ~164 bundled sample-recipe photos load from third-party recipe sites while browsing, but in-app Privacy Policy 5.2 only mentions images for recipes the user imports. Either bundle/cache those images or add a sentence to 5.2 — owner to choose (legal text).
 - 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🔴 RELEASE BLOCKER (data loss, readiness audit 2026-11-09, verified) — `Utilities/Managers/RecipeStore.swift:78` `removeDuplicateCopies` runs on EVERY launch using `BackupMerge.duplicateRecipeIDs` (name + ingredient names + steps only; ignores amounts, notes, tags, servings, collections, meal plans), so a user's deliberate copy ("Import Anyway", or a received `.recipefinderrecipe`) edited only in amounts/notes/tags can be silently deleted, orphaning its collection/meal-plan entries — gate behind a run-once `LocalStore` flag and only ever remove copies where `isSampleRecipe` is true (the legacy re-seed case it was written for); test both.
+- 🔴 RELEASE BLOCKER (data loss, readiness audit 2026-11-09) — restore after fresh install/Reset: `Persistence/Backup/BackupArchive.swift:4-17` + `PersistenceController+RecipeWrites.swift:224` (`mergeRecipes` → `BackupMerge.mergedRecipesWithAdditions`) skips incoming recipes whose id already exists, and samples are re-seeded with the same fixed ids first, so cook count, last cooked, favourite, rating, tags, photos and edits on samples are lost; streak dates aren't in the archive; photo files aren't in the archive. Fix: when an incoming id exists, merge user state (cookCount/lastCookedAt max, favourite OR, rating, tags union, photoNames, edited content if the stored copy is an unedited sample); add cooking-streak dates to the archive (backward-compatible decode); bundle photos (zip) or change the "Save everything to a file" copy (`DataManagementSettingsView.swift:184`) to say photos aren't included. Tests: restore-onto-fresh-seed round trip keeps all user state.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🔴 `Views/Main/ContentView.swift:94` — since 4dbd6f9 the Made it sheet is presented from the app root, so Made it / cooking-mode finish from a recipe opened inside the Collections sheet is dropped (root already presenting); `MadeItPresenter.request` stays set → `isBusy` true → all badge celebrations blocked — present from the topmost view, or clear `request` when presentation fails.
 - 🟠 `Views/Main/ContentView.swift:98` — Done clears `request` immediately, so the badge sheet presents mid-dismiss and is silently dropped (already marked shown in `BadgeManager`) — unblock via `.sheet(item:onDismiss:)`; update `MadeItPresenterTests.dismiss_unblocks`.
