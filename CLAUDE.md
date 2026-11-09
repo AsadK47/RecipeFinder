@@ -41,7 +41,7 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 
 **Per slice/iteration:** `BuildProject` + `RunSomeTests <affected suite>` is enough. Reserve `RunAllTests` for the pre-commit gate. CI catches anything missed on push.
 
-CI runs the full test suite on every push to `main` — red tests fail the build.
+**Cloud sessions (claude.ai/code, scheduled agents):** no Xcode, so the Xcode tools above don't exist and GitHub CI is the compiler — push a branch, read its "Build & Test" run with the GitHub MCP tools, fix, repeat. Create Swift files with `Write` and register them in `project.pbxproj` by mirroring a sibling's four entries (PBXBuildFile, PBXFileReference, group child, Sources phase).
 
 **When the AI agent produces a wrong result, don't conclude "the LLM isn't capable enough" — attribute the failure to a layer first.** Work through these five in order: (1) task not clearly defined, (2) insufficient context, (3) misconfigured environment, (4) missing verification, (5) loss of state between sessions.
 
@@ -79,7 +79,7 @@ When a new failure class appears or a convention changes, update the relevant se
 **Replace or refine, don't append.** When a failure tempts you to "add a new rule," first ask whether an existing rule should be sharpened instead. Each CLAUDE.md file has a line budget: root ≤100, RecipeFinder/ ≤100, RecipeFinderTests/ ≤50. Exceeding budget is a signal to consolidate, not to keep adding.
 
 ## Commit messages & branch policy
-Interactive sessions commit and push straight to `main` — no PRs (solo project, 2026-11-08). The scheduled agent loop instead works `BACKLOG.md` on `agent/<slug>` branches and fast-forwards `main` only once CI is green (protocol in that file). Every push to `main` runs unit tests (~4 min) and, if app code changed, uploads a TestFlight build, so only push work that builds and passes tests. UI tests run nightly; check that run when touching UI.
+No PRs (solo project). Code changes — interactive sessions and the scheduled agent loop alike — go on an `agent/<slug>` branch (CI runs on that pattern); `main` is fast-forwarded only once that branch's CI is green, so unbuilt code never reaches TestFlight (2026-11-09, after an unbuilt layout fix shipped twice). Docs/backlog-only commits may go straight to `main`. The agent loop's protocol is in `BACKLOG.md`. Every push to `main` runs unit tests (~4 min) and, if app code changed, uploads a TestFlight build, so only push work that builds and passes tests. UI tests run nightly; check that run when touching UI.
 
 **Commit in logical units.** One verified-green area per commit (build + affected tests, full suite before committing), not one tiny diff at a time.
 

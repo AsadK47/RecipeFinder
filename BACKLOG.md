@@ -2,6 +2,7 @@
 
 Ranked, top first. The owner reorders, adds or deletes items at any time; agents only tick items off, append to the
 Log, and add review findings under **Inbox**. Each item says what "done" means — an item isn't done until CI is green.
+Owner bug reports from TestFlight go straight to the **top of Queue** marked 🐞 and are worked before anything else.
 
 ## How an agent works this file (read fully before starting)
 1. Read root `CLAUDE.md`, `RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`, `RecipeFinder/DesignSystem.md`.
@@ -25,6 +26,14 @@ Log, and add review findings under **Inbox**. Each item says what "done" means �
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
+- [ ] **CI screenshots of key screens.** Neither agents nor interactive sessions can see the app, so layout bugs
+  (e.g. the toolbar scroll fade, 2026-11-08/09) only surface on the owner's phone. Add a UI-test that launches with
+  seeded sample data and captures screenshots (`XCTAttachment`, lifetime `.keepAlways`) of: Recipes home, a recipe
+  detail scrolled halfway, Groceries with stores, Planning, Settings — Light and Dark. Export them in `build.yml`
+  (e.g. `xcrun xcresulttool export attachments`) and upload as a `screenshots` artifact on every run, including
+  `agent/**` branches. Add a line to the protocol above: after CI is green, download the artifact and look at the
+  screens your change touched before merging. 🙋-free: CI workflow change approved by owner 2026-11-09.
+  *Done when:* artifact with 10 PNGs on an agent-branch run, protocol updated, CI green.
 - [x] **"Made it" moment.** Tapping *Made it* opens one celebratory sheet: "Cook #N", streak flame + weeks, tap-to-rate
   stars, optional photo (reuse `PostCookPhotoSheet` logic), and progress to the next cooking badge ("2 more to
   *Seasoned*"). Replaces the scattered rate/photo flow (CORE_LOOP_AUDIT "Track"). *Done when:* one sheet, rating +
