@@ -416,7 +416,9 @@
 		F3FF62DE305BF9E00008B191 /* SmartCollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62DD305BF9E00008B191 /* SmartCollectionDetailView.swift */; };
 		F3FF62E0305BF9F40008B191 /* SmartCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62DF305BF9F40008B191 /* SmartCollectionTests.swift */; };
 		F3FF62E2305C18550008B191 /* RecipeDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62E1305C18550008B191 /* RecipeDiff.swift */; };
+		A1B2C3D4E5F60718293A4B31 /* ImportQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B32 /* ImportQuality.swift */; };
 		F3FF62E4305C186C0008B191 /* RecipeDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62E3305C186C0008B191 /* RecipeDiffTests.swift */; };
+		A1B2C3D4E5F60718293A4B33 /* ImportQualityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B34 /* ImportQualityTests.swift */; };
 		F3FF62E6305C18800008B191 /* RecipeRefreshSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62E5305C18800008B191 /* RecipeRefreshSheet.swift */; };
 		F3FF62E8305C198C0008B191 /* RecipePrintFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62E7305C198C0008B191 /* RecipePrintFormatter.swift */; };
 		F3FF62EA305C19A20008B191 /* RecipePrintFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62E9305C19A20008B191 /* RecipePrintFormatterTests.swift */; };
@@ -879,7 +881,9 @@
 		F3FF62DD305BF9E00008B191 /* SmartCollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCollectionDetailView.swift; sourceTree = "<group>"; };
 		F3FF62DF305BF9F40008B191 /* SmartCollectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCollectionTests.swift; sourceTree = "<group>"; };
 		F3FF62E1305C18550008B191 /* RecipeDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDiff.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B32 /* ImportQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportQuality.swift; sourceTree = "<group>"; };
 		F3FF62E3305C186C0008B191 /* RecipeDiffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDiffTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B34 /* ImportQualityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportQualityTests.swift; sourceTree = "<group>"; };
 		F3FF62E5305C18800008B191 /* RecipeRefreshSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRefreshSheet.swift; sourceTree = "<group>"; };
 		F3FF62E7305C198C0008B191 /* RecipePrintFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipePrintFormatter.swift; sourceTree = "<group>"; };
 		F3FF62E9305C19A20008B191 /* RecipePrintFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipePrintFormatterTests.swift; sourceTree = "<group>"; };
@@ -1371,6 +1375,7 @@
 				F3D4056D305994EF0076834D /* IngredientSubstituteProvider.swift */,
 				F3FF62D5305BE4550008B191 /* PantryExpirySuggestions.swift */,
 				F3FF62E1305C18550008B191 /* RecipeDiff.swift */,
+				A1B2C3D4E5F60718293A4B32 /* ImportQuality.swift */,
 				F3FF62E7305C198C0008B191 /* RecipePrintFormatter.swift */,
 				F3FF62ED305C243E0008B191 /* RecipeFileExporter.swift */,
 				F3FF62EF305C24460008B191 /* RecipeTransferItem.swift */,
@@ -1620,6 +1625,7 @@
 				F3D4056F305994FC0076834D /* IngredientSubstituteProviderTests.swift */,
 				F3FF62D9305BE4760008B191 /* PantryExpirySuggestionsTests.swift */,
 				F3FF62E3305C186C0008B191 /* RecipeDiffTests.swift */,
+				A1B2C3D4E5F60718293A4B34 /* ImportQualityTests.swift */,
 				F3FF62E9305C19A20008B191 /* RecipePrintFormatterTests.swift */,
 				F3FF62F3305C24CE0008B191 /* RecipeFileExporterTests.swift */,
 				F3FF62F8305DA5FC0008B191 /* RecipeParserTextContentTests.swift */,
@@ -2396,6 +2402,7 @@
 				F3E9D1B230457B00008BF231 /* AppTheme+Gradients.swift in Sources */,
 				9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */,
 				F3FF62E2305C18550008B191 /* RecipeDiff.swift in Sources */,
+				A1B2C3D4E5F60718293A4B31 /* ImportQuality.swift in Sources */,
 				F3E9D12B30439F56008BF231 /* EditableStepsStepView.swift in Sources */,
 				9E5B39882FABC4B700C96DB3 /* FilterChip.swift in Sources */,
 				F3E9D12930439F49008BF231 /* IngredientsStepView.swift in Sources */,
@@ -2551,6 +2558,7 @@
 				F3FF62EA305C19A20008B191 /* RecipePrintFormatterTests.swift in Sources */,
 				F3B837EC3055FD740003AEF8 /* ShoppingListFromRecipeTests.swift in Sources */,
 				F3FF62E4305C186C0008B191 /* RecipeDiffTests.swift in Sources */,
+				A1B2C3D4E5F60718293A4B33 /* ImportQualityTests.swift in Sources */,
 				F3B837E83055FD3F0003AEF8 /* NotificationSettingsTests.swift in Sources */,
 				F3E9D13F3043A8F9008BF231 /* IngredientCatalogTests.swift in Sources */,
 				9E1E26122FBA077A0002A220 /* RecipeImportBuilderTests.swift in Sources */,

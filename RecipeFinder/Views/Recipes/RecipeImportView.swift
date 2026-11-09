@@ -321,7 +321,9 @@ struct RecipeImportView: View {
                     showIncompleteAlert = true
                 } else {
                     loadingStage = .idle
-                    reviewPrefill = RecipeWizardView.PrefilledRecipeData(recipe: recipe)
+                    var prefill = RecipeWizardView.PrefilledRecipeData(recipe: recipe)
+                    prefill.sourceConfidence = importer.parseConfidence
+                    reviewPrefill = prefill
                 }
             } else {
                 loadingStage = .idle

@@ -24,6 +24,8 @@ extension RecipeWizardView {
         var galleryImageURLs: [String]? = nil
         /// The text this came from (paste, OCR, share, page text), saved on the recipe for "Re-import from original".
         var sourceText: String? = nil
+        /// How sure the import was (URL parser confidence; 1.0 for an on-device AI read); nil = judge from content.
+        var sourceConfidence: Double? = nil
     }
 
     /// A single editable ingredient row in the wizard's ingredients step.
@@ -53,6 +55,7 @@ extension RecipeWizardView.PrefilledRecipeData {
             isFavorite: nil,
             imageURL: nil
         )
+        sourceConfidence = 1.0
     }
 }
 
