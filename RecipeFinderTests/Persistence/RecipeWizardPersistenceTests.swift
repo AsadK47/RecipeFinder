@@ -429,7 +429,7 @@ import Foundation
             ingredientItems: [
                 ingredient("1.5",  "kg",   "beef"),
                 ingredient("0.25", "cups", "wine"),
-                ingredient("",     "pinch","pepper"),  // blank qty → defaults to 1.0
+                ingredient("",     "pinch","pepper"),  // blank qty → 0 (no amount), never an invented 1
             ],
             prePrepSteps: [],
             mainInstructions: [step("Braise")],
@@ -445,6 +445,6 @@ import Foundation
 
         #expect(beef.baseQuantity == 1.5)
         #expect(wine.baseQuantity == 0.25)
-        #expect(pepper.baseQuantity == 1.0)  // blank qty defaults to 1
+        #expect(pepper.baseQuantity == 0)  // blank qty stays "no amount"
     }
 }

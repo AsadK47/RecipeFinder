@@ -40,10 +40,11 @@ struct RecipeWizardView: View {
 
     @State var recipeName = ""
 
-    @State private var prepTime = 15
+    // 0 = not set. Defaults of 15 + 30 used to be saved on every manual recipe as if the cook had entered them.
+    @State private var prepTime = 0
     /// Set only for a new import the reader struggled with; drives the banner + section highlights (Import 2/5).
     @State private var importQuality: ImportQuality.Assessment?
-    @State private var cookTime = 30
+    @State private var cookTime = 0
     @State private var difficulty = "Intermediate"
     @State private var category = "Main"
 
@@ -70,6 +71,9 @@ struct RecipeWizardView: View {
     @State private var existingGalleryReferences: [String] = []
     @State private var showGalleryPhotoPicker = false
     @State private var pendingGalleryImage: UIImage?
+    /// The form as first shown (after any prefill); Cancel/swipe-down only asks before discarding if it changed.
+    @State private var initialDraft: RecipeWizardBuilder.Draft?
+    @State private var showDiscardConfirm = false
 
     private let imageStore = RecipeImageStore()
 
@@ -113,6 +117,7 @@ struct RecipeWizardView: View {
                 let assessment = ImportQuality.assess(data)
                 importQuality = assessment.isLow ? assessment : nil
             }
+            if initialDraft == nil { initialDraft = currentDraft }
             // First full create-flow only — not focused edits or updates.
             if focus == nil, editingRecipeId == nil, !hasSeenWizardIntro {
                 showIntro = true
@@ -122,7 +127,7 @@ struct RecipeWizardView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
                     HapticManager.shared.selection()
-                    dismiss()
+                    if hasUnsavedChanges { showDiscardConfirm = true } else { dismiss() }
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
@@ -133,6 +138,14 @@ struct RecipeWizardView: View {
             }
         }
         .sheetScaffold(navigationTitleText)
+        // Swipe-down can't silently throw away typing; Cancel asks first instead.
+        .interactiveDismissDisabled(hasUnsavedChanges)
+        .confirmationDialog("Discard this recipe?", isPresented: $showDiscardConfirm, titleVisibility: .visible) {
+            Button("Discard Changes", role: .destructive) { dismiss() }
+            Button("Keep Editing", role: .cancel) {}
+        } message: {
+            Text("Your changes haven't been saved.")
+        }
         .sheet(isPresented: $showIntro) {
             WizardIntroSheet {
                 hasSeenWizardIntro = true
@@ -219,6 +232,20 @@ struct RecipeWizardView: View {
         if let galleryURLs = data.galleryImageURLs, !galleryURLs.isEmpty {
             existingGalleryReferences = galleryURLs
         }
+    }
+
+    private var currentDraft: RecipeWizardBuilder.Draft {
+        RecipeWizardBuilder.Draft(
+            name: recipeName, prepTime: prepTime, cookTime: cookTime, difficulty: difficulty, category: category,
+            servings: servings, ingredientItems: ingredientItems, prePrepSteps: prePrepSteps,
+            mainInstructions: mainInstructions, notes: notes, tags: recipeTags, cuisine: recipeCuisine,
+            imageReference: existingImageReference, galleryReferences: existingGalleryReferences
+        )
+    }
+
+    private var hasUnsavedChanges: Bool {
+        selectedRecipeImage != nil || !selectedGalleryImages.isEmpty
+            || initialDraft.map { $0 != currentDraft } ?? false
     }
 
     private var navigationTitleText: String {

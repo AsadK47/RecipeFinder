@@ -10,8 +10,9 @@ struct BasicInfoStepView: View {
     let difficulties: [String]
     let categories: [String]
 
+    /// 0 means the cook hasn't set it — say so, matching the recipe screen, rather than "0 minutes".
     private func timeLabel(_ minutes: Int) -> String {
-        DurationFormatter.label(minutes: minutes)
+        minutes == 0 ? "Not set" : DurationFormatter.label(minutes: minutes)
     }
 
     var body: some View {
