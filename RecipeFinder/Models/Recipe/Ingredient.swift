@@ -89,3 +89,29 @@ struct Ingredient: Identifiable, Codable, Hashable {
         return IngredientNameFormatter.extractPreparationNotes(name)
     }
 }
+
+extension Ingredient {
+    /// Lines that never need an amount — seasoning to taste, garnish, frying/greasing oil, ice, soaking water — so a blank
+    /// amount there isn't a gap. Mirrors `tools/audit-missing-amounts.py`, which audits the bundled recipes.
+    static let amountOptionalPattern =
+        #"to taste|to serve|to garnish|for garnish|to decorate|to dust|to top|optional|as needed|pinch|splash|"#
+        + #"for (deep |shallow |pan[- ])?frying|for (dusting|greasing|brushing|sprinkling|rolling|proving|coating|cooking|"#
+        + #"drizzling|soaking|dipping|pan-frying)|cooking spray|oil spray|toppings of your choice|"#
+        + #"^(fine sea )?salt and (freshly ground )?(black )?pepper$|^ice( cubes)?$|^(freshly ground )?black pepper$|"#
+        + #"^black pepper, freshly ground$"#
+
+    /// True when the recipe gives no amount for an ingredient that normally needs one (e.g. "flour" with no quantity).
+    var isMissingAmount: Bool {
+        baseQuantity <= 0
+            && name.range(of: Self.amountOptionalPattern, options: [.regularExpression, .caseInsensitive]) == nil
+    }
+}
+
+/// Recipe-level view of missing amounts, used to decide whether to invite the user to fill them in.
+enum IngredientAmountGaps {
+    /// At least half of the ingredients lack an amount they'd normally need — the recipe is hard to cook as written.
+    static func isMostlyMissing(_ ingredients: [Ingredient]) -> Bool {
+        let gaps = ingredients.filter(\.isMissingAmount).count
+        return gaps > 0 && gaps * 2 >= ingredients.count
+    }
+}

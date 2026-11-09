@@ -153,6 +153,34 @@ struct RecipeIngredientsSection: View {
         )
     }
 
+    /// Shown when most ingredients have no amount (e.g. a recipe imported from a caption that never listed them).
+    private var missingAmountsCard: some View {
+        HStack(alignment: .top, spacing: AppTheme.spacing8) {
+            Image(systemName: "scalemass")
+                .font(.subheadline)
+                .foregroundStyle(AppTheme.accentColor)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: AppTheme.spacing6) {
+                Text("This recipe didn't list most amounts.")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .adaptiveForegroundColor()
+                    .fixedSize(horizontal: false, vertical: true)
+                Button("Add your amounts", action: onEditIngredients)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.accentColor)
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("recipe.addAmounts")
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(AppTheme.spacing12)
+        .background(
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                .fill(AppTheme.accentColor.opacity(0.10))
+        )
+    }
+
     // Pre-computed once per body so the O(table) substitute scan doesn't run per-row on every re-render.
     private var ingredientsWithSubstitutes: Set<UUID> {
         Set(recipe.ingredients.compactMap { ingredient in
@@ -162,6 +190,9 @@ struct RecipeIngredientsSection: View {
 
     private var ingredientsList: some View {
         VStack(spacing: AppTheme.spacing16) {
+            if IngredientAmountGaps.isMostlyMissing(recipe.ingredients) {
+                missingAmountsCard
+            }
             if !hasSeenTapHint && !ingredientsState.contains(true) && !recipe.ingredients.isEmpty {
                 tapHint
             }

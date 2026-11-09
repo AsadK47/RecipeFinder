@@ -17,32 +17,35 @@ struct IngredientRowView: View {
     }
 
     var body: some View {
+        let amount = Self.amount(for: ingredient, scaleFactor: scaleFactor, system: measurementSystem)
         HStack(alignment: .center, spacing: AppTheme.spacing12) {
 
-            // Fixed-width amount column so names align; whole column is the tap target, reserved even when empty to keep alignment.
-            Button(action: { onTapQuantity?() }) {
-                let amount = Self.amount(for: ingredient, scaleFactor: scaleFactor, system: measurementSystem)
-                HStack(alignment: .firstTextBaseline, spacing: 3) {
-                    if let quantity = amount.quantity {
-                        Text(quantity)
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundStyle(isChecked ? .secondary : .primary)
-                    }
+            // Fixed-width amount column so names align; the whole column is the tap target. A line with no amount at all
+            // ("fresh coriander") drops the column and runs full width as plain text — an empty column read as broken.
+            if amount.quantity != nil || amount.unit != nil {
+                Button(action: { onTapQuantity?() }) {
+                    HStack(alignment: .firstTextBaseline, spacing: 3) {
+                        if let quantity = amount.quantity {
+                            Text(quantity)
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(isChecked ? .secondary : .primary)
+                        }
 
-                    if let unit = amount.unit {
-                        Text(unit)
-                            .font(.caption)
-                            .adaptiveSecondaryForeground()
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
+                        if let unit = amount.unit {
+                            Text(unit)
+                                .font(.caption)
+                                .adaptiveSecondaryForeground()
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                        }
                     }
+                    .frame(width: 72, alignment: .leading)
+                    .contentShape(Rectangle())
                 }
-                .frame(width: 72, alignment: .leading)
-                .contentShape(Rectangle())
+                .buttonStyle(.plain)
+                .disabled(onTapQuantity == nil)
             }
-            .buttonStyle(.plain)
-            .disabled(onTapQuantity == nil)
 
             Button(action: {
                 HapticManager.shared.light()
