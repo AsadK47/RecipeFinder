@@ -3,7 +3,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -156,14 +156,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Achari Chicken Curry",
-    "notes" : "1 cup of tomato puree is roughly 0.5 lb fresh tomatoes.\n\nhttps://myheartbeets.com/instant-pot-achari-chicken-curry/",
+    "notes" : "Times are estimates: the original recipe didn't list them. 1 cup of tomato puree is roughly 0.5 lb fresh tomatoes.\n\nhttps://myheartbeets.com/instant-pot-achari-chicken-curry/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -415,16 +415,16 @@
         "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "0E04F21B-90D2-5636-BD82-E8C30ABCF8EC",
         "name" : "Chinese five-spice powder, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "B8B3E196-A741-561E-BF63-3353026AD3AA",
         "name" : "soy sauce, for the marinade",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 1,
@@ -451,7 +451,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Air Fryer Crispy Chilli Beef",
-    "notes" : "Marinating is optional but improves flavour.\n\nhttps://www.bbcgoodfood.com/recipes/air-fryer-crispy-chilli-beef",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Marinating is optional but improves flavour.\n\nhttps://www.bbcgoodfood.com/recipes/air-fryer-crispy-chilli-beef",
     "photoNames" : [
 
     ],
@@ -827,10 +827,10 @@
         "unit" : "cup"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "766A915F-9BC1-587B-B247-B72C214DB46E",
         "name" : "olive oil",
-        "unit" : ""
+        "unit" : "tbsp"
       }
     ],
     "instructions" : [
@@ -847,7 +847,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Air Fryer Southern Fried Chicken",
-    "notes" : "Air-fried chicken doesn't stay crisp for long, so serve straight away.\n\nhttps://divascancook.com/air-fryer-southern-fried-chicken-recipe/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Air-fried chicken doesn't stay crisp for long, so serve straight away.\n\nhttps://divascancook.com/air-fryer-southern-fried-chicken-recipe/",
     "photoNames" : [
 
     ],
@@ -1102,10 +1102,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 500,
         "id" : "C8746833-E469-53EB-B93A-514F90B3ABF9",
         "name" : "water",
-        "unit" : ""
+        "unit" : "ml"
       },
       {
         "baseQuantity" : 0.5,
@@ -1133,7 +1133,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Aloo Gosht (Lamb and Potato Curry)",
-    "notes" : "Instant Pot: sauté as above, pressure cook on high for 20 minutes with 10 minutes natural release, sauté off the liquid, then add yogurt, potatoes and water and pressure cook 5-6 minutes. Don't move on until the meat is tender.\n\nhttps://www.teaforturmeric.com/mutton-and-potato-curry-aloo-gosht/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Instant Pot: sauté as above, pressure cook on high for 20 minutes with 10 minutes natural release, sauté off the liquid, then add yogurt, potatoes and water and pressure cook 5-6 minutes. Don't move on until the meat is tender.\n\nhttps://www.teaforturmeric.com/mutton-and-potato-curry-aloo-gosht/",
     "photoNames" : [
 
     ],
@@ -1150,7 +1150,7 @@
     "baseServings" : 4,
     "category" : "Starter",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -1207,10 +1207,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "730565AF-5F19-53A0-AD17-2D6E412EE560",
         "name" : "lemon juice",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 1,
@@ -1272,14 +1272,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Aloo Sabzi Tikki (Potato Kebab)",
-    "notes" : "Mix masala is a homemade blend of cloves, dried chillies, coriander seeds, turmeric, black peppercorns, Madras powder, garam masala and cumin seeds.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Mix masala is a homemade blend of cloves, dried chillies, coriander seeds, turmeric, black peppercorns, Madras powder, garam masala and cumin seeds.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "25 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -1289,7 +1289,7 @@
     "baseServings" : 4,
     "category" : "Breakfast",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -1376,14 +1376,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "American Pancakes",
-    "notes" : "https://www.bbcgoodfood.com/recipes/american-pancakes",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bbcgoodfood.com/recipes/american-pancakes",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -1468,16 +1468,16 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 3,
         "id" : "6B4F7251-4617-5643-8F54-4898F42FCFB0",
         "name" : "granulated sugar, for the filling",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 75,
         "id" : "E1FB6853-C4FC-5CE0-9D93-22ABE9AED3DF",
         "name" : "crushed peanuts",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 250,
@@ -1486,10 +1486,10 @@
         "unit" : "ml"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 30,
         "id" : "821BE3C2-2C09-5949-B5D5-B8D040A89991",
         "name" : "unsalted butter, for the filling",
-        "unit" : ""
+        "unit" : "g"
       }
     ],
     "instructions" : [
@@ -1504,7 +1504,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Apam Balik (Malaysian Peanut Pancake)",
-    "notes" : "Use oat milk and vegan butter for a dairy-free version.",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Use oat milk and vegan butter for a dairy-free version.",
     "photoNames" : [
 
     ],
@@ -1566,10 +1566,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "12EB305B-B1FE-5135-8DC2-158F7596F6EC",
         "name" : "water",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 112.5,
@@ -1620,7 +1620,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Apple Crumble Pie",
-    "notes" : "Makes 1.5 pies; halve the crumble for one pie. Quick version: bake sugared apples 10 minutes, top with 400g crushed digestives mixed with 75g soft butter and bake 25-30 minutes. Hob Nobs work instead of digestives.",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Makes 1.5 pies; halve the crumble for one pie. Quick version: bake sugared apples 10 minutes, top with 400g crushed digestives mixed with 75g soft butter and bake 25-30 minutes. Hob Nobs work instead of digestives.",
     "photoNames" : [
 
     ],
@@ -1637,7 +1637,7 @@
     "baseServings" : 2,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -1677,7 +1677,7 @@
         "unit" : "cup"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "597A0D66-3B73-5D14-BCB6-F535E6EE3C88",
         "name" : "probiotic capsules, totalling 40-50 billion cultures",
         "unit" : ""
@@ -1736,14 +1736,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Apple Jalebi (Gluten-Free, Vegan)",
-    "notes" : "Check the cultures per capsule on the box; you may need 2-5 capsules to reach 40-50 billion.\n\nhttps://myheartbeets.com/apple-jalebi/",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Check the cultures per capsule on the box; you may need 2-5 capsules to reach 40-50 billion.\n\nhttps://myheartbeets.com/apple-jalebi/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Mix the almond flour, arrowroot flour and coconut milk with the contents of the probiotic capsules. Loosely cover and leave in the oven with only the light on for at least 10 hours to ferment."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -1753,7 +1753,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -1821,14 +1821,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Apple Crisp with Oat Topping",
-    "notes" : "Good-quality cinnamon makes a real difference. The source also had three alternative crumbles (lemon-oat, walnut-coconut oil, and BBC classic).\n\nhttps://www.allrecipes.com/recipe/229088/apple-crisp-with-oat-topping/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Good-quality cinnamon makes a real difference. The source also had three alternative crumbles (lemon-oat, walnut-coconut oil, and BBC classic).\n\nhttps://www.allrecipes.com/recipe/229088/apple-crisp-with-oat-topping/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -1947,7 +1947,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "50 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -2047,10 +2047,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "922B653E-7C22-5C02-AE94-C2A02F5EFFBF",
         "name" : "cilantro, chopped",
-        "unit" : ""
+        "unit" : "handful"
       }
     ],
     "instructions" : [
@@ -2065,14 +2065,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Baingan Ka Bharta (Indian Roasted Eggplant)",
-    "notes" : "Use 1-2 Serrano peppers to taste.\n\nhttps://myheartbeets.com/baingan-ka-bharta-indian-eggplant/",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Use 1-2 Serrano peppers to taste.\n\nhttps://myheartbeets.com/baingan-ka-bharta-indian-eggplant/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -2303,7 +2303,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -2393,14 +2393,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Baked Peri Peri Chicken",
-    "notes" : "Variants: swap peri peri for Cajun seasoning; for jerk use jerk seasoning plus 2 tsp black pepper; for BBQ use 3 tbsp brown and BBQ sauce with 2 tsp honey instead of ketchup.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Variants: swap peri peri for Cajun seasoning; for jerk use jerk seasoning plus 2 tsp black pepper; for BBQ use 3 tbsp brown and BBQ sauce with 2 tsp honey instead of ketchup.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Wash and drain the chicken. Mix the ketchup, chicken seasoning, chilli, peri peri seasoning and oil, then coat the chicken evenly. Cover and marinate for 4 hours, or overnight."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -2477,7 +2477,7 @@
     "baseServings" : 10,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 10,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -2552,7 +2552,7 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "A9451A5D-7639-58ED-8640-48EA212A5E7C",
         "name" : "bananas, just ripe, sliced",
         "unit" : ""
@@ -2586,7 +2586,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Thai Banana Pancakes (Banana Roti)",
-    "notes" : "Use bananas with a hint of green; overripe ones turn mushy. You can swap the condensed milk in the dough for 1 tbsp sugar.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Use bananas with a hint of green; overripe ones turn mushy. You can swap the condensed milk in the dough for 1 tbsp sugar.",
     "photoNames" : [
 
     ],
@@ -2594,7 +2594,7 @@
       "Whisk the salt into the water until dissolved, then whisk in the condensed milk and egg. Rub the butter into the flour, add to the liquid and knead briefly into a shaggy dough. Rest 15-30 minutes.",
       "Knead for about 5 minutes until evenly moist and tacky, then rest 10-15 minutes. Cut into 80g pieces (about 11), shape into balls, brush generously with the melted butter and oil mixture and rest at least 3 hours (or refrigerate overnight; bring back to room temperature for 2 hours)."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -3547,10 +3547,10 @@
         "unit" : "can"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 150,
         "id" : "0A88B53A-F97C-59DA-9EDD-F6AA610EE2E3",
         "name" : "green beans",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 0.5,
@@ -3589,7 +3589,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Pressure Cooker Beef Stew",
-    "notes" : "The source also lists kidney beans, green beans, fish sauce, chilli, ketchup and sugar without saying when to add them.\n\nhttps://share.google/0ZrC3xIWq6fM3O5Uy",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. The source also lists kidney beans, green beans, fish sauce, chilli, ketchup and sugar without saying when to add them.\n\nhttps://share.google/0ZrC3xIWq6fM3O5Uy",
     "photoNames" : [
 
     ],
@@ -4176,10 +4176,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "4A647E37-184D-55DD-BBDE-D2AC420FBDD9",
         "name" : "ginger garlic paste",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
         "baseQuantity" : 2,
@@ -4194,16 +4194,16 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.25,
         "id" : "A9B219B4-F6F1-5255-9B94-BA87B7E91599",
         "name" : "turmeric (haldi)",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "505952C1-F71B-55EF-B6F9-094C119312A1",
         "name" : "red chilli powder",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
         "baseQuantity" : 1,
@@ -4249,7 +4249,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Bhindi Masala",
-    "notes" : "https://www.indianhealthyrecipes.com/bhindi-masala-recipe/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste.\n\nhttps://www.indianhealthyrecipes.com/bhindi-masala-recipe/",
     "photoNames" : [
 
     ],
@@ -4394,7 +4394,7 @@
     "baseServings" : 20,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 20,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -4475,14 +4475,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Black Sesame Ladyfingers",
-    "notes" : "Keeps up to two weeks in an airtight container. Adapted from Preppy Kitchen.\n\nhttps://www.craving-nomz.com/black-sesame-lady-fingers/#recipe",
+    "notes" : "Times are estimates: the original recipe didn't list them. Keeps up to two weeks in an airtight container. Adapted from Preppy Kitchen.\n\nhttps://www.craving-nomz.com/black-sesame-lady-fingers/#recipe",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -4561,14 +4561,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Black Sesame Matcha Tiramisu",
-    "notes" : "Use 5-8 ladyfingers depending on your dish; see the Black Sesame Ladyfingers recipe. Keeps up to 5 days in the fridge.\n\nhttps://www.craving-nomz.com/black-sesame-matcha-tiramisu/#recipe",
+    "notes" : "Times are estimates: the original recipe didn't list them. Use 5-8 ladyfingers depending on your dish; see the Black Sesame Ladyfingers recipe. Keeps up to 5 days in the fridge.\n\nhttps://www.craving-nomz.com/black-sesame-matcha-tiramisu/#recipe",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -4578,7 +4578,7 @@
     "baseServings" : 12,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 12,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -4653,14 +4653,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Black Sesame Rugelach",
-    "notes" : "Use 3-4 tbsp red bean paste instead of black sesame paste for a variation.\n\nhttps://www.craving-nomz.com/black-sesame-rugelach/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Use 3-4 tbsp red bean paste instead of black sesame paste for a variation.\n\nhttps://www.craving-nomz.com/black-sesame-rugelach/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Mix the flour and salt, then cut in the cold butter and cream cheese until sandy. Gather into a ball, wrap and chill for at least 2 hours."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "40 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -4670,7 +4670,7 @@
     "baseServings" : 8,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -4739,14 +4739,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Black Sesame Steamed Buns (Mantou)",
-    "notes" : "For filled buns, divide into 10, wrap each around a ball of black sesame paste and seal. A splash of white vinegar in the steaming water prevents greying. Freeze cooled buns and re-steam to reheat.\n\nhttps://www.craving-nomz.com/black-sesame-mantou-steamed-bun/#recipe",
+    "notes" : "Times are estimates: the original recipe didn't list them. For filled buns, divide into 10, wrap each around a ball of black sesame paste and seal. A splash of white vinegar in the steaming water prevents greying. Freeze cooled buns and re-steam to reheat.\n\nhttps://www.craving-nomz.com/black-sesame-mantou-steamed-bun/#recipe",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -4756,7 +4756,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -4823,7 +4823,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Black Sesame Tangyuan",
-    "notes" : "For matcha skins, mix 1 tbsp matcha (and 1 tbsp sugar, optional) into the flour first. Also good in ginger or osmanthus syrup.\n\nhttps://thefeedfeed.com/ying_a_ting/black-sesame-tangyuan-with-plain-skins-and-matcha-skins",
+    "notes" : "Times are estimates: the original recipe didn't list them. For matcha skins, mix 1 tbsp matcha (and 1 tbsp sugar, optional) into the flour first. Also good in ginger or osmanthus syrup.\n\nhttps://thefeedfeed.com/ying_a_ting/black-sesame-tangyuan-with-plain-skins-and-matcha-skins",
     "photoNames" : [
 
     ],
@@ -4831,7 +4831,7 @@
       "Melt the butter, then stir in the sugar and ground sesame. Chill until solid, about 2 hours.",
       "Roll teaspoon-sized balls of filling and freeze on a tray for about 1 hour."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "45 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -4841,7 +4841,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -4958,14 +4958,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Blueberry Streusel Cupcakes",
-    "notes" : "Make buttermilk with 300ml milk plus 20ml lemon juice. The streusel is optional.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Make buttermilk with 300ml milk plus 20ml lemon juice. The streusel is optional.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -4975,7 +4975,7 @@
     "baseServings" : 8,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "18 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -5051,16 +5051,16 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 200,
         "id" : "857AEF91-CFC3-5A47-A24C-66E8422A3AB9",
         "name" : "chocolate chips or chunks",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "D37EBF81-B631-5B23-90B3-5668408EB675",
         "name" : "flaky salt",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -5071,7 +5071,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Brown Butter Chocolate Chip Cookies",
-    "notes" : "The longer the dough chills, the less the cookies spread. Adapted from Tasty's brown butter toffee cookie.\n\nhttps://www.craving-nomz.com/the-best-chocolate-chip-cookies/",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. The longer the dough chills, the less the cookies spread. Adapted from Tasty's brown butter toffee cookie.\n\nhttps://www.craving-nomz.com/the-best-chocolate-chip-cookies/",
     "photoNames" : [
 
     ],
@@ -5080,7 +5080,7 @@
       "Beat in both sugars, then the egg and vanilla until smooth and glossy. Fold in the salt, cream of tartar, baking soda, flour and chopped chocolate.",
       "Roll into balls on a lined tray, cover loosely and refrigerate at least overnight, or up to 3 days."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -5090,7 +5090,7 @@
     "baseServings" : 12,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 12,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -5159,14 +5159,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Classic Chocolate Brownies",
-    "notes" : "Use 200g sugar for cakier brownies. Add 100g white or milk chocolate chunks, toasted hazelnuts or pecans, or 2 handfuls of mini marshmallows with the flour.\n\nhttps://www.olivemagazine.com/recipes/baking-and-desserts/classic-chocolate-brownies/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Use 200g sugar for cakier brownies. Add 100g white or milk chocolate chunks, toasted hazelnuts or pecans, or 2 handfuls of mini marshmallows with the flour.\n\nhttps://www.olivemagazine.com/recipes/baking-and-desserts/classic-chocolate-brownies/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -5261,7 +5261,7 @@
     "baseServings" : 4,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -5391,14 +5391,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Turkish Bulgur Pilaf",
-    "notes" : "200ml tomato puree can replace the tomato paste.\n\nhttps://youtu.be/ryp38w_Kchs?si=dPN0hkstKIUYSsRY",
+    "notes" : "Times are estimates: the original recipe didn't list them. 200ml tomato puree can replace the tomato paste.\n\nhttps://youtu.be/ryp38w_Kchs?si=dPN0hkstKIUYSsRY",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -5705,7 +5705,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -5750,14 +5750,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Butter Cookies",
-    "notes" : "https://youtube.com/shorts/AKn9_SmRrLI?si=nlh-SHgb3QpYFtFF",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://youtube.com/shorts/AKn9_SmRrLI?si=nlh-SHgb3QpYFtFF",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -5767,7 +5767,7 @@
     "baseServings" : 8,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "50 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -5855,14 +5855,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Roasted Butternut Squash Soup",
-    "notes" : "https://www.bbc.co.uk/food/recipes/roasted_butternut_squash_10281",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bbc.co.uk/food/recipes/roasted_butternut_squash_10281",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -5990,7 +5990,7 @@
     "baseServings" : 4,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -6063,14 +6063,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Carrot Ginger Lentil Soup",
-    "notes" : "https://www.cleaneatingkitchen.com/instant-pot-carrot-ginger-soup/",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.cleaneatingkitchen.com/instant-pot-carrot-ginger-soup/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -6152,7 +6152,7 @@
     "baseServings" : 4,
     "category" : "Drink",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -6215,14 +6215,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Homemade Chai Concentrate",
-    "notes" : "Makes 3-4 cups. Use within a week, or freeze in cubes.\n\nhttps://myheartbeets.com/homemade-chai-concentrate/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Makes 3-4 cups. Use within a week, or freeze in cubes.\n\nhttps://myheartbeets.com/homemade-chai-concentrate/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "5 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -6318,7 +6318,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -6440,14 +6440,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Chana Dal",
-    "notes" : "Skip soaking and use 2.5 cups cooking water if short on time. Chana dal foams, so fill the pot no more than halfway. Stovetop pressure cooker: 10-12 minutes on low once at pressure.\n\nhttps://spicecravings.com/chana-dal#recipe",
+    "notes" : "Times are estimates: the original recipe didn't list them. Skip soaking and use 2.5 cups cooking water if short on time. Chana dal foams, so fill the pot no more than halfway. Stovetop pressure cooker: 10-12 minutes on low once at pressure.\n\nhttps://spicecravings.com/chana-dal#recipe",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Soak the chana dal in the soaking water for 30 minutes, then drain."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -7175,7 +7175,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -7256,10 +7256,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 200,
         "id" : "311E29FD-48FD-5EF0-BEA2-E0DFFCD019A7",
         "name" : "broad beans, a bag (or broccoli or peas)",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 2,
@@ -7292,40 +7292,40 @@
         "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "694219C5-4E66-5280-8E04-D7E77EDC844C",
         "name" : "mint leaves",
-        "unit" : ""
+        "unit" : "handful"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "3EAD8D9C-5705-586B-B69F-19EF95FF52F8",
         "name" : "cucumber, grated",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "97752AA5-C82A-59BD-B3F5-A3C309244250",
         "name" : "ground cumin",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "4EF21D19-1D65-5660-BEF7-EFD51E3BC8C8",
         "name" : "salt",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.25,
         "id" : "264F3508-9B7B-5221-8FBC-DF817AF72A57",
         "name" : "chilli powder, for raita",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "229C5163-F725-50B4-B6BE-8E9ABCCB85F7",
         "name" : "paprika",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -7341,7 +7341,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Chicken Biryani",
-    "notes" : "Stovetop version: fry the onions and chicken in a pot, set the chicken aside and fry the carrot, cauliflower and broad beans, then simmer together until 75% done; boil the potatoes separately and layer as above, covered with foil and a lid, stirring to stop it catching.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Stovetop version: fry the onions and chicken in a pot, set the chicken aside and fry the carrot, cauliflower and broad beans, then simmer together until 75% done; boil the potatoes separately and layer as above, covered with foil and a lid, stirring to stop it catching.",
     "photoNames" : [
 
     ],
@@ -7349,7 +7349,7 @@
       "Marinate the chicken with about 7 tbsp (75%) of the yoghurt, the turmeric and chilli powder for an hour, preferably overnight.",
       "Soak the rice in water."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "25 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -7748,7 +7748,7 @@
     "baseServings" : 6,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -7811,14 +7811,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Chicken Congee",
-    "notes" : "Ratio is about 1 cup rice to 9-9.75 cups water. Top with crispy garlic, fried shallots, roasted peanuts, soy sauce or fish sauce.\n\nhttps://www.pressurecookrecipes.com/instant-pot-chicken-congee/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Ratio is about 1 cup rice to 9-9.75 cups water. Top with crispy garlic, fried shallots, roasted peanuts, soy sauce or fish sauce.\n\nhttps://www.pressurecookrecipes.com/instant-pot-chicken-congee/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -7989,7 +7989,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -8028,10 +8028,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "143C2651-1B13-5E6A-B5F1-20BDA0502952",
         "name" : "chives",
-        "unit" : ""
+        "unit" : "bunch"
       },
       {
         "baseQuantity" : 1,
@@ -8070,22 +8070,22 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "90B9FEEF-D296-5616-9C11-52109F9902D3",
         "name" : "light soy sauce",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "EC998227-ED67-5B5C-B4BD-B6EB30D8932A",
         "name" : "fish sauce",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "B74C876B-7733-575D-A70D-E11AF1855018",
         "name" : "oil",
-        "unit" : ""
+        "unit" : "tbsp"
       }
     ],
     "instructions" : [
@@ -8100,14 +8100,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chicken Dumplings",
-    "notes" : "",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "40 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -8117,7 +8117,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "45 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -8186,10 +8186,10 @@
         "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "1F624C1E-EF26-58EA-A9EC-43073EE4D8FC",
         "name" : "curry leaves (a handful plus about 65), divided",
-        "unit" : ""
+        "unit" : "sprig"
       },
       {
         "baseQuantity" : 13,
@@ -8258,10 +8258,10 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "B8974C16-AE5B-52CC-B3D7-71DF00B74454",
         "name" : "salt",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
         "baseQuantity" : 1,
@@ -8270,10 +8270,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "D41D7238-95CA-5549-B040-E81D06FE2C4C",
         "name" : "cornflour",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 400,
@@ -8282,31 +8282,31 @@
         "unit" : "ml"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "E8D7B104-BA3E-5A22-9D63-60EEDFCB12E7",
         "name" : "pandan leaves",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 3,
         "id" : "779407F6-318B-524E-98F8-C99DD7DE741B",
         "name" : "oil",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "CE20458D-45C4-51FF-92FC-C6D322EDDE1A",
         "name" : "parboiled potatoes",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "5CD9FC06-551C-51AD-AF65-AC1659C001ED",
         "name" : "onion, for the roti",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "CD6E1358-02A7-5772-AF4C-A23FC8BF5079",
         "name" : "leek",
         "unit" : ""
@@ -8318,16 +8318,16 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 4,
         "id" : "835CA899-B966-5087-B11B-E86527A46241",
         "name" : "roti, chopped",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "4D586A0A-0394-5AAF-B0A9-A8D4424914D4",
         "name" : "pepper",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -8344,14 +8344,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chicken Kothu Roti",
-    "notes" : "Save the rest of the vaasa thool to sprinkle in at the end.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Save the rest of the vaasa thool to sprinkle in at the end.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Marinate the chicken for at least 6 hours with the tomato paste, 1.5 tbsp Jaffna curry powder, 2 chopped garlic cloves and a little ginger, the chopped green chilli, 15 torn curry leaves, turmeric, a little salt, lime juice and cornflour."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -8940,7 +8940,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "45 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -9102,14 +9102,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chicken Pot Pie",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -9119,7 +9119,7 @@
     "baseServings" : 4,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -9248,14 +9248,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Paleo Chicken Pot Pie Soup",
-    "notes" : "To cook the chicken: simmer chicken pieces in boiling water for about 30 minutes, cool and shred off the bone. Save the broth for the soup.\n\nhttps://myheartbeets.com/chicken-pot-pie-soup-paleo/",
+    "notes" : "Times are estimates: the original recipe didn't list them. To cook the chicken: simmer chicken pieces in boiling water for about 30 minutes, cool and shred off the bone. Save the broth for the soup.\n\nhttps://myheartbeets.com/chicken-pot-pie-soup-paleo/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -9991,7 +9991,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -10101,14 +10101,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Chicken Vindaloo",
-    "notes" : "Adjust the chillies and cayenne to your spice preference.\n\nhttps://myheartbeets.com/instant-pot-chicken-vindaloo/#wprm-recipe-container-16702",
+    "notes" : "Times are estimates: the original recipe didn't list them. Adjust the chillies and cayenne to your spice preference.\n\nhttps://myheartbeets.com/instant-pot-chicken-vindaloo/#wprm-recipe-container-16702",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -10492,7 +10492,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "50 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -10609,14 +10609,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chilli Con Carne",
-    "notes" : "Serve with rice, spaghetti or a baked potato.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Serve with rice, spaghetti or a baked potato.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -10626,7 +10626,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -10727,14 +10727,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Kürtőskalács (Chimney Cake)",
-    "notes" : "On a grill over the fire it takes about 6 minutes. Mix the ground walnuts with the sugar and cinnamon for the walnut topping.",
+    "notes" : "Times are estimates: the original recipe didn't list them. On a grill over the fire it takes about 6 minutes. Mix the ground walnuts with the sugar and cinnamon for the walnut topping.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -11327,7 +11327,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -11472,14 +11472,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chocolate Cake with Ganache and Chocolate Buttercream",
-    "notes" : "If the buttercream is stiff, loosen it with a little milk or a few seconds in the microwave so it doesn't drag crumbs. Save the levelled offcuts for cake truffles.",
+    "notes" : "Times are estimates: the original recipe didn't list them. If the buttercream is stiff, loosen it with a little milk or a few seconds in the microwave so it doesn't drag crumbs. Save the levelled offcuts for cake truffles.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "40 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -11564,7 +11564,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -11654,14 +11654,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Chocolate Cheesecake",
-    "notes" : "Run a paring knife around the edge if the cheesecake sticks when unmoulding.\n\nhttps://myheartbeets.com/instant-pot-chocolate-cheesecake/#wprm-recipe-container-23720",
+    "notes" : "Times are estimates: the original recipe didn't list them. Run a paring knife around the edge if the cheesecake sticks when unmoulding.\n\nhttps://myheartbeets.com/instant-pot-chocolate-cheesecake/#wprm-recipe-container-23720",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -11763,7 +11763,7 @@
     "baseServings" : 18,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "5 minutes",
     "currentServings" : 18,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -11820,14 +11820,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chocolate Cornflake Clusters",
-    "notes" : "Use any chocolate you like. For peanut butter clusters, melt a tablespoon or two of peanut butter with the chocolate. Store covered in the fridge for up to 2 weeks or freeze for up to 3 months.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Use any chocolate you like. For peanut butter clusters, melt a tablespoon or two of peanut butter with the chocolate. Store covered in the fridge for up to 2 weeks or freeze for up to 3 months.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -11837,7 +11837,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "24 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -11950,14 +11950,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chocolate Cupcakes (Cupcake Jemma)",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "25 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -12375,7 +12375,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "120 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -12468,14 +12468,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chocolate Mud Cake",
-    "notes" : "A foil lid and baking strips help the centre cook before the outside overbakes. Wrapped twice in cling film it keeps 3 weeks in the fridge or 6 months frozen.",
+    "notes" : "Times are estimates: the original recipe didn't list them. A foil lid and baking strips help the centre cook before the outside overbakes. Wrapped twice in cling film it keeps 3 weeks in the fridge or 6 months frozen.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -12554,7 +12554,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -12642,14 +12642,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chocolate Chip Oat Cookies",
-    "notes" : "https://www.bbcgoodfood.com/user/289940/recipe/chocolate-chip-oat-cookies",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bbcgoodfood.com/user/289940/recipe/chocolate-chip-oat-cookies",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -12659,7 +12659,7 @@
     "baseServings" : 8,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "5 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -12741,14 +12741,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chocolate Tiramisu",
-    "notes" : "Use 226-340 g mascarpone depending on how rich and thick you want the filling. Make extra ganache for a more chocolatey tiramisu.\n\nhttps://bakewithzoha.com/easy-chocolate-tiramisu/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Use 226-340 g mascarpone depending on how rich and thick you want the filling. Make extra ganache for a more chocolatey tiramisu.\n\nhttps://bakewithzoha.com/easy-chocolate-tiramisu/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "25 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -12758,7 +12758,7 @@
     "baseServings" : 6,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -12862,14 +12862,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chocolate Tiramisu with Cream Cheese",
-    "notes" : "https://thefoodflamingo.com/easy-tiramisu-without-mascarpone/",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://thefoodflamingo.com/easy-tiramisu-without-mascarpone/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -13129,7 +13129,7 @@
     "baseServings" : 6,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "35 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -13259,14 +13259,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Vegan Victoria Sponge",
-    "notes" : "Total time about 40 minutes.\n\nhttps://www.bosh.tv/recipes/classic-victoria-sponge",
+    "notes" : "Times are estimates: the original recipe didn't list them. Total time about 40 minutes.\n\nhttps://www.bosh.tv/recipes/classic-victoria-sponge",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -13888,10 +13888,10 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 60,
         "id" : "8454DE88-62F5-522A-ADF1-60407A0A97FA",
         "name" : "mini semi-sweet chocolate chips",
-        "unit" : ""
+        "unit" : "g"
       }
     ],
     "instructions" : [
@@ -13905,7 +13905,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Edible Cookie Dough",
-    "notes" : "Chocolate variation: replace 1/3 cup flour with 32 g Dutch process cocoa and swap the chips for 2 oz chopped dark chocolate. Funfetti variation: omit brown sugar, use 136 g granulated sugar, add 1/4 tsp almond extract, and use 52 g white chocolate chips plus 3 tbsp sprinkles.\n\nhttps://www.cookingclassy.com/edible-cookie-dough/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Chocolate variation: replace 1/3 cup flour with 32 g Dutch process cocoa and swap the chips for 2 oz chopped dark chocolate. Funfetti variation: omit brown sugar, use 136 g granulated sugar, add 1/4 tsp almond extract, and use 52 g white chocolate chips plus 3 tbsp sprinkles.\n\nhttps://www.cookingclassy.com/edible-cookie-dough/",
     "photoNames" : [
 
     ],
@@ -13922,7 +13922,7 @@
     "baseServings" : 3,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 3,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -14079,14 +14079,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Coriander Chickpea Bowl",
-    "notes" : "https://www.bosh.tv/recipes/coriander-chickpea-bowl",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bosh.tv/recipes/coriander-chickpea-bowl",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -14780,10 +14780,10 @@
         "unit" : "bunch"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "E8067ED8-576C-5691-B555-4C67E2E9EF47",
         "name" : "chopped peanuts",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 0,
@@ -14806,7 +14806,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Dan Dan Noodles",
-    "notes" : "The chili oil makes more than you need; store the rest in a glass jar in the fridge.\n\nhttps://thewoksoflife.com/dan-dan-noodles/#recipe",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. The chili oil makes more than you need; store the rest in a glass jar in the fridge.\n\nhttps://thewoksoflife.com/dan-dan-noodles/#recipe",
     "photoNames" : [
 
     ],
@@ -15184,7 +15184,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "45 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -15302,10 +15302,10 @@
         "unit" : "cup"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 3,
         "id" : "74DF0426-23D4-50FB-8FD7-7C5F2082AC82",
         "name" : "simple syrup",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 80,
@@ -15373,14 +15373,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Eggless Double Chocolate Mousse Cake with Mirror Glaze",
-    "notes" : "https://gayathriscookspot.com/2016/06/eggless-double-chocolate-mousse-cake-with-chocolate-mirror-glaze/#google_vignette",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste.\n\nhttps://gayathriscookspot.com/2016/06/eggless-double-chocolate-mousse-cake-with-chocolate-mirror-glaze/#google_vignette",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "45 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -15676,10 +15676,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "2C49B72F-AF2C-588F-A920-F0C88B0951CC",
         "name" : "oil",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 8,
@@ -15704,7 +15704,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Ground Beef Fajitas",
-    "notes" : "Don't overcook the beef or it turns tough; 160F is safe. Get the skillet very hot so the vegetables char without going soft. For less heat, skip the chilies and use half the seasoning. For chicken fajitas, coat 500g thin chicken strips in a sachet of fajita seasoning and 2 tbsp oil, fry, then add the onion and 2 sliced peppers.\n\nhttps://www.crumbtopbaking.com/ground-beef-fajitas/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Don't overcook the beef or it turns tough; 160F is safe. Get the skillet very hot so the vegetables char without going soft. For less heat, skip the chilies and use half the seasoning. For chicken fajitas, coat 500g thin chicken strips in a sachet of fajita seasoning and 2 tbsp oil, fry, then add the onion and 2 sliced peppers.\n\nhttps://www.crumbtopbaking.com/ground-beef-fajitas/",
     "photoNames" : [
 
     ],
@@ -15721,7 +15721,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -15821,14 +15821,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Hotteok (Korean Sweet Pancakes)",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -15884,14 +15884,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Ferrero Rocher Milkshake",
-    "notes" : "Amounts are per person; multiply for more servings.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Amounts are per person; multiply for more servings.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "5 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -15922,7 +15922,7 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "723A5070-AD50-519E-98A3-07408EFD75D7",
         "name" : "frozen udon noodle cakes",
         "unit" : ""
@@ -16004,7 +16004,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Fish Ball Noodle Soup",
-    "notes" : "No mirin? Mix three parts water with one part sugar. For a saltier soup, add 1 more tbsp oyster sauce.",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. No mirin? Mix three parts water with one part sugar. For a saltier soup, add 1 more tbsp oyster sauce.",
     "photoNames" : [
 
     ],
@@ -16207,7 +16207,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -16228,10 +16228,10 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "95447315-FAEF-5C94-BDD4-D2EECADEBAC1",
         "name" : "turmeric powder",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
         "baseQuantity" : 1,
@@ -16312,10 +16312,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "A4709C05-6A67-514C-8B9B-A64D9246816F",
         "name" : "ginger-garlic paste",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 2,
@@ -16348,14 +16348,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Tamil-Style Roasted Coconut Basa Curry",
-    "notes" : "Use a dark roasted Sri Lankan or Tamil curry powder for the best aroma. Basa is delicate: sear it lightly first or add it only in the last few minutes. Adjust the tamarind to taste.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Use a dark roasted Sri Lankan or Tamil curry powder for the best aroma. Basa is delicate: sear it lightly first or add it only in the last few minutes. Adjust the tamarind to taste.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -17044,7 +17044,7 @@
     "baseServings" : 2,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -17144,14 +17144,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Gochujang Chilli Oil Noodles",
-    "notes" : "https://www.bosh.tv/recipes/gochujang-chilli-oil-noodles",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bosh.tv/recipes/gochujang-chilli-oil-noodles",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -17466,14 +17466,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Indian Green Chutney (Cilantro Mint Chutney)",
-    "notes" : "Keeps in an airtight container in the fridge for up to a week; freeze in cubes for longer. Add a little more sugar if skipping the pomegranate.\n\nhttps://myheartbeets.com/green-chutney-cilantro-mint-chutney/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Keeps in an airtight container in the fridge for up to a week; freeze in cubes for longer. Add a little more sugar if skipping the pomegranate.\n\nhttps://myheartbeets.com/green-chutney-cilantro-mint-chutney/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -17559,7 +17559,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -17674,14 +17674,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Habanero Chili",
-    "notes" : "Use 2 habaneros if you like it very spicy.\n\nhttps://myheartbeets.com/instant-pot-habanero-chili/#wprm-recipe-container-9198",
+    "notes" : "Times are estimates: the original recipe didn't list them. Use 2 habaneros if you like it very spicy.\n\nhttps://myheartbeets.com/instant-pot-habanero-chili/#wprm-recipe-container-9198",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -18778,7 +18778,7 @@
     "baseServings" : 4,
     "category" : "Breakfast",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -18836,10 +18836,10 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "A655D73B-617F-5FFB-ADED-68EDFFE1356C",
         "name" : "oil, for dosa",
-        "unit" : ""
+        "unit" : "tbsp"
       }
     ],
     "instructions" : [
@@ -18855,14 +18855,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Idli Dosa Batter",
-    "notes" : "Use the batter for idli in the first couple of days and for crispy dosa later in the week. Keeps up to a week in the fridge or a month in the freezer.\n\nhttps://myheartbeets.com/instant-pot-idli-dosa-batter/",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Use the batter for idli in the first couple of days and for crispy dosa later in the week. Keeps up to a week in the fridge or a month in the freezer.\n\nhttps://myheartbeets.com/instant-pot-idli-dosa-batter/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Soak the rice in cold water for 5-6 hours; separately soak the urad dal and fenugreek seeds for 5-6 hours, then drain both. Soak in the morning so the batter can ferment overnight."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -18872,7 +18872,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -19014,10 +19014,10 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 400,
         "id" : "F3AC767C-4771-52B3-B0DE-5A817396028F",
         "name" : "penne, cooked (enough for 4)",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 1,
@@ -19038,14 +19038,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Indian-Style Pasta",
-    "notes" : "https://www.bosh.tv/recipes/indian-style-pasta",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste.\n\nhttps://www.bosh.tv/recipes/indian-style-pasta",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -19055,7 +19055,7 @@
     "baseServings" : 2,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -19088,10 +19088,10 @@
         "unit" : "pinch"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 20,
         "id" : "8AB164B9-BB57-5BB6-B849-FD3BB1BF3D33",
         "name" : "butter",
-        "unit" : ""
+        "unit" : "g"
       }
     ],
     "instructions" : [
@@ -19105,14 +19105,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Microwave Jacket Potatoes",
-    "notes" : "",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "5 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -19122,7 +19122,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -19303,14 +19303,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Jackfruit Bulgogi Bao Buns",
-    "notes" : "https://www.bosh.tv/recipes/jackfruit-bulgogi-bao-buns",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bosh.tv/recipes/jackfruit-bulgogi-bao-buns",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "45 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -19553,7 +19553,7 @@
     "baseServings" : 4,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "45 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -19610,7 +19610,7 @@
         "unit" : "ml"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "BCFEE69C-599E-596F-90CD-E0A95B4C2A47",
         "name" : "Maggi cubes (or chicken powder)",
         "unit" : ""
@@ -19665,14 +19665,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Nigerian Jollof Rice",
-    "notes" : "Allow about 2 Maggi cubes per cup of rice.\n\nhttps://thelmzkitchen.co.uk/2016/05/23/nigerian-style-jollof-rice-long-grain-rice/",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Allow about 2 Maggi cubes per cup of rice.\n\nhttps://thelmzkitchen.co.uk/2016/05/23/nigerian-style-jollof-rice-long-grain-rice/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -19682,7 +19682,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "35 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -19811,10 +19811,10 @@
         "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "8E457831-C367-53FE-A3A4-2109F577D12B",
         "name" : "salt",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -19832,14 +19832,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Kathrikai Kulambu (Jaffna Aubergine Curry)",
-    "notes" : "The kulambu thickens over time as the aubergine absorbs the gravy, so don't reduce it too much.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. The kulambu thickens over time as the aubergine absorbs the gravy, so don't reduce it too much.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -20261,7 +20261,7 @@
     "baseServings" : 3,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 3,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -20395,14 +20395,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Kerala Ground Meat Coconut Curry",
-    "notes" : "https://myheartbeets.com/instant-pot-kerala-ground-beef-stew/",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://myheartbeets.com/instant-pot-kerala-ground-beef-stew/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -20600,14 +20600,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Halal Kimchi",
-    "notes" : "No gochugaru? Use a mix of chili powder, paprika, cayenne or crushed red pepper flakes, starting small and adjusting to taste.\n\nhttps://www.youtube.com/watch?v=PnfaYFC0XPg&t=30s",
+    "notes" : "Times are estimates: the original recipe didn't list them. No gochugaru? Use a mix of chili powder, paprika, cayenne or crushed red pepper flakes, starting small and adjusting to taste.\n\nhttps://www.youtube.com/watch?v=PnfaYFC0XPg&t=30s",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "45 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -20687,16 +20687,16 @@
         "unit" : "cup"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "27FEA921-15ED-5D9D-BFF2-A0F1A6BEF25E",
         "name" : "garlic powder",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "F59CA154-9548-5A4A-9E76-4B65C41BEF66",
         "name" : "chicken stock powder",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -20710,7 +20710,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Kimchi Tofu Soup",
-    "notes" : "You can deep-fry or air-fry the tofu instead.\n\nhttps://fullofplants.com/tofu-kimchi-stew/#recipe",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. You can deep-fry or air-fry the tofu instead.\n\nhttps://fullofplants.com/tofu-kimchi-stew/#recipe",
     "photoNames" : [
 
     ],
@@ -21774,7 +21774,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -21842,14 +21842,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Kulfa",
-    "notes" : "Grinding your own cardamom seeds gives a pleasant coarse texture. Ice cream or kulfi moulds also work.\n\nhttps://spatulainmypocket.com/2017/08/02/kulfa-the-cheats-version/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Grinding your own cardamom seeds gives a pleasant coarse texture. Ice cream or kulfi moulds also work.\n\nhttps://spatulainmypocket.com/2017/08/02/kulfa-the-cheats-version/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -21859,7 +21859,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "270 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -21928,10 +21928,10 @@
         "unit" : "inch"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 100,
         "id" : "C57A620B-19CE-5BF7-9C09-87B1A02ABF2F",
         "name" : "oil, plenty",
-        "unit" : ""
+        "unit" : "ml"
       },
       {
         "baseQuantity" : 1.5,
@@ -21946,22 +21946,22 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "133F7C56-14CE-5C20-AAD3-A047D010C4BB",
         "name" : "cucumber",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "8ED1452B-3B38-511A-8491-91029FE622BC",
         "name" : "mint",
-        "unit" : ""
+        "unit" : "handful"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "89F87FFC-7CC8-57AD-9D8A-C5B5E1D71853",
         "name" : "coriander",
-        "unit" : ""
+        "unit" : "handful"
       },
       {
         "baseQuantity" : 1,
@@ -21982,14 +21982,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Slow Cooker Lamb Biryani",
-    "notes" : "Use the remaining yoghurt with cucumber, mint and coriander for a raita.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Use the remaining yoghurt with cucumber, mint and coriander for a raita.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Marinate the lamb with 7 tbsp (about 75%) of the yoghurt, the turmeric, chilli powder and ¾ of the biryani mix for at least 4 hours, preferably overnight."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -21999,7 +21999,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -22062,13 +22062,13 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "98B8241C-EA6F-5ABF-A68D-7139A5652F88",
         "name" : "onions, sliced",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "9E4C3BAF-9B77-5FBD-959F-77C311AF40BC",
         "name" : "bell peppers, sliced",
         "unit" : ""
@@ -22084,14 +22084,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Lamb Chops",
-    "notes" : "",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -22238,7 +22238,7 @@
         "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "DDAD6A28-1052-563A-A476-6CF7EC33B160",
         "name" : "curry leaves, a few, leaves picked",
         "unit" : "sprig"
@@ -22383,7 +22383,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Jaffna Lamb Curry",
-    "notes" : "The spice mix makes more than needed; store the rest airtight in a cool dark place for up to 2 months. The curry freezes well in portions — reheat gently, covered, with a splash of water.\n\nhttps://www.sainsburysmagazine.co.uk/recipes/mains/jaffna-lamb-curry",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. The spice mix makes more than needed; store the rest airtight in a cool dark place for up to 2 months. The curry freezes well in portions — reheat gently, covered, with a splash of water.\n\nhttps://www.sainsburysmagazine.co.uk/recipes/mains/jaffna-lamb-curry",
     "photoNames" : [
 
     ],
@@ -22616,7 +22616,7 @@
     "baseServings" : 2,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "240 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -22727,14 +22727,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Slow Cooker Lamb Shanks",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -22888,7 +22888,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "90 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -23085,14 +23085,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Lactose-Free Meat Lasagne",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "An hour before cooking, put the milk, onion and garlic in a saucepan and bring very gently just to the boil. Turn off the heat and leave for 1 hour to infuse."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -23102,7 +23102,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -23205,14 +23205,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Lauki Chana Dal",
-    "notes" : "Don't skip soaking the dal — it ensures it cooks tender. Frozen onion masala cubes can go in straight from frozen.\n\nhttps://myheartbeets.com/instant-pot-lauki-chana-dal/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Don't skip soaking the dal — it ensures it cooks tender. Frozen onion masala cubes can go in straight from frozen.\n\nhttps://myheartbeets.com/instant-pot-lauki-chana-dal/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Soak the chana dal in cold water for 1 hour, then drain and rinse."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -23222,7 +23222,7 @@
     "baseServings" : 12,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "35 minutes",
     "currentServings" : 12,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -23323,14 +23323,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Vegan Lemon Drizzle Buns",
-    "notes" : "Total time about 2 hours 45 minutes including rising. The dough is much softer than a bread dough.\n\nhttps://www.bosh.tv/recipes/lemon-drizzle-buns",
+    "notes" : "Times are estimates: the original recipe didn't list them. Total time about 2 hours 45 minutes including rising. The dough is much softer than a bread dough.\n\nhttps://www.bosh.tv/recipes/lemon-drizzle-buns",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -23525,7 +23525,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -23610,14 +23610,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Lemon Sponge Cake",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -23698,14 +23698,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Lotus Biscoff Frappe",
-    "notes" : "For a layered version, dissolve the spread into the coffee, smear 1 tsp spread inside the glass, add ice and milk, then pour the coffee mixture over.",
+    "notes" : "Times are estimates: the original recipe didn't list them. For a layered version, dissolve the spread into the coffee, smear 1 tsp spread inside the glass, add ice and milk, then pour the coffee mixture over.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "5 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -23782,7 +23782,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -23886,14 +23886,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Mac and Cheese",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -24148,7 +24148,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -24235,10 +24235,10 @@
         "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 30,
         "id" : "BBFC7EB5-0D6E-54C9-AC62-CCFF417E58B7",
         "name" : "desiccated coconut",
-        "unit" : ""
+        "unit" : "g"
       }
     ],
     "instructions" : [
@@ -24254,14 +24254,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Mandarin Coconut Sponge Cake",
-    "notes" : "Chilling the bowl and whisk for 7–10 minutes speeds up whipping. Quantities are for two 8-inch tins; use about 0.57x for two 6-inch tins.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Chilling the bowl and whisk for 7–10 minutes speeds up whipping. Quantities are for two 8-inch tins; use about 0.57x for two 6-inch tins.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -24345,7 +24345,7 @@
     "baseServings" : 8,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -24408,14 +24408,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Mantou (Chinese Steamed Buns)",
-    "notes" : "Total time about 3 hours. Cooled buns freeze well; reheat by steaming again. The dough can also be shaped into twists, gua bao or filled baos.\n\nhttps://www.craving-nomz.com/basic-mantou-steamed-buns/#recipe",
+    "notes" : "Times are estimates: the original recipe didn't list them. Total time about 3 hours. Cooled buns freeze well; reheat by steaming again. The dough can also be shaped into twists, gua bao or filled baos.\n\nhttps://www.craving-nomz.com/basic-mantou-steamed-buns/#recipe",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -24552,7 +24552,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -24607,14 +24607,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Margarine Cookies",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -25515,7 +25515,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -25572,14 +25572,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Matcha Steamed Cake",
-    "notes" : "https://cinaintavola.com/en/torta-al-vapore-al-te-matcha/#wpzoom-recipe-card",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://cinaintavola.com/en/torta-al-vapore-al-te-matcha/#wpzoom-recipe-card",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -25643,14 +25643,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Matcha Frappe",
-    "notes" : "https://www.monin.com/spa/frappe-de-matcha",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.monin.com/spa/frappe-de-matcha",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "5 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -25660,7 +25660,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -25724,10 +25724,10 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "DA6FD810-62DC-58A1-A43A-AF4E35952011",
         "name" : "sesame seeds",
-        "unit" : ""
+        "unit" : "tbsp"
       }
     ],
     "instructions" : [
@@ -25740,14 +25740,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Matcha Mochi Cookies",
-    "notes" : "Other combinations work too, such as chocolate dough with peanut rice balls.\n\nhttps://ufood.com.hk/recipe/detail/3181137/%E7%94%9C%E5%93%81%E9%A3%9F%E8%AD%9C-%E6%8A%B9%E8%8C%B6%E9%BA%BB%E7%B3%AC%E6%9B%B2%E5%A5%87%E7%88%86%E6%BC%BF%E8%8A%9D%E9%BA%BB%E9%A4%A1-%E6%B9%AF%E5%9C%93%E6%9B%B2%E5%A5%87%E7%94%9C%E5%93%81%E9%A3%9F%E8%AD%9C-%E5%8C%85%E5%AE%8C%E7%B2%92%E6%B9%AF%E5%9C%93%E5%A4%9A%E9%87%8D%E5%8F%A3%E6%84%9F-%E9%85%A5%E8%84%86%E7%85%99%E9%9F%8C%E4%B8%89%E6%AD%A5%E5%AE%8C%E6%88%90",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Other combinations work too, such as chocolate dough with peanut rice balls.\n\nhttps://ufood.com.hk/recipe/detail/3181137/%E7%94%9C%E5%93%81%E9%A3%9F%E8%AD%9C-%E6%8A%B9%E8%8C%B6%E9%BA%BB%E7%B3%AC%E6%9B%B2%E5%A5%87%E7%88%86%E6%BC%BF%E8%8A%9D%E9%BA%BB%E9%A4%A1-%E6%B9%AF%E5%9C%93%E6%9B%B2%E5%A5%87%E7%94%9C%E5%93%81%E9%A3%9F%E8%AD%9C-%E5%8C%85%E5%AE%8C%E7%B2%92%E6%B9%AF%E5%9C%93%E5%A4%9A%E9%87%8D%E5%8F%A3%E6%84%9F-%E9%85%A5%E8%84%86%E7%85%99%E9%9F%8C%E4%B8%89%E6%AD%A5%E5%AE%8C%E6%88%90",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Cook the frozen rice balls according to the packet, return them to their tray and refrigerate for 1 hour."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "25 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -25878,7 +25878,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "60 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -25953,14 +25953,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Matcha Pound Cake",
-    "notes" : "https://www.japanesecooking101.com/matcha-pound-cake-recipe/",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.japanesecooking101.com/matcha-pound-cake-recipe/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -25970,7 +25970,7 @@
     "baseServings" : 6,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -26071,14 +26071,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chewy Matcha Hotteok (Sweet Filled Pancakes)",
-    "notes" : "https://m.10000recipe.com/zh/6977427/%E8%B0%81%E9%83%BD%E5%96%9C%E6%AC%A2%E7%9A%84%E5%8A%B2%E9%81%93%E6%8A%B9%E8%8C%B6%E7%B3%AF%E7%B1%B3%E7%B3%96%E9%A5%BC",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://m.10000recipe.com/zh/6977427/%E8%B0%81%E9%83%BD%E5%96%9C%E6%AC%A2%E7%9A%84%E5%8A%B2%E9%81%93%E6%8A%B9%E8%8C%B6%E7%B3%AF%E7%B1%B3%E7%B3%96%E9%A5%BC",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "25 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -26088,7 +26088,7 @@
     "baseServings" : 1,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 1,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -26157,14 +26157,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Matcha Scones",
-    "notes" : "Best warm and freshly baked, with jam, butter or cream.\n\nhttps://m.10000recipe.com/zh/6889037/%E5%88%B6%E4%BD%9C%E6%8A%B9%E8%8C%B6%E5%8F%B8%E5%BA%B7%E9%A5%BC%EF%BC%81",
+    "notes" : "Times are estimates: the original recipe didn't list them. Best warm and freshly baked, with jam, butter or cream.\n\nhttps://m.10000recipe.com/zh/6889037/%E5%88%B6%E4%BD%9C%E6%8A%B9%E8%8C%B6%E5%8F%B8%E5%BA%B7%E9%A5%BC%EF%BC%81",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -26174,7 +26174,7 @@
     "baseServings" : 16,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 16,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -26266,14 +26266,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Matcha Snow Cake (Mochi with Oat Filling)",
-    "notes" : "The dough is very sticky — gloves and plastic wrap make it much easier to handle.\n\nhttps://m.xiachufang.com/recipe/104424439/",
+    "notes" : "Times are estimates: the original recipe didn't list them. The dough is very sticky — gloves and plastic wrap make it much easier to handle.\n\nhttps://m.xiachufang.com/recipe/104424439/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -26604,7 +26604,7 @@
     "baseServings" : 16,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 16,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -26683,14 +26683,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Rice Cooker Mexican Rice",
-    "notes" : "Hands-off option: whisk the paste into the stock and water, add everything to the cold cooker pot, stir and cook. Chicken bouillon powder (2 tbsp) plus water can replace the stock. On the stovetop, use 16 oz tomato sauce and simmer covered for 20 minutes.\n\nhttps://www.lovefromtheoven.com/mexican-spanish-rice/#wprm-recipe-container-42344",
+    "notes" : "Times are estimates: the original recipe didn't list them. Hands-off option: whisk the paste into the stock and water, add everything to the cold cooker pot, stir and cook. Chicken bouillon powder (2 tbsp) plus water can replace the stock. On the stovetop, use 16 oz tomato sauce and simmer covered for 20 minutes.\n\nhttps://www.lovefromtheoven.com/mexican-spanish-rice/#wprm-recipe-container-42344",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -26700,7 +26700,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "35 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -26821,14 +26821,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "One-Pot Mexican Chicken and Rice",
-    "notes" : "If the rice starts sticking before it's cooked, add a splash of water or stock.\n\nhttps://www.tamingtwins.com/mexican-chicken-and-rice-one-pot/",
+    "notes" : "Times are estimates: the original recipe didn't list them. If the rice starts sticking before it's cooked, add a splash of water or stock.\n\nhttps://www.tamingtwins.com/mexican-chicken-and-rice-one-pot/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -27045,7 +27045,7 @@
     "baseServings" : 4,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -27127,14 +27127,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Miso Soup with Homemade Dashi",
-    "notes" : "Never boil the soup after adding miso. Dashi keeps 2–4 days in the fridge or 2 weeks frozen. Instant dashi granules (about 1 tbsp per litre) make a quick shortcut.\n\nhttps://www.youtube.com/watch?",
+    "notes" : "Times are estimates: the original recipe didn't list them. Never boil the soup after adding miso. Dashi keeps 2–4 days in the fridge or 2 weeks frozen. Instant dashi granules (about 1 tbsp per litre) make a quick shortcut.\n\nhttps://www.youtube.com/watch?",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -27144,7 +27144,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "18 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -27343,14 +27343,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "No-Churn Mocha Ice Cream Cake",
-    "notes" : "For a churned coffee ice cream instead, make a custard with 240 ml half-and-half, 240 ml cream, 180 g sugar, 3 tbsp espresso powder, ¼ tsp salt, 2 egg yolks and 1 tsp vanilla, chill, then churn. Wrap leftovers in plastic and keep frozen for a few days.",
+    "notes" : "Times are estimates: the original recipe didn't list them. For a churned coffee ice cream instead, make a custard with 240 ml half-and-half, 240 ml cream, 180 g sugar, 3 tbsp espresso powder, ¼ tsp salt, 2 egg yolks and 1 tsp vanilla, chill, then churn. Wrap leftovers in plastic and keep frozen for a few days.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Make the mocha ice cream at least 6 hours ahead: whip the cream to stiff peaks, then on low speed mix in the condensed milk, vanilla, sifted cocoa and espresso powder. Transfer to a container, press plastic wrap on the surface, seal and freeze until firm."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "40 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -27466,7 +27466,7 @@
     "baseServings" : 6,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "45 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -27642,14 +27642,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Moroccan Jackfruit 'Lamb' with Lemon Couscous",
-    "notes" : "https://www.bosh.tv/recipes/moroccan-jackfruit-lamb-with-lemon-couscous",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bosh.tv/recipes/moroccan-jackfruit-lamb-with-lemon-couscous",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -27921,7 +27921,7 @@
     "baseServings" : 4,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -27936,16 +27936,16 @@
     "id" : "2C0B3482-9BB4-56A1-8CF0-00BDF438D06B",
     "ingredients" : [
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 150,
         "id" : "6ACB0CD2-7B5D-5E9B-8CDC-CEE9DAB3EABA",
         "name" : "natural yoghurt",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 150,
         "id" : "E76DF910-2064-5E4D-942B-75548DDC9D2B",
         "name" : "self-raising flour",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 1,
@@ -27954,10 +27954,10 @@
         "unit" : "pinch"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "396B94AE-288E-562E-B7BB-E03DB352D506",
         "name" : "nigella seeds",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
         "baseQuantity" : 100,
@@ -27989,14 +27989,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Yoghurt Flatbreads or Pizza Base",
-    "notes" : "If using unsalted butter, add a pinch of salt to the garlic butter.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. If using unsalted butter, add a pinch of salt to the garlic butter.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -28006,7 +28006,7 @@
     "baseServings" : 6,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -28090,14 +28090,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Naan Bread",
-    "notes" : "To freeze, store in a ziplock bag; reheat from frozen in the microwave.",
+    "notes" : "Times are estimates: the original recipe didn't list them. To freeze, store in a ziplock bag; reheat from frozen in the microwave.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -28159,10 +28159,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 30,
         "id" : "5DE93230-D1FC-5829-B1DC-A391120725D1",
         "name" : "blanched peanuts",
-        "unit" : ""
+        "unit" : "g"
       }
     ],
     "instructions" : [
@@ -28177,7 +28177,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Nian Gao (Chinese New Year Rice Cake)",
-    "notes" : "Brown sugar can be swapped for 25g granulated sugar. To pan fry, cool completely, cut into strips and fry in a greased pan over medium-high heat until browned on both sides.\n\nhttps://www.craving-nomz.com/nian-gao-chinese-new-year-cake/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Brown sugar can be swapped for 25g granulated sugar. To pan fry, cool completely, cut into strips and fry in a greased pan over medium-high heat until browned on both sides.\n\nhttps://www.craving-nomz.com/nian-gao-chinese-new-year-cake/",
     "photoNames" : [
 
     ],
@@ -28500,7 +28500,7 @@
     "baseServings" : 4,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -28594,14 +28594,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Indian Onion Masala",
-    "notes" : "Makes about 5 cups. Use enough oil and remove any burnt bits before sealing to avoid a burn error. The more caramelised the onions, the sweeter the masala.\n\nhttps://myheartbeets.com/indian-onion-masala/#wprm-recipe-container-10348",
+    "notes" : "Times are estimates: the original recipe didn't list them. Makes about 5 cups. Use enough oil and remove any burnt bits before sealing to avoid a burn error. The more caramelised the onions, the sweeter the masala.\n\nhttps://myheartbeets.com/indian-onion-masala/#wprm-recipe-container-10348",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -29144,7 +29144,7 @@
     "baseServings" : 4,
     "category" : "Breakfast",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -29225,14 +29225,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Yoghurt Pancakes",
-    "notes" : "Makes 4-6 pancakes. Use up to 150g yoghurt for a softer batter.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Makes 4-6 pancakes. Use up to 150g yoghurt for a softer batter.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -29450,7 +29450,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -29519,14 +29519,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Crunchy Panko-Crusted Cod",
-    "notes" : "Good with baby carrots and asparagus.\n\nhttps://frozenfish.direct/recipe/crunchy-panko-crusted-cod/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Good with baby carrots and asparagus.\n\nhttps://frozenfish.direct/recipe/crunchy-panko-crusted-cod/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -29679,10 +29679,10 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 3,
         "id" : "06E3D551-CECC-51AE-B5DA-21F600FF8FAB",
         "name" : "salted butter, softened, or ghee or oil",
-        "unit" : ""
+        "unit" : "tbsp"
       }
     ],
     "instructions" : [
@@ -29700,7 +29700,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Lachha Paratha",
-    "notes" : "On electric or induction hobs, use a lightweight pan; heavy cast iron can make the parathas tough.\n\nhttps://www.teaforturmeric.com/lachha-paratha/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. On electric or induction hobs, use a lightweight pan; heavy cast iron can make the parathas tough.\n\nhttps://www.teaforturmeric.com/lachha-paratha/",
     "photoNames" : [
 
     ],
@@ -29970,7 +29970,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "35 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -30028,10 +30028,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 3,
         "id" : "18ED9EA5-71AF-5B9C-A4BC-660D0BA04045",
         "name" : "extra virgin olive oil",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 8,
@@ -30149,14 +30149,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Pepper Prawn Paella",
-    "notes" : "https://originalflava.com/meals/pepper-prawn-paella/",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste.\n\nhttps://originalflava.com/meals/pepper-prawn-paella/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -30166,7 +30166,7 @@
     "baseServings" : 4,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "50 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -30354,14 +30354,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Pho Ga (Vietnamese Chicken Noodle Soup)",
-    "notes" : "Total time about 1 hr 25 min. Star anise is deliberately left out so it doesn't overpower the clean broth.\n\nhttps://www.pressurecookrecipes.com/instant-pot-pho-ga/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Total time about 1 hr 25 min. Star anise is deliberately left out so it doesn't overpower the clean broth.\n\nhttps://www.pressurecookrecipes.com/instant-pot-pho-ga/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -30739,7 +30739,7 @@
     "baseServings" : 6,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -30819,14 +30819,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Vegan Potato Leek Soup (Instant Pot or Stovetop)",
-    "notes" : "Stovetop: soften the leeks and garlic in oil in a large pot, add everything else, bring to a simmer, then cover and simmer on low for 20-25 minutes until tender before blending. A large onion can replace the leeks.\n\nhttps://www.cleaneatingkitchen.com/dairy-free-potato-leek-soup/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Stovetop: soften the leeks and garlic in oil in a large pot, add everything else, bring to a simmer, then cover and simmer on low for 20-25 minutes until tender before blending. A large onion can replace the leeks.\n\nhttps://www.cleaneatingkitchen.com/dairy-free-potato-leek-soup/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -31175,7 +31175,7 @@
     "baseServings" : 4,
     "category" : "Starter",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "60 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -31276,14 +31276,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Radish Cake",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -31527,14 +31527,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Red Onion Pickle",
-    "notes" : "Makes 2 x 400ml jars. Keep in the fridge and use within 4 weeks. Salting keeps the onions crisp.\n\nhttps://www.bbc.co.uk/food/recipes/red_onion_pickle_98165",
+    "notes" : "Times are estimates: the original recipe didn't list them. Makes 2 x 400ml jars. Keep in the fridge and use within 4 weeks. Salting keeps the onions crisp.\n\nhttps://www.bbc.co.uk/food/recipes/red_onion_pickle_98165",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -31692,7 +31692,7 @@
     "baseServings" : 4,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -31766,14 +31766,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Rice Cooker Pilau",
-    "notes" : "https://youtube.com/shorts/76A0dHz3oKE?si=edxUs0kZCq5wPRKc",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://youtube.com/shorts/76A0dHz3oKE?si=edxUs0kZCq5wPRKc",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -31933,14 +31933,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Homemade Salsa",
-    "notes" : "https://www.loveandlemons.com/homemade-salsa-recipe/#wprm-recipe-container-50817",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.loveandlemons.com/homemade-salsa-recipe/#wprm-recipe-container-50817",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -32259,10 +32259,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "74CB8028-459B-5C6F-B1C2-950CD71AE2E4",
         "name" : "flaky sea salt",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -32276,7 +32276,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Salted Chocolate Chunk Brownie Cookies",
-    "notes" : "https://www.craving-nomz.com/salted-chocolate-chunk-brownie-cookies/#recipe",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste.\n\nhttps://www.craving-nomz.com/salted-chocolate-chunk-brownie-cookies/#recipe",
     "photoNames" : [
 
     ],
@@ -32293,7 +32293,7 @@
     "baseServings" : 4,
     "category" : "Breakfast",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -32391,14 +32391,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Savoury Indian Pancake",
-    "notes" : "Use more oil for crispier edges. For a chickpea version, replace the almond flour, tapioca flour and coconut milk with 1 cup chickpea flour and enough water for a pancake batter.\n\nhttps://myheartbeets.com/savory-indian-pancake/#wprm-recipe-container-8751",
+    "notes" : "Times are estimates: the original recipe didn't list them. Use more oil for crispier edges. For a chickpea version, replace the almond flour, tapioca flour and coconut milk with 1 cup chickpea flour and enough water for a pancake batter.\n\nhttps://myheartbeets.com/savory-indian-pancake/#wprm-recipe-container-8751",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -32523,7 +32523,7 @@
     "baseServings" : 2,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -32645,14 +32645,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Seafood Paella",
-    "notes" : "Fresh parsley works too: use 1/4 cup, chopped.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Fresh parsley works too: use 1/4 cup, chopped.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -32761,7 +32761,7 @@
     "baseServings" : 4,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -32914,14 +32914,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Shalgam ki Sabzi (Indian Spiced Turnips)",
-    "notes" : "https://myheartbeets.com/instant-pot-shalgam-ki-sabzi/",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://myheartbeets.com/instant-pot-shalgam-ki-sabzi/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -33282,10 +33282,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "1AFD3112-062F-56E2-9D86-07972DF38C6B",
         "name" : "oil",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
         "baseQuantity" : 3,
@@ -33367,7 +33367,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Pressure Cooker Shiitake Mushroom Chicken Rice",
-    "notes" : "Rubbing the mushrooms with cornflour gives them a smoother, more delicate texture.\n\nhttps://en.christinesrecipes.com/2017/03/shiitake-mushroom-chicken-rice-pressure-cooker.html",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Rubbing the mushrooms with cornflour gives them a smoother, more delicate texture.\n\nhttps://en.christinesrecipes.com/2017/03/shiitake-mushroom-chicken-rice-pressure-cooker.html",
     "photoNames" : [
 
     ],
@@ -35442,7 +35442,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "45 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -35571,14 +35571,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Spicy Spaghetti Bolognese",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -35588,7 +35588,7 @@
     "baseServings" : 4,
     "category" : "Side",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -35705,14 +35705,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Spicy Yellow Rice",
-    "notes" : "https://youtube.com/shorts/lH2joWkF6Ew?si=3B_PmBgkWYWEwdR7",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://youtube.com/shorts/lH2joWkF6Ew?si=3B_PmBgkWYWEwdR7",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -36012,7 +36012,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -36081,10 +36081,10 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.25,
         "id" : "9B20CC15-3D4E-5C1F-B28C-6C1B9115C1A1",
         "name" : "red food colouring, a little",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
         "baseQuantity" : 60,
@@ -36099,10 +36099,10 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 250,
         "id" : "46962691-C15D-55C8-97D8-961C17ADD1AE",
         "name" : "strawberries, cut small and patted dry",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 0,
@@ -36127,14 +36127,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Strawberry Cream Cake",
-    "notes" : "Pat the strawberry pieces dry on kitchen paper so they don't make the cream watery. For 3–4 thinner layers baked separately, bake 15–20 minutes.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Pat the strawberry pieces dry on kitchen paper so they don't make the cream watery. For 3–4 thinner layers baked separately, bake 15–20 minutes.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "40 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -36336,7 +36336,7 @@
     "baseServings" : 2,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -36433,14 +36433,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Sticky Asian Wings",
-    "notes" : "Instead of broiling in the oven, you can cook the wings on an outdoor grill.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Instead of broiling in the oven, you can cook the wings on an outdoor grill.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -37245,16 +37245,16 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "A20C0134-CE8C-5568-92B4-FD4D5ADB922F",
         "name" : "toasted sesame seeds",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 30,
         "id" : "1170078C-D13E-5621-AACD-1446D4349384",
         "name" : "shredded unsweetened coconut",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 0,
@@ -37277,7 +37277,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Tapioca Thousand Layer Cake",
-    "notes" : "Keeps covered at room temperature overnight, or refrigerated for 3–4 days; steam or microwave to soften. Avoid the dark, very hard brown sugar slabs.\n\nhttps://healthynibblesandbits.com/tapioca-thousand-layer-cake/",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. Keeps covered at room temperature overnight, or refrigerated for 3–4 days; steam or microwave to soften. Avoid the dark, very hard brown sugar slabs.\n\nhttps://healthynibblesandbits.com/tapioca-thousand-layer-cake/",
     "photoNames" : [
 
     ],
@@ -37294,7 +37294,7 @@
     "baseServings" : 2,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "35 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -37429,16 +37429,16 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "5CCB9F24-DB5A-573F-BF87-6F84103C64BF",
         "name" : "cumin seeds",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "74058974-060C-57BA-B778-0D28DDB2A25C",
         "name" : "fresh coriander",
-        "unit" : ""
+        "unit" : "handful"
       }
     ],
     "instructions" : [
@@ -37453,14 +37453,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Tarka Dhal",
-    "notes" : "Made in a 26 cm pan.",
+    "notes" : "Some amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Made in a 26 cm pan.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "10 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -37470,7 +37470,7 @@
     "baseServings" : 6,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "480 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -37598,14 +37598,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Slow Cooker Texas Beef Chili",
-    "notes" : "Instant Pot: brown the beef on Sauté, add everything else, lock the lid and cook on Meat/Stew (35 minutes), then release the pressure naturally or quickly.\n\nhttps://myheartbeets.com/texas-beef-chili/",
+    "notes" : "Times are estimates: the original recipe didn't list them. Instant Pot: brown the beef on Sauté, add everything else, lock the lid and cook on Meat/Stew (35 minutes), then release the pressure naturally or quickly.\n\nhttps://myheartbeets.com/texas-beef-chili/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -37687,7 +37687,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -37781,14 +37781,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Thai Green Curry Chicken (Gaeng Keow Waan)",
-    "notes" : "Start with 50 g store-bought paste (Maeploy, Aroy-D or Maesri); more paste means more flavour and heat. For chicken breast, slice thinly, marinate in 2 tsp fish sauce, and add to the simmering sauce for just 1–2 minutes. Lime leaves are for infusion; warn guests not to eat them.\n\nhttps://hot-thai-kitchen.com/green-curry-new-2/#recipe",
+    "notes" : "Times are estimates: the original recipe didn't list them. Start with 50 g store-bought paste (Maeploy, Aroy-D or Maesri); more paste means more flavour and heat. For chicken breast, slice thinly, marinate in 2 tsp fish sauce, and add to the simmering sauce for just 1–2 minutes. Lime leaves are for infusion; warn guests not to eat them.\n\nhttps://hot-thai-kitchen.com/green-curry-new-2/#recipe",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -37798,7 +37798,7 @@
     "baseServings" : 8,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -37927,14 +37927,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Pressure Cooker Thai Green Chicken Curry",
-    "notes" : "Don't shake the can of coconut milk; you want the cream to stay on top. For less heat, use 1/4 cup curry paste.",
+    "notes" : "Times are estimates: the original recipe didn't list them. Don't shake the can of coconut milk; you want the cream to stay on top. For less heat, use 1/4 cup curry paste.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -38169,10 +38169,10 @@
         "unit" : "clove"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "B34847D4-8598-5D4D-8F64-81FF90B211FF",
         "name" : "coriander leaves",
-        "unit" : ""
+        "unit" : "handful"
       },
       {
         "baseQuantity" : 0,
@@ -38195,7 +38195,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Tomato Chutney",
-    "notes" : "https://cookpad.com/eng/recipes/15843352",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste.\n\nhttps://cookpad.com/eng/recipes/15843352",
     "photoNames" : [
 
     ],
@@ -38580,7 +38580,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -38717,14 +38717,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Tuna Pasta Bake",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -38861,7 +38861,7 @@
     "baseServings" : 8,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -38937,14 +38937,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Vanilla Cake (Cupcake Jemma)",
-    "notes" : "",
+    "notes" : "Times are estimates: the original recipe didn't list them.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -38954,7 +38954,7 @@
     "baseServings" : 12,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 12,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -39028,14 +39028,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Mini Vanilla Cupcakes",
-    "notes" : "This is a third of the regular batch (125g flour, 100g sugar, 1 tsp baking powder, 125g butter, 1.5 tbsp milk, 0.25 tsp vanilla, 2 eggs), which makes 12 regular cupcakes.",
+    "notes" : "Times are estimates: the original recipe didn't list them. This is a third of the regular batch (125g flour, 100g sugar, 1 tsp baking powder, 125g butter, 1.5 tbsp milk, 0.25 tsp vanilla, 2 eggs), which makes 12 regular cupcakes.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -39151,7 +39151,7 @@
         "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "0373360E-EB7B-54F7-A87F-7A65DD684DB2",
         "name" : "fresh chilli or chilli sauce, sliced",
         "unit" : ""
@@ -39169,16 +39169,16 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 100,
         "id" : "DE500404-CA20-53E4-B4E4-773B6109E1E4",
         "name" : "red cabbage, finely shredded",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 40,
         "id" : "CBA8D739-33E3-506F-A1AB-D8021213F222",
         "name" : "roasted unsalted peanuts, crushed or chopped",
-        "unit" : ""
+        "unit" : "g"
       },
       {
         "baseQuantity" : 0,
@@ -39187,10 +39187,10 @@
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "E0BBAF73-8248-5AA9-BF15-328F8E358A38",
         "name" : "fresh coriander",
-        "unit" : ""
+        "unit" : "handful"
       }
     ],
     "instructions" : [
@@ -39209,7 +39209,7 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Vegan Bao Buns with Pulled Jackfruit",
-    "notes" : "The buns can be made 1 day ahead.\n\nhttps://www.lazycatkitchen.com/vegan-bao-buns-pulled-jackfruit/#recipe-start",
+    "notes" : "Some amounts are estimates: the original recipe didn't list them, so adjust to taste. The buns can be made 1 day ahead.\n\nhttps://www.lazycatkitchen.com/vegan-bao-buns-pulled-jackfruit/#recipe-start",
     "photoNames" : [
 
     ],
@@ -39226,7 +39226,7 @@
     "baseServings" : 6,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "14 minutes",
     "currentServings" : 6,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -39302,14 +39302,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Vegan Chocolate Chip Cookies",
-    "notes" : "https://www.bosh.tv/recipes/chocolate-chip-cookies",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://www.bosh.tv/recipes/chocolate-chip-cookies",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -39319,7 +39319,7 @@
     "baseServings" : 4,
     "category" : "Breakfast",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "20 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -39400,14 +39400,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Easy Vegan Croissants",
-    "notes" : "Total time is about 25 minutes plus 2 hours resting.\n\nhttps://www.bosh.tv/recipes/easy-vegan-croissants",
+    "notes" : "Times are estimates: the original recipe didn't list them. Total time is about 25 minutes plus 2 hours resting.\n\nhttps://www.bosh.tv/recipes/easy-vegan-croissants",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -39417,7 +39417,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "60 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -39552,14 +39552,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Mum's Vegan Lentil Roast",
-    "notes" : "https://originalflava.com/vegan/mums-vegan-lentil-roast/",
+    "notes" : "Times are estimates: the original recipe didn't list them.\n\nhttps://originalflava.com/vegan/mums-vegan-lentil-roast/",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -39569,7 +39569,7 @@
     "baseServings" : 4,
     "category" : "Starter",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -39713,14 +39713,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Wild West Wings",
-    "notes" : "Total time about 35 minutes.\n\nhttps://www.bosh.tv/recipes/wild-west-wings",
+    "notes" : "Times are estimates: the original recipe didn't list them. Total time about 35 minutes.\n\nhttps://www.bosh.tv/recipes/wild-west-wings",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "20 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -39904,7 +39904,7 @@
     "baseServings" : 8,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "25 minutes",
     "currentServings" : 8,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -40027,14 +40027,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Instant Pot Vegetable Soup",
-    "notes" : "Makes about 10 cups. Keeps 3-4 days in the fridge or 4-6 months frozen.\n\nhttps://www.thereciperebel.com/instant-pot-vegetable-soup/#wprm-recipe-container-12772",
+    "notes" : "Times are estimates: the original recipe didn't list them. Makes about 10 cups. Keeps 3-4 days in the fridge or 4-6 months frozen.\n\nhttps://www.thereciperebel.com/instant-pot-vegetable-soup/#wprm-recipe-container-12772",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -40712,7 +40712,7 @@
     "baseServings" : 4,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "12 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -40807,14 +40807,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Yule Log",
-    "notes" : "The source method ends at the ganache and doesn't say how the 150ml cream is used or how to assemble the log.",
+    "notes" : "Times are estimates: the original recipe didn't list them. The source method ends at the ganache and doesn't say how the 150ml cream is used or how to assemble the log.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
