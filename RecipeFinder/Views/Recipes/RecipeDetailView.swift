@@ -21,7 +21,7 @@ struct RecipeDetailView: View {
     static let saveErrorMessage = "Your changes couldn't be saved. Please try again."
     @State var showTimerSheet = false
     @State var substitutingIngredientIndex: Int?
-    // The post-cook "Made it" sheet is presented from the app root (see `MadeItPresenter`).
+    // The post-cook "Made it" sheet's shared state (see `MadeItPresenting`); this screen presents it.
     @Environment(\.madeItPresenter) private var madeItPresenter
     @State private var showPhotoManager = false
     @State var photoViewer: PhotoViewerSource?
@@ -129,6 +129,12 @@ struct RecipeDetailView: View {
             RecipeRefreshSheet(diff: diff, sourceURL: recipe.importedFromURL) { updated in
                 applyRefresh(updated)
             }
+        }
+        .sheet(item: Binding(
+            get: { madeItPresenter.request(for: recipe.id) },
+            set: { if $0 == nil { madeItPresenter.dismiss() } }
+        ), onDismiss: { madeItPresenter.didDismiss() }) { request in
+            MadeItSheet(summary: request.summary, onRate: request.onRate, onPhotoSelected: request.onPhotoSelected)
         }
         .fullScreenCover(isPresented: $showCookingMode, onDismiss: {
             // Present only once the cover is gone — a sheet can't present over a dismissing cover.
@@ -273,6 +279,8 @@ struct RecipeDetailView: View {
     }
 
     func recordCook() {
+        // One cook a day: Made it is disabled once cooked today, and finishing cooking mode again mustn't add another.
+        guard !recipe.wasCookedToday() else { return }
         recipe.cookCount += 1
         recipe.lastCookedAt = Date()
         Task { await PersistenceController.shared.recordCook(withId: recipe.id) }
@@ -298,7 +306,9 @@ struct RecipeDetailView: View {
             rating: recipe.rating,
             milestone: BadgeType.nextCookingMilestone(totalCooks: totalCooks)
         )
-        let request = MadeItPresenter.Request(summary: summary, onRate: updateRating, onPhotoSelected: addCookPhoto)
+        let request = MadeItPresenter.Request(
+            recipeId: recipe.id, summary: summary, onRate: updateRating, onPhotoSelected: addCookPhoto
+        )
         if showCookingMode {
             madeItPresenter.hold(request)
         } else {

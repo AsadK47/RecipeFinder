@@ -167,27 +167,46 @@ struct MadeItSheet: View {
     }
 }
 
-/// Presents the Made it sheet from the app root, and makes other root sheets (badge celebrations) wait for it.
-/// A cook often unlocks a badge in the same instant; two sheets presenting at once showed neither, so the
-/// celebration now follows the Made it sheet instead of colliding with it.
+/// The Made it sheet's shared state. The recipe screen that logged the cook presents it (always the topmost
+/// screen, so it also works inside the Collections sheet); the app root reads `isBusy` so a badge celebration from the
+/// same cook waits until the sheet has fully closed — two sheets presenting at once showed neither.
+@MainActor
+protocol MadeItPresenting: AnyObject {
+    var request: MadeItPresenter.Request? { get }
+    var isBusy: Bool { get }
+    func request(for recipeId: UUID) -> MadeItPresenter.Request?
+    func present(_ request: MadeItPresenter.Request)
+    func hold(_ request: MadeItPresenter.Request)
+    func presentHeld()
+    func dismiss()
+    func didDismiss()
+}
+
 @MainActor @Observable
-final class MadeItPresenter {
+final class MadeItPresenter: MadeItPresenting {
     static let shared = MadeItPresenter()
 
     struct Request: Identifiable {
+        let recipeId: UUID
         let summary: MadeItSummary
         let onRate: (Int) -> Void
         let onPhotoSelected: (UIImage) -> Void
         var id: UUID { summary.id }
     }
 
-    /// The sheet on screen; the root's `.sheet(item:)` binds to it and clears it on dismiss.
-    var request: Request?
+    /// The sheet on screen.
+    private(set) var request: Request?
     /// Parked while cooking mode's full-screen cover is still up — a sheet can't present over a dismissing cover.
     private(set) var held: Request?
+    /// Closed but still animating out; presenting the badge sheet now would be dropped.
+    private(set) var isDismissing = false
 
-    /// True while a Made it sheet is showing or waiting to show.
-    var isBusy: Bool { request != nil || held != nil }
+    /// True while a Made it sheet is showing, waiting to show, or still closing.
+    var isBusy: Bool { request != nil || held != nil || isDismissing }
+
+    func request(for recipeId: UUID) -> Request? {
+        request?.recipeId == recipeId ? request : nil
+    }
 
     func present(_ request: Request) { self.request = request }
 
@@ -198,17 +217,25 @@ final class MadeItPresenter {
         self.held = nil
         request = held
     }
+
+    func dismiss() {
+        guard request != nil else { return }
+        request = nil
+        isDismissing = true
+    }
+
+    func didDismiss() { isDismissing = false }
 }
 
 private struct MadeItPresenterKey: EnvironmentKey {
     // SwiftUI reads environment defaults on the main actor; the app shares one presenter.
-    static var defaultValue: MadeItPresenter {
+    static var defaultValue: any MadeItPresenting {
         MainActor.assumeIsolated { MadeItPresenter.shared }
     }
 }
 
 extension EnvironmentValues {
-    var madeItPresenter: MadeItPresenter {
+    var madeItPresenter: any MadeItPresenting {
         get { self[MadeItPresenterKey.self] }
         set { self[MadeItPresenterKey.self] = newValue }
     }

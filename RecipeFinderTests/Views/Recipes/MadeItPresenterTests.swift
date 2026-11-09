@@ -2,13 +2,17 @@ import Testing
 import UIKit
 @testable import RecipeFinder
 
-/// Sequencing for the root-presented Made it sheet: badge celebrations wait while it is up or held for cooking mode.
+/// Sequencing for the Made it sheet: badge celebrations wait while it is up, held for cooking mode, or still
+/// animating closed (presenting mid-dismiss silently dropped the celebration).
 @MainActor
 @Suite("MadeItPresenter")
 struct MadeItPresenterTests {
 
+    private let recipeId = UUID()
+
     private func request() -> MadeItPresenter.Request {
         MadeItPresenter.Request(
+            recipeId: recipeId,
             summary: MadeItSummary(cookNumber: 1, streakWeeks: 1, rating: 0, milestone: nil),
             onRate: { _ in },
             onPhotoSelected: { _ in }
@@ -45,17 +49,29 @@ struct MadeItPresenterTests {
         sut.hold(held)
         sut.presentHeld()
         #expect(sut.request?.id == held.id)
-        sut.request = nil
+        sut.dismiss()
+        sut.didDismiss()
         sut.presentHeld()
         #expect(sut.request == nil)
         #expect(!sut.isBusy)
     }
 
-    @Test("dismissing the sheet frees the queue for a celebration")
-    func dismiss_unblocks() {
+    @Test("closing the sheet keeps celebrations waiting until the dismiss animation ends")
+    func dismiss_unblocksOnlyAfterDidDismiss() {
         let sut = MadeItPresenter()
         sut.present(request())
-        sut.request = nil
+        sut.dismiss()
+        #expect(sut.request == nil)
+        #expect(sut.isBusy)
+        sut.didDismiss()
         #expect(!sut.isBusy)
+    }
+
+    @Test("only the screen showing that recipe presents the sheet")
+    func presentsOnlyForTheMatchingRecipe() {
+        let sut = MadeItPresenter()
+        sut.present(request())
+        #expect(sut.request(for: recipeId) != nil)
+        #expect(sut.request(for: UUID()) == nil)
     }
 }

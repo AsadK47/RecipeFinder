@@ -91,12 +91,6 @@ struct ContentView: View {
             }
         }
         .errorAlert("Couldn't Open Recipe", message: $fileImportError)
-        .sheet(item: Binding(
-            get: { madeItPresenter.request },
-            set: { madeItPresenter.request = $0 }
-        )) { request in
-            MadeItSheet(summary: request.summary, onRate: request.onRate, onPhotoSelected: request.onPhotoSelected)
-        }
         // A celebration waits for the Made it sheet: the same cook often unlocks a badge, and presenting both at once
         // left neither on screen.
         .sheet(item: Binding(
