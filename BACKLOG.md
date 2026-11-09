@@ -29,14 +29,6 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
-- [ ] **Estimate the remaining missing amounts and times in bundled recipes** — 🚧 IN PROGRESS in an interactive
-  session (2026-11-09); agents skip this item. (owner OK 2026-11-09; follow-up to e3f1f4c). Audit 2026-11-09: 87 recipes have core ingredients with no amount (134 ingredients; ignore "to taste",
-  "to serve", "optional", "for frying" etc.), 113 have no prep+cook time. Same method as e3f1f4c: edit
-  `recipes_curated.json` + matching lines in `recipes_seed.json` (CI drift test proves they agree), realistic estimates,
-  each touched recipe's notes start "Amounts and times are estimates: …", never change names/steps. Up to ~30 recipes
-  per run, worst first; tick only when the audit is clean. On the final batch run `tools/seed-history.py` (full git
-  history) and bump `BundledRecipeCatalog.sampleRefreshVersion` so installs refresh. *Done when:* audit script
-  (add it to `tools/`) reports 0, CI green.
 - [ ] **Missing-amount hint** (owner OK 2026-11-09, from TestFlight issue #15). When a recipe's ingredients have no
   amount (`baseQuantity == 0`), show a quiet "Amount not in original — tap to add" in the amount column instead of a
   blank, and when ≥ half the ingredients lack amounts show one card above the list: "This recipe didn't list amounts —
@@ -102,3 +94,4 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
 - 2026-11-08 · loop set up · CI now also runs on `agent/**` branches.
 - 2026-11-09 · "Made it" moment · ef1c7f1 · Tap *Made it* (and finish cooking mode → Done): one sheet shows Cook #N (total cooks), streak, stars, Add/Take photo, "N more to <badge>"; rate + add photo, check both saved. Renamed PostCookPhotoSheet.swift→MadeItSheet.swift in pbxproj. Streak toast + cooking-mode "Add a photo" removed. Remote branch not deleted (proxy refused) — delete agent/made-it-sheet by hand.
 - 2026-11-09 · Refresh stale bundled recipes · 8abbcc1 · On first launch after update, old bundled copies (e.g. 鷄肉炒麵) show curated steps/ingredients; favourites, ratings, cooks, photos, tags kept; any recipe you edited is unchanged. Unedited = matches a shipped version in new recipes_seed_history.json (2.85 MB, from git via tools/seed-history.py; registered in pbxproj Resources). Future seed fixes: rerun script + bump BundledRecipeCatalog.sampleRefreshVersion. Remote branch delete refused by proxy — delete agent/refresh-stale-samples (and agent/made-it-sheet) by hand.
+- 2026-11-09 · Bundled-recipe gaps (interactive) · estimated 81 ingredient amounts + 113 prep/cook times across 133 recipes, flagged in each recipe's notes; `tools/audit-missing-amounts.py` now reports 0; sampleRefreshVersion 3.

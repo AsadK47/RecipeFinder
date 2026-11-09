@@ -33,7 +33,7 @@ enum BundledRecipeCatalog {
     // MARK: - Stale-sample refresh
 
     /// Bump when `recipes_seed.json` gains fixes that existing installs should pick up (and regenerate the history).
-    static let sampleRefreshVersion = 2
+    static let sampleRefreshVersion = 3
 
     static func needsSampleRefresh(lastRunVersion: Int, currentVersion: Int = sampleRefreshVersion) -> Bool {
         lastRunVersion < currentVersion
