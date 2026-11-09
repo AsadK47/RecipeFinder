@@ -21,6 +21,7 @@ inputs **blend** into the glass via translucent fills, not solid fills.
 | `IconBadge` | SF Symbol in a circle — `.tinted` (tint @ 0.15 behind tint icon) or `.solid` (tint fill, white icon); never hand-build `ZStack { Circle(); Image }` | `Components/Layout/IconBadge.swift` |
 | `CollectionDot` | a collection's 28pt colour dot with white glyph | `Components/Layout/IconBadge.swift` — wraps `IconBadge(.solid)` |
 | `AppTheme.destructiveFill` | destructive CTA fill (e.g. "Remove Recipe"); always pair with `.foregroundStyle(.white)` | `Theme/AppTheme+Palette.swift` — fixed deep red, white text ≥4.5:1 in both modes |
+| `.importHighlight(_:)` / `ImportQualityBanner` | flag wizard sections an import couldn't read (fixed orange 2pt outline; reads on every gradient) | `Views/Recipes/Wizard/ImportQualityBanner.swift` |
 | `AppTheme.subtleFill` / `.subtleStroke` | chip / secondary-button fills, and dividers / outlines / grabbers — instead of `Color.white.opacity(...)`, which vanishes in Light | `Theme/AppTheme+Colors.swift` — dark = white 0.15 / 0.3, light = black 0.06 / 0.12 |
 
 ## Hard rules (violations are the bugs we keep re-fixing)

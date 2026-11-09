@@ -11,6 +11,11 @@ struct ImportView: View {
     @State private var showPhotoImport = false
     @State private var showWizard = false
     @State private var saveError: String?
+    #if DEBUG
+    /// Screenshots hook (`-show-low-confidence-import`): opens the review on a deliberately poor import, once.
+    @State private var debugLowConfidencePrefill: RecipeWizardView.PrefilledRecipeData?
+    @State private var didShowDebugImport = false
+    #endif
 
     var body: some View {
         NavigationStack {
@@ -87,6 +92,20 @@ struct ImportView: View {
             RecipeWizardView(prefilledData: nil) { store($0, source: .wizard) }
         }
         .errorAlert("Couldn't Save Recipe", message: $saveError)
+        #if DEBUG
+        .sheet(item: $debugLowConfidencePrefill) { prefill in
+            RecipeWizardView(prefilledData: prefill) { store($0, source: .paste) }
+        }
+        .onAppear {
+            guard !didShowDebugImport, ProcessInfo.processInfo.arguments.contains("-show-low-confidence-import") else { return }
+            didShowDebugImport = true
+            debugLowConfidencePrefill = RecipeWizardView.PrefilledRecipeData(
+                name: "Mystery Stew", description: nil, ingredients: ["beans", "rice", "spices"], instructions: nil,
+                prepTime: nil, cookTime: nil, servings: nil, difficulty: nil, notes: nil, category: nil,
+                isFavorite: nil, imageURL: nil
+            )
+        }
+        #endif
     }
 
     /// Appends and persists a recipe; shared by every import route. On save failure the optimistic insert is rolled back and the user alerted.

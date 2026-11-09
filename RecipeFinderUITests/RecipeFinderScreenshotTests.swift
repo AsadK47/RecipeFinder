@@ -89,6 +89,23 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "08-reimport-menu")
     }
 
+    /// Import 2/5: the review screen's "We couldn't read this one well" banner and section highlights, opened on a
+    /// deliberately poor import via the DEBUG `-show-low-confidence-import` flag (the paste path may use on-device AI).
+    @MainActor
+    func testCaptureLowConfidenceImport() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-show-low-confidence-import"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        let importTab = app.tabBars.buttons["Import"]
+        guard importTab.waitForExistence(timeout: 5) else { return }
+        importTab.tap()
+        settle(2)
+        XCTAssertTrue(app.descendants(matching: .any)["import.lowConfidenceBanner"].waitForExistence(timeout: 5),
+                      "A poor import should open the review with the low-confidence banner.")
+        snap(app, "09-low-confidence-import")
+    }
+
     // MARK: - Helpers
 
     @MainActor

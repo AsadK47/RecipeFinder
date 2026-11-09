@@ -41,6 +41,8 @@ struct RecipeWizardView: View {
     @State var recipeName = ""
 
     @State private var prepTime = 15
+    /// Set only for a new import the reader struggled with; drives the banner + section highlights (Import 2/5).
+    @State private var importQuality: ImportQuality.Assessment?
     @State private var cookTime = 30
     @State private var difficulty = "Intermediate"
     @State private var category = "Main"
@@ -107,6 +109,10 @@ struct RecipeWizardView: View {
         }
         .onAppear {
             applyPrefilledData()
+            if editingRecipeId == nil, let data = prefilledData {
+                let assessment = ImportQuality.assess(data)
+                importQuality = assessment.isLow ? assessment : nil
+            }
             // First full create-flow only — not focused edits or updates.
             if focus == nil, editingRecipeId == nil, !hasSeenWizardIntro {
                 showIntro = true
@@ -223,8 +229,18 @@ struct RecipeWizardView: View {
         Section.shown(for: focus).contains(section)
     }
 
+    /// True when the import couldn't read any of `fields` and the low-confidence banner is up.
+    private func needsCheck(_ fields: ImportQuality.Field...) -> Bool {
+        guard let importQuality else { return false }
+        return !importQuality.missing.isDisjoint(with: fields)
+    }
+
     @ViewBuilder
     private var sections: some View {
+        if importQuality != nil {
+            ImportQualityBanner()
+        }
+
         if shouldShow(.basics) {
             RecipeNameStepView(
                 recipeName: $recipeName,
@@ -241,6 +257,7 @@ struct RecipeWizardView: View {
                     showGalleryPhotoPicker = true
                 }
             )
+            .importHighlight(needsCheck(.name))
         }
 
         if shouldShow(.details) {
@@ -253,6 +270,7 @@ struct RecipeWizardView: View {
                 difficulties: difficulties,
                 categories: categories
             )
+            .importHighlight(needsCheck(.times))
         }
 
         if shouldShow(.ingredients) {
@@ -261,6 +279,7 @@ struct RecipeWizardView: View {
                 focusedIngredientID: $focusedIngredientID,
                 cookingUnitGroups: cookingUnitGroups
             )
+            .importHighlight(needsCheck(.ingredients, .amounts))
         }
 
         if shouldShow(.prePrep) {
@@ -283,6 +302,7 @@ struct RecipeWizardView: View {
                 fieldPlaceholder: "Describe this cooking step",
                 addButtonTitle: "Add Cooking Step"
             )
+            .importHighlight(needsCheck(.steps))
         }
 
         if shouldShow(.notes) {

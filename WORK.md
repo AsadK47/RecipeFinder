@@ -14,5 +14,9 @@ paste-import UI path in RecipeFinderScreenshotTests.
 - Missing fields always computed from content; the confidence only decides whether to warn.
 - Split into slices (WIP=1, CI per slice).
 
+Slice A green on 71e3522, rebased to d23f2e4 (main moved). Slice B added on same branch: ImportQualityBanner.swift
+(registered), wizard highlights, DEBUG `-show-low-confidence-import` in ImportView, screenshot test 09-low-confidence-import.
+After 2/5: owner rule — work the BACKLOG Inbox findings (several are about today's Made it / re-import code) before 3/5.
+
 ## Next action
-Implement slice A.
+CI on branch + Screenshots workflow for 09; merge; tick 2/5 (remove 🚧).
