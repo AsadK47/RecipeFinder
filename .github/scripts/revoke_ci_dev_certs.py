@@ -9,65 +9,15 @@ TestFlight runs are serialised (concurrency group), so no other run is using the
 
 Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH (the .p8 written by the workflow). Standard library + openssl only.
 """
-import base64
-import json
 import os
-import subprocess
 import sys
-import time
 import urllib.error
-import urllib.request
 
-API = "https://api.appstoreconnect.apple.com/v1"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from asc import API, call, make_token  # noqa: E402
+
 DEV_TYPES = {"DEVELOPMENT", "IOS_DEVELOPMENT"}
 CI_NAME = "Created via API"
-
-
-def b64url(data: bytes) -> str:
-    return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
-
-
-def der_to_raw(der: bytes) -> bytes:
-    """ECDSA DER signature (SEQUENCE{r INTEGER, s INTEGER}) -> 64-byte r||s, the JWS ES256 format."""
-    def read_len(i):
-        n = der[i]
-        i += 1
-        if n & 0x80:
-            k = n & 0x7F
-            n = int.from_bytes(der[i:i + k], "big")
-            i += k
-        return n, i
-
-    if der[0] != 0x30:
-        raise ValueError("not a DER sequence")
-    _, i = read_len(1)
-    out = b""
-    for _ in range(2):
-        if der[i] != 0x02:
-            raise ValueError("not a DER integer")
-        n, i = read_len(i + 1)
-        out += der[i:i + n].lstrip(b"\x00").rjust(32, b"\x00")
-        i += n
-    return out
-
-
-def make_token(key_id: str, issuer_id: str, key_path: str) -> str:
-    header = {"alg": "ES256", "kid": key_id, "typ": "JWT"}
-    now = int(time.time())
-    payload = {"iss": issuer_id, "iat": now, "exp": now + 600, "aud": "appstoreconnect-v1"}
-    signing_input = f"{b64url(json.dumps(header).encode())}.{b64url(json.dumps(payload).encode())}".encode()
-    der = subprocess.run(
-        ["openssl", "dgst", "-sha256", "-sign", key_path],
-        input=signing_input, capture_output=True, check=True,
-    ).stdout
-    return f"{signing_input.decode()}.{b64url(der_to_raw(der))}"
-
-
-def call(method: str, url: str, token: str):
-    req = urllib.request.Request(url, method=method, headers={"Authorization": f"Bearer {token}"})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        body = resp.read()
-        return json.loads(body) if body else None
 
 
 def is_ci_dev_cert(cert: dict) -> bool:

@@ -19,6 +19,7 @@ on:
       - '*.xcodeproj/**'
       - '.github/workflows/testflight.yml'
       - '.github/scripts/revoke_ci_dev_certs.py'
+      - '.github/scripts/asc.py'
   workflow_dispatch:
 
 concurrency:

@@ -1,0 +1,72 @@
+name: TestFlight feedback
+
+# Hourly: pull new TestFlight feedback (screenshots, crashes) into BACKLOG.md as 🐞 items for the agent loop.
+# Text only goes into the (public) repo; screenshots and crash logs go to a short-lived artifact.
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: testflight-feedback
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    name: Fetch feedback
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          echo "ASC_KEY_PATH=$KEY_PATH" >> "$GITHUB_ENV"
+
+      - name: Fetch new feedback
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          BUNDLE_ID: com.asadkhan.recipefinder
+          FEEDBACK_OUT_DIR: ${{ runner.temp }}/feedback
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python3 .github/scripts/fetch_testflight_feedback.py
+
+      - name: Upload screenshots and crash logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-feedback
+          path: ${{ runner.temp }}/feedback
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Commit to main
+        run: |
+          if [ -z "$(git status --porcelain BACKLOG.md .github/testflight-feedback-seen.json)" ]; then
+            echo "Nothing new."; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add BACKLOG.md .github/testflight-feedback-seen.json
+          git commit -m "docs(backlog): add TestFlight feedback"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep 10
+          done
+          exit 1
+
+      - name: Remove API key
+        if: always()
+        run: rm -f "$ASC_KEY_PATH"
