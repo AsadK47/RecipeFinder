@@ -139,7 +139,7 @@ struct RecipePhotoManagerSheet: View {
 
     private func addPhotos(_ images: [UIImage]) {
         let store = RecipeImageStore()
-        let newPaths = store.persistGallery(images, recipeId: recipe.id, startingIndex: recipe.photoNames.count)
+        let newPaths = store.persistGallery(images, recipeId: recipe.id)
         guard !newPaths.isEmpty else { return }
         recipe.photoNames.append(contentsOf: newPaths)
         persist { recipe.photoNames.removeLast(newPaths.count) }

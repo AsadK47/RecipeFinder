@@ -61,13 +61,14 @@ struct RecipeImageStore {
         }
     }
 
-    /// Persists non-hero gallery images as `<id>_g<n>.jpg`; `startingIndex` offsets the index so existing gallery files aren't overwritten.
-    func persistGallery(_ images: [UIImage], recipeId: UUID, startingIndex: Int = 0) -> [String] {
+    /// Persists non-hero gallery images as `<id>_g<uuid>.jpg`. A count-based index repeated after a delete and
+    /// overwrote a kept photo, so every file gets a fresh UUID.
+    func persistGallery(_ images: [UIImage], recipeId: UUID) -> [String] {
         var paths: [String] = []
         for (idx, img) in images.enumerated() {
             guard let imageData = img.jpegData(compressionQuality: AppTheme.jpegCompressionQuality),
                   let documentsDirectory else { continue }
-            let relativePath = "RecipeImages/\(recipeId.uuidString)_g\(startingIndex + idx).jpg"
+            let relativePath = "RecipeImages/\(recipeId.uuidString)_g\(UUID().uuidString).jpg"
             let imageURL = documentsDirectory.appendingPathComponent(relativePath)
             do {
                 try fileManager.createDirectory(

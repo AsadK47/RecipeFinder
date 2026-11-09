@@ -38,6 +38,28 @@ struct RecipeImageStoreTests {
         #expect(FileManager.default.fileExists(atPath: absolutePath))
     }
 
+    @Test("Gallery photos added after a delete never reuse an existing file name")
+    func galleryNamesAreUniqueAfterDelete() throws {
+        let directory = makeTempDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = RecipeImageStore(documentsDirectory: directory)
+        let id = UUID()
+
+        let first = store.persistGallery([makeImage(), makeImage()], recipeId: id)
+        #expect(first.count == 2)
+        store.deleteIfLocal(first[0])
+        let kept = first[1]
+
+        let added = store.persistGallery([makeImage()], recipeId: id)
+
+        #expect(added.count == 1)
+        #expect(!added.contains(kept))
+        #expect(Set(first + added).count == 3)
+        let keptPath = try #require(store.absolutePath(for: kept))
+        #expect(FileManager.default.fileExists(atPath: keptPath))
+        #expect(added.allSatisfy { $0.hasPrefix("RecipeImages/\(id.uuidString)_") })
+    }
+
     @Test("deleteIfLocal removes an owned on-disk image file")
     func deleteIfLocalRemovesFile() throws {
         let directory = makeTempDirectory()

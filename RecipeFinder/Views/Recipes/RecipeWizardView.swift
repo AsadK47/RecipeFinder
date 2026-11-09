@@ -381,8 +381,7 @@ struct RecipeWizardView: View {
 
         let newGalleryPaths = imageStore.persistGallery(
             selectedGalleryImages,
-            recipeId: recipeId,
-            startingIndex: existingGalleryReferences.count
+            recipeId: recipeId
         )
         let allPhotoNames = existingGalleryReferences + newGalleryPaths
 

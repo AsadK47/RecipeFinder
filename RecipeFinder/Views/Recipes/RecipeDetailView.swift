@@ -318,7 +318,7 @@ struct RecipeDetailView: View {
 
     private func addCookPhoto(_ image: UIImage) {
         let store = RecipeImageStore()
-        let newPaths = store.persistGallery([image], recipeId: recipe.id, startingIndex: recipe.photoNames.count)
+        let newPaths = store.persistGallery([image], recipeId: recipe.id)
         // Surface the failure (e.g. disk full) instead of dropping the photo.
         guard !newPaths.isEmpty else {
             saveError = Self.saveErrorMessage
