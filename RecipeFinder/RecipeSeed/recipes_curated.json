@@ -21557,7 +21557,7 @@
   ],
   "recipe": {
    "category": "Main",
-   "cookMinutes": 0,
+   "cookMinutes": 30,
    "difficulty": "Basic",
    "ingredients": [
     {
@@ -21577,29 +21577,29 @@
     },
     {
      "name": "swede, cubed, optional",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 100,
+     "unit": "g"
     },
     {
      "name": "sesame oil",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "spring onions, chopped",
-     "quantity": 0,
+     "quantity": 2,
      "unit": ""
     },
     {
      "name": "white pepper",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 0.25,
+     "unit": "tsp"
     }
    ],
    "name": "Ninja Foodi Congee",
-   "notes": "0.25 tsp ginger powder can replace the fresh ginger. Source gives no pressure-cook time.",
+   "notes": "Amounts and times are estimates: the original recipe didn't list them all, so adjust to taste. 0.25 tsp ginger powder can replace the fresh ginger.",
    "prePrep": [],
-   "prepMinutes": 0,
+   "prepMinutes": 5,
    "servings": 4,
    "steps": [
     "Add the rice, swede (if using), ginger and stock to the Ninja.",
@@ -21909,7 +21909,7 @@
   ],
   "recipe": {
    "category": "Soup",
-   "cookMinutes": 0,
+   "cookMinutes": 120,
    "difficulty": "Basic",
    "ingredients": [
     {
@@ -21924,47 +21924,47 @@
     },
     {
      "name": "jujube dates",
-     "quantity": 0,
+     "quantity": 6,
      "unit": ""
     },
     {
      "name": "water",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 2,
+     "unit": "l"
     },
     {
      "name": "cooking wine, optional",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tbsp"
     },
     {
      "name": "American ginseng, optional",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 10,
+     "unit": "g"
     },
     {
      "name": "codonopsis root, optional",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 15,
+     "unit": "g"
     },
     {
      "name": "angelica root, optional",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 5,
+     "unit": "g"
     },
     {
      "name": "Chinese yam, optional",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 20,
+     "unit": "g"
     },
     {
      "name": "astragalus root, optional",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 15,
+     "unit": "g"
     },
     {
      "name": "dried shiitake mushrooms, optional",
-     "quantity": 0,
+     "quantity": 4,
      "unit": ""
     },
     {
@@ -21974,14 +21974,14 @@
     },
     {
      "name": "salt, to taste",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     }
    ],
    "name": "Chinese Herbal Chicken Soup",
-   "notes": "You can also make this in a pressure cooker.",
+   "notes": "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste. You can also make this in a pressure cooker.",
    "prePrep": [],
-   "prepMinutes": 0,
+   "prepMinutes": 15,
    "servings": 4,
    "steps": [
     "Put the chicken in a pot with enough cold water to cover, plus the ginger and cooking wine (if using).",
@@ -22346,7 +22346,7 @@
   ],
   "recipe": {
    "category": "Main",
-   "cookMinutes": 0,
+   "cookMinutes": 15,
    "difficulty": "Basic",
    "ingredients": [
     {
@@ -22381,41 +22381,41 @@
     },
     {
      "name": "cornstarch",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tbsp"
     },
     {
      "name": "plain flour",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tbsp"
     },
     {
      "name": "salt",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 0.5,
+     "unit": "tsp"
     },
     {
      "name": "pepper",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 0.25,
+     "unit": "tsp"
     },
     {
      "name": "oil, for frying",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 2,
+     "unit": "tbsp"
     },
     {
      "name": "coriander, to garnish",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "handful"
     }
    ],
    "name": "Seafood Laksa",
-   "notes": "Variation: swap the seafood for diced chicken, long beans and cooked prawns, topped with bean sprouts.",
+   "notes": "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Variation: swap the seafood for diced chicken, long beans and cooked prawns, topped with bean sprouts.",
    "prePrep": [
     "Defrost the squid and prawns."
    ],
-   "prepMinutes": 0,
+   "prepMinutes": 15,
    "servings": 2,
    "steps": [
     "Boil the vermicelli noodles in a saucepan until cooked, then drain in a colander and set aside.",
@@ -24790,146 +24790,146 @@
   ],
   "recipe": {
    "category": "Main",
-   "cookMinutes": 0,
+   "cookMinutes": 40,
    "difficulty": "Intermediate",
    "ingredients": [
     {
      "name": "boneless chicken thighs",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 600,
+     "unit": "g"
     },
     {
      "name": "yoghurt, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 125,
+     "unit": "g"
     },
     {
      "name": "turmeric, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 0.5,
+     "unit": "tsp"
     },
     {
      "name": "garlic powder, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "cumin, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "paprika, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "allspice, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 0.5,
+     "unit": "tsp"
     },
     {
      "name": "coriander, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "onion powder, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "cardamom, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 0.25,
+     "unit": "tsp"
     },
     {
      "name": "fresh garlic, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 3,
+     "unit": "clove"
     },
     {
      "name": "salt, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "sugar, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "olive oil, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 2,
+     "unit": "tbsp"
     },
     {
      "name": "lemon juice, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 2,
+     "unit": "tbsp"
     },
     {
      "name": "orange juice, for the marinade",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 2,
+     "unit": "tbsp"
     },
     {
      "name": "white vinegar, a splash",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "tomato paste",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tbsp"
     },
     {
      "name": "room temperature water",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 180,
+     "unit": "ml"
     },
     {
      "name": "baking powder",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "yeast",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "Korean all-purpose flour",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 300,
+     "unit": "g"
     },
     {
      "name": "sugar, for the dough",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tsp"
     },
     {
      "name": "pomegranate molasses, to serve",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 2,
+     "unit": "tbsp"
     },
     {
      "name": "toum, to serve",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 4,
+     "unit": "tbsp"
     },
     {
      "name": "Arabic pickled onions, to serve",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "handful"
     }
    ],
    "name": "Chicken Shawarma Dumplings",
-   "notes": "Source gives no quantities or cooking times; adjust to taste.",
+   "notes": "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste.",
    "prePrep": [
     "Marinate the chicken thighs in the combined marinade ingredients overnight."
    ],
-   "prepMinutes": 0,
+   "prepMinutes": 30,
    "servings": 4,
    "steps": [
     "Bake the marinated chicken thighs.",
@@ -27032,29 +27032,29 @@
     },
     {
      "name": "Jollof seasoning",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 2,
+     "unit": "tbsp"
     },
     {
      "name": "garlic granules",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tbsp"
     },
     {
      "name": "paprika",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tbsp"
     },
     {
      "name": "Italian seasoning",
-     "quantity": 0,
-     "unit": ""
+     "quantity": 1,
+     "unit": "tbsp"
     }
    ],
    "name": "Baked Smoked Turkey Legs",
-   "notes": "",
+   "notes": "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste.",
    "prePrep": [],
-   "prepMinutes": 0,
+   "prepMinutes": 15,
    "servings": 4,
    "steps": [
     "Preheat the oven to gas mark 4.",

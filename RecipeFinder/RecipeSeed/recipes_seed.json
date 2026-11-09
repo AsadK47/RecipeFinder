@@ -9425,7 +9425,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "40 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -9440,160 +9440,160 @@
     "id" : "C6725836-BCFA-5AC5-BB9F-313B569CB16D",
     "ingredients" : [
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 600,
         "id" : "FFC4BD47-ADD3-55B6-871E-59598C1CBA60",
         "name" : "boneless chicken thighs",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 125,
         "id" : "1D9B34A7-9F1F-5681-827B-C1EF94063A33",
         "name" : "yoghurt, for the marinade",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "66432FBA-A6C7-5A41-B5EE-15C69364B0F0",
         "name" : "turmeric, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "E84431D3-67A5-57AB-BC82-D77A9E7B4E1B",
         "name" : "garlic powder, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "E21AEC8C-F772-50F0-9601-4474EE998D26",
         "name" : "cumin, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "1BCA6D9D-B559-50EF-BF86-486763CF6779",
         "name" : "paprika, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "C678B758-9B03-56DA-BBEE-0CEAFF4255F9",
         "name" : "allspice, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "11CF3A22-2106-54E3-8ECA-57DD15AFB624",
         "name" : "coriander, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "A80C4C49-5742-5C0B-9F03-CE88A97D8732",
         "name" : "onion powder, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.25,
         "id" : "E690D2B8-C3DF-5A86-9777-7A179AC757D8",
         "name" : "cardamom, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 3,
         "id" : "2E4608BE-EABD-5CD6-82D5-F4BEF8DD87EB",
         "name" : "fresh garlic, for the marinade",
-        "unit" : ""
+        "unit" : "clove"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "1FE6ED3A-31A9-54B1-A021-F7F261BBBCBE",
         "name" : "salt, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "138D7B10-9370-5B8B-94C8-2578A2BFAD04",
         "name" : "sugar, for the marinade",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "5AEE02F3-D8D3-5B08-A445-B5A3A8457C76",
         "name" : "olive oil, for the marinade",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "F956501F-75CE-546D-B944-15296A302773",
         "name" : "lemon juice, for the marinade",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "92EC019E-6BD8-560A-9869-016FEB5D2229",
         "name" : "orange juice, for the marinade",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "B96E7FA2-322A-50BD-B315-919BA53A59B1",
         "name" : "white vinegar, a splash",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "93FCF941-B197-58F4-9FBE-4B4BB829C4ED",
         "name" : "tomato paste",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 180,
         "id" : "40633AA2-6D80-5966-872F-3CA1B45FBFC7",
         "name" : "room temperature water",
-        "unit" : ""
+        "unit" : "ml"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "16FE834B-7F41-5DF1-9965-91EF4F63962F",
         "name" : "baking powder",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "F6ADBEE4-58A8-5316-A73E-15BEA92E441E",
         "name" : "yeast",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 300,
         "id" : "63AACE04-43B4-56DB-81A2-19BF0F56D6AD",
         "name" : "Korean all-purpose flour",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "05E5B925-652A-5F6C-8CE2-88DA7FDA30E3",
         "name" : "sugar, for the dough",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "C558DD4B-5879-572E-9DAE-271A4C226743",
         "name" : "pomegranate molasses, to serve",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 4,
         "id" : "5B97280D-D57F-5FE0-9AE5-1D5CF44385BB",
         "name" : "toum, to serve",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "75A9B8D6-79D5-566E-BA03-76C78DA9B692",
         "name" : "Arabic pickled onions, to serve",
-        "unit" : ""
+        "unit" : "handful"
       }
     ],
     "instructions" : [
@@ -9606,14 +9606,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chicken Shawarma Dumplings",
-    "notes" : "Source gives no quantities or cooking times; adjust to taste.",
+    "notes" : "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Marinate the chicken thighs in the combined marinade ingredients overnight."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "30 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -9728,7 +9728,7 @@
     "baseServings" : 4,
     "category" : "Soup",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "120 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -9756,55 +9756,55 @@
         "unit" : "slice"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 6,
         "id" : "3F5106B4-F675-5B60-BFAF-D225980698B4",
         "name" : "jujube dates",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "9142EBFA-8BFC-54A7-8BE6-051CC89446E4",
         "name" : "water",
-        "unit" : ""
+        "unit" : "l"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "611D0F13-4E4B-5C8D-940D-3A9E58F8813C",
         "name" : "cooking wine, optional",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 10,
         "id" : "F52251A0-7842-5DCD-8167-C6711748A6DA",
         "name" : "American ginseng, optional",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 15,
         "id" : "6455D29A-D42C-5FD5-8ECD-752DE9C6D365",
         "name" : "codonopsis root, optional",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 5,
         "id" : "15EB4AD7-2CB8-5D34-B39B-9E02CB8DD361",
         "name" : "angelica root, optional",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 20,
         "id" : "126230A3-14AA-5ABD-A388-434EFBA5BD99",
         "name" : "Chinese yam, optional",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 15,
         "id" : "17AEC6F1-7B83-5280-AB6A-3E51CACCB723",
         "name" : "astragalus root, optional",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 4,
         "id" : "D2E55095-A3DF-5831-BC3F-1F299E05AD6C",
         "name" : "dried shiitake mushrooms, optional",
         "unit" : ""
@@ -9816,10 +9816,10 @@
         "unit" : "handful"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "21748FF4-13C5-576C-80BF-8FA5CD475A24",
         "name" : "salt, to taste",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -9832,14 +9832,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Chinese Herbal Chicken Soup",
-    "notes" : "You can also make this in a pressure cooker.\n\nhttps://www.youtube.com/watch?v=iKMo3AsI9eQ&t=64s",
+    "notes" : "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste. You can also make this in a pressure cooker.\n\nhttps://www.youtube.com/watch?v=iKMo3AsI9eQ&t=64s",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -13747,7 +13747,7 @@
     "baseServings" : 4,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "30 minutes",
     "currentServings" : 4,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -13780,28 +13780,28 @@
         "unit" : "l"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 100,
         "id" : "A7B9EBED-D54B-5BBC-9A6D-18745521CCED",
         "name" : "swede, cubed, optional",
-        "unit" : ""
+        "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "2CAB0881-45FB-5679-A515-5E203B4D8101",
         "name" : "sesame oil",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "E631E49F-E47B-569C-9656-FC8BE3F001C3",
         "name" : "spring onions, chopped",
         "unit" : ""
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.25,
         "id" : "4DA7C948-B731-5CD1-B244-7C65FAFBD4F9",
         "name" : "white pepper",
-        "unit" : ""
+        "unit" : "tsp"
       }
     ],
     "instructions" : [
@@ -13813,14 +13813,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Ninja Foodi Congee",
-    "notes" : "0.25 tsp ginger powder can replace the fresh ginger. Source gives no pressure-cook time.",
+    "notes" : "Amounts and times are estimates: the original recipe didn't list them all, so adjust to taste. 0.25 tsp ginger powder can replace the fresh ginger.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "5 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -32408,7 +32408,7 @@
     "baseServings" : 2,
     "category" : "Main",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "15 minutes",
     "currentServings" : 2,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -32459,40 +32459,40 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "C63B8E5D-42CD-53B7-AF89-5B82A51D7582",
         "name" : "cornstarch",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "34A294EF-3B39-5A2C-A37F-6FEB9F6DAD23",
         "name" : "plain flour",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.5,
         "id" : "DDDB6149-2652-584F-A5C9-E1F33F1D2AD3",
         "name" : "salt",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 0.25,
         "id" : "E36B1085-4254-5E1A-B59B-23B4DB56BC61",
         "name" : "pepper",
-        "unit" : ""
+        "unit" : "tsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "A094FD50-4A60-5067-ABC3-5F81E7533A10",
         "name" : "oil, for frying",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "3EA96E0C-B902-537F-95DF-2D2984E19D2E",
         "name" : "coriander, to garnish",
-        "unit" : ""
+        "unit" : "handful"
       }
     ],
     "instructions" : [
@@ -32506,14 +32506,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Seafood Laksa",
-    "notes" : "Variation: swap the seafood for diced chicken, long beans and cooked prawns, topped with bean sprouts.",
+    "notes" : "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste. Variation: swap the seafood for diced chicken, long beans and cooked prawns, topped with bean sprouts.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
       "Defrost the squid and prawns."
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
@@ -34418,28 +34418,28 @@
         "unit" : "g"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 2,
         "id" : "8D1E8199-76D7-54BF-9576-02A82365B862",
         "name" : "Jollof seasoning",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "1D4A86A9-97DF-5316-8223-5FDABDF945A5",
         "name" : "garlic granules",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "CFE6ACC4-3082-5AC2-9EA2-A2A07B8CDB49",
         "name" : "paprika",
-        "unit" : ""
+        "unit" : "tbsp"
       },
       {
-        "baseQuantity" : 0,
+        "baseQuantity" : 1,
         "id" : "A2185EE0-CD6B-53A8-A3C7-2FCADB905023",
         "name" : "Italian seasoning",
-        "unit" : ""
+        "unit" : "tbsp"
       }
     ],
     "instructions" : [
@@ -34453,14 +34453,14 @@
     "isFavorite" : false,
     "isSampleRecipe" : true,
     "name" : "Baked Smoked Turkey Legs",
-    "notes" : "",
+    "notes" : "Amounts and times are estimates: the original recipe didn't list them, so adjust to taste.",
     "photoNames" : [
 
     ],
     "prePrepInstructions" : [
 
     ],
-    "prepTime" : "0 minutes",
+    "prepTime" : "15 minutes",
     "rating" : 0,
     "tags" : [
 
