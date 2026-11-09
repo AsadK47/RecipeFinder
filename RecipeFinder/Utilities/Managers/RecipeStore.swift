@@ -70,6 +70,9 @@ final class RecipeStore: RecipeStoring {
             if let seeded = await seedIfNeeded(existing: fetched) {
                 fetched = seeded
             }
+            #if DEBUG
+            fetched = seedUITestReimportRecipeIfRequested(into: fetched)
+            #endif
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
             let deduped = removeDuplicateCopies(from: fetched)
@@ -146,6 +149,26 @@ final class RecipeStore: RecipeStoring {
     }
 
     private static let logger = AppLogger.logger(category: "RecipeStore")
+
+    #if DEBUG
+    /// UI-test hook (`-seed-reimport-recipe`): one recipe that kept its original text, named to sort first, so the
+    /// Screenshots workflow can capture the "Re-import from original" menu. Idempotent via a fixed id.
+    private func seedUITestReimportRecipeIfRequested(into library: [RecipeModel]) -> [RecipeModel] {
+        guard ProcessInfo.processInfo.arguments.contains("-seed-reimport-recipe"),
+              let id = UUID(uuidString: "5EED0000-0000-4000-8000-00000000A001"),
+              !library.contains(where: { $0.id == id }) else { return library }
+        let original = "1-Pot Tomato Soup\nIngredients\n4 tomatoes\n1 onion\n500 ml stock\nMethod\nSoften the onion.\nAdd tomatoes and stock, simmer 20 minutes, blend."
+        let recipe = RecipeModel(
+            id: id, name: "1-Pot Tomato Soup", category: "Main", difficulty: "Basic",
+            prepTime: "5 minutes", cookingTime: "25 minutes", baseServings: 2,
+            ingredients: [Ingredient(baseQuantity: 4, unit: "", name: "tomatoes")],
+            prePrepInstructions: [], instructions: ["Soften the onion."], notes: "",
+            sourceText: original
+        )
+        guard persistence.saveRecipeModel(recipe) else { return library }
+        return library + [recipe]
+    }
+    #endif
 
     /// One-time seeding: starters for an empty library, plus the bundled collection (once, even for existing
     /// libraries — ids already present are skipped). Returns the refetched library, or nil if nothing was seeded.

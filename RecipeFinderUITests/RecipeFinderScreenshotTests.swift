@@ -66,6 +66,29 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
     }
 
+    /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,
+    /// so this run seeds one (`-seed-reimport-recipe`, sorts first) and captures the open menu.
+    @MainActor
+    func testCaptureReimportMenu() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-reimport-recipe"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        settle()
+
+        let row = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
+        guard row.waitForExistence(timeout: 10) else { return }
+        row.tap()
+        settle()
+        let more = app.buttons["More actions"].firstMatch
+        guard more.waitForExistence(timeout: 5) else { return }
+        more.tap()
+        settle(1)
+        XCTAssertTrue(app.buttons["recipe.reimport"].waitForExistence(timeout: 5),
+                      "A recipe with its original text should offer Re-import from original.")
+        snap(app, "08-reimport-menu")
+    }
+
     // MARK: - Helpers
 
     @MainActor
