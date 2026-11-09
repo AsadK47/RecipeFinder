@@ -46,9 +46,6 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
-- [ ] **Manual 1/3 — Wizard bugs** — 🚧 interactive session 2026-11-09. Confirm before discarding edits (Cancel +
-  swipe-down), no invented 15/30 min times or "1" amounts, "1,5"/".5"/"½" parse, words kept in the name, trimmed rows.
-  Branch `agent/wizard-bugfixes`.
 - [ ] **Manual 2/3 — Paste-and-type ingredients & steps** (owner OK 2026-11-09; wizard review). Replace per-row
   ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
   block — parsed live by `IngredientLineParser` into an editable preview (amount, unit, name) so manual entry and
@@ -190,3 +187,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-09 · Import 1/5 slice 4 · 9123388 · On a recipe you pasted/photographed/shared/imported after this update: ⋯ → Re-import from original → review sheet (or "Already matches the original"). Bundled/older recipes don't show it (no original text).
 - 2026-11-09 · Import 1/5 done · 27d2243 · Screenshots workflow now captures `08-reimport-menu` (test asserts the item exists; image not viewable from the cloud agent — glance at it in the screenshots release). DEBUG-only `-seed-reimport-recipe` launch flag seeds "1-Pot Tomato Soup" for it.
 - 2026-11-09 · Import 2/5 done · 20fd3f2 · Paste a few loose ingredient words: the review shows "We couldn't read this one well" + orange outlines on unread sections. New `ImportQualityBanner.swift` registered in pbxproj. DEBUG `-show-low-confidence-import` drives screenshot 09.
+- 2026-11-09 · Manual 1/3 wizard bugs (interactive) · 91bffbb · Cancel/swipe-down asks before discarding edits; new recipes start with times "Not set"; blank amount stays blank (no "1 salt"); "1,5" ".5" "½" parse; words like "a few" kept in the name; rows trimmed.
