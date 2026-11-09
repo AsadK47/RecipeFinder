@@ -26,6 +26,11 @@ Owner bug reports from TestFlight go straight to the **top of Queue** marked �
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
+- [ ] 🐞 **Nightly UI test red: `RecipeFinderHabitLoopUITests.testCookingShowsRatingAndStreakChip`** (Build & Test
+  schedule run 42554073688, 2026-11-09 03:00, after the "Made it" sheet merged). Find the failing assertion in that
+  run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
+  intent: cook → sheet → Done → button disabled → rating shown → streak chip). UI tests only run nightly or on
+  "Run workflow", so verify with a `workflow_dispatch` run on your branch. *Done when:* that test passes in CI.
 - [ ] **CI screenshots of key screens.** Neither agents nor interactive sessions can see the app, so layout bugs
   (e.g. the toolbar scroll fade, 2026-11-08/09) only surface on the owner's phone. Add a UI-test that launches with
   seeded sample data and captures screenshots (`XCTAttachment`, lifetime `.keepAlways`) of: Recipes home, a recipe
