@@ -37,11 +37,10 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
   per run, worst first; tick only when the audit is clean. On the final batch run `tools/seed-history.py` (full git
   history) and bump `BundledRecipeCatalog.sampleRefreshVersion` so installs refresh. *Done when:* audit script
   (add it to `tools/`) reports 0, CI green.
-- [ ] **Missing-amount hint** (owner OK 2026-11-09, from TestFlight issue #15). When a recipe's ingredients have no
-  amount (`baseQuantity == 0`), show a quiet "Amount not in original — tap to add" in the amount column instead of a
-  blank, and when ≥ half the ingredients lack amounts show one card above the list: "This recipe didn't list amounts —
-  add yours" → opens the editor on ingredients. Applies to imported recipes too. *Done when:* the "mostly missing"
-  rule is a tested pure function, Screenshots workflow shows the hint, CI green.
+- [ ] **Missing-amount display + hint** — 🚧 IN PROGRESS in an interactive session (2026-11-09); agents skip this
+  item. (owner OK 2026-11-09, TestFlight issue #15.) An ingredient with no amount renders Paprika-style as a full-width
+  plain-text line (no empty amount column); when ≥ half the ingredients lack amounts, one card above the list invites
+  the user to add theirs → opens the editor on ingredients. Applies to imported recipes too.
 - [ ] **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
   "Estimate amounts" action that fills them with the on-device model (iOS 26 FoundationModels — already used for
   import, see `RecipeTextInterpreting`), shown as a review sheet the user accepts or edits before saving; nothing

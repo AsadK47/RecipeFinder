@@ -299,6 +299,13 @@ and auto-build a basket via deep links or affiliate APIs (scraping last resort),
 with price comparison and smart substitutions. This is added value we can
 legitimately charge for.
 
+### 🔴 Amounts from the video, not the caption *(idea, 2026-11-09)*
+Social imports (TikTok/Instagram/YouTube) often have amounts spoken in the video but not written in the caption, so
+the import comes back with blank quantities. ReciMe/Pestle-style fix, kept on-device: when a share includes the video
+file (Photos, Files, or a saved video), transcribe its audio with the on-device `Speech` framework
+(`requiresOnDeviceRecognition`), merge the transcript with the caption, and run the existing on-device interpreter
+over both. Never upload. Can't fetch a TikTok/Instagram URL's video directly — only video the user shares as a file.
+
 ### 🟡 Recipe sharing
 Share recipes as rich links or formatted cards; import shared recipes from other
 RecipeFinder users; export as PDF (basic text/PDF share already exists).
