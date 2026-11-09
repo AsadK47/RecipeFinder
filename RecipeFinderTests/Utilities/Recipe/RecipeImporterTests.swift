@@ -192,4 +192,44 @@ struct RecipeImporterTests {
             _ = try await importer.fetchAndParse(from: url)
         }
     }
+
+    // MARK: - Page text kept for re-import (Import 1/5)
+
+    @Test("link import keeps the page's readable text, without scripts")
+    func linkImportKeepsPageText() async throws {
+        let url = try #require(URL(string: "https://example.com/pancakes"))
+        let html = Self.validRecipeHTML.replacingOccurrences(
+            of: "<body></body>", with: "<body><h1>Test Pancakes</h1><p>Grandma's Sunday batch.</p></body>"
+        )
+        let importer = makeImporter(stubs: [url.absoluteString: .init(body: html)])
+        await importer.importRecipe(from: url)
+
+        let pageText = try #require(importer.extractedData?.pageText)
+        #expect(pageText.contains("Grandma's Sunday batch."))
+        #expect(!pageText.contains("@context"))
+    }
+
+    @Test("the built recipe stores the page text as its original import text")
+    func builtRecipeCarriesPageText() async throws {
+        let url = try #require(URL(string: "https://example.com/pancakes"))
+        let html = Self.validRecipeHTML.replacingOccurrences(of: "<body></body>", with: "<body><p>Fluffy.</p></body>")
+        let importer = makeImporter(stubs: [url.absoluteString: .init(body: html)])
+        await importer.importRecipe(from: url)
+
+        let data = try #require(importer.extractedData)
+        #expect(RecipeImportBuilder().build(from: data).sourceText == data.pageText)
+    }
+
+    @Test("page text is capped without splitting a character", arguments: [10, 11, 50_000])
+    func pageTextIsCapped(limit: Int) {
+        let html = "<p>" + String(repeating: "é", count: 40_000) + "</p>"   // 2 UTF-8 bytes per é
+        let text = RecipeImportPipeline.pageText(fromHTML: html, limit: limit)
+        #expect(text.utf8.count <= limit)
+        #expect(text.allSatisfy { $0 == "é" })
+    }
+
+    @Test("short page text is kept whole")
+    func shortPageTextIsWhole() {
+        #expect(RecipeImportPipeline.pageText(fromHTML: "<p>Hello</p>", limit: 50_000) == "Hello")
+    }
 }

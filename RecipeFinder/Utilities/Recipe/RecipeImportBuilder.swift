@@ -24,7 +24,8 @@ struct RecipeImportBuilder {
             notes: buildNotes(from: data),
             imageName: data.imageURL,
             isFavorite: false,
-            cuisine: data.cuisine
+            cuisine: data.cuisine,
+            sourceText: data.pageText
         )
     }
 

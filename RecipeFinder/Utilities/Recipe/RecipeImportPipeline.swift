@@ -17,6 +17,9 @@ struct ExtractedRecipeData: Equatable, Sendable, Codable {
     let category: String?
     let cuisine: String?
     let imageURL: String?
+    /// The page's readable text (≤ 50 KB), saved on the recipe as `sourceText` for "Re-import from original".
+    /// Optional + defaulted so older App Group payloads still decode.
+    var pageText: String? = nil
 }
 
 struct RecipeImportOutcome: Equatable, Sendable {
@@ -107,10 +110,27 @@ struct RecipeImportPipeline: Sendable {
             difficulty: parsed.difficulty,
             category: parsed.category,
             cuisine: parsed.cuisine,
-            imageURL: parsed.imageURL
+            imageURL: parsed.imageURL,
+            pageText: Self.pageText(fromHTML: html)
         )
 
         return RecipeImportOutcome(data: extracted, confidence: parsed.confidence)
+    }
+
+    /// The page as readable text (scripts/styles/tags stripped by the parser's `cleanHTML`), capped at `limit` UTF-8
+    /// bytes on a character boundary so a huge page can't bloat the store.
+    static func pageText(fromHTML html: String, limit: Int = 50_000) -> String {
+        let text = RecipeParser.cleanHTML(html)
+        guard text.utf8.count > limit else { return text }
+        var end = text.startIndex
+        var bytes = 0
+        for index in text.indices {
+            let size = text[index].utf8.count
+            guard bytes + size <= limit else { break }
+            bytes += size
+            end = text.index(after: index)
+        }
+        return String(text[..<end])
     }
 
     /// Decodes bytes to HTML: declared charset → UTF-8/legacy encodings → lossy UTF-8, so latin-1/CP1252 blogs (once `.invalidEncoding` failures) or a stray byte can't sink the import.

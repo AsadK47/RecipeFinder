@@ -16,5 +16,8 @@ Slice 1 MERGED 9a6c119. Slice 2 (branch agent/import-source-text-2): PrefilledRe
 (paste/photo/share), wizard assemble + edit prefill carry it. Slice 3: link import page text (≤50 KB; ExtractedRecipeData
 has no page text today — rawText is ingredients). Slice 4: detail ⋯ "Re-import from original" → router → RecipeRefreshSheet.
 
+Slice 2 MERGED cad2d44. Slice 3 (branch agent/import-source-text-3): ExtractedRecipeData.pageText via
+RecipeImportPipeline.pageText(fromHTML:) (reuses RecipeParser.cleanHTML, 50 KB cap), builder → sourceText.
+
 ## Next action
-Check CI for slice 2, merge, then slice 3.
+Check CI for slice 3, merge, then slice 4 (Re-import menu).
