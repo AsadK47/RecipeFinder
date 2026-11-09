@@ -71,7 +71,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   original" when `sourceText != nil` → run `RecipeTextImportRouter` on it → reuse the Refresh-from-source per-field
   accept sheet (`RecipeDiff`), personal data preserved. *Done when:* tests for 14→15 migration (store opens, data
   intact), Codable + backup round-trip with `sourceText`, router→diff path; screenshot of the menu; CI green.
-- [ ] **Import 2/5 — Low-confidence warning.** — 🚧 builder agent 2026-11-09 Pure `ImportQuality.assess(_ prefill:) -> (score: Double,
+- [x] **Import 2/5 — Low-confidence warning.** Pure `ImportQuality.assess(_ prefill:) -> (score: Double,
   missing: Set<Field>)` (fields: name, ingredients, steps, amounts, times); URL path uses the parser's confidence,
   text path scores from what was found (on-device AI result counts as high). In `RecipeWizardView`, when score < 0.6:
   a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
@@ -189,3 +189,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-09 · Import 1/5 slice 3 · 449dff9 · Link imports now keep the page's readable text (≤50 KB, stored only). Next: Re-import menu.
 - 2026-11-09 · Import 1/5 slice 4 · 9123388 · On a recipe you pasted/photographed/shared/imported after this update: ⋯ → Re-import from original → review sheet (or "Already matches the original"). Bundled/older recipes don't show it (no original text).
 - 2026-11-09 · Import 1/5 done · 27d2243 · Screenshots workflow now captures `08-reimport-menu` (test asserts the item exists; image not viewable from the cloud agent — glance at it in the screenshots release). DEBUG-only `-seed-reimport-recipe` launch flag seeds "1-Pot Tomato Soup" for it.
+- 2026-11-09 · Import 2/5 done · 20fd3f2 · Paste a few loose ingredient words: the review shows "We couldn't read this one well" + orange outlines on unread sections. New `ImportQualityBanner.swift` registered in pbxproj. DEBUG `-show-low-confidence-import` drives screenshot 09.
