@@ -43,10 +43,13 @@ struct NavigationBarScrollFade: View {
             // Fade ends at the bar's bottom edge so content resting just below it (the hero photo) is never dimmed.
             let barHeight = max(proxy.safeAreaInsets.top, 1)
             let solidEnd = max(barHeight - AppTheme.spacing16, 0) / barHeight
+            // ignoresSafeArea on the stack itself (not just its children) so the mask below is measured from the top
+            // of the screen; otherwise it starts under the bar and blanks a bar-height band of content instead.
             ZStack {
-                Color(uiColor: .systemBackground).ignoresSafeArea()
+                Color(uiColor: .systemBackground)
                 AppBackground()
             }
+            .ignoresSafeArea()
             .mask(alignment: .top) {
                 LinearGradient(
                     stops: [
