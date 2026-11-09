@@ -10,6 +10,9 @@ Reviewer findings in **Inbox** are also worked as 🐞 items without waiting for
 after TestFlight issues, before the Queue. Re-verify each against current `main` first; fix it, then delete its Inbox
 line and add a Log line. If one needs a product decision or would break a guardrail, move it to **Needs owner** instead.
 Bug fixes may interrupt a numbered series between items, never mid-item.
+**Smells** (code-quality refactors, refactoring.guru names): after each merged Queue item, take the top Smell before the
+next Queue item (feature, smell, feature…), unless a numbered series is mid-way — finish the series first. Each smell
+fix is behaviour-preserving: characterisation tests first, refactor in its own commit, no feature changes mixed in.
 
 ## How an agent works this file (read fully before starting)
 1. Read root `CLAUDE.md`, `RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`, `RecipeFinder/DesignSystem.md`.
@@ -142,6 +145,15 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   checkbox a11y state; ingredient delete only via long-press (add swipe).
 - [ ] **Scroll fade elsewhere.** Check other screens with a nav bar + scrolling content for text showing through the
   toolbar; apply `NavigationBarScrollFade` (see DesignSystem.md lesson 2026-11-08) where it does.
+
+## Smells (refactors — reviewer adds, builder works; see rule at top)
+- [ ] **Primitive Obsession: recipe times stored as text** (owner OK incl. Core Data change, 2026-11-09).
+  `RecipeModel.prepTime`/`cookingTime` are Strings ("30 minutes") parsed back with regexes for sorting, filtering,
+  the wizard and bundled seeds. Replace Data Value with Object: store `prepMinutes`/`cookMinutes: Int` (new model
+  version + lightweight migration parsing the old strings; bump the `.xccurrentversion` number in CLAUDE.md files),
+  keep a `DurationFormatter` for display, decode legacy JSON (backups, `recipes_seed.json`) via `decodeIfPresent`.
+  *Done when:* migration + legacy-decode tests, every `prepTime`/`cookingTime` string use removed, CI green.
+- [ ] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — handled by Manual 2/3; tick both together.
 
 ## Needs owner
 - 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.

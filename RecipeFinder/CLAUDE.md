@@ -51,6 +51,9 @@ Visual language + shared UI tokens live in `RecipeFinder/DesignSystem.md` (livin
 ## Technical debt
 - Refactors require a test proving behaviour-preservation — write the test first.
 - When touching a manager or view, add the protocol seam or extract the pure function. Don't add to the debt.
+- Name smells and fixes with refactoring.guru's catalogue (e.g. Primitive Obsession → Replace Data Value with Object;
+  Long Method → Extract Method) so findings and commits are concrete. A refactor is its own commit — never mixed with a
+  feature or bug fix. GoF patterns are tools, not goals: prefer Swift's value types, protocols and closures.
 
 ## Performance
 - No non-trivial work in `body` or properties it reads — compute once on data change, store in `@State`.
