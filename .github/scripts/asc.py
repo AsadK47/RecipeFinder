@@ -49,8 +49,13 @@ def make_token(key_id: str, issuer_id: str, key_path: str) -> str:
     return f"{signing_input.decode()}.{b64url(der_to_raw(der))}"
 
 
-def call(method: str, url: str, token: str):
-    req = urllib.request.Request(url, method=method, headers={"Authorization": f"Bearer {token}"})
+def call(method: str, url: str, token: str, body=None):
+    headers = {"Authorization": f"Bearer {token}"}
+    data = None
+    if body is not None:
+        data = json.dumps(body).encode()
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, method=method, headers=headers, data=data)
     with urllib.request.urlopen(req, timeout=30) as resp:
         body = resp.read()
         return json.loads(body) if body else None

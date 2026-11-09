@@ -133,3 +133,56 @@ jobs:
           path: |
             archive.log
             export.log
+
+  # Fills TestFlight's "What to Test" with the user-facing commits since the last successful upload, so testers see
+  # what changed. Runs on Linux (cheap) after the upload; waits for App Store Connect to register the build.
+  notes:
+    name: Set What to Test
+    needs: upload
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          echo "ASC_KEY_PATH=$KEY_PATH" >> "$GITHUB_ENV"
+
+      - name: Build notes from commits since the last upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PREV=$(gh run list --workflow testflight.yml --branch main --status success --limit 1 \
+            --json headSha --jq '.[0].headSha // empty')
+          if [ -n "$PREV" ] && git cat-file -e "${PREV}^{commit}" 2>/dev/null; then
+            git log --no-merges --format=%s "$PREV..HEAD" > "$RUNNER_TEMP/subjects.txt"
+          else
+            git log --no-merges --format=%s -20 HEAD > "$RUNNER_TEMP/subjects.txt"
+          fi
+          python3 .github/scripts/testflight_notes.py < "$RUNNER_TEMP/subjects.txt" > "$RUNNER_TEMP/notes.txt"
+          cat "$RUNNER_TEMP/notes.txt"
+
+      - name: Set What to Test
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          BUNDLE_ID: com.asadkhan.recipefinder
+          BUILD_NUMBER: ${{ github.run_number }}
+          NOTES_FILE: ${{ runner.temp }}/notes.txt
+        run: python3 .github/scripts/set_whats_new.py
+
+      - name: Remove API key
+        if: always()
+        run: rm -f "$ASC_KEY_PATH"

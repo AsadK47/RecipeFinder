@@ -16,13 +16,18 @@ Bug fixes may interrupt a numbered series between items, never mid-item.
 2. Take the **first unticked item under Queue** that isn't marked 🙋 (needs the owner). One item per run (WIP=1).
    If the item is too big for one run, do a coherent first slice, tick nothing, and rewrite the item to say what's
    left. If it's unclear or would break a guardrail, move it to **Needs owner** with a one-line question and stop.
-3. Branch `agent/<short-slug>` from latest `main`. Write tests first (Swift Testing) for any logic.
-4. No Swift toolchain in the cloud container: CI is the compiler. Push the branch, then check the "Build & Test" run
+3. **Claim it first:** append `— 🚧 <who> <YYYY-MM-DD>` to the item's title line and push that to `main` before
+   writing code ("who" = builder agent / interactive session). Skip items claimed by someone else; a claim older than
+   1 day with no open `agent/*` branch is stale and may be taken over (say so in the Log). Remove the 🚧 when ticking.
+4. Branch `agent/<short-slug>` from latest `main`. Write tests first (Swift Testing) for any logic.
+5. No Swift toolchain in the cloud container: CI is the compiler. Push the branch, then check the "Build & Test" run
    for that commit with the GitHub tools; on failure read the job log, fix, push, re-check. Give up after 4 failed
-   attempts — log what broke and leave the branch unmerged.
-5. When green: rebase on `origin/main`; if that brought in new commits, push and wait for green again. Then
-   fast-forward `main` to the branch and push `main` (this ships a TestFlight build). Delete the remote branch.
-6. Tick the item, append one line to **Log** (date · item · commit · what to check on device), commit to `main`.
+   attempts — log what broke and leave the branch unmerged. Docs-only branches (`*.md`, `tools/`, CI scripts) don't
+   trigger Build & Test (paths-ignore), so don't wait for a run — merge them directly.
+6. When green: rebase on `origin/main`; if that brought in new commits, push and wait for green again. Then
+   fast-forward `main` to the branch and push `main` (this ships a TestFlight build with auto-filled "What to Test").
+   Merged `agent/*` branches are deleted daily by `cleanup-agent-branches.yml` — no need to delete them yourself.
+7. Tick the item, append one line to **Log** (date · item · commit · what to check on device), commit to `main`.
 
 ### Numbered series (e.g. "Import 2/5")
 Owner-approved series are worked strictly in order, one item at a time: start item N only after item N-1 is merged,

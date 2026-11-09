@@ -1,0 +1,35 @@
+name: Clean up agent branches
+
+# Daily: delete `agent/*` branches whose changes are already on main (agents can't delete remote branches themselves).
+# "Already on main" uses patch identity (`git cherry`), so branches merged after a rebase count too. Branches with
+# any commit not on main are left alone.
+
+on:
+  schedule:
+    - cron: '41 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete merged agent branches
+        run: |
+          git fetch --prune origin '+refs/heads/agent/*:refs/remotes/origin/agent/*'
+          for ref in $(git for-each-ref --format='%(refname:short)' 'refs/remotes/origin/agent/'); do
+            branch="${ref#origin/}"
+            if git cherry origin/main "$ref" | grep -q '^+'; then
+              echo "keep   $branch (has commits not on main)"
+            else
+              echo "delete $branch"
+              git push origin --delete "$branch"
+            fi
+          done

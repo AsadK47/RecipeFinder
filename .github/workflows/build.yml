@@ -7,7 +7,22 @@ name: Build & Test
 on:
   push:
     branches: [ main, 'agent/**' ]   # agent/** = scheduled agent loop branches (see BACKLOG.md)
+    # Docs, backlog and CI-helper edits can't break the app; skip the 10-minute macOS run for them.
+    paths-ignore:
+      - '**/*.md'
+      - 'tools/**'
+      - '.github/scripts/**'
+      - '.github/workflows/testflight*.yml'
+      - '.github/workflows/screenshots.yml'
+      - '.github/workflows/cleanup-agent-branches.yml'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'tools/**'
+      - '.github/scripts/**'
+      - '.github/workflows/testflight*.yml'
+      - '.github/workflows/screenshots.yml'
+      - '.github/workflows/cleanup-agent-branches.yml'
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
