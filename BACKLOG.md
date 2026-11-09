@@ -128,6 +128,22 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+_Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
+- 🔴 `Views/Main/ContentView.swift:94` — since 4dbd6f9 the Made it sheet is presented from the app root, so Made it / cooking-mode finish from a recipe opened inside the Collections sheet is dropped (root already presenting); `MadeItPresenter.request` stays set → `isBusy` true → all badge celebrations blocked — present from the topmost view, or clear `request` when presentation fails.
+- 🟠 `Views/Main/ContentView.swift:98` — Done clears `request` immediately, so the badge sheet presents mid-dismiss and is silently dropped (already marked shown in `BadgeManager`) — unblock via `.sheet(item:onDismiss:)`; update `MadeItPresenterTests.dismiss_unblocks`.
+- 🟠 `Views/Recipes/RecipeDetailView.swift:311` + `Utilities/Recipe/RecipeImageStore.swift:70` — photo file name `_g<photoNames.count>` repeats after a photo delete, so a new Made it photo overwrites an existing file and the name is listed twice — name files with a UUID.
+- 🟠 `Components/Ingredients/IngredientRowView.swift:25` — amount-less rows lost the amount button, their only tap-to-edit; under the 50% "Add your amounts" threshold there's no way in — show an "Add amount" button when `isMissingAmount && onTapQuantity != nil`.
+- 🟠 `Utilities/Recipe/RecipeImportPipeline.swift:114` — link imports store script-stripped page text (JSON-LD gone), so Re-import runs nav/comments through `TextRecipeParser` (title = first nav line) and `RecipeRefreshSheet` pre-ticks every change — hide Re-import for link imports (keep refresh-from-source) or store capped raw HTML; open re-import with nothing pre-ticked.
+- 🟠 `Utilities/Managers/RecipeStore.swift:126` — stale-sample refresh does up to 332 sync `updateRecipe` fetch+save calls on the main thread at launch — one batched background save like `seedRecipes(_:)`.
+- 🟠 `Views/Recipes/RecipeDetailView+Content.swift:4` (`StarRatingView`, used by MadeItSheet) — combined element with no adjustable action, fixed 18pt font, ~20pt targets — add `.accessibilityAdjustableAction` + value, scalable font, 44pt targets.
+- 🟡 `Utilities/Recipe/RecipeDiff.swift:64` — `applying(selections:)` omits `currentServings`, so refresh/Re-import resets the user's chosen servings — pass `stored.currentServings`; add test.
+- 🟡 `Utilities/Managers/RecipeStore.swift:131` — refresh version marked done even when bundle/history JSON decode fails (returns `[]`) — only mark done when both decoded non-empty; inject `LocalStore` so run-once/retry is testable.
+- 🟡 `Utilities/Recipe/RecipeImportPipeline.swift:122` — JS-rendered pages save `sourceText = ""`, showing a Re-import that always fails — store nil when trimmed text is empty.
+- 🟡 `Views/Import/RecipeTextImportRouter.swift:22` — pasted/OCR/shared `sourceText` is uncapped (page text has 50 KB cap) — reuse the `pageText` byte cap.
+- 🟡 `Views/Recipes/RecipeDetailView.swift:275` + `CookingModeView.swift:83` — Made it is disabled once cooked today, but cooking-mode Finish records another cook — guard on `wasCookedToday()` or drop the disabled rule.
+- 🟡 `Views/Recipes/MadeItSheet.swift:173` — `MadeItPresenter` in environment without a `*ing` protocol seam (root CLAUDE.md rule) — add `MadeItPresenting`.
+- 🟡 Tests: `BundledRecipeCatalogTests` lacks cases for `currentServings` kept/reset, multiple history versions per id, and `""` image name.
+- 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
 - 2026-11-08 · loop set up · CI now also runs on `agent/**` branches.
