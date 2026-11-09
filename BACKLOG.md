@@ -104,6 +104,39 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
   intent: cook → sheet → Done → button disabled → rating shown → streak chip). UI tests only run nightly or on
   "Run workflow", so verify with a `workflow_dispatch` run on your branch. *Done when:* that test passes in CI.
+- [ ] **Guide 1/2 — "Get to know RecipeFinder" checklist + contextual tips** (owner OK 2026-11-09). A dismissible
+  checklist card on the Recipes home: import a recipe · cook one ("Made it") · build a grocery list · plan a meal · add
+  a store · try Siri ("What's for dinner?"). Each step deep-links to the feature and shows a TipKit popover on the
+  exact control; steps tick themselves from real events (first import saved, first cook, …), not taps on the card.
+  Card hides when all done or dismissed. Add moment-of-use tips (first recipe open → Cook; groceries ≥ 10 items →
+  Stores). Pure `FeatureGuideProgress` (which steps are done, from store state) is unit-tested. *Done when:* tests,
+  Screenshots of card + one tip, CI green.
+- [ ] **Guide 2/2 — Tutorial mode.** Settings toggle "Show tips & guide": on → reset TipKit datastore + guide
+  progress so everything replays; off → hide all tips. *Done when:* toggle tested (resets state), CI green.
+- [ ] **Import from other apps** (owner OK 2026-11-09). Settings → Data → "Import from another app": Paprika
+  (`.paprikarecipes` = zip of gzipped JSON), Mela (`.melarecipes`/`.melarecipe` JSON), and CSV (name, ingredients,
+  instructions columns). Map into `RecipeModel` (photos where embedded), dedupe by name+ingredients, show a summary
+  ("Imported 182, skipped 3 duplicates") and set `sourceText`. Pure parsers with fixtures under
+  `RecipeFinderTests/Fixtures/OtherApps/` (hand-made samples, no third-party user data). *Done when:* parser tests
+  per format, import summary screenshot, CI green.
+- [ ] **Import PDFs and multi-page photos.** Accept PDFs (share sheet + Files) and up to 5 photos at once: PDF text
+  via PDFKit (`PDFDocument.string`), image-only pages via the existing Vision OCR; pages joined in order, then the
+  normal text-import router. *Done when:* page-joining + PDF text extraction tested on fixtures, CI green.
+- [ ] **Video 1/3 — Import a recipe from a video (speech)** (owner OK 2026-11-09; big feature, all on-device).
+  Share a saved video (Photos / Files / TikTok "Save video" / screen recording) into the app: the share extension
+  only hands the file to the app group (memory limits), the main app extracts the audio (`AVAsset`) and transcribes
+  it on-device (iOS 26 `SpeechAnalyzer`/`SpeechTranscriber`; fallback `SFSpeechRecognizer` with
+  `requiresOnDeviceRecognition`), then sends transcript + any caption text through `RecipeTextImportRouter` into the
+  review wizard with `sourceText` = transcript. Speech permission asked only at first video import, with a clear
+  "never leaves your phone" explanation (Info.plist usage string). Cap 10 min of video. *Done when:* audio-extract +
+  transcript→prefill path tested with a fixture transcript and a fake transcriber, CI green.
+- [ ] **Video 2/3 — Read on-screen text from the video.** Sample frames (~1 per second, de-duplicated) and run
+  Vision text recognition; merge overlay text (where TikTok recipes usually put amounts) with the transcript before
+  interpreting. *Done when:* frame-sampling + text de-dup tested, CI green.
+- [ ] **Video 3/3 — Progress, cancel and limits.** Stage progress ("Listening… Reading on-screen text… Building
+  recipe"), Cancel at any stage, clear errors (too long, no speech found → "Start from this text" with whatever was
+  found), temp files deleted afterwards. Update in-app Privacy Policy: video/audio processed on-device only (owner OK
+  for this legal-text sentence). *Done when:* Screenshots of progress + error, CI green.
 - [ ] **CI screenshots of key screens.** Neither agents nor interactive sessions can see the app, so layout bugs
   (e.g. the toolbar scroll fade, 2026-11-08/09) only surface on the owner's phone. Add a UI-test that launches with
   seeded sample data and captures screenshots (`XCTAttachment`, lifetime `.keepAlways`) of: Recipes home, a recipe

@@ -299,7 +299,7 @@ and auto-build a basket via deep links or affiliate APIs (scraping last resort),
 with price comparison and smart substitutions. This is added value we can
 legitimately charge for.
 
-### 🔴 Amounts from the video, not the caption *(idea, 2026-11-09)*
+### 🟡 Video import *(queued as Video 1/3–3/3 in BACKLOG.md, 2026-11-09)*
 Social imports (TikTok/Instagram/YouTube) often have amounts spoken in the video but not written in the caption, so
 the import comes back with blank quantities. ReciMe/Pestle-style fix, kept on-device: when a share includes the video
 file (Photos, Files, or a saved video), transcribe its audio with the on-device `Speech` framework
