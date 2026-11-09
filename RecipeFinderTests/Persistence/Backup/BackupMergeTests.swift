@@ -131,8 +131,14 @@ import Foundation
         let sample = Self.copy("Soup")
         let own = Self.copy("Soup", isSample: false)
         let favourite = Self.copy("Soup", isFavorite: true)
-        #expect(BackupMerge.duplicateRecipeIDs(in: [sample, own, favourite]) == [sample.id, own.id])
+        #expect(BackupMerge.duplicateRecipeIDs(in: [sample, own, favourite]) == [sample.id])
         #expect(BackupMerge.duplicateRecipeIDs(in: [sample, own]) == [sample.id])
+    }
+
+    @Test func duplicateRecipeIDs_neverRemovesTheUsersOwnCopies() {
+        let first = Self.copy("Chilli", isSample: false)
+        let variant = Self.copy("Chilli", cookCount: 3, isSample: false)  // e.g. "Import Anyway", amounts edited
+        #expect(BackupMerge.duplicateRecipeIDs(in: [first, variant]).isEmpty)
     }
 
     @Test func duplicateRecipeIDs_tieKeepsTheFirstCopy() {

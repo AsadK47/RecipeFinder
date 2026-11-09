@@ -43,7 +43,8 @@ enum BackupMerge {
 
     /// Ids of exact duplicate recipes to remove: same name, ingredients and steps but different ids — left behind by
     /// older builds that re-seeded samples with random ids. In each group the copy the user has invested in most
-    /// (cooked, favourited, rated, photographed, their own over a sample) is kept; the rest are returned.
+    /// (cooked, favourited, rated, photographed, their own over a sample) is kept. Only sample copies are ever
+    /// returned: the content key ignores amounts, notes and tags, so a user's own copy may be a deliberate variant.
     static func duplicateRecipeIDs(in recipes: [RecipeModel]) -> Set<UUID> {
         func contentKey(_ r: RecipeModel) -> String {
             ([r.name.nameKey] + r.ingredients.map { $0.name.nameKey } + r.instructions).joined(separator: "\u{1F}")
@@ -55,7 +56,7 @@ enum BackupMerge {
         for group in Dictionary(grouping: recipes, by: contentKey).values where group.count > 1 {
             // max(by:) keeps the first of equal maxima, so ties keep the earliest copy.
             guard let keep = group.max(by: { investment($0).lexicographicallyPrecedes(investment($1)) }) else { continue }
-            remove.formUnion(group.filter { $0.id != keep.id }.map(\.id))
+            remove.formUnion(group.filter { $0.id != keep.id && $0.isSampleRecipe }.map(\.id))
         }
         return remove
     }

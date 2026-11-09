@@ -75,9 +75,10 @@ final class RecipeStore: RecipeStoring {
             #endif
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
-            let deduped = removeDuplicateCopies(from: fetched)
-            let repaired = await repairLegacySampleFlags(in: deduped)
-            recipes = await refreshStaleSamples(in: repaired)
+            // Repair flags first: dedupe only removes sample copies, and legacy samples lacked the flag.
+            let repaired = await repairLegacySampleFlags(in: fetched)
+            let deduped = removeDuplicateCopies(from: repaired)
+            recipes = await refreshStaleSamples(in: deduped)
             isLoading = false
         }
     }
@@ -135,10 +136,13 @@ final class RecipeStore: RecipeStoring {
         return updated
     }
 
-    /// Deletes exact duplicate copies (see `BackupMerge.duplicateRecipeIDs`) and returns the cleaned library.
-    /// Idempotent: a no-op once the store is clean. Goes straight to persistence rather than `delete(id:)` so
-    /// image files shared with the kept copy are never removed.
+    /// One-time cleanup of duplicate sample copies (see `BackupMerge.duplicateRecipeIDs`) left by old re-seeding
+    /// builds. Runs once per install so it can never touch copies made later. Goes straight to persistence rather
+    /// than `delete(id:)` so image files shared with the kept copy are never removed.
     private func removeDuplicateCopies(from library: [RecipeModel]) -> [RecipeModel] {
+        let key = "duplicateSampleCopiesRemoved_v1"
+        guard !LocalStore.shared.bool(forKey: key) else { return library }
+        LocalStore.shared.set(true, forKey: key)
         let duplicates = BackupMerge.duplicateRecipeIDs(in: library)
         guard !duplicates.isEmpty else { return library }
         for id in duplicates {
