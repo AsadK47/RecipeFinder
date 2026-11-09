@@ -1,6 +1,7 @@
 name: TestFlight feedback
 
-# Hourly: pull new TestFlight feedback (screenshots, crashes) into BACKLOG.md as 🐞 items for the agent loop.
+# Hourly: file new TestFlight feedback (screenshots, crashes) as GitHub issues labelled `testflight-feedback`,
+# which the agent loop works first. Issues, not BACKLOG.md commits: `main` is protected against bot pushes.
 # Text only goes into the (public) repo; screenshots and crash logs go to a short-lived artifact.
 
 on:
@@ -9,7 +10,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  issues: write
 
 concurrency:
   group: testflight-feedback
@@ -41,6 +43,7 @@ jobs:
           BUNDLE_ID: com.asadkhan.recipefinder
           FEEDBACK_OUT_DIR: ${{ runner.temp }}/feedback
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: python3 .github/scripts/fetch_testflight_feedback.py
 
       - name: Upload screenshots and crash logs
@@ -50,22 +53,6 @@ jobs:
           path: ${{ runner.temp }}/feedback
           if-no-files-found: ignore
           retention-days: 14
-
-      - name: Commit to main
-        run: |
-          if [ -z "$(git status --porcelain BACKLOG.md .github/testflight-feedback-seen.json)" ]; then
-            echo "Nothing new."; exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add BACKLOG.md .github/testflight-feedback-seen.json
-          git commit -m "docs(backlog): add TestFlight feedback"
-          for attempt in 1 2 3; do
-            git pull --rebase origin main && git push origin HEAD:main && exit 0
-            git rebase --abort 2>/dev/null || true
-            sleep 10
-          done
-          exit 1
 
       - name: Remove API key
         if: always()
