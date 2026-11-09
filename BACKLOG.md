@@ -43,6 +43,21 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
+- [ ] **Manual 1/3 — Wizard bugs** — 🚧 interactive session 2026-11-09. Confirm before discarding edits (Cancel +
+  swipe-down), no invented 15/30 min times or "1" amounts, "1,5"/".5"/"½" parse, words kept in the name, trimmed rows.
+  Branch `agent/wizard-bugfixes`.
+- [ ] **Manual 2/3 — Paste-and-type ingredients & steps** (owner OK 2026-11-09; wizard review). Replace per-row
+  ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
+  block — parsed live by `IngredientLineParser` into an editable preview (amount, unit, name) so manual entry and
+  import share one parser. Fraction-friendly keyboard (`.numbersAndPunctuation` or a ½ ⅓ ¼ ¾ bar) where a numeric
+  field remains; keyboard toolbar with Done; `scrollDismissesKeyboard(.interactively)`. Target: wizard total shrinks
+  (≈1,500 → ≤1,000 lines across `RecipeWizardView` + `Wizard/`), `RecipeWizardView.swift` ≤ 300 lines.
+  *Done when:* line→rows mapping tested (paste of 10 mixed lines, blank lines, fractions, "1,5"), edit-existing round
+  trip unchanged, Screenshots of the new form, CI green.
+- [ ] **Manual 3/3 — Reorder, faster times, accessibility.** Drag-to-reorder (or move up/down) for ingredients/steps if
+  2/3 keeps rows; hours+minutes picker instead of 5-min stepper; servings 1...50 (matches `Validator`); VoiceOver labels
+  on unit picker and remove buttons ("Remove ingredient 3"); ≥44pt hit targets on photo remove buttons; gallery
+  thumbnails keyed by a stable id, not offset. *Done when:* Screenshots, CI green.
 - [x] **Import 1/5 — Keep the original import text** (owner OK incl. Core Data change, 2026-11-09). ✅ Slice 1 merged
   (9a6c119): model v15 + `RecipeModel.sourceText` persisted, backed up, migration-tested. ✅ Slice 2 (cad2d44): paste,
   photo OCR and share keep `sourceText`. ✅ Slice 3 (449dff9): link imports keep page text (≤50 KB). ✅ Slice 4 (9123388): ⋯ "Re-import from original" → router → per-field sheet, tested. ✅ Slice 5 (27d2243): `08-reimport-menu` screenshot (Screenshots workflow, DEBUG `-seed-reimport-recipe`). Original spec: New model version
