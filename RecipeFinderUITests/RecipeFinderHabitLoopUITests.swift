@@ -83,7 +83,12 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
 
             // The Made it sheet presents straight away — close it.
             let done = app.buttons["madeIt.done"]
-            XCTAssertTrue(done.waitForExistence(timeout: 4), "Marking as cooked should open the Made it sheet.")
+            let sheetShown = done.waitForExistence(timeout: 4)
+            if !sheetShown {
+                // CI logs are the only window into a cloud-run failure: dump what is on screen instead.
+                print("MADEIT-DEBUG hierarchy after Mark as Cooked:\n\(app.debugDescription)")
+            }
+            XCTAssertTrue(sheetShown, "Marking as cooked should open the Made it sheet.")
             XCTAssertTrue(done.isHittable, "Done must be on screen without scrolling the Made it sheet.")
             done.tap()
             XCTAssertTrue(done.waitForNonExistence(timeout: 4), "Done should close the Made it sheet.")
