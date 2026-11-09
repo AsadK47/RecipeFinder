@@ -29,8 +29,8 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
-- [ ] **Estimate the remaining missing amounts and times in bundled recipes** (owner OK 2026-11-09; follow-up to
-  e3f1f4c). Audit 2026-11-09: 87 recipes have core ingredients with no amount (134 ingredients; ignore "to taste",
+- [ ] **Estimate the remaining missing amounts and times in bundled recipes** — 🚧 IN PROGRESS in an interactive
+  session (2026-11-09); agents skip this item. (owner OK 2026-11-09; follow-up to e3f1f4c). Audit 2026-11-09: 87 recipes have core ingredients with no amount (134 ingredients; ignore "to taste",
   "to serve", "optional", "for frying" etc.), 113 have no prep+cook time. Same method as e3f1f4c: edit
   `recipes_curated.json` + matching lines in `recipes_seed.json` (CI drift test proves they agree), realistic estimates,
   each touched recipe's notes start "Amounts and times are estimates: …", never change names/steps. Up to ~30 recipes
