@@ -29,10 +29,6 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
-- [ ] **Missing-amount display + hint** — 🚧 IN PROGRESS in an interactive session (2026-11-09); agents skip this
-  item. (owner OK 2026-11-09, TestFlight issue #15.) An ingredient with no amount renders Paprika-style as a full-width
-  plain-text line (no empty amount column); when ≥ half the ingredients lack amounts, one card above the list invites
-  the user to add theirs → opens the editor on ingredients. Applies to imported recipes too.
 - [ ] **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
   "Estimate amounts" action that fills them with the on-device model (iOS 26 FoundationModels — already used for
   import, see `RecipeTextInterpreting`), shown as a review sheet the user accepts or edits before saving; nothing
@@ -94,3 +90,4 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
 - 2026-11-09 · "Made it" moment · ef1c7f1 · Tap *Made it* (and finish cooking mode → Done): one sheet shows Cook #N (total cooks), streak, stars, Add/Take photo, "N more to <badge>"; rate + add photo, check both saved. Renamed PostCookPhotoSheet.swift→MadeItSheet.swift in pbxproj. Streak toast + cooking-mode "Add a photo" removed. Remote branch not deleted (proxy refused) — delete agent/made-it-sheet by hand.
 - 2026-11-09 · Refresh stale bundled recipes · 8abbcc1 · On first launch after update, old bundled copies (e.g. 鷄肉炒麵) show curated steps/ingredients; favourites, ratings, cooks, photos, tags kept; any recipe you edited is unchanged. Unedited = matches a shipped version in new recipes_seed_history.json (2.85 MB, from git via tools/seed-history.py; registered in pbxproj Resources). Future seed fixes: rerun script + bump BundledRecipeCatalog.sampleRefreshVersion. Remote branch delete refused by proxy — delete agent/refresh-stale-samples (and agent/made-it-sheet) by hand.
 - 2026-11-09 · Bundled-recipe gaps (interactive) · estimated 81 ingredient amounts + 113 prep/cook times across 133 recipes, flagged in each recipe's notes; `tools/audit-missing-amounts.py` now reports 0; sampleRefreshVersion 3.
+- 2026-11-09 · Missing-amount display (interactive) · no-amount ingredients render full width as plain text; "This recipe didn't list most amounts · Add your amounts" card when ≥ half lack amounts (`IngredientAmountGaps`, 9 tests). Check on device with any imported recipe missing amounts.
