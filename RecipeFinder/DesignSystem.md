@@ -45,7 +45,8 @@ inputs **blend** into the glass via translucent fills, not solid fills.
   toolbar buttons (recipe detail). Fix: put `NavigationBarScrollFade()` above the ScrollView in
   the screen's ZStack — it repaints `AppBackground` over the bar only, so it's invisible at rest.
   Its first build masked from below the bar (stack frame was safe-area-inset), blanking content instead —
-  a full-screen layer must `.ignoresSafeArea()` itself before `.mask`, or the mask is offset by the inset.
+  `.ignoresSafeArea()` must come AFTER `.mask` (wrapping the masked layer); before it, the mask stays in safe-area
+  coordinates. Check layout fixes with the Screenshots workflow (02-recipe) before merging.
 - **2026-09-24 — A translucent fill alone isn't a visible boundary on a gradient.**
   `white.opacity(0.1)` read fine on the darker blue but vanished on the light teal,
   so the notes field looked like unstyled floating text. Fix: keep the translucent
