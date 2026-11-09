@@ -11,12 +11,16 @@ struct RecipeTextImportRouter {
 
     /// Wizard prefill for the text, or `nil` when no recipe could be found.
     func prefill(for text: String) async -> RecipeWizardView.PrefilledRecipeData? {
+        var prefill: RecipeWizardView.PrefilledRecipeData?
         switch await SharedTextImporter(interpreter: interpreter).handle(text) {
         case .interpreted(let recipe):
-            return RecipeWizardView.PrefilledRecipeData(interpreted: recipe)
+            prefill = RecipeWizardView.PrefilledRecipeData(interpreted: recipe)
         case .needsManualEntry(let raw):
-            return TextRecipeParser.parse(raw)
+            prefill = TextRecipeParser.parse(raw)
         }
+        // Keep what the user gave us so the recipe can be re-imported later as the parser improves.
+        prefill?.sourceText = text
+        return prefill
     }
 }
 

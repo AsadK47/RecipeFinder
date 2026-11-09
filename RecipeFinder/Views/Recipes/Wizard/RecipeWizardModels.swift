@@ -22,6 +22,8 @@ extension RecipeWizardView {
         var tags: [String]? = nil
         var cuisine: String? = nil
         var galleryImageURLs: [String]? = nil
+        /// The text this came from (paste, OCR, share, page text), saved on the recipe for "Re-import from original".
+        var sourceText: String? = nil
     }
 
     /// A single editable ingredient row in the wizard's ingredients step.
@@ -74,7 +76,8 @@ extension RecipeWizardView.PrefilledRecipeData {
             imageURL: recipe.imageName,
             tags: recipe.tags.isEmpty ? nil : recipe.tags,
             cuisine: recipe.cuisine,
-            galleryImageURLs: recipe.photoNames.isEmpty ? nil : recipe.photoNames
+            galleryImageURLs: recipe.photoNames.isEmpty ? nil : recipe.photoNames,
+            sourceText: recipe.sourceText
         )
     }
 }

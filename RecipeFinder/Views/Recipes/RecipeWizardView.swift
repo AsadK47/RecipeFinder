@@ -356,7 +356,8 @@ struct RecipeWizardView: View {
             isFavorite: prefilledData?.isFavorite ?? false,
             tags: recipeTags,
             cuisine: cuisineValue.isEmpty ? nil : cuisineValue,
-            photoNames: allPhotoNames
+            photoNames: allPhotoNames,
+            sourceText: prefilledData?.sourceText
         )
 
         HapticManager.shared.success()

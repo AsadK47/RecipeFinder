@@ -12,5 +12,9 @@ extension); detail ⋯ "Re-import from original" → RecipeTextImportRouter → 
 - Split into slices per BACKLOG step 2 (item too big for one run); tick nothing until all slices merge.
 - No mapping model: adding an optional attribute is a lightweight migration (same as v12→v13).
 
+Slice 1 MERGED 9a6c119. Slice 2 (branch agent/import-source-text-2): PrefilledRecipeData.sourceText, router sets it
+(paste/photo/share), wizard assemble + edit prefill carry it. Slice 3: link import page text (≤50 KB; ExtractedRecipeData
+has no page text today — rawText is ingredients). Slice 4: detail ⋯ "Re-import from original" → router → RecipeRefreshSheet.
+
 ## Next action
-Finish slice 1, push branch, check CI, merge, then rewrite the BACKLOG item to list what's left.
+Check CI for slice 2, merge, then slice 3.

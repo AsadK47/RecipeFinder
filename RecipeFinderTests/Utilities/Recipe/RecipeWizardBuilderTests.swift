@@ -231,4 +231,36 @@ struct RecipeWizardBuilderTests {
         #expect(prefill.imageURL == "https://example.com/scones.jpg")
         #expect(prefill.ingredients?.first?.hasPrefix(FractionFormatter.format(1.0 / 3.0)) == true)
     }
+
+    // MARK: - Original import text (Import 1/5)
+
+    @Test func assembleCarriesTheOriginalImportText() {
+        let recipe = RecipeWizardBuilder.assemble(
+            recipeId: UUID(), name: "Soup", category: "Main", difficulty: "Basic", prepTime: 5, cookTime: 20,
+            servings: 2, ingredientItems: [RecipeWizardView.IngredientItem(quantity: "1", unit: "", name: "onion")],
+            prePrepSteps: [], mainInstructions: [EditableStep(text: "Simmer")], notes: "", imageReference: nil,
+            isFavorite: false, sourceText: "pasted text"
+        )
+        #expect(recipe.sourceText == "pasted text")
+    }
+
+    @Test func editPrefillCarriesTheOriginalImportText() {
+        var recipe = RecipeModel(
+            name: "Soup", category: "Main", difficulty: "Basic", prepTime: "5 minutes", cookingTime: "20 minutes",
+            baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: ["Simmer"], notes: ""
+        )
+        recipe.sourceText = "pasted text"
+        #expect(RecipeWizardView.PrefilledRecipeData(recipe: recipe).sourceText == "pasted text")
+    }
+
+    @Test func mergeEditKeepsStoredSourceTextWhenEditHasNone() {
+        var stored = RecipeModel(
+            name: "Soup", category: "Main", difficulty: "Basic", prepTime: "5 minutes", cookingTime: "20 minutes",
+            baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: ["Simmer"], notes: ""
+        )
+        stored.sourceText = "pasted text"
+        var edited = stored
+        edited.sourceText = nil
+        #expect(RecipeWizardBuilder.mergeEdit(edited, onto: stored).sourceText == "pasted text")
+    }
 }
