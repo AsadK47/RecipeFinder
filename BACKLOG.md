@@ -29,11 +29,25 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
+- [ ] **Estimate the remaining missing amounts and times in bundled recipes** (owner OK 2026-11-09; follow-up to
+  e3f1f4c). Audit 2026-11-09: 87 recipes have core ingredients with no amount (134 ingredients; ignore "to taste",
+  "to serve", "optional", "for frying" etc.), 113 have no prep+cook time. Same method as e3f1f4c: edit
+  `recipes_curated.json` + matching lines in `recipes_seed.json` (CI drift test proves they agree), realistic estimates,
+  each touched recipe's notes start "Amounts and times are estimates: …", never change names/steps. Up to ~30 recipes
+  per run, worst first; tick only when the audit is clean. On the final batch run `tools/seed-history.py` (full git
+  history) and bump `BundledRecipeCatalog.sampleRefreshVersion` so installs refresh. *Done when:* audit script
+  (add it to `tools/`) reports 0, CI green.
 - [ ] **Missing-amount hint** (owner OK 2026-11-09, from TestFlight issue #15). When a recipe's ingredients have no
   amount (`baseQuantity == 0`), show a quiet "Amount not in original — tap to add" in the amount column instead of a
   blank, and when ≥ half the ingredients lack amounts show one card above the list: "This recipe didn't list amounts —
   add yours" → opens the editor on ingredients. Applies to imported recipes too. *Done when:* the "mostly missing"
   rule is a tested pure function, Screenshots workflow shows the hint, CI green.
+- [ ] **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
+  "Estimate amounts" action that fills them with the on-device model (iOS 26 FoundationModels — already used for
+  import, see `RecipeTextInterpreting`), shown as a review sheet the user accepts or edits before saving; nothing
+  leaves the device. Pre-iOS 26 / Apple Intelligence off → the action is hidden and the hint above still invites manual
+  entry. Also run the same check right after an import so new recipes get the offer immediately. *Done when:*
+  prompt/parse logic tested with the fake interpreter, review sheet in Screenshots, CI green.
 - [ ] 🐞 **Nightly UI test red: `RecipeFinderHabitLoopUITests.testCookingShowsRatingAndStreakChip`** (Build & Test
   schedule run 42554073688, 2026-11-09 03:00, after the "Made it" sheet merged). Find the failing assertion in that
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
