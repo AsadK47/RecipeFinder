@@ -20,6 +20,11 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
    fast-forward `main` to the branch and push `main` (this ships a TestFlight build). Delete the remote branch.
 6. Tick the item, append one line to **Log** (date · item · commit · what to check on device), commit to `main`.
 
+### Numbered series (e.g. "Import 2/5")
+Owner-approved series are worked strictly in order, one item at a time: start item N only after item N-1 is merged,
+`main`'s Build & Test is green, and its screenshots were checked. Within a series you may go straight on to the next
+item in the same session (no need to wait for the nightly run) — then `fire_trigger` the builder again if needed.
+
 ### Guardrails — never do these without the owner saying yes in this file
 - Change the Core Data model / `.xccurrentversion`, signing, entitlements, bundle IDs, CI/TestFlight workflows.
 - Change legal text (Terms, Privacy, LICENSE), pricing, or anything that sends data off the device.
@@ -29,6 +34,39 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
+- [ ] **Import 1/5 — Keep the original import text** (owner OK incl. Core Data change, 2026-11-09). New model version
+  `RecipeModel 15` (copy 14, add optional String `sourceText` to the recipe entity, lightweight migration, point
+  `.xccurrentversion` at 15, and update every "RecipeModel 14" mention in CLAUDE.md files to 15 in the same commit).
+  `RecipeModel.sourceText: String?` (decodeIfPresent; included in backup/restore). Set it on every import path: link
+  (cleaned page text, capped at 50 KB), paste, photo OCR, share extension. Recipe detail ⋯ menu: "Re-import from
+  original" when `sourceText != nil` → run `RecipeTextImportRouter` on it → reuse the Refresh-from-source per-field
+  accept sheet (`RecipeDiff`), personal data preserved. *Done when:* tests for 14→15 migration (store opens, data
+  intact), Codable + backup round-trip with `sourceText`, router→diff path; screenshot of the menu; CI green.
+- [ ] **Import 2/5 — Low-confidence warning.** Pure `ImportQuality.assess(_ prefill:) -> (score: Double,
+  missing: Set<Field>)` (fields: name, ingredients, steps, amounts, times); URL path uses the parser's confidence,
+  text path scores from what was found (on-device AI result counts as high). In `RecipeWizardView`, when score < 0.6:
+  a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
+  *Done when:* `ImportQuality` tests (complete, partial, empty prefill), wizard banner screenshot, CI green.
+- [ ] **Import 3/5 — No dead ends when parsing fails.** Paste/photo: when the router returns nil, keep the text (paste
+  already does) and offer "Start from this text" → wizard prefilled with name = first non-empty line, notes = full
+  text, empty ingredient/step rows ready to fill, `sourceText` set. Link import failure: "Couldn't read a recipe from
+  this page" + "Paste the recipe text instead" opening the paste sheet. *Done when:* prefill-builder tested, both
+  failure screens screenshotted (UI test can force failure via a launch argument), CI green.
+- [ ] **Import 4/5 — Failed imports become test cases.** `RecipeFinderTests/Fixtures/ImportRegressions/<slug>.txt` +
+  `<slug>.expected.json` ({name, minIngredients, minSteps, amountsPresent}); a parameterised Swift Testing suite
+  loads them via `#filePath` (like `SeedCorpusParseQualityTests`, no bundle resources) and runs the heuristic text
+  path (interpreter faked to decline). Seed it with 3 real cases from the bundled corpus's known-poor list. Add to the
+  protocol above: a 🐞 that is a bad import gets a fixture first (red), then the parser fix (green). *Done when:*
+  suite runs in CI with ≥ 3 fixtures, protocol updated, CI green.
+- [ ] **Import 5/5 — Search the web for recipes** (owner OK 2026-11-09, Paprika-style; no backend, no API).
+  Import tab → "Search the web": query field → in-app browser (`WKWebView` via `UIViewRepresentable`; not
+  `SFSafariViewController`, which can't hand back the page) on the user's engine — DuckDuckGo default, Google, BBC Good
+  Food — chosen in Settings. Floating "Import this recipe" button runs the existing link importer on the current URL →
+  review wizard (with 1/5–3/5 behaviour). "Recipe found ✓" badge when the page has JSON-LD Recipe data (pure detector,
+  tested on HTML fixtures). Default (non-persistent) website data store; no tracking. Add one sentence to the in-app
+  Privacy Policy section 5: searches and pages load directly from the site/engine the user chooses (owner OK for this
+  legal-text change); log in the Needs owner list that the website privacy page needs the same sentence.
+  *Done when:* engine URL builder + recipe detector tested, browser + badge screenshots, CI green.
 - [ ] **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
   "Estimate amounts" action that fills them with the on-device model (iOS 26 FoundationModels — already used for
   import, see `RecipeTextInterpreting`), shown as a review sheet the user accepts or edits before saving; nothing
