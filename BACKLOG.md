@@ -46,6 +46,9 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
+- [ ] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
+  anything else. Audit result: 1 🔴 (photo overwrite after delete — data loss), 14 🟡, 28 🟢; CI green. Also merge the
+  already-green `agent/fix-madeit-presenter` (5c414a6) after rebasing — it fixes the Made it sheet 🟡.
 - [ ] **Manual 2/3 — Paste-and-type ingredients & steps** (owner OK 2026-11-09; wizard review). Replace per-row
   ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
   block — parsed live by `IngredientLineParser` into an editable preview (amount, unit, name) so manual entry and
@@ -193,7 +196,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🔴 `Views/Main/ContentView.swift:94` — since 4dbd6f9 the Made it sheet is presented from the app root, so Made it / cooking-mode finish from a recipe opened inside the Collections sheet is dropped (root already presenting); `MadeItPresenter.request` stays set → `isBusy` true → all badge celebrations blocked — present from the topmost view, or clear `request` when presentation fails.
 - 🟠 `Views/Main/ContentView.swift:98` — Done clears `request` immediately, so the badge sheet presents mid-dismiss and is silently dropped (already marked shown in `BadgeManager`) — unblock via `.sheet(item:onDismiss:)`; update `MadeItPresenterTests.dismiss_unblocks`.
-- 🟠 `Views/Recipes/RecipeDetailView.swift:311` + `Utilities/Recipe/RecipeImageStore.swift:70` — photo file name `_g<photoNames.count>` repeats after a photo delete, so a new Made it photo overwrites an existing file and the name is listed twice — name files with a UUID.
+- 🔴 RELEASE BLOCKER (data loss, readiness audit 2026-11-09) — `Views/Recipes/RecipeDetailView.swift:311` + `Utilities/Recipe/RecipeImageStore.swift:70` (also `RecipePhotoManagerSheet.swift:142`, `RecipeWizardView.swift:385`) — photo file name `_g<photoNames.count>` repeats after a photo delete, so a new Made it photo overwrites an existing file and the name is listed twice — name files with a UUID.
 - 🟠 `Components/Ingredients/IngredientRowView.swift:25` — amount-less rows lost the amount button, their only tap-to-edit; under the 50% "Add your amounts" threshold there's no way in — show an "Add amount" button when `isMissingAmount && onTapQuantity != nil`.
 - 🟠 `Utilities/Recipe/RecipeImportPipeline.swift:114` — link imports store script-stripped page text (JSON-LD gone), so Re-import runs nav/comments through `TextRecipeParser` (title = first nav line) and `RecipeRefreshSheet` pre-ticks every change — hide Re-import for link imports (keep refresh-from-source) or store capped raw HTML; open re-import with nothing pre-ticked.
 - 🟠 `Utilities/Managers/RecipeStore.swift:126` — stale-sample refresh does up to 332 sync `updateRecipe` fetch+save calls on the main thread at launch — one batched background save like `seedRecipes(_:)`.
