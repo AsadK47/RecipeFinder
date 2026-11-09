@@ -281,6 +281,7 @@
 		F3D40587305B0DA70076834D /* Meal prep.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = F3D40585305B0DA70076834D /* Meal prep.xlsx */; };
 		F3D40588305B0DA70076834D /* Meal prep.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = F3D40585305B0DA70076834D /* Meal prep.xlsx */; };
 		F3D4058E305B44A20076834D /* recipes_seed.json in Resources */ = {isa = PBXBuildFile; fileRef = F3D4058D305B44A20076834D /* recipes_seed.json */; };
+		A1B2C3D4E5F60718293A4B01 /* recipes_seed_history.json in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B02 /* recipes_seed_history.json */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
 		F3E9D10C30434D65008BF231 /* RecipeSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */; };
@@ -738,6 +739,7 @@
 		F3D40580305B04D60076834D /* DynamitePrawns.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = DynamitePrawns.jpeg; sourceTree = "<group>"; };
 		F3D40585305B0DA70076834D /* Meal prep.xlsx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Meal prep.xlsx"; sourceTree = "<group>"; };
 		F3D4058D305B44A20076834D /* recipes_seed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = recipes_seed.json; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B02 /* recipes_seed_history.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = recipes_seed_history.json; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
 		F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSelectionSheet.swift; sourceTree = "<group>"; };
@@ -1900,6 +1902,7 @@
 			isa = PBXGroup;
 			children = (
 				F3D4058D305B44A20076834D /* recipes_seed.json */,
+				A1B2C3D4E5F60718293A4B02 /* recipes_seed_history.json */,
 				F3D40585305B0DA70076834D /* Meal prep.xlsx */,
 			);
 			path = RecipeSeed;
@@ -2145,6 +2148,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3D4058E305B44A20076834D /* recipes_seed.json in Resources */,
+				A1B2C3D4E5F60718293A4B01 /* recipes_seed_history.json in Resources */,
 				F3AEF8B1309A3CD000A9C5E0 /* PrivacyInfo.xcprivacy in Resources */,
 				9E9DE5FF2ECCA111005CD593 /* LICENSE in Resources */,
 				9EDBD52E2EE8593F00DC2503 /* Assets.xcassets in Resources */,

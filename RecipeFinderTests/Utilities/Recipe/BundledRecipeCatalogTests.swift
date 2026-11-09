@@ -359,4 +359,121 @@ struct BundledRecipeCatalogTests {
         #expect(persistence.fetchRecipeCount() == all.count)
         #expect(persistence.fetchCollectedRecipeCount() == 0)
     }
+
+    // MARK: - Stale-sample refresh (devices seeded before curation keep old copies)
+
+    private static let sampleID = UUID()
+
+    private static func sample(
+        name: String = "Chicken Chow Mein",
+        ingredients: [String] = ["noodles", "chicken"],
+        instructions: [String] = ["Fry.", "Serve."],
+        imageName: String? = "https://example.com/old.jpg",
+        isSampleRecipe: Bool = true
+    ) -> RecipeModel {
+        RecipeModel(
+            id: sampleID, name: name, category: "Main", difficulty: "Basic", prepTime: "10 minutes",
+            cookingTime: "10 minutes", baseServings: 2,
+            ingredients: ingredients.map { Ingredient(baseQuantity: 1, unit: "", name: $0) },
+            prePrepInstructions: [], instructions: instructions, notes: "", imageName: imageName,
+            isSampleRecipe: isSampleRecipe
+        )
+    }
+
+    private static let oldVersion = sample(ingredients: ["Fry the noodles", "Serve hot"], instructions: [])
+    private static let currentVersion = sample(imageName: "https://example.com/new.jpg")
+
+    private static func refreshed(_ stored: RecipeModel) -> [RecipeModel] {
+        BundledRecipeCatalog.staleSampleRefreshes(
+            library: [stored], current: [currentVersion], history: [oldVersion]
+        )
+    }
+
+    @Test("an unedited pre-curation copy is replaced with the current bundled content")
+    func unedited_isRefreshed() {
+        let result = Self.refreshed(Self.oldVersion)
+        #expect(result.count == 1)
+        #expect(result.first?.ingredients.map(\.name) == Self.currentVersion.ingredients.map(\.name))
+        #expect(result.first?.instructions == Self.currentVersion.instructions)
+        #expect(result.first?.imageName == Self.currentVersion.imageName)
+        #expect(result.first?.isSampleRecipe == true)
+    }
+
+    @Test("refresh keeps favourite, rating, cook history, photos and tags")
+    func refresh_preservesUserState() {
+        var stored = Self.oldVersion
+        let cookedAt = Date(timeIntervalSince1970: 1_000_000)
+        stored.isFavorite = true
+        stored.rating = 4
+        stored.cookCount = 3
+        stored.lastCookedAt = cookedAt
+        stored.photoNames = ["dish.jpg"]
+        stored.tags = ["weeknight"]
+        let result = Self.refreshed(stored).first
+        #expect(result?.isFavorite == true)
+        #expect(result?.rating == 4)
+        #expect(result?.cookCount == 3)
+        #expect(result?.lastCookedAt == cookedAt)
+        #expect(result?.photoNames == ["dish.jpg"])
+        #expect(result?.tags == ["weeknight"])
+    }
+
+    @Test("a hero photo the user chose survives the refresh")
+    func refresh_keepsUserHeroPhoto() {
+        var stored = Self.oldVersion
+        stored.imageName = "local-hero.jpg"
+        #expect(Self.refreshed(stored).first?.imageName == "local-hero.jpg")
+    }
+
+    @Test("a copy the user edited is left alone")
+    func edited_isUntouched() {
+        let edited = Self.sample(ingredients: ["Fry the noodles", "Serve hot", "My extra chilli"], instructions: [])
+        #expect(Self.refreshed(edited).isEmpty)
+    }
+
+    @Test("a copy already matching the current bundle needs no write")
+    func current_isUntouched() {
+        #expect(Self.refreshed(Self.currentVersion).isEmpty)
+    }
+
+    @Test("a user recipe that shares the id but isn't a sample is left alone")
+    func nonSample_isUntouched() {
+        let mine = Self.sample(ingredients: ["Fry the noodles", "Serve hot"], instructions: [], isSampleRecipe: false)
+        #expect(Self.refreshed(mine).isEmpty)
+    }
+
+    @Test("refresh runs once per version, and again when the version is bumped", arguments: [
+        (0, 1, true), (1, 1, false), (1, 2, true), (2, 1, false),
+    ])
+    func refresh_runsOncePerVersion(lastRun: Int, current: Int, expected: Bool) {
+        #expect(BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: lastRun, currentVersion: current) == expected)
+    }
+
+    @Test("shipped history decodes and only holds versions of recipes still in the bundle")
+    func bundledHistoryLoads() {
+        let history = BundledRecipeCatalog.loadHistory()
+        let currentIDs = Set(BundledRecipeCatalog.load().map(\.id))
+        #expect(history.count > 100)
+        #expect(history.allSatisfy { currentIDs.contains($0.id) })
+    }
+
+    @Test("an old copy seeded through the store still matches its shipped version after the round trip")
+    @MainActor
+    func roundTrippedOldCopy_isRecognisedAsUnedited() async {
+        let persistence = PersistenceController(inMemory: true)
+        let history = BundledRecipeCatalog.loadHistory()
+        let current = BundledRecipeCatalog.load()
+        guard let old = history.first(where: { $0.name == "鷄肉炒麵" }) else {
+            Issue.record("history should hold the pre-curation 鷄肉炒麵")
+            return
+        }
+        var seeded = old
+        seeded.isSampleRecipe = true
+        #expect(await persistence.seedRecipes([seeded]))
+        let stored = await persistence.fetchRecipesAsync()
+        let result = BundledRecipeCatalog.staleSampleRefreshes(library: stored, current: current, history: history)
+        let fresh = current.first { $0.id == old.id }
+        #expect(result.count == 1)
+        #expect(result.first?.instructions == fresh?.instructions)
+    }
 }

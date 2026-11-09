@@ -73,7 +73,8 @@ final class RecipeStore: RecipeStoring {
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
             let deduped = removeDuplicateCopies(from: fetched)
-            recipes = await repairLegacySampleFlags(in: deduped)
+            let repaired = await repairLegacySampleFlags(in: deduped)
+            recipes = await refreshStaleSamples(in: repaired)
             isLoading = false
         }
     }
@@ -103,6 +104,32 @@ final class RecipeStore: RecipeStoring {
             Self.logger.info("Re-flagged \(fixedCount) legacy sample recipes; \(collected) user recipes remain")
         }
         return repaired
+    }
+
+    /// Versioned one-time pass: bundled samples are seeded once, so installs keep pre-curation copies (steps parsed
+    /// as ingredients, etc.). Rewrites untouched ones with today's content; edited copies are never overwritten.
+    private func refreshStaleSamples(in library: [RecipeModel]) async -> [RecipeModel] {
+        let key = "bundledSampleRefreshVersion"
+        guard BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: LocalStore.shared.integer(forKey: key)) else {
+            return library
+        }
+        let refreshes = await Task.detached(priority: .utility) {
+            BundledRecipeCatalog.staleSampleRefreshes(
+                library: library, current: BundledRecipeCatalog.load(), history: BundledRecipeCatalog.loadHistory()
+            )
+        }.value
+        var updated = library
+        var failures = 0
+        for recipe in refreshes {
+            guard persistence.updateRecipe(recipe) else { failures += 1; continue }
+            if let index = updated.firstIndex(where: { $0.id == recipe.id }) { updated[index] = recipe }
+        }
+        // Retry next launch if any write failed; otherwise this version is done.
+        if failures == 0 { LocalStore.shared.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key) }
+        if !refreshes.isEmpty {
+            Self.logger.info("Refreshed \(refreshes.count - failures) stale sample recipes (\(failures) failed)")
+        }
+        return updated
     }
 
     /// Deletes exact duplicate copies (see `BackupMerge.duplicateRecipeIDs`) and returns the cleaned library.
