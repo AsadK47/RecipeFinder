@@ -102,7 +102,8 @@ enum RecipeWizardBuilder {
 
     /// Digits, ".5", ",5" or a unicode fraction ("½") — anything else in the amount field is words ("a few").
     static func startsWithNumber(_ text: String) -> Bool {
-        guard let first = IngredientLineParser.normaliseUnicodeFractions(text).first else { return false }
+        // The fraction normaliser pads with spaces ("½" → " 1/2 "), so trim before looking at the first character.
+        guard let first = IngredientLineParser.normaliseUnicodeFractions(text).trimmed.first else { return false }
         return first.isNumber || first == "." || first == ","
     }
 
