@@ -25,7 +25,7 @@ Log, and add review findings under **Inbox**. Each item says what "done" means �
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
-- [ ] **"Made it" moment.** Tapping *Made it* opens one celebratory sheet: "Cook #N", streak flame + weeks, tap-to-rate
+- [x] **"Made it" moment.** Tapping *Made it* opens one celebratory sheet: "Cook #N", streak flame + weeks, tap-to-rate
   stars, optional photo (reuse `PostCookPhotoSheet` logic), and progress to the next cooking badge ("2 more to
   *Seasoned*"). Replaces the scattered rate/photo flow (CORE_LOOP_AUDIT "Track"). *Done when:* one sheet, rating +
   photo saved from it, badge progress text unit-tested, CI green.
@@ -64,3 +64,4 @@ Log, and add review findings under **Inbox**. Each item says what "done" means �
 
 ## Log
 - 2026-11-08 · loop set up · CI now also runs on `agent/**` branches.
+- 2026-11-09 · "Made it" moment · ef1c7f1 · Tap *Made it* (and finish cooking mode → Done): one sheet shows Cook #N (total cooks), streak, stars, Add/Take photo, "N more to <badge>"; rate + add photo, check both saved. Renamed PostCookPhotoSheet.swift→MadeItSheet.swift in pbxproj. Streak toast + cooking-mode "Add a photo" removed. Remote branch not deleted (proxy refused) — delete agent/made-it-sheet by hand.
