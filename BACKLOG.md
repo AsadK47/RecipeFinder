@@ -73,7 +73,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   leaves the device. Pre-iOS 26 / Apple Intelligence off → the action is hidden and the hint above still invites manual
   entry. Also run the same check right after an import so new recipes get the offer immediately. *Done when:*
   prompt/parse logic tested with the fake interpreter, review sheet in Screenshots, CI green.
-- [ ] 🐞 **Nightly UI test red: `RecipeFinderHabitLoopUITests.testCookingShowsRatingAndStreakChip`** (Build & Test
+- [x] 🐞 **Nightly UI test red: `RecipeFinderHabitLoopUITests.testCookingShowsRatingAndStreakChip`** (Build & Test
   schedule run 42554073688, 2026-11-09 03:00, after the "Made it" sheet merged). Find the failing assertion in that
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
   intent: cook → sheet → Done → button disabled → rating shown → streak chip). UI tests only run nightly or on
@@ -129,3 +129,4 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - 2026-11-09 · Refresh stale bundled recipes · 8abbcc1 · On first launch after update, old bundled copies (e.g. 鷄肉炒麵) show curated steps/ingredients; favourites, ratings, cooks, photos, tags kept; any recipe you edited is unchanged. Unedited = matches a shipped version in new recipes_seed_history.json (2.85 MB, from git via tools/seed-history.py; registered in pbxproj Resources). Future seed fixes: rerun script + bump BundledRecipeCatalog.sampleRefreshVersion. Remote branch delete refused by proxy — delete agent/refresh-stale-samples (and agent/made-it-sheet) by hand.
 - 2026-11-09 · Bundled-recipe gaps (interactive) · estimated 81 ingredient amounts + 113 prep/cook times across 133 recipes, flagged in each recipe's notes; `tools/audit-missing-amounts.py` now reports 0; sampleRefreshVersion 3.
 - 2026-11-09 · Missing-amount display (interactive) · no-amount ingredients render full width as plain text; "This recipe didn't list most amounts · Add your amounts" card when ≥ half lack amounts (`IngredientAmountGaps`, 9 tests). Check on device with any imported recipe missing amounts.
+- 2026-11-09 · 🐞 Nightly UI test red (Made it) · 4dbd6f9 · Root cause: first cook unlocks Head Chef and its badge sheet (app root) collided with the Made it sheet (detail view) — neither showed. Made it is now presented from the app root (`MadeItPresenter`), Done pinned to the bottom, badge celebration waits until Made it closes. New `MadeItPresenterTests.swift` registered in pbxproj (4 entries). UI test passes in CI (workflow_dispatch). On phone: first cook → Made it sheet → Done → Head Chef badge. Delete remote agent/fix-madeit-uitest by hand (proxy refuses).
