@@ -166,3 +166,50 @@ struct MadeItSheet: View {
         }
     }
 }
+
+/// Presents the Made it sheet from the app root, and makes other root sheets (badge celebrations) wait for it.
+/// A cook often unlocks a badge in the same instant; two sheets presenting at once showed neither, so the
+/// celebration now follows the Made it sheet instead of colliding with it.
+@MainActor @Observable
+final class MadeItPresenter {
+    static let shared = MadeItPresenter()
+
+    struct Request: Identifiable {
+        let summary: MadeItSummary
+        let onRate: (Int) -> Void
+        let onPhotoSelected: (UIImage) -> Void
+        var id: UUID { summary.id }
+    }
+
+    /// The sheet on screen; the root's `.sheet(item:)` binds to it and clears it on dismiss.
+    var request: Request?
+    /// Parked while cooking mode's full-screen cover is still up — a sheet can't present over a dismissing cover.
+    private(set) var held: Request?
+
+    /// True while a Made it sheet is showing or waiting to show.
+    var isBusy: Bool { request != nil || held != nil }
+
+    func present(_ request: Request) { self.request = request }
+
+    func hold(_ request: Request) { held = request }
+
+    func presentHeld() {
+        guard let held else { return }
+        self.held = nil
+        request = held
+    }
+}
+
+private struct MadeItPresenterKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor; the app shares one presenter.
+    static var defaultValue: MadeItPresenter {
+        MainActor.assumeIsolated { MadeItPresenter.shared }
+    }
+}
+
+extension EnvironmentValues {
+    var madeItPresenter: MadeItPresenter {
+        get { self[MadeItPresenterKey.self] }
+        set { self[MadeItPresenterKey.self] = newValue }
+    }
+}

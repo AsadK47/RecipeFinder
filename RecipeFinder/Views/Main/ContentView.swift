@@ -10,6 +10,7 @@ struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.badges) private var badgeManager
+    @Environment(\.madeItPresenter) private var madeItPresenter
     @State private var showProfileFromBadge = false
     /// Set by "View all badges"; the Profile sheet opens only once the badge sheet has fully dismissed (presenting
     /// it mid-dismissal was silently dropped, so the button appeared to do nothing).
@@ -91,7 +92,15 @@ struct ContentView: View {
         }
         .errorAlert("Couldn't Open Recipe", message: $fileImportError)
         .sheet(item: Binding(
-            get: { badgeManager.pendingCelebration },
+            get: { madeItPresenter.request },
+            set: { madeItPresenter.request = $0 }
+        )) { request in
+            MadeItSheet(summary: request.summary, onRate: request.onRate, onPhotoSelected: request.onPhotoSelected)
+        }
+        // A celebration waits for the Made it sheet: the same cook often unlocks a badge, and presenting both at once
+        // left neither on screen.
+        .sheet(item: Binding(
+            get: { madeItPresenter.isBusy ? nil : badgeManager.pendingCelebration },
             set: { if $0 == nil { badgeManager.dismissCelebration() } }
         ), onDismiss: {
             if openProfileAfterBadge {

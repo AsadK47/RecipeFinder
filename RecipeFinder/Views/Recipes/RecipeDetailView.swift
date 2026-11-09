@@ -21,9 +21,8 @@ struct RecipeDetailView: View {
     static let saveErrorMessage = "Your changes couldn't be saved. Please try again."
     @State var showTimerSheet = false
     @State var substitutingIngredientIndex: Int?
-    // The post-cook "Made it" sheet; parked in `pendingMadeIt` while cooking mode's cover is still up.
-    @State private var madeItSummary: MadeItSummary?
-    @State private var pendingMadeIt: MadeItSummary?
+    // The post-cook "Made it" sheet is presented from the app root (see `MadeItPresenter`).
+    @Environment(\.madeItPresenter) private var madeItPresenter
     @State private var showPhotoManager = false
     @State var photoViewer: PhotoViewerSource?
     // Drives the editor sheet; `section` deep-links to those fields (nil = full editor). Presented via `.sheet(item:)` so content rebuilds from the target — avoids the stale-first-render race of `.sheet(isPresented:)` + separate state.
@@ -122,9 +121,6 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showTimerSheet) {
             CookTimerView()
         }
-        .sheet(item: $madeItSummary) { summary in
-            MadeItSheet(summary: summary, onRate: updateRating, onPhotoSelected: addCookPhoto)
-        }
         .sheet(isPresented: $showPhotoManager) {
             RecipePhotoManagerSheet(recipe: $recipe)
         }
@@ -137,8 +133,7 @@ struct RecipeDetailView: View {
         }
         .fullScreenCover(isPresented: $showCookingMode, onDismiss: {
             // Present only once the cover is gone — a sheet can't present over a dismissing cover.
-            madeItSummary = pendingMadeIt
-            pendingMadeIt = nil
+            madeItPresenter.presentHeld()
         }) {
             CookingModeView(recipe: recipe, onFinish: recordCook)
         }
@@ -304,10 +299,11 @@ struct RecipeDetailView: View {
             rating: recipe.rating,
             milestone: BadgeType.nextCookingMilestone(totalCooks: totalCooks)
         )
+        let request = MadeItPresenter.Request(summary: summary, onRate: updateRating, onPhotoSelected: addCookPhoto)
         if showCookingMode {
-            pendingMadeIt = summary
+            madeItPresenter.hold(request)
         } else {
-            madeItSummary = summary
+            madeItPresenter.present(request)
         }
     }
 
