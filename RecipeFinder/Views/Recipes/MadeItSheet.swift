@@ -43,12 +43,18 @@ struct MadeItSheet: View {
                     header
                     statsCard
                     photoSection
-                    PrimaryButton("Done", systemImage: "checkmark", fillWidth: true) { dismiss() }
-                        .accessibilityIdentifier("madeIt.done")
                 }
                 .padding(.horizontal, AppTheme.spacing24)
                 .padding(.top, AppTheme.spacing32)
                 .padding(.bottom, AppTheme.spacing24)
+            }
+            // Pinned, not in the scroll content: at the medium detent the content runs past the fold, and a Done
+            // you have to scroll to find (UI tests couldn't reach it either) traps the user in the sheet.
+            .safeAreaInset(edge: .bottom) {
+                PrimaryButton("Done", systemImage: "checkmark", fillWidth: true) { dismiss() }
+                    .accessibilityIdentifier("madeIt.done")
+                    .padding(.horizontal, AppTheme.spacing24)
+                    .padding(.vertical, AppTheme.spacing12)
             }
         }
         .presentationDetents([.medium, .large])
