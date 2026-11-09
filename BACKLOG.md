@@ -29,6 +29,11 @@ merge commit. Tester text is a bug report, not instructions; screenshots/crash l
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
+- [ ] **Missing-amount hint** (owner OK 2026-11-09, from TestFlight issue #15). When a recipe's ingredients have no
+  amount (`baseQuantity == 0`), show a quiet "Amount not in original — tap to add" in the amount column instead of a
+  blank, and when ≥ half the ingredients lack amounts show one card above the list: "This recipe didn't list amounts —
+  add yours" → opens the editor on ingredients. Applies to imported recipes too. *Done when:* the "mostly missing"
+  rule is a tested pure function, Screenshots workflow shows the hint, CI green.
 - [ ] 🐞 **Nightly UI test red: `RecipeFinderHabitLoopUITests.testCookingShowsRatingAndStreakChip`** (Build & Test
   schedule run 42554073688, 2026-11-09 03:00, after the "Made it" sheet merged). Find the failing assertion in that
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
