@@ -27,7 +27,7 @@ struct RecipeWizardBuilderTests {
 
     // MARK: - makeIngredients
 
-    @Test("Blank-name rows are dropped and blank quantities default to 1.0")
+    @Test("Blank-name rows are dropped and a blank amount stays 0 (no invented 1)")
     func mapsIngredientsDroppingBlankRows() {
         let items = [
             RecipeWizardView.IngredientItem(quantity: "2", unit: "cups", name: "flour"),
@@ -43,7 +43,7 @@ struct RecipeWizardBuilderTests {
         #expect(ingredients[0].name == "Flour")
         #expect(ingredients[0].baseQuantity == 2.0)
         #expect(ingredients[1].name == "Salt")
-        #expect(ingredients[1].baseQuantity == 1.0)
+        #expect(ingredients[1].baseQuantity == 0)
     }
 
     // MARK: - validate
@@ -199,7 +199,7 @@ struct RecipeWizardBuilderTests {
     }
 
     @Test("Fraction quantities parse instead of silently saving as 1", arguments: [
-        ("1/2", 0.5), ("1 1/2", 1.5), ("⅓", 1.0 / 3.0), ("0.44", 0.44), ("", 1.0),
+        ("1/2", 0.5), ("1 1/2", 1.5), ("⅓", 1.0 / 3.0), ("0.44", 0.44), ("", 0), ("1,5", 1.5), (".5", 0.5), ("½", 0.5),
     ])
     func parsesFractionQuantities(text: String, expected: Double) {
         let item = RecipeWizardView.IngredientItem(quantity: text, unit: "cup", name: "flour")
@@ -262,5 +262,55 @@ struct RecipeWizardBuilderTests {
         var edited = stored
         edited.sourceText = nil
         #expect(RecipeWizardBuilder.mergeEdit(edited, onto: stored).sourceText == "pasted text")
+    }
+
+    // MARK: - Manual-entry fixes (2026-11-09)
+
+    @Test("Whitespace-only rows are dropped and names are trimmed")
+    func trimsAndDropsBlankRows() {
+        let items = [
+            RecipeWizardView.IngredientItem(quantity: " 2 ", unit: " g ", name: "  sugar  "),
+            RecipeWizardView.IngredientItem(quantity: "", unit: "", name: "   ")
+        ]
+        let ingredients = RecipeWizardBuilder.makeIngredients(from: items)
+        #expect(ingredients.count == 1)
+        #expect(ingredients[0].name == "Sugar")
+        #expect(ingredients[0].unit == "g")
+        #expect(ingredients[0].baseQuantity == 2)
+    }
+
+    @Test("An amount written in words is kept in the name instead of becoming 0")
+    func keepsWordAmountsInName() {
+        let item = RecipeWizardView.IngredientItem(quantity: "a few", unit: "", name: "curry leaves")
+        let ingredient = RecipeWizardBuilder.makeIngredients(from: [item]).first
+        #expect(ingredient?.baseQuantity == 0)
+        #expect(ingredient?.name == "A Few Curry Leaves")
+    }
+
+    @Test("Recipe name is trimmed when saved")
+    func trimsRecipeName() {
+        let recipe = RecipeWizardBuilder.assemble(
+            recipeId: UUID(), name: "  Soup  ", category: "Soup", difficulty: "Basic", prepTime: 0, cookTime: 0,
+            servings: 2, ingredientItems: [RecipeWizardView.IngredientItem(quantity: "1", unit: "", name: "leek")],
+            prePrepSteps: [], mainInstructions: [EditableStep(text: "Cook")], notes: "", imageReference: nil,
+            isFavorite: false
+        )
+        #expect(recipe.name == "Soup")
+    }
+
+    @Test("Draft ignores row ids and blank rows but notices real edits")
+    func draftDetectsRealChangesOnly() {
+        func draft(_ items: [RecipeWizardView.IngredientItem], name: String = "Soup") -> RecipeWizardBuilder.Draft {
+            RecipeWizardBuilder.Draft(
+                name: name, prepTime: 0, cookTime: 0, difficulty: "Basic", category: "Soup", servings: 4,
+                ingredientItems: items, prePrepSteps: [EditableStep()], mainInstructions: [EditableStep()],
+                notes: "", tags: [], cuisine: "", imageReference: nil, galleryReferences: []
+            )
+        }
+        let blank = draft([RecipeWizardView.IngredientItem()])
+        #expect(blank == draft([RecipeWizardView.IngredientItem(), RecipeWizardView.IngredientItem()]))
+        #expect(blank != draft([RecipeWizardView.IngredientItem(quantity: "", unit: "", name: "leek")]))
+        #expect(blank != draft([RecipeWizardView.IngredientItem()], name: "Stew"))
+        #expect(blank == draft([RecipeWizardView.IngredientItem()], name: " Soup "))
     }
 }
