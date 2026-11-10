@@ -49,7 +49,6 @@ drop a line while moving it.
 - Skip, disable or weaken a test to get green.
 - New Swift files: no `XcodeWrite` in the cloud — register them in `project.pbxproj` by mirroring a sibling file's
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
-- 2026-11-10 · Import 3/5 slice 1 · b36649c · Paste import that finds no recipe offers "Start from this text": wizard with first line as name, full text as notes/source.
 
 ## Queue
 - [x] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
@@ -242,3 +241,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-10 · Manual 3/3 slice 1 · 4157d72 · Wizard prep/cook time = hours + minutes menus (odd imported minutes kept); servings up to 50. UI test `testCookingShowsRatingAndStreakChip` flaked once (unrelated), green on rerun.
 - 2026-11-10 · Manual 3/3 slice 2 · 50b7eb4 · Photo remove buttons: 44pt targets, "Remove photo N" labels; gallery thumbnails keyed by photo not position. Manual series done.
 - 2026-11-10 · Smell Large wizard (partial) · 6b7560c · One `SuggestionChip` for cuisine/tag/note pills. Not user-visible.
+- 2026-11-10 · Import 3/5 slice 1 · b36649c · Paste import that finds no recipe offers "Start from this text": wizard with first line as name, full text as notes/source.
