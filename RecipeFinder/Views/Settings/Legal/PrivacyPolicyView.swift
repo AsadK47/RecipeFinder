@@ -41,7 +41,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("5. Network Activity")
 
-                BodyText("5.1 Recipe import. When you import a recipe by supplying a URL (directly or via the share sheet), the Application retrieves content directly from the website you specify. The Developer does not intermediate, store copies of, or monitor those requests.")
+                BodyText("5.1 Recipe import. When you import a recipe by supplying a URL (directly or via the share sheet), the Application retrieves content directly from the website you specify. The Developer does not intermediate, store copies of, or monitor those requests. Web searches and the pages you open from them load directly from the search engine or website you choose; browsing data from them is not kept.")
 
                 BodyText("5.2 Images. The Application may load recipe images directly from image addresses contained within recipes you import. No information about you is sent to those sources beyond what is required to request the image.")
 

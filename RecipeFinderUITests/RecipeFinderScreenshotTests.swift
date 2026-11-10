@@ -149,6 +149,21 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "12-link-failed")
     }
 
+    /// Import 5/5: the in-app recipe search (empty state; results need the network, so they aren't captured here).
+    @MainActor
+    func testCaptureWebSearch() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Import"].tap()
+        settle()
+        app.buttons["import.web"].tap()
+        XCTAssertTrue(app.textFields["webSearch.query"].waitForExistence(timeout: 5),
+                      "Search the web should open with a search field.")
+        snap(app, "13-web-search")
+    }
+
     // MARK: - Helpers
 
     @MainActor

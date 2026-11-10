@@ -8,6 +8,7 @@ struct ImportView: View {
 
     @State private var showLinkImport = false
     @State private var showPasteImport = false
+    @State private var showWebSearch = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
     @State private var saveError: String?
@@ -41,6 +42,15 @@ struct ImportView: View {
                                 action: { showLinkImport = true }
                             )
                             .accessibilityIdentifier("import.link")
+
+                            actionCard(
+                                icon: "globe",
+                                color: .blue,
+                                title: "Search the web",
+                                subtitle: "Find a recipe online, then import the page you're on.",
+                                action: { showWebSearch = true }
+                            )
+                            .accessibilityIdentifier("import.web")
 
                             actionCard(
                                 icon: "doc.on.clipboard",
@@ -81,6 +91,9 @@ struct ImportView: View {
         }
         .sheet(isPresented: $showLinkImport) {
             RecipeImportView(initialURL: nil, existingNames: recipes.map(\.name)) { store($0, source: .link) }
+        }
+        .sheet(isPresented: $showWebSearch) {
+            RecipeWebSearchView(existingNames: recipes.map(\.name)) { store($0, source: .link) }
         }
         .sheet(isPresented: $showPasteImport) {
             PasteTextImportSheet { store($0, source: .paste) }
