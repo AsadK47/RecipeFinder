@@ -125,7 +125,7 @@ drop a line while moving it.
   Screenshots of card + one tip, CI green.
 - [ ] **Guide 2/2 — Tutorial mode.** Settings toggle "Show tips & guide": on → reset TipKit datastore + guide
   progress so everything replays; off → hide all tips. *Done when:* toggle tested (resets state), CI green.
-- [ ] **Import from other apps** (owner OK 2026-11-09). Settings → Data → "Import from another app": Paprika
+- [ ] 🚧 **Import from other apps** (owner OK 2026-11-09). Settings → Data → "Import from another app": Paprika
   (`.paprikarecipes` = zip of gzipped JSON), Mela (`.melarecipes`/`.melarecipe` JSON), and CSV (name, ingredients,
   instructions columns). Map into `RecipeModel` (photos where embedded), dedupe by name+ingredients, show a summary
   ("Imported 182, skipped 3 duplicates") and set `sourceText`. Pure parsers with fixtures under
