@@ -11,6 +11,7 @@ struct RecipeDetailToolbar: View {
     let onPrint: () -> Void
     /// Shown only for recipes that kept their original import text.
     var onReimport: (() -> Void)? = nil
+    let onDelete: () -> Void
 
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
@@ -45,13 +46,17 @@ struct RecipeDetailToolbar: View {
                     }
                     .accessibilityIdentifier("recipe.reimport")
                 }
+                Divider()
+                Button(role: .destructive, action: onDelete) {
+                    Label("Delete Recipe", systemImage: "trash")
+                }
             } label: {
                 Image(systemName: "ellipsis.circle")
                     .font(.title3)
                     .adaptiveForegroundColor()
             }
             .accessibilityLabel("More actions")
-            .accessibilityHint("Edit, share, or print this recipe")
+            .accessibilityHint("Edit, share, print, or delete this recipe")
         }
     }
 }

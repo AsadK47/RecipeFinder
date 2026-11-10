@@ -28,6 +28,7 @@ struct RecipeDetailView: View {
     // Drives the editor sheet; `section` deep-links to those fields (nil = full editor). Presented via `.sheet(item:)` so content rebuilds from the target — avoids the stale-first-render race of `.sheet(isPresented:)` + separate state.
     @State var editTarget: EditTarget?
     @State var pendingRefreshDiff: RecipeDiff?
+    @State private var pendingDelete: RecipeModel?
     // Nutrition card: false = per-serving, true = whole-recipe totals.
     @State var nutritionShowsWholeRecipe = false
     @Environment(\.recipeTimer) var recipeTimer
@@ -35,6 +36,7 @@ struct RecipeDetailView: View {
     @Environment(\.cookingStreak) var cookingStreak
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
     @Environment(\.requestReview) private var requestReview
+    @Environment(\.dismiss) private var dismiss
 
     var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
     var hasNotes: Bool { !recipe.notesForDisplay.isEmpty || recipe.importedFromURL != nil }
@@ -105,10 +107,12 @@ struct RecipeDetailView: View {
                     onAddToCollection: { showAddToCollection = true },
                     onManagePhotos: { showPhotoManager = true },
                     onPrint: { RecipePrintFormatter.present(for: recipe) },
-                    onReimport: recipe.canReimportFromOriginal ? { reimportFromOriginal() } : nil
+                    onReimport: recipe.canReimportFromOriginal ? { reimportFromOriginal() } : nil,
+                    onDelete: { pendingDelete = recipe }
                 )
             }
         }
+        .recipeDeleteFlow(pending: $pendingDelete) { _ in dismiss() }
         .sheet(item: $editTarget) { target in
             editRecipeSheet(focus: target.section)
         }

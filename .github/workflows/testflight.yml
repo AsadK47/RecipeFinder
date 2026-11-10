@@ -3,12 +3,16 @@ name: TestFlight
 # Archives a signed Release build and uploads it to App Store Connect, where it
 # appears in TestFlight. Signing is automatic: Xcode uses the App Store Connect
 # API key (Admin role) to fetch a cloud-managed distribution certificate and
-# provisioning profiles, so no certificates or profiles live in this repo.
+# provisioning profiles. The archive step's Apple Development certificate is one
+# long-lived certificate stored as a secret, so runs reuse it instead of minting
+# a new one each time (Apple caps development certificates per account).
 #
 # Required repository secrets:
-#   ASC_KEY_ID     - App Store Connect API key ID
-#   ASC_ISSUER_ID  - App Store Connect issuer ID
-#   ASC_KEY_P8     - full contents of the AuthKey_<id>.p8 file
+#   ASC_KEY_ID            - App Store Connect API key ID
+#   ASC_ISSUER_ID         - App Store Connect issuer ID
+#   ASC_KEY_P8            - full contents of the AuthKey_<id>.p8 file
+#   CI_DEV_CERT_P12       - base64 of the CI Apple Development certificate + private key (.p12)
+#   CI_DEV_CERT_PASSWORD  - password of that .p12
 
 on:
   push:
@@ -18,7 +22,6 @@ on:
       - 'RecipeShareExtension/**'
       - '*.xcodeproj/**'
       - '.github/workflows/testflight.yml'
-      - '.github/scripts/revoke_ci_dev_certs.py'
       - '.github/scripts/asc.py'
       # Docs inside the app folder (RecipeFinder/CLAUDE.md, DesignSystem.md) don't change the app — no upload.
       - '!**/*.md'
@@ -55,15 +58,27 @@ jobs:
           chmod 600 "$KEY_PATH"
           echo "ASC_KEY_PATH=$KEY_PATH" >> "$GITHUB_ENV"
 
-      # Xcode's cloud signing mints an Apple Development certificate on every fresh runner and Apple caps them, so
-      # clear CI-made ones before archiving (headroom) and after the run (no build-up). Never touches distribution
-      # certificates or the owner's own Mac certificate. See .github/scripts/revoke_ci_dev_certs.py.
-      - name: Revoke CI development certificates (before)
-        continue-on-error: true
+      # A fresh runner has an empty keychain, so without this Xcode mints a new development certificate every run.
+      # Importing the stored one into a throwaway keychain lets automatic signing find and reuse it.
+      - name: Install CI development certificate
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-        run: python3 .github/scripts/revoke_ci_dev_certs.py
+          CI_DEV_CERT_P12: ${{ secrets.CI_DEV_CERT_P12 }}
+          CI_DEV_CERT_PASSWORD: ${{ secrets.CI_DEV_CERT_PASSWORD }}
+        run: |
+          if [ -z "$CI_DEV_CERT_P12" ]; then
+            echo "::error::CI_DEV_CERT_P12 secret is not set"; exit 1
+          fi
+          KEYCHAIN="$RUNNER_TEMP/ci-signing.keychain-db"
+          KEYCHAIN_PASSWORD=$(openssl rand -hex 16)
+          printf '%s' "$CI_DEV_CERT_P12" | base64 --decode > "$RUNNER_TEMP/ci-dev.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/ci-dev.p12" -P "$CI_DEV_CERT_PASSWORD" -f pkcs12 -A -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" > /dev/null
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm -f "$RUNNER_TEMP/ci-dev.p12"
+          echo "KEYCHAIN=$KEYCHAIN" >> "$GITHUB_ENV"
 
       - name: Archive
         env:
@@ -115,17 +130,11 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" | tee export.log
 
-      - name: Revoke CI development certificates (after)
+      - name: Remove API key and signing keychain
         if: always()
-        continue-on-error: true
-        env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-        run: python3 .github/scripts/revoke_ci_dev_certs.py
-
-      - name: Remove API key
-        if: always()
-        run: rm -f "$ASC_KEY_PATH"
+        run: |
+          rm -f "$ASC_KEY_PATH"
+          if [ -n "$KEYCHAIN" ]; then security delete-keychain "$KEYCHAIN" || true; fi
 
       - name: Upload logs
         if: failure()

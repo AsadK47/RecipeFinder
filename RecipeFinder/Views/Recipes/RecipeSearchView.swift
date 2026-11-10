@@ -26,14 +26,11 @@ struct RecipeSearchView: View {
     @State private var pendingOpenRecipeId: UUID?
     @State private var importToastMessage: String?
     @State private var recipeToDelete: RecipeModel?
-    @State private var showDeleteAlert: Bool = false
-    @State private var dontAskAgainDelete: Bool = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var availableTags: [String] = []
     @State private var availableCuisines: [String] = []
     @State private var categories: [String] = []
     @FocusState private var isSearchFocused: Bool
-    @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @Environment(\.collections) private var collectionManager
     @Environment(\.cookingStreak) private var cookingStreak
     @State private var showCookingSheet = false
@@ -84,10 +81,9 @@ struct RecipeSearchView: View {
                 .toolbar { keyboardToolbar }
                 .modifier(SheetPresentationModifier(
                     showFilters: $showFilters,
-                    showDeleteAlert: $showDeleteAlert,
-                    filterSheet: filterSheet,
-                    deleteSheet: deleteConfirmationSheet
+                    filterSheet: filterSheet
                 ))
+                .recipeDeleteFlow(pending: $recipeToDelete)
                 .sheet(item: $sharedImportURL) { shared in
                     RecipeImportView(initialURL: shared.url, existingNames: recipes.map { $0.name }) { importedRecipe in
                         addRecipe(importedRecipe, successMessage: "Imported \"\(importedRecipe.name)\"")
@@ -316,7 +312,7 @@ struct RecipeSearchView: View {
             } else {
                 RecipeResultsList(
                     filteredRecipes: current,
-                    onRequestDelete: requestDelete,
+                    onRequestDelete: { recipeToDelete = $0 },
                     onRefresh: refreshRecipesAsync
                 ) {
                     rediscoverySection
@@ -325,18 +321,6 @@ struct RecipeSearchView: View {
         }
     }
 
-    /// Applies the delete preference: delete immediately when "don't ask again" is on, otherwise stage the recipe and confirm.
-    private func requestDelete(_ recipe: RecipeModel) {
-        recipeToDelete = recipe
-        if skipDeleteConfirmation {
-            deleteRecipe(recipe)
-            recipeToDelete = nil
-        } else {
-            showDeleteAlert = true
-            HapticManager.shared.warning()
-        }
-    }
-    
     @ToolbarContentBuilder
     private var keyboardToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .keyboard) {
@@ -387,29 +371,6 @@ struct RecipeSearchView: View {
     }
 
 
-    private var deleteConfirmationSheet: some View {
-        RecipeDeleteConfirmationSheet(
-            recipeName: recipeToDelete?.name ?? "",
-            dontAskAgain: $dontAskAgainDelete,
-            onConfirm: {
-                if dontAskAgainDelete {
-                    skipDeleteConfirmation = true
-                }
-                if let recipe = recipeToDelete {
-                    deleteRecipe(recipe)
-                }
-                recipeToDelete = nil
-                dontAskAgainDelete = false
-                showDeleteAlert = false
-            },
-            onCancel: {
-                recipeToDelete = nil
-                dontAskAgainDelete = false
-                showDeleteAlert = false
-            }
-        )
-    }
-    
     private func updateDerivedMetadata() {
         let validCategories = Set(["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"])
         availableTags = Array(Set(recipes.flatMap { $0.tags })).sorted()
@@ -422,12 +383,6 @@ struct RecipeSearchView: View {
         cachedFilteredRecipes = filterCriteria.apply(to: recipes)
     }
     
-    private func deleteRecipe(_ recipe: RecipeModel) {
-        withAnimation {
-            recipeStore.delete(id: recipe.id)
-        }
-        HapticManager.shared.success()
-    }
     
     
     private func clearAllFilters() {

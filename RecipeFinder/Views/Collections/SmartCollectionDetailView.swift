@@ -22,7 +22,6 @@ struct SmartCollectionDetailView: View {
             }
         }
         .appNavigationTitle(smartCollection.name)
-        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
     private var recipeList: some View {

@@ -40,7 +40,7 @@ struct RecipeSearchHeader: View {
 
     private var filterMenu: some View {
         CircleMenuButton(
-            accessibilityLabel: activeFilterCount > 0 ? "Menu, \(activeFilterCount) active filters" : "Menu",
+            accessibilityLabel: activeFilterCount > 0 ? "Menu, ^[\(activeFilterCount) active filter](inflect: true)" : "Menu",
             badge: {
                 if activeFilterCount > 0 {
                     Text("\(activeFilterCount)")

@@ -57,6 +57,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 Image(systemName: dontAskAgain ? "checkmark.square.fill" : "square")
                                     .font(.title3)
                                     .foregroundStyle(dontAskAgain ? AppTheme.accentColor : .white.opacity(AppTheme.mediumEmphasisOpacity))
+                                    .accessibilityHidden(true)
                                 
                                 Text("Don't ask me again")
                                     .font(.subheadline)
@@ -68,7 +69,10 @@ struct RecipeDeleteConfirmationSheet: View {
                             .padding(.horizontal, AppTheme.spacing24)
                         }
                         .buttonStyle(PlainButtonStyle())
-                        
+                        // A custom checkbox is otherwise silent about its state in VoiceOver.
+                        .accessibilityAddTraits(dontAskAgain ? .isSelected : [])
+                        .accessibilityValue(dontAskAgain ? "On" : "Off")
+
                         VStack(spacing: AppTheme.spacing12) {
                             Button(action: {
                                 HapticManager.shared.light()
@@ -107,5 +111,68 @@ struct RecipeDeleteConfirmationSheet: View {
         }
         .presentationDetents([.height(480)])
         .presentationDragIndicator(.hidden)
+    }
+}
+
+/// The one recipe-delete flow (list long-press and detail menu): honours "don't ask again", otherwise confirms via
+/// `RecipeDeleteConfirmationSheet`. Callers set `pending`; the delete runs after the sheet is gone so `onDeleted`
+/// (e.g. popping the detail screen) never races the sheet's own dismissal.
+private struct RecipeDeleteFlowModifier: ViewModifier {
+    @Binding var pending: RecipeModel?
+    let onDeleted: (RecipeModel) -> Void
+
+    @Environment(\.recipeStore) private var recipeStore
+    @AppStorage("skipRecipeDeleteConfirmation") private var skipConfirmation: Bool = false
+    @State private var confirming: RecipeModel?
+    @State private var confirmed: RecipeModel?
+    @State private var dontAskAgain = false
+
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: pending) { _, recipe in
+                guard let recipe else { return }
+                pending = nil
+                if skipConfirmation {
+                    delete(recipe)
+                } else {
+                    confirming = recipe
+                    HapticManager.shared.warning()
+                }
+            }
+            .sheet(item: $confirming, onDismiss: finishConfirmedDelete) { recipe in
+                RecipeDeleteConfirmationSheet(
+                    recipeName: recipe.name,
+                    dontAskAgain: $dontAskAgain,
+                    onConfirm: {
+                        if dontAskAgain { skipConfirmation = true }
+                        confirmed = recipe
+                        confirming = nil
+                    },
+                    onCancel: { confirming = nil }
+                )
+            }
+    }
+
+    private func finishConfirmedDelete() {
+        dontAskAgain = false
+        guard let recipe = confirmed else { return }
+        confirmed = nil
+        delete(recipe)
+    }
+
+    private func delete(_ recipe: RecipeModel) {
+        withAnimation {
+            recipeStore.delete(id: recipe.id)
+        }
+        HapticManager.shared.success()
+        onDeleted(recipe)
+    }
+}
+
+extension View {
+    /// Attaches the shared delete flow; set `pending` to a recipe to request its deletion.
+    func recipeDeleteFlow(pending: Binding<RecipeModel?>,
+                          onDeleted: @escaping (RecipeModel) -> Void = { _ in }) -> some View {
+        modifier(RecipeDeleteFlowModifier(pending: pending, onDeleted: onDeleted))
     }
 }

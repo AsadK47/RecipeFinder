@@ -97,8 +97,7 @@ struct MealPlanningView: View {
                 }
             }
         }
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .appNavigationChrome()
         .animation(.appGentle, value: selectedMealTimes)
         .animation(.appGentle, value: pantryExpirySuggestions.count)
         .confirmationDialog("Add to Groceries", isPresented: $showAddWeekConfirm, titleVisibility: .visible) {

@@ -4,28 +4,18 @@ import SwiftUI
 // directly via `.sheet(item:)` in RecipeSearchView, so their content rebuilds from the value (no stale first render).
 struct SheetPresentationModifier: ViewModifier {
     @Binding var showFilters: Bool
-    @Binding var showDeleteAlert: Bool
 
     let filterSheet: AnyView
-    let deleteSheet: AnyView
 
-    init(showFilters: Binding<Bool>,
-         showDeleteAlert: Binding<Bool>,
-         filterSheet: some View,
-         deleteSheet: some View) {
+    init(showFilters: Binding<Bool>, filterSheet: some View) {
         self._showFilters = showFilters
-        self._showDeleteAlert = showDeleteAlert
         self.filterSheet = AnyView(filterSheet)
-        self.deleteSheet = AnyView(deleteSheet)
     }
 
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $showFilters) {
                 filterSheet
-            }
-            .sheet(isPresented: $showDeleteAlert) {
-                deleteSheet
             }
     }
 }

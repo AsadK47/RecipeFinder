@@ -104,7 +104,6 @@ struct ProfileView: View {
             }
         }
         .appNavigationTitle("")
-        .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
             case .privacyPolicy:

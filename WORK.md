@@ -1,5 +1,14 @@
 # WORK — session handoff
 
+## Local uncommitted (Mac, 2026-11-06) — reapplied on top of origin/main 2026-11-10
+BACKLOG + FOLLOW-UPS FIXED (1852 green pre-pull, sim-checked): clear-search, search-only no-results button
+ (RecipeFilterCriteria.clearActionTitle), AddToCollection frosted rows, Legal nav chrome, AppTheme.destructiveFill, Microdata
+ shared header vocab; no .toolbarColorScheme(.dark) left; filter label inflects; checkbox a11y On/Off; Delete Recipe in detail
+ menu via shared .recipeDeleteFlow (RecipeDeleteConfirmationSheet.swift) + UI test. Merged with upstream Re-import menu item.
+ Next 🟡: "Don't ask again" tap target ~17pt (<44); checkbox unchecked colour invisible in Light / checked teal-on-teal;
+ Profile shows "John"/"Doe" placeholders + blank avatar while Settings says "Recipe Chef" (unconfirmed — investigate).
+ Needs: BuildProject + RunAllTests after merge, then user reviews + commits.
+
 ## In progress: Import 3/5 (🚧 claimed).
 
 ## Decisions

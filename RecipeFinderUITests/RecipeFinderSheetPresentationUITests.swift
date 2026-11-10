@@ -66,4 +66,17 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
         shot.lifetime = .keepAlways
         add(shot)
     }
+
+    /// Delete must be reachable from the detail screen, not only via the list's long-press. Asserts the menu item
+    /// exists only — tapping it could delete a real recipe if "don't ask again" was persisted.
+    @MainActor
+    func testRecipeDetailMenuOffersDelete() {
+        let app = launchApp()
+
+        tapWhenReady(element(app, id: "recipe.row"), "Recipes home should list at least one recipe.")
+        tapWhenReady(app.buttons["More actions"], "Recipe detail should show the overflow menu.")
+
+        XCTAssertTrue(app.buttons["Delete Recipe"].waitForExistence(timeout: 5),
+                      "Detail overflow menu should offer Delete Recipe.")
+    }
 }
