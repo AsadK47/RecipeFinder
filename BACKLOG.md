@@ -134,7 +134,7 @@ drop a line while moving it.
   (version, licences, Legal). Every row shows its current value; search field at the top; one icon colour per
   section. No legal text changes. *Done when:* settings search + row-value logic tested, screenshot of every
   settings screen, CI green.
-- [ ] **Bug sweep (audit 2026-11-10)** — the 8 likely bugs in `docs/AUDIT-2026-11-10.md` §0 (pantry expiry/quantity
+- [ ] **Bug sweep (audit 2026-11-10)** — 🚧 interactive session 2026-11-10 — the 8 likely bugs in `docs/AUDIT-2026-11-10.md` §0 (pantry expiry/quantity
   UI, collection remove swipe, ½× servings → 0, week-to-groceries servings, unused shopping reminders toggle,
   one-slot share inbox, premature "Recipe saved", silent file-import failure). Test first for each. *Done when:*
   each has a failing-then-passing test (UI ones a screenshot), CI green.
