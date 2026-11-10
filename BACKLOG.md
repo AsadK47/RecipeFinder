@@ -25,6 +25,8 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
    writing code ("who" = builder agent / interactive session). Skip items claimed by someone else; a claim older than
    1 day with no open `agent/*` branch is stale and may be taken over (say so in the Log). Remove the 🚧 when ticking.
 4. Branch `agent/<short-slug>` from latest `main`. Write tests first (Swift Testing) for any logic.
+   A 🐞 that is a bad import: add `RecipeFinderTests/Fixtures/ImportRegressions/<slug>.txt` + `.expected.json` first
+   (red in `ImportRegressionFixtureTests`), then fix the parser (green).
 5. No Swift toolchain in the cloud container: CI is the compiler. Push the branch, then check the "Build & Test" run
    for that commit with the GitHub tools; on failure read the job log, fix, push, re-check. Give up after 4 failed
    attempts — log what broke and leave the branch unmerged. Docs-only branches (`*.md`, `tools/`, CI scripts) don't

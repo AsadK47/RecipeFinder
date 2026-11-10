@@ -82,3 +82,55 @@ import Foundation
         #expect(goodFrac >= 0.88, "Seed amount-parse quality regressed below the locked floor. \(summary)")
     }
 }
+
+/// Import 4/5: every bad import a cook reports becomes a fixture here first (red), then the parser fix (green).
+/// Each `Fixtures/ImportRegressions/<slug>.txt` is raw import text; `<slug>.expected.json` holds the minimum the
+/// heuristic text path must recover. Loaded from the source tree via `#filePath` — no bundle resources needed.
+@Suite struct ImportRegressionFixtureTests {
+
+    private struct Expected: Decodable {
+        let name: String
+        let minIngredients: Int
+        let minSteps: Int
+        let amountsPresent: Bool
+    }
+
+    private static var fixtureDirectory: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Fixtures/ImportRegressions")
+    }
+
+    static let slugs: [String] = {
+        let files = (try? FileManager.default.contentsOfDirectory(atPath: fixtureDirectory.path)) ?? []
+        return files.filter { $0.hasSuffix(".txt") }.map { String($0.dropLast(4)) }.sorted()
+    }()
+
+    @Test("There are at least three regression fixtures")
+    func hasFixtures() {
+        #expect(Self.slugs.count >= 3, "No fixtures found in \(Self.fixtureDirectory.path)")
+    }
+
+    @Test("Each regression fixture still imports at least as well as pinned", arguments: slugs)
+    func fixtureImports(slug: String) async throws {
+        let dir = Self.fixtureDirectory
+        let text = try String(contentsOf: dir.appendingPathComponent("\(slug).txt"), encoding: .utf8)
+        let expected = try JSONDecoder().decode(
+            Expected.self, from: Data(contentsOf: dir.appendingPathComponent("\(slug).expected.json")))
+
+        // The heuristic path: the on-device interpreter is faked to decline, as on devices without it.
+        let prefill = try #require(
+            await RecipeTextImportRouter(interpreter: UnavailableRecipeTextInterpreter()).prefill(for: text),
+            "\(slug): no recipe found")
+        let ingredients = prefill.ingredients ?? []
+        let steps = prefill.instructions ?? []
+        let report = "\(slug): name=\(prefill.name ?? "nil") ingredients=\(ingredients.count) steps=\(steps.count)"
+
+        #expect(prefill.name?.localizedCaseInsensitiveContains(expected.name) == true, "\(report)")
+        #expect(ingredients.count >= expected.minIngredients, "\(report)")
+        #expect(steps.count >= expected.minSteps, "\(report)")
+        if expected.amountsPresent {
+            #expect(ingredients.contains { IngredientLineParser.parse($0).quantity > 0 }, "\(report)")
+        }
+    }
+}
