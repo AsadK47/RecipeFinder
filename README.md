@@ -1,9 +1,8 @@
 <div align="center">
 
-# RecipeFinder™ 🍳
+# RecipeFinder 🍳
 
-**Sophisticated recipe management with stunning design**  
-*All your culinary treasures, beautifully organised. Completely private.*
+**Your recipes, your groceries, your week of cooking — all on your phone, nothing in the cloud.**
 
 [![Build & Test](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
 [![Platform](https://img.shields.io/badge/platform-iOS%2017.5%2B-blue.svg)](https://www.apple.com/ios/)
@@ -11,150 +10,129 @@
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
 
-**[Visit recipefinder.uk →](https://recipefinder.uk)**
+**[Join the TestFlight beta](https://testflight.apple.com/join/UJWrMbk2)** · **[recipefinder.uk](https://recipefinder.uk)**
+
+<img src="screenshots/home_page.png" alt="RecipeFinder home screen" width="250"/>
 
 </div>
 
-## 📸 Demo
+## What it is
 
-<div align="center">
+RecipeFinder is an iPhone and iPad recipe manager built around one loop: **get a recipe in → shop for it → cook it**.
+There are no accounts, no servers and no subscriptions. Your library lives on your device, and the smart parts
+(reading photos, tidying messy text, estimating amounts) run on-device too.
 
-<img src="screenshots/home_page.png" alt="Home Page" width="250"/>
+It ships with 332 starter recipes so it's useful from the first launch.
 
-*Beautiful recipe management from import to cooking*
+## Features
 
-</div>
+**Get recipes in**
+- Paste a link — recipe data is read straight from the page, with automatic ingredient parsing
+- Search the web without leaving the app; an import button appears only on pages that contain a recipe
+- Share a link or text from Safari or any other app via the share sheet
+- Scan up to five photos of cookbook pages, or open a PDF
+- Paste any text and it's turned into a recipe
+- Bring your library over from Paprika, Mela or a CSV export
+- Write your own with a step-by-step wizard
+- Missing amounts? "Estimate amounts" suggests them on-device (Apple Intelligence) for you to review
 
-## ✨ Why RecipeFinder?
+**Cook**
+- Cooking mode: one step at a time, screen stays on
+- Step timers with background alerts
+- Scale servings (½× to 3×) and switch metric / imperial
+- Ingredient substitutes and nutrition estimates
+- "Made it" — rate, add a photo, keep your cooking streak and earn badges
+- Siri & Shortcuts: "What's for dinner", "Start cooking", "Next step", "Add to my list"
 
-- **Privacy First** - Designed with your privacy in mind. See our Privacy Policy for details
-- **Beautiful Design** - Six elegant color themes with seamless light/dark mode
-- **Complete Toolkit** - Recipes, shopping lists, meal planning, kitchen inventory, and timers in one app
-- **Smart Import** - From websites, a built-in web search, other recipe apps, PDFs and photos
+**Plan & shop**
+- Weekly meal planner with reminders
+- Groceries list that sorts itself by aisle; add a recipe or a whole week in one tap
+- Kitchen inventory with "what can I make?" matching and use-it-up suggestions
 
-## 🚀 Installation
+**Organise**
+- Collections and smart collections, favourites, ratings, tags and filters
+- Six colour themes, light and dark
+- Full backup and restore to a file you keep
 
-### For Users
-**Join the beta on TestFlight:** https://testflight.apple.com/join/UJWrMbk2  
-*App Store release coming soon.*
+**Accessible by default** — VoiceOver, Dynamic Type, WCAG 2.1 AA contrast and 44pt tap targets throughout.
 
-### For Developers
+## Privacy
+
+- No sign-in, no backend, no analytics — RecipeFinder never sends your recipes anywhere
+- On-device text recognition and Apple Intelligence; network access only to fetch a page you asked to import or search
+- In-app web browsing keeps nothing (non-persistent web store)
+- Details: [Privacy Policy](https://recipefinder.uk/privacy.html)
+
+## Built with
+
+| | |
+|---|---|
+| UI | SwiftUI, Swift 6 strict concurrency, `async`/`await` (no Combine) |
+| Architecture | Clean Architecture — Presentation → Domain → Data; views reach managers through `@Environment` protocol seams |
+| Storage | Core Data, App Group `UserDefaults` (share extension hand-off) |
+| On-device AI | Vision (OCR), PDFKit, FoundationModels (iOS 26 + Apple Intelligence) |
+| System | App Intents (Siri/Shortcuts), Share Extension, local notifications |
+| Packages | [Kingfisher](https://github.com/onevcat/Kingfisher) (images), [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI) (celebrations), [ViewInspector](https://github.com/nalexn/ViewInspector) (tests only) |
+| Tests | Swift Testing unit tests, import-regression fixtures, XCUITest UI + screenshot + accessibility audits |
+
+## Getting started (developers)
 
 ```bash
 git clone https://github.com/AsadK47/RecipeFinder.git
 cd RecipeFinder
-open RecipeFinder.xcodeproj  # Press ⌘+R to run
+open RecipeFinder.xcodeproj   # ⌘R to run, ⌘U to test
 ```
 
-**Requirements**: iOS 17.5+ • Xcode 16.0+ • Swift 6.0 • macOS 15.0+
-
-## 📱 Features
-
-### Core Features
-- **📖 Recipe Management** - Curated collection, custom creation, favorites, and sharing
-- **📥 Import Anything** - Paste a URL, search the web in-app (import button appears on recipe pages), files from other recipe apps, PDFs, and multi-page photos
-- **⚖️ Estimate Amounts** - Fills in sensible quantities when an imported recipe leaves them out
-- **🛒 Smart Shopping Lists** - Auto-categorized ingredients, add from recipes, track inventory
-- **🍽 Meal Planning** - Weekly calendar, schedule meals, add a week to your shopping list
-- **🏠 Kitchen Inventory** - Track ingredients, expiry dates, find recipes you can make now
-- **⏲ Cook Timer** - Step timer with background alerts and haptic feedback
-
-### Security & Privacy
-- **🔐 No Accounts** - No sign-in, no backend; your recipes and profile stay on your device
-- **🛡️ Privacy-Focused** - Designed with data protection and privacy in mind
-
-### Design & Accessibility
-- **🎨 Six Color Themes** - Beautiful palettes that work in light and dark modes
-- **♿️ Accessible** - VoiceOver support, Dynamic Type, WCAG 2.1 AA contrast, 44pt tap targets
-- **⚡️ Smooth Performance** - Hardware-accelerated rendering, optimized Core Data
-
-## 🏗 Technical Stack
-
-**Architecture**: SwiftUI with Clean Architecture (Presentation / Domain / Data) • Core Data persistence • Swift async/await concurrency  
-**Dependencies**: [Kingfisher](https://github.com/onevcat/Kingfisher) (image loading & caching) • [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI) (celebration effects)  
-**Performance**: Hardware-accelerated rendering • Async image loading • Optimized Core Data fetches  
-**Security**: Local-first storage • No accounts or backend  
-**Privacy**: Privacy-focused design • See Privacy Policy for details  
-**Accessibility**: VoiceOver support • Dynamic Type • WCAG 2.1 AA contrast • 44pt tap targets
-
-## 🛠 For Developers
-
-### Build Commands
+Requires Xcode 16+, macOS 15+, iOS 17.5+ simulator or device.
 
 ```bash
-# Pick any available iOS simulator (avoids hardcoding a device name)
-SIMULATOR_ID=$(xcrun simctl list devices available --json \
-  | jq -r 'first(.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.isAvailable and (.name | test("iPhone"))) | .udid)')
-
-# Run tests
-xcodebuild test -scheme RecipeFinder \
-  -destination "platform=iOS Simulator,id=$SIMULATOR_ID"
-
-# Build for simulator
-xcodebuild -scheme RecipeFinder \
-  -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
-  clean build
-
-# Build for device
-xcodebuild -scheme RecipeFinder \
-  -destination 'generic/platform=iOS' \
-  -configuration Release \
-  clean build
+# Tests from the command line on any available iPhone simulator
+SIM=$(xcrun simctl list devices available --json \
+  | jq -r 'first(.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.name | test("iPhone")) | .udid)')
+xcodebuild test -scheme RecipeFinder -destination "platform=iOS Simulator,id=$SIM"
 ```
 
-### Project Structure
+### Layout
 
 ```
-RecipeFinder/
-├── Components/      # Reusable UI components
-├── Views/          # Screen views
-├── Models/         # Data models
-├── Persistence/    # Core Data & managers
-├── Theme/          # Design system
-├── Utilities/      # Helpers & extensions
-└── Services/       # Business logic
+RecipeFinder/            App target
+├── Views/               Screens (Recipes, Import, Kitchen, Shopping, MealPlanning, Profile, Settings…)
+├── Components/          Reusable UI
+├── Models/              Domain models
+├── Utilities/Recipe/    Parsing, import pipeline, scaling, nutrition, matching (pure, tested)
+├── Persistence/         Core Data stack, managers, backup
+├── Services/            Networking, OCR, PDF, cooking session
+├── Intents/             Siri & Shortcuts
+├── Theme/               Design tokens (see DesignSystem.md)
+└── RecipeSeed/          Bundled starter recipes
+RecipeShareExtension/    Share sheet extension
+RecipeFinderTests/       Unit + fixture tests
+RecipeFinderUITests/     UI, screenshot and accessibility tests
 ```
 
-### CI & Agent Loop
-- **Build & Test** (`build.yml`) runs on every `agent/*` branch and `main`; UI screenshots run nightly
-- **TestFlight** (`testflight.yml`) uploads a build on every app-code push to `main`; tester feedback is filed as GitHub issues
-- Work is planned in `BACKLOG.md` and worked by a scheduled agent loop; session handoff lives in `WORK.md`
-- Changes land on `agent/<slug>` branches; `main` is fast-forwarded only once CI is green
+### How it's built
 
-### Key Files
-- `AppTheme.swift` - Complete design system
-- `NotificationManager.swift` - Local notifications
-- `PersistenceController.swift` - Core Data stack
-- `RecipeImporter.swift` - Web recipe parsing
+- **CI** — `build.yml` builds and tests every `agent/*` branch and `main`; UI screenshots run nightly.
+- **TestFlight** — every app-code push to `main` uploads a beta build; tester feedback is filed as GitHub issues.
+- **Agent loop** — work is planned in [`BACKLOG.md`](BACKLOG.md) and built by scheduled Claude Code agents on
+  `agent/<slug>` branches; `main` only moves once a branch is green. Session handoff lives in `WORK.md`; project rules
+  in `CLAUDE.md`.
 
-## 💬 Support & Contact
+## Contact
 
-- 🐛 **Report Bugs**: [GitHub Issues](https://github.com/AsadK47/RecipeFinder/issues)
-- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/AsadK47/RecipeFinder/discussions)
-- 📧 **Email**: recipefinderuk@gmail.com
-- 🌐 **Website**: [recipefinder.uk](https://recipefinder.uk)
+- 🐛 Bugs: [GitHub Issues](https://github.com/AsadK47/RecipeFinder/issues) or TestFlight feedback
+- 📧 recipefinderuk@gmail.com
+- 🌐 [recipefinder.uk](https://recipefinder.uk)
 
-> **Note**: This is proprietary software. Pull requests are not accepted.
+> Proprietary software — pull requests are not accepted.
 
-## ⚖️ License & Legal
+## Licence
 
-**Copyright © 2024-2026 Asad Khan. All Rights Reserved.**
-
-This software is proprietary.
-
-For complete terms, see:
-- 📄 [Full License Agreement](./LICENSE)
-- 🔒 [Privacy Policy](https://recipefinder.uk/privacy.html)
-- 📋 [Terms of Service](https://recipefinder.uk/terms.html)
-
-For licensing inquiries: recipefinderuk@gmail.com
+**© 2024–2026 Asad Khan. All rights reserved.** See [LICENSE](LICENSE), the
+[Privacy Policy](https://recipefinder.uk/privacy.html) and [Terms of Service](https://recipefinder.uk/terms.html).
 
 <div align="center">
 
----
-
-**© 2024-2026 Asad Khan • All Rights Reserved**
-
-Made with ❤️ in the UK • [recipefinder.uk](https://recipefinder.uk)
+Made in the UK · [recipefinder.uk](https://recipefinder.uk)
 
 </div>
