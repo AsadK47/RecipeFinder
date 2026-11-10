@@ -476,4 +476,12 @@ struct BundledRecipeCatalogTests {
         #expect(result.count == 1)
         #expect(result.first?.instructions == fresh?.instructions)
     }
+
+    @Test func sampleRefresh_onlyCompletesWithBothBundleAndHistory() {
+        let r = RecipeModel(name: "Dal", category: "Main", difficulty: "Easy", prepTime: "", cookingTime: "",
+                            baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: "")
+        #expect(BundledRecipeCatalog.canCompleteSampleRefresh(current: [r], history: [r]))
+        #expect(!BundledRecipeCatalog.canCompleteSampleRefresh(current: [], history: [r]))
+        #expect(!BundledRecipeCatalog.canCompleteSampleRefresh(current: [r], history: []))
+    }
 }

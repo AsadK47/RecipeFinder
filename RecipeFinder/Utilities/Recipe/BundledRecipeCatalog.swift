@@ -35,6 +35,12 @@ enum BundledRecipeCatalog {
     /// Bump when `recipes_seed.json` gains fixes that existing installs should pick up (and regenerate the history).
     static let sampleRefreshVersion = 3
 
+    /// The refresh can only judge "untouched" against real data: an empty bundle or history (missing/corrupt JSON)
+    /// must not mark the version done, or it would never retry.
+    static func canCompleteSampleRefresh(current: [RecipeModel], history: [RecipeModel]) -> Bool {
+        !current.isEmpty && !history.isEmpty
+    }
+
     static func needsSampleRefresh(lastRunVersion: Int, currentVersion: Int = sampleRefreshVersion) -> Bool {
         lastRunVersion < currentVersion
     }

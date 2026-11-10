@@ -466,4 +466,23 @@ struct RecipePersistenceRoundTripTests {
         let fetched = store.fetchRecipes().first { $0.id == recipe.id }
         #expect(fetched?.rating == 0)
     }
+
+    @Test("batch background update rewrites content, keeps cook history, skips missing ids")
+    func updateRecipesInBackground_rewritesContentKeepsHistory() async {
+        let store = makeStore()
+        let a = UUID(), b = UUID()
+        #expect(store.saveRecipeModel(makeRecipe(id: a, name: "Old A", cookCount: 2)) == true)
+        #expect(store.saveRecipeModel(makeRecipe(id: b, name: "Old B")) == true)
+
+        let ok = await store.updateRecipesInBackground([
+            makeRecipe(id: a, name: "New A"), makeRecipe(id: b, name: "New B"), makeRecipe(id: UUID(), name: "Ghost")
+        ])
+
+        let fetched = store.fetchRecipes()
+        #expect(ok)
+        #expect(fetched.count == 2)
+        #expect(fetched.first { $0.id == a }?.name == "New A")
+        #expect(fetched.first { $0.id == a }?.cookCount == 2)
+        #expect(fetched.first { $0.id == b }?.name == "New B")
+    }
 }

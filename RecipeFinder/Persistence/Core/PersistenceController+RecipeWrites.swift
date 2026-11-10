@@ -200,6 +200,37 @@ extension PersistenceController {
         }
     }
 
+    /// Rewrites existing recipes' content on a background context in one save (the stale-sample refresh touched up to
+    /// ~330 recipes one main-thread save at a time). Cook history is re-read from the store, never overwritten.
+    /// Missing ids are skipped. Returns `true` only if the save succeeded.
+    func updateRecipesInBackground(_ models: [RecipeModel]) async -> Bool {
+        guard !models.isEmpty else { return true }
+        guard ensureStoreIsReady() else { return false }
+        let container = self.container
+        return await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                do {
+                    for model in models {
+                        let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+                        request.predicate = Self.recipeIdPredicate(model.id)
+                        request.fetchLimit = 1
+                        guard let object = try context.fetch(request).first else { continue }
+                        let cookCount = object.value(forKey: RecipeKey.cookCount)
+                        let lastCookedAt = object.value(forKey: RecipeKey.lastCookedAt)
+                        guard Self.populate(object, from: RecipeSaveParameters(from: model)) else { continue }
+                        object.setValue(cookCount, forKey: RecipeKey.cookCount)
+                        object.setValue(lastCookedAt, forKey: RecipeKey.lastCookedAt)
+                    }
+                    try context.save()
+                    continuation.resume(returning: true)
+                } catch {
+                    persistenceLogger.error("❌ Failed to batch-update recipes: \(error.localizedDescription)")
+                    continuation.resume(returning: false)
+                }
+            }
+        }
+    }
+
     @discardableResult
     func saveRecipeModel(_ recipe: RecipeModel) -> Bool {
         let context = container.viewContext

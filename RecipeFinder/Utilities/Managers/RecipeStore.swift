@@ -117,23 +117,21 @@ final class RecipeStore: RecipeStoring {
         guard BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: LocalStore.shared.integer(forKey: key)) else {
             return library
         }
-        let refreshes = await Task.detached(priority: .utility) {
-            BundledRecipeCatalog.staleSampleRefreshes(
-                library: library, current: BundledRecipeCatalog.load(), history: BundledRecipeCatalog.loadHistory()
-            )
+        let refreshes = await Task.detached(priority: .utility) { () -> [RecipeModel]? in
+            let current = BundledRecipeCatalog.load()
+            let history = BundledRecipeCatalog.loadHistory()
+            guard BundledRecipeCatalog.canCompleteSampleRefresh(current: current, history: history) else { return nil }
+            return BundledRecipeCatalog.staleSampleRefreshes(library: library, current: current, history: history)
         }.value
-        var updated = library
-        var failures = 0
-        for recipe in refreshes {
-            guard persistence.updateRecipe(recipe) else { failures += 1; continue }
-            if let index = updated.firstIndex(where: { $0.id == recipe.id }) { updated[index] = recipe }
-        }
-        // Retry next launch if any write failed; otherwise this version is done.
-        if failures == 0 { LocalStore.shared.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key) }
-        if !refreshes.isEmpty {
-            Self.logger.info("Refreshed \(refreshes.count - failures) stale sample recipes (\(failures) failed)")
-        }
-        return updated
+        // Bundle data missing or unreadable: leave the version unmarked so the next launch retries.
+        guard let refreshes else { return library }
+        // One background save; on failure keep the old copies and retry next launch.
+        guard await persistence.updateRecipesInBackground(refreshes) else { return library }
+        LocalStore.shared.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key)
+        guard !refreshes.isEmpty else { return library }
+        let byID = Dictionary(refreshes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        Self.logger.info("Refreshed \(refreshes.count) stale sample recipes")
+        return library.map { byID[$0.id] ?? $0 }
     }
 
     /// One-time cleanup of duplicate sample copies (see `BackupMerge.duplicateRecipeIDs`) left by old re-seeding
