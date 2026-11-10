@@ -58,10 +58,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   *Done when:* no bundled recipe has an http(s) image, refresh test for existing installs, Screenshots of the library,
   CI green.
 - [x] **Manual 2/3 — Paste-and-type ingredients & steps** — one text box per section, one item per line, live preview (c5c4e39, cd2352f, 14b1f63). No numeric ingredient field remains, so no fraction bar. Line-count target moved to Smells.
-- [ ] **Manual 3/3 — Reorder, faster times, accessibility.** — 🚧 builder 2026-11-10 ✅ Slice 1 (4157d72): hours+minutes time pickers, servings 1–50 (`Validator.servingsRange`). Reorder N/A (text boxes). Remaining: VoiceOver labels + ≥44pt photo remove buttons, gallery thumbnails keyed by stable id. Drag-to-reorder (or move up/down) for ingredients/steps if
-  2/3 keeps rows; hours+minutes picker instead of 5-min stepper; servings 1...50 (matches `Validator`); VoiceOver labels
-  on unit picker and remove buttons ("Remove ingredient 3"); ≥44pt hit targets on photo remove buttons; gallery
-  thumbnails keyed by a stable id, not offset. *Done when:* Screenshots, CI green.
+- [x] **Manual 3/3 — Reorder, faster times, accessibility.** Hours+minutes times, servings 1–50 (4157d72); photo remove buttons 44pt + VoiceOver names, gallery keyed by photo (50b7eb4). Reorder N/A (text boxes).
 - [x] **Import 1/5 — Keep the original import text** (owner OK incl. Core Data change, 2026-11-09). ✅ Slice 1 merged
   (9a6c119): model v15 + `RecipeModel.sourceText` persisted, backed up, migration-tested. ✅ Slice 2 (cad2d44): paste,
   photo OCR and share keep `sourceText`. ✅ Slice 3 (449dff9): link imports keep page text (≤50 KB). ✅ Slice 4 (9123388): ⋯ "Re-import from original" → router → per-field sheet, tested. ✅ Slice 5 (27d2243): `08-reimport-menu` screenshot (Screenshots workflow, DEBUG `-seed-reimport-recipe`). Original spec: New model version
@@ -235,3 +232,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · Manual 2/3 slice 3 + Smell Large Class RecipeWizardView · 14b1f63 · Prefill + form sections moved to `RecipeWizardView+Form.swift` (registered in pbxproj by hand); 422→242 lines. Not user-visible.
 - 2026-11-10 · Manual 2/3 ticked · — · Done-when met; line-count target split into a Smell.
 - 2026-11-10 · Manual 3/3 slice 1 · 4157d72 · Wizard prep/cook time = hours + minutes menus (odd imported minutes kept); servings up to 50. UI test `testCookingShowsRatingAndStreakChip` flaked once (unrelated), green on rerun.
+- 2026-11-10 · Manual 3/3 slice 2 · 50b7eb4 · Photo remove buttons: 44pt targets, "Remove photo N" labels; gallery thumbnails keyed by photo not position. Manual series done.
