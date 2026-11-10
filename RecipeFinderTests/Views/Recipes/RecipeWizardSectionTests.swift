@@ -43,3 +43,11 @@ struct RecipeWizardSectionTests {
         #expect(focused.id == RecipeDetailView.EditTarget(section: section).id)
     }
 }
+
+@Suite struct PhotoRemoveLabelTests {
+
+    @Test("Remove buttons are named by the photo's position, counting from 1", arguments: [(1, "Remove photo 1"), (4, "Remove photo 4")])
+    func label(position: Int, expected: String) {
+        #expect(RecipeNameStepView.removePhotoLabel(position: position) == expected)
+    }
+}

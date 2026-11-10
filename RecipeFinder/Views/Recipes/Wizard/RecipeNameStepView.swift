@@ -79,19 +79,11 @@ struct RecipeNameStepView: View {
                             .buttonStyle(.plain)
 
                             if selectedRecipeImage != nil || existingImageReference != nil {
-                                Button(action: {
+                                PhotoRemoveButton(label: "Remove main photo") {
                                     HapticManager.shared.light()
                                     selectedRecipeImage = nil
                                     existingImageReference = nil
-                                }) {
-                                    Image(systemName: "xmark")
-                                        .font(.caption.weight(.bold))
-                                        .foregroundStyle(.white)
-                                        .frame(width: 24, height: 24)
-                                        .background(.black.opacity(0.55), in: Circle())
                                 }
-                                .buttonStyle(.plain)
-                                .padding(AppTheme.spacing8)
                             }
                         }
                     }
@@ -112,42 +104,29 @@ struct RecipeNameStepView: View {
 
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: AppTheme.spacing8) {
-                                ForEach(Array(existingGalleryReferences.enumerated()), id: \.offset) { idx, ref in
+                                // Keyed by the stored file name, not position, so removing one doesn't re-render its neighbours' images.
+                                ForEach(Array(existingGalleryReferences.enumerated()), id: \.element) { idx, ref in
                                     ZStack(alignment: .topTrailing) {
                                         RecipeImageView(imageName: ref, height: 80)
                                             .frame(width: 80, height: 80)
-                                        Button {
-                                            existingGalleryReferences.remove(at: idx)
-                                        } label: {
-                                            Image(systemName: "xmark")
-                                                .font(.caption.weight(.bold))
-                                                .foregroundStyle(.white)
-                                                .frame(width: 20, height: 20)
-                                                .background(.black.opacity(0.55), in: Circle())
+                                        PhotoRemoveButton(label: Self.removePhotoLabel(position: idx + 1)) {
+                                            existingGalleryReferences.removeAll { $0 == ref }
                                         }
-                                        .buttonStyle(.plain)
-                                        .padding(4)
                                     }
                                 }
 
-                                ForEach(Array(selectedGalleryImages.enumerated()), id: \.offset) { idx, img in
+                                ForEach(Array(selectedGalleryImages.enumerated()), id: \.element) { idx, img in
                                     ZStack(alignment: .topTrailing) {
                                         Image(uiImage: img)
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 80, height: 80)
                                             .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius8))
-                                        Button {
-                                            selectedGalleryImages.remove(at: idx)
-                                        } label: {
-                                            Image(systemName: "xmark")
-                                                .font(.caption.weight(.bold))
-                                                .foregroundStyle(.white)
-                                                .frame(width: 20, height: 20)
-                                                .background(.black.opacity(0.55), in: Circle())
+                                        PhotoRemoveButton(
+                                            label: Self.removePhotoLabel(position: existingGalleryReferences.count + idx + 1)
+                                        ) {
+                                            selectedGalleryImages.removeAll { $0 === img }
                                         }
-                                        .buttonStyle(.plain)
-                                        .padding(4)
                                     }
                                 }
 
@@ -195,5 +174,32 @@ struct RecipeNameStepView: View {
         } catch {
             return error.localizedDescription
         }
+    }
+}
+
+extension RecipeNameStepView {
+    /// VoiceOver name for a gallery photo's remove button, counting from 1 as the cook sees them.
+    nonisolated static func removePhotoLabel(position: Int) -> String {
+        "Remove photo \(position)"
+    }
+}
+
+/// Small visual "×" on a photo with a full 44pt hit target and a spoken name (an unlabeled 20pt glyph read as "xmark").
+private struct PhotoRemoveButton: View {
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "xmark")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 24, height: 24)
+                .background(.black.opacity(0.55), in: Circle())
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 }
