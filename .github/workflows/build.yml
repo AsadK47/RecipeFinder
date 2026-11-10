@@ -2,7 +2,7 @@ name: Build & Test
 
 # Pushes and PRs: build + unit tests.
 # Nightly and "Run workflow": everything, including the slow UI tests.
-# Xcode's build folder is cached between runs so only changed files recompile.
+# No build cache: restoring it (3.5 min) cost more than the compile it saved (3 min) — measured 2026-11-10.
 
 on:
   push:
@@ -34,68 +34,46 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  # main is fast-forwarded to an agent branch that already passed here, so that exact commit was already tested:
+  # skip it without starting a macOS runner. A few seconds on Linux.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IS_MAIN_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          RUN=true
+          if [ "$IS_MAIN_PUSH" = "true" ]; then
+            N=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&status=success" \
+              --jq '[.workflow_runs[] | select(.id != ${{ github.run_id }})] | length')
+            [ "$N" -gt 0 ] && RUN=false
+          fi
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+
   test:
     name: Build & Test
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
     runs-on: macos-26
     timeout-minutes: 30
 
     steps:
-      # main is fast-forwarded to an agent branch that already passed here, so the same commit was already tested:
-      # then main only compiles (no simulator, no tests) to refresh the build cache every branch reads from.
-      - name: Check whether this commit already passed
-        id: already
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          N=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&status=success" \
-            --jq '[.workflow_runs[] | select(.id != ${{ github.run_id }})] | length')
-          echo "passed=$([ "$N" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # full history, so file dates can be restored below
 
-      # A fresh checkout stamps every file "now", which makes Xcode recompile everything even with a
-      # cached build folder. Reset each file to its last commit time so unchanged files stay up to date.
-      - name: Restore file dates
-        run: |
-          python3 - <<'EOF'
-          import os, subprocess
-          out = subprocess.run(["git", "log", "--format=@%ct", "--name-only"],
-                               capture_output=True, text=True, check=True).stdout
-          seen, ts = set(), None
-          for line in out.splitlines():
-              if line.startswith("@"):
-                  ts = int(line[1:])
-              elif line and line not in seen and os.path.isfile(line):
-                  seen.add(line)
-                  os.utime(line, (ts, ts))
-          print(f"restored {len(seen)} file dates")
-          EOF
-          # Runners get new disk inodes each time; tell Xcode not to treat that as a change.
-          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
-
-      # Booting the simulator took ~4 of the ~8 minutes, idle after compiling. Start it now, in the background,
-      # so it boots while the cache restores and the app compiles (Sentry, Nuke, Home Assistant do the same).
+      # Start the simulator now, in the background, so it boots while Xcode compiles (Sentry, Nuke, Home Assistant).
       - name: Boot simulator early
         run: |
           SIM=$(xcrun simctl list devices available -j \
             | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
           echo "SIM=$SIM" >> "$GITHUB_ENV"
-          if [ "${{ steps.already.outputs.passed }}" != "true" ]; then xcrun simctl boot "$SIM" & fi
+          xcrun simctl boot "$SIM" &
 
-      - name: Restore build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: DerivedData
-          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
-          restore-keys: deriveddata-test-${{ runner.os }}-
-
-      # Build once, then test that exact build (build-for-testing + test-without-building), so compile and test
-      # time show separately and the simulator finishes booting while Xcode compiles.
-      # Flags (same for every build, or the cache stops matching): no index store and no coverage (nobody reads
-      # them in CI), no macro/plugin validation prompts.
+      # Build once, then test that exact build, so compile and test time show separately.
+      # No index store and no coverage (nobody reads them in CI); no macro/plugin validation prompts.
       - name: Build
         run: |
           set -o pipefail
@@ -104,7 +82,6 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
       - name: Test
-        if: steps.already.outputs.passed != 'true'
         env:
           EVENT: ${{ github.event_name }}
           NSUnbufferedIO: 'YES'   # log lines arrive as they happen, so the timestamps show where time goes
@@ -117,15 +94,6 @@ jobs:
           xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult -collect-test-diagnostics never \
             $SKIP | tee -a xcodebuild.log
-
-      # Only main writes the cache (Home Assistant, Element X): branches read main's, and per-branch saves just
-      # filled the 10 GB limit and evicted the useful one. Saved even if tests fail — the build is still valid.
-      - name: Save build cache
-        if: always() && github.ref == 'refs/heads/main' && hashFiles('DerivedData/**') != ''
-        uses: actions/cache/save@v4
-        with:
-          path: DerivedData
-          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
 
       - name: Keep logs if it fails
         if: failure()
