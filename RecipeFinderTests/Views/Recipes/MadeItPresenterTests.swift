@@ -74,4 +74,11 @@ struct MadeItPresenterTests {
         #expect(sut.request(for: recipeId) != nil)
         #expect(sut.request(for: UUID()) == nil)
     }
+
+    @Test func starRating_voiceOverAdjustStaysWithinUnratedToFive() {
+        #expect(StarRatingView.adjusted(0, by: 1) == 1)
+        #expect(StarRatingView.adjusted(3, by: -1) == 2)
+        #expect(StarRatingView.adjusted(5, by: 1) == 5)
+        #expect(StarRatingView.adjusted(0, by: -1) == 0)
+    }
 }
