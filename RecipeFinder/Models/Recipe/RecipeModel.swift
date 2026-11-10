@@ -181,6 +181,12 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return url
     }
 
+    /// "Re-import from original" re-parses saved text. Link imports keep only script-stripped page text (the
+    /// structured data is gone), so they use refresh-from-source instead; an empty capture can never parse.
+    var canReimportFromOriginal: Bool {
+        importedFromURL == nil && sourceText?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+    }
+
     /// Whether opening the recipe should re-check its source page for changes: the user's own URL imports only.
     /// Bundled recipes are a fixed snapshot — checking would hit a third-party site on every open and always "differ".
     var shouldAutoRefreshFromSource: Bool {

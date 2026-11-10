@@ -191,4 +191,32 @@ import Foundation
         #expect(diff.changed.contains(.ingredients))
         #expect(!diff.changed.contains(.name))
     }
+
+    // MARK: - Re-import polish
+
+    @Test func reimportSheetStartsWithNothingTicked_refreshTicksEverything() {
+        let stored = recipe(instructions: ["Boil"])
+        let diff = RecipeDiff.compute(stored: stored, upstream: recipe(instructions: ["Simmer"]))
+        #expect(diff.initialSelection(isReimport: true).isEmpty)
+        #expect(diff.initialSelection(isReimport: false) == diff.changed)
+    }
+
+    @Test func reimportOffered_onlyForNonLinkImportsWithText() {
+        func model(notes: String, source: String?) -> RecipeModel {
+            RecipeModel(name: "Soup", category: "Main", difficulty: "Easy", prepTime: "", cookingTime: "",
+                        baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: notes,
+                        sourceText: source)
+        }
+        #expect(model(notes: "", source: "Soup\n1 onion").canReimportFromOriginal)
+        #expect(!model(notes: "Imported\nhttps://example.com/soup", source: "page text").canReimportFromOriginal)
+        #expect(!model(notes: "", source: "  \n ").canReimportFromOriginal)
+        #expect(!model(notes: "", source: nil).canReimportFromOriginal)
+    }
+
+    @Test func storedSourceText_isNilWhenBlank_andCapped() {
+        #expect(RecipeImportPipeline.storedSourceText("  \n\t ") == nil)
+        #expect(RecipeImportPipeline.storedSourceText("Soup") == "Soup")
+        let long = String(repeating: "a", count: 60_000)
+        #expect(RecipeImportPipeline.storedSourceText(long)?.utf8.count == 50_000)
+    }
 }

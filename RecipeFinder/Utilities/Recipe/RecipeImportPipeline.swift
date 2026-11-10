@@ -111,7 +111,7 @@ struct RecipeImportPipeline: Sendable {
             category: parsed.category,
             cuisine: parsed.cuisine,
             imageURL: parsed.imageURL,
-            pageText: Self.pageText(fromHTML: html)
+            pageText: Self.storedSourceText(RecipeParser.cleanHTML(html))
         )
 
         return RecipeImportOutcome(data: extracted, confidence: parsed.confidence)
@@ -120,7 +120,16 @@ struct RecipeImportPipeline: Sendable {
     /// The page as readable text (scripts/styles/tags stripped by the parser's `cleanHTML`), capped at `limit` UTF-8
     /// bytes on a character boundary so a huge page can't bloat the store.
     static func pageText(fromHTML html: String, limit: Int = 50_000) -> String {
-        let text = RecipeParser.cleanHTML(html)
+        capped(RecipeParser.cleanHTML(html), limit: limit)
+    }
+
+    /// Import text as saved on a recipe: nil when blank (JS-rendered pages, empty captures), else capped at 50 KB.
+    static func storedSourceText(_ text: String) -> String? {
+        text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : capped(text, limit: 50_000)
+    }
+
+    /// `text` cut to at most `limit` UTF-8 bytes on a character boundary.
+    static func capped(_ text: String, limit: Int) -> String {
         guard text.utf8.count > limit else { return text }
         var end = text.startIndex
         var bytes = 0

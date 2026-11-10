@@ -19,7 +19,7 @@ struct RecipeTextImportRouter {
             prefill = TextRecipeParser.parse(raw)
         }
         // Keep what the user gave us so the recipe can be re-imported later as the parser improves.
-        prefill?.sourceText = text
+        prefill?.sourceText = RecipeImportPipeline.storedSourceText(text)
         return prefill
     }
 }

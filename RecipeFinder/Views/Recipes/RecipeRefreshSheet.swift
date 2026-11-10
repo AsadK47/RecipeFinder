@@ -12,7 +12,7 @@ struct RecipeRefreshSheet: View {
     init(diff: RecipeDiff, sourceURL: URL?, onApply: @escaping (RecipeModel) -> Void) {
         self.diff = diff
         self.sourceURL = sourceURL
-        _selectedFields = State(initialValue: diff.changed)
+        _selectedFields = State(initialValue: diff.initialSelection(isReimport: sourceURL == nil))
         self.onApply = onApply
     }
 

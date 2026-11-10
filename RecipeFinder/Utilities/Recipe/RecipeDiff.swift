@@ -38,6 +38,12 @@ struct RecipeDiff: Identifiable {
 
     var hasChanges: Bool { !changed.isEmpty }
 
+    /// Fields ticked when the review sheet opens. A source refresh pre-ticks every change; a re-import from the original
+    /// text ticks nothing, since a re-parse can be noisier than what the user already fixed by hand.
+    func initialSelection(isReimport: Bool) -> Set<RecipeDiffField> {
+        isReimport ? [] : changed
+    }
+
     /// Content fields differing between `stored` and `upstream`; ingredient equality is content-based (each import assigns new UUIDs).
     static func compute(stored: RecipeModel, upstream: RecipeModel) -> RecipeDiff {
         var changed = Set<RecipeDiffField>()

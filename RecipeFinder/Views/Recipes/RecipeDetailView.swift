@@ -105,7 +105,7 @@ struct RecipeDetailView: View {
                     onAddToCollection: { showAddToCollection = true },
                     onManagePhotos: { showPhotoManager = true },
                     onPrint: { RecipePrintFormatter.present(for: recipe) },
-                    onReimport: recipe.sourceText == nil ? nil : { reimportFromOriginal() }
+                    onReimport: recipe.canReimportFromOriginal ? { reimportFromOriginal() } : nil
                 )
             }
         }
