@@ -47,7 +47,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 
 ## Queue
 - [ ] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
-  anything else. Audit result: 3 🔴 (photo overwrite after delete; duplicate cleanup deleting user copies every launch; restore losing user state on samples/photos/streak — all data loss), 14 🟡, 28 🟢; CI green.
+  anything else. Audit result: 3 🔴 — all fixed 2026-11-10 (photo UUIDs, samples-only dedupe, restore merges state + streak), 14 🟡, 28 🟢; CI green.
 - [ ] **Sample recipes stop loading third-party photos** (🟡 privacy/copyright, owner OK 2026-11-09). ~164 bundled
   recipes hotlink hero images from recipe sites (`recipes_source_images.json`, applied in `BundledRecipeCatalogTests`),
   leaking the user's IP to those sites while browsing and showing others' copyrighted photos. Stop applying that
@@ -208,7 +208,6 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🔴 RELEASE BLOCKER (data loss, readiness audit 2026-11-09) — restore, remaining after 5885245 (recipe state now merged): cooking-streak dates (`CookingStreakManager` `cookDatesLog`) aren't in `BackupArchive` — add with backward-compatible decode + union on restore; photo files aren't in the archive — change the "Save everything to a file" copy (`DataManagementSettingsView.swift:184`) to say photos aren't included (bundling photos = later item). Test: archive round trip keeps streak dates; old archives still decode.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🟠 `Components/Ingredients/IngredientRowView.swift:25` — amount-less rows lost the amount button, their only tap-to-edit; under the 50% "Add your amounts" threshold there's no way in — show an "Add amount" button when `isMissingAmount && onTapQuantity != nil`.
 - 🟠 `Utilities/Recipe/RecipeImportPipeline.swift:114` — link imports store script-stripped page text (JSON-LD gone), so Re-import runs nav/comments through `TextRecipeParser` (title = first nav line) and `RecipeRefreshSheet` pre-ticks every change — hide Re-import for link imports (keep refresh-from-source) or store capped raw HTML; open re-import with nothing pre-ticked.
@@ -239,3 +238,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-09 · 🐞 🔴 Photo overwrite after delete · 60ac2f8 · Gallery photo files now get a UUID name; delete a photo, then add one (Made it or photo manager) — the remaining photo stays and nothing shows twice.
 - 2026-11-10 · 🐞 🔴 Duplicate cleanup deleting user copies · 1a3ffae · Launch cleanup now removes only duplicate *sample* copies, once per install (after legacy flag repair). Your own copies (Import Anyway, received recipes) are never deleted.
 - 2026-11-10 · 🐞 🔴 Restore slice 1 · 5885245 · Restoring a backup onto a fresh install/reset now keeps cooks, last cooked, favourites, ratings, tags and your edits on built-in recipes (fresh seeds used to win). Streak + photo note next.
+- 2026-11-10 · 🐞 🔴 Restore slice 2 · 7b6b8cf · Backups now include cooking-streak dates (old backups still restore); Settings → Backup says photos aren't included. All 3 audit release blockers fixed.
