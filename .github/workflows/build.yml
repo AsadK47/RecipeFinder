@@ -2,7 +2,7 @@ name: Build & Test
 
 # Pushes and PRs: build + unit tests.
 # Nightly and "Run workflow": everything, including the slow UI tests.
-# No build cache: restoring it (3.5 min) cost more than the compile it saved (3 min) — measured 2026-11-10.
+# Build cache: written only by main, read by every run (cold build 8m41s vs restore ~3 min + incremental build).
 
 on:
   push:
@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   # main is fast-forwarded to an agent branch that already passed here, so that exact commit was already tested:
-  # skip it without starting a macOS runner. A few seconds on Linux.
+  # main then only compiles, to write the build cache every branch reads. A few seconds on Linux.
   gate:
     runs-on: ubuntu-latest
     outputs:
@@ -57,12 +57,41 @@ jobs:
   test:
     name: Build & Test
     needs: gate
-    if: needs.gate.outputs.run == 'true'
     runs-on: macos-26
     timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history, so file dates can be restored below
+
+      # Spotlight, crash reporting and other background services compete with the simulator for the runner's 3 CPUs
+      # (Bitwarden's macos-runner-tuneup). Swift Testing ran in 45s on a settled runner vs 119s on a busy one.
+      - name: Quiet the runner
+        run: |
+          sudo mdutil -a -i off >/dev/null || true
+          for s in com.apple.metadata.mds com.apple.metadata.mds.index com.apple.metadata.mds.scan com.apple.ReportCrash; do
+            sudo launchctl bootout "system/$s" 2>/dev/null || true
+          done
+          sudo pkill -SIGKILL -f "Metadata.framework/Versions/A/Support/mds" || true
+
+      # A fresh checkout stamps every file "now", which makes Xcode recompile everything even with a cached build
+      # folder. Reset each file to its last commit time; tell Xcode new disk inodes aren't changes (TCA, Supabase).
+      - name: Restore file dates
+        run: |
+          python3 - <<'PY'
+          import os, subprocess
+          out = subprocess.run(["git", "log", "--format=@%ct", "--name-only"],
+                               capture_output=True, text=True, check=True).stdout
+          seen, ts = set(), None
+          for line in out.splitlines():
+              if line.startswith("@"):
+                  ts = int(line[1:])
+              elif line and line not in seen and os.path.isfile(line):
+                  seen.add(line)
+                  os.utime(line, (ts, ts))
+          PY
+          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
       # Start the simulator now, in the background, so it boots while Xcode compiles (Sentry, Nuke, Home Assistant).
       - name: Boot simulator early
@@ -70,7 +99,14 @@ jobs:
           SIM=$(xcrun simctl list devices available -j \
             | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
           echo "SIM=$SIM" >> "$GITHUB_ENV"
-          xcrun simctl boot "$SIM" &
+          if [ "${{ needs.gate.outputs.run }}" = "true" ]; then xcrun simctl boot "$SIM" & fi
+
+      - name: Restore build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: DerivedData
+          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
+          restore-keys: deriveddata-test-${{ runner.os }}-
 
       # Build once, then test that exact build, so compile and test time show separately.
       # No index store and no coverage (nobody reads them in CI); no macro/plugin validation prompts.
@@ -82,6 +118,7 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
       - name: Test
+        if: needs.gate.outputs.run == 'true'
         env:
           EVENT: ${{ github.event_name }}
           NSUnbufferedIO: 'YES'   # log lines arrive as they happen, so the timestamps show where time goes
@@ -94,6 +131,14 @@ jobs:
           xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult -collect-test-diagnostics never \
             $SKIP | tee -a xcodebuild.log
+
+      # Only main writes the cache (Home Assistant, Element X): per-branch saves filled the 10 GB limit and evicted it.
+      - name: Save build cache
+        if: always() && github.ref == 'refs/heads/main' && hashFiles('DerivedData/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: DerivedData
+          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
 
       - name: Keep logs if it fails
         if: failure()
