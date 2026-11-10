@@ -220,7 +220,6 @@ drop a line while moving it.
   own words in batches (same curated-JSON + seed + drift-test process), or trim the bundled set. Owner to confirm
   before agents start.
 - 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.
-- 🙋 Website privacy page: add the app's new sentence — "Web searches and the pages you open from them load directly from the search engine or website you choose; browsing data from them is not kept."
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
@@ -229,7 +228,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
-- 2026-11-10 · Import 5/5 Search the web · 3500a5d · Import → "Search the web": type a dish, browse in an in-app browser (DuckDuckGo default; Google / BBC Good Food in Settings → Recipe Search), "Recipe found ✓ — Import this recipe" on pages with recipe data. Nothing kept from browsing (non-persistent web store); Privacy Policy 5.1 sentence added. 3 new files registered in pbxproj (WebRecipeSearchEngine needed the app target's Sources phase, not the share extension's). Screenshot 13-web-search. On phone: search "lemon cake", open a recipe, Import.
+- 2026-11-10 · Import 5/5 Search the web · 3500a5d · Import → "Search the web": type a dish, browse in an in-app browser (DuckDuckGo default; Google / BBC Good Food in Settings → Recipe Search), "Recipe found ✓ — Import this recipe" on pages with recipe data. Nothing kept from browsing (non-persistent web store); Privacy Policy 5.1 sentence added. 3 new files registered in pbxproj (WebRecipeSearchEngine needed the app target's Sources phase, not the share extension's). Screenshot 13-web-search. Website privacy page updated (RecipeFinderWebsite 5e70821). On phone: search "lemon cake", open a recipe, Import.
 - 2026-11-08 · loop set up · CI now also runs on `agent/**` branches.
 - 2026-11-09 · "Made it" moment · ef1c7f1 · Tap *Made it* (and finish cooking mode → Done): one sheet shows Cook #N (total cooks), streak, stars, Add/Take photo, "N more to <badge>"; rate + add photo, check both saved. Renamed PostCookPhotoSheet.swift→MadeItSheet.swift in pbxproj. Streak toast + cooking-mode "Add a photo" removed. Remote branch not deleted (proxy refused) — delete agent/made-it-sheet by hand.
 - 2026-11-09 · Refresh stale bundled recipes · 8abbcc1 · On first launch after update, old bundled copies (e.g. 鷄肉炒麵) show curated steps/ingredients; favourites, ratings, cooks, photos, tags kept; any recipe you edited is unchanged. Unedited = matches a shipped version in new recipes_seed_history.json (2.85 MB, from git via tools/seed-history.py; registered in pbxproj Resources). Future seed fixes: rerun script + bump BundledRecipeCatalog.sampleRefreshVersion. Remote branch delete refused by proxy — delete agent/refresh-stale-samples (and agent/made-it-sheet) by hand.
