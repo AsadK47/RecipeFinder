@@ -179,3 +179,48 @@ enum RecipeWizardBuilder {
         return merged
     }
 }
+
+/// Manual entry as one text area: one ingredient per line, parsed by the same `IngredientLineParser` imports use,
+/// so typing, pasting and importing produce identical rows.
+enum IngredientTextBlock {
+    /// Rows for each non-blank line, in order.
+    static func items(from text: String) -> [RecipeWizardView.IngredientItem] {
+        text.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .map { line in
+                let parsed = IngredientLineParser.parse(line)
+                return RecipeWizardView.IngredientItem(quantity: parsed.quantityText, unit: parsed.unit, name: parsed.name)
+            }
+    }
+
+    /// The text area's contents for existing rows ("200 g flour"); rows without a name are dropped.
+    static func text(from items: [RecipeWizardView.IngredientItem]) -> String {
+        items.compactMap { item in
+            let name = item.name.trimmingCharacters(in: .whitespaces)
+            guard !name.isEmpty else { return nil }
+            return [item.quantity.trimmingCharacters(in: .whitespaces), item.unit, name]
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+        }
+        .joined(separator: "\n")
+    }
+}
+
+/// Steps as one text area: one step per line; blank lines and pasted numbering ("1.", "2)", "Step 3:") are dropped.
+enum StepTextBlock {
+    static func steps(from text: String) -> [String] {
+        text.components(separatedBy: .newlines)
+            .map { line in
+                line.trimmingCharacters(in: .whitespaces)
+                    .replacingOccurrences(of: #"^(?:step\s*)?\d+\s*[.):\-]\s*"#, with: "",
+                                          options: [.regularExpression, .caseInsensitive])
+                    .trimmingCharacters(in: .whitespaces)
+            }
+            .filter { !$0.isEmpty }
+    }
+
+    static func text(from steps: [String]) -> String {
+        steps.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }.joined(separator: "\n")
+    }
+}

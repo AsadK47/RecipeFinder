@@ -313,4 +313,54 @@ struct RecipeWizardBuilderTests {
         #expect(blank != draft([RecipeWizardView.IngredientItem()], name: "Stew"))
         #expect(blank == draft([RecipeWizardView.IngredientItem()], name: " Soup "))
     }
+
+    // MARK: - Text blocks (Manual 2/3)
+
+    @Test("a pasted block of mixed lines becomes one row per line, blanks skipped")
+    func pastedIngredientBlockBecomesRows() {
+        let pasted = """
+        200g plain flour
+
+        1 1/2 cups milk
+        ½ tsp salt
+        1,5 dl cream
+        2 eggs
+        a few basil leaves
+        3 tbsp olive oil, plus extra
+          1 onion, diced
+        pinch of pepper
+        400 g tin chopped tomatoes
+        """
+        let items = IngredientTextBlock.items(from: pasted)
+        #expect(items.count == 10)
+        #expect(items[0].name == "plain flour")
+        #expect(items[0].unit == "g")
+        #expect(RecipeWizardBuilder.parseAmount(items[1].quantity) == 1.5)
+        #expect(RecipeWizardBuilder.parseAmount(items[2].quantity) == 0.5)
+        #expect(RecipeWizardBuilder.parseAmount(items[3].quantity) == 1.5)
+        #expect(items[5].quantity.isEmpty)
+        #expect(items[5].name.contains("basil"))
+        #expect(items[7].name == "onion, diced")
+    }
+
+    @Test("rows → text → rows keeps every amount, unit and name")
+    func ingredientTextRoundTrip() {
+        let original = IngredientTextBlock.items(from: "200 g flour\n2 eggs\nsalt, to taste\n1 1/2 cup milk")
+        let again = IngredientTextBlock.items(from: IngredientTextBlock.text(from: original))
+        #expect(again.map(\.quantity) == original.map(\.quantity))
+        #expect(again.map(\.unit) == original.map(\.unit))
+        #expect(again.map(\.name) == original.map(\.name))
+    }
+
+    @Test("step lines drop blanks and pasted numbering")
+    func stepBlockDropsNumbering() {
+        let steps = StepTextBlock.steps(from: "1. Heat the oil.\n\n2) Add onions\nStep 3: Simmer 20 min\nServe hot")
+        #expect(steps == ["Heat the oil.", "Add onions", "Simmer 20 min", "Serve hot"])
+        #expect(StepTextBlock.steps(from: StepTextBlock.text(from: steps)) == steps)
+    }
+
+    @Test("a step starting with a quantity isn't mistaken for numbering")
+    func stepWithLeadingQuantityKept() {
+        #expect(StepTextBlock.steps(from: "2 cups of water go in the pot") == ["2 cups of water go in the pot"])
+    }
 }
