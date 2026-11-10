@@ -119,7 +119,6 @@ jobs:
             -destination "id=$SIM" \
             -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult \
-            -parallel-testing-enabled NO \
             -enableCodeCoverage NO \
             -skipPackagePluginValidation \
             -skipMacroValidation \
