@@ -209,13 +209,10 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
-- 🟠 `Utilities/Recipe/RecipeImportPipeline.swift:114` — link imports store script-stripped page text (JSON-LD gone), so Re-import runs nav/comments through `TextRecipeParser` (title = first nav line) and `RecipeRefreshSheet` pre-ticks every change — hide Re-import for link imports (keep refresh-from-source) or store capped raw HTML; open re-import with nothing pre-ticked.
 - 🟠 `Utilities/Managers/RecipeStore.swift:126` — stale-sample refresh does up to 332 sync `updateRecipe` fetch+save calls on the main thread at launch — one batched background save like `seedRecipes(_:)`.
 - 🟠 `Views/Recipes/RecipeDetailView+Content.swift:4` (`StarRatingView`, used by MadeItSheet) — combined element with no adjustable action, fixed 18pt font, ~20pt targets — add `.accessibilityAdjustableAction` + value, scalable font, 44pt targets.
 - 🟡 `Utilities/Recipe/RecipeDiff.swift:64` — `applying(selections:)` omits `currentServings`, so refresh/Re-import resets the user's chosen servings — pass `stored.currentServings`; add test.
 - 🟡 `Utilities/Managers/RecipeStore.swift:131` — refresh version marked done even when bundle/history JSON decode fails (returns `[]`) — only mark done when both decoded non-empty; inject `LocalStore` so run-once/retry is testable.
-- 🟡 `Utilities/Recipe/RecipeImportPipeline.swift:122` — JS-rendered pages save `sourceText = ""`, showing a Re-import that always fails — store nil when trimmed text is empty.
-- 🟡 `Views/Import/RecipeTextImportRouter.swift:22` — pasted/OCR/shared `sourceText` is uncapped (page text has 50 KB cap) — reuse the `pageText` byte cap.
 - 🟡 Tests: `BundledRecipeCatalogTests` lacks cases for `currentServings` kept/reset, multiple history versions per id, and `""` image name.
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
@@ -239,3 +236,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · 🐞 🔴 Restore slice 1 · 5885245 · Restoring a backup onto a fresh install/reset now keeps cooks, last cooked, favourites, ratings, tags and your edits on built-in recipes (fresh seeds used to win). Streak + photo note next.
 - 2026-11-10 · 🐞 🔴 Restore slice 2 · 7b6b8cf · Backups now include cooking-streak dates (old backups still restore); Settings → Backup says photos aren't included. All 3 audit release blockers fixed.
 - 2026-11-10 · 🐞 🟠 Add amount button · e880b4f · Ingredient rows with no amount (e.g. imported "flour") show "Add amount" → opens the amount editor. Not for "to taste" items.
+- 2026-11-10 · 🐞 Re-import polish · f1d8535 · Link imports no longer show Re-import (use refresh); re-import review opens with nothing ticked; blank page text isn't saved; pasted/photo/shared text capped at 50 KB.
