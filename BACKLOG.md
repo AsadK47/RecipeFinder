@@ -94,12 +94,7 @@ drop a line while moving it.
   a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
   *Done when:* `ImportQuality` tests (complete, partial, empty prefill), wizard banner screenshot, CI green.
 - [x] **Import 3/5 — No dead ends when parsing fails.** Paste/photo no-recipe → "Start from this text" (b36649c, ccb2ea7); link failure → "Paste the recipe text instead" (ccb2ea7); DEBUG `-force-import-failure` + screenshots 10–12 (a14a5bb).
-- [ ] **Import 4/5 — Failed imports become test cases.** — 🚧 builder 2026-11-10 `RecipeFinderTests/Fixtures/ImportRegressions/<slug>.txt` +
-  `<slug>.expected.json` ({name, minIngredients, minSteps, amountsPresent}); a parameterised Swift Testing suite
-  loads them via `#filePath` (like `SeedCorpusParseQualityTests`, no bundle resources) and runs the heuristic text
-  path (interpreter faked to decline). Seed it with 3 real cases from the bundled corpus's known-poor list. Add to the
-  protocol above: a 🐞 that is a bad import gets a fixture first (red), then the parser fix (green). *Done when:*
-  suite runs in CI with ≥ 3 fixtures, protocol updated, CI green.
+- [x] **Import 4/5 — Failed imports become test cases.** `Fixtures/ImportRegressions` (3 seed known-poor cases) + `ImportRegressionFixtureTests`; protocol step 4 updated (dac5fa8).
 - [ ] **Import 5/5 — Search the web for recipes** (owner OK 2026-11-09, Paprika-style; no backend, no API).
   Import tab → "Search the web": query field → in-app browser (`WKWebView` via `UIViewRepresentable`; not
   `SFSafariViewController`, which can't hand back the page) on the user's engine — DuckDuckGo default, Google, BBC Good
@@ -267,3 +262,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-10 · 🐞 Flaky streak-chip UI test · bffa702 · Test waits for Recipes home after Back (retries once), 10s chip wait, hierarchy dump on failure. Test-only.
 - 2026-11-10 · Import 3/5 slice 2 · ccb2ea7 · Photo import with no recipe offers "Start from this text"; link import failure offers "Paste the recipe text instead".
 - 2026-11-10 · Import 3/5 done · a14a5bb · Forced-failure screenshots of both fallbacks (`-force-import-failure`, DEBUG only). Paste sheet Import button id `paste.import`.
+- 2026-11-10 · Import 4/5 · dac5fa8 · Bad imports now get a fixture + parameterised test (heuristic path). Test-only.

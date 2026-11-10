@@ -17,4 +17,4 @@ BACKLOG + FOLLOW-UPS FIXED (1852 green pre-pull, sim-checked): clear-search, sea
 - Wizard text boxes replace per-row editors; per-row unit picker + name autocomplete dropped deliberately (text is the source of truth). Don't re-add rows.
 
 ## Next action
-Alternate a Smell (Large wizard: RecipeNameStepView), then Import 4/5 (failed imports become test cases). TestFlight on main fails until owner adds CI_DEV_CERT_P12 secret — not ours to fix.
+Batches section in BACKLOG.md: refactor Batch A (RecipeDetailView+Content split) interleaves now; then Import 5/5 first slice.
