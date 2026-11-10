@@ -99,6 +99,24 @@ import Foundation
         #expect(fetched?.name == "Lasagne")
     }
 
+    @Test func mergeRecipes_withSameId_restoresCooksFavouriteAndRating() {
+        let controller = PersistenceController(inMemory: true)
+        let id = UUID()
+        controller.saveRecipeModel(recipe("Soup", id: id))
+        var backup = recipe("Soup", id: id)
+        backup.cookCount = 3
+        backup.isFavorite = true
+        backup.rating = 4
+
+        controller.mergeRecipes([backup])
+
+        let fetched = controller.fetchRecipes().first { $0.id == id }
+        #expect(fetched?.cookCount == 3)
+        #expect(fetched?.isFavorite == true)
+        #expect(fetched?.rating == 4)
+        #expect(controller.fetchRecipes().count == 1)
+    }
+
     @Test func mergeRecipes_intoEmptyStore_savesAll() {
         let controller = PersistenceController(inMemory: true)
 

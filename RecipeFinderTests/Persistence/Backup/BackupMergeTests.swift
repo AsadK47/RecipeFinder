@@ -146,4 +146,62 @@ import Foundation
         let second = Self.copy("Toast")
         #expect(BackupMerge.duplicateRecipeIDs(in: [first, second]) == [second.id])
     }
+
+    // MARK: - restoredUserState(existing:incoming:isPristineSample:)
+
+    private static func sample(id: UUID, steps: [String] = ["step"], cookCount: Int = 0, lastCooked: Date? = nil,
+                               favourite: Bool = false, rating: Int = 0, tags: [String] = [],
+                               photos: [String] = [], isSample: Bool = true) -> RecipeModel {
+        RecipeModel(id: id, name: "Dal", category: "Main", difficulty: "Basic", prepTime: "5 min",
+                    cookingTime: "10 min", baseServings: 2,
+                    ingredients: [Ingredient(baseQuantity: 1, unit: "cup", name: "lentils")],
+                    prePrepInstructions: [], instructions: steps, notes: "", isFavorite: favourite, tags: tags,
+                    isSampleRecipe: isSample, cookCount: cookCount, lastCookedAt: lastCooked, rating: rating,
+                    photoNames: photos)
+    }
+
+    @Test func restoredUserState_ontoFreshSeed_keepsCooksFavouriteRatingTagsAndEdits() throws {
+        let id = UUID()
+        let cooked = Date(timeIntervalSince1970: 1_800_000_000)
+        let fresh = Self.sample(id: id)
+        let backup = Self.sample(id: id, steps: ["my way"], cookCount: 4, lastCooked: cooked, favourite: true,
+                                 rating: 5, tags: ["weeknight"])
+
+        let updates = BackupMerge.restoredUserState(existing: [fresh], incoming: [backup]) { _ in true }
+
+        let merged = try #require(updates.first)
+        #expect(updates.count == 1)
+        #expect(merged.id == id)
+        #expect(merged.cookCount == 4)
+        #expect(merged.lastCookedAt == cooked)
+        #expect(merged.isFavorite)
+        #expect(merged.rating == 5)
+        #expect(merged.tags == ["weeknight"])
+        #expect(merged.instructions == ["my way"])
+        #expect(merged.isSampleRecipe)
+    }
+
+    @Test func restoredUserState_editedCopyKeepsItsTextButMergesState() throws {
+        let id = UUID()
+        let stored = Self.sample(id: id, steps: ["edited here"], cookCount: 2, rating: 3, tags: ["a"],
+                                 photos: ["RecipeImages/x.jpg"])
+        let backup = Self.sample(id: id, steps: ["older"], cookCount: 1, favourite: true, rating: 4, tags: ["b", "a"])
+
+        let updates = BackupMerge.restoredUserState(existing: [stored], incoming: [backup]) { _ in false }
+
+        let merged = try #require(updates.first)
+        #expect(merged.instructions == ["edited here"])
+        #expect(merged.cookCount == 2)
+        #expect(merged.rating == 3)
+        #expect(merged.isFavorite)
+        #expect(merged.tags == ["a", "b"])
+        #expect(merged.photoNames == ["RecipeImages/x.jpg"])
+    }
+
+    @Test func restoredUserState_nothingToChange_returnsNothing() {
+        let id = UUID()
+        let stored = Self.sample(id: id, cookCount: 2)
+        #expect(BackupMerge.restoredUserState(existing: [stored], incoming: [stored]) { _ in true }.isEmpty)
+        #expect(BackupMerge.restoredUserState(existing: [stored], incoming: [Self.sample(id: UUID(), cookCount: 9)]) { _ in true }.isEmpty)
+    }
 }

@@ -68,6 +68,11 @@ enum BundledRecipeCatalog {
         }
     }
 
+    /// Whether two copies have the same user-editable text (ingredient ids and hero image ignored).
+    static func hasSameContent(_ a: RecipeModel, _ b: RecipeModel) -> Bool {
+        ContentKey(a) == ContentKey(b)
+    }
+
     /// The recipe text a user can edit. Ingredient ids are ignored (an edit may re-mint them) and the hero image
     /// is handled separately, so swapping the photo alone doesn't count as an edit.
     private struct ContentKey: Equatable {

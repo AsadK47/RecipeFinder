@@ -41,6 +41,36 @@ enum BackupMerge {
         return (existing + added, added)
     }
 
+    /// Restoring onto recipes already here (same id). Samples are re-seeded with fixed ids before a restore, so a
+    /// plain union kept the fresh copy and dropped the user's cooks, favourite, rating, tags and edits. Returns the
+    /// stored recipes that change: state is merged (most cooks, latest cook, favourite if either, the stored rating
+    /// unless unrated, tags unioned); the backup's text replaces a stored copy only when that copy is an untouched
+    /// sample. Photos stay as stored — backups don't carry the image files.
+    static func restoredUserState(
+        existing: [RecipeModel],
+        incoming: [RecipeModel],
+        isPristineSample: (RecipeModel) -> Bool
+    ) -> [RecipeModel] {
+        let incomingByID = Dictionary(incoming.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return existing.compactMap { stored in
+            guard let backup = incomingByID[stored.id] else { return nil }
+            let takeText = isPristineSample(stored) && !BundledRecipeCatalog.hasSameContent(stored, backup)
+            var merged = takeText ? backup : stored
+            merged.id = stored.id
+            merged.imageName = stored.imageName
+            merged.photoNames = stored.photoNames
+            merged.isSampleRecipe = stored.isSampleRecipe
+            merged.cookCount = max(stored.cookCount, backup.cookCount)
+            merged.lastCookedAt = [stored.lastCookedAt, backup.lastCookedAt].compactMap { $0 }.max()
+            merged.isFavorite = stored.isFavorite || backup.isFavorite
+            merged.rating = stored.rating > 0 ? stored.rating : backup.rating
+            merged.tags = stored.tags + backup.tags.filter { !stored.tags.contains($0) }
+            let stateChanged = merged.cookCount != stored.cookCount || merged.lastCookedAt != stored.lastCookedAt
+                || merged.isFavorite != stored.isFavorite || merged.rating != stored.rating || merged.tags != stored.tags
+            return takeText || stateChanged ? merged : nil
+        }
+    }
+
     /// Ids of exact duplicate recipes to remove: same name, ingredients and steps but different ids — left behind by
     /// older builds that re-seeded samples with random ids. In each group the copy the user has invested in most
     /// (cooked, favourited, rated, photographed, their own over a sample) is kept. Only sample copies are ever

@@ -222,7 +222,16 @@ extension PersistenceController {
     
     /// Non-destructive restore: saves only new recipes per `BackupMerge.mergedRecipes` (dedupes by id AND normalized name so re-imports don't duplicate).
     func mergeRecipes(_ incoming: [RecipeModel]) {
-        let added = BackupMerge.mergedRecipesWithAdditions(existing: fetchRecipes(), incoming: incoming).added
+        let existing = fetchRecipes()
+        let added = BackupMerge.mergedRecipesWithAdditions(existing: existing, incoming: incoming).added
+        let shipped = Dictionary(
+            (SeedRecipeProvider.recipes + BundledRecipeCatalog.load()).map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        let restored = BackupMerge.restoredUserState(existing: existing, incoming: incoming) { stored in
+            guard stored.isSampleRecipe, let fresh = shipped[stored.id] else { return false }
+            return BundledRecipeCatalog.hasSameContent(stored, fresh)
+        }
         // Suppress milestone-badge celebrations during restore: crossing count thresholds here would pop a parade of
         // sheets for a library the user already had. Badges still persist, mirroring how `BadgeManager.merge` silences
         // the explicitly-restored badges (BackupService.restore calls that straight after this).
@@ -230,6 +239,9 @@ extension PersistenceController {
         defer { BadgeManager.shared.isBulkImporting = false }
         for recipe in added {
             saveRecipeModel(recipe)
+        }
+        for recipe in restored {
+            updateRecipe(recipe)
         }
     }
 
