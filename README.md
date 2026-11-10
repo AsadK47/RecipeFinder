@@ -5,6 +5,8 @@
 **Your recipes, your groceries, your week of cooking — all on your phone, nothing in the cloud.**
 
 [![Build & Test](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
+[![TestFlight](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml)
+[![UI tests (nightly)](https://github.com/AsadK47/RecipeFinder/actions/workflows/screenshots.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/screenshots.yml)
 [![Platform](https://img.shields.io/badge/platform-iOS%2017.5%2B-blue.svg)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org/)
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
