@@ -57,6 +57,7 @@ struct PasteTextImportSheet: View {
                 } else {
                     Button("Import") { run() }
                         .disabled(trimmed.isEmpty)
+                        .accessibilityIdentifier("paste.import")
                 }
             }
         }

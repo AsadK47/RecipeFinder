@@ -123,7 +123,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(editor.waitForExistence(timeout: 5), "The paste sheet should show a text box.")
         editor.tap()
         editor.typeText("Nan's lemon cake\nzest two lemons, bake till golden")
-        app.buttons["Import"].firstMatch.tap()
+        app.buttons["paste.import"].tap()
         let startFromText = app.buttons["import.startFromText"]
         XCTAssertTrue(startFromText.waitForExistence(timeout: 10), "A paste with no recipe should offer Start from this text.")
         snap(app, "10-import-no-recipe")
