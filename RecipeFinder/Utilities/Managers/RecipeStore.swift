@@ -72,6 +72,7 @@ final class RecipeStore: RecipeStoring {
             }
             #if DEBUG
             fetched = seedUITestReimportRecipeIfRequested(into: fetched)
+            fetched = seedUITestMissingAmountsRecipeIfRequested(into: fetched)
             #endif
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
@@ -166,6 +167,25 @@ final class RecipeStore: RecipeStoring {
             ingredients: [Ingredient(baseQuantity: 4, unit: "", name: "tomatoes")],
             prePrepInstructions: [], instructions: ["Soften the onion."], notes: "",
             sourceText: original
+        )
+        guard persistence.saveRecipeModel(recipe) else { return library }
+        return library + [recipe]
+    }
+
+    /// UI-test hook (`-seed-missing-amounts-recipe`): a recipe whose ingredients mostly lack amounts, named to sort
+    /// first, so Screenshots can capture the "Estimate amounts" review sheet. Idempotent via a fixed id.
+    private func seedUITestMissingAmountsRecipeIfRequested(into library: [RecipeModel]) -> [RecipeModel] {
+        guard ProcessInfo.processInfo.arguments.contains("-seed-missing-amounts-recipe"),
+              let id = UUID(uuidString: "5EED0000-0000-4000-8000-00000000A002"),
+              !library.contains(where: { $0.id == id }) else { return library }
+        let recipe = RecipeModel(
+            id: id, name: "1-Bowl Banana Bread", category: "Dessert", difficulty: "Basic",
+            prepTime: "10 minutes", cookingTime: "50 minutes", baseServings: 8,
+            ingredients: ["ripe bananas", "plain flour", "light brown sugar", "butter, melted"].map {
+                Ingredient(baseQuantity: 0, unit: "", name: $0)
+            } + [Ingredient(baseQuantity: 1, unit: "tsp", name: "baking soda")],
+            prePrepInstructions: [], instructions: ["Mash the bananas.", "Stir everything together.", "Bake 50 minutes."],
+            notes: ""
         )
         guard persistence.saveRecipeModel(recipe) else { return library }
         return library + [recipe]

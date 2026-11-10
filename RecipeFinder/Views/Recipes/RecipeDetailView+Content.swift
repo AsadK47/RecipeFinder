@@ -341,8 +341,17 @@ extension RecipeDetailView {
             isInShoppingList: { isIngredientInShoppingList($0) },
             onEditIngredient: { _ in beginEdit(section: .ingredients) },
             onSubstitute: { index in substitutingIngredientIndex = index },
-            onEditIngredients: { beginEdit(section: .ingredients) }
+            onEditIngredients: { beginEdit(section: .ingredients) },
+            onEstimateAmounts: amountEstimator.isAvailable ? beginAmountEstimate : nil
         )
+        .sheet(item: $amountEstimateTarget) { target in
+            AmountEstimateReviewSheet(
+                target: target,
+                estimator: amountEstimator,
+                onSave: applyEstimatedAmounts,
+                onEditManually: { beginEdit(section: .ingredients) }
+            )
+        }
         .sheet(item: Binding(
             get: { substitutingIngredientIndex.map { EditingIngredient(index: $0) } },
             set: { substitutingIngredientIndex = $0?.index }

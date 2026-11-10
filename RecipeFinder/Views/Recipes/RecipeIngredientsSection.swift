@@ -16,6 +16,8 @@ struct RecipeIngredientsSection: View {
     let onSubstitute: ((Int) -> Void)?
     /// Opens the full recipe editor on the ingredients section (add/remove/reorder).
     let onEditIngredients: () -> Void
+    /// Non-nil only where the on-device model can run: offers "Estimate amounts" alongside typing them in.
+    var onEstimateAmounts: (() -> Void)? = nil
 
     // One-time hint for the non-obvious tap-to-check / tap-amount-to-edit gestures; hidden once seen or anything is checked off.
     @AppStorage("hasSeenIngredientTapHint") private var hasSeenTapHint = false
@@ -166,11 +168,20 @@ struct RecipeIngredientsSection: View {
                     .fontWeight(.semibold)
                     .adaptiveForegroundColor()
                     .fixedSize(horizontal: false, vertical: true)
-                Button("Add your amounts", action: onEditIngredients)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.accentColor)
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("recipe.addAmounts")
+                HStack(spacing: AppTheme.spacing16) {
+                    if let onEstimateAmounts {
+                        Button("Estimate amounts", action: onEstimateAmounts)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(AppTheme.accentColor)
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("recipe.estimateAmounts")
+                    }
+                    Button("Add your amounts", action: onEditIngredients)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppTheme.accentColor)
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("recipe.addAmounts")
+                }
             }
             Spacer(minLength: 0)
         }

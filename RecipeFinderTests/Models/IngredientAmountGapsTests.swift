@@ -135,3 +135,60 @@ struct IngredientAmountEstimateTests {
         #expect(try await UnavailableIngredientAmountEstimator().estimateAmounts(for: estimateRequest) == nil)
     }
 }
+
+/// The review sheet's rows: suggestions in, the user's edits out.
+@Suite("Ingredient amount estimate review")
+struct IngredientAmountEstimateDraftTests {
+
+    private let ingredients = [
+        Ingredient(baseQuantity: 0, unit: "", name: "plain flour"),
+        Ingredient(baseQuantity: 100, unit: "g", name: "caster sugar"),
+        Ingredient(baseQuantity: 0, unit: "", name: "eggs")
+    ]
+
+    private func draftRequest() throws -> AmountEstimateRequest {
+        try #require(AmountEstimateRequest(recipeName: "Sponge", servings: 8, ingredients: ingredients, steps: []))
+    }
+
+    @Test("One row per gap, pre-filled from the first usable suggestion")
+    func rowsPrefilled() throws {
+        let rows = AmountEstimateDraft.rows(for: try draftRequest(), ingredients: ingredients, estimates: [
+            AmountEstimate(index: 0, quantity: 0, unit: "g"),
+            AmountEstimate(index: 0, quantity: 225, unit: " g "),
+            AmountEstimate(index: 1, quantity: 50, unit: "g")
+        ])
+        #expect(rows.map(\.index) == [0, 2])
+        #expect(rows[0].name == "Plain flour")
+        #expect(rows[0].quantityText == "225")
+        #expect(rows[0].unit == "g")
+        #expect(rows[1].quantityText.isEmpty)   // no suggestion for eggs: left for the user
+    }
+
+    @Test("Edited rows become estimates; blank and unreadable ones stay missing", arguments: [
+        ("200", 200.0), ("1.5", 1.5), ("1,5", 1.5), ("1 1/2", 1.5), ("", 0.0), ("lots", 0.0), ("0", 0.0)
+    ])
+    func estimatesFromEdits(text: String, expected: Double) {
+        let row = AmountEstimateDraftRow(index: 0, name: "Plain flour", quantityText: text, unit: "g")
+        let result = AmountEstimateDraft.estimates(from: [row])
+        if expected > 0 {
+            #expect(result == [AmountEstimate(index: 0, quantity: expected, unit: "g")])
+        } else {
+            #expect(result.isEmpty)
+        }
+    }
+
+    @Test("Suggested amounts show as plain editable numbers", arguments: [
+        (200.0, "200"), (1.5, "1.5"), (0.25, "0.25"), (0.333, "0.33")
+    ])
+    func editableText(quantity: Double, expected: String) {
+        #expect(AmountEstimateDraft.editableText(quantity) == expected)
+    }
+
+    @Test("The UI-test estimator suggests an amount for every gap")
+    func fakeEstimatorFillsEveryGap() async throws {
+        let estimates = try await FakeIngredientAmountEstimator().estimateAmounts(for: try draftRequest())
+        #expect(estimates?.map(\.index) == [0, 2])
+        #expect(FakeIngredientAmountEstimator().isAvailable)
+        #expect(!UnavailableIngredientAmountEstimator().isAvailable)
+    }
+}

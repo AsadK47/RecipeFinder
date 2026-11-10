@@ -28,6 +28,8 @@ struct RecipeDetailView: View {
     // Drives the editor sheet; `section` deep-links to those fields (nil = full editor). Presented via `.sheet(item:)` so content rebuilds from the target — avoids the stale-first-render race of `.sheet(isPresented:)` + separate state.
     @State var editTarget: EditTarget?
     @State var pendingRefreshDiff: RecipeDiff?
+    @State var amountEstimateTarget: AmountEstimateTarget?
+    let amountEstimator: IngredientAmountEstimating = makeIngredientAmountEstimator()
     @State private var pendingDelete: RecipeModel?
     // Nutrition card: false = per-serving, true = whole-recipe totals.
     @State var nutritionShowsWholeRecipe = false
@@ -383,6 +385,21 @@ struct RecipeDetailView: View {
                 showAddedFeedback = "Already matches the original"
             }
         }
+    }
+
+    func beginAmountEstimate() {
+        guard let request = AmountEstimateRequest(
+            recipeName: recipe.name, servings: recipe.baseServings,
+            ingredients: recipe.ingredients, steps: recipe.instructions
+        ) else { return }
+        HapticManager.shared.light()
+        amountEstimateTarget = AmountEstimateTarget(request: request, ingredients: recipe.ingredients)
+    }
+
+    func applyEstimatedAmounts(_ ingredients: [Ingredient]) {
+        var updated = recipe
+        updated.ingredients = ingredients
+        applyRefresh(updated)
     }
 
     func applyRefresh(_ updated: RecipeModel) {

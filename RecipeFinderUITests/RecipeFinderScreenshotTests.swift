@@ -164,6 +164,30 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "13-web-search")
     }
 
+    /// Estimate missing amounts: the review sheet on a seeded recipe with gaps (`-seed-missing-amounts-recipe`, sorts
+    /// first), filled by the DEBUG fake estimator (`-fake-amount-estimates`) since simulators lack Apple Intelligence.
+    @MainActor
+    func testCaptureEstimateAmounts() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-missing-amounts-recipe", "-fake-amount-estimates"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        settle()
+        let row = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "The seeded recipe should be listed.")
+        row.tap()
+        settle()
+        let estimate = app.buttons["recipe.estimateAmounts"]
+        for _ in 0..<6 where !estimate.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(estimate.waitForExistence(timeout: 5), "A recipe missing most amounts should offer Estimate amounts.")
+        estimate.tap()
+        XCTAssertTrue(app.buttons["estimate.save"].waitForExistence(timeout: 10), "The review sheet should open.")
+        settle()
+        snap(app, "14-estimate-amounts")
+    }
+
     // MARK: - Helpers
 
     @MainActor
