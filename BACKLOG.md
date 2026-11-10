@@ -80,7 +80,7 @@ drop a line while moving it.
   a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
   *Done when:* `ImportQuality` tests (complete, partial, empty prefill), wizard banner screenshot, CI green.
 - [x] **Import 3/5 — No dead ends when parsing fails.** Paste/photo no-recipe → "Start from this text" (b36649c, ccb2ea7); link failure → "Paste the recipe text instead" (ccb2ea7); DEBUG `-force-import-failure` + screenshots 10–12 (a14a5bb).
-- [ ] **Import 4/5 — Failed imports become test cases.** `RecipeFinderTests/Fixtures/ImportRegressions/<slug>.txt` +
+- [ ] **Import 4/5 — Failed imports become test cases.** — 🚧 builder 2026-11-10 `RecipeFinderTests/Fixtures/ImportRegressions/<slug>.txt` +
   `<slug>.expected.json` ({name, minIngredients, minSteps, amountsPresent}); a parameterised Swift Testing suite
   loads them via `#filePath` (like `SeedCorpusParseQualityTests`, no bundle resources) and runs the heuristic text
   path (interpreter faked to decline). Seed it with 3 real cases from the bundled corpus's known-poor list. Add to the
