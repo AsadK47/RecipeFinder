@@ -42,6 +42,7 @@ Settings tidy-up (inside Me) + polish. Audit with file:line evidence: `docs/AUDI
   https://testflight.apple.com/join/UJWrMbk2 sent to it; sign-up form untouched by owner request).
 
 ## Constraints discovered
+- Files in the repo can be bundled app resources (`screenshots/home_page.png` was): before deleting any non-.md file, `grep` it in `project.pbxproj` — a dangling Resources entry breaks the build (main went red 2026-11-10, fixed on `agent/fix-home-png`).
 - New Swift files must go in the **app** target's Sources phase (first mirror attempt landed in the share extension).
 - Auto-mode blocks force-push, remote branch deletes and some rm; ask owner to delete merged `agent/*` branches.
 - Screenshot UI tests share simulator data: open seeded recipes by name, not `firstMatch`.
