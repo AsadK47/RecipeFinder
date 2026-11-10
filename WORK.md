@@ -8,4 +8,4 @@
 - Wizard text boxes replace per-row editors; per-row unit picker + name autocomplete dropped deliberately (text is the source of truth). Don't re-add rows.
 
 ## Next action
-Slice 1 on agent/import-3-start-from-text: `PrefilledRecipeData.startingFrom(unparsedText:)` tested; PasteTextImportSheet failure → "Start from this text". Slice 2: link import failure → "Paste the recipe text instead"; UI-test launch arg to force failure + screenshots.
+Inbox 🐞 flaky streak-chip UI test first (testCookingShowsRatingAndStreakChip). Then Import 3/5 slice 2: photo failure "Start from this text" + link failure "Paste the recipe text instead".

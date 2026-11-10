@@ -49,6 +49,7 @@ drop a line while moving it.
 - Skip, disable or weaken a test to get green.
 - New Swift files: no `XcodeWrite` in the cloud — register them in `project.pbxproj` by mirroring a sibling file's
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
+- 2026-11-10 · Import 3/5 slice 1 · b36649c · Paste import that finds no recipe offers "Start from this text": wizard with first line as name, full text as notes/source.
 
 ## Queue
 - [x] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
@@ -79,7 +80,7 @@ drop a line while moving it.
   text path scores from what was found (on-device AI result counts as high). In `RecipeWizardView`, when score < 0.6:
   a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
   *Done when:* `ImportQuality` tests (complete, partial, empty prefill), wizard banner screenshot, CI green.
-- [ ] **Import 3/5 — No dead ends when parsing fails.** — 🚧 builder 2026-11-10 Paste/photo: when the router returns nil, keep the text (paste
+- [ ] **Import 3/5 — No dead ends when parsing fails.** — 🚧 builder 2026-11-10 ✅ Slice 1 (b36649c): paste failure → "Start from this text" (`PrefilledRecipeData(unparsedText:)`, tested). Remaining: photo failure same button, link failure "Paste the recipe text instead", launch-arg forced-failure screenshots. Paste/photo: when the router returns nil, keep the text (paste
   already does) and offer "Start from this text" → wizard prefilled with name = first non-empty line, notes = full
   text, empty ingredient/step rows ready to fill, `sourceText` set. Link import failure: "Couldn't read a recipe from
   this page" + "Paste the recipe text instead" opening the paste sheet. *Done when:* prefill-builder tested, both
@@ -204,6 +205,7 @@ drop a line while moving it.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🐞 Flaky UI test `testCookingShowsRatingAndStreakChip` — `streak.chip` not found after back-tap (line 104); failed 2 of 5 runs on 2026-11-10 on unrelated branches, green on rerun. Make the wait robust.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
