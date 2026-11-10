@@ -75,6 +75,20 @@ struct IngredientRowView: View {
             .opacity(isChecked ? 0.5 : 1)
             .accessibilityValue(isChecked ? "checked" : "unchecked")
 
+            if Self.showsAddAmount(for: ingredient, amount: amount, canEdit: onTapQuantity != nil) {
+                // Amount-less rows drop the amount column, which was their only way into the editor.
+                Button(action: { onTapQuantity?() }) {
+                    Label("Add amount", systemImage: "plus.circle")
+                        .font(.caption.weight(.semibold))
+                        .labelStyle(.titleAndIcon)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.tint)
+                .accessibilityLabel("Add amount for \(ingredient.mainIngredientName)")
+            }
+
             if let onSubstitute {
                 Button(action: onSubstitute) {
                     Image(systemName: "arrow.2.squarepath")
@@ -114,6 +128,11 @@ struct IngredientRowView: View {
         let quantity = converted.quantity > 0 ? FractionFormatter.format(prettyQuantity(converted.quantity)) : nil
         let unit = converted.unit.isEmpty ? nil : displayUnit(converted.unit, quantity: converted.quantity)
         return (quantity, unit)
+    }
+
+    /// An "Add amount" button replaces the dropped amount column when a needed amount is missing and editing is wired.
+    static func showsAddAmount(for ingredient: Ingredient, amount: (quantity: String?, unit: String?), canEdit: Bool) -> Bool {
+        canEdit && amount.quantity == nil && amount.unit == nil && ingredient.isMissingAmount
     }
 
     // Snaps converted quantities to cooking-sensible precision so conversions don't surface ugly values like "14.79 ml".

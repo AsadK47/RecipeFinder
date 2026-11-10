@@ -37,4 +37,14 @@ struct IngredientAmountGapsTests {
         #expect(!IngredientAmountGaps.isMostlyMissing(onlyOptional))
         #expect(!IngredientAmountGaps.isMostlyMissing([]))
     }
+
+    @Test("An amount-less row offers Add amount only when editing is wired and the amount is needed")
+    func addAmountButtonVisibility() {
+        let flour = ingredient("flour", 0)
+        let none: (quantity: String?, unit: String?) = (nil, nil)
+        #expect(IngredientRowView.showsAddAmount(for: flour, amount: none, canEdit: true))
+        #expect(!IngredientRowView.showsAddAmount(for: flour, amount: none, canEdit: false))
+        #expect(!IngredientRowView.showsAddAmount(for: ingredient("salt, to taste", 0), amount: none, canEdit: true))
+        #expect(!IngredientRowView.showsAddAmount(for: ingredient("flour", 300), amount: ("300", "g"), canEdit: true))
+    }
 }
