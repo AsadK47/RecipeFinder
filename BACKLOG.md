@@ -145,7 +145,7 @@ drop a line while moving it.
   photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
   later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
   tested, every tab screenshot, existing UI tests updated (not weakened), CI green.
-- [ ] **Tabs 2/3 — Today.** Greeting + streak (shown at 0 as "Start a streak") + Spoons; Tonight hero (planned meal,
+- [ ] **Tabs 2/3 — Today.** — 🚧 builder agent 2026-11-10 Greeting + streak (shown at 0 as "Start a streak") + Spoons; Tonight hero (planned meal,
   else best pantry match, "you have 8/10", Start cooking); prep-ahead nudge row; shelves Cook again / Fits your
   fridge / New imports / Rediscover (absorbs "Recently cooked row" + RediscoveryCard); clipboard recipe-link card;
   new-user state = "Import your first recipe" + starters. *Done when:* hero/shelf selection logic tested,
