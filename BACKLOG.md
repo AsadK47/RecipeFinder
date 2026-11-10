@@ -105,7 +105,7 @@ drop a line while moving it.
   Privacy Policy section 5: searches and pages load directly from the site/engine the user chooses (owner OK for this
   legal-text change); log in the Needs owner list that the website privacy page needs the same sentence.
   *Done when:* engine URL builder + recipe detector tested, browser + badge screenshots, CI green.
-- [ ] **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
+- [ ] 🚧 **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
   "Estimate amounts" action that fills them with the on-device model (iOS 26 FoundationModels — already used for
   import, see `RecipeTextInterpreting`), shown as a review sheet the user accepts or edits before saving; nothing
   leaves the device. Pre-iOS 26 / Apple Intelligence off → the action is hidden and the hint above still invites manual
