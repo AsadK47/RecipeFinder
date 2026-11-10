@@ -4,8 +4,6 @@ import SwiftUI
 /// the same `IngredientLineParser` imports use, with a preview of how each line was read.
 struct IngredientsStepView: View {
     @Binding var ingredientItems: [RecipeWizardView.IngredientItem]
-    @FocusState.Binding var focusedIngredientID: UUID?
-    let cookingUnitGroups: [(group: String, units: [String])]
 
     @State private var text = ""
     @State private var seeded = false

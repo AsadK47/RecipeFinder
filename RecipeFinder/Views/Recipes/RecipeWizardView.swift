@@ -41,35 +41,34 @@ struct RecipeWizardView: View {
     @State var recipeName = ""
 
     // 0 = not set. Defaults of 15 + 30 used to be saved on every manual recipe as if the cook had entered them.
-    @State private var prepTime = 0
+    @State var prepTime = 0
     /// Set only for a new import the reader struggled with; drives the banner + section highlights (Import 2/5).
-    @State private var importQuality: ImportQuality.Assessment?
-    @State private var cookTime = 0
-    @State private var difficulty = "Intermediate"
-    @State private var category = "Main"
+    @State var importQuality: ImportQuality.Assessment?
+    @State var cookTime = 0
+    @State var difficulty = "Intermediate"
+    @State var category = "Main"
 
     @State var servings = 4
 
     @State var ingredientItems: [IngredientItem] = [IngredientItem()]
-    @FocusState private var focusedIngredientID: UUID?
 
-    @State private var prePrepSteps: [EditableStep] = [EditableStep()]
+    @State var prePrepSteps: [EditableStep] = [EditableStep()]
 
     @State var mainInstructions: [EditableStep] = [EditableStep()]
 
-    @State private var notes = ""
-    @State private var recipeTags: [String] = []
-    @State private var recipeCuisine = ""
+    @State var notes = ""
+    @State var recipeTags: [String] = []
+    @State var recipeCuisine = ""
 
     @State private var errorMessage: String?
     @AppStorage("hasSeenWizardIntro") private var hasSeenWizardIntro = false
     @State private var showIntro = false
-    @State private var showPhotoPicker = false
-    @State private var selectedRecipeImage: UIImage?
-    @State private var existingImageReference: String?
-    @State private var selectedGalleryImages: [UIImage] = []
-    @State private var existingGalleryReferences: [String] = []
-    @State private var showGalleryPhotoPicker = false
+    @State var showPhotoPicker = false
+    @State var selectedRecipeImage: UIImage?
+    @State var existingImageReference: String?
+    @State var selectedGalleryImages: [UIImage] = []
+    @State var existingGalleryReferences: [String] = []
+    @State var showGalleryPhotoPicker = false
     @State private var pendingGalleryImage: UIImage?
     /// The form as first shown (after any prefill); Cancel/swipe-down only asks before discarding if it changed.
     @State private var initialDraft: RecipeWizardBuilder.Draft?
@@ -91,16 +90,6 @@ struct RecipeWizardView: View {
 
     let difficulties = ["Basic", "Intermediate", "Expert"]
     let categories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
-
-    let cookingUnitGroups: [(group: String, units: [String])] = [
-        ("Volume – Metric",   ["ml", "cl", "dl", "l"]),
-        ("Volume – Imperial", ["tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal"]),
-        ("Weight – Metric",   ["g", "kg"]),
-        ("Weight – Imperial", ["oz", "lb"]),
-        ("Count & Other",     ["piece", "whole", "slice", "clove", "can", "jar",
-                               "package", "bunch", "sprig", "leaf", "sheet",
-                               "pinch", "dash", "drop", "handful"]),
-    ]
 
     var body: some View {
         ScrollView {
@@ -172,67 +161,6 @@ struct RecipeWizardView: View {
         }
     }
 
-    private func applyPrefilledData() {
-        guard let data = prefilledData else { return }
-
-        if let name = data.name, !name.isEmpty {
-            recipeName = name
-        }
-
-        if let category = data.category, !category.isEmpty {
-            self.category = category
-        }
-
-        // Unknown times stay 0 (unset) — keeping the 15 + 30 min defaults invented a "45 minutes" the source never said.
-        self.prepTime = data.prepTime ?? 0
-        self.cookTime = data.cookTime ?? 0
-
-        if let servings = data.servings {
-            self.servings = servings
-        }
-
-        if let difficulty = data.difficulty, !difficulty.isEmpty {
-            self.difficulty = RecipeWizardBuilder.normalizeDifficulty(difficulty)
-        }
-
-        if let ingredients = data.ingredients, !ingredients.isEmpty {
-            ingredientItems = ingredients.map { fullIngredient in
-                return parseIngredientString(fullIngredient)
-            }
-            if !ingredients.isEmpty {
-                ingredientItems.append(IngredientItem())
-            }
-        }
-
-        if let instructions = data.instructions, !instructions.isEmpty {
-            mainInstructions = .steps(from: instructions)
-            mainInstructions.append(EditableStep())
-        }
-
-        if let prePrep = data.prePrepInstructions, !prePrep.isEmpty {
-            prePrepSteps = .steps(from: prePrep)
-        }
-
-        if let notes = data.notes, !notes.isEmpty {
-            self.notes = notes
-        }
-
-        if let tags = data.tags, !tags.isEmpty {
-            self.recipeTags = tags
-        }
-
-        if let cuisine = data.cuisine, !cuisine.isEmpty {
-            self.recipeCuisine = cuisine
-        }
-
-        if let imageReference = data.imageURL, !imageReference.isEmpty {
-            existingImageReference = imageReference
-        }
-
-        if let galleryURLs = data.galleryImageURLs, !galleryURLs.isEmpty {
-            existingGalleryReferences = galleryURLs
-        }
-    }
 
     private var currentDraft: RecipeWizardBuilder.Draft {
         RecipeWizardBuilder.Draft(
@@ -252,110 +180,6 @@ struct RecipeWizardView: View {
         Self.editorTitle(focus: focus, isEditing: editingRecipeId != nil)
     }
 
-    private func shouldShow(_ section: Section) -> Bool {
-        Section.shown(for: focus).contains(section)
-    }
-
-    /// True when the import couldn't read any of `fields` and the low-confidence banner is up.
-    private func needsCheck(_ fields: ImportQuality.Field...) -> Bool {
-        guard let importQuality else { return false }
-        return !importQuality.missing.isDisjoint(with: fields)
-    }
-
-    @ViewBuilder
-    private var sections: some View {
-        if importQuality != nil {
-            ImportQualityBanner()
-        }
-
-        if shouldShow(.basics) {
-            RecipeNameStepView(
-                recipeName: $recipeName,
-                selectedRecipeImage: $selectedRecipeImage,
-                existingImageReference: $existingImageReference,
-                selectedGalleryImages: $selectedGalleryImages,
-                existingGalleryReferences: $existingGalleryReferences,
-                onPickPhoto: {
-                    HapticManager.shared.light()
-                    showPhotoPicker = true
-                },
-                onAddGalleryPhoto: {
-                    HapticManager.shared.light()
-                    showGalleryPhotoPicker = true
-                }
-            )
-            .importHighlight(needsCheck(.name))
-        }
-
-        if shouldShow(.details) {
-            BasicInfoStepView(
-                prepTime: $prepTime,
-                cookTime: $cookTime,
-                difficulty: $difficulty,
-                category: $category,
-                servings: $servings,
-                difficulties: difficulties,
-                categories: categories
-            )
-            .importHighlight(needsCheck(.times))
-        }
-
-        if shouldShow(.ingredients) {
-            IngredientsStepView(
-                ingredientItems: $ingredientItems,
-                focusedIngredientID: $focusedIngredientID,
-                cookingUnitGroups: cookingUnitGroups
-            )
-            .importHighlight(needsCheck(.ingredients, .amounts))
-        }
-
-        if shouldShow(.prePrep) {
-            EditableStepsStepView(
-                steps: $prePrepSteps,
-                title: "Pre-prep Instructions",
-                subtitle: "Any prep work before cooking? (Optional)",
-                illustration: "list.bullet.clipboard.fill",
-                fieldPlaceholder: "Describe the pre-prep step",
-                addButtonTitle: "Add Pre-prep Step"
-            )
-        }
-
-        if shouldShow(.instructions) {
-            EditableStepsStepView(
-                steps: $mainInstructions,
-                title: "Cooking Instructions",
-                subtitle: "Walk us through the cooking process",
-                illustration: "flame.fill",
-                fieldPlaceholder: "Describe this cooking step",
-                addButtonTitle: "Add Cooking Step"
-            )
-            .importHighlight(needsCheck(.steps))
-        }
-
-        if shouldShow(.notes) {
-            NotesStepView(
-                notes: $notes,
-                tags: $recipeTags,
-                cuisine: $recipeCuisine,
-                hasPrefilledNotes: prefilledData?.notes != nil,
-                summary: recipeSummary
-            )
-        }
-    }
-
-    private var recipeSummary: WizardRecipeSummary {
-        WizardRecipeSummary(
-            name: recipeName,
-            category: category,
-            difficulty: difficulty,
-            servings: servings,
-            prepTime: prepTime,
-            cookTime: cookTime,
-            ingredientCount: ingredientItems.filter { !$0.name.isEmpty }.count,
-            prePrepStepCount: prePrepSteps.nonEmptyTexts.count,
-            cookingStepCount: mainInstructions.nonEmptyTexts.count
-        )
-    }
 
     func createRecipe() {
         do {
@@ -409,11 +233,6 @@ struct RecipeWizardView: View {
         HapticManager.shared.success()
         onComplete(recipe)
         dismiss()
-    }
-
-    private func parseIngredientString(_ fullIngredient: String) -> IngredientItem {
-        let parsed = WizardIngredientParser.parse(fullIngredient)
-        return IngredientItem(quantity: parsed.quantity, unit: parsed.unit, name: parsed.name)
     }
 }
 
