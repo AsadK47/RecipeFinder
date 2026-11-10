@@ -76,7 +76,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         settle()
 
-        let row = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
+        // By name: other screenshot tests seed recipes that also sort near the top and persist on the simulator.
+        let row = app.staticTexts["1-Pot Tomato Soup"].firstMatch
         guard row.waitForExistence(timeout: 10) else { return }
         row.tap()
         settle()
@@ -173,7 +174,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         settle()
-        let row = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
+        let row = app.staticTexts["1-Bowl Banana Bread"].firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 10), "The seeded recipe should be listed.")
         row.tap()
         settle()
