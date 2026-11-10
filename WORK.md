@@ -1,10 +1,11 @@
 # WORK — session handoff
 
-## In progress: Manual 2/3 (🚧 claimed). Slice 1 merged (parsers). Slice 2 = UI.
+## In progress: Manual 2/3 (🚧 claimed). Slices 1–2 merged (parsers, text-box UI cd2352f).
 
 ## Decisions
 - Restore: backup text replaces a stored copy only when it's a pristine sample; photos stay as stored (not in archive).
 - Dedupe runs once and only removes sample copies; legacy flag repair runs first.
+- Wizard text boxes replace per-row editors; per-row unit picker + name autocomplete dropped deliberately (text is the source of truth). Don't re-add rows.
 
 ## Next action
-Slice 2 on agent/manual-2-text-ui: IngredientsStepView → TextEditor bound to a text string (seed IngredientTextBlock.text(from: items)), on change set items = IngredientTextBlock.items(from:); show parsed preview rows below (amount · unit · name); same for EditableStepsStepView with StepTextBlock. Keep RecipeWizardView API (ingredientItems / steps bindings) unchanged so builder/tests still pass. Add keyboard toolbar Done + scrollDismissesKeyboard(.interactively). Screenshots after.
+Slice 3 on agent/manual-2-size: extract subviews/helpers so `RecipeWizardView` ≤300 lines (ticks Smell "Large Class: RecipeWizardView"); remove now-unused `focusedIngredientID` / `cookingUnitGroups` params from the step views.
