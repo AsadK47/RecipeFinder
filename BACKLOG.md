@@ -58,7 +58,6 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   Plus Web search redesign (in progress).
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
    (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Medium features (fridge photo, taste profile,
@@ -122,7 +121,7 @@ drop a line while moving it.
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
   intent: cook → sheet → Done → button disabled → rating shown → streak chip). UI tests only run nightly or on
   "Run workflow", so verify with a `workflow_dispatch` run on your branch. *Done when:* that test passes in CI.
-- [ ] 🚧 **Web search redesign** (owner OK 2026-11-10). Import button only where it helps: hidden on search-engine result
+- [x] **Web search redesign** (owner OK 2026-11-10). Import button only where it helps: hidden on search-engine result
   pages and while loading; green "Import this recipe ✓" pill when the page parses as a recipe (same check as the
   importer, not just JSON-LD); small grey "Try importing this page" on other pages (failure → existing "Paste the
   recipe text instead"); re-checked on every navigation. Look: Safari-style compact top bar (site name, tap to search),
@@ -309,6 +308,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
+- 2026-11-10 · Web search redesign · 8f877c0 · Import → Search the web: Safari-style address bar + progress line, back/forward/reload bar, start screen with suggestion chips + recent searches; green "Import this recipe" pill only on pages that parse as a recipe, grey "Try importing this page" elsewhere, nothing on search results. New WebSearchBrowsing.swift registered in pbxproj. Screenshot 13-web-search = start screen only (results need live network). On phone: search "lemon cake", check no pill on results, pill on a recipe page.
 - 2026-11-10 · Import PDFs and multi-page photos · 0d5d5cf · Import → Scan a Photo: pick up to 5 photos (one recipe across pages, read in picked order) or "Choose a PDF"; PDF text pages read directly, scanned pages via on-device OCR, pages joined in order then the normal text router. New MultiPageRecipeReader.swift registered in pbxproj (mirrors RecipeImageTextRecognizer.swift); tests draw PDFs in-test. Not done: PDFs shared from other apps via the share sheet (Files/picker only). On phone: Import → Scan a Photo → Choose a PDF (any recipe PDF) or select 2–3 cookbook page photos.
 - 2026-11-10 · Import from other apps · 0bf22a3 · Settings → Data Management → "Import from Another App": choose a Paprika (.paprikarecipes/.paprikarecipe), Mela (.melarecipes/.melarecipe) or CSV export; recipes the library already has (same name + ingredients) are skipped, embedded photos saved, summary "Imported N recipes, skipped M duplicates." (+ unreadable count). Own zip/gzip reader on Apple Compression (no dependency). New OtherAppRecipeImport.swift, OtherAppExportReader.swift, OtherAppImportSection.swift registered in pbxproj; fixtures Fixtures/OtherApps (hand-made, zip/gzip made with Python). Screenshot 15-other-app-import (DEBUG -show-other-app-import-summary). On phone: export from Paprika/Mela, open in Files, import via Settings.
 - 2026-11-10 · Estimate missing amounts · 253f2ab · Recipe missing most amounts → "Estimate amounts" next to "Add your amounts" (only where Apple Intelligence runs): on-device model suggests amounts, review sheet lets you edit/clear each, only saved ones are written; failure offers "Add your amounts". New IngredientAmountEstimating.swift + AmountEstimateReviewSheet.swift registered in pbxproj. Not done: missing prep/cook times; offer is the detail-screen card (no separate post-import prompt). Screenshot 14-estimate-amounts. On phone (iOS 26, Apple Intelligence on): open an imported recipe with blank amounts → Estimate amounts. Delete remote agent/estimate-amounts-*, agent/import-5-*, agent/ci-faster by hand (delete refused).
