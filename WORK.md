@@ -8,4 +8,4 @@
 - Wizard text boxes replace per-row editors; per-row unit picker + name autocomplete dropped deliberately (text is the source of truth). Don't re-add rows.
 
 ## Next action
-Import 3/5 slice 2 on agent/import-3-link-fallback: photo failure "Start from this text" (OCR text) + link failure "Paste the recipe text instead" opening the paste sheet.
+Import 3/5 slice 3: DEBUG launch arg forcing import failure (e.g. `-force-import-failure`) + UI test tapping import.startFromText / import.pasteInstead, screenshots of both failure screens. Then tick Import 3/5.
