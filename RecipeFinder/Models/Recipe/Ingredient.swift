@@ -100,6 +100,11 @@ extension Ingredient {
         + #"^(fine sea )?salt and (freshly ground )?(black )?pepper$|^ice( cubes)?$|^(freshly ground )?black pepper$|"#
         + #"^black pepper, freshly ground$"#
 
+    /// Same ingredient (id and name as written) with a new amount — used when the user accepts an estimate.
+    func withAmount(_ quantity: Double, unit: String) -> Ingredient {
+        Ingredient(id: id, baseQuantity: quantity, unit: unit, name: _name)
+    }
+
     /// True when the recipe gives no amount for an ingredient that normally needs one (e.g. "flour" with no quantity).
     var isMissingAmount: Bool {
         baseQuantity <= 0
