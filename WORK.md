@@ -1,12 +1,10 @@
 # WORK.md — handoff (2026-11-10, end of long interactive session)
 
 ## In progress
-- Tabs 2/3 slice 2 on `agent/today-launch` (cec3f49): launch default → `.today`; UI-test `launchApp`s tap Recipes;
-  launch test asserts Today; `-seed-tonight-plan` DEBUG hook (RecipeStore) + `testCaptureTodayPlanned` → 18-today-planned.
+- Nothing in progress. Tabs 2/3 slice 2 merged (cec3f49); item stays open in BACKLOG.
 
 ## Next action
-Check "Build & Test" for `agent/today-launch`; when green, ff main, push, update Tabs 2/3 item + Log. Then Tabs 2/3
-slice 3: "Let's cook" starts cooking mode, prep-ahead row, clipboard link card, remove RediscoveryCard from Recipes.
+Check the nightly UI-test run passes with the Today launch (tests now tap Recipes first). Then Tabs 2/3 slice 3: "Let's cook" starts cooking mode, prep-ahead row, clipboard link card, remove RediscoveryCard from Recipes.
 
 ## Decisions (why)
 - **Tabs 2/3 slice 2**: UI tests tap Recipes after launch (not a launch-arg override) so CI exercises the real default.

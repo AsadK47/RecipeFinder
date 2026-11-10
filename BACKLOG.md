@@ -145,14 +145,12 @@ drop a line while moving it.
   photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
   later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
   tested, every tab screenshot, existing UI tests updated (not weakened), CI green.
-- [ ] **Tabs 2/3 — Today.** — 🚧 builder agent 2026-11-10 Slice 1 done (69c3b21): greeting + streak/"Start a streak", Tonight hero (planned meal,
-  else best kitchen match "You have 8/10 ingredients"), shelves Cook again / Fits your kitchen / Rediscover,
-  new-user "Bring in your first recipe" + Starters (pure `TodayFeed`, tested). **Left:** flip `AppTab.launchDefault`
-  to `.today` (update every UI test `launchApp` that assumes Recipes + `RecipeFinderLaunchUITests` +
-  `AppTabTests.launchLandsOnRecipesUntilTodayHasContent`); "Let's cook" starts cooking mode (now opens detail);
-  prep-ahead nudge row; New imports shelf (no recipe add-date exists — needs a Core Data field = owner OK, or skip);
-  clipboard recipe-link card; Spoons (after Spoons 1/2); remove RediscoveryCard from Recipes once Today is the
-  launch tab. *Done when:* screenshots (new user, planned day, unplanned day — seed via launch args), CI green.
+- [ ] **Tabs 2/3 — Today.** Slices 1–2 done (69c3b21, cec3f49): greeting + streak, Tonight hero (planned meal, else
+  best kitchen match), shelves Cook again / Fits your kitchen / Rediscover, new-user "Bring in your first recipe" +
+  Starters; app opens on Today; screenshots 16-today (unplanned) + 18-today-planned (`-seed-tonight-plan`).
+  **Left:** "Let's cook" starts cooking mode (now opens detail); prep-ahead nudge row; New imports shelf (no recipe
+  add-date — needs a Core Data field = owner OK, or skip); clipboard recipe-link card; Spoons (after Spoons 1/2);
+  remove RediscoveryCard from Recipes; new-user screenshot. *Done when:* those land, CI green.
 - [ ] **Add flow 1/3 — One recipe screen for import review + create** (owner 2026-11-10: importing and creating
   "sucks … needs to be rethought well"; OK'd this direction). After any import, and for "Create manually", show the
   recipe as it will look once saved (photo, title, time/servings chips, ingredients, steps — same look as
@@ -427,3 +425,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-10 · Import 3/5 done · a14a5bb · Forced-failure screenshots of both fallbacks (`-force-import-failure`, DEBUG only). Paste sheet Import button id `paste.import`.
 - 2026-11-10 · Import 4/5 · dac5fa8 · Bad imports now get a fixture + parameterised test (heuristic path). Test-only.
 - 2026-11-10 · Tabs 2/3 slice 1 · 69c3b21 · Today tab now shows a Tonight card (planned meal, else best kitchen match), Cook again / Fits your kitchen / Rediscover shelves, and "Bring in your first recipe" + Starters for new users. App still opens on Recipes. New TodayFeed, TodaySections, TodayFeedTests registered in pbxproj. On phone: open Today, tap the Tonight card and a shelf tile.
+- 2026-11-10 · Tabs 2/3 slice 2 · cec3f49 · App now opens on Today. New DEBUG `-seed-tonight-plan` + screenshot 18-today-planned; UI tests tap Recipes after launch (nightly UI run will confirm). On phone: cold-launch lands on Today.
