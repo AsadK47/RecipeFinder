@@ -18,7 +18,8 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
 1. Read root `CLAUDE.md`, `RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`, `RecipeFinder/DesignSystem.md`.
 2. Work by **batch** (see *Batches* below): take the first unfinished batch, then its first unticked item that isn't
    🙋. Break big items into slices that each fit one CI cycle; put small related items (same screen/area) in ONE
-   branch and ship them together. One batch in flight at a time.
+   branch and ship them together. While a branch waits on CI, start the next item on its own branch (owner OK
+   2026-11-10); independent batches may run in parallel sessions. Owner OK 2026-11-10 to edit `build.yml` for speed.
    If the item is too big for one run, do a coherent first slice, tick nothing, and rewrite the item to say what's
    left. If it's unclear or would break a guardrail, move it to **Needs owner** with a one-line question and stop.
 3. **Claim it first:** append `— 🚧 <who> <YYYY-MM-DD>` to the item's title line and push that to `main` before

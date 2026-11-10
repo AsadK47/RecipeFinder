@@ -8,7 +8,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** answer concisely: lead with the result/answer; cut preamble, recaps, and reasoning the user didn't ask for. Detail only on request.
 - **MUST** run `BuildProject` + `RunAllTests` before committing; unfinished state goes in `WORK.md`.
-- **MUST** keep one task active at a time (WIP=1): finish it (`BuildProject` + `RunAllTests` green — "looks fine" is not done) before starting the next, and never "also refactor" B while doing A — record B as the next `WORK.md` action. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
+- **MUST** keep one task in *active editing* at a time (WIP=1): never "also refactor" B while doing A — record B as the next `WORK.md` action. While a pushed branch waits on CI, the next item may start on its own branch (owner OK 2026-11-10); independent batches may run in parallel sessions. Nothing merges until its CI is green. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
 - **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 15`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 15.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
 
