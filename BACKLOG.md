@@ -274,7 +274,11 @@ Rules for every Site item: repo `AsadK47/RecipeFinderWebsite`, plain HTML/CSS/JS
 root CLAUDE.md (say what the app does, positive and open-ended), honour `prefers-reduced-motion` and keep content
 visible without JS, phone + desktop, light + dark. *Done when* for each: `npm test` green, new logic has a Jest test,
 Playwright screenshots at 390px and 1280px (light + dark) checked by eye, pushed to the site's `main`, Log line here.
-Legal pages (privacy/terms/cookies) are out of scope. The TestFlight beta link ships only when the owner says
+**Look like the app** (owner 2026-11-10): follow `RecipeFinder/DesignSystem.md` — the theme's gradient background,
+frosted translucent cards (`backdrop-filter` blur + translucent fill + 0.5px hairline border; never opaque white
+blocks), capsule buttons like `PrimaryButton`, tinted circular icon badges in the style of SF Symbols (not emoji),
+the system font stack (SF Pro on Apple devices), the app's radii and spacing, teal accent, light/dark matching the app.
+Compare side by side with the app screenshots before pushing. Legal pages (privacy/terms/cookies) are out of scope. The TestFlight beta link ships only when the owner says
 "ship the beta link" (branch `feat/testflight-beta`); until then CTAs say "Coming soon" + notify form.
 - [ ] **Showcase screenshots** (app repo; app builder takes this next, owner request 2026-11-10 — the site's
   screenshots look like test data). Add a DEBUG-only `-seed-showcase` launch state and capture with
@@ -283,6 +287,10 @@ Legal pages (privacy/terms/cookies) are out of scope. The TestFlight beta link s
   photo and rating, cooking mode mid-recipe, and a real link import (fixture HTML served locally) at each step: Paste a
   link → review → saved. Publish to the `screenshots` release. *Done when:* every screen looks like a real person's
   kitchen, no empty states, screenshots checked by eye, CI green.
+- [ ] **Site look — match the app's aesthetic** (owner request 2026-11-10; website builder does this next, before
+  Site 3/6). Restyle every section on the rules above: frosted glass cards over the app gradient, app-style buttons,
+  chips and icon badges, emoji swapped for icons drawn in the app's style. *Done when:* screenshots of each section
+  sit next to the app screenshots and read as the same product, in light and dark.
 - [ ] **Site 1/6 — Banner + FAQ.** Top banner shows what's new (e.g. "New: import from PDFs and other apps", one line,
   edited in one place). FAQ section (accordion, `<details>`): Is it free? iPhone and iPad? Bring my Paprika/Mela/CSV
   recipes? Where are my recipes kept? Works offline? How do I get it / beta? Answers match the app today.
