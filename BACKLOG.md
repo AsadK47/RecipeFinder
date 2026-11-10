@@ -79,11 +79,7 @@ drop a line while moving it.
   text path scores from what was found (on-device AI result counts as high). In `RecipeWizardView`, when score < 0.6:
   a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
   *Done when:* `ImportQuality` tests (complete, partial, empty prefill), wizard banner screenshot, CI green.
-- [ ] **Import 3/5 — No dead ends when parsing fails.** — 🚧 builder 2026-11-10 ✅ Slice 1 (b36649c): paste failure → "Start from this text" (`PrefilledRecipeData(unparsedText:)`, tested). ✅ Slice 2 (ccb2ea7): photo failure → "Start from this text" (OCR text), link failure → "Paste the recipe text instead". Remaining: launch-arg forced-failure UI test + screenshots of both failure screens. Paste/photo: when the router returns nil, keep the text (paste
-  already does) and offer "Start from this text" → wizard prefilled with name = first non-empty line, notes = full
-  text, empty ingredient/step rows ready to fill, `sourceText` set. Link import failure: "Couldn't read a recipe from
-  this page" + "Paste the recipe text instead" opening the paste sheet. *Done when:* prefill-builder tested, both
-  failure screens screenshotted (UI test can force failure via a launch argument), CI green.
+- [x] **Import 3/5 — No dead ends when parsing fails.** Paste/photo no-recipe → "Start from this text" (b36649c, ccb2ea7); link failure → "Paste the recipe text instead" (ccb2ea7); DEBUG `-force-import-failure` + screenshots 10–12 (a14a5bb).
 - [ ] **Import 4/5 — Failed imports become test cases.** `RecipeFinderTests/Fixtures/ImportRegressions/<slug>.txt` +
   `<slug>.expected.json` ({name, minIngredients, minSteps, amountsPresent}); a parameterised Swift Testing suite
   loads them via `#filePath` (like `SeedCorpusParseQualityTests`, no bundle resources) and runs the heuristic text
@@ -243,3 +239,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-10 · Import 3/5 slice 1 · b36649c · Paste import that finds no recipe offers "Start from this text": wizard with first line as name, full text as notes/source.
 - 2026-11-10 · 🐞 Flaky streak-chip UI test · bffa702 · Test waits for Recipes home after Back (retries once), 10s chip wait, hierarchy dump on failure. Test-only.
 - 2026-11-10 · Import 3/5 slice 2 · ccb2ea7 · Photo import with no recipe offers "Start from this text"; link import failure offers "Paste the recipe text instead".
+- 2026-11-10 · Import 3/5 done · a14a5bb · Forced-failure screenshots of both fallbacks (`-force-import-failure`, DEBUG only). Paste sheet Import button id `paste.import`.

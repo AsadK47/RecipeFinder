@@ -9,7 +9,7 @@ BACKLOG + FOLLOW-UPS FIXED (1852 green pre-pull, sim-checked): clear-search, sea
  Profile shows "John"/"Doe" placeholders + blank avatar while Settings says "Recipe Chef" (unconfirmed — investigate).
  Needs: BuildProject + RunAllTests after merge, then user reviews + commits.
 
-## In progress: Import 3/5 (🚧 claimed).
+## In progress: none.
 
 ## Decisions
 - Restore: backup text replaces a stored copy only when it's a pristine sample; photos stay as stored (not in archive).
@@ -17,4 +17,4 @@ BACKLOG + FOLLOW-UPS FIXED (1852 green pre-pull, sim-checked): clear-search, sea
 - Wizard text boxes replace per-row editors; per-row unit picker + name autocomplete dropped deliberately (text is the source of truth). Don't re-add rows.
 
 ## Next action
-Import 3/5 slice 3: DEBUG launch arg forcing import failure (e.g. `-force-import-failure`) + UI test tapping import.startFromText / import.pasteInstead, screenshots of both failure screens. Then tick Import 3/5.
+Alternate a Smell (Large wizard: RecipeNameStepView), then Import 4/5 (failed imports become test cases). TestFlight on main fails until owner adds CI_DEV_CERT_P12 secret — not ours to fix.
