@@ -1,14 +1,11 @@
 # WORK.md — handoff (2026-11-10, end of long interactive session)
 
 ## In progress
-- **Tabs 1/3** on `agent/tabs-1-structure` (1c0f6d3), waiting on Build & Test. New: `Views/Main/AppTab.swift`,
-  `TodayView.swift`, `MeView.swift`, `Views/Import/AddRecipeOption.swift`, `RecipeFinderTests/Views/Recipes/AppNavigationTests.swift`
-  (all registered in pbxproj). ImportView = "+" sheet (presented by ContentView). UI tests updated (Import tab → `recipes.add`,
-  Settings → Me → `me.settings`, Planning → Plan); screenshots add 16-today, 17-me.
+- Nothing in progress.
 
 ## Next action
-Green → rebase on origin/main → ff main → tick Tabs 1/3 + Log; run UI tests (workflow_dispatch) on the branch first.
-Then Tabs 2/3 Today (flip `AppTab.launchDefault` to `.today` and update `RecipeFinderLaunchUITests`).
+Start **Tabs 2/3 Today** (claim in BACKLOG first): flip `AppTab.launchDefault` to `.today`, update
+`RecipeFinderLaunchUITests` + `AppTabTests.launchLandsOnRecipesUntilTodayHasContent`. Then Add flow 1/3.
 
 ## Decisions (why)
 - **Tabs 1/3**: launch stays on Recipes until Today has content (no placeholder landing for TestFlight users).
