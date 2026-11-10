@@ -13,6 +13,8 @@ struct RecipeImportView: View {
     @State private var reviewPrefill: RecipeWizardView.PrefilledRecipeData?
     @State private var showDuplicateAlert = false
     @State private var showIncompleteAlert = false
+    /// A page we can't read isn't a dead end: the cook can copy the recipe text and paste it instead.
+    @State private var showPasteFallback = false
     private let builder = RecipeImportBuilder()
 
     /// When set (e.g. from the share extension), prefills the URL field and auto-starts the import.
@@ -172,6 +174,10 @@ struct RecipeImportView: View {
                         Text(error)
                             .font(.subheadline)
                             .adaptiveSecondaryForeground()
+
+                        Button("Paste the recipe text instead") { showPasteFallback = true }
+                            .buttonStyle(.bordered)
+                            .accessibilityIdentifier("import.pasteInstead")
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
@@ -223,6 +229,12 @@ struct RecipeImportView: View {
         .sheet(item: $reviewPrefill) { prefill in
             RecipeWizardView(prefilledData: prefill) { reviewed in
                 onImport(reviewed)
+                dismiss()
+            }
+        }
+        .sheet(isPresented: $showPasteFallback) {
+            PasteTextImportSheet { recipe in
+                onImport(recipe)
                 dismiss()
             }
         }

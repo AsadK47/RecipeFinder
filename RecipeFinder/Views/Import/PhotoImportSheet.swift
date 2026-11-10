@@ -13,6 +13,8 @@ struct PhotoImportSheet: View {
     @State private var prefill: RecipeWizardView.PrefilledRecipeData?
     @State private var isProcessing = false
     @State private var errorMessage: String?
+    /// Text the photo yielded when no recipe was found — kept so the cook can start from it instead of a dead end.
+    @State private var unparsedText: String?
 
     private let recognizer: RecipeImageTextRecognizing = VisionRecipeImageTextRecognizer()
 
@@ -54,6 +56,14 @@ struct PhotoImportSheet: View {
                     .font(.footnote)
                     .foregroundStyle(.orange)
                     .multilineTextAlignment(.center)
+            }
+
+            if let unparsedText {
+                Button("Start from this text") {
+                    prefill = RecipeWizardView.PrefilledRecipeData(unparsedText: unparsedText)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("import.startFromText")
             }
 
             Spacer()
@@ -103,6 +113,7 @@ struct PhotoImportSheet: View {
 
     private func process(_ image: UIImage) async {
         errorMessage = nil
+        unparsedText = nil
         isProcessing = true
         defer { isProcessing = false }
         do {
@@ -111,6 +122,7 @@ struct PhotoImportSheet: View {
                 prefill = result
             } else {
                 errorMessage = "Couldn't find a recipe in that photo. Try a clearer, straight-on shot."
+                unparsedText = text.trimmed.isEmpty ? nil : text
                 HapticManager.shared.error()
             }
         } catch {
