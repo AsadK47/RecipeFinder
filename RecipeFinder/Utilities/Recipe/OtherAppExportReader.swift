@@ -17,11 +17,11 @@ enum OtherAppExportError: LocalizedError, Equatable {
 /// Reads another app's export file into recipes: Paprika (`.paprikarecipes` zip of gzipped JSON, or one
 /// `.paprikarecipe`), Mela (`.melarecipes` zip of JSON, or one `.melarecipe`) and CSV.
 enum OtherAppExportReader {
-    enum Format: String, Equatable {
+    enum Format: String, Equatable, Sendable {
         case paprika = "Paprika", mela = "Mela", csv = "CSV"
     }
 
-    struct Contents: Equatable {
+    struct Contents: Equatable, Sendable {
         let format: Format
         var recipes: [OtherAppRecipe]
         /// Entries in the export that weren't readable recipes — reported, never silently dropped.

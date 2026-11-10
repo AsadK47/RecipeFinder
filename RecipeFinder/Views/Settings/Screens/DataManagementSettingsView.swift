@@ -21,6 +21,8 @@ struct DataManagementSettingsView: View {
         SettingsScreen("Data Management") {
             backupSection
 
+            OtherAppImportSection()
+
             onDeviceImportSection
 
             VStack(spacing: AppTheme.spacing8) {

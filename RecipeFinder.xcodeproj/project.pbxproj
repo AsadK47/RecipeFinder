@@ -112,6 +112,7 @@
 		9E97EEA2300795DF00D35FAB /* DisplaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */; };
 		9E97EEA4300795F100D35FAB /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */; };
 		9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */; };
+		392D9B18ACD217D29B5A5E51 /* OtherAppImportSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733DDB51933A585D3F0D3952 /* OtherAppImportSection.swift */; };
 		9E97EEA83007962900D35FAB /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA73007962900D35FAB /* HelpView.swift */; };
 		9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA93007963C00D35FAB /* AboutView.swift */; };
 		9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEAB3007965300D35FAB /* PartyTimeView.swift */; };
@@ -587,6 +588,7 @@
 		9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementSettingsView.swift; sourceTree = "<group>"; };
+		733DDB51933A585D3F0D3952 /* OtherAppImportSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherAppImportSection.swift; sourceTree = "<group>"; };
 		9E97EEA73007962900D35FAB /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		9E97EEA93007963C00D35FAB /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		9E97EEAB3007965300D35FAB /* PartyTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyTimeView.swift; sourceTree = "<group>"; };
@@ -1691,6 +1693,7 @@
 				9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */,
 				9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */,
 				9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */,
+				733DDB51933A585D3F0D3952 /* OtherAppImportSection.swift */,
 				9E97EEA73007962900D35FAB /* HelpView.swift */,
 				9E97EEA93007963C00D35FAB /* AboutView.swift */,
 				9E97EEAB3007965300D35FAB /* PartyTimeView.swift */,
@@ -2375,6 +2378,7 @@
 				9E6DEA8E2EF5EFE8001E7B24 /* NetworkMonitor.swift in Sources */,
 				F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */,
 				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
+				392D9B18ACD217D29B5A5E51 /* OtherAppImportSection.swift in Sources */,
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
 				F3E9D1AA3045197F008BF231 /* AppTheme+Metrics.swift in Sources */,
 				F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */,

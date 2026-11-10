@@ -178,6 +178,8 @@ enum OtherAppImportPlanner {
     struct Plan: Equatable {
         var recipes: [RecipeModel]
         var skippedDuplicates: Int
+        /// Embedded photos by recipe id, saved alongside the recipes (image files live outside `RecipeModel`).
+        var photos: [UUID: Data] = [:]
 
         /// "Imported 182 recipes, skipped 3 duplicates."
         var summary: String {
@@ -191,6 +193,7 @@ enum OtherAppImportPlanner {
     static func plan(_ incoming: [OtherAppRecipe], existing: [RecipeModel], source: String) -> Plan {
         var seen = Set(existing.map { key(name: $0.name, ingredients: $0.ingredients.map(\.displayName)) })
         var recipes: [RecipeModel] = []
+        var photos: [UUID: Data] = [:]
         var skipped = 0
         let builder = RecipeImportBuilder()
         for recipe in incoming {
@@ -201,8 +204,9 @@ enum OtherAppImportPlanner {
                 continue
             }
             recipes.append(model)
+            photos[model.id] = recipe.photoData
         }
-        return Plan(recipes: recipes, skippedDuplicates: skipped)
+        return Plan(recipes: recipes, skippedDuplicates: skipped, photos: photos)
     }
 
     /// Same recipe = same name and same ingredient names, ignoring case, spacing and order.

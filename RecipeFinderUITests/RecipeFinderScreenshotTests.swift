@@ -189,6 +189,24 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "14-estimate-amounts")
     }
 
+    /// Import from other apps: the summary after importing an export, shown via the DEBUG
+    /// `-show-other-app-import-summary` flag because UI tests can't drive the system file picker.
+    @MainActor
+    func testCaptureOtherAppImportSummary() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-show-other-app-import-summary"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Settings"].tap()
+        settle()
+        let data = app.staticTexts["Data Management"].firstMatch
+        for _ in 0..<4 where !data.isHittable { app.swipeUp() }
+        data.tap()
+        XCTAssertTrue(app.alerts["Import Finished"].waitForExistence(timeout: 10),
+                      "The import summary should appear on Data Management.")
+        snap(app, "15-other-app-import")
+    }
+
     // MARK: - Helpers
 
     @MainActor

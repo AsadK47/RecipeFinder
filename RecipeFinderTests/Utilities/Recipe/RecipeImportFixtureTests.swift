@@ -249,6 +249,15 @@ struct OtherAppImportTests {
         #expect(plan.summary == "Imported 2 recipes, skipped 2 duplicates.")
     }
 
+    @Test("Embedded photos travel with their recipe")
+    func photos() {
+        var withPhoto = sample("Cake")
+        withPhoto.photoData = Data([1, 2, 3])
+        let plan = OtherAppImportPlanner.plan([withPhoto, sample("Bread")], existing: [], source: "Mela")
+        #expect(plan.photos.count == 1)
+        #expect(plan.photos[plan.recipes[0].id] == Data([1, 2, 3]))
+    }
+
     @Test("Summary wording", arguments: [
         (1, 0, "Imported 1 recipe."), (3, 0, "Imported 3 recipes."), (0, 1, "Imported 0 recipes, skipped 1 duplicate.")
     ])
