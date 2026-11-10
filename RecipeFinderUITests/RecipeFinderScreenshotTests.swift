@@ -18,10 +18,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launch()
         let tabs = app.tabBars.firstMatch
         XCTAssertTrue(tabs.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        XCTAssertTrue(app.tabBars.buttons["Today"].isSelected, "The app should open on Today.")
         settle()
 
         // 1. Recipe library
-        snap(app, "01-recipes")
+        tab(app, "Recipes", shot: "01-recipes")
 
         // 2. A recipe
         let row = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
@@ -84,6 +85,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-seed-reimport-recipe"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Recipes"].tap()
         settle()
 
         // By name: other screenshot tests seed recipes that also sort near the top and persist on the simulator.
@@ -108,6 +110,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-show-low-confidence-import"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Recipes"].tap()
         let add = app.buttons["recipes.add"]
         guard add.waitForExistence(timeout: 5) else { return }
         add.tap()
@@ -125,6 +128,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-force-import-failure"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Recipes"].tap()
         app.buttons["recipes.add"].tap()
         settle()
 
@@ -147,6 +151,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         // Link: page can't be read → paste instead.
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Recipes"].tap()
         app.buttons["recipes.add"].tap()
         settle()
         app.buttons["import.link"].tap()
@@ -167,6 +172,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Recipes"].tap()
         app.buttons["recipes.add"].tap()
         settle()
         app.buttons["import.web"].tap()
@@ -183,6 +189,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-seed-missing-amounts-recipe", "-fake-amount-estimates"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Recipes"].tap()
         settle()
         let row = app.staticTexts["1-Bowl Banana Bread"].firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 10), "The seeded recipe should be listed.")
@@ -217,6 +224,27 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.alerts["Import Finished"].waitForExistence(timeout: 10),
                       "The import summary should appear on Data Management.")
         snap(app, "15-other-app-import")
+    }
+
+    /// Tabs 2/3: Today's "Planned for tonight" hero, with tonight's dinner seeded via the DEBUG `-seed-tonight-plan`
+    /// flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
+    @MainActor
+    func testCaptureTodayPlanned() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-tonight-plan"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        // Planning a meal can unlock a badge whose sheet would cover the shot; swipe it away.
+        let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
+        if badgeSheet.waitForExistence(timeout: 3) {
+            badgeSheet.swipeDown()
+            settle()
+        }
+        let hero = app.descendants(matching: .any).matching(identifier: "today.hero").firstMatch
+        XCTAssertTrue(hero.waitForExistence(timeout: 10), "Today should lead with a Tonight card.")
+        XCTAssertTrue(hero.label.contains("Planned for tonight"), "The Tonight card should be the planned dinner.")
+        settle()
+        snap(app, "18-today-planned")
     }
 
     // MARK: - Helpers

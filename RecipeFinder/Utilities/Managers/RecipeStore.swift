@@ -73,6 +73,7 @@ final class RecipeStore: RecipeStoring {
             #if DEBUG
             fetched = seedUITestReimportRecipeIfRequested(into: fetched)
             fetched = seedUITestMissingAmountsRecipeIfRequested(into: fetched)
+            seedUITestTonightPlanIfRequested(from: fetched)
             #endif
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
@@ -189,6 +190,16 @@ final class RecipeStore: RecipeStoring {
         )
         guard persistence.saveRecipeModel(recipe) else { return library }
         return library + [recipe]
+    }
+
+    /// UI-test hook (`-seed-tonight-plan`): plans tonight's dinner (first recipe by name) so Screenshots can capture
+    /// Today's "Planned for tonight" hero. Leaves an existing dinner plan alone.
+    private func seedUITestTonightPlanIfRequested(from library: [RecipeModel]) {
+        let planner = MealPlanningManager.shared
+        guard ProcessInfo.processInfo.arguments.contains("-seed-tonight-plan"),
+              planner.mealPlan(for: Date(), mealTime: .dinner) == nil,
+              let recipe = library.min(by: { $0.name < $1.name }) else { return }
+        planner.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: Date(), mealTime: .dinner))
     }
     #endif
 

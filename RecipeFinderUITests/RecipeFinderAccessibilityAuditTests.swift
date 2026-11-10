@@ -87,6 +87,8 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
             )
             wait(for: [dismissed], timeout: 8)
         }
+        // The app opens on Today; these flows start from the Recipes home.
+        app.tabBars.buttons["Recipes"].tap()
         return app
     }
 

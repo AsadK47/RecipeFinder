@@ -4,8 +4,8 @@ import Foundation
 enum AppTab: String, CaseIterable, Hashable, Identifiable {
     case today, recipes, plan, groceries, me
 
-    /// Recipes until Today has real content (Tabs 2/3), so a launch never lands on a placeholder.
-    static let launchDefault: AppTab = .recipes
+    /// Today is the daily reason to open the app: tonight's meal and what to cook next.
+    static let launchDefault: AppTab = .today
 
     var id: String { rawValue }
 

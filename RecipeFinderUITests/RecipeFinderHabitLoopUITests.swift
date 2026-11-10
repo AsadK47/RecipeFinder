@@ -16,6 +16,8 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
         app.launchArguments += ["-ui-testing"]
         app.launch()
         _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
+        // The app opens on Today; these flows start from the Recipes home.
+        app.tabBars.buttons["Recipes"].tap()
         return app
     }
 

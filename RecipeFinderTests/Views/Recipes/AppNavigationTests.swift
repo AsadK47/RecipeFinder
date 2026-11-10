@@ -10,8 +10,8 @@ import Testing
         #expect(AppTab.allCases.map(\.title) == ["Today", "Recipes", "Plan", "Groceries", "Me"])
     }
 
-    @Test func launchLandsOnRecipesUntilTodayHasContent() {
-        #expect(AppTab.launchDefault == .recipes)
+    @Test func launchLandsOnToday() {
+        #expect(AppTab.launchDefault == .today)
     }
 
     @Test(arguments: [
