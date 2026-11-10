@@ -1,14 +1,17 @@
 # WORK.md — handoff (2026-11-10, end of long interactive session)
 
 ## In progress
-- Nothing in progress. Tabs 2/3 slice 1 merged (69c3b21); item stays open in BACKLOG with what's left.
+- Tabs 2/3 slice 2 on `agent/today-launch` (cec3f49): launch default → `.today`; UI-test `launchApp`s tap Recipes;
+  launch test asserts Today; `-seed-tonight-plan` DEBUG hook (RecipeStore) + `testCaptureTodayPlanned` → 18-today-planned.
 
 ## Next action
-Tabs 2/3 slice 2: flip `AppTab.launchDefault` to `.today`; in every UI test `launchApp` (AccessibilityAudit,
-HabitLoop, Import, SheetPresentation, Screenshot tests) tap `app.tabBars.buttons["Recipes"]` after launch; rename
-`RecipeFinderLaunchUITests` to assert Today; add launch-arg seeds for planned-day / unplanned-day Today screenshots.
+Check "Build & Test" for `agent/today-launch`; when green, ff main, push, update Tabs 2/3 item + Log. Then Tabs 2/3
+slice 3: "Let's cook" starts cooking mode, prep-ahead row, clipboard link card, remove RediscoveryCard from Recipes.
 
 ## Decisions (why)
+- **Tabs 2/3 slice 2**: UI tests tap Recipes after launch (not a launch-arg override) so CI exercises the real default.
+  Planned-day shot is its own test sorting after `testCaptureScreenshots`, so 16-today stays unplanned despite
+  shared simulator data. Seed plans the first recipe by name; leaves an existing dinner plan alone.
 - **Tabs 2/3 slice 1**: launch kept on Recipes this slice — flipping it breaks ~6 UI-test helpers that assume Recipes,
   so it gets its own branch. Hero = open dinner plan, else earliest open plan, else best kitchen match (≥ half the
   ingredients). Cook again = cooked ≤21 days; Rediscover = older (no overlap; `RecipeRediscovery.ranked`). New user =
