@@ -57,7 +57,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   bump `sampleRefreshVersion`). Keep "View original" links (credit). Never touch user-imported recipes' images.
   *Done when:* no bundled recipe has an http(s) image, refresh test for existing installs, Screenshots of the library,
   CI green.
-- [ ] **Manual 2/3 — Paste-and-type ingredients & steps** (owner OK 2026-11-09; wizard review). Replace per-row
+- [ ] **Manual 2/3 — Paste-and-type ingredients & steps** — 🚧 builder 2026-11-10 (owner OK 2026-11-09; wizard review). Replace per-row
   ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
   block — parsed live by `IngredientLineParser` into an editable preview (amount, unit, name) so manual entry and
   import share one parser. Fraction-friendly keyboard (`.numbersAndPunctuation` or a ½ ⅓ ¼ ¾ bar) where a numeric
