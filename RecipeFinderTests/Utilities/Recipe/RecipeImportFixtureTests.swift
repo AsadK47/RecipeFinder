@@ -273,3 +273,83 @@ struct OtherAppImportTests {
         #expect(model.sourceText?.hasPrefix("Lemon Drizzle Cake\n\nIngredients\n225 g unsalted butter") == true)
     }
 }
+
+/// Export containers: zip (stored + deflate entries), gzip and file-type detection, on fixtures generated with
+/// Python's zipfile/gzip so they match what real exporters write.
+@Suite("Import from other apps — export files")
+struct OtherAppExportReaderTests {
+
+    private func fixture(_ name: String) throws -> Data {
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Fixtures/OtherApps/\(name)")
+        return try Data(contentsOf: url)
+    }
+
+    @Test("File type from the extension", arguments: [
+        ("Export.paprikarecipes", OtherAppExportReader.Format.paprika),
+        ("one.PaprikaRecipe", .paprika), ("All.melarecipes", .mela), ("x.melarecipe", .mela), ("list.CSV", .csv)
+    ])
+    func format(name: String, expected: OtherAppExportReader.Format) {
+        #expect(OtherAppExportReader.format(forFileName: name) == expected)
+    }
+
+    @Test("Other files are refused with a readable message")
+    func unsupported() {
+        #expect(OtherAppExportReader.format(forFileName: "photo.jpg") == nil)
+        #expect(throws: OtherAppExportError.unsupportedFile) {
+            try OtherAppExportReader.read(Data(), fileName: "photo.jpg")
+        }
+        #expect(OtherAppExportError.unsupportedFile.errorDescription == "This isn't a Paprika, Mela or CSV export.")
+    }
+
+    @Test("A Paprika export reads every recipe and counts the broken one")
+    func paprikaBundle() throws {
+        let contents = try OtherAppExportReader.read(try fixture("sample.paprikarecipes"),
+                                                     fileName: "sample.paprikarecipes")
+        #expect(contents.format == .paprika)
+        #expect(contents.recipes.map(\.name) == ["Lemon Drizzle Cake", "Tomato Soup"])
+        #expect(contents.unreadable == 1)
+    }
+
+    @Test("A single Paprika recipe (gzip with a file name in its header)")
+    func paprikaSingle() throws {
+        let contents = try OtherAppExportReader.read(try fixture("lemon-drizzle.paprikarecipe"),
+                                                     fileName: "lemon-drizzle.paprikarecipe")
+        #expect(contents.recipes.first?.ingredients.count == 5)
+        #expect(contents.unreadable == 0)
+    }
+
+    @Test("A Mela export skips folders and macOS metadata, reads stored and deflated entries")
+    func melaBundle() throws {
+        let contents = try OtherAppExportReader.read(try fixture("sample.melarecipes"), fileName: "sample.melarecipes")
+        #expect(contents.recipes.map(\.name) == ["Shakshuka", "Plain Toast"])
+        #expect(contents.unreadable == 0)
+    }
+
+    @Test("A single Mela recipe and a CSV file")
+    func singleFiles() throws {
+        let mela = try OtherAppExportReader.read(try fixture("mela-shakshuka.melarecipe"), fileName: "a.melarecipe")
+        #expect(mela.recipes.map(\.name) == ["Shakshuka"])
+        let csv = try OtherAppExportReader.read(try fixture("recipes.csv"), fileName: "recipes.csv")
+        #expect(csv.recipes.count == 2)
+    }
+
+    @Test("Damaged archives throw instead of crashing", arguments: [
+        Data(), Data("PK not really a zip".utf8), Data(repeating: 0xff, count: 64)
+    ])
+    func damagedZip(data: Data) {
+        #expect(throws: OtherAppExportError.damaged) { try ZipArchive.entries(in: data) }
+    }
+
+    @Test("A truncated zip throws")
+    func truncatedZip() throws {
+        let data = try fixture("sample.melarecipes")
+        #expect(throws: OtherAppExportError.damaged) { try ZipArchive.entries(in: data.prefix(data.count - 30)) }
+    }
+
+    @Test("Damaged gzip throws", arguments: [Data(), Data("not gzip at all, really".utf8)])
+    func damagedGzip(data: Data) {
+        #expect(throws: OtherAppExportError.damaged) { try Gzip.decompress(data) }
+    }
+}
