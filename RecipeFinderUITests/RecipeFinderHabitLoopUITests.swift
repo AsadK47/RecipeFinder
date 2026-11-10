@@ -100,9 +100,21 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
                       "Rating should appear after the recipe has been cooked.")
 
         // …and the weekly-streak chip now shows in the Recipes header (a cook this week ⇒ streak ≥ 1).
+        // Back to the Recipes home. The first nav-bar button isn't always Back while the detail settles after the
+        // Made it sheet (flaked 2/5 runs 2026-11-10), so confirm we're home and retry Back once before asserting.
+        let home = element(app, id: "recipe.row")
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        XCTAssertTrue(element(app, id: "streak.chip").waitForExistence(timeout: 5),
-                      "Streak chip should appear in the header after cooking.")
+        if !home.waitForExistence(timeout: 5) {
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+        }
+        XCTAssertTrue(home.waitForExistence(timeout: 5), "Back should return to the Recipes home.")
+        let chip = element(app, id: "streak.chip")
+        let chipShown = chip.waitForExistence(timeout: 10)
+        if !chipShown {
+            // CI logs are the only window into a cloud-run failure: dump what is on screen instead.
+            print("STREAK-DEBUG hierarchy on Recipes home after cooking:\n\(app.debugDescription)")
+        }
+        XCTAssertTrue(chipShown, "Streak chip should appear in the header after cooking.")
 
         let shot = XCTAttachment(screenshot: app.screenshot())
         shot.name = "Recipes home — streak chip after cooking"
