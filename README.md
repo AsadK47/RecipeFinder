@@ -30,12 +30,13 @@
 - **Privacy First** - Designed with your privacy in mind. See our Privacy Policy for details
 - **Beautiful Design** - Six elegant color themes with seamless light/dark mode
 - **Complete Toolkit** - Recipes, shopping lists, meal planning, kitchen inventory, and timers in one app
-- **Smart Import** - Grab recipes from any website with automatic ingredient parsing
+- **Smart Import** - From websites, a built-in web search, other recipe apps, PDFs and photos
 
 ## 🚀 Installation
 
 ### For Users
-*Coming soon to the App Store*
+**Join the beta on TestFlight:** https://testflight.apple.com/join/UJWrMbk2  
+*App Store release coming soon.*
 
 ### For Developers
 
@@ -50,7 +51,9 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ## 📱 Features
 
 ### Core Features
-- **📖 Recipe Management** - Curated collection, URL import, custom creation, favorites, and sharing
+- **📖 Recipe Management** - Curated collection, custom creation, favorites, and sharing
+- **📥 Import Anything** - Paste a URL, search the web in-app (import button appears on recipe pages), files from other recipe apps, PDFs, and multi-page photos
+- **⚖️ Estimate Amounts** - Fills in sensible quantities when an imported recipe leaves them out
 - **🛒 Smart Shopping Lists** - Auto-categorized ingredients, add from recipes, track inventory
 - **🍽 Meal Planning** - Weekly calendar, schedule meals, add a week to your shopping list
 - **🏠 Kitchen Inventory** - Track ingredients, expiry dates, find recipes you can make now
@@ -111,6 +114,12 @@ RecipeFinder/
 ├── Utilities/      # Helpers & extensions
 └── Services/       # Business logic
 ```
+
+### CI & Agent Loop
+- **Build & Test** (`build.yml`) runs on every `agent/*` branch and `main`; UI screenshots run nightly
+- **TestFlight** (`testflight.yml`) uploads a build on every app-code push to `main`; tester feedback is filed as GitHub issues
+- Work is planned in `BACKLOG.md` and worked by a scheduled agent loop; session handoff lives in `WORK.md`
+- Changes land on `agent/<slug>` branches; `main` is fast-forwarded only once CI is green
 
 ### Key Files
 - `AppTheme.swift` - Complete design system
