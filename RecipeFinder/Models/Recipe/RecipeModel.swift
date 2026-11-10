@@ -209,6 +209,12 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     mutating func updateServings(to servings: Int) {
         currentServings = servings
     }
+
+    /// Servings for a quick-scale multiplier (½×, 2×…), rounded and never below 1 so ½× of a 1-serving recipe can't
+    /// zero every amount.
+    func servings(scaledBy multiplier: Double) -> Int {
+        max(1, Int((Double(baseServings) * multiplier).rounded()))
+    }
     
     func containsIngredient(_ searchTerm: String) -> Bool {
         let normalized = searchTerm.lowercased().trimmingCharacters(in: .whitespaces)

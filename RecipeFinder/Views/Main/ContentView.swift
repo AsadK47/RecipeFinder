@@ -17,6 +17,9 @@ struct ContentView: View {
     @State private var openProfileAfterBadge = false
     @State private var pendingFileImport: RecipeModel?
     @State private var fileImportError: String?
+    /// Held until the import sheet finishes dismissing — an alert raised while it's still up never appears.
+    @State private var pendingFileSaveError: String?
+    @State private var fileSaveError: String?
 
 
     private enum SidebarItem: Int, Hashable, CaseIterable {
@@ -116,7 +119,11 @@ struct ContentView: View {
                 ProfileView()
             }
         }
-        .sheet(item: $pendingFileImport) { recipe in
+        .errorAlert("Couldn't Save Recipe", message: $fileSaveError)
+        .sheet(item: $pendingFileImport, onDismiss: {
+            fileSaveError = pendingFileSaveError
+            pendingFileSaveError = nil
+        }) { recipe in
             RecipeFileImportSheet(recipe: recipe) { confirmed in
                 saveImportedRecipe(confirmed)
             }
@@ -126,6 +133,7 @@ struct ContentView: View {
     private func saveImportedRecipe(_ recipe: RecipeModel) {
         guard store.add(recipe) else {
             logger.error("Failed to save imported recipe '\(recipe.name)'")
+            pendingFileSaveError = "\"\(recipe.name)\" couldn't be saved. Please try again."
             return
         }
         selectedTab = 0

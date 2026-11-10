@@ -65,20 +65,26 @@ struct CollectionDetailView: View {
                     RecipeLink(recipe: recipe) {
                         RecipeRow(recipe: recipe)
                     }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    // `.swipeActions` only works inside a List; in this LazyVStack it never fired.
+                    .contextMenu {
                         Button(role: .destructive) {
-                            manager.remove(recipeID: recipe.id, from: currentCollection)
-                            HapticManager.shared.delete()
+                            remove(recipe)
                         } label: {
-                            Label("Remove", systemImage: "minus.circle")
+                            Label("Remove from Collection", systemImage: "minus.circle")
                         }
                     }
+                    .accessibilityAction(named: "Remove from Collection") { remove(recipe) }
                 }
             }
             .padding(.horizontal, AppTheme.spacing16)
             .padding(.vertical, AppTheme.spacing12)
             .padding(.bottom, AppTheme.spacing100)
         }
+    }
+
+    private func remove(_ recipe: RecipeModel) {
+        manager.remove(recipeID: recipe.id, from: currentCollection)
+        HapticManager.shared.delete()
     }
 
     private func addAllToShoppingList() {

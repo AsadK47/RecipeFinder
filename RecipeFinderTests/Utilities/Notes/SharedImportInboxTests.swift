@@ -70,3 +70,65 @@ import Foundation
         #expect(SharedImportInbox.resolvePayload(recipeData: nil, urlString: "", text: "") == nil)
     }
 }
+
+/// Queue behaviour against an isolated, throwaway `UserDefaults` suite (never the real App Group).
+@Suite struct SharedImportInboxQueueTests {
+
+    private static func freshDefaults() -> UserDefaults? {
+        UserDefaults(suiteName: "SharedImportInboxQueueTests.\(UUID().uuidString)")
+    }
+
+    private static func extracted(_ name: String, ingredients: [String] = ["1 egg"], steps: [String] = ["mix"]) -> ExtractedRecipeData {
+        ExtractedRecipeData(
+            name: name, description: nil, matchedIngredients: [], rawIngredients: ingredients,
+            rawText: "1 egg", instructions: steps, sourceURL: URL(string: "https://x.test")!,
+            cookTimeMinutes: nil, prepTimeMinutes: nil, servings: nil,
+            difficulty: nil, category: nil, cuisine: nil, imageURL: nil
+        )
+    }
+
+    @Test func secondShareDoesNotOverwriteFirst() {
+        let defaults = Self.freshDefaults()
+        SharedImportInbox.storeURL("https://a.test", in: defaults)
+        SharedImportInbox.storeURL("https://b.test", in: defaults)
+        #expect(SharedImportInbox.consumePayloads(from: defaults) == [.url("https://a.test"), .url("https://b.test")])
+    }
+
+    @Test func keepsOrderAcrossKinds() {
+        let defaults = Self.freshDefaults()
+        SharedImportInbox.storeExtractedRecipe(Self.extracted("Soup"), in: defaults)
+        SharedImportInbox.storeText("2 eggs, whisk", in: defaults)
+        SharedImportInbox.storeText("see https://c.test/recipe", in: defaults)
+        #expect(SharedImportInbox.consumePayloads(from: defaults) == [
+            .extracted(Self.extracted("Soup")), .text("2 eggs, whisk"), .url("https://c.test/recipe"),
+        ])
+    }
+
+    @Test func consumingEmptiesTheInbox() {
+        let defaults = Self.freshDefaults()
+        SharedImportInbox.storeURL("https://a.test", in: defaults)
+        _ = SharedImportInbox.consumePayloads(from: defaults)
+        #expect(SharedImportInbox.consumePayloads(from: defaults).isEmpty)
+    }
+
+    @Test func drainsLegacySingleSlotBeforeQueue() {
+        let defaults = Self.freshDefaults()
+        defaults?.set("https://old.test", forKey: "pendingSharedImportURL")
+        SharedImportInbox.storeURL("https://new.test", in: defaults)
+        #expect(SharedImportInbox.consumePayloads(from: defaults) == [.url("https://old.test"), .url("https://new.test")])
+    }
+
+    @Test func missingAppGroupStoresNothing() {
+        #expect(SharedImportInbox.storeExtractedRecipe(Self.extracted("Soup"), in: nil) == false)
+        #expect(SharedImportInbox.consumePayloads(from: nil).isEmpty)
+    }
+
+    @Test(arguments: [
+        (["1 egg"], ["mix"], true),
+        ([], ["mix"], false),
+        (["1 egg"], [], false),
+    ])
+    func onlyCompleteRecipesAreHandedOverAsSaved(ingredients: [String], steps: [String], expected: Bool) {
+        #expect(SharedImportInbox.isCompleteRecipe(Self.extracted("Soup", ingredients: ingredients, steps: steps)) == expected)
+    }
+}

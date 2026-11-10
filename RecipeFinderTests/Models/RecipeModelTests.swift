@@ -495,3 +495,21 @@ struct RecipeModelDisplayTests {
         #expect(!recipe(notes: "Just a personal note").shouldAutoRefreshFromSource)
     }
 }
+
+// MARK: - Quick-scale servings
+
+@Suite("Quick-scale servings")
+struct QuickScaleServingsTests {
+
+    private func recipe(baseServings: Int) -> RecipeModel {
+        RecipeModel(
+            name: "Toast", category: "Test", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+            baseServings: baseServings, ingredients: [], prePrepInstructions: [], instructions: [], notes: ""
+        )
+    }
+
+    @Test(arguments: [(1, 0.5, 1), (4, 0.5, 2), (3, 0.5, 2), (2, 3.0, 6), (0, 2.0, 1)])
+    func scalesBaseServingsNeverBelowOne(base: Int, multiplier: Double, expected: Int) {
+        #expect(recipe(baseServings: base).servings(scaledBy: multiplier) == expected)
+    }
+}

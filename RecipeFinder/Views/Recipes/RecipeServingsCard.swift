@@ -79,7 +79,7 @@ struct RecipeServingsCard: View {
     }
 
     private func quickScaleButton(label: String, multiplier: Double) -> some View {
-        let targetServings = Int(Double(recipe.baseServings) * multiplier)
+        let targetServings = recipe.servings(scaledBy: multiplier)
         let isActive = recipe.currentServings == targetServings
 
         return Button(action: {

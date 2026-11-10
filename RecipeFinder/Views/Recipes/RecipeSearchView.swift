@@ -140,16 +140,25 @@ struct RecipeSearchView: View {
     }
 
     /// Handles the share-extension App Group inbox: finished recipe saved with a toast, URL opens the import sheet, text prefills the wizard.
+    /// Finished recipes all save; only the first link/text opens a sheet (one sheet at a time) and the rest go
+    /// back into the inbox for the next foreground.
     private func checkSharedImportInbox() {
-        switch SharedImportInbox.consumePayload() {
-        case .extracted(let data):
-            ingest(sharedRecipe: RecipeImportBuilder().build(from: data))
-        case .url(let urlString):
-            sharedImportURL = SharedImportURL(url: urlString)
-        case .text(let text):
-            Task { await importSharedText(text) }
-        case nil:
-            break
+        var openedInteractive = false
+        for payload in SharedImportInbox.consumePayloads() {
+            switch payload {
+            case .extracted(let data):
+                ingest(sharedRecipe: RecipeImportBuilder().build(from: data))
+            case .url(let urlString) where !openedInteractive:
+                openedInteractive = true
+                sharedImportURL = SharedImportURL(url: urlString)
+            case .text(let text) where !openedInteractive:
+                openedInteractive = true
+                Task { await importSharedText(text) }
+            case .url(let urlString):
+                SharedImportInbox.storeURL(urlString)
+            case .text(let text):
+                SharedImportInbox.storeText(text)
+            }
         }
     }
 
