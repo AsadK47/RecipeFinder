@@ -39,6 +39,12 @@ struct PasteTextImportSheet: View {
                 Text(errorMessage)
                     .font(.footnote)
                     .foregroundStyle(.orange)
+                // No dead end: keep the text and let the cook fill in the rest themselves.
+                Button("Start from this text") {
+                    prefill = RecipeWizardView.PrefilledRecipeData(unparsedText: text)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("import.startFromText")
             }
 
             Spacer()

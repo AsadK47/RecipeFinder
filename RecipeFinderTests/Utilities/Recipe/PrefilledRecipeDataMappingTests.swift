@@ -42,3 +42,41 @@ import Foundation
         #expect(prefill.notes == nil)
     }
 }
+
+/// "Start from this text" when an import can't find a recipe: the cook keeps their text instead of hitting a dead end.
+@Suite struct UnparsedTextPrefillTests {
+
+    @Test("Name is the first non-empty line, trimmed")
+    func nameFromFirstLine() {
+        let prefill = RecipeWizardView.PrefilledRecipeData(unparsedText: "\n\n  Nan's Lemon Cake  \nzest 2 lemons\nbake")
+        #expect(prefill.name == "Nan's Lemon Cake")
+    }
+
+    @Test("Full text is kept as notes and as the original source")
+    func keepsFullText() {
+        let text = "Lemon cake\nzest 2 lemons\nbake 40 min"
+        let prefill = RecipeWizardView.PrefilledRecipeData(unparsedText: text)
+        #expect(prefill.notes == text)
+        #expect(prefill.sourceText == text)
+    }
+
+    @Test("Ingredients and steps start empty for the cook to fill")
+    func leavesRowsEmpty() {
+        let prefill = RecipeWizardView.PrefilledRecipeData(unparsedText: "Soup\nstuff")
+        #expect(prefill.ingredients == nil)
+        #expect(prefill.instructions == nil)
+    }
+
+    @Test("A very long first line is cut to a usable name")
+    func capsLongName() {
+        let prefill = RecipeWizardView.PrefilledRecipeData(unparsedText: String(repeating: "a", count: 300))
+        #expect(prefill.name?.count == RecipeWizardView.PrefilledRecipeData.maxUnparsedNameLength)
+    }
+
+    @Test("Blank text gives no name and no source")
+    func blankText() {
+        let prefill = RecipeWizardView.PrefilledRecipeData(unparsedText: "  \n ")
+        #expect(prefill.name == nil)
+        #expect(prefill.sourceText == nil)
+    }
+}

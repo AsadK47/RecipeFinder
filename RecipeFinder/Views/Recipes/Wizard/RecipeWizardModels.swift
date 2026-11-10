@@ -60,6 +60,34 @@ extension RecipeWizardView.PrefilledRecipeData {
 }
 
 extension RecipeWizardView.PrefilledRecipeData {
+    static let maxUnparsedNameLength = 80
+
+    /// "Start from this text" after an import found no recipe: first line as the name, the whole text as notes and
+    /// source, rows left empty — the cook keeps what they pasted instead of retyping it.
+    init(unparsedText text: String) {
+        let firstLine = text.split(whereSeparator: \.isNewline)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .first { !$0.isEmpty }
+        let notes = text.trimmed
+        self.init(
+            name: firstLine.map { String($0.prefix(Self.maxUnparsedNameLength)) },
+            description: nil,
+            ingredients: nil,
+            instructions: nil,
+            prepTime: nil,
+            cookTime: nil,
+            servings: nil,
+            difficulty: nil,
+            notes: notes.isEmpty ? nil : text,
+            category: nil,
+            isFavorite: nil,
+            imageURL: nil,
+            sourceText: RecipeImportPipeline.storedSourceText(text)
+        )
+    }
+}
+
+extension RecipeWizardView.PrefilledRecipeData {
     /// Editor prefill for a saved or just-imported recipe — one mapping shared by "Edit" and URL-import review.
     init(recipe: RecipeModel) {
         self.init(
