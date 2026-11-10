@@ -161,6 +161,9 @@ drop a line while moving it.
   it came from; undo on delete/clear. Merge duplicated row/section/header views between `Views/Kitchen` and
   `Views/Shopping` and delete the leftovers. *Done when:* put-away + expiry + merge logic tested, screenshots of both
   halves, net line count down, CI green.
+- [ ] **Made-it celebration.** Motion + count-up (cook #N, streak), a variable "fun fact" line, distinct haptic
+  vocabulary (today 94/181 haptics are `.light()`), confetti moved here from groceries; groundwork for Spoons
+  earn animation. *Done when:* fun-fact selection tested, screenshot, CI green.
 - [ ] **Spoons 1/2 — earn** (owner OK 2026-11-10). On-device reward currency for real cooking: Made it +10, first cook
   of a recipe +15, weekly streak kept +25, Kitchen item used before expiry +10, week planned +5, badge +20–50;
   "Cook for someone" toggle on Made it (+bonus, badge). Balance + recent earnings in Me/Profile; earn animation on
@@ -170,6 +173,10 @@ drop a line while moving it.
   celebration effects, one streak freeze). Impact stats card: meals cooked at home, ~kg food saved (Kitchen items used
   before expiry), techniques learned, meals cooked for others. *Done when:* unlock + stats logic tested,
   screenshots, CI green.
+- [ ] **Cooking mode upgrade.** Several named timers ("Rice 12:00") with time-sensitive notifications; swipe between
+  steps; each step shows its own ingredients/amounts; Done mid-recipe confirms + resume later; timer presets
+  (+1/5/10 min); voice-command hint; VoiceOver labels for timer + progress. *Done when:* multi-timer + step-ingredient
+  matching + resume logic tested, screenshots, CI green.
 - [ ] **Guide 1/2 — "Get to know RecipeFinder" checklist + contextual tips** (owner OK 2026-11-09). A dismissible
   checklist card on the Recipes home: import a recipe · cook one ("Made it") · build a grocery list · plan a meal · add
   a store · try Siri ("What's for dinner?"). Each step deep-links to the feature and shows a TipKit popover on the
