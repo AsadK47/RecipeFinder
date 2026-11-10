@@ -58,10 +58,11 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   Plus Web search redesign (in progress).
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
-   (now inside Me) + polish.
+   (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Medium features (fridge photo, taste profile,
+   cook-along Q&A, skill tree, heirloom mode) + Shared family cookbooks: owner unsure 2026-11-10 — revisit after
+   this list is done.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
    Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.
@@ -120,7 +121,7 @@ drop a line while moving it.
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
   intent: cook → sheet → Done → button disabled → rating shown → streak chip). UI tests only run nightly or on
   "Run workflow", so verify with a `workflow_dispatch` run on your branch. *Done when:* that test passes in CI.
-- [ ] 🚧 **Web search redesign** (owner OK 2026-11-10). Import button only where it helps: hidden on search-engine result
+- [x] **Web search redesign** (owner OK 2026-11-10). Import button only where it helps: hidden on search-engine result
   pages and while loading; green "Import this recipe ✓" pill when the page parses as a recipe (same check as the
   importer, not just JSON-LD); small grey "Try importing this page" on other pages (failure → existing "Paste the
   recipe text instead"); re-checked on every navigation. Look: Safari-style compact top bar (site name, tap to search),
@@ -249,6 +250,24 @@ drop a line while moving it.
 - [ ] **Scroll fade elsewhere.** Check other screens with a nav bar + scrolling content for text showing through the
   toolbar; apply `NavigationBarScrollFade` (see DesignSystem.md lesson 2026-11-08) where it does.
 
+- [ ] **Widget + Live Activity** (owner OK 2026-11-10 for the new Widget Extension target, its App Group entitlement
+  and signing). Home-screen widget "Tonight" (planned meal, else a pantry match) + streak; Live Activity for cooking
+  mode (current step + running timer on Lock Screen / Dynamic Island). Data via the existing App Group, read-only, no
+  network. Creating the target by hand in `project.pbxproj` from the cloud is risky — if CI can't sign/build it after
+  2 tries, leave the branch and ask the owner to add the target in Xcode. *Done when:* timeline/snapshot logic tested,
+  widget preview screenshot, CI + TestFlight green.
+- [ ] **Recipe pictures** (owner idea 2026-11-10: "pictures for the recipes"). Recipes without a photo get one.
+  First slice: confirm with owner which route — (a) on-device Image Playground illustration (iOS 18.1+, Apple
+  Intelligence, nothing leaves the device), (b) owner-supplied/free-licensed photos bundled for starters, or (c) both.
+  *Done when:* chosen route shipped, fallback for unsupported devices, screenshot, CI green.
+
+- [ ] 🙋 **Shared family cookbooks (iCloud)** (owner idea 2026-11-10; revisit with medium features). Invite family or
+  friends to a collection via CloudKit sharing (`CKShare`, private DB — Apple hosts it, no backend of ours, invite-only
+  so no public UGC/Online Safety Act duties). Everyone can add/edit, changes sync. Pairs with "heirloom mode".
+  Needs owner OK before starting: iCloud entitlement + CloudKit container (guardrail: entitlements, Core Data model if
+  moved to `NSPersistentCloudKitContainer`), and a Privacy Policy line. Public shared recipe DB rejected (server,
+  accounts, moderation, OSA/Ofcom duties, copyright takedowns).
+
 ## Smells (refactors — reviewer adds, builder works; see rule at top)
 - [ ] **Primitive Obsession: recipe times stored as text** (owner OK incl. Core Data change, 2026-11-09).
   `RecipeModel.prepTime`/`cookingTime` are Strings ("30 minutes") parsed back with regexes for sorting, filtering,
@@ -280,7 +299,6 @@ drop a line while moving it.
   generally fine; written steps may be protected — not legal advice). Recommended: agents rewrite every method in our
   own words in batches (same curated-JSON + seed + drift-test process), or trim the bundled set. Owner to confirm
   before agents start.
-- 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.
 - 🙋 Later, once there is revenue: owner-funded charity pledge (e.g. "every 1,000 community Spoons funds a meal" via a UK food charity). Needs your decision + a Charities Act-compliant statement/agreement; agents never link money to Spoons.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
@@ -290,6 +308,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
+- 2026-11-10 · Web search redesign · 8f877c0 · Import → Search the web: Safari-style address bar + progress line, back/forward/reload bar, start screen with suggestion chips + recent searches; green "Import this recipe" pill only on pages that parse as a recipe, grey "Try importing this page" elsewhere, nothing on search results. New WebSearchBrowsing.swift registered in pbxproj. Screenshot 13-web-search = start screen only (results need live network). On phone: search "lemon cake", check no pill on results, pill on a recipe page.
 - 2026-11-10 · Import PDFs and multi-page photos · 0d5d5cf · Import → Scan a Photo: pick up to 5 photos (one recipe across pages, read in picked order) or "Choose a PDF"; PDF text pages read directly, scanned pages via on-device OCR, pages joined in order then the normal text router. New MultiPageRecipeReader.swift registered in pbxproj (mirrors RecipeImageTextRecognizer.swift); tests draw PDFs in-test. Not done: PDFs shared from other apps via the share sheet (Files/picker only). On phone: Import → Scan a Photo → Choose a PDF (any recipe PDF) or select 2–3 cookbook page photos.
 - 2026-11-10 · Import from other apps · 0bf22a3 · Settings → Data Management → "Import from Another App": choose a Paprika (.paprikarecipes/.paprikarecipe), Mela (.melarecipes/.melarecipe) or CSV export; recipes the library already has (same name + ingredients) are skipped, embedded photos saved, summary "Imported N recipes, skipped M duplicates." (+ unreadable count). Own zip/gzip reader on Apple Compression (no dependency). New OtherAppRecipeImport.swift, OtherAppExportReader.swift, OtherAppImportSection.swift registered in pbxproj; fixtures Fixtures/OtherApps (hand-made, zip/gzip made with Python). Screenshot 15-other-app-import (DEBUG -show-other-app-import-summary). On phone: export from Paprika/Mela, open in Files, import via Settings.
 - 2026-11-10 · Estimate missing amounts · 253f2ab · Recipe missing most amounts → "Estimate amounts" next to "Add your amounts" (only where Apple Intelligence runs): on-device model suggests amounts, review sheet lets you edit/clear each, only saved ones are written; failure offers "Add your amounts". New IngredientAmountEstimating.swift + AmountEstimateReviewSheet.swift registered in pbxproj. Not done: missing prep/cook times; offer is the detail-screen card (no separate post-import prompt). Screenshot 14-estimate-amounts. On phone (iOS 26, Apple Intelligence on): open an imported recipe with blank amounts → Estimate amounts. Delete remote agent/estimate-amounts-*, agent/import-5-*, agent/ci-faster by hand (delete refused).
