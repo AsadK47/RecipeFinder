@@ -241,7 +241,7 @@ extension PersistenceController {
             saveRecipeModel(recipe)
         }
         for recipe in restored {
-            updateRecipe(recipe)
+            updateRecipe(recipe, includingCookHistory: true)
         }
     }
 
@@ -268,7 +268,7 @@ extension PersistenceController {
     }
     
     @discardableResult
-    func updateRecipe(_ recipe: RecipeModel) -> Bool {
+    func updateRecipe(_ recipe: RecipeModel, includingCookHistory: Bool = false) -> Bool {
         guard ensureStoreIsReady() else { return false }
 
         let context = container.viewContext
@@ -309,7 +309,12 @@ extension PersistenceController {
             if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
                 managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
             }
-            // cookCount/lastCookedAt intentionally not updated here — only recordCook(_:) touches them, preserving cook history across edits.
+            // cookCount/lastCookedAt normally untouched — recordCook(_:) owns them, preserving cook history across edits.
+            // Restore is the exception: it writes the merged history from a backup.
+            if includingCookHistory {
+                managedRecipe.setValue(recipe.cookCount, forKey: RecipeKey.cookCount)
+                managedRecipe.setValue(recipe.lastCookedAt, forKey: RecipeKey.lastCookedAt)
+            }
 
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(recipe.name)' updated successfully")
