@@ -10,6 +10,7 @@ enum NotificationKind: String {
     case expiry
     case streak
     case dailyReminder = "daily-reminder"
+    case groceriesReminder = "groceries-reminder"
 }
 
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
@@ -217,6 +218,40 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         return identifier
     }
     
+    static let groceriesReminderIdentifier = "daily-groceries-reminder"
+
+    /// The Settings "Groceries Reminders" toggle: a repeating daily nudge at the chosen time, or none when off.
+    /// Re-adding with the same identifier replaces the previous time.
+    func syncGroceriesReminder(isOn: Bool, time: String) {
+        guard isOn, let clock = Self.hourAndMinute(from: time) else {
+            cancelNotification(identifier: Self.groceriesReminderIdentifier)
+            return
+        }
+        let content = UNMutableNotificationContent()
+        content.title = "🛒 Groceries"
+        content.body = "Picking up food today? Your list is ready."
+        content.sound = .default
+        content.userInfo = ["type": NotificationKind.groceriesReminder.rawValue]
+
+        var components = DateComponents()
+        components.hour = clock.hour
+        components.minute = clock.minute
+        let request = UNNotificationRequest(
+            identifier: Self.groceriesReminderIdentifier,
+            content: content,
+            trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        )
+        addAskingPermissionFirst(request, failureLabel: "groceries reminder")
+    }
+
+    /// Parses the stored "HH:mm" reminder time; nil for anything out of range.
+    static func hourAndMinute(from time: String) -> (hour: Int, minute: Int)? {
+        let parts = time.split(separator: ":")
+        guard parts.count == 2, let hour = Int(parts[0]), let minute = Int(parts[1]),
+              (0..<24).contains(hour), (0..<60).contains(minute) else { return nil }
+        return (hour: hour, minute: minute)
+    }
+
     func notifyShoppingListUpdate(itemsCount: Int) {
         let content = UNMutableNotificationContent()
         content.title = "🛒 Groceries Updated"
@@ -330,7 +365,7 @@ extension NotificationManager {
                 userInfo: userInfo
             )
             
-        case .expiry:
+        case .expiry, .groceriesReminder:
             NotificationCenter.default.post(
                 name: .openGroceries,
                 object: nil,

@@ -71,6 +71,8 @@ struct NotificationSettingsView: View {
         .onAppear {
             checkNotificationPermission()
         }
+        .onChange(of: shoppingListReminders) { _, _ in syncGroceriesReminder() }
+        .onChange(of: reminderTimeString) { _, _ in syncGroceriesReminder() }
     }
 
     private var permissionBanner: some View {
@@ -117,6 +119,10 @@ struct NotificationSettingsView: View {
             .padding(.vertical, AppTheme.spacing16)
             .frame(maxWidth: .infinity)
         }
+    }
+
+    private func syncGroceriesReminder() {
+        NotificationManager.shared.syncGroceriesReminder(isOn: shoppingListReminders, time: reminderTimeString)
     }
 
     private func checkNotificationPermission() {

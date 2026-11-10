@@ -372,6 +372,7 @@
 		F3E9D22530476397008BF231 /* BackupDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D22430476396008BF231 /* BackupDocument.swift */; };
 		F3E9D22730477D84008BF231 /* RecipeImportPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D22630477D84008BF231 /* RecipeImportPipeline.swift */; };
 		F3E9D22930477DBC008BF231 /* SharedImportInboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D22830477DBC008BF231 /* SharedImportInboxTests.swift */; };
+		A1B2C3D4E5F6000000000002 /* NotificationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000001 /* NotificationManagerTests.swift */; };
 		F3E9D2433048354F008BF231 /* RecipeTextInterpreting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2423048354F008BF231 /* RecipeTextInterpreting.swift */; };
 		42626713FA072CC4D94F24C6 /* IngredientAmountEstimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66E36D07593F6007F8C0D29 /* IngredientAmountEstimating.swift */; };
 		F3E9D24530483555008BF231 /* SharedTextImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D24430483555008BF231 /* SharedTextImporter.swift */; };
@@ -846,6 +847,7 @@
 		F3E9D22430476396008BF231 /* BackupDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupDocument.swift; sourceTree = "<group>"; };
 		F3E9D22630477D84008BF231 /* RecipeImportPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportPipeline.swift; sourceTree = "<group>"; };
 		F3E9D22830477DBC008BF231 /* SharedImportInboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedImportInboxTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000001 /* NotificationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManagerTests.swift; sourceTree = "<group>"; };
 		F3E9D2423048354F008BF231 /* RecipeTextInterpreting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeTextInterpreting.swift; sourceTree = "<group>"; };
 		D66E36D07593F6007F8C0D29 /* IngredientAmountEstimating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientAmountEstimating.swift; sourceTree = "<group>"; };
 		F3E9D24430483555008BF231 /* SharedTextImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTextImporter.swift; sourceTree = "<group>"; };
@@ -1983,6 +1985,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E9D22830477DBC008BF231 /* SharedImportInboxTests.swift */,
+				A1B2C3D4E5F6000000000001 /* NotificationManagerTests.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -2555,6 +2558,7 @@
 				F3D405493056204B0076834D /* NutritionCalculatorTests.swift in Sources */,
 				F3E9D12030439DD1008BF231 /* WizardIngredientParserTests.swift in Sources */,
 				F3E9D22930477DBC008BF231 /* SharedImportInboxTests.swift in Sources */,
+				A1B2C3D4E5F6000000000002 /* NotificationManagerTests.swift in Sources */,
 				9E6C2C1A2FB394090083A08B /* RecipeParserTests.swift in Sources */,
 				F3E9D26C304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift in Sources */,
 				F3B837E63055FD270003AEF8 /* RecipeTimerManagerTests.swift in Sources */,
