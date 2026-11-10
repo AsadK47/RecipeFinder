@@ -76,6 +76,7 @@ struct RecipeDiff: Identifiable {
             prepTime:            selections.contains(.prepTime)     ? upstream.prepTime     : stored.prepTime,
             cookingTime:         selections.contains(.cookingTime)  ? upstream.cookingTime  : stored.cookingTime,
             baseServings:        stored.baseServings,
+            currentServings:     stored.currentServings,
             ingredients:         selections.contains(.ingredients)  ? upstream.ingredients  : stored.ingredients,
             prePrepInstructions: stored.prePrepInstructions,
             instructions:        selections.contains(.instructions) ? upstream.instructions : stored.instructions,

@@ -484,4 +484,42 @@ struct BundledRecipeCatalogTests {
         #expect(!BundledRecipeCatalog.canCompleteSampleRefresh(current: [], history: [r]))
         #expect(!BundledRecipeCatalog.canCompleteSampleRefresh(current: [r], history: []))
     }
+
+    @Test("refresh keeps the user's servings when the base is unchanged")
+    func refresh_keepsServingsWhenBaseUnchanged() {
+        var stored = Self.oldVersion
+        stored.currentServings = 6
+        #expect(Self.refreshed(stored).first?.currentServings == 6)
+    }
+
+    @Test("refresh resets servings to the new base when the recipe's base servings changed")
+    func refresh_resetsServingsWhenBaseChanged() {
+        var stored = Self.oldVersion
+        stored.currentServings = 6
+        let current = RecipeModel(
+            id: Self.sampleID, name: "Chicken Chow Mein", category: "Main", difficulty: "Basic",
+            prepTime: "10 minutes", cookingTime: "10 minutes", baseServings: 4,
+            ingredients: [Ingredient(baseQuantity: 1, unit: "", name: "noodles")],
+            prePrepInstructions: [], instructions: ["Fry."], notes: "", isSampleRecipe: true
+        )
+        let result = BundledRecipeCatalog.staleSampleRefreshes(library: [stored], current: [current], history: [Self.oldVersion])
+        #expect(result.first?.currentServings == 4)
+    }
+
+    @Test("a copy matching any of several shipped versions of the same recipe is refreshed")
+    func refresh_matchesAnyHistoryVersion() {
+        let older = Self.sample(ingredients: ["noodles"], instructions: ["Cook."])
+        let result = BundledRecipeCatalog.staleSampleRefreshes(
+            library: [older], current: [Self.currentVersion], history: [Self.oldVersion, older]
+        )
+        #expect(result.count == 1)
+        #expect(result.first?.instructions == Self.currentVersion.instructions)
+    }
+
+    @Test("an empty stored image name doesn't override the current bundled image")
+    func refresh_emptyImageNameTakesBundledImage() {
+        var stored = Self.oldVersion
+        stored.imageName = ""
+        #expect(Self.refreshed(stored).first?.imageName == Self.currentVersion.imageName)
+    }
 }

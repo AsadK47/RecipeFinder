@@ -68,7 +68,7 @@ enum BundledRecipeCatalog {
             refreshed.lastCookedAt = stored.lastCookedAt
             refreshed.photoNames = stored.photoNames
             refreshed.tags = stored.tags
-            if let image = stored.imageName, !bundledImages.contains(image) { refreshed.imageName = image }
+            if let image = stored.imageName, !image.isEmpty, !bundledImages.contains(image) { refreshed.imageName = image }
             if stored.baseServings == fresh.baseServings { refreshed.currentServings = stored.currentServings }
             return refreshed
         }

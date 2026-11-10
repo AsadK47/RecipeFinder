@@ -219,4 +219,11 @@ import Foundation
         let long = String(repeating: "a", count: 60_000)
         #expect(RecipeImportPipeline.storedSourceText(long)?.utf8.count == 50_000)
     }
+
+    @Test func applyingKeepsTheUsersChosenServings() {
+        var stored = recipe(instructions: ["Boil"])
+        stored.currentServings = 8
+        let diff = RecipeDiff.compute(stored: stored, upstream: recipe(instructions: ["Simmer"]))
+        #expect(diff.applying(selections: diff.changed).currentServings == 8)
+    }
 }
