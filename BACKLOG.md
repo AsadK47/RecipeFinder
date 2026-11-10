@@ -95,7 +95,7 @@ drop a line while moving it.
   *Done when:* `ImportQuality` tests (complete, partial, empty prefill), wizard banner screenshot, CI green.
 - [x] **Import 3/5 — No dead ends when parsing fails.** Paste/photo no-recipe → "Start from this text" (b36649c, ccb2ea7); link failure → "Paste the recipe text instead" (ccb2ea7); DEBUG `-force-import-failure` + screenshots 10–12 (a14a5bb).
 - [x] **Import 4/5 — Failed imports become test cases.** `Fixtures/ImportRegressions` (3 seed known-poor cases) + `ImportRegressionFixtureTests`; protocol step 4 updated (dac5fa8).
-- [ ] **Import 5/5 — Search the web for recipes** (owner OK 2026-11-09, Paprika-style; no backend, no API).
+- [ ] **Import 5/5 — Search the web for recipes** — 🚧 builder 2026-11-10 (owner OK 2026-11-09, Paprika-style; no backend, no API).
   Import tab → "Search the web": query field → in-app browser (`WKWebView` via `UIViewRepresentable`; not
   `SFSafariViewController`, which can't hand back the page) on the user's engine — DuckDuckGo default, Google, BBC Good
   Food — chosen in Settings. Floating "Import this recipe" button runs the existing link importer on the current URL →
