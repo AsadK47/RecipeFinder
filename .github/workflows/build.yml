@@ -64,6 +64,15 @@ jobs:
           # Runners get new disk inodes each time; tell Xcode not to treat that as a change.
           defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
+      # Booting the simulator took ~4 of the ~8 minutes, idle after compiling. Start it now, in the background,
+      # so it boots while the cache restores and the app compiles.
+      - name: Boot simulator early
+        run: |
+          SIM=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          echo "SIM=$SIM" >> "$GITHUB_ENV"
+          xcrun simctl boot "$SIM" &
+
       - name: Restore build cache
         uses: actions/cache/restore@v4
         with:
@@ -78,13 +87,17 @@ jobs:
           set -o pipefail
           SKIP="-skip-testing:RecipeFinderUITests"
           if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "workflow_dispatch" ]; then SKIP=""; fi
-          SIM=$(xcrun simctl list devices available -j \
-            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          xcrun simctl bootstatus "$SIM" -b
+          # One simulator, no clones (parallel testing cloned devices for a 20-second suite), no coverage report.
           xcodebuild test \
             -scheme RecipeFinder \
             -destination "id=$SIM" \
             -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult \
+            -parallel-testing-enabled NO \
+            -enableCodeCoverage NO \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
             $SKIP \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
