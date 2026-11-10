@@ -559,13 +559,13 @@ struct WeekShoppingSummaryServingsTests {
 
     @Test(arguments: [(2, 2, 200), (4, 2, 400), (1, 2, 100)])
     func buysForPlannedServings(planned: Int, base: Int, expectedGrams: Int) {
-        let beef = summary(planned: planned, baseServings: base).items.first { $0.name.contains("beef") }
+        let beef = summary(planned: planned, baseServings: base).items.first { $0.name.lowercased().contains("beef") }
         #expect(beef?.quantity == expectedGrams)
         #expect(beef?.unit == "g")
     }
 
     @Test func zeroBaseServingsFallsBackToRecipeAmounts() {
-        let beef = summary(planned: 4, baseServings: 0).items.first { $0.name.contains("beef") }
+        let beef = summary(planned: 4, baseServings: 0).items.first { $0.name.lowercased().contains("beef") }
         #expect(beef?.quantity == 200)
     }
 }
