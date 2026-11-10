@@ -204,7 +204,6 @@ drop a line while moving it.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🐞 Flaky UI test `testCookingShowsRatingAndStreakChip` — `streak.chip` not found after back-tap (line 104); failed 2 of 5 runs on 2026-11-10 on unrelated branches, green on rerun. Make the wait robust.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
@@ -242,3 +241,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-10 · Manual 3/3 slice 2 · 50b7eb4 · Photo remove buttons: 44pt targets, "Remove photo N" labels; gallery thumbnails keyed by photo not position. Manual series done.
 - 2026-11-10 · Smell Large wizard (partial) · 6b7560c · One `SuggestionChip` for cuisine/tag/note pills. Not user-visible.
 - 2026-11-10 · Import 3/5 slice 1 · b36649c · Paste import that finds no recipe offers "Start from this text": wizard with first line as name, full text as notes/source.
+- 2026-11-10 · 🐞 Flaky streak-chip UI test · bffa702 · Test waits for Recipes home after Back (retries once), 10s chip wait, hierarchy dump on failure. Test-only.
