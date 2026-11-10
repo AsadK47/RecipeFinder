@@ -319,6 +319,12 @@ extension RecipeDetailView {
         editTarget = EditTarget(section: section)
     }
 
+    /// "Estimate amounts" only where the on-device model can run; nil hides the button.
+    var estimateAmountsAction: (() -> Void)? {
+        guard amountEstimator.isAvailable else { return nil }
+        return { beginAmountEstimate() }
+    }
+
     var ingredientsSection: some View {
         RecipeIngredientsSection(
             recipe: recipe,
@@ -342,7 +348,7 @@ extension RecipeDetailView {
             onEditIngredient: { _ in beginEdit(section: .ingredients) },
             onSubstitute: { index in substitutingIngredientIndex = index },
             onEditIngredients: { beginEdit(section: .ingredients) },
-            onEstimateAmounts: amountEstimator.isAvailable ? beginAmountEstimate : nil
+            onEstimateAmounts: estimateAmountsAction
         )
         .sheet(item: $amountEstimateTarget) { target in
             AmountEstimateReviewSheet(
