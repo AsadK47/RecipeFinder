@@ -62,7 +62,8 @@ drop a line while moving it.
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
    (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Medium features (fridge photo, taste profile,
-   cook-along Q&A, skill tree, heirloom mode): owner unsure 2026-11-10 — revisit after this list is done.
+   cook-along Q&A, skill tree, heirloom mode) + Shared family cookbooks: owner unsure 2026-11-10 — revisit after
+   this list is done.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
    Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.
@@ -260,6 +261,13 @@ drop a line while moving it.
   First slice: confirm with owner which route — (a) on-device Image Playground illustration (iOS 18.1+, Apple
   Intelligence, nothing leaves the device), (b) owner-supplied/free-licensed photos bundled for starters, or (c) both.
   *Done when:* chosen route shipped, fallback for unsupported devices, screenshot, CI green.
+
+- [ ] 🙋 **Shared family cookbooks (iCloud)** (owner idea 2026-11-10; revisit with medium features). Invite family or
+  friends to a collection via CloudKit sharing (`CKShare`, private DB — Apple hosts it, no backend of ours, invite-only
+  so no public UGC/Online Safety Act duties). Everyone can add/edit, changes sync. Pairs with "heirloom mode".
+  Needs owner OK before starting: iCloud entitlement + CloudKit container (guardrail: entitlements, Core Data model if
+  moved to `NSPersistentCloudKitContainer`), and a Privacy Policy line. Public shared recipe DB rejected (server,
+  accounts, moderation, OSA/Ofcom duties, copyright takedowns).
 
 ## Smells (refactors — reviewer adds, builder works; see rule at top)
 - [ ] **Primitive Obsession: recipe times stored as text** (owner OK incl. Core Data change, 2026-11-09).
