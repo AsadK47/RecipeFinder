@@ -113,7 +113,7 @@ jobs:
           SKIP="-skip-testing:RecipeFinderUITests"
           if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "workflow_dispatch" ]; then SKIP=""; fi
           xcrun simctl bootstatus "$SIM" -b
-          # One simulator, no clones (parallel testing cloned devices for a 20-second suite), no coverage report.
+          # Pre-booted simulator, no coverage report.
           xcodebuild test \
             -scheme RecipeFinder \
             -destination "id=$SIM" \
