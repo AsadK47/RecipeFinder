@@ -19,15 +19,14 @@ struct BundledRecipeCatalogTests {
     // MARK: - Generator
 
     /// Parses raw entries into sample recipes with name-derived stable ids. Drops unparseable entries and
-    /// duplicate names (the corpus has a few, and some overlap the hard-coded starters). `images` maps a source URL
-    /// to its page's hero image (`recipes_source_images.json`, from tools/seed-images) — hotlinked, never bundled.
-    static func generate(from entries: [SourceEntry], images: [String: String] = [:],
-                         curated: [String: CuratedEntry] = [:]) -> [RecipeModel] {
+    /// duplicate names (the corpus has a few, and some overlap the hard-coded starters). Bundled recipes carry no
+    /// photo: hotlinking source-site images leaked the user's IP and showed others' copyrighted photos.
+    static func generate(from entries: [SourceEntry], curated: [String: CuratedEntry] = [:]) -> [RecipeModel] {
         var seen = Set(SeedRecipeProvider.recipes.map { normalised($0.name) })
         var recipes: [RecipeModel] = []
         for entry in entries {
             guard let prefill = TextRecipeParser.parse(entry.rawText) else { continue }
-            var model = makeModel(from: prefill, entry: entry, images: images)
+            var model = makeModel(from: prefill, entry: entry)
             // A human-reviewed version (recipes_curated.json, keyed by the stable id) replaces the raw parse.
             if let review = curated[model.id.uuidString] {
                 guard review.action != "drop" else { continue }
@@ -90,7 +89,7 @@ struct BundledRecipeCatalogTests {
         return try encoder.encode(recipes)
     }
 
-    private static func makeModel(from prefill: RecipeWizardView.PrefilledRecipeData, entry: SourceEntry, images: [String: String]) -> RecipeModel {
+    private static func makeModel(from prefill: RecipeWizardView.PrefilledRecipeData, entry: SourceEntry) -> RecipeModel {
         let rawName = prefill.name
             .flatMap { $0.trimmingCharacters(in: .whitespaces).isEmpty ? nil : $0 }
             ?? entry.name
@@ -119,7 +118,7 @@ struct BundledRecipeCatalogTests {
             prePrepInstructions: prefill.prePrepInstructions ?? [],
             instructions: cleanSteps(prefill.instructions ?? []),
             notes: notes(prefill.notes ?? "", sourceURL: source),
-            imageName: source.flatMap { images[$0] },
+            imageName: nil,
             isSampleRecipe: true,
             cuisine: prefill.cuisine
         )
@@ -232,18 +231,12 @@ struct BundledRecipeCatalogTests {
         return try JSONDecoder().decode([String: CuratedEntry].self, from: data)
     }
 
-    private static func loadImages() throws -> [String: String] {
-        let dir = try #require(seedDirectory())
-        guard let data = try? Data(contentsOf: dir.appendingPathComponent("recipes_source_images.json")) else { return [:] }
-        return try JSONDecoder().decode([String: String].self, from: data)
-    }
-
     // MARK: - Drift gate
 
     @Test("committed recipes_seed.json matches the generator (rewrites it when stale)")
     func committedCatalogMatchesGenerator() throws {
         let dir = try #require(Self.seedDirectory())
-        let fresh = try Self.encode(Self.generate(from: Self.loadSource(), images: Self.loadImages(), curated: Self.loadCurated()))
+        let fresh = try Self.encode(Self.generate(from: Self.loadSource(), curated: Self.loadCurated()))
         let outputURL = dir.appendingPathComponent("recipes_seed.json")
         guard (try? Data(contentsOf: outputURL)) != fresh else { return }
         try fresh.write(to: outputURL)
@@ -253,16 +246,15 @@ struct BundledRecipeCatalogTests {
     @Test("generation is deterministic")
     func generationIsDeterministic() throws {
         let source = try Self.loadSource()
-        let images = try Self.loadImages()
         let curated = try Self.loadCurated()
-        #expect(try Self.encode(Self.generate(from: source, images: images, curated: curated))
-                == Self.encode(Self.generate(from: source, images: images, curated: curated)))
+        #expect(try Self.encode(Self.generate(from: source, curated: curated))
+                == Self.encode(Self.generate(from: source, curated: curated)))
     }
 
     @Test("every bundled recipe has a human review — new source recipes can't ship unreviewed")
     func everyRecipeIsCurated() throws {
         let curated = try Self.loadCurated()
-        let unreviewed = Self.generate(from: try Self.loadSource(), images: [:])
+        let unreviewed = Self.generate(from: try Self.loadSource())
             .filter { curated[$0.id.uuidString] == nil }
             .map(\.name)
         #expect(unreviewed.isEmpty, "Review these (tools/recipe-review/BRIEF.md) and add them to recipes_curated.json: \(unreviewed)")
@@ -294,16 +286,12 @@ struct BundledRecipeCatalogTests {
         #expect(!names.contains("greek salad"))
     }
 
-    @Test("source image is hotlinked as an https imageName; recipes without one stay image-less")
-    func sourceImageBecomesImageName() {
+    @Test("generated recipes never carry a photo, even when the source page had one")
+    func generatedRecipesHaveNoImage() {
         let raw = "Ingredients\n200g rice\n1 onion\nMethod\nCook the rice."
-        let entries = [
-            SourceEntry(name: "Rice", rawText: "Rice\nhttps://example.com/rice\n" + raw),
-            SourceEntry(name: "Noodles", rawText: "Noodles\n" + raw),
-        ]
-        let recipes = Self.generate(from: entries, images: ["https://example.com/rice": "https://example.com/rice.jpg"])
-        #expect(recipes.first { $0.name == "Rice" }?.imageName == "https://example.com/rice.jpg")
-        #expect(recipes.first { $0.name == "Noodles" }?.imageName == nil)
+        let recipes = Self.generate(from: [SourceEntry(name: "Rice", rawText: "Rice\nhttps://example.com/rice\n" + raw)])
+        #expect(recipes.first?.imageName == nil)
+        #expect(recipes.first?.importedFromURL?.absoluteString == "https://example.com/rice")
     }
 
     @Test("Junk pasted into titles is cleaned", arguments: [
@@ -345,9 +333,8 @@ struct BundledRecipeCatalogTests {
         #expect(ids.isDisjoint(with: SeedRecipeProvider.recipes.map(\.id)))
         #expect(recipes.allSatisfy { $0.isSampleRecipe })
         #expect(recipes.allSatisfy { !$0.name.isEmpty && !$0.ingredients.isEmpty })
-        // Photos are hotlinked from the source site, never bundled files.
-        #expect(recipes.compactMap(\.imageName).allSatisfy { $0.hasPrefix("https://") || $0.hasPrefix("http://") })
-        #expect(recipes.compactMap(\.imageName).allSatisfy { URL(string: $0) != nil })
+        // No third-party photos: nothing is fetched from recipe sites while browsing.
+        #expect(recipes.allSatisfy { $0.imageName == nil })
     }
 
     @Test("seeding starters + bundled catalog persists every recipe without counting toward badges")
@@ -521,5 +508,28 @@ struct BundledRecipeCatalogTests {
         var stored = Self.oldVersion
         stored.imageName = ""
         #expect(Self.refreshed(stored).first?.imageName == Self.currentVersion.imageName)
+    }
+
+    @Test("existing installs drop hotlinked sample photos but keep the user's own photo and recipes")
+    func remoteSamplePhotosAreCleared() {
+        var hotlinked = Self.currentVersion
+        hotlinked.imageName = "https://example.com/new.jpg"
+        var ownPhoto = Self.currentVersion
+        ownPhoto.imageName = "RecipeImages/mine.jpg"
+        var userRecipe = Self.currentVersion
+        userRecipe.isSampleRecipe = false
+        let cleared = BundledRecipeCatalog.remoteImageRemovals(library: [hotlinked, ownPhoto, userRecipe])
+        #expect(cleared.count == 1)
+        #expect(cleared.first?.imageName == nil)
+    }
+
+    @Test("sample updates refresh stale copies and clear their remote photo in one pass")
+    func sampleUpdates_refreshAndClear() {
+        var current = Self.currentVersion
+        current.imageName = nil
+        let updates = BundledRecipeCatalog.sampleUpdates(library: [Self.oldVersion], current: [current], history: [Self.oldVersion])
+        #expect(updates.count == 1)
+        #expect(updates.first?.instructions == current.instructions)
+        #expect(updates.first?.imageName == nil)
     }
 }

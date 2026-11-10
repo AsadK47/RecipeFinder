@@ -121,7 +121,7 @@ final class RecipeStore: RecipeStoring {
             let current = BundledRecipeCatalog.load()
             let history = BundledRecipeCatalog.loadHistory()
             guard BundledRecipeCatalog.canCompleteSampleRefresh(current: current, history: history) else { return nil }
-            return BundledRecipeCatalog.staleSampleRefreshes(library: library, current: current, history: history)
+            return BundledRecipeCatalog.sampleUpdates(library: library, current: current, history: history)
         }.value
         // Bundle data missing or unreadable: leave the version unmarked so the next launch retries.
         guard let refreshes else { return library }

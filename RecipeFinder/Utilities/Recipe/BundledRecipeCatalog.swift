@@ -33,7 +33,7 @@ enum BundledRecipeCatalog {
     // MARK: - Stale-sample refresh
 
     /// Bump when `recipes_seed.json` gains fixes that existing installs should pick up (and regenerate the history).
-    static let sampleRefreshVersion = 3
+    static let sampleRefreshVersion = 4
 
     /// The refresh can only judge "untouched" against real data: an empty bundle or history (missing/corrupt JSON)
     /// must not mark the version done, or it would never retry.
@@ -43,6 +43,30 @@ enum BundledRecipeCatalog {
 
     static func needsSampleRefresh(lastRunVersion: Int, currentVersion: Int = sampleRefreshVersion) -> Bool {
         lastRunVersion < currentVersion
+    }
+
+    /// Every change the versioned sample pass makes: stale untouched copies rebuilt from today's bundle, then any
+    /// sample still showing a hotlinked third-party photo cleared (those leaked the user's IP to recipe sites).
+    static func sampleUpdates(library: [RecipeModel], current: [RecipeModel], history: [RecipeModel]) -> [RecipeModel] {
+        var updates = Dictionary(
+            staleSampleRefreshes(library: library, current: current, history: history).map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        let merged = library.map { updates[$0.id] ?? $0 }
+        for cleared in remoteImageRemovals(library: merged) { updates[cleared.id] = cleared }
+        return library.compactMap { updates[$0.id] }
+    }
+
+    /// Samples whose hero is a remote URL, with it removed so the placeholder shows. A photo the user chose is a
+    /// local file and is kept; the user's own recipes are never touched.
+    static func remoteImageRemovals(library: [RecipeModel]) -> [RecipeModel] {
+        library.compactMap { recipe in
+            guard recipe.isSampleRecipe, let image = recipe.imageName,
+                  image.hasPrefix("https://") || image.hasPrefix("http://") else { return nil }
+            var cleared = recipe
+            cleared.imageName = nil
+            return cleared
+        }
     }
 
     /// The library's sample recipes that are an untouched earlier shipped version, rebuilt from the current

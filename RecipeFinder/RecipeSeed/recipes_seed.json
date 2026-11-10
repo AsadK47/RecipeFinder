@@ -16,7 +16,6 @@
     },
     "difficulty" : "Basic",
     "id" : "A2B0FCF7-67C3-512E-8961-EA3D996D5B55",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2019/02/instant-pot-achari-chicken-curry.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 3,
@@ -186,7 +185,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "1E8B634D-CB4B-5B53-87D8-B3C339711371",
-    "imageName" : "https://www.hookedonheat.com/wp-content/uploads/2020/10/Achari-Gosht-HOHV.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -340,7 +338,6 @@
     },
     "difficulty" : "Basic",
     "id" : "3A39471A-95CD-59E3-AB3A-EFD9DBF1B660",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2023/04/Air-fryer-crispy-chilli-beef-0cc563b.jpg?resize=768,713",
     "ingredients" : [
       {
         "baseQuantity" : 250,
@@ -481,7 +478,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B63F1F4B-12B2-52F8-A6AD-F3F16EE43234",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2022/04/Air-Fryer-Doughnuts-847528d.jpg?resize=768,713",
     "ingredients" : [
       {
         "baseQuantity" : 125,
@@ -746,7 +742,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B7D6FBE7-E48B-52CC-A489-2316AD3ADF03",
-    "imageName" : "https://divascancook.com/wp-content/uploads/2019/01/Air-Fryer-Southern-Fried-Chicken-Recipe-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -985,7 +980,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "E6349A8E-4F13-56DC-A011-6D1BB27FAC66",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2016/11/Aloo-Gosht-13-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.25,
@@ -1302,7 +1296,6 @@
     },
     "difficulty" : "Basic",
     "id" : "8C909FBD-26ED-5A0D-8F3D-A790EBF3A46A",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/american-style-pancakes-87119e3.jpg?resize=440,400",
     "ingredients" : [
       {
         "baseQuantity" : 200,
@@ -1650,7 +1643,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "ABDC4CAD-A07E-5FAE-89EF-27F7E6307D15",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2019/02/apple-jalebi.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0,
@@ -1960,7 +1952,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "048DC37E-DDEE-549E-ABFD-AB18913E8C20",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2014/02/indian-eggplant-recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -2423,7 +2414,6 @@
     },
     "difficulty" : "Basic",
     "id" : "90A8F7E3-946D-5BF4-A236-E95020D2387D",
-    "imageName" : "https://cdn.theliveinkitchen.com/wp-content/uploads/2022/07/10123136/Frozen-Corn-on-the-Cob-The-Live-In-Kitchen-Featured.png",
     "ingredients" : [
       {
         "baseQuantity" : 4,
@@ -2696,7 +2686,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B2DC5108-C423-52BE-91C3-57A0F357E958",
-    "imageName" : "https://i.ytimg.com/vi/rsGsNBRD5uo/oardefault.jpg?sqp=-oaymwEkCJUDENAFSFqQAgHyq4qpAxMIARUAAAAAJQAAyEI9AICiQ3gB&rs=AOn4CLDvqqK_KdUdgnzYMv9QjREnkuUUTw",
     "ingredients" : [
       {
         "baseQuantity" : 800,
@@ -2965,7 +2954,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "E10DDDB3-92F2-5F5E-BB33-2559632752B5",
-    "imageName" : "https://khinskitchen.com/wp-content/uploads/2021/08/beef-in-black-bean-sauce.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 300,
@@ -3294,7 +3282,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "2AEA0763-EE82-5104-9B40-5B2F7DD57D22",
-    "imageName" : "https://www.seasonsandsuppers.ca/wp-content/uploads/2013/11/beef-ragu-1200-21.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -3472,7 +3459,6 @@
     },
     "difficulty" : "Basic",
     "id" : "023A5FEB-F3C3-5EE8-8DEE-039BE5AA4902",
-    "imageName" : "https://i.ytimg.com/vi/O-_DioIGBJ4/maxresdefault.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 450,
@@ -4143,7 +4129,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "1FD0F0FB-B78F-55CC-9B23-1930110AC0BD",
-    "imageName" : "https://www.indianhealthyrecipes.com/wp-content/uploads/2022/05/bhindi-masala-recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 500,
@@ -4407,7 +4392,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "E65FD19C-B864-5313-A9CD-505D9897542E",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2024/08/IMG_7173-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 3,
@@ -4505,7 +4489,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B115FE00-B6C2-5E81-94E3-671EC9214FC9",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2024/08/IMG_5894-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 5,
@@ -4591,7 +4574,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "E6D948B5-DA6D-540C-988F-134A5707B7E6",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2021/10/384FBD37-F47D-4CC4-83B0-7873C888C723-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 40,
@@ -4683,7 +4665,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "A84D2DB1-7422-5762-9DAE-C99CB8C0FFCD",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2021/01/IMG_1032-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 140,
@@ -4988,7 +4969,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "8FD846DD-751D-5364-A1E4-8D501D448013",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2020/06/E66D84D6-C995-491D-93C5-EF2F5F010B8E.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 100,
@@ -5103,7 +5083,6 @@
     },
     "difficulty" : "Basic",
     "id" : "14BB3879-662D-568E-912B-DB62936CD11B",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/2/2017/08/classic-chocolate-brownies.jpg?resize=768,1062",
     "ingredients" : [
       {
         "baseQuantity" : 100,
@@ -5274,7 +5253,6 @@
     },
     "difficulty" : "Basic",
     "id" : "58BD8CDE-E782-5140-BBCE-66CAAB191C09",
-    "imageName" : "https://i.ytimg.com/vi/ryp38w_Kchs/maxresdefault.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -5421,7 +5399,6 @@
     },
     "difficulty" : "Basic",
     "id" : "95F2A5C7-AE86-5FAD-A283-BC6332EFE454",
-    "imageName" : "https://simply-delicious-food.com/wp-content/uploads/2020/06/Image-11.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.5,
@@ -5510,7 +5487,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "09E53660-E3D7-5298-98B2-E7A0E1F31EEB",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2018/08/Instant-Pot-Butter-Chicken-Side.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 454,
@@ -5718,7 +5694,6 @@
     },
     "difficulty" : "Basic",
     "id" : "7D48DBB8-AFF1-5695-A3BA-2FBC07F1EAC6",
-    "imageName" : "https://i.ytimg.com/vi/AKn9_SmRrLI/hq720.jpg?sqp=-oaymwEkCJUDENAFSFryq4qpAxYIARUAAAAAJQAAyEI9AICiQ3gB0AEB&rs=AOn4CLB_0817Q0IUO-UWycF-yPwF6mkGtQ",
     "ingredients" : [
       {
         "baseQuantity" : 230,
@@ -5780,7 +5755,6 @@
     },
     "difficulty" : "Basic",
     "id" : "EAB09EA0-227C-5DA7-8698-36882F188B11",
-    "imageName" : "https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/roasted_butternut_squash_10281_16x9.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1.5,
@@ -5885,7 +5859,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "60DFD77A-104D-5130-8397-273ABDA5D875",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2014/10/cabbage-dolmas-north-african.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 12,
@@ -6093,7 +6066,6 @@
     },
     "difficulty" : "Basic",
     "id" : "D28E00AA-C51D-5128-B32E-8EFE7A64BD1D",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2016/10/Authentic-Pakistani-Chai-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1.25,
@@ -6165,7 +6137,6 @@
     },
     "difficulty" : "Basic",
     "id" : "84CF6698-F334-5503-B22A-04C50EAA3F87",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2014/08/homemade-chai-concentrate.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 5,
@@ -6245,7 +6216,6 @@
     },
     "difficulty" : "Basic",
     "id" : "AE972DCE-A0CE-58D5-8B75-B3E16B1AF4E2",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2023/02/B3BF459A-CAD6-4173-BF48-D8965849B490-scaled.jpeg",
     "ingredients" : [
       {
         "baseQuantity" : 150,
@@ -6470,7 +6440,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "3589A73C-C406-58F7-9109-3F79E1A1C4B4",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2020/06/Instant-Pot-Pakistani-Chana-Dal-3.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.75,
@@ -6808,7 +6777,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "029E8F46-E8AB-5C09-8558-804FFFDF19EC",
-    "imageName" : "https://eatlittlebird.com/wp-content/uploads/2017/01/chestnut-cake-4.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 4,
@@ -6996,7 +6964,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "3F5C06D9-1262-54CD-A359-6D37A3FD3BCE",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2024/05/Chicken-65-11.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -7549,7 +7516,6 @@
     },
     "difficulty" : "Expert",
     "id" : "C89A966D-2B69-5304-BC0D-18912D6D933D",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/8732886ff6462e6478165bff2ed04efe6510fe02-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 7.1,
@@ -7761,7 +7727,6 @@
     },
     "difficulty" : "Basic",
     "id" : "ABCF9B09-4223-5EA7-B51C-EDC6370F908B",
-    "imageName" : "https://www.pressurecookrecipes.com/wp-content/uploads/2016/04/instant-pot-chicken-congee-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 173,
@@ -7841,7 +7806,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "0B507E76-0B66-56A2-8F24-8174609A4882",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2026/04/Instant-Pot-Chicken-Curry-05.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 405,
@@ -8374,7 +8338,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "285D210A-9C7E-5203-8553-1F2FAE67962C",
-    "imageName" : "https://www.theflavorbender.com/wp-content/uploads/2018/03/Chicken-Kottu-Roti-The-Flavor-Bender-Featured-Image-SQ-8.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -8539,7 +8502,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "241CB5B8-553D-52BD-9274-93DE5108730C",
-    "imageName" : "https://omnivorescookbook.com/wp-content/uploads/2023/09/230807_Chicken-Mei-Fun_550.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 142,
@@ -8705,7 +8667,6 @@
     },
     "difficulty" : "Basic",
     "id" : "491032DE-217E-59D2-8436-6F7AAF272B08",
-    "imageName" : "https://www.curlyscooking.co.uk/wp-content/uploads/2023/07/Homemade-Air-Fryer-Chicken-Nuggets-15-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 600,
@@ -9132,7 +9093,6 @@
     },
     "difficulty" : "Basic",
     "id" : "B41E2BC1-A4FA-578E-AAD3-138289461C0B",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2017/08/Chicken-Pot-Pie-Soup-Paleo-600x450.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 3,
@@ -9278,7 +9238,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B7FB99DE-E43D-575C-A228-3A7A6E7E712F",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2019/08/Instant-Pot-Chicken-Pulao.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1.5,
@@ -9636,7 +9595,6 @@
     },
     "difficulty" : "Basic",
     "id" : "51374414-B58A-58CB-AD4E-5384C13A6995",
-    "imageName" : "https://www.bitesofberi.com/wp-content/uploads/2020/04/APC_0549-3.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 600,
@@ -9741,7 +9699,6 @@
     },
     "difficulty" : "Basic",
     "id" : "B0857970-1107-5980-83EE-01277FABAC51",
-    "imageName" : "https://i.ytimg.com/vi/iKMo3AsI9eQ/maxresdefault.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 3,
@@ -9862,7 +9819,6 @@
     },
     "difficulty" : "Basic",
     "id" : "5F9F39E9-B158-539C-8936-C7C72201D47F",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/08b0ecb71b99435ff624bb2e52289052ba85019e-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 85,
@@ -10004,7 +9960,6 @@
     },
     "difficulty" : "Basic",
     "id" : "C3E5BC13-412C-5075-8AC6-B7BBFC0DEFBD",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2020/03/chicken-vindaloo-instant-pot.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -10131,7 +10086,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "7E631A8E-612D-5F68-8330-514894EA18E2",
-    "imageName" : "https://thewoksoflife.com/wp-content/uploads/2016/04/steamed-chicken-10-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.25,
@@ -10266,7 +10220,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "64757844-555D-5D52-88B1-B631DAECCE96",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2024/06/Chilli-Chicken-Recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -11008,7 +10961,6 @@
     },
     "difficulty" : "Expert",
     "id" : "96A14873-755D-57C0-A15F-17605BC58D27",
-    "imageName" : "https://cinaintavola.com/wp-content/uploads/2023/03/dscf7987.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 450,
@@ -11260,7 +11212,6 @@
     },
     "difficulty" : "Basic",
     "id" : "917722D6-7FAB-58D3-9C18-F119F7F4DEF3",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/10ba389f82e803233a0bbfe2ef4f35b6060ca210-630x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 200,
@@ -11502,7 +11453,6 @@
     },
     "difficulty" : "Basic",
     "id" : "3F442B16-6891-5CF6-9624-479AC1F72621",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chocolate-chip-shortbread-d06c5e5.jpg?resize=440,400",
     "ingredients" : [
       {
         "baseQuantity" : 300,
@@ -11577,7 +11527,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "C5DF0156-A996-5B50-9E0D-F9E77C124C64",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2021/02/instant-pot-triple-chocolate-cheesecake.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 10,
@@ -11684,7 +11633,6 @@
     },
     "difficulty" : "Basic",
     "id" : "ECD73E7B-77C1-562A-B545-D90D2381123C",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chewy-choc-chip-cookies-2c49063.jpg?resize=440,400",
     "ingredients" : [
       {
         "baseQuantity" : 150,
@@ -11980,7 +11928,6 @@
     },
     "difficulty" : "Basic",
     "id" : "7FC245B1-C66D-5766-941E-FD0085C6B476",
-    "imageName" : "https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/choc_hazelnut_mousse_16084_16x9.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 200,
@@ -12071,7 +12018,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "9F84E562-2C03-5689-BE56-E3036E742996",
-    "imageName" : "https://www.fufuskitchen.com/wp-content/uploads/2021/02/chocolate-moousse-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 355,
@@ -12567,7 +12513,6 @@
     },
     "difficulty" : "Basic",
     "id" : "E017415C-299C-5D35-A1C3-36D8179F9AC6",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2026/08/Chocolate-chip-oat-cookies-eca26b5.jpeg?resize=328,298",
     "ingredients" : [
       {
         "baseQuantity" : 0.5,
@@ -12771,7 +12716,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "8BCF6D05-08F7-53DC-B774-11EB1A5A6653",
-    "imageName" : "https://thefoodflamingo.com/wp-content/uploads/2023/12/tiramisu_thefoodflamingo_5.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 180,
@@ -12892,7 +12836,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "D242BE11-2C4D-5931-8953-DBEF42816742",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/4aef7813d72115cdb5c668e7970b781d8078a296-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 510,
@@ -13049,7 +12992,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "A7171E82-38B8-5C8D-91F6-8F004D896647",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/recipe-image-legacy-id-967613_11-9453574.jpg?resize=440,400",
     "ingredients" : [
       {
         "baseQuantity" : 250,
@@ -13142,7 +13084,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "47330E1F-38EE-5857-A7A2-98914C600793",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/e49add8e6c4144bff766b73e223983b73055d410-494x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 550,
@@ -13289,7 +13230,6 @@
     },
     "difficulty" : "Expert",
     "id" : "1B4A8A4E-5BD5-5A88-BCA7-5DED328B816B",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/44ab4b138d318ba041298a2628a2263f5a22202b-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 283,
@@ -13507,7 +13447,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B2B3DF4C-6F81-5023-AE41-874505A5996F",
-    "imageName" : "https://omnivorescookbook.com/wp-content/uploads/2023/09/230809_Coconut-Mochi-With-Red-Bean-Paste_550.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 120,
@@ -13595,7 +13534,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "94FA2FAD-D2D8-5C89-B2A7-04020DF9F9CF",
-    "imageName" : "https://takestwoeggs.com/wp-content/uploads/2021/03/Vietnamese-Coffee-and-Cream-Jelly-Tha%CC%A3ch-Ca%CC%80-Phe%CC%82-takestwoeggs-sq.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 600,
@@ -13843,7 +13781,6 @@
     },
     "difficulty" : "Basic",
     "id" : "51AEEBDB-4A00-5D34-A800-B992E1AE7E52",
-    "imageName" : "https://www.cookingclassy.com/wp-content/uploads/2018/09/edible-cookie-dough-55.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 136,
@@ -13935,7 +13872,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "60585B87-B236-5A53-9469-0764FDB14D85",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/fbf5236a6695f2f4f607f4e8e8453e0424f57c5d-945x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -14109,7 +14045,6 @@
     },
     "difficulty" : "Basic",
     "id" : "A6D6FFCA-3B3A-5568-BA44-1E5B552A6C27",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/recipe-image-legacy-id-1035601_12-ae7f0ff.jpg?resize=440,400",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -14315,7 +14250,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "7E845D5B-D730-50C9-94F6-E84B5DECB06F",
-    "imageName" : "https://omnivorescookbook.com/wp-content/uploads/2018/01/1507_Crispy-Bing-Bread_004-300x200.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 500,
@@ -14497,7 +14431,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "C15D8A01-5A5C-5E2E-8CCB-9A582611F2A0",
-    "imageName" : "https://fatimacooks.net/wp-content/uploads/2021/12/Dal-Gosht-Meat-and-Lentils-Recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 800,
@@ -14645,7 +14578,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B7D72029-98BF-5D70-B485-3ACF03F1105B",
-    "imageName" : "https://thewoksoflife.com/wp-content/uploads/2014/11/dan-dan-noodles-15-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -15092,7 +15024,6 @@
     },
     "difficulty" : "Basic",
     "id" : "C0D5C87B-CAB4-5B00-B1CE-615F5F200355",
-    "imageName" : "https://bakedabundance.com/wp-content/uploads/2021/12/eggless-chocolate-chip-cookies-225x225.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 114,
@@ -15197,7 +15128,6 @@
     },
     "difficulty" : "Expert",
     "id" : "A93E44F6-2AD7-5A3C-9BA1-A1BAAB808605",
-    "imageName" : "https://gayathriscookspot.com/wp-content/uploads/2016/06/8-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1.25,
@@ -15483,7 +15413,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "4F46D90C-33F0-5F6A-8570-150678E38123",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2021/06/202443083_1396354504097216_8406031043754432527_n1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 50,
@@ -15595,7 +15524,6 @@
     },
     "difficulty" : "Basic",
     "id" : "E582FCD3-4D93-57BF-8306-8581B580390A",
-    "imageName" : "https://www.crumbtopbaking.com/wp-content/uploads/2022/09/Ground-Beef-Fajitas-8.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -16034,7 +15962,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "67067F2D-911F-5573-B0C3-391703502DB9",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2023/06/Fish-Curry-Recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -16378,7 +16305,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "D9E89694-2D6A-5BE9-AE33-16F7D06A3E54",
-    "imageName" : "https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/mary_berrys_fish_pie_79943_16x9.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 75,
@@ -16601,7 +16527,6 @@
     },
     "difficulty" : "Basic",
     "id" : "2C4E0711-E422-5264-BAC6-561A10262375",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/2412db8ade1bd888a7f7f6162a88a584da77f71a-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 397,
@@ -16921,7 +16846,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "DEFDD233-89C0-517E-9F20-265EAFD4756B",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2018/11/Instant-Pot-Goat-Curry-with-Bell-Peppers-3.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -17057,7 +16981,6 @@
     },
     "difficulty" : "Basic",
     "id" : "780B837F-AEDA-5CFD-BDDF-4271D752F8A4",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/0545ea4c9b7418b23a16ca7e275de1262abebe2f-945x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -17407,7 +17330,6 @@
     },
     "difficulty" : "Basic",
     "id" : "2775C891-6972-5F43-9B2D-EF09F98631F8",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2013/11/green-chutney.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -17572,7 +17494,6 @@
     },
     "difficulty" : "Basic",
     "id" : "F0E23915-02D1-5C38-92EA-305EADF62DB5",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2016/04/Instant-Pot-Paleo-Chili.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -17704,7 +17625,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "2E2F823D-ACFA-5EFE-BEE5-E8DE3F641285",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2023/06/Hakka-Noodles-13-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 210,
@@ -17900,7 +17820,6 @@
     },
     "difficulty" : "Expert",
     "id" : "98C7BE79-6B05-5ABA-BBED-E549A5BA2220",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2020/07/Haleem-Recipe-Instant-Pot-2.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.25,
@@ -18171,7 +18090,6 @@
     },
     "difficulty" : "Basic",
     "id" : "2A583E82-31CF-5FD3-99C7-0AD11EAEC439",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2019/02/Instant-Pot-Carrot-Halwa-Gajar-ka-Halwa-4.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -18350,7 +18268,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "1B67F2AB-0F3B-5AB7-BE98-E56CAFEFA64D",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2021/03/Harissa-fish-pie-9a1d880.jpg?resize=768,713",
     "ingredients" : [
       {
         "baseQuantity" : 700,
@@ -18601,7 +18518,6 @@
     },
     "difficulty" : "Basic",
     "id" : "734D2D06-9256-5E90-ADF7-2260DCB5F0B0",
-    "imageName" : "https://www.slimmingeats.com/blog/wp-content/uploads/2022/12/harissa-salmon-featured-1-720x720.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -18791,7 +18707,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "718BE630-A77C-5BA7-BFA0-4576E15670BB",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2019/02/instant-pot-idli-how-to-make-idli.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 3,
@@ -18885,7 +18800,6 @@
     },
     "difficulty" : "Basic",
     "id" : "ED697698-6B91-57A4-8E4E-FD26BCC73AA9",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/6a5d688448952a2bb5664255babe9dc6798a7b70-1120x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -19135,7 +19049,6 @@
     },
     "difficulty" : "Expert",
     "id" : "6E9CF688-1DA0-51C8-8677-E2E1E95267C3",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/e8b01c91bf5cdb8500807030c7f90babe3c21f55-798x482.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.5,
@@ -19333,7 +19246,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "0B7ADF29-0F19-5763-AC41-18A2CA3A49BB",
-    "imageName" : "https://eatlittlebird.com/wp-content/uploads/2022/05/japanese-milk-buns-8.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -19962,7 +19874,6 @@
     },
     "difficulty" : "Basic",
     "id" : "42406173-4454-5342-A723-939A774C957B",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2020/04/Instant-Pot-Keema-5.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -20274,7 +20185,6 @@
     },
     "difficulty" : "Basic",
     "id" : "01820B4D-E202-5E87-94BF-F3495A4AE514",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2019/01/kerala-ground-beef-stew.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -20425,7 +20335,6 @@
     },
     "difficulty" : "Basic",
     "id" : "1C02EC7A-E493-542E-A97F-CF0B44C2C255",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2020/06/Instant-Pot-Kheer-2-e1608916161275.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.4,
@@ -20517,7 +20426,6 @@
     },
     "difficulty" : "Expert",
     "id" : "DE16F50D-31D2-5B07-A33F-8F03A1BA750A",
-    "imageName" : "https://i.ytimg.com/vi/PnfaYFC0XPg/maxresdefault.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 500,
@@ -20630,7 +20538,6 @@
     },
     "difficulty" : "Basic",
     "id" : "0D04FFB2-C89B-5C13-8DC6-85B3FC0EF397",
-    "imageName" : "https://fullofplants.com/wp-content/uploads/2022/02/fried-tofu-kimchi-stew-korean-inspired-vegan-plant-based-dish-thumb.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 280,
@@ -20804,7 +20711,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "6F695A60-4D4E-5D75-A4F6-77F00304618D",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2019/04/Pakistani-Beef-Kofta-Curry-2.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -21787,7 +21693,6 @@
     },
     "difficulty" : "Basic",
     "id" : "872E1887-DD1B-5A8E-9EED-896126464FE1",
-    "imageName" : "https://spatulainmypocket.com/wp-content/uploads/2017/08/dsc06981.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -22223,7 +22128,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "DF09F49B-70EC-53E3-B065-0595814DF804",
-    "imageName" : "https://www.sainsburysmagazine.co.uk/uploads/media/3200x1800/07/13687-jaffna-lamb-curry.jpg?v=1-0",
     "ingredients" : [
       {
         "baseQuantity" : 900,
@@ -22413,7 +22317,6 @@
     },
     "difficulty" : "Expert",
     "id" : "9ECF07A6-C883-5235-81CE-AF5B93EDDBEE",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2023/03/Mutton-Pulao-Recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 3.75,
@@ -23115,7 +23018,6 @@
     },
     "difficulty" : "Basic",
     "id" : "B75E39F7-1A71-508A-9AA6-81426662D870",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2019/10/instant-pot-lauki-chana-dal.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -23235,7 +23137,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "29483355-96DD-5142-8507-5780FCD8398A",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/8579c652f6a4537fb7d7f4b483a36d4b3c3dc57b-945x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 150,
@@ -23353,7 +23254,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "FDFC5B8F-FAA4-55E0-A71D-00D780077510",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2023/03/image-26-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 113,
@@ -23452,7 +23352,6 @@
     },
     "difficulty" : "Basic",
     "id" : "DF5A6FB6-8FE7-5930-8357-FC672FEC6C4B",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/recipe-image-legacy-id-1238452_7-35e4911.jpg?resize=440,400",
     "ingredients" : [
       {
         "baseQuantity" : 225,
@@ -24358,7 +24257,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "4C249839-92F3-562B-934D-B2D69B96A97C",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2021/02/IMG_7846-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 150,
@@ -24727,7 +24625,6 @@
     },
     "difficulty" : "Basic",
     "id" : "F78EB944-47BB-5C51-A675-0F28336B4DE9",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2021/11/Masala-Chai-Tea-Recipe-Card.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2.25,
@@ -24830,7 +24727,6 @@
     },
     "difficulty" : "Basic",
     "id" : "F267A604-E8A9-50A5-9265-3AE34846C4BD",
-    "imageName" : "https://khinskitchen.com/wp-content/uploads/2021/09/masala-chips-7.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 350,
@@ -24957,7 +24853,6 @@
     },
     "difficulty" : "Basic",
     "id" : "713392DA-43BC-5BF4-B8A6-9932AE79B6DD",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2019/01/Instant-Pot-Red-Lentil-Dal-5.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -25200,7 +25095,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "DF177200-04CD-5EE7-BCFE-EE4F1A5E07B9",
-    "imageName" : "https://www.lynnmumbingmejia.com/wp-content/uploads/2021/03/matcha-butter-featured-image.png",
     "ingredients" : [
       {
         "baseQuantity" : 173,
@@ -25392,7 +25286,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B6EBE220-4B78-560C-BCE5-4EC10DA4E148",
-    "imageName" : "https://chelsweets.com/wp-content/uploads/2022/12/frosted-matcha-cupcakes-with-dusting-of-matcha-powderv4-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 135,
@@ -25528,7 +25421,6 @@
     },
     "difficulty" : "Basic",
     "id" : "BF143303-41F5-598D-A67A-CF1787339720",
-    "imageName" : "https://cinaintavola.com/wp-content/uploads/2022/05/dscf6927.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -25673,7 +25565,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "B4988806-3D7C-5F1B-94D1-65B20D913A3C",
-    "imageName" : "https://resource02.ulifestyle.com.hk/ulcms/content/article/thumbnail/1280x720/uf/3180000/3181137/DSC0924.JPG",
     "ingredients" : [
       {
         "baseQuantity" : 8,
@@ -25770,7 +25661,6 @@
     },
     "difficulty" : "Basic",
     "id" : "A4C7C510-B16B-5390-85C5-5D1047A55EB8",
-    "imageName" : "https://omnivorescookbook.com/wp-content/uploads/2018/05/1804_Matcha-Pancakes_550.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -25891,7 +25781,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "1796DCCB-002C-5C41-95FC-48A1322DD224",
-    "imageName" : "https://japanesecooking101.com/wp-content/uploads/2026/03/IMG_1021-2.jpeg",
     "ingredients" : [
       {
         "baseQuantity" : 3,
@@ -25983,7 +25872,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "A14302D1-F0BE-56BA-AF9B-41D428DCBCD0",
-    "imageName" : "https://recipe1.ezmember.co.kr/cache/recipe/2022/04/07/19526209fc944b8e998165578489f02a1_f.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 155,
@@ -26101,7 +25989,6 @@
     },
     "difficulty" : "Basic",
     "id" : "EE3482E6-974B-5BD8-86CE-F8BBE36EE911",
-    "imageName" : "https://recipe1.ezmember.co.kr/cache/recipe/2018/05/17/f16ca9829e1b24e4b96ca9389eb9bfa01_f.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 200,
@@ -26851,7 +26738,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "62087B7E-CE91-581B-B52F-80BDF34831A9",
-    "imageName" : "https://omnivorescookbook.com/wp-content/uploads/2019/11/1911_Easy-Milk-Bread-Rolls_550.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 300,
@@ -26946,7 +26832,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "1AF5B5F8-B546-5CD6-BB4D-1B221335653F",
-    "imageName" : "https://images.immediate.co.uk/production/volatile/sites/30/2024/02/Milk-buns-5526e79.jpg?resize=768,713",
     "ingredients" : [
       {
         "baseQuantity" : 125,
@@ -27058,7 +26943,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "27EF4EB8-0E22-562C-BFB6-EEF673B45AF0",
-    "imageName" : "https://www.youtube.com/img/desktop/yt_1200.png",
     "ingredients" : [
       {
         "baseQuantity" : 4,
@@ -27479,7 +27363,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "FE860029-E310-5DE8-A92C-0A513B166441",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/a79532e0837f967a5e76839bb518289137e6e35d-1200x521.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -27672,7 +27555,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "6B253C54-BA6E-5D8E-96C6-ACB98DA8FF9A",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/685c6a1f492ee7583f529cdf02d3bf0f3feb86fa-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 28.3,
@@ -28120,7 +28002,6 @@
     },
     "difficulty" : "Basic",
     "id" : "8BFDFC93-D655-5804-A91C-FC02979026AF",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2021/02/IMG_6057-scaled.jpeg",
     "ingredients" : [
       {
         "baseQuantity" : 120,
@@ -28207,7 +28088,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "50BF6EAE-DA10-5DE9-B1F8-19DF55527520",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2018/12/Easy-Instant-Pot-Nihari-4.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -28434,7 +28314,6 @@
     },
     "difficulty" : "Expert",
     "id" : "5DD26EA1-8E6A-5101-8A32-3CEF03F3F9C7",
-    "imageName" : "https://omnivorescookbook.com/wp-content/uploads/2018/01/1507_Nutty-Steamed-Buns_005-300x200.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 300,
@@ -28513,7 +28392,6 @@
     },
     "difficulty" : "Basic",
     "id" : "3409DE16-0474-5BBB-A09F-44FD97F8E855",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2018/01/how-to-make-indian-onion-masala.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.5,
@@ -28753,7 +28631,6 @@
     },
     "difficulty" : "Basic",
     "id" : "B0EBAD01-8509-5430-A1CB-C6FA7DC5D7D0",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2018/11/Healthier-Pan-Fried-Pakora-Recipe-4.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -28905,7 +28782,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "368B9396-9086-52EE-9D03-897EB7624CB2",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2024/03/Pakora-04.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 250,
@@ -29051,7 +28927,6 @@
     },
     "difficulty" : "Basic",
     "id" : "4B76D548-B59A-5698-B52D-F790640D124F",
-    "imageName" : "https://www.inspiredtaste.net/wp-content/uploads/2026/08/Whole-Wheat-Pancakes-Recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.75,
@@ -29348,7 +29223,6 @@
     },
     "difficulty" : "Expert",
     "id" : "F48B1DD4-2261-5BD8-910D-1BC1D56E5827",
-    "imageName" : "https://whattocooktoday.com/wp-content/uploads/2023/06/pandan-kaya-buns-3.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 135,
@@ -29463,7 +29337,6 @@
     },
     "difficulty" : "Basic",
     "id" : "8972EDC4-134F-55F4-82C7-60E1480D8B8F",
-    "imageName" : "https://frozenfish.direct/wp-content/uploads/2020/05/Crunchy-Panko-Crusted-Cod1-410x307-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.25,
@@ -29658,7 +29531,6 @@
     },
     "difficulty" : "Expert",
     "id" : "33349084-6FAF-5C82-8177-8BB84567E799",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2024/04/Paratha-007.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 280,
@@ -29983,7 +29855,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "E0BB8AB0-E903-5587-A8CD-1281BEFABE60",
-    "imageName" : "https://originalflava.com/wp-content/uploads/2022/05/pepper-prawn-paella-.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.5,
@@ -30179,7 +30050,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "A14830F9-AB6A-557D-9CC7-8F061A82E9C4",
-    "imageName" : "https://www.pressurecookrecipes.com/wp-content/uploads/2017/07/instant-pot-pho-ga-recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -30849,7 +30719,6 @@
     },
     "difficulty" : "Basic",
     "id" : "5BFFDEC4-90F1-5710-907C-0243B8E66216",
-    "imageName" : "https://www.bitesofberi.com/wp-content/uploads/2020/12/vegan-potato-leek-soup-3.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -30969,7 +30838,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "C0767C29-4D3B-51FF-9FC8-0BD3BE97B949",
-    "imageName" : "https://www.cocoaandheart.co.uk/wp-content/uploads/2021/05/Cinnamon-Pretzels-Recipe-soft-version.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 500,
@@ -31388,7 +31256,6 @@
     },
     "difficulty" : "Basic",
     "id" : "AD4BC2B3-0539-5634-8CF3-795BA1817B2E",
-    "imageName" : "https://www.liveeatlearn.com/wp-content/uploads/2018/09/pickled-red-cabbage-vert2.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.25,
@@ -31472,7 +31339,6 @@
     },
     "difficulty" : "Basic",
     "id" : "101A4917-3941-5710-A83F-3C6A333DC8F1",
-    "imageName" : "https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/red_onion_pickle_98165_16x9.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 3,
@@ -31557,7 +31423,6 @@
     },
     "difficulty" : "Basic",
     "id" : "B4BD3D8B-D5AD-5FD8-B730-DFBFC8FAA79A",
-    "imageName" : "http://www.nigella.com/assets/uploads/recipes/red-velvet-cupcakes-563a73c448dbe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 250,
@@ -31705,7 +31570,6 @@
     },
     "difficulty" : "Basic",
     "id" : "E2C37878-8F7E-5D9F-A424-89C5E519CBA0",
-    "imageName" : "https://i.ytimg.com/vi/76A0dHz3oKE/oardefault.jpg?sqp=-oaymwEkCJUDENAFSFqQAgHyq4qpAxMIARUAAAAAJQAAyEI9AICiQ3gB&rs=AOn4CLC2HECMJVobrIMNZYsqV6Mgr_N2sA",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -31796,7 +31660,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "94D4943D-6F4A-5486-9C5A-87EE05893A4D",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2024/08/Roti-Chapati-Recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 280,
@@ -31868,7 +31731,6 @@
     },
     "difficulty" : "Basic",
     "id" : "2682B2CB-5868-5921-B20F-FF0CE22CA983",
-    "imageName" : "https://cdn.loveandlemons.com/wp-content/uploads/2020/09/homemade-salsa-social.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0.25,
@@ -32077,7 +31939,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "F77C971C-EC26-553B-A769-3549CBD6A77C",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/718b1cf64a764ab957ddc098b8ccb73d3c54a1e6-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 454,
@@ -32306,7 +32167,6 @@
     },
     "difficulty" : "Basic",
     "id" : "733CE4DF-511B-5A6B-994C-D9A1024A3DF9",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2014/02/indian-pancake.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 0,
@@ -32774,7 +32634,6 @@
     },
     "difficulty" : "Basic",
     "id" : "A8C0C1D4-772B-52C6-B80C-66BBE9A8ED45",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2019/03/instant-pot-indian-turnips.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -32944,7 +32803,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "E1ECE4B9-A74A-531D-8062-6127E1E295EB",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2019/04/Instant-Pot-Shami-Kabab.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -33243,7 +33101,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "3EF62085-0B35-53B5-9C4C-A132DD1E5089",
-    "imageName" : "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiwA3CGhVCZeMkTodFdmgB1maVesUoAS7Pdzw5V9xuC1rRm3YzCz23L514RRfetzKGv_32YC2fzcZ0DTPHP2WUfJWei8orf2FSwYl7atPqht1zq-J0PBxX5gQQaLzpQrF6Il0modHIyzV0/s1600/Shiitake+Chicken+and+Rice+in+Instant+Pot01.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 4,
@@ -34311,7 +34168,6 @@
     },
     "difficulty" : "Basic",
     "id" : "04E1C8BF-EA1B-56C8-8C1D-88B6AE308191",
-    "imageName" : "https://www.fannetasticfood.com/wp-content/uploads/2022/12/Slow-Cooker-Chicken-Drumsticks-featured-image-720x720.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -35177,7 +35033,6 @@
     },
     "difficulty" : "Basic",
     "id" : "73B83FFC-A3FD-5F10-BD8E-E35F81BB0361",
-    "imageName" : "https://www.aforkstale.com/wp-content/uploads/Mexican-chicken-soup-1200-x-1200.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 450,
@@ -35317,7 +35172,6 @@
     },
     "difficulty" : "Basic",
     "id" : "666AD7F4-3843-52D6-9BDE-8457018CE933",
-    "imageName" : "https://www.bitesofberi.com/wp-content/uploads/2021/01/spicy-mexican-chicken-soup-1.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -35601,7 +35455,6 @@
     },
     "difficulty" : "Basic",
     "id" : "2478D099-E414-55F4-A462-BC9C3ACE7EC1",
-    "imageName" : "https://i.ytimg.com/vi/lH2joWkF6Ew/hq720.jpg?sqp=-oaymwEkCJUDENAFSFryq4qpAxYIARUAAAAAJQAAyEI9AICiQ3gB0AEB&rs=AOn4CLB1_ddnFiu_7dftPvswBmkY4DYRGw",
     "ingredients" : [
       {
         "baseQuantity" : 4,
@@ -35841,7 +35694,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "6342A2E6-DAE8-5609-909F-79611806D999",
-    "imageName" : "https://www.hungrylankan.com/wp-content/uploads/2022/03/PXL_20220309_161126334.PORTRAIT-500x500.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 600,
@@ -36221,7 +36073,6 @@
     },
     "difficulty" : "Basic",
     "id" : "BE488A5F-A38C-57A7-A72D-84B49216B88A",
-    "imageName" : "https://www.recipetineats.com/tachyon/2014/06/Sticky-Chinese-Chicken-Wings_5.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1.5,
@@ -36594,7 +36445,6 @@
     },
     "difficulty" : "Basic",
     "id" : "41A250F1-11A1-51F4-B07B-C537FC795A2E",
-    "imageName" : "https://www.craving-nomz.com/wp-content/uploads/2020/12/14B74456-0400-4A11-9798-0C1736A52BC9-1-scaled.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 50,
@@ -36915,7 +36765,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "121924F5-4885-59C1-8CAC-C01E908AEC64",
-    "imageName" : "https://www.teaforturmeric.com/wp-content/uploads/2024/09/Tandoori-Chicken-Recipe.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 5,
@@ -37483,7 +37332,6 @@
     },
     "difficulty" : "Basic",
     "id" : "6C2D5992-A3B5-50FA-B820-E39E81AF4B02",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2017/08/texas-beef-chili-300x225.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -37957,7 +37805,6 @@
     },
     "difficulty" : "Basic",
     "id" : "9D1E4243-B9C5-5B12-A434-82ADDE11263F",
-    "imageName" : "https://www.cookingwithnart.com/wp-content/uploads/2023/08/Thai-Pink-Milk-%E0%B8%99%E0%B8%A1%E0%B9%80%E0%B8%A2%E0%B9%87%E0%B8%99-Cooking-with-Nart.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -38142,7 +37989,6 @@
     },
     "difficulty" : "Basic",
     "id" : "5497723F-BCAD-5297-9674-124F42ABD968",
-    "imageName" : "https://img-global.cpcdn.com/recipes/ee55217805c2bed9/1200x630cq80/photo.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 4,
@@ -38225,7 +38071,6 @@
     },
     "difficulty" : "Basic",
     "id" : "75E17F30-0EC1-5B62-A7B3-C09DC056441B",
-    "imageName" : "https://thewoksoflife.com/wp-content/uploads/2019/05/tomato-egg-9.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 4,
@@ -38452,7 +38297,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "CAFEC7B3-9904-5670-922A-47B1D8C0F50D",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/5ac0079d1c398335fe0029a4be06845e320477fb-1000x1000.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 397,
@@ -39058,7 +38902,6 @@
     },
     "difficulty" : "Expert",
     "id" : "CA152681-3A77-5457-85AA-8C3613BFD78D",
-    "imageName" : "https://cdn77-s3.lazycatkitchen.com/wp-content/uploads/2017/03/vegan-bao-buns-single.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 300,
@@ -39239,7 +39082,6 @@
     },
     "difficulty" : "Basic",
     "id" : "54DD4B3B-0C0F-53BA-988F-9778EFC786BD",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/68cc008ff0916836f596b0700c29004205eb5bf5-630x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -39332,7 +39174,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "9708ADBF-72EE-5194-8982-EFBB0651705F",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/b49f2d90964ecd278a4a05d6033d8e6d546edf89-1120x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 500,
@@ -39430,7 +39271,6 @@
     },
     "difficulty" : "Basic",
     "id" : "2C6BD972-A2FB-5F75-BF91-02A858B7EA46",
-    "imageName" : "https://originalflava.com/wp-content/uploads/2019/03/lentil-nut-roast.png",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -39582,7 +39422,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "3101E854-98CD-57D8-AF49-A42BBB85C350",
-    "imageName" : "https://cdn.sanity.io/images/xzzrj6ap/production/2d51b4f17a619bef2b97911b47135a11475c712b-968x630.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 1,
@@ -39743,7 +39582,6 @@
     },
     "difficulty" : "Intermediate",
     "id" : "006D7212-D01C-5F84-AFCB-1D856E6AF7E4",
-    "imageName" : "https://cdn.sanity.io/images/2r0kdewr/production/9207db6fe1f0d166c12ed70795361fa00b7ba40f-1500x1500.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 283,
@@ -40216,7 +40054,6 @@
     },
     "difficulty" : "Basic",
     "id" : "5C398836-2B2A-5FA3-AAB2-B21BC193DC1E",
-    "imageName" : "https://myheartbeets.com/wp-content/uploads/2017/08/white-chicken-chili-600x450.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 2,
@@ -40411,7 +40248,6 @@
     },
     "difficulty" : "Expert",
     "id" : "497E4FD0-4947-50FA-8E31-8335464B2FD0",
-    "imageName" : "https://www.girlversusdough.com/wp-content/uploads/2019/03/sourdough-starter-2-copy.jpg",
     "ingredients" : [
       {
         "baseQuantity" : 100,
