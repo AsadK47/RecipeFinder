@@ -58,7 +58,10 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   Plus Web search redesign (in progress) and Settings tidy-up.
+   Plus Web search redesign (in progress).
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Plan my week → Groceries + Kitchen →
+   Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
+   (now inside Me) + polish.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
    Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.
@@ -135,6 +138,29 @@ drop a line while moving it.
   UI, collection remove swipe, ½× servings → 0, week-to-groceries servings, unused shopping reminders toggle,
   one-slot share inbox, premature "Recipe saved", silent file-import failure). Test first for each. *Done when:*
   each has a failing-then-passing test (UI ones a screenshot), CI green.
+- [ ] **Tabs 1/3 — new structure** (owner OK 2026-11-10; plan in `docs/AUDIT-2026-11-10.md` + chat 2026-11-10).
+  Tabs become Today · Recipes · Plan · Groceries · Me. Import tab → "+" on Recipes (link, web search, paste,
+  photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
+  later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
+  tested, every tab screenshot, existing UI tests updated (not weakened), CI green.
+- [ ] **Tabs 2/3 — Today.** Greeting + streak (shown at 0 as "Start a streak") + Spoons; Tonight hero (planned meal,
+  else best pantry match, "you have 8/10", Start cooking); prep-ahead nudge row; shelves Cook again / Fits your
+  fridge / New imports / Rediscover (absorbs "Recently cooked row" + RediscoveryCard); clipboard recipe-link card;
+  new-user state = "Import your first recipe" + starters. *Done when:* hero/shelf selection logic tested,
+  screenshots (new user, planned day, unplanned day), CI green.
+- [ ] **Plan my week — a proper meal planner** (owner: "make the meal planner a proper feature"). 7-day agenda by
+  default (tap empty slot → inline suggestions/picker; long-press to move/swap; per-meal servings); tap planned meal →
+  open/cook; cooking it marks it done; pinned "Shop for this week (N items)" that scales by planned servings (fixes
+  audit bug 4) and skips what's At home; copy last week / repeat a week; leftovers chain hook. Delete code made
+  redundant by the agenda (single-day empty states etc.). *Done when:* agenda/move/servings/shop-list logic tested,
+  screenshots (empty week, full week), CI green.
+- [ ] **Groceries + Kitchen, one feature** (owner: "lost cohesiveness … delete redundant code"). One Groceries tab
+  with a To buy | At home switch (Kitchen no longer an overflow-menu sheet); add/edit expiry + quantity (audit
+  bug 1); ticked items → "Put away" moves them into At home with an expiry suggestion (instead of
+  `clearCheckedItems` deleting); empty-state buttons (Add this week's plan / Re-add staples); item shows which recipe
+  it came from; undo on delete/clear. Merge duplicated row/section/header views between `Views/Kitchen` and
+  `Views/Shopping` and delete the leftovers. *Done when:* put-away + expiry + merge logic tested, screenshots of both
+  halves, net line count down, CI green.
 - [ ] **Spoons 1/2 — earn** (owner OK 2026-11-10). On-device reward currency for real cooking: Made it +10, first cook
   of a recipe +15, weekly streak kept +25, Kitchen item used before expiry +10, week planned +5, badge +20–50;
   "Cook for someone" toggle on Made it (+bonus, badge). Balance + recent earnings in Me/Profile; earn animation on
