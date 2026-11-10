@@ -2,7 +2,7 @@
 
 # RecipeFinder 🍳
 
-**Your recipes, your groceries, your week of cooking — all on your phone.**
+**Save any recipe, plan your week, shop smarter and cook with confidence.**
 
 [![Build & Test](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
 [![TestFlight](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml)
@@ -26,9 +26,9 @@
 
 ## What it is
 
-RecipeFinder is an iPhone and iPad recipe manager built around one loop: **get a recipe in → shop for it → cook it**.
-Open it and start cooking. Your library lives on your device, and the smart parts (reading photos, tidying messy
-text, estimating amounts) run on-device too.
+RecipeFinder is an iPhone and iPad app that helps you collect recipes from anywhere, plan your meals, shop for them
+and cook with confidence. Open it and start cooking: smart features like reading photos, tidying messy text and
+estimating amounts run privately on your device.
 
 It ships with 332 starter recipes so it's useful from the first launch.
 
@@ -36,7 +36,7 @@ It ships with 332 starter recipes so it's useful from the first launch.
 
 **Get recipes in**
 - Paste a link — recipe data is read straight from the page, with automatic ingredient parsing
-- Search the web without leaving the app; an import button appears only on pages that contain a recipe
+- Search the web without leaving the app and import any recipe you find in one tap
 - Share a link or text from Safari or any other app via the share sheet
 - Scan up to five photos of cookbook pages, or open a PDF
 - Paste any text and it's turned into a recipe
@@ -66,8 +66,8 @@ It ships with 332 starter recipes so it's useful from the first launch.
 
 ## Privacy
 
-- Your recipes stay on your device — open the app and go, straight away
-- Text recognition and Apple Intelligence run on-device; the app goes online only to fetch a page you chose to import or search
+- Private by design: your recipes live on your device and you can start straight away
+- Text recognition and Apple Intelligence run privately on your device; pages you search or import load straight from the web
 - In-app browsing is private: every session starts fresh
 - Details: [Privacy Policy](https://recipefinder.uk/privacy.html)
 

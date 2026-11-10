@@ -7,7 +7,7 @@ Proprietary — Asad Khan. GitHub: https://github.com/AsadK47/RecipeFinder
 These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** answer concisely: lead with the result/answer; cut preamble, recaps, and reasoning the user didn't ask for. Detail only on request.
-- **MUST** write user-facing copy (README, website, App Store, in-app text) positively: say what it does, not lists of "no X, no Y".
+- **MUST** write user-facing copy (README, website, App Store, in-app text) positively and open-ended: say what it does and why it helps — no "no X, no Y" lists and no limiting words ("only", "just", "built around one…") that box the product in and age badly when it grows.
 - **MUST** run `BuildProject` + `RunAllTests` before committing; unfinished state goes in `WORK.md`.
 - **MUST** keep one task in *active editing* at a time (WIP=1): never "also refactor" B while doing A — record B as the next `WORK.md` action. While a pushed branch waits on CI, the next item may start on its own branch (owner OK 2026-11-10); independent batches may run in parallel sessions. Nothing merges until its CI is green. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
