@@ -287,7 +287,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   photo and rating, cooking mode mid-recipe, and a real link import (fixture HTML served locally) at each step: Paste a
   link → review → saved. Publish to the `screenshots` release. *Done when:* every screen looks like a real person's
   kitchen, no empty states, screenshots checked by eye, CI green.
-- [ ] **Site look — match the app's aesthetic** (owner request 2026-11-10; website builder does this next, before
+- [ ] **Site look — match the app's aesthetic** — 🚧 website builder 2026-11-10 (owner request 2026-11-10; website builder does this next, before
   Site 3/6). Restyle every section on the rules above: frosted glass cards over the app gradient, app-style buttons,
   chips and icon badges, emoji swapped for icons drawn in the app's style. *Done when:* screenshots of each section
   sit next to the app screenshots and read as the same product, in light and dark.
