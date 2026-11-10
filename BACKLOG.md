@@ -61,7 +61,8 @@ drop a line while moving it.
    Plus Web search redesign (in progress).
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
-   (now inside Me) + polish.
+   (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Medium features (fridge photo, taste profile,
+   cook-along Q&A, skill tree, heirloom mode): owner unsure 2026-11-10 — revisit after this list is done.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
    Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.
@@ -249,6 +250,17 @@ drop a line while moving it.
 - [ ] **Scroll fade elsewhere.** Check other screens with a nav bar + scrolling content for text showing through the
   toolbar; apply `NavigationBarScrollFade` (see DesignSystem.md lesson 2026-11-08) where it does.
 
+- [ ] **Widget + Live Activity** (owner OK 2026-11-10 for the new Widget Extension target, its App Group entitlement
+  and signing). Home-screen widget "Tonight" (planned meal, else a pantry match) + streak; Live Activity for cooking
+  mode (current step + running timer on Lock Screen / Dynamic Island). Data via the existing App Group, read-only, no
+  network. Creating the target by hand in `project.pbxproj` from the cloud is risky — if CI can't sign/build it after
+  2 tries, leave the branch and ask the owner to add the target in Xcode. *Done when:* timeline/snapshot logic tested,
+  widget preview screenshot, CI + TestFlight green.
+- [ ] **Recipe pictures** (owner idea 2026-11-10: "pictures for the recipes"). Recipes without a photo get one.
+  First slice: confirm with owner which route — (a) on-device Image Playground illustration (iOS 18.1+, Apple
+  Intelligence, nothing leaves the device), (b) owner-supplied/free-licensed photos bundled for starters, or (c) both.
+  *Done when:* chosen route shipped, fallback for unsupported devices, screenshot, CI green.
+
 ## Smells (refactors — reviewer adds, builder works; see rule at top)
 - [ ] **Primitive Obsession: recipe times stored as text** (owner OK incl. Core Data change, 2026-11-09).
   `RecipeModel.prepTime`/`cookingTime` are Strings ("30 minutes") parsed back with regexes for sorting, filtering,
@@ -280,7 +292,6 @@ drop a line while moving it.
   generally fine; written steps may be protected — not legal advice). Recommended: agents rewrite every method in our
   own words in batches (same curated-JSON + seed + drift-test process), or trim the bundled set. Owner to confirm
   before agents start.
-- 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.
 - 🙋 Later, once there is revenue: owner-funded charity pledge (e.g. "every 1,000 community Spoons funds a meal" via a UK food charity). Needs your decision + a Charities Act-compliant statement/agreement; agents never link money to Spoons.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
