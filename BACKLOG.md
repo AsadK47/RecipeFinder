@@ -57,7 +57,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   bump `sampleRefreshVersion`). Keep "View original" links (credit). Never touch user-imported recipes' images.
   *Done when:* no bundled recipe has an http(s) image, refresh test for existing installs, Screenshots of the library,
   CI green.
-- [ ] **Manual 2/3 — Paste-and-type ingredients & steps** — 🚧 builder 2026-11-10 ✅ Slices 1–2 (c5c4e39, cd2352f): text-block parsers + one text box per section with live preview, keyboard Done, interactive dismiss. Remaining: editable preview rows / fraction bar, wizard ≤1,000 lines, `RecipeWizardView` ≤300. Original: (owner OK 2026-11-09; wizard review). Replace per-row
+- [ ] **Manual 2/3 — Paste-and-type ingredients & steps** — 🚧 builder 2026-11-10 ✅ Slices 1–2 (c5c4e39, cd2352f): text-block parsers + one text box per section with live preview, keyboard Done, interactive dismiss. ✅ Slice 3 (14b1f63): `RecipeWizardView` 422→242. Remaining: editable preview rows / fraction bar, wizard total ≤1,000 lines (now 1,434). Original: (owner OK 2026-11-09; wizard review). Replace per-row
   ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
   block — parsed live by `IngredientLineParser` into an editable preview (amount, unit, name) so manual entry and
   import share one parser. Fraction-friendly keyboard (`.numbersAndPunctuation` or a ½ ⅓ ¼ ¾ bar) where a numeric
@@ -194,7 +194,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   version + lightweight migration parsing the old strings; bump the `.xccurrentversion` number in CLAUDE.md files),
   keep a `DurationFormatter` for display, decode legacy JSON (backups, `recipes_seed.json`) via `decodeIfPresent`.
   *Done when:* migration + legacy-decode tests, every `prepTime`/`cookingTime` string use removed, CI green.
-- [ ] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — handled by Manual 2/3; tick both together.
+- [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
 ## Needs owner
 - 🙋 Starter photos (optional, nice-to-have): pick ~6 photos you own or free-licensed ones (e.g. Unsplash, licence
@@ -238,3 +238,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · Sample recipes stop loading third-party photos · 2967638 · 164 bundled recipes no longer hotlink site images (placeholder art instead; "View original" links kept). Existing installs: sampleRefreshVersion 4 clears remote images on samples, keeps any photo you chose. History JSON not regenerated (content unchanged). Screenshots workflow green — glance at the library in the screenshots release.
 - 2026-11-10 · Manual 2/3 slice 1 · c5c4e39 · Text-block parsers for ingredients/steps (shared with import parser). Nothing visible yet.
 - 2026-11-10 · Manual 2/3 slice 2 · cd2352f · Wizard ingredients/steps: one text box per section, one item per line, live preview. Per-row unit picker + name autocomplete removed.
+- 2026-11-10 · Manual 2/3 slice 3 + Smell Large Class RecipeWizardView · 14b1f63 · Prefill + form sections moved to `RecipeWizardView+Form.swift` (registered in pbxproj by hand); 422→242 lines. Not user-visible.
