@@ -106,6 +106,7 @@
 		9E97EE963007958B00D35FAB /* AppearanceAndThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */; };
 		9E97EE9C300795BA00D35FAB /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */; };
 		9E97EEA0300795D300D35FAB /* UnitsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */; };
+		E4280864924C7F60117016F7 /* RecipeSearchSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22059C9408FBFE54A613292B /* RecipeSearchSettingsView.swift */; };
 		9E97EEA2300795DF00D35FAB /* DisplaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */; };
 		9E97EEA4300795F100D35FAB /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */; };
 		9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */; };
@@ -576,6 +577,7 @@
 		9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceAndThemeSettingsView.swift; sourceTree = "<group>"; };
 		9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitsSettingsView.swift; sourceTree = "<group>"; };
+		22059C9408FBFE54A613292B /* RecipeSearchSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchSettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementSettingsView.swift; sourceTree = "<group>"; };
@@ -1673,6 +1675,7 @@
 				9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */,
 				9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */,
 				9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */,
+				22059C9408FBFE54A613292B /* RecipeSearchSettingsView.swift */,
 				9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */,
 				9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */,
 				9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */,
@@ -2293,6 +2296,7 @@
 				9E97EECB300D0DA400D35FAB /* EditableStep.swift in Sources */,
 				F3E9D11C30434E20008BF231 /* MealPlannerHeader.swift in Sources */,
 				9E97EEA0300795D300D35FAB /* UnitsSettingsView.swift in Sources */,
+				E4280864924C7F60117016F7 /* RecipeSearchSettingsView.swift in Sources */,
 				9E77ABF42EB4483100666BB0 /* SettingsView.swift in Sources */,
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
 				9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */,

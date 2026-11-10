@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsTabView: View {
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
+    @AppStorage("webSearchEngine") private var webSearchEngine = WebRecipeSearchEngine.default.rawValue
     @Environment(\.profile) private var profileManager
     @State private var profileImage: UIImage?
     @State private var debugResetMessage: String?
@@ -65,6 +66,13 @@ struct SettingsTabView: View {
                         .init(
                             row: SettingsRow(icon: "display", iconColor: .cyan, title: "Display"),
                             destination: DisplaySettingsView()
+                        ),
+                        .init(
+                            row: SettingsRow(
+                                icon: "globe", iconColor: .green, title: "Recipe Search",
+                                value: (WebRecipeSearchEngine(rawValue: webSearchEngine) ?? .default).displayName
+                            ),
+                            destination: RecipeSearchSettingsView()
                         )
                     ])
 
