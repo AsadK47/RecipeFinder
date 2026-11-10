@@ -74,7 +74,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   text path scores from what was found (on-device AI result counts as high). In `RecipeWizardView`, when score < 0.6:
   a banner "We couldn't read this one well — check the highlighted parts" and a highlight on each missing field.
   *Done when:* `ImportQuality` tests (complete, partial, empty prefill), wizard banner screenshot, CI green.
-- [ ] **Import 3/5 — No dead ends when parsing fails.** Paste/photo: when the router returns nil, keep the text (paste
+- [ ] **Import 3/5 — No dead ends when parsing fails.** — 🚧 builder 2026-11-10 Paste/photo: when the router returns nil, keep the text (paste
   already does) and offer "Start from this text" → wizard prefilled with name = first non-empty line, notes = full
   text, empty ingredient/step rows ready to fill, `sourceText` set. Link import failure: "Couldn't read a recipe from
   this page" + "Paste the recipe text instead" opening the paste sheet. *Done when:* prefill-builder tested, both
@@ -184,7 +184,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   version + lightweight migration parsing the old strings; bump the `.xccurrentversion` number in CLAUDE.md files),
   keep a `DurationFormatter` for display, decode legacy JSON (backups, `recipes_seed.json`) via `decodeIfPresent`.
   *Done when:* migration + legacy-decode tests, every `prepTime`/`cookingTime` string use removed, CI green.
-- [ ] **Large wizard: 1,434 lines across `RecipeWizardView*` + `Wizard/` (target ≤1,000)** — e.g. one `SuggestionChip` for the 3 copy-pasted chip buttons in `NotesStepView`, trim the notes placeholder block, review `RecipeNameStepView` (199).
+- [ ] **Large wizard: ~1,444 lines across `RecipeWizardView*` + `Wizard/` (target ≤1,000)** — ✅ `SuggestionChip` + hint loop in `NotesStepView` (6b7560c). Remaining: review `RecipeNameStepView` (~210), `BasicInfoStepView`, `WizardIntroSheet`.
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
 ## Needs owner
@@ -233,3 +233,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · Manual 2/3 ticked · — · Done-when met; line-count target split into a Smell.
 - 2026-11-10 · Manual 3/3 slice 1 · 4157d72 · Wizard prep/cook time = hours + minutes menus (odd imported minutes kept); servings up to 50. UI test `testCookingShowsRatingAndStreakChip` flaked once (unrelated), green on rerun.
 - 2026-11-10 · Manual 3/3 slice 2 · 50b7eb4 · Photo remove buttons: 44pt targets, "Remove photo N" labels; gallery thumbnails keyed by photo not position. Manual series done.
+- 2026-11-10 · Smell Large wizard (partial) · 6b7560c · One `SuggestionChip` for cuisine/tag/note pills. Not user-visible.
