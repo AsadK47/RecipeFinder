@@ -9,6 +9,7 @@ struct ProfileView: View {
     @Environment(\.badges) private var badgeManager
 
     @State private var activeSheet: ProfileSheet?
+    @State private var showSettings = false
     @State private var profileImage: UIImage?
     @State private var editingName = false
     @State private var tempName = ""
@@ -26,13 +27,11 @@ struct ProfileView: View {
             VStack(spacing: 0) {
                 ScreenTitleHeader(title) {
                     if showsSettingsLink {
-                        NavigationLink(destination: SettingsTabView()) {
-                            CircleButton(icon: "gearshape.fill") {}
-                                .allowsHitTesting(false)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Settings")
-                        .accessibilityIdentifier("me.settings")
+                        // A plain button + navigationDestination: a NavigationLink wrapping CircleButton's own
+                        // Button never pushed in UI tests.
+                        CircleButton(icon: "gearshape.fill") { showSettings = true }
+                            .accessibilityLabel("Settings")
+                            .accessibilityIdentifier("me.settings")
                     }
                 }
 
@@ -103,6 +102,7 @@ struct ProfileView: View {
         .appNavigationTitle("")
         // Me's root draws its own title header; an empty bar above it would only waste space.
         .toolbar(showsSettingsLink ? .hidden : .automatic, for: .navigationBar)
+        .navigationDestination(isPresented: $showSettings) { SettingsTabView() }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
             case .privacyPolicy:

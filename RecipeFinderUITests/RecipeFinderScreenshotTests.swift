@@ -209,6 +209,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         app.tabBars.buttons["Me"].tap()
         app.buttons["me.settings"].tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
         settle()
         let data = app.staticTexts["Data Management"].firstMatch
         for _ in 0..<4 where !data.isHittable { app.swipeUp() }
