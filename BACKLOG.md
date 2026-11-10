@@ -145,7 +145,7 @@ drop a line while moving it.
   photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
   later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
   tested, every tab screenshot, existing UI tests updated (not weakened), CI green.
-- [ ] **Tabs 2/3 — Today.** Slice 1 done (69c3b21): greeting + streak/"Start a streak", Tonight hero (planned meal,
+- [ ] **Tabs 2/3 — Today.** — 🚧 builder agent 2026-11-10 Slice 1 done (69c3b21): greeting + streak/"Start a streak", Tonight hero (planned meal,
   else best kitchen match "You have 8/10 ingredients"), shelves Cook again / Fits your kitchen / Rediscover,
   new-user "Bring in your first recipe" + Starters (pure `TodayFeed`, tested). **Left:** flip `AppTab.launchDefault`
   to `.today` (update every UI test `launchApp` that assumes Recipes + `RecipeFinderLaunchUITests` +
