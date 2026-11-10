@@ -79,6 +79,22 @@ enum DurationFormatter {
         return minutes == 0 ? "\(hours) hr" : "\(hours) hr \(minutes) min"
     }
 
+    static func hours(of total: Int) -> Int { total / 60 }
+    static func minutes(of total: Int) -> Int { total % 60 }
+
+    /// New total after picking an hour count, keeping the minutes.
+    static func total(_ total: Int, settingHours hours: Int) -> Int { hours * 60 + minutes(of: total) }
+
+    /// New total after picking a minute count, keeping the hours.
+    static func total(_ total: Int, settingMinutes minutes: Int) -> Int { hours(of: total) * 60 + minutes }
+
+    /// 0, 5 … 55, plus the current minutes when an import gave an odd value (e.g. 7), so the picker can show it.
+    static func minuteChoices(including total: Int) -> [Int] {
+        let steps = Array(stride(from: 0, through: 55, by: 5))
+        let current = minutes(of: total)
+        return steps.contains(current) ? steps : (steps + [current]).sorted()
+    }
+
     /// Countdown clock, "01:05:09".
     static func clock(seconds: Int) -> String {
         String(format: "%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60)

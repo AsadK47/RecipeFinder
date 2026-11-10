@@ -48,4 +48,35 @@ struct TimeExtractorTests {
     func clock(seconds: Int, expected: String) {
         #expect(DurationFormatter.clock(seconds: seconds) == expected)
     }
+
+    @Test("Total minutes split into hours and minutes", arguments: [
+        (0, 0, 0), (45, 0, 45), (60, 1, 0), (125, 2, 5),
+    ])
+    func split(total: Int, hours: Int, minutes: Int) {
+        #expect(DurationFormatter.hours(of: total) == hours)
+        #expect(DurationFormatter.minutes(of: total) == minutes)
+    }
+
+    @Test("Changing one part keeps the other", arguments: [
+        (125, 3, 185), (125, 0, 5), (0, 1, 60),
+    ])
+    func settingHours(total: Int, hours: Int, expected: Int) {
+        #expect(DurationFormatter.total(total, settingHours: hours) == expected)
+    }
+
+    @Test("Changing minutes keeps the hours", arguments: [
+        (125, 30, 150), (125, 0, 120), (0, 15, 15),
+    ])
+    func settingMinutes(total: Int, minutes: Int, expected: Int) {
+        #expect(DurationFormatter.total(total, settingMinutes: minutes) == expected)
+    }
+
+    @Test("Minute choices step by 5 and keep an imported odd value selectable")
+    func minuteChoices() {
+        #expect(DurationFormatter.minuteChoices(including: 10) == Array(stride(from: 0, through: 55, by: 5)))
+        let odd = DurationFormatter.minuteChoices(including: 67)
+        #expect(odd.contains(7))
+        #expect(odd == odd.sorted())
+        #expect(odd.count == 13)
+    }
 }

@@ -10,11 +10,6 @@ struct BasicInfoStepView: View {
     let difficulties: [String]
     let categories: [String]
 
-    /// 0 means the cook hasn't set it — say so, matching the recipe screen, rather than "0 minutes".
-    private func timeLabel(_ minutes: Int) -> String {
-        minutes == 0 ? "Not set" : DurationFormatter.label(minutes: minutes)
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             WizardStepHeader(
@@ -30,10 +25,7 @@ struct BasicInfoStepView: View {
                             .font(.headline)
                             .foregroundStyle(.primary)
 
-                        HStack {
-                            Stepper(timeLabel(prepTime), value: $prepTime, in: 0...300, step: 5)
-                                .font(.body)
-                        }
+                        DurationPicker(title: "Prep Time", minutes: $prepTime, maxHours: 5)
                     }
 
                     Divider()
@@ -43,10 +35,7 @@ struct BasicInfoStepView: View {
                             .font(.headline)
                             .foregroundStyle(.primary)
 
-                        HStack {
-                            Stepper(timeLabel(cookTime), value: $cookTime, in: 0...480, step: 5)
-                                .font(.body)
-                        }
+                        DurationPicker(title: "Cook Time", minutes: $cookTime, maxHours: 8)
                     }
 
                     Divider()
@@ -88,7 +77,7 @@ struct BasicInfoStepView: View {
 
                         HStack {
                             Stepper(
-                                value: $servings, in: 1...20,
+                                value: $servings, in: Validator.servingsRange,
                                 label: {
                                     HStack(spacing: AppTheme.spacing8) {
                                         Text("\(servings)")
@@ -108,5 +97,35 @@ struct BasicInfoStepView: View {
                 .padding()
             }
         }
+    }
+}
+
+/// Hours + minutes menus: one tap each instead of dozens of 5-minute stepper taps. 0 reads "Not set", as on the recipe screen.
+private struct DurationPicker: View {
+    let title: String
+    @Binding var minutes: Int
+    let maxHours: Int
+
+    var body: some View {
+        HStack(spacing: AppTheme.spacing8) {
+            Text(minutes == 0 ? "Not set" : DurationFormatter.label(minutes: minutes))
+                .adaptiveSecondaryForeground()
+            Spacer()
+            Picker("\(title) hours", selection: Binding(
+                get: { DurationFormatter.hours(of: minutes) },
+                set: { minutes = DurationFormatter.total(minutes, settingHours: $0) }
+            )) {
+                ForEach(0...max(maxHours, DurationFormatter.hours(of: minutes)), id: \.self) { Text("\($0) hr").tag($0) }
+            }
+            .pickerStyle(.menu)
+            Picker("\(title) minutes", selection: Binding(
+                get: { DurationFormatter.minutes(of: minutes) },
+                set: { minutes = DurationFormatter.total(minutes, settingMinutes: $0) }
+            )) {
+                ForEach(DurationFormatter.minuteChoices(including: minutes), id: \.self) { Text("\($0) min").tag($0) }
+            }
+            .pickerStyle(.menu)
+        }
+        .frame(minHeight: 44)
     }
 }

@@ -98,8 +98,11 @@ struct Validator {
         }
     }
     
+    /// Servings a recipe may have; the wizard's stepper uses the same range so it can't offer a value that fails here.
+    static let servingsRange = 1...50
+
     static func validateServings(_ servings: Int) throws {
-        guard servings >= 1 && servings <= 50 else {
+        guard servingsRange.contains(servings) else {
             throw AppError.invalidServings
         }
     }

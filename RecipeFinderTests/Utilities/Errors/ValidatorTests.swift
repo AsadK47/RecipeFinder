@@ -137,3 +137,15 @@ struct ValidatorUnicodeQuantityTests {
         #expect(try Validator.validateQuantity(input, field: "Amount") == expected)
     }
 }
+
+@Suite struct ServingsRangeTests {
+
+    @Test("The wizard's servings range is exactly what validation accepts")
+    func rangeMatchesValidation() throws {
+        #expect(Validator.servingsRange == 1...50)
+        try Validator.validateServings(Validator.servingsRange.lowerBound)
+        try Validator.validateServings(Validator.servingsRange.upperBound)
+        #expect(throws: AppError.self) { try Validator.validateServings(Validator.servingsRange.upperBound + 1) }
+        #expect(throws: AppError.self) { try Validator.validateServings(Validator.servingsRange.lowerBound - 1) }
+    }
+}
