@@ -140,7 +140,7 @@ drop a line while moving it.
   UI, collection remove swipe, ½× servings → 0, week-to-groceries servings, unused shopping reminders toggle,
   one-slot share inbox, premature "Recipe saved", silent file-import failure). Test first for each. *Done when:*
   each has a failing-then-passing test (UI ones a screenshot), CI green.
-- [ ] **Tabs 1/3 — new structure** (owner OK 2026-11-10; plan in `docs/AUDIT-2026-11-10.md` + chat 2026-11-10).
+- [ ] **Tabs 1/3 — new structure** (owner OK 2026-11-10; plan in `docs/AUDIT-2026-11-10.md` + chat 2026-11-10). — 🚧 interactive session 2026-11-10
   Tabs become Today · Recipes · Plan · Groceries · Me. Import tab → "+" on Recipes (link, web search, paste,
   photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
   later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
