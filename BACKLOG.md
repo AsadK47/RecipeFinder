@@ -58,7 +58,7 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Plan my week → Groceries + Kitchen →
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Showcase screenshots → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
    (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Medium features (fridge photo, taste profile,
    cook-along Q&A, skill tree, heirloom mode) + Shared family cookbooks: owner unsure 2026-11-10 — revisit after
@@ -274,18 +274,38 @@ Rules for every Site item: repo `AsadK47/RecipeFinderWebsite`, plain HTML/CSS/JS
 root CLAUDE.md (say what the app does, positive and open-ended), honour `prefers-reduced-motion` and keep content
 visible without JS, phone + desktop, light + dark. *Done when* for each: `npm test` green, new logic has a Jest test,
 Playwright screenshots at 390px and 1280px (light + dark) checked by eye, pushed to the site's `main`, Log line here.
-Legal pages (privacy/terms/cookies) are out of scope. The TestFlight beta link ships only when the owner says
+**Look like the app** (owner 2026-11-10): follow `RecipeFinder/DesignSystem.md` — the theme's gradient background,
+frosted translucent cards (`backdrop-filter` blur + translucent fill + 0.5px hairline border; never opaque white
+blocks), capsule buttons like `PrimaryButton`, tinted circular icon badges in the style of SF Symbols (not emoji),
+the system font stack (SF Pro on Apple devices), the app's radii and spacing, teal accent, light/dark matching the app.
+Compare side by side with the app screenshots before pushing. Legal pages (privacy/terms/cookies) are out of scope. The TestFlight beta link ships only when the owner says
 "ship the beta link" (branch `feat/testflight-beta`); until then CTAs say "Coming soon" + notify form.
+- [ ] **Showcase screenshots** (app repo; app builder takes this next, owner request 2026-11-10 — the site's
+  screenshots look like test data). Add a DEBUG-only `-seed-showcase` launch state and capture with
+  `RecipeFinderScreenshotTests`: a varied library (mixed cuisines and photos, not an alphabetical run of one dish), a
+  filled week in the meal planner, a grocery list from several recipes sorted by aisle with two stores, a recipe with a
+  photo and rating, cooking mode mid-recipe, and a real link import (fixture HTML served locally) at each step: Paste a
+  link → review → saved. Publish to the `screenshots` release. *Done when:* every screen looks like a real person's
+  kitchen, no empty states, screenshots checked by eye, CI green.
+- [ ] **Site look — match the app's aesthetic** (owner request 2026-11-10; website builder does this next, before
+  Site 3/6). Restyle every section on the rules above: frosted glass cards over the app gradient, app-style buttons,
+  chips and icon badges, emoji swapped for icons drawn in the app's style. *Done when:* screenshots of each section
+  sit next to the app screenshots and read as the same product, in light and dark.
 - [ ] **Site 1/6 — Banner + FAQ.** Top banner shows what's new (e.g. "New: import from PDFs and other apps", one line,
   edited in one place). FAQ section (accordion, `<details>`): Is it free? iPhone and iPad? Bring my Paprika/Mela/CSV
   recipes? Where are my recipes kept? Works offline? How do I get it / beta? Answers match the app today.
 - [ ] **Site 2/6 — Feature tour.** Replace the emoji grid with tabs (Save · Cook · Plan & shop · Organise), each with a
   short list and a real phone screenshot that swaps (screenshots from the app's nightly `screenshots` release, copied
   into `assets/screens/`). Keyboard and screen-reader friendly tabs.
-- [ ] **Site 3/6 — Import animation.** Hero/how-it-works loop: a cluttered recipe web page turns into a clean recipe
-  card (ingredients + steps). CSS/JS only, under ~5 s, static final frame for reduced motion.
-- [ ] **Site 4/6 — Try-it recipe card.** One recipe on the page with a working servings stepper and metric/imperial
-  toggle (pure JS scaling + conversion, Jest-tested), styled like the app's recipe screen.
+- [ ] **Site 3/6 — Import demo (true to the app).** Shows a real import, not an invented one: a real public recipe
+  page goes through the app's real Import → Paste a link flow, and the demo is built from those real app screens
+  (captured by a UI test, see *Showcase screenshots*) — page → review sheet → saved recipe, with the app's actual
+  wording and layout. Nothing on screen the app doesn't do. Static final frame for reduced motion. **Blocked until
+  Showcase screenshots is merged.**
+- [ ] **Site 4/6 — Try-it recipe card (true to the app).** One real bundled recipe, rendered like the app's recipe
+  screen, with the app's servings presets (½× 1× 2× 3×) and Metric/Imperial toggle. Port the app's scaling, fraction
+  and unit-conversion rules (`Utilities/Recipe/`) to JS and test them against the same cases as the app's Swift tests
+  so both give identical results. **Blocked until Showcase screenshots is merged** (needs the real recipe screen).
 - [ ] **Site 5/6 — "A week with RecipeFinder" + Recipe of the day.** Scroll story Sun→Sat: save from a link, plan the
   week, shop by store, cook in cooking mode, "Made it" badge — each beat with a screenshot. Recipe of the day rotates
   daily (by date) through a small JSON of bundled recipes generated by a script in the app repo's `tools/` — name,
