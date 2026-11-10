@@ -362,3 +362,59 @@ struct OtherAppExportReaderTests {
         #expect(throws: OtherAppExportError.damaged) { try Gzip.decompress(data) }
     }
 }
+
+/// In-app browser rules: when the import button shows, what the address bar says, recent searches.
+@Suite("Web search browsing")
+struct WebSearchBrowsingTests {
+
+    private let recipePage = URL(string: "https://www.example-recipes.com/lemon-cake")
+
+    @Test("Import is hidden with nothing loaded, while loading, and on search results", arguments: [
+        "https://duckduckgo.com/?q=lemon%20cake%20recipe", "https://html.duckduckgo.com/html/?q=cake",
+        "https://www.google.com/search?q=cake", "https://www.google.co.uk/search?q=cake",
+        "https://www.bbcgoodfood.com/search?q=cake"
+    ])
+    func hiddenOnResults(results: String) {
+        #expect(WebSearchBrowsing.offer(for: URL(string: results), isLoading: false, recipeDetected: true) == .hidden)
+        #expect(WebSearchBrowsing.offer(for: nil, isLoading: false, recipeDetected: false) == .hidden)
+        #expect(WebSearchBrowsing.offer(for: recipePage, isLoading: true, recipeDetected: true) == .hidden)
+    }
+
+    @Test("Recipe pages get the import pill; other pages a quiet try-anyway link")
+    func offers() {
+        #expect(WebSearchBrowsing.offer(for: recipePage, isLoading: false, recipeDetected: true) == .recipeFound)
+        #expect(WebSearchBrowsing.offer(for: recipePage, isLoading: false, recipeDetected: false) == .tryAnyway)
+        let bbcRecipe = URL(string: "https://www.bbcgoodfood.com/recipes/lemon-drizzle-cake")
+        #expect(WebSearchBrowsing.offer(for: bbcRecipe, isLoading: false, recipeDetected: true) == .recipeFound)
+    }
+
+    @Test("Recipe detection uses the importer's reader, not only JSON-LD")
+    func detection() {
+        #expect(WebSearchBrowsing.looksLikeRecipe(html: RecipeHTMLFixtures.plainBlogNoStructuredData))
+        #expect(WebSearchBrowsing.looksLikeRecipe(html: RecipeHTMLFixtures.microdataOnly))
+        #expect(!WebSearchBrowsing.looksLikeRecipe(html: "<html><body><h1>About us</h1><p>We love food.</p></body></html>"))
+    }
+
+    @Test("Address bar shows the site, not the full link", arguments: [
+        ("https://www.bbcgoodfood.com/recipes/x", "bbcgoodfood.com"), ("https://m.allrecipes.com/a", "allrecipes.com"),
+        ("https://cooking.nytimes.com/r/1", "cooking.nytimes.com")
+    ])
+    func siteName(link: String, expected: String) {
+        #expect(WebSearchBrowsing.siteName(for: URL(string: link)) == expected)
+        #expect(WebSearchBrowsing.siteName(for: nil).isEmpty)
+    }
+
+    @Test("Recent searches: newest first, no repeats, blanks ignored, capped")
+    func recent() {
+        var list = RecentWebSearches.adding("Lemon cake", to: [])
+        list = RecentWebSearches.adding("  ", to: list)
+        list = RecentWebSearches.adding("Soup", to: list)
+        list = RecentWebSearches.adding("lemon CAKE", to: list)
+        #expect(list == ["lemon CAKE", "Soup"])
+        let many = (1...10).reduce([String]()) { RecentWebSearches.adding("q\($1)", to: $0) }
+        #expect(many.count == RecentWebSearches.limit)
+        #expect(many.first == "q10")
+        #expect(RecentWebSearches.decode(RecentWebSearches.encode(list)) == list)
+        #expect(RecentWebSearches.decode("").isEmpty)
+    }
+}
