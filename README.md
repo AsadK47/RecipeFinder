@@ -2,7 +2,7 @@
 
 # RecipeFinder 🍳
 
-**Your recipes, your groceries, your week of cooking — all on your phone, nothing in the cloud.**
+**Save any recipe, plan your week, shop smarter and cook with confidence.**
 
 [![Build & Test](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
 [![TestFlight](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml)
@@ -26,9 +26,9 @@
 
 ## What it is
 
-RecipeFinder is an iPhone and iPad recipe manager built around one loop: **get a recipe in → shop for it → cook it**.
-There are no accounts, no servers and no subscriptions. Your library lives on your device, and the smart parts
-(reading photos, tidying messy text, estimating amounts) run on-device too.
+RecipeFinder is an iPhone and iPad app that helps you collect recipes from anywhere, plan your meals, shop for them
+and cook with confidence. Open it and start cooking: smart features like reading photos, tidying messy text and
+estimating amounts run privately on your device.
 
 It ships with 332 starter recipes so it's useful from the first launch.
 
@@ -36,7 +36,7 @@ It ships with 332 starter recipes so it's useful from the first launch.
 
 **Get recipes in**
 - Paste a link — recipe data is read straight from the page, with automatic ingredient parsing
-- Search the web without leaving the app; an import button appears only on pages that contain a recipe
+- Search the web without leaving the app and import any recipe you find in one tap
 - Share a link or text from Safari or any other app via the share sheet
 - Scan up to five photos of cookbook pages, or open a PDF
 - Paste any text and it's turned into a recipe
@@ -59,23 +59,23 @@ It ships with 332 starter recipes so it's useful from the first launch.
 
 **Organise**
 - Collections and smart collections, favourites, ratings, tags and filters
-- Six colour themes, light and dark
+- Eight colour themes, light and dark
 - Full backup and restore to a file you keep
 
 **Accessible by default** — VoiceOver, Dynamic Type, WCAG 2.1 AA contrast and 44pt tap targets throughout.
 
 ## Privacy
 
-- No sign-in, no backend, no analytics — RecipeFinder never sends your recipes anywhere
-- On-device text recognition and Apple Intelligence; network access only to fetch a page you asked to import or search
-- In-app web browsing keeps nothing (non-persistent web store)
+- Private by design: your recipes live on your device and you can start straight away
+- Text recognition and Apple Intelligence run privately on your device; pages you search or import load straight from the web
+- In-app browsing is private: every session starts fresh
 - Details: [Privacy Policy](https://recipefinder.uk/privacy.html)
 
 ## Built with
 
 | | |
 |---|---|
-| UI | SwiftUI, Swift 6 strict concurrency, `async`/`await` (no Combine) |
+| UI | SwiftUI, Swift 6 strict concurrency, `async`/`await` |
 | Architecture | Clean Architecture — Presentation → Domain → Data; views reach managers through `@Environment` protocol seams |
 | Storage | Core Data, App Group `UserDefaults` (share extension hand-off) |
 | On-device AI | Vision (OCR), PDFKit, FoundationModels (iOS 26 + Apple Intelligence) |
@@ -123,7 +123,7 @@ RecipeFinderUITests/     UI, screenshot and accessibility tests
 - **CI** — `build.yml` builds and tests every `agent/*` branch and `main`; UI screenshots run nightly.
 - **TestFlight** — every app-code push to `main` uploads a beta build; tester feedback is filed as GitHub issues.
 - **Agent loop** — work is planned in [`BACKLOG.md`](BACKLOG.md) and built by scheduled Claude Code agents on
-  `agent/<slug>` branches; `main` only moves once a branch is green. Session handoff lives in `WORK.md`; project rules
+  `agent/<slug>` branches; `main` advances when a branch is green. Session handoff lives in `WORK.md`; project rules
   in `CLAUDE.md`.
 
 ## Contact
@@ -132,7 +132,7 @@ RecipeFinderUITests/     UI, screenshot and accessibility tests
 - 📧 recipefinderuk@gmail.com
 - 🌐 [recipefinder.uk](https://recipefinder.uk)
 
-> Proprietary software — pull requests are not accepted.
+> Proprietary software — bug reports and ideas are welcome via Issues or TestFlight feedback.
 
 ## Licence
 
