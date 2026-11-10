@@ -298,6 +298,14 @@ struct RecipeImportView: View {
             importer.errorMessage = "Invalid URL"
             return
         }
+        #if DEBUG
+        // Screenshots/UI-test hook: show the failure card without a network fetch.
+        if ProcessInfo.processInfo.arguments.contains("-force-import-failure") {
+            importer.errorMessage = "Couldn't read a recipe from this page."
+            HapticManager.shared.error()
+            return
+        }
+        #endif
         
         let importerRef = importer
         

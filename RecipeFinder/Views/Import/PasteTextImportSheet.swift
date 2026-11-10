@@ -77,12 +77,22 @@ struct PasteTextImportSheet: View {
         Task {
             isProcessing = true
             defer { isProcessing = false }
-            if let result = await RecipeTextImportRouter().prefill(for: text) {
+            if !Self.forcesFailure, let result = await RecipeTextImportRouter().prefill(for: text) {
                 prefill = result
             } else {
                 errorMessage = "Couldn't find a recipe in that text. Try putting ingredients and steps on separate lines."
                 HapticManager.shared.error()
             }
         }
+    }
+
+    /// Screenshots/UI-test hook (`-force-import-failure`): the paste path may use on-device AI that reads a recipe out
+    /// of anything, so tests force the "no recipe found" screen instead of relying on bad input.
+    private static var forcesFailure: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-force-import-failure")
+        #else
+        false
+        #endif
     }
 }

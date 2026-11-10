@@ -106,6 +106,49 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "09-low-confidence-import")
     }
 
+    /// Import 3/5: no dead ends. Forced failures (`-force-import-failure`) show "Start from this text" on a paste that
+    /// found no recipe (which opens the editor with the text kept) and "Paste the recipe text instead" on a failed link.
+    @MainActor
+    func testCaptureImportFailureFallbacks() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-force-import-failure"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Import"].tap()
+        settle()
+
+        // Paste: no recipe found → keep the text.
+        app.buttons["import.paste"].tap()
+        let editor = app.textViews.firstMatch
+        XCTAssertTrue(editor.waitForExistence(timeout: 5), "The paste sheet should show a text box.")
+        editor.tap()
+        editor.typeText("Nan's lemon cake\nzest two lemons, bake till golden")
+        app.buttons["Import"].firstMatch.tap()
+        let startFromText = app.buttons["import.startFromText"]
+        XCTAssertTrue(startFromText.waitForExistence(timeout: 10), "A paste with no recipe should offer Start from this text.")
+        snap(app, "10-import-no-recipe")
+        startFromText.tap()
+        XCTAssertTrue(app.staticTexts["Let's start with a name"].waitForExistence(timeout: 5),
+                      "Start from this text should open the editor.")
+        snap(app, "11-start-from-text")
+        app.terminate()
+
+        // Link: page can't be read → paste instead.
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Import"].tap()
+        settle()
+        app.buttons["import.link"].tap()
+        let field = app.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "The link sheet should show a URL field.")
+        field.tap()
+        field.typeText("https://example.com/not-a-recipe")
+        app.buttons["Import Recipe"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["import.pasteInstead"].waitForExistence(timeout: 10),
+                      "A failed link should offer Paste the recipe text instead.")
+        snap(app, "12-link-failed")
+    }
+
     // MARK: - Helpers
 
     @MainActor
