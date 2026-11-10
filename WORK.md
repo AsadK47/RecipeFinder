@@ -10,7 +10,7 @@
   need live network), ff main, tick, Log, notify.
 
 ## Next action
-0. Update `readme.md` (lowercase; last touched 2026-11-08; owner asked 2026-11-10): add web search, estimate amounts,
+0. Update `README.md` (last touched 2026-11-08; owner asked 2026-11-10): add web search, estimate amounts,
    other-app + PDF/multi-photo import, TestFlight beta link https://testflight.apple.com/join/UJWrMbk2, CI + agent loop
    (BACKLOG.md/WORK.md); no company name. Docs-only → straight to main.
 Work the BACKLOG "Next (owner order 2026-11-10)" line in order: Bug sweep → Tabs 1/3 → Tabs 2/3 Today →
