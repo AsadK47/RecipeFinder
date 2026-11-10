@@ -14,7 +14,13 @@
 
 **[Join the TestFlight beta](https://testflight.apple.com/join/UJWrMbk2)** · **[recipefinder.uk](https://recipefinder.uk)**
 
-<img src="screenshots/home_page.png" alt="RecipeFinder home screen" width="250"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/01-recipes-web.jpg" alt="Recipes" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/02-recipe-web.jpg" alt="Recipe" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/05-import-web.jpg" alt="Import" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/03-groceries-web.jpg" alt="Groceries" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/04-meal-plan-web.jpg" alt="Meal plan" width="160"/>
+
+<sub>Screenshots refresh nightly from the UI tests.</sub>
 
 </div>
 
