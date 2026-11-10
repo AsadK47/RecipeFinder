@@ -77,14 +77,13 @@ jobs:
           defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
       # Booting the simulator took ~4 of the ~8 minutes, idle after compiling. Start it now, in the background,
-      # so it boots while the cache restores and the app compiles.
+      # so it boots while the cache restores and the app compiles (Sentry, Nuke, Home Assistant do the same).
       - name: Boot simulator early
-        if: steps.already.outputs.passed != 'true'
         run: |
           SIM=$(xcrun simctl list devices available -j \
             | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
           echo "SIM=$SIM" >> "$GITHUB_ENV"
-          xcrun simctl boot "$SIM" &
+          if [ "${{ steps.already.outputs.passed }}" != "true" ]; then xcrun simctl boot "$SIM" & fi
 
       - name: Restore build cache
         uses: actions/cache/restore@v4
@@ -93,42 +92,36 @@ jobs:
           key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
           restore-keys: deriveddata-test-${{ runner.os }}-
 
-      - name: Refresh build cache only
-        if: steps.already.outputs.passed == 'true'
+      # Build once, then test that exact build (build-for-testing + test-without-building), so compile and test
+      # time show separately and the simulator finishes booting while Xcode compiles.
+      # Flags (same for every build, or the cache stops matching): no index store and no coverage (nobody reads
+      # them in CI), no macro/plugin validation prompts.
+      - name: Build
         run: |
           set -o pipefail
-          # Same simulator destination as the test run, so the cached output matches what branches build.
-          SIM=$(xcrun simctl list devices available -j \
-            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
-          xcodebuild build-for-testing -scheme RecipeFinder -destination "id=$SIM" \
-            -derivedDataPath DerivedData -skipPackagePluginValidation -skipMacroValidation \
-            CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
+          xcodebuild build-for-testing -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
+            -enableCodeCoverage NO -skipPackagePluginValidation -skipMacroValidation \
+            COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
-      - name: Build & test
+      - name: Test
         if: steps.already.outputs.passed != 'true'
         env:
           EVENT: ${{ github.event_name }}
+          NSUnbufferedIO: 'YES'   # log lines arrive as they happen, so the timestamps show where time goes
         run: |
           set -o pipefail
           SKIP="-skip-testing:RecipeFinderUITests"
           if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "workflow_dispatch" ]; then SKIP=""; fi
-          xcrun simctl bootstatus "$SIM" -b
-          # Pre-booted simulator, no coverage report.
-          xcodebuild test \
-            -scheme RecipeFinder \
-            -destination "id=$SIM" \
-            -derivedDataPath DerivedData \
-            -resultBundlePath TestResults.xcresult \
-            -enableCodeCoverage NO \
-            -skipPackagePluginValidation \
-            -skipMacroValidation \
-            $SKIP \
-            CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
+          time xcrun simctl bootstatus "$SIM" -b
+          # -collect-test-diagnostics never: no `simctl diagnose` dump after the run (Nuke measured 610s -> 6s).
+          xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
+            -resultBundlePath TestResults.xcresult -collect-test-diagnostics never \
+            $SKIP | tee -a xcodebuild.log
 
-      # Saved even when tests fail or the run is cancelled after building: the compiled output is still valid,
-      # and a save that only happened on success meant the cache was never written.
+      # Only main writes the cache (Home Assistant, Element X): branches read main's, and per-branch saves just
+      # filled the 10 GB limit and evicted the useful one. Saved even if tests fail — the build is still valid.
       - name: Save build cache
-        if: always() && hashFiles('DerivedData/**') != ''
+        if: always() && github.ref == 'refs/heads/main' && hashFiles('DerivedData/**') != ''
         uses: actions/cache/save@v4
         with:
           path: DerivedData
