@@ -58,11 +58,11 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Showcase screenshots → Plan my week → Groceries + Kitchen →
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Showcase screenshots → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
-   (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Medium features (fridge photo, taste profile,
-   cook-along Q&A, skill tree, heirloom mode) + Shared family cookbooks: owner unsure 2026-11-10 — revisit after
-   this list is done.
+   (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
+   skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
+   Shared family cookbooks: still undecided — revisit after.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
    Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.
@@ -150,6 +150,23 @@ drop a line while moving it.
   fridge / New imports / Rediscover (absorbs "Recently cooked row" + RediscoveryCard); clipboard recipe-link card;
   new-user state = "Import your first recipe" + starters. *Done when:* hero/shelf selection logic tested,
   screenshots (new user, planned day, unplanned day), CI green.
+- [ ] **Add flow 1/3 — One recipe screen for import review + create** (owner 2026-11-10: importing and creating
+  "sucks … needs to be rethought well"; OK'd this direction). After any import, and for "Create manually", show the
+  recipe as it will look once saved (photo, title, time/servings chips, ingredients, steps — same look as
+  `RecipeDetailView`); tap any part to edit it in place (name, photo, times, servings, ingredient and step text boxes);
+  reader-struggled parts highlighted inline (Import 2/5 logic); one Save pinned at the bottom; Cancel asks only if
+  changed. Replaces the long `RecipeWizardView` form for create + import review (keep focused single-section edits
+  from detail working); delete `WizardIntroSheet` and step views it makes unused. *Done when:* draft/validation/save
+  logic tested, screenshots (blank, imported, low-confidence), existing import UI tests updated, net lines down, CI green.
+- [ ] **Add flow 2/3 — Fewer taps to get there.** "+" sheet leads with one box: paste a link or recipe text (or tap
+  "Paste" from the clipboard) — auto-detects link vs text; then Photo/PDF, Search the web, From another app, Start
+  blank. Link/paste/photo go straight to the Add flow 1/3 screen with a loading state (no in-between sheets); share
+  extension recipes open on the same screen. *Done when:* link-vs-text detection tested, tap count per path ≤ 3 to the
+  recipe screen (note in Log), screenshots, CI green.
+- [ ] **Add flow 3/3 — Imports come out right.** Collect ~10 real recipe pages/texts that import badly today (popular
+  sites, Instagram captions, cookbook photos) as `ImportRegressions` fixtures (red), fix the parsers until green;
+  amounts/units split correctly, section headers ("For the sauce") kept, junk lines (ads, "Jump to recipe") dropped.
+  *Done when:* every fixture green, CI green.
 - [ ] **Plan my week — a proper meal planner** (owner: "make the meal planner a proper feature"). 7-day agenda by
   default (tap empty slot → inline suggestions/picker; long-press to move/swap; per-meal servings); tap planned meal →
   open/cook; cooking it marks it done; pinned "Shop for this week (N items)" that scales by planned servings (fixes
@@ -287,14 +304,14 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   photo and rating, cooking mode mid-recipe, and a real link import (fixture HTML served locally) at each step: Paste a
   link → review → saved. Publish to the `screenshots` release. *Done when:* every screen looks like a real person's
   kitchen, no empty states, screenshots checked by eye, CI green.
-- [ ] **Site look — match the app's aesthetic** (owner request 2026-11-10; website builder does this next, before
+- [x] **Site look — match the app's aesthetic** (owner request 2026-11-10; website builder does this next, before
   Site 3/6). Restyle every section on the rules above: frosted glass cards over the app gradient, app-style buttons,
   chips and icon badges, emoji swapped for icons drawn in the app's style. *Done when:* screenshots of each section
   sit next to the app screenshots and read as the same product, in light and dark.
-- [ ] **Site 1/6 — Banner + FAQ.** Top banner shows what's new (e.g. "New: import from PDFs and other apps", one line,
+- [x] **Site 1/6 — Banner + FAQ.** Top banner shows what's new (e.g. "New: import from PDFs and other apps", one line,
   edited in one place). FAQ section (accordion, `<details>`): Is it free? iPhone and iPad? Bring my Paprika/Mela/CSV
   recipes? Where are my recipes kept? Works offline? How do I get it / beta? Answers match the app today.
-- [ ] **Site 2/6 — Feature tour.** Replace the emoji grid with tabs (Save · Cook · Plan & shop · Organise), each with a
+- [x] **Site 2/6 — Feature tour.** Replace the emoji grid with tabs (Save · Cook · Plan & shop · Organise), each with a
   short list and a real phone screenshot that swaps (screenshots from the app's nightly `screenshots` release, copied
   into `assets/screens/`). Keyboard and screen-reader friendly tabs.
 - [ ] **Site 3/6 — Import demo (true to the app).** Shows a real import, not an invented one: a real public recipe
@@ -306,11 +323,11 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   screen, with the app's servings presets (½× 1× 2× 3×) and Metric/Imperial toggle. Port the app's scaling, fraction
   and unit-conversion rules (`Utilities/Recipe/`) to JS and test them against the same cases as the app's Swift tests
   so both give identical results. **Blocked until Showcase screenshots is merged** (needs the real recipe screen).
-- [ ] **Site 5/6 — "A week with RecipeFinder" + Recipe of the day.** Scroll story Sun→Sat: save from a link, plan the
+- [x] **Site 5/6 — "A week with RecipeFinder" + Recipe of the day.** Scroll story Sun→Sat: save from a link, plan the
   week, shop by store, cook in cooking mode, "Made it" badge — each beat with a screenshot. Recipe of the day rotates
   daily (by date) through a small JSON of bundled recipes generated by a script in the app repo's `tools/` — name,
   time, cuisine, ingredient count only (no method text: see Needs owner on bundled method text).
-- [ ] **Site 6/6 — What's new page + playful polish.** `whats-new.html` built from the app repo's `CHANGELOG.md` +
+- [x] **Site 6/6 — What's new page + playful polish.** `whats-new.html` built from the app repo's `CHANGELOG.md` +
   BACKLOG Log (script, user-facing lines only, newest week first). Confetti on notify sign-up (vanilla JS), a few food
   doodles, card hover motion. Proper 1200×630 share image, sitemap updated, Lighthouse ≥ 95 on all four scores.
 
@@ -355,6 +372,11 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
+- 2026-11-10 · Site look · RecipeFinderWebsite 44bc61a · recipefinder.uk home + whats-new: frosted translucent cards (blur, 0.5px hairline) over the gradient, capsule PrimaryButton-style CTAs (deep teal, white text), segmented tour tabs, tinted circular icon badges with SF Symbols-style line icons (no emoji; theme toggle is a moon/sun glyph), solid teal day/step badges. Legal pages unchanged. Lighthouse 99–100 on all four. Compared side by side with the app shots in light + dark.
+- 2026-11-10 · Site 6/6 What's new + polish · RecipeFinderWebsite 42fdf04 · recipefinder.uk/whats-new.html (banner links to it), generated by `tools/website-whats-new.py` from the Log + CHANGELOG; only items with a line in `tools/whats-new-copy.json` are published (script lists the rest — add copy to publish). Confetti on notify success, line-drawn food doodles, hover lift, new 1200×630 og-image, sitemap (+ whats-new, gallery), screens as WebP, small icons. Built before Site look (order slip); Site look restyled it.
+- 2026-11-10 · Site 5/6 Week story + Recipe of the day · RecipeFinderWebsite 0b01508 · "A week with RecipeFinder" Sun→Sat timeline with current screenshots (swap for Showcase ones later) + "Recipe of the day" from assets/recipes-of-the-day.json (`tools/website-recipes.py`: name, time, cuisine/category, ingredient count; seed has no cuisine field, so cuisine only when the name says it). Earlier invented Site 3/4 demos were dropped before pushing (not true to the app).
+- 2026-11-10 · Site 2/6 Feature tour · RecipeFinderWebsite f8f0a81 · "Everything in the app": 4 keyboard-friendly tabs (Save · Cook · Plan & shop · Organise), each a short list + screenshot; all show stacked without JS. Jest tests/featureTour.test.js.
+- 2026-11-10 · Site 1/6 Banner + FAQ · RecipeFinderWebsite 12220b1 · Top banner "NEW Import from PDFs and other apps" (one line in index.html `.banner-text`); 6-question `<details>` FAQ above the sign-up.
 - 2026-11-10 · Legal wording (owner OK to change legal text) · df55339 · In-app Privacy Policy + Terms (Last Updated 10 Nov 2026) describe current behaviour ("current version", "private by default") and promise opt-in + a policy update before any sync/sharing/accounts feature, instead of "no servers / no accounts". New Terms 6.3 sharing licence; consent changes asked for, not assumed. Website privacy.html + terms.html match (RecipeFinderWebsite 41ffbdf). On phone: Settings → Privacy → Privacy Policy, check date + sections 2, 3, 7.
 - 2026-11-10 · Bug sweep (bugs 2–8) · 8d2091f · Collection remove = long-press "Remove from Collection" (+ VoiceOver action); ½× on a 1-serving recipe stays 1; "Add week to groceries" buys for each meal's planned servings; Settings → Notifications → Groceries Reminders schedules a daily reminder at the chosen time; two shares before opening the app both arrive (queue); share sheet says "Sent — open RecipeFinder to add it" and only for complete recipes; failed file-import save shows an alert. New NotificationManagerTests.swift registered in pbxproj. On phone: share two links back-to-back, open app → both import; plan a 2-serving meal of a 4-serving recipe → half amounts.
 - 2026-11-10 · Build fix · 8938bdc · Deleted `screenshots/home_page.png` was bundled as an app resource → main red ~16:00; removed from pbxproj (app 3.4 MB smaller).
