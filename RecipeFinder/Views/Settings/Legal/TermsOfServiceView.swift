@@ -1,6 +1,7 @@
 import SwiftUI
 
-// NOTE: Updated 2026-11-04 alongside the Privacy Policy: no accounts or sign-in, local-only storage.
+// NOTE: Updated 2026-11-10 alongside the Privacy Policy: current behaviour described without ruling out opt-in
+// sync, sharing or accounts later.
 // Minimum age stated as 13 (UK age of digital consent). Have a solicitor review before App Store submission.
 struct TermsOfServiceView: View {
     var body: some View {
@@ -24,7 +25,7 @@ struct TermsOfServiceView: View {
 
                 SectionTitle("3. Access")
 
-                BodyText("3.1 The Application does not have accounts or sign-in. Your profile and data are stored locally on your device (see the Privacy Policy); the Developer does not maintain a server-side account for you.")
+                BodyText("3.1 The current version of the Application does not require an account or sign-in, and your profile and data are stored on your device (see the Privacy Policy). If optional accounts or online features are introduced, additional terms for those features will be shown before you use them.")
 
                 BodyText("3.2 You are responsible for keeping your device secure. You must be at least 13 years old to use the Application.")
                 
@@ -45,9 +46,11 @@ struct TermsOfServiceView: View {
                 
                 SectionTitle("6. User Content")
                 
-                BodyText("6.1 You retain ownership of all content you create or import within the Application. Because this content is stored only on your device and is not transmitted to the Developer, the Developer does not access, store, or claim any licence over it.")
+                BodyText("6.1 You retain ownership of all content you create or import within the Application. The Developer does not claim ownership of your content.")
                 
                 BodyText("6.2 When importing recipes from third-party websites, you are responsible for ensuring compliance with applicable copyright laws and terms of use of such websites.")
+                
+                BodyText("6.3 If you use a feature to share content with other people, you grant those people, and the Developer only as needed to operate that feature, a non-exclusive licence to store, display and copy that content for the purpose of the sharing you chose. You can stop sharing at any time.")
                 
                 SectionTitle("7. Warranty Disclaimer")
                 
@@ -69,7 +72,7 @@ struct TermsOfServiceView: View {
                 
                 SectionTitle("10. Recipe Import and Data Handling")
                 
-                BodyText("10.1 When you elect to import a recipe by providing a URL, the Application will retrieve the content directly from the URL you supply. The Developer does not intermediate or store copies of the source webpages on its servers. Parsed recipe data is stored locally on your device.")
+                BodyText("10.1 When you elect to import a recipe by providing a URL, the Application retrieves the content directly from the URL you supply. The Developer does not intermediate or store copies of the source webpages. Imported recipe data is stored with your other data as described in the Privacy Policy.")
                 
                 SectionTitle("11. Termination")
                 

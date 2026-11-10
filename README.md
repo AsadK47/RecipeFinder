@@ -2,7 +2,7 @@
 
 # RecipeFinder 🍳
 
-**Your recipes, your groceries, your week of cooking — all on your phone, nothing in the cloud.**
+**Your recipes, your groceries, your week of cooking — private by default.**
 
 [![Build & Test](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
 [![TestFlight](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml/badge.svg?branch=main)](https://github.com/AsadK47/RecipeFinder/actions/workflows/testflight.yml)
@@ -27,7 +27,7 @@
 ## What it is
 
 RecipeFinder is an iPhone and iPad recipe manager built around one loop: **get a recipe in → shop for it → cook it**.
-There are no accounts, no servers and no subscriptions. Your library lives on your device, and the smart parts
+No sign-up needed. Your library lives on your device, and the smart parts
 (reading photos, tidying messy text, estimating amounts) run on-device too.
 
 It ships with 332 starter recipes so it's useful from the first launch.
@@ -66,8 +66,9 @@ It ships with 332 starter recipes so it's useful from the first launch.
 
 ## Privacy
 
-- No sign-in, no backend, no analytics — RecipeFinder never sends your recipes anywhere
-- On-device text recognition and Apple Intelligence; network access only to fetch a page you asked to import or search
+- Private by default: no sign-in, no ads, no analytics or tracking
+- Your recipes live on your device; smart features (text recognition, Apple Intelligence) run on-device
+- The network is used to fetch pages you ask to import or search
 - In-app web browsing keeps nothing (non-persistent web store)
 - Details: [Privacy Policy](https://recipefinder.uk/privacy.html)
 

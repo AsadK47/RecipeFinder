@@ -1,6 +1,7 @@
 import SwiftUI
 
-// NOTE: Updated 2026-11-04: the app has no accounts or sign-in — a single local user, local-only storage.
+// NOTE: Updated 2026-11-10 (owner request): describes today's data flows without promising they can never change,
+// so opt-in features (iCloud sync/sharing, accounts) can be added by updating this policy first.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -20,17 +21,19 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("2. Our Approach to Privacy")
 
-                BodyText("2.1 The Application is offline-first and private by design. The Developer operates no servers and maintains no backend account for you. Information you enter or generate is stored on your Device and is not collected by, transmitted to, or accessible to the Developer or any third party, except where you explicitly direct the Application to retrieve content from the internet (see Section 5).")
+                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device and is not collected by, or accessible to, the Developer, except where you direct the Application to retrieve content from the internet (see Section 5).")
 
-                SectionTitle("3. No Accounts")
+                BodyText("2.2 We will only collect or share Personal Information in the ways described in this Privacy Policy. If we introduce a feature that would handle your information differently, we will update this Privacy Policy before that feature is made available, and any such feature will be optional.")
 
-                BodyText("3.1 The Application does not have accounts or sign-in. You can use every feature without creating an account or providing any Personal Information. Any name or photo you add to your profile is stored only on your Device.")
+                SectionTitle("3. Accounts")
+
+                BodyText("3.1 The current version of the Application does not require an account or sign-in. You can use its features without providing any Personal Information. Any name or photo you add to your profile is stored on your Device.")
             }
 
             Group {
                 SectionTitle("4. Information Stored on Your Device")
 
-                BodyText("4.1 The following is created and held solely on your Device:")
+                BodyText("4.1 The following is created and held on your Device (and in your own iCloud account only where you enable a feature that uses it — see Section 7):")
                 LegalBulletPoint("Recipes you create or import, including ingredients, instructions, notes, tags, cuisine and dietary information")
                 LegalBulletPoint("Meal plans, shopping lists and kitchen inventory")
                 LegalBulletPoint("Collections, cooking history, ratings and achievements")
@@ -55,19 +58,21 @@ struct PrivacyPolicyView: View {
 
                 BodyText("6.1 In-app purchases. If the Application offers optional paid features, purchases are processed by Apple under Apple's terms and privacy policy. The Developer does not receive or store your payment card details.")
 
-                BodyText("6.2 Notifications. The Application may schedule local notifications (such as cooking timers and meal reminders) on your Device, only with your permission. No notifications are sent from the Developer's servers.")
+                BodyText("6.2 Notifications. The Application may schedule local notifications (such as cooking timers and meal reminders) on your Device, only with your permission.")
 
                 BodyText("6.3 Ratings. The Application may ask you to rate it using Apple's standard prompt. No information is collected through this prompt.")
 
-                SectionTitle("7. Cloud Synchronisation")
+                SectionTitle("7. Optional Sync and Sharing")
 
-                BodyText("7.1 The Application does not currently synchronise your data to any cloud service; all data remains on your Device. If optional iCloud synchronisation is introduced in a future version, your data would be stored in your own private iCloud account, governed by Apple's terms, and the Developer would not have access to it.")
+                BodyText("7.1 The current version does not synchronise your data to any cloud service. Future versions may offer optional features such as iCloud synchronisation, or sharing recipes and collections with people you choose. Where such a feature uses Apple's iCloud, your data is stored in your own iCloud account under Apple's terms, and content you choose to share is visible to the people you share it with.")
+
+                BodyText("7.2 Any such feature will be off until you turn it on, and Sections 4 and 5 will be updated to describe what it does before it is released.")
             }
 
             Group {
                 SectionTitle("8. Data Security")
 
-                BodyText("8.1 As your data remains on your Device and is not transmitted to the Developer, its security depends primarily on your Device's own protections.")
+                BodyText("8.1 Data held on your Device is protected by your Device's own security, and data held in iCloud by Apple's. The Developer does not hold copies of it.")
 
                 BodyText("8.2 The Developer recommends that you secure your Device with a strong passcode, and keep device encryption enabled.")
 
@@ -82,7 +87,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("10. Data Protection Laws")
 
-                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the information you enter remains on your Device and is not collected or received by the Developer, the Developer does not act as a data controller of that information for most purposes. You remain in control of the data held on your Device.")
+                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. While the information you enter is not collected or received by the Developer, the Developer does not act as a data controller of that information for most purposes. If that changes for any feature, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
 
                 SectionTitle("11. Children's Privacy")
 
@@ -92,7 +97,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("12.1 The Developer may amend this Privacy Policy at any time. The date of the most recent revision is shown at the top of this Privacy Policy.")
 
-                BodyText("12.2 Material changes will be notified through the Application. Continued use of the Application following notification constitutes acceptance of the amended Privacy Policy.")
+                BodyText("12.2 Material changes will be notified through the Application before they take effect. Where a change relies on your consent, we will ask for it rather than treat continued use as consent.")
             }
 
             Group {
