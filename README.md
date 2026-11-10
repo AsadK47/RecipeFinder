@@ -59,7 +59,7 @@ It ships with 332 starter recipes so it's useful from the first launch.
 
 **Organise**
 - Collections and smart collections, favourites, ratings, tags and filters
-- Six colour themes, light and dark
+- Eight colour themes, light and dark
 - Full backup and restore to a file you keep
 
 **Accessible by default** — VoiceOver, Dynamic Type, WCAG 2.1 AA contrast and 44pt tap targets throughout.
