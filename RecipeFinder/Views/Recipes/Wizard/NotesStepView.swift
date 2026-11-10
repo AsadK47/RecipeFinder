@@ -73,23 +73,12 @@ struct NotesStepView: View {
                                     .padding(.horizontal, AppTheme.spacing4)
                                     .padding(.vertical, AppTheme.spacing8)
 
-                                Text("Try adding:")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-
-                                Text("• Substitution ideas")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-                                Text("• Storage tips")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-                                Text("• Serving suggestions")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
+                                ForEach(["Try adding:", "• Substitution ideas", "• Storage tips", "• Serving suggestions"], id: \.self) { hint in
+                                    Text(hint)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                        .padding(.horizontal, AppTheme.spacing4)
+                                }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .allowsHitTesting(false)
@@ -142,25 +131,12 @@ struct NotesStepView: View {
     }
 
     private func quickNoteButton(icon: String, text: String, template: String) -> some View {
-        Button(action: {
-            HapticManager.shared.light()
+        SuggestionChip(text, icon: icon) {
             if !notes.isEmpty {
                 notes += "\n\n"
             }
             notes += template
-        }) {
-            HStack(spacing: AppTheme.spacing4) {
-                Image(systemName: icon)
-                    .font(.caption)
-                Text(text)
-                    .font(.caption)
-            }
-            .padding(.horizontal, AppTheme.spacing12)
-            .padding(.vertical, AppTheme.spacing6)
-            .background(AppTheme.secondaryBackground)
-            .cornerRadius(AppTheme.cornerRadius16)
         }
-        .buttonStyle(PlainButtonStyle())
     }
 
     @ViewBuilder
@@ -180,18 +156,7 @@ struct NotesStepView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppTheme.spacing8) {
                     ForEach(cuisineSuggestions.filter { $0 != cuisine }, id: \.self) { suggestion in
-                        Button(action: {
-                            HapticManager.shared.light()
-                            cuisine = suggestion
-                        }) {
-                            Text(suggestion)
-                                .font(.caption)
-                                .padding(.horizontal, AppTheme.spacing12)
-                                .padding(.vertical, AppTheme.spacing6)
-                                .background(AppTheme.secondaryBackground)
-                                .cornerRadius(AppTheme.cornerRadius16)
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                        SuggestionChip(suggestion) { cuisine = suggestion }
                     }
                 }
             }
@@ -252,18 +217,7 @@ struct NotesStepView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: AppTheme.spacing8) {
                         ForEach(tagSuggestions.filter { !tags.contains($0) }, id: \.self) { suggestion in
-                            Button(action: {
-                                HapticManager.shared.light()
-                                tags.append(suggestion)
-                            }) {
-                                Text(suggestion)
-                                    .font(.caption)
-                                    .padding(.horizontal, AppTheme.spacing12)
-                                    .padding(.vertical, AppTheme.spacing6)
-                                    .background(AppTheme.secondaryBackground)
-                                    .cornerRadius(AppTheme.cornerRadius16)
-                            }
-                            .buttonStyle(PlainButtonStyle())
+                            SuggestionChip(suggestion) { tags.append(suggestion) }
                         }
                     }
                 }
@@ -277,5 +231,36 @@ struct NotesStepView: View {
         HapticManager.shared.light()
         tags.append(trimmed)
         tagInput = ""
+    }
+}
+
+/// One tappable suggestion pill (cuisine, tag or note template): light haptic, then the action.
+private struct SuggestionChip: View {
+    let text: String
+    let icon: String?
+    let action: () -> Void
+
+    init(_ text: String, icon: String? = nil, action: @escaping () -> Void) {
+        self.text = text
+        self.icon = icon
+        self.action = action
+    }
+
+    var body: some View {
+        Button {
+            HapticManager.shared.light()
+            action()
+        } label: {
+            HStack(spacing: AppTheme.spacing4) {
+                if let icon { Image(systemName: icon) }
+                Text(text)
+            }
+            .font(.caption)
+            .padding(.horizontal, AppTheme.spacing12)
+            .padding(.vertical, AppTheme.spacing6)
+            .background(AppTheme.secondaryBackground)
+            .cornerRadius(AppTheme.cornerRadius16)
+        }
+        .buttonStyle(.plain)
     }
 }
