@@ -48,7 +48,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 ## Queue
 - [x] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
   anything else. Audit result: 3 🔴 — all fixed 2026-11-10 (photo UUIDs, samples-only dedupe, restore merges state + streak), 14 🟡, 28 🟢; CI green.
-- [ ] **Sample recipes stop loading third-party photos** — 🚧 builder 2026-11-10 (🟡 privacy/copyright, owner OK 2026-11-09). ~164 bundled
+- [x] **Sample recipes stop loading third-party photos** (🟡 privacy/copyright, owner OK 2026-11-09). ~164 bundled
   recipes hotlink hero images from recipe sites (`recipes_source_images.json`, applied in `BundledRecipeCatalogTests`),
   leaking the user's IP to those sites while browsing and showing others' copyrighted photos. Stop applying that
   mapping so bundled recipes have no remote `imageName` (the existing `RecipePlaceholderView` gradient shows instead);
@@ -235,3 +235,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · 🐞 Sample refresh off main thread · 3f50d9f · Stale bundled recipes now refresh in one background save; refresh retries next launch if bundle data can't be read. First launch after update should feel no slower.
 - 2026-11-10 · 🐞 🟠 Star rating accessibility · 5e3a19b · Stars on recipe detail + Made it: VoiceOver swipe up/down adjusts rating, stars grow with text size, 44pt taps. UI tests green (1 infra launch flake on Import audit, passed on rerun).
 - 2026-11-10 · 🐞 Servings + catalog gaps · 44e6fa3 · Refresh / Re-import keep your chosen servings; empty stored image name no longer blocks the bundled photo; 4 new catalog tests. Inbox findings all done (only the 🧹 branch-delete note remains for owner).
+- 2026-11-10 · Sample recipes stop loading third-party photos · 2967638 · 164 bundled recipes no longer hotlink site images (placeholder art instead; "View original" links kept). Existing installs: sampleRefreshVersion 4 clears remote images on samples, keeps any photo you chose. History JSON not regenerated (content unchanged). Screenshots workflow green — glance at the library in the screenshots release.
