@@ -57,7 +57,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   bump `sampleRefreshVersion`). Keep "View original" links (credit). Never touch user-imported recipes' images.
   *Done when:* no bundled recipe has an http(s) image, refresh test for existing installs, Screenshots of the library,
   CI green.
-- [ ] **Manual 2/3 — Paste-and-type ingredients & steps** — 🚧 builder 2026-11-10 (owner OK 2026-11-09; wizard review). Replace per-row
+- [ ] **Manual 2/3 — Paste-and-type ingredients & steps** — 🚧 builder 2026-11-10 ✅ Slice 1 (c5c4e39): `IngredientTextBlock` / `StepTextBlock` (lines ↔ rows via `IngredientLineParser`, numbering stripped), tested. Remaining: swap `IngredientsStepView` / `EditableStepsStepView` rows for a text area + live parsed preview, keyboard Done toolbar, `scrollDismissesKeyboard`, line-count targets. Original: (owner OK 2026-11-09; wizard review). Replace per-row
   ingredient/step editing with one multi-line text area each — one line per item, Return = new line, paste a whole
   block — parsed live by `IngredientLineParser` into an editable preview (amount, unit, name) so manual entry and
   import share one parser. Fraction-friendly keyboard (`.numbersAndPunctuation` or a ½ ⅓ ¼ ¾ bar) where a numeric
@@ -236,3 +236,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · 🐞 🟠 Star rating accessibility · 5e3a19b · Stars on recipe detail + Made it: VoiceOver swipe up/down adjusts rating, stars grow with text size, 44pt taps. UI tests green (1 infra launch flake on Import audit, passed on rerun).
 - 2026-11-10 · 🐞 Servings + catalog gaps · 44e6fa3 · Refresh / Re-import keep your chosen servings; empty stored image name no longer blocks the bundled photo; 4 new catalog tests. Inbox findings all done (only the 🧹 branch-delete note remains for owner).
 - 2026-11-10 · Sample recipes stop loading third-party photos · 2967638 · 164 bundled recipes no longer hotlink site images (placeholder art instead; "View original" links kept). Existing installs: sampleRefreshVersion 4 clears remote images on samples, keeps any photo you chose. History JSON not regenerated (content unchanged). Screenshots workflow green — glance at the library in the screenshots release.
+- 2026-11-10 · Manual 2/3 slice 1 · c5c4e39 · Text-block parsers for ingredients/steps (shared with import parser). Nothing visible yet.
