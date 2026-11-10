@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Reusable wizard step for editing an ordered `EditableStep` list; used by both pre-prep and cooking-instructions (only labels differ).
+/// Reusable wizard step for an ordered step list (pre-prep and cooking instructions): one text area, one step per
+/// line; pasted numbering is dropped and each line becomes a numbered step in the preview.
 struct EditableStepsStepView: View {
     @Binding var steps: [EditableStep]
     let title: String
@@ -8,6 +9,10 @@ struct EditableStepsStepView: View {
     let illustration: String
     let fieldPlaceholder: String
     let addButtonTitle: String
+
+    @State private var text = ""
+    @State private var seeded = false
+    @FocusState private var editorFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
@@ -18,54 +23,55 @@ struct EditableStepsStepView: View {
             )
 
             WizardCard {
-                VStack(spacing: AppTheme.spacing12) {
-                    ForEach($steps) { $step in
-                        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                            HStack {
-                                Text("Step \(number(of: step))")
-                                    .font(.caption)
+                VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+                    TextEditor(text: $text)
+                        .focused($editorFocused)
+                        .scrollContentBackground(.hidden)
+                        .frame(minHeight: 160)
+                        .appInputField()
+                        .overlay(alignment: .topLeading) {
+                            if text.isEmpty {
+                                Text("\(fieldPlaceholder) — one step per line")
                                     .adaptiveSecondaryForeground()
-
-                                Spacer()
-
-                                if steps.count > 1 {
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        steps.removeAll { $0.id == step.id }
-                                    }) {
-                                        Image(systemName: "minus.circle.fill")
-                                            .foregroundStyle(AppTheme.error)
-                                    }
-                                }
+                                    .padding(.horizontal, AppTheme.spacing12)
+                                    .padding(.vertical, AppTheme.spacing14)
+                                    .allowsHitTesting(false)
                             }
-
-                            TextField(fieldPlaceholder, text: $step.text, axis: .vertical)
-                                .textFieldStyle(.plain)
-                                .lineLimit(2...5)
-                                .appInputField()
                         }
+                        .accessibilityLabel("\(title), one step per line")
 
-                        if step.id != steps.last?.id {
-                            Divider()
+                    let texts = steps.nonEmptyTexts
+                    ForEach(Array(texts.enumerated()), id: \.offset) { index, step in
+                        HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing8) {
+                            Text("\(index + 1).")
+                                .font(.subheadline.weight(.semibold))
+                                .adaptiveSecondaryForeground()
+                            Text(step)
+                                .font(.subheadline)
+                                .adaptiveForegroundColor()
                         }
-                    }
-
-                    Button(action: {
-                        HapticManager.shared.light()
-                        steps.append(EditableStep())
-                    }) {
-                        Label(addButtonTitle, systemImage: "plus.circle.fill")
-                            .foregroundStyle(AppTheme.accentColor)
-                            .frame(maxWidth: .infinity)
-                            .padding()
+                        .accessibilityElement(children: .combine)
                     }
                 }
                 .padding()
             }
         }
-    }
-
-    private func number(of step: EditableStep) -> Int {
-        (steps.firstIndex(where: { $0.id == step.id }) ?? 0) + 1
+        .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                if editorFocused {
+                    Button("Done") { editorFocused = false }
+                }
+            }
+        }
+        .onAppear {
+            guard !seeded else { return }
+            seeded = true
+            text = StepTextBlock.text(from: steps.nonEmptyTexts)
+        }
+        .onChange(of: text) { _, newText in
+            steps = .steps(from: StepTextBlock.steps(from: newText))
+        }
     }
 }
