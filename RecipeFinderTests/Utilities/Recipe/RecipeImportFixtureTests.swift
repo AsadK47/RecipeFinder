@@ -126,3 +126,34 @@ import Testing
         #expect(r.confidence > 0.9) // JSON-LD path wins (JSONSerialization tolerates trailing commas)
     }
 }
+
+/// Import 5/5: the in-app recipe browser's search URLs and its "Recipe found" badge.
+@Suite struct WebRecipeSearchTests {
+
+    @Test("Blank queries give no search page", arguments: WebRecipeSearchEngine.allCases)
+    func blankQuery(engine: WebRecipeSearchEngine) {
+        #expect(engine.searchURL(for: "   ") == nil)
+    }
+
+    @Test("Each engine searches its own site, query encoded", arguments: [
+        (WebRecipeSearchEngine.duckDuckGo, "https://duckduckgo.com/?q=lemon%20cake%20recipe"),
+        (.google, "https://www.google.com/search?q=lemon%20cake%20recipe"),
+        (.bbcGoodFood, "https://www.bbcgoodfood.com/search?q=lemon%20cake"),
+    ])
+    func searchURL(engine: WebRecipeSearchEngine, expected: String) {
+        #expect(engine.searchURL(for: " lemon cake ")?.absoluteString == expected)
+    }
+
+    @Test("DuckDuckGo is the default engine")
+    func defaultEngine() {
+        #expect(WebRecipeSearchEngine.default == .duckDuckGo)
+    }
+
+    @Test("Pages with schema.org Recipe data are detected; plain pages are not")
+    func detectsRecipeData() {
+        #expect(RecipeParser.hasRecipeData(html: RecipeHTMLFixtures.plainBlogNoStructuredData) == false)
+        let page = #"<html><script type="application/ld+json">{"@type":"Recipe","name":"Soup","recipeIngredient":["1 onion"],"recipeInstructions":["Cook"]}</script></html>"#
+        #expect(RecipeParser.hasRecipeData(html: page))
+    }
+}
+

@@ -3,6 +3,11 @@ import Foundation
 /// Schema.org JSON-LD parsing for `RecipeParser` — the highest-confidence path (embedded `application/ld+json` Recipe data parsed directly).
 extension RecipeParser {
 
+    /// True when the page embeds schema.org Recipe data — drives the in-app browser's "Recipe found ✓" badge.
+    static func hasRecipeData(html: String) -> Bool {
+        extractJSONLD(from: html) != nil
+    }
+
     static func extractJSONLD(from html: String) -> ParsedRecipe? {
         let pattern = #"<script[^>]*type=["\']application/ld\+json["\'][^>]*>([\s\S]*?)</script>"#
 
