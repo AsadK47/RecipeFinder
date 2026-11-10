@@ -37,6 +37,11 @@ Owner-approved series are worked strictly in order, one item at a time: start it
 `main`'s Build & Test is green, and its screenshots were checked. Within a series you may go straight on to the next
 item in the same session (no need to wait for the nightly run) — then `fire_trigger` the builder again if needed.
 
+### Log rotation (reviewer, each run)
+Keep **Log** to the last 7 days. Move older lines, unchanged, to the top of `CHANGELOG.md` under a
+`## Week of <Monday YYYY-MM-DD>` heading (newest week first), in the same docs commit as the review. Never edit or
+drop a line while moving it.
+
 ### Guardrails — never do these without the owner saying yes in this file
 - Change the Core Data model / `.xccurrentversion`, signing, entitlements, bundle IDs, CI/TestFlight workflows.
 - Change legal text (Terms, Privacy, LICENSE), pricing, or anything that sends data off the device.
@@ -203,6 +208,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+_Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-08 · loop set up · CI now also runs on `agent/**` branches.
 - 2026-11-09 · "Made it" moment · ef1c7f1 · Tap *Made it* (and finish cooking mode → Done): one sheet shows Cook #N (total cooks), streak, stars, Add/Take photo, "N more to <badge>"; rate + add photo, check both saved. Renamed PostCookPhotoSheet.swift→MadeItSheet.swift in pbxproj. Streak toast + cooking-mode "Add a photo" removed. Remote branch not deleted (proxy refused) — delete agent/made-it-sheet by hand.
 - 2026-11-09 · Refresh stale bundled recipes · 8abbcc1 · On first launch after update, old bundled copies (e.g. 鷄肉炒麵) show curated steps/ingredients; favourites, ratings, cooks, photos, tags kept; any recipe you edited is unchanged. Unedited = matches a shipped version in new recipes_seed_history.json (2.85 MB, from git via tools/seed-history.py; registered in pbxproj Resources). Future seed fixes: rerun script + bump BundledRecipeCatalog.sampleRefreshVersion. Remote branch delete refused by proxy — delete agent/refresh-stale-samples (and agent/made-it-sheet) by hand.
