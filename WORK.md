@@ -10,6 +10,9 @@
   need live network), ff main, tick, Log, notify.
 
 ## Next action
+0. Write a root `README.md` (none exists; owner asked 2026-11-10): what the app is, privacy-first/offline, feature list
+   (incl. web search, estimate amounts, other-app/PDF import), TestFlight beta link, project layout, CI + agent loop
+   (BACKLOG.md/WORK.md), no company name. Docs-only → straight to main.
 Work the BACKLOG "Next (owner order 2026-11-10)" line in order: Bug sweep → Tabs 1/3 → Tabs 2/3 Today →
 Plan my week → Groceries + Kitchen → Made-it celebration + Spoons → cooking mode → small sticky features →
 Settings tidy-up (inside Me) + polish. Audit with file:line evidence: `docs/AUDIT-2026-11-10.md`.
