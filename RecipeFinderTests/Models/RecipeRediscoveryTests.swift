@@ -62,3 +62,28 @@ import Foundation
         #expect(p.name == "Older")
     }
 }
+
+/// The full stale list behind Today's Rediscover shelf.
+@Suite struct RecipeRediscoveryRankedTests {
+
+    @Test func ranksLovedFirstThenLongestCold() {
+        let now = Date()
+        func ago(_ n: Int) -> Date { Calendar.current.date(byAdding: .day, value: -n, to: now) ?? now }
+        func recipe(_ name: String, last: Date, favorite: Bool = false) -> RecipeModel {
+            RecipeModel(
+                name: name, category: "Main", difficulty: "Basic", prepTime: "5 min",
+                cookingTime: "10 min", baseServings: 2,
+                ingredients: [], prePrepInstructions: [], instructions: ["Cook"], notes: "",
+                isFavorite: favorite, cookCount: 1, lastCookedAt: last
+            )
+        }
+        let fresh = recipe("Fresh", last: ago(2))
+        let cold = recipe("Cold", last: ago(30))
+        let colder = recipe("Colder", last: ago(90))
+        let loved = recipe("Loved", last: ago(25), favorite: true)
+
+        let ranked = RecipeRediscovery.ranked(from: [fresh, cold, colder, loved], now: now, thresholdDays: 21)
+        #expect(ranked.map(\.name) == ["Loved", "Colder", "Cold"])
+        #expect(RecipeRediscovery.pick(from: [fresh, cold, colder, loved], now: now, thresholdDays: 21)?.name == "Loved")
+    }
+}

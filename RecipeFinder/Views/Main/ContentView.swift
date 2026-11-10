@@ -167,7 +167,7 @@ struct ContentView: View {
     @ViewBuilder
     private func tabRoot(_ tab: AppTab) -> some View {
         switch tab {
-        case .today: TodayView(onOpen: { select($0) })
+        case .today: TodayView(onOpen: { select($0) }, onAddRecipe: openAddRecipe)
         case .recipes: RecipeSearchView(isLoading: store.isLoading, onAddRecipe: openAddRecipe)
         case .plan: MealPlanningView()
         case .groceries: KitchenShoppingView()

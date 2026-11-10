@@ -1,9 +1,20 @@
 import SwiftUI
 
-/// Today tab. Starts as a friendly launch pad into the other tabs; Tabs 2/3 fills it with tonight's meal and shelves.
+/// Today tab: greeting + streak, a "Tonight" hero (planned meal, else best kitchen match) and shelves of recipes to cook.
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
     let onOpen: (AppTab) -> Void
+    /// Opens the "+" add-recipe sheet.
+    let onAddRecipe: () -> Void
+
+    @Environment(\.recipeStore) private var recipeStore
+    @Environment(\.mealPlanning) private var mealPlanning
+    @Environment(\.kitchen) private var kitchen
+    @Environment(\.cookingStreak) private var cookingStreak
+
+    @State private var path = NavigationPath()
+    // Computed on data change, not in body (matching ingredients across every recipe isn't free).
+    @State private var feed: TodayFeed?
 
     /// Morning before noon, afternoon until 6pm, evening after.
     nonisolated static func greeting(forHour hour: Int) -> String {
@@ -15,7 +26,7 @@ struct TodayView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 AppBackground()
 
@@ -23,21 +34,9 @@ struct TodayView: View {
                     ScreenTitleHeader("Today")
 
                     ScrollView {
-                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                            Text(Self.greeting(forHour: Calendar.current.component(.hour, from: Date())))
-                                .font(.title2.weight(.bold))
-                                .adaptiveForegroundColor()
-                            Text("What sounds good today?")
-                                .font(.subheadline)
-                                .adaptiveSecondaryForeground()
-                                .padding(.bottom, AppTheme.spacing8)
-
-                            shortcut(.recipes, title: "Find something to cook",
-                                     subtitle: "Browse your recipes or search by what you fancy.", color: .orange)
-                            shortcut(.plan, title: "Plan your week",
-                                     subtitle: "Pick meals for the days ahead.", color: .blue)
-                            shortcut(.groceries, title: "Check your groceries",
-                                     subtitle: "See what to buy and what's at home.", color: .green)
+                        VStack(alignment: .leading, spacing: AppTheme.spacing20) {
+                            header
+                            if let feed { content(feed) }
                         }
                         .padding(.horizontal, AppTheme.spacing20)
                         .padding(.top, AppTheme.spacing16)
@@ -46,7 +45,102 @@ struct TodayView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: UUID.self) { id in
+                if let recipe = recipeStore.recipes.first(where: { $0.id == id }) {
+                    RecipeDetailView(recipe: recipe)
+                }
+            }
         }
+        .onAppear(perform: refresh)
+        .onChange(of: recipeStore.recipes) { _, _ in refresh() }
+        .onChange(of: kitchen.items) { _, _ in refresh() }
+    }
+
+    private func refresh() {
+        feed = TodayFeed.make(
+            recipes: recipeStore.recipes,
+            todaysPlans: mealPlanning.mealPlans(for: Date()),
+            kitchenItemNames: kitchen.items.map(\.name)
+        )
+    }
+
+    private var header: some View {
+        HStack(alignment: .center, spacing: AppTheme.spacing12) {
+            Text(Self.greeting(forHour: Calendar.current.component(.hour, from: Date())))
+                .font(.title2.weight(.bold))
+                .adaptiveForegroundColor()
+            Spacer(minLength: 0)
+            if cookingStreak.streak.currentWeeks > 0 {
+                StreakChip(streak: cookingStreak.streak)
+            } else {
+                Label("Start a streak", systemImage: "flame")
+                    .font(.footnote.weight(.semibold))
+                    .adaptiveSecondaryForeground()
+                    .padding(.horizontal, AppTheme.spacing10)
+                    .padding(.vertical, AppTheme.spacing6)
+                    .appCard(in: Capsule())
+                    .accessibilityLabel("Start a streak: cook anything this week")
+                    .accessibilityIdentifier("today.startStreak")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func content(_ feed: TodayFeed) -> some View {
+        if feed.isNewUser {
+            firstRecipeCard
+        }
+
+        if let hero = feed.hero {
+            TodayHeroCard(hero: hero) { open(hero.recipe) }
+        } else if !feed.isNewUser {
+            shortcut(.plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.", color: .blue)
+        }
+
+        if feed.isNewUser, !feed.starters.isEmpty {
+            TodayShelf(title: "Starters to try", id: "starters",
+                       items: feed.starters.map { ($0, $0.hasTotalTime ? $0.totalTime : nil) }, onOpen: open)
+        }
+        if !feed.cookAgain.isEmpty {
+            TodayShelf(title: "Cook again", id: "cookAgain",
+                       items: feed.cookAgain.map { ($0, nil) }, onOpen: open)
+        }
+        if !feed.fitsYourKitchen.isEmpty {
+            TodayShelf(title: "Fits your kitchen", id: "kitchen",
+                       items: feed.fitsYourKitchen.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open)
+        }
+        if !feed.rediscover.isEmpty {
+            TodayShelf(title: "Rediscover", id: "rediscover",
+                       items: feed.rediscover.map { ($0, nil) }, onOpen: open)
+        }
+
+        shortcut(.groceries, title: "Check your groceries",
+                 subtitle: "See what to buy and what's at home.", color: .green)
+    }
+
+    private var firstRecipeCard: some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            Text("Bring in your first recipe")
+                .font(.headline)
+                .adaptiveForegroundColor()
+            Text("Add one from a link, a photo, pasted text or your own notes, and Today starts suggesting what to cook.")
+                .font(.subheadline)
+                .adaptiveSecondaryForeground()
+                .fixedSize(horizontal: false, vertical: true)
+            PrimaryButton("Add a recipe", systemImage: "plus.circle.fill") {
+                HapticManager.shared.light()
+                onAddRecipe()
+            }
+            .accessibilityIdentifier("today.addFirstRecipe")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(AppTheme.spacing20)
+        .appCard()
+    }
+
+    private func open(_ recipe: RecipeModel) {
+        HapticManager.shared.light()
+        path.append(recipe.id)
     }
 
     private func shortcut(_ tab: AppTab, title: String, subtitle: String, color: Color) -> some View {
@@ -81,5 +175,5 @@ struct TodayView: View {
 }
 
 #Preview {
-    TodayView(onOpen: { _ in })
+    TodayView(onOpen: { _ in }, onAddRecipe: {})
 }
