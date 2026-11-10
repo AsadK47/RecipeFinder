@@ -60,9 +60,9 @@ drop a line while moving it.
    photos, Video 1/3 → 3/3.
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Showcase screenshots → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
-   (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Medium features (fridge photo, taste profile,
-   cook-along Q&A, skill tree, heirloom mode) + Shared family cookbooks: owner unsure 2026-11-10 — revisit after
-   this list is done.
+   (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
+   skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
+   Shared family cookbooks: still undecided — revisit after.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
    Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.

@@ -15,8 +15,8 @@ Settings tidy-up (inside Me) + polish. Audit with file:line evidence: `docs/AUDI
 - **Plan my week** must become a proper feature (owner: "beautiful").
 - **Spoons**: on-device, cosmetic-only spending, no purchase/cash-out. Real-money/charity pledge = owner decision
   later (Needs owner). Loot boxes/random paid rewards rejected (UK/EU gambling scrutiny).
-- Still unanswered by owner: which medium features (fridge photo, taste profile, cook-along Q&A, skill tree,
-  heirloom mode) and whether to add a Widget/Live Activity target (guardrail: new target = owner).
+- Owner 2026-11-10: yes to taste profile, skill tree, heirloom mode, cook-along Q&A (only if well implemented);
+  widget and/or Live Activity — whichever suits (both already specced in BACKLOG). Fridge photo undecided.
 - **CI (build.yml)**: 100-repo survey → Linux gate skips re-testing main commits that passed on a branch,
   build-for-testing + test-without-building, simulator boots during compile, DerivedData cache saved only by main,
   runner tune-up (Spotlight/ReportCrash off), no coverage/index/test diagnostics. Measured warm branch run 11m25s
