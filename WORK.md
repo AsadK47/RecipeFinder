@@ -18,6 +18,12 @@
   `servings: 1` (recipes have base 1). Bug 1 (pantry expiry/quantity UI) deferred to Groceries + Kitchen batch.
   If red: read log, fix. If green: rebase/ff main, tick, Log.
 
+- **Legal future-proofing** (owner request 2026-11-10: remove wording that pigeonholes us) — branch
+  `agent/legal-futureproof`: in-app Privacy Policy + Terms (+ lastUpdated 10 Nov 2026) and README describe *current*
+  behaviour ("current version", "private by default") and promise opt-in + policy update before any sync/sharing/
+  accounts feature, instead of "no servers / no accounts / never". Website privacy.html + terms.html updated to match
+  (RecipeFinderWebsite 41ffbdf, live). When CI green: ff main, Log line noting owner OK for the legal-text guardrail.
+
 ## Next action
 Work the BACKLOG "Next (owner order 2026-11-10)" line in order: Bug sweep → Tabs 1/3 → Tabs 2/3 Today →
 Plan my week → Groceries + Kitchen → Made-it celebration + Spoons → cooking mode → small sticky features →
