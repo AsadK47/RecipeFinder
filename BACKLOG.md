@@ -185,6 +185,19 @@ drop a line while moving it.
   version + lightweight migration parsing the old strings; bump the `.xccurrentversion` number in CLAUDE.md files),
   keep a `DurationFormatter` for display, decode legacy JSON (backups, `recipes_seed.json`) via `decodeIfPresent`.
   *Done when:* migration + legacy-decode tests, every `prepTime`/`cookingTime` string use removed, CI green.
+- [ ] **Batch A — Large Class: `RecipeDetailView+Content.swift` (745) + `RecipeDetailView` (398).** Extract Method/Class:
+  nutrition section + `NutritionMacroBar`, ingredients/steps/timer sections into own views; `StarRatingView`,
+  `ShopIngredientsSheet` to own files. Target each file ≤300. One branch.
+- [ ] **Batch B — Duplicate Code: persisted managers.** `Badge/Collection/CookingStreak/KitchenInventory/MealPlanning/
+  ShoppingList` managers hand-roll load/encode/save on `LocalStore` → one shared persisted-store helper (Extract
+  Superclass → protocol + generic). Tests first: each manager's round-trip unchanged. One branch.
+- [ ] **Batch C — Duplicate Code: chip styling** copied in 9 files → `.chipStyle()` in DesignSystem; replace all. One branch.
+- [ ] **Batch D — Large Class: big screens** `MealPlanningView` (440), `RecipeSearchView` (411), `CookingModeView`
+  (391), `RecipeImportView` (360): extract subviews + move logic into tested pure functions. One branch per screen.
+- [ ] **Batch E — Large Class: `PersistenceController+RecipeWrites` (445)** → split by job (single writes / batch /
+  merge-restore). Behaviour tests already cover it; refactor only.
+- [ ] **Batch F — Swallowed errors: 64 `try?`** — audit each; user-triggerable paths surface or log the error
+  (CLAUDE.md error rule). Data-only/optional reads may stay. Group by folder.
 - [ ] **Large wizard: ~1,444 lines across `RecipeWizardView*` + `Wizard/` (target ≤1,000)** — ✅ `SuggestionChip` + hint loop in `NotesStepView` (6b7560c). Remaining: review `RecipeNameStepView` (~210), `BasicInfoStepView`, `WizardIntroSheet`.
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
