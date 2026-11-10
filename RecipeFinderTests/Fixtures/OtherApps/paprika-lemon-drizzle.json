@@ -1,0 +1,13 @@
+{
+  "uid": "A1B2C3",
+  "name": "Lemon Drizzle Cake",
+  "ingredients": "225 g unsalted butter\n225 g caster sugar\n\n4 eggs\n225 g self-raising flour\n1 lemon, zested",
+  "directions": "Heat the oven to 180C.\nBeat the butter and sugar, then add the eggs.\nFold in the flour and zest, then bake for 45 minutes.",
+  "servings": "Serves 10",
+  "prep_time": "15 mins",
+  "cook_time": "45 min",
+  "notes": "Drizzle while warm.",
+  "source_url": "https://example.com/lemon-drizzle",
+  "categories": ["Baking", "Cakes"],
+  "photo_data": "aGVsbG8="
+}
