@@ -1,14 +1,21 @@
 # WORK.md — handoff (2026-11-10, end of long interactive session)
 
 ## In progress
-- Nothing in progress.
+- **Tabs 1/3** on `agent/tabs-1-structure` (1c0f6d3), waiting on Build & Test. New: `Views/Main/AppTab.swift`,
+  `TodayView.swift`, `MeView.swift`, `Views/Import/AddRecipeOption.swift`, `RecipeFinderTests/Views/Recipes/AppNavigationTests.swift`
+  (all registered in pbxproj). ImportView = "+" sheet (presented by ContentView). UI tests updated (Import tab → `recipes.add`,
+  Settings → Me → `me.settings`, Planning → Plan); screenshots add 16-today, 17-me.
 
 ## Next action
-Start **Tabs 1/3** (claim in BACKLOG first). Then follow BACKLOG "Next (owner order)": Tabs 2/3 Today →
-Showcase screenshots → Plan my week → Groceries + Kitchen → Made-it celebration + Spoons → cooking mode → small sticky features →
-Settings tidy-up (inside Me) + polish. Audit with file:line evidence: `docs/AUDIT-2026-11-10.md`.
+Green → rebase on origin/main → ff main → tick Tabs 1/3 + Log; run UI tests (workflow_dispatch) on the branch first.
+Then Tabs 2/3 Today (flip `AppTab.launchDefault` to `.today` and update `RecipeFinderLaunchUITests`).
 
 ## Decisions (why)
+- **Tabs 1/3**: launch stays on Recipes until Today has content (no placeholder landing for TestFlight users).
+  "+" sits beside the search field (title row too narrow for + and menu). "+" sheet is presented from the app root
+  and closes on save; badge celebrations wait for its onDismiss (`addRecipeBusy`) — a sheet over/mid-dismissal of
+  another is dropped. "View all badges" now switches to the Me tab instead of a Profile sheet. Settings still has its
+  own Profile row (redundant inside Me) — left for Settings tidy-up. Other-app import is in both "+" and Data Management.
 - **Tabs → Today · Recipes · Plan · Groceries · Me** (owner OK). Import is rare-use → "+" on Recipes; Settings →
   gear in Me. Today is the daily reason to open the app.
 - **Groceries + Kitchen merge** with To buy | At home and "Put away"; owner explicitly wants redundant code deleted.
