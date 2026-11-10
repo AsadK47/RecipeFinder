@@ -105,7 +105,7 @@ drop a line while moving it.
   Privacy Policy section 5: searches and pages load directly from the site/engine the user chooses (owner OK for this
   legal-text change); log in the Needs owner list that the website privacy page needs the same sentence.
   *Done when:* engine URL builder + recipe detector tested, browser + badge screenshots, CI green.
-- [ ] 🚧 **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
+- [x] **"Estimate missing amounts" for any recipe (future imports).** On recipes with missing amounts/times, offer an
   "Estimate amounts" action that fills them with the on-device model (iOS 26 FoundationModels — already used for
   import, see `RecipeTextInterpreting`), shown as a review sheet the user accepts or edits before saving; nothing
   leaves the device. Pre-iOS 26 / Apple Intelligence off → the action is hidden and the hint above still invites manual
@@ -228,6 +228,8 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
+- 2026-11-10 · Estimate missing amounts · 253f2ab · Recipe missing most amounts → "Estimate amounts" next to "Add your amounts" (only where Apple Intelligence runs): on-device model suggests amounts, review sheet lets you edit/clear each, only saved ones are written; failure offers "Add your amounts". New IngredientAmountEstimating.swift + AmountEstimateReviewSheet.swift registered in pbxproj. Not done: missing prep/cook times; offer is the detail-screen card (no separate post-import prompt). Screenshot 14-estimate-amounts. On phone (iOS 26, Apple Intelligence on): open an imported recipe with blank amounts → Estimate amounts. Delete remote agent/estimate-amounts-*, agent/import-5-*, agent/ci-faster by hand (delete refused).
+- 2026-11-10 · CI speed (owner OK) · a05c72b · build.yml from a 100-repo survey: Linux gate skips re-testing main commits that passed on a branch, build-for-testing + test-without-building, simulator boots during compile, cache saved only by main, runner background services off, no coverage/index/test diagnostics. First warm branch run 11m25s (restore 2m34, build 4m14, test 3m35) vs 8m40 baseline — not faster yet; next: compiler-cache-only cache (Element X) and find why the build is not incremental.
 - 2026-11-10 · Import 5/5 Search the web · 3500a5d · Import → "Search the web": type a dish, browse in an in-app browser (DuckDuckGo default; Google / BBC Good Food in Settings → Recipe Search), "Recipe found ✓ — Import this recipe" on pages with recipe data. Nothing kept from browsing (non-persistent web store); Privacy Policy 5.1 sentence added. 3 new files registered in pbxproj (WebRecipeSearchEngine needed the app target's Sources phase, not the share extension's). Screenshot 13-web-search. Website privacy page updated (RecipeFinderWebsite 5e70821). On phone: search "lemon cake", open a recipe, Import.
 - 2026-11-08 · loop set up · CI now also runs on `agent/**` branches.
 - 2026-11-09 · "Made it" moment · ef1c7f1 · Tap *Made it* (and finish cooking mode → Done): one sheet shows Cook #N (total cooks), streak, stars, Add/Take photo, "N more to <badge>"; rate + add photo, check both saved. Renamed PostCookPhotoSheet.swift→MadeItSheet.swift in pbxproj. Streak toast + cooking-mode "Add a photo" removed. Remote branch not deleted (proxy refused) — delete agent/made-it-sheet by hand.
