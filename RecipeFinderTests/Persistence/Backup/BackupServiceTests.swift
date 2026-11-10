@@ -24,6 +24,7 @@ import Foundation
         let mealPlans: MealPlanningManager
         let badges: BadgeManager
         let collections: CollectionManager
+        let streak: CookingStreakManager
     }
 
     private static func makeHarness(recipes: [RecipeModel] = []) -> Harness {
@@ -36,15 +37,18 @@ import Foundation
         let mealPlans = MealPlanningManager(storage: storage)
         let badges = BadgeManager(storage: storage)
         let collections = CollectionManager(storage: storage)
+        let streak = CookingStreakManager(
+            storage: storage, reminders: CookingStreakManagerTests.FakeStreakReminderScheduler()
+        )
 
         let service = BackupService(
             recipeStore: recipeStore, shopping: shopping,
             kitchen: kitchen, mealPlans: mealPlans, badges: badges,
-            collections: collections
+            collections: collections, streak: streak
         )
         return Harness(service: service, recipeStore: recipeStore,
                        shopping: shopping, kitchen: kitchen, mealPlans: mealPlans,
-                       badges: badges, collections: collections)
+                       badges: badges, collections: collections, streak: streak)
     }
 
     private static func recipe(_ name: String) -> RecipeModel {
@@ -168,5 +172,20 @@ import Foundation
         #expect(throws: BackupError.corruptedData) {
             try dest.service.importData(Data("not a backup".utf8))
         }
+    }
+
+    @Test func backup_roundTrip_keepsCookingStreakDates_withoutDuplicates() throws {
+        let source = Self.makeHarness()
+        let week1 = Date(timeIntervalSince1970: 1_800_000_000)
+        let week2 = week1.addingTimeInterval(7 * 86_400)
+        source.streak.recordCook(on: week1)
+        source.streak.recordCook(on: week2)
+        let data = try source.service.exportData()
+
+        let dest = Self.makeHarness()
+        dest.streak.recordCook(on: week2)
+        try dest.service.importData(data)
+
+        #expect(dest.streak.recordedCookDates == [week1, week2])
     }
 }

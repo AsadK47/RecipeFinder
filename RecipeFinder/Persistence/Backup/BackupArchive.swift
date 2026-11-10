@@ -15,6 +15,8 @@ struct BackupArchive: Codable {
     var mealPlans: [MealPlanModel]
     var badges: [String: Badge]
     var collections: [RecipeCollection]
+    /// Cook dates behind the weekly cooking streak.
+    var cookDates: [Date]
 
     init(
         schemaVersion: Int = BackupArchive.currentSchemaVersion,
@@ -25,7 +27,8 @@ struct BackupArchive: Codable {
         kitchenInventory: [KitchenInventoryModel] = [],
         mealPlans: [MealPlanModel] = [],
         badges: [String: Badge] = [:],
-        collections: [RecipeCollection] = []
+        collections: [RecipeCollection] = [],
+        cookDates: [Date] = []
     ) {
         self.schemaVersion = schemaVersion
         self.exportedAt = exportedAt
@@ -36,6 +39,7 @@ struct BackupArchive: Codable {
         self.mealPlans = mealPlans
         self.badges = badges
         self.collections = collections
+        self.cookDates = cookDates
     }
 
     // `collections` postdates v1 archives; decode optionally so pre-collections backups restore instead of throwing `.corruptedData`.
@@ -50,6 +54,8 @@ struct BackupArchive: Codable {
         mealPlans = try c.decode([MealPlanModel].self, forKey: .mealPlans)
         badges = try c.decode([String: Badge].self, forKey: .badges)
         collections = (try? c.decodeIfPresent([RecipeCollection].self, forKey: .collections)) ?? []
+        // Added after v1; older backups have no streak history.
+        cookDates = (try? c.decodeIfPresent([Date].self, forKey: .cookDates)) ?? []
     }
 }
 

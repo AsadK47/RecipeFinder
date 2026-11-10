@@ -84,6 +84,7 @@ import Foundation
         let data = Data(json.utf8)
         let restored = try BackupCodec.decode(data)
         #expect(restored.collections.isEmpty)
+        #expect(restored.cookDates.isEmpty)
     }
 
     // MARK: - Schema guard

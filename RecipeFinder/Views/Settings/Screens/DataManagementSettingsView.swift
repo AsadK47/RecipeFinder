@@ -181,13 +181,13 @@ struct DataManagementSettingsView: View {
                                 .font(.body)
                                 .adaptiveForegroundColor()
 
-                            Text("Save everything to a file, or restore from one")
+                            Text("Save your library to a file (photos not included), or restore from one")
                                 .font(.caption)
                                 .adaptiveSecondaryForeground()
                         }
                     }
 
-                    Text("Exports your recipes, notes, groceries, kitchen, meal plans, badges and tips to a single file. Importing merges a backup into your current library without overwriting anything.")
+                    Text("Exports your recipes, notes, groceries, kitchen, meal plans, badges, cooking streak and tips to a single file. Photos aren't included. Importing merges a backup into your current library without overwriting anything.")
                         .font(.subheadline)
                         .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)

@@ -18,6 +18,7 @@ struct BackupService {
     private let mealPlans: MealPlanningManager
     private let badges: BadgeManager
     private let collections: CollectionManager
+    private let streak: CookingStreakManager
 
     init(
         recipeStore: RecipeBackupStore = PersistenceController.shared,
@@ -25,7 +26,8 @@ struct BackupService {
         kitchen: KitchenInventoryManager = .shared,
         mealPlans: MealPlanningManager = .shared,
         badges: BadgeManager = .shared,
-        collections: CollectionManager = .shared
+        collections: CollectionManager = .shared,
+        streak: CookingStreakManager = .shared
     ) {
         self.recipeStore = recipeStore
         self.shopping = shopping
@@ -33,6 +35,7 @@ struct BackupService {
         self.mealPlans = mealPlans
         self.badges = badges
         self.collections = collections
+        self.streak = streak
     }
 
     /// A complete snapshot of the library.
@@ -44,7 +47,8 @@ struct BackupService {
             kitchenInventory: kitchen.inventoryItems,
             mealPlans: mealPlans.mealPlans,
             badges: badges.unlockedBadges,
-            collections: collections.collections
+            collections: collections.collections,
+            cookDates: streak.recordedCookDates
         )
     }
 
@@ -56,6 +60,7 @@ struct BackupService {
         mealPlans.merge(archive.mealPlans)
         badges.merge(archive.badges)
         collections.merge(archive.collections)
+        streak.merge(cookDates: archive.cookDates)
     }
 
     // MARK: - File-facing convenience

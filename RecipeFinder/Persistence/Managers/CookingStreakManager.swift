@@ -68,6 +68,18 @@ final class CookingStreakManager: CookingStreakTracking {
         load()
     }
 
+    /// Every recorded cook date, for backups.
+    var recordedCookDates: [Date] { cookDates }
+
+    /// Restores cook dates from a backup: unions with what's here (same instant counted once), never removes.
+    func merge(cookDates incoming: [Date]) {
+        let merged = Array(Set(cookDates).union(incoming)).sorted()
+        guard merged.count != cookDates.count else { return }
+        cookDates = merged
+        storage.setEncodable(cookDates, forKey: saveKey)
+        recompute()
+    }
+
     private func load() {
         if let decoded = storage.decodable([Date].self, forKey: saveKey) {
             cookDates = decoded
