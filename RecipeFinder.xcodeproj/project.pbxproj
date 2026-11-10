@@ -132,6 +132,7 @@
 		E7E7E7E7E7E7E7E7E7E70001 /* RecipeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA832EF5EFE8001E7B24 /* RecipeParser.swift */; };
 		E7E7E7E7E7E7E7E7E7E70002 /* RecipeParser+StructuredData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D12E3043A5BE008BF231 /* RecipeParser+StructuredData.swift */; };
 		03A7FBDB368671FC9361F498 /* WebRecipeSearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37762830D5964CAB4473EDE1 /* WebRecipeSearchEngine.swift */; };
+		9E280AFF77EA9407CAA0BB2C /* WebRecipeSearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37762830D5964CAB4473EDE1 /* WebRecipeSearchEngine.swift */; };
 		E7E7E7E7E7E7E7E7E7E70003 /* RecipeParser+WPRM.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1303043A5EF008BF231 /* RecipeParser+WPRM.swift */; };
 		E7E7E7E7E7E7E7E7E7E70004 /* RecipeParser+TextMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1323043A60A008BF231 /* RecipeParser+TextMetadata.swift */; };
 		E7E7E7E7E7E7E7E7E7E70005 /* RecipeParser+TextContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1343043A62B008BF231 /* RecipeParser+TextContent.swift */; };
@@ -2377,6 +2378,7 @@
 				F3B837D13055F0E80003AEF8 /* CollectionManager.swift in Sources */,
 				F3E9D15E30444D41008BF231 /* ShoppingListGrouping.swift in Sources */,
 				F3E9D12F3043A5BE008BF231 /* RecipeParser+StructuredData.swift in Sources */,
+				9E280AFF77EA9407CAA0BB2C /* WebRecipeSearchEngine.swift in Sources */,
 				F3E9D1CC3045D7CB008BF231 /* RecipeDietaryInfo.swift in Sources */,
 				9E6DEA952EF5EFE8001E7B24 /* AdaptiveSpacing.swift in Sources */,
 				F3B837DD3055F1650003AEF8 /* AddToCollectionSheet.swift in Sources */,
