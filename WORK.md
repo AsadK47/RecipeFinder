@@ -1,7 +1,7 @@
 # WORK.md — handoff (2026-11-10, end of long interactive session)
 
 ## In progress
-- **Web search redesign** — branch `agent/web-search-redesign` (27c3bc2), Build & Test run 42838404077 in progress.
+- **Web search redesign** — branch `agent/web-search-redesign` (27c3bc2), Build & Test run 42838404077 ✅ green; Screenshots dispatched 15:08 on the branch.
   New `Utilities/Recipe/WebSearchBrowsing.swift` (offer rules, site name, recent searches; registered in pbxproj
   mirroring RecipeImportBuilder.swift), tests `WebSearchBrowsingTests` in RecipeImportFixtureTests.swift,
   `Views/Import/RecipeWebSearchView.swift` rewritten (`WebBrowserModel` @Observable + KVO, Safari-style address bar,
