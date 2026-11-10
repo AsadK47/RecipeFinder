@@ -360,7 +360,7 @@ enum BadgeType: String, CaseIterable, Identifiable {
                 description: "Created your first meal plan",
                 icon: "calendar.circle.fill",
                 color: "teal",
-                howToEarn: "Go to the Planning tab and create your first meal plan for the week."
+                howToEarn: "Go to the Plan tab and create your first meal plan for the week."
             )
         case .shoppingExpert:
             return Badge(
@@ -378,7 +378,7 @@ enum BadgeType: String, CaseIterable, Identifiable {
                 description: "Imported your first recipe from the web",
                 icon: "link.circle.fill",
                 color: "blue",
-                howToEarn: "Import a recipe by pasting a URL in the Import tab."
+                howToEarn: "Import a recipe: tap + on Recipes and paste a link."
             )
         case .firstPhotoImport:
             return Badge(

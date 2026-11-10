@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Which engine Import → "Search the web" opens. Same stored choice as the picker on the search screen.
+/// Which engine Recipes + → "Search the web" opens. Same stored choice as the picker on the search screen.
 struct RecipeSearchSettingsView: View {
     @AppStorage("webSearchEngine") private var engineRaw = WebRecipeSearchEngine.default.rawValue
 

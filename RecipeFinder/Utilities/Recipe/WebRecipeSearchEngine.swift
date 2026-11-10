@@ -1,6 +1,6 @@
 import Foundation
 
-/// The search engine the in-app recipe browser opens (Import → Search the web). Pages load straight from the chosen
+/// The search engine the in-app recipe browser opens (Recipes + → Search the web). Pages load straight from the chosen
 /// site — no RecipeFinder server in between.
 enum WebRecipeSearchEngine: String, CaseIterable, Identifiable, Sendable {
     case duckDuckGo

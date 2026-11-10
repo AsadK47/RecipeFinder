@@ -1,7 +1,7 @@
 import SwiftUI
 import WebKit
 
-/// Import → "Search the web": search on the cook's chosen engine in an in-app browser, then import the page they're
+/// Recipes + → "Search the web": search on the cook's chosen engine in an in-app browser, then import the page they're
 /// on with the existing link importer. Pages load straight from the site; browsing data isn't kept (non-persistent store).
 struct RecipeWebSearchView: View {
     @Environment(\.dismiss) private var dismiss

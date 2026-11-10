@@ -5,46 +5,25 @@ private let logger = AppLogger.logger(category: "ContentView")
 struct ContentView: View {
     @Environment(\.recipeStore) private var store
     @State private var showTimer = false
-    @State private var selectedTab: Int = 0
-    @State private var sidebarSelection: SidebarItem? = .recipes
+    @State private var selectedTab: AppTab = .launchDefault
+    /// iPad sidebar selection; optional because `List(selection:)` can clear it.
+    @State private var sidebarSelection: AppTab? = .launchDefault
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.badges) private var badgeManager
     @Environment(\.madeItPresenter) private var madeItPresenter
-    @State private var showProfileFromBadge = false
-    /// Set by "View all badges"; the Profile sheet opens only once the badge sheet has fully dismissed (presenting
-    /// it mid-dismissal was silently dropped, so the button appeared to do nothing).
-    @State private var openProfileAfterBadge = false
+    /// Set by "View all badges"; the Me tab opens once the badge sheet has fully dismissed.
+    @State private var openMeAfterBadge = false
+    @State private var showAddRecipe = false
+    /// True from opening the "+" sheet until it has fully dismissed: a badge earned by the import waits for it, since a
+    /// second sheet presented over (or mid-dismissal of) another is silently dropped.
+    @State private var addRecipeBusy = false
     @State private var pendingFileImport: RecipeModel?
     @State private var fileImportError: String?
     /// Held until the import sheet finishes dismissing — an alert raised while it's still up never appears.
     @State private var pendingFileSaveError: String?
     @State private var fileSaveError: String?
 
-
-    private enum SidebarItem: Int, Hashable, CaseIterable {
-        case recipes, groceries, importRecipes, planning, settings
-
-        var label: String {
-            switch self {
-            case .recipes: "Recipes"
-            case .groceries: "Groceries"
-            case .importRecipes: "Import"
-            case .planning: "Planning"
-            case .settings: "Settings"
-            }
-        }
-
-        var icon: String {
-            switch self {
-            case .recipes: "book.fill"
-            case .groceries: "cart.fill"
-            case .importRecipes: "plus.circle.fill"
-            case .planning: "calendar"
-            case .settings: "gearshape.fill"
-            }
-        }
-    }
 
     var body: some View {
         Group {
@@ -59,22 +38,10 @@ struct ContentView: View {
                 store.load()
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .openRecipes)) { _ in
-            selectedTab = 0
-            sidebarSelection = .recipes
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .openGroceries)) { _ in
-            selectedTab = 1
-            sidebarSelection = .groceries
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .openMealPlan)) { _ in
-            selectedTab = 3
-            sidebarSelection = .planning
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .openRecipe)) { _ in
-            selectedTab = 0
-            sidebarSelection = .recipes
-        }
+        .onReceive(NotificationCenter.default.publisher(for: .openRecipes)) { select(AppTab.destination(for: $0.name)) }
+        .onReceive(NotificationCenter.default.publisher(for: .openGroceries)) { select(AppTab.destination(for: $0.name)) }
+        .onReceive(NotificationCenter.default.publisher(for: .openMealPlan)) { select(AppTab.destination(for: $0.name)) }
+        .onReceive(NotificationCenter.default.publisher(for: .openRecipe)) { select(AppTab.destination(for: $0.name)) }
         // Tapping a finished-timer notification opens the timer (it shows the shared RecipeTimerManager state).
         .onReceive(NotificationCenter.default.publisher(for: .openTimer)) { _ in
             showTimer = true
@@ -97,29 +64,27 @@ struct ContentView: View {
         // A celebration waits for the Made it sheet: the same cook often unlocks a badge, and presenting both at once
         // left neither on screen.
         .sheet(item: Binding(
-            get: { madeItPresenter.isBusy ? nil : badgeManager.pendingCelebration },
+            get: { madeItPresenter.isBusy || addRecipeBusy ? nil : badgeManager.pendingCelebration },
             set: { if $0 == nil { badgeManager.dismissCelebration() } }
         ), onDismiss: {
-            if openProfileAfterBadge {
-                openProfileAfterBadge = false
-                showProfileFromBadge = true
+            if openMeAfterBadge {
+                openMeAfterBadge = false
+                select(.me)
             }
         }) { badge in
             BadgeEarnedSheet(badge: badge, onDismiss: {
                 badgeManager.dismissCelebration()
             }, onViewAllBadges: {
-                openProfileAfterBadge = true
+                openMeAfterBadge = true
                 badgeManager.dismissCelebration()
             })
             .presentationDetents([.height(380)])
             .presentationDragIndicator(.visible)
         }
-        .sheet(isPresented: $showProfileFromBadge) {
-            NavigationStack {
-                ProfileView()
-            }
-        }
         .errorAlert("Couldn't Save Recipe", message: $fileSaveError)
+        .sheet(isPresented: $showAddRecipe, onDismiss: { addRecipeBusy = false }) {
+            ImportView()
+        }
         .sheet(item: $pendingFileImport, onDismiss: {
             fileSaveError = pendingFileSaveError
             pendingFileSaveError = nil
@@ -136,31 +101,29 @@ struct ContentView: View {
             pendingFileSaveError = "\"\(recipe.name)\" couldn't be saved. Please try again."
             return
         }
-        selectedTab = 0
-        sidebarSelection = .recipes
+        select(.recipes)
+    }
+
+    private func openAddRecipe() {
+        addRecipeBusy = true
+        showAddRecipe = true
+    }
+
+    private func select(_ tab: AppTab?) {
+        guard let tab else { return }
+        selectedTab = tab
+        sidebarSelection = tab
     }
 
     private var iPhoneLayout: some View {
         // No backdrop here: each tab root draws its own AppBackground (their NavigationStacks are opaque, so one here never shows).
         ZStack {
             TabView(selection: $selectedTab) {
-                RecipeSearchView(isLoading: store.isLoading)
-                    .tabItem { Label("Recipes", systemImage: "book.fill") }
-                    .tag(0)
-                KitchenShoppingView()
-                    .tabItem { Label("Groceries", systemImage: "cart.fill") }
-                    .tag(1)
-                ImportView()
-                    .tabItem { Label("Import", systemImage: "plus.circle.fill") }
-                    .tag(2)
-                MealPlanningView()
-                    .tabItem { Label("Planning", systemImage: "calendar") }
-                    .tag(3)
-                NavigationStack {
-                    SettingsTabView()
+                ForEach(AppTab.allCases, id: \.self) { tab in
+                    tabRoot(tab)
+                        .tabItem { Label(tab.title, systemImage: tab.icon) }
+                        .tag(tab)
                 }
-                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
-                .tag(4)
             }
             .tint(AppTheme.textColor())
             .onAppear {
@@ -186,8 +149,8 @@ struct ContentView: View {
             ZStack {
                 AppBackground()
 
-                List(SidebarItem.allCases, id: \.self, selection: $sidebarSelection) { item in
-                    Label(item.label, systemImage: item.icon)
+                List(AppTab.allCases, id: \.self, selection: $sidebarSelection) { tab in
+                    Label(tab.title, systemImage: tab.icon)
                 }
                 .scrollContentBackground(.hidden)
                 .appNavigationTitle("RecipeFinder")
@@ -197,19 +160,18 @@ struct ContentView: View {
         }
     }
 
-    @ViewBuilder
     private var sidebarDetailView: some View {
-        switch sidebarSelection ?? .recipes {
-        case .recipes:
-            RecipeSearchView(isLoading: store.isLoading)
-        case .groceries:
-            KitchenShoppingView()
-        case .importRecipes:
-            ImportView()
-        case .planning:
-            MealPlanningView()
-        case .settings:
-            NavigationStack { SettingsTabView() }
+        tabRoot(sidebarSelection ?? .launchDefault)
+    }
+
+    @ViewBuilder
+    private func tabRoot(_ tab: AppTab) -> some View {
+        switch tab {
+        case .today: TodayView(onOpen: { select($0) })
+        case .recipes: RecipeSearchView(isLoading: store.isLoading, onAddRecipe: openAddRecipe)
+        case .plan: MealPlanningView()
+        case .groceries: KitchenShoppingView()
+        case .me: MeView()
         }
     }
 

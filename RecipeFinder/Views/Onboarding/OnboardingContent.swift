@@ -6,7 +6,7 @@ enum OnboardingContent {
         OnboardingSlide(
             icon: "tray.and.arrow.down.fill",
             title: "Get your first recipe in",
-            description: "Tap Import below — paste a recipe link, scan a cookbook photo, or type it yourself. All free, all on device.",
+            description: "Tap + on Recipes — paste a recipe link, scan a cookbook photo, or type it yourself. All free, all on device.",
             accentColor: .orange
         ),
         OnboardingSlide(

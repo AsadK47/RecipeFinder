@@ -47,10 +47,20 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             settle()
         }
 
-        // 3–5. Other tabs
+        // 3–5. Other tabs and the "+" sheet
         tab(app, "Groceries", shot: "03-groceries")
-        tab(app, "Planning", shot: "04-meal-plan")
-        tab(app, "Import", shot: "05-import")
+        tab(app, "Plan", shot: "04-meal-plan")
+        tab(app, "Today", shot: "16-today")
+        tab(app, "Me", shot: "17-me")
+        tab(app, "Recipes", shot: nil)
+        let add = app.buttons["recipes.add"]
+        if add.waitForExistence(timeout: 5) {
+            add.tap()
+            settle()
+            snap(app, "05-import")
+            app.buttons["import.close"].tap()
+            settle()
+        }
 
         // 6. Cooking mode — last, so there's no need to find its close button.
         tab(app, "Recipes", shot: nil)
@@ -98,9 +108,9 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-show-low-confidence-import"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        let importTab = app.tabBars.buttons["Import"]
-        guard importTab.waitForExistence(timeout: 5) else { return }
-        importTab.tap()
+        let add = app.buttons["recipes.add"]
+        guard add.waitForExistence(timeout: 5) else { return }
+        add.tap()
         settle(2)
         XCTAssertTrue(app.descendants(matching: .any)["import.lowConfidenceBanner"].waitForExistence(timeout: 5),
                       "A poor import should open the review with the low-confidence banner.")
@@ -115,7 +125,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-force-import-failure"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        app.tabBars.buttons["Import"].tap()
+        app.buttons["recipes.add"].tap()
         settle()
 
         // Paste: no recipe found → keep the text.
@@ -137,7 +147,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         // Link: page can't be read → paste instead.
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        app.tabBars.buttons["Import"].tap()
+        app.buttons["recipes.add"].tap()
         settle()
         app.buttons["import.link"].tap()
         let field = app.textFields.firstMatch
@@ -157,7 +167,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        app.tabBars.buttons["Import"].tap()
+        app.buttons["recipes.add"].tap()
         settle()
         app.buttons["import.web"].tap()
         XCTAssertTrue(app.textFields["webSearch.query"].waitForExistence(timeout: 5),
@@ -197,7 +207,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-show-other-app-import-summary"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        app.tabBars.buttons["Settings"].tap()
+        app.tabBars.buttons["Me"].tap()
+        app.buttons["me.settings"].tap()
         settle()
         let data = app.staticTexts["Data Management"].firstMatch
         for _ in 0..<4 where !data.isHittable { app.swipeUp() }

@@ -1,6 +1,6 @@
 import XCTest
 
-/// Critical-flow UI tests: each Import tab entry point opens its expected sheet.
+/// Critical-flow UI tests: each Recipes "+" entry point opens its expected sheet.
 final class RecipeFinderImportUITests: XCTestCase {
 
     override func setUp() {
@@ -23,10 +23,10 @@ final class RecipeFinderImportUITests: XCTestCase {
     func testCreateManuallyOpensWizard() {
         let app = launchApp()
 
-        app.tabBars.buttons["Import"].tap()
+        app.buttons["recipes.add"].tap()
         XCTAssertTrue(
-            app.staticTexts["Import a Recipe"].waitForExistence(timeout: 5),
-            "Import tab should be visible."
+            app.staticTexts["Add a Recipe"].waitForExistence(timeout: 5),
+            "Recipes + should open the Add a Recipe sheet."
         )
 
         app.buttons["import.wizard"].tap()
@@ -42,16 +42,31 @@ final class RecipeFinderImportUITests: XCTestCase {
         add(shot)
     }
 
+    // MARK: - Other apps
+
+    @MainActor
+    func testOtherAppsOpensImportScreen() {
+        let app = launchApp()
+
+        app.buttons["recipes.add"].tap()
+        app.buttons["import.otherApp"].tap()
+
+        XCTAssertTrue(
+            app.buttons["settings.importOtherApp"].waitForExistence(timeout: 5),
+            "Bring recipes from another app should open the export-file import."
+        )
+    }
+
     // MARK: - Paste text
 
     @MainActor
     func testPasteTextOpensSheet() {
         let app = launchApp()
 
-        app.tabBars.buttons["Import"].tap()
+        app.buttons["recipes.add"].tap()
         XCTAssertTrue(
-            app.staticTexts["Import a Recipe"].waitForExistence(timeout: 5),
-            "Import tab should be visible."
+            app.staticTexts["Add a Recipe"].waitForExistence(timeout: 5),
+            "Recipes + should open the Add a Recipe sheet."
         )
 
         app.buttons["import.paste"].tap()

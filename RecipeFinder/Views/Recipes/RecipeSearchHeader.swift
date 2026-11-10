@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// The screen title with a menu button (Collections + Filters) and search field.
+/// The screen title with a menu button (Collections + Filters), search field with the "+" add-recipe button, and a
+/// one-time tip pointing at "+" (it replaced the Import tab).
 struct RecipeSearchHeader: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding
@@ -11,6 +12,10 @@ struct RecipeSearchHeader: View {
     let onShowCollections: () -> Void
     /// Tapping the streak chip opens the Cooking sheet (explains the streak + shows cooking-badge progress).
     var onShowStreak: () -> Void = {}
+    /// Opens the add-recipe sheet (link, web search, paste, photo/PDF, other apps, manual).
+    var onAdd: () -> Void = {}
+    var showsAddTip = false
+    var onDismissAddTip: () -> Void = {}
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
@@ -66,12 +71,49 @@ struct RecipeSearchHeader: View {
     }
 
     private var searchBarSection: some View {
-        AppSearchField(
-            text: $searchText,
-            placeholder: "What would you like to eat...?",
-            isFocused: isSearchFocused
-        )
+        VStack(spacing: AppTheme.spacing12) {
+            HStack(spacing: AppTheme.spacing12) {
+                AppSearchField(
+                    text: $searchText,
+                    placeholder: "What would you like to eat...?",
+                    isFocused: isSearchFocused
+                )
+                CircleButton(icon: "plus", action: onAdd)
+                    .accessibilityLabel("Add a recipe")
+                    .accessibilityIdentifier("recipes.add")
+            }
+            if showsAddTip {
+                addTip
+            }
+        }
         .padding(.horizontal, AppTheme.spacing20)
         .padding(.bottom, AppTheme.spacing12)
+    }
+
+    private var addTip: some View {
+        HStack(alignment: .top, spacing: AppTheme.spacing12) {
+            Image(systemName: "plus.circle.fill")
+                .font(.title3)
+                .foregroundStyle(.orange)
+                .accessibilityHidden(true)
+            Text("Add recipes with **+** — paste a link, search the web, scan a photo or PDF, bring your collection from another app, or write your own.")
+                .font(.caption)
+                .adaptiveForegroundColor()
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+            Button(action: onDismissAddTip) {
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.semibold))
+                    .adaptiveSecondaryForeground()
+                    .frame(width: AppTheme.height44, height: AppTheme.height44)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Dismiss tip")
+            .accessibilityIdentifier("recipes.addTip.dismiss")
+        }
+        .padding(.leading, AppTheme.spacing16)
+        .appCard()
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("recipes.addTip")
     }
 }

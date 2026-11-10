@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Root of the Settings tab. Each sub-screen lives in Views/Settings/Screens/.
+/// Settings root, opened from the gear on the Me tab. Each sub-screen lives in Views/Settings/Screens/.
 struct SettingsTabView: View {
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric

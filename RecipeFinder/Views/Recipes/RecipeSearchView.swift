@@ -9,6 +9,8 @@ struct RecipeSearchView: View {
     /// True while the library is still fetching on launch, so empty `recipes` shows a skeleton, not the empty state.
     var isLoading: Bool = false
     @State private var showCollections = false
+    /// One-time tip for "+", which replaced the Import tab.
+    @AppStorage("hasSeenAddRecipeTip") private var hasSeenAddRecipeTip = false
     @State private var searchText = ""
     @State private var showFilters = false
     @State private var selectedCategories: Set<String> = []
@@ -68,8 +70,12 @@ struct RecipeSearchView: View {
         ["Basic", "Expert", "Intermediate"]
     }
 
-    init(isLoading: Bool = false) {
+    /// Opens the add-recipe sheet, presented by the app root so badge celebrations can wait for it to close.
+    private let onAddRecipe: () -> Void
+
+    init(isLoading: Bool = false, onAddRecipe: @escaping () -> Void = {}) {
         self.isLoading = isLoading
+        self.onAddRecipe = onAddRecipe
         // Seed from the shared store (the env default) so the first frame isn't an empty-state flash.
         _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: RecipeStore.shared.recipes))
     }
@@ -285,7 +291,13 @@ struct RecipeSearchView: View {
             streak: recipes.isEmpty ? nil : cookingStreak.streak,
             onToggleFilters: { showFilters.toggle() },
             onShowCollections: { showCollections = true },
-            onShowStreak: { showCookingSheet = true }
+            onShowStreak: { showCookingSheet = true },
+            onAdd: {
+                hasSeenAddRecipeTip = true
+                onAddRecipe()
+            },
+            showsAddTip: !hasSeenAddRecipeTip,
+            onDismissAddTip: { hasSeenAddRecipeTip = true }
         )
     }
     

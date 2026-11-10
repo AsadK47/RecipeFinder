@@ -8,16 +8,16 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    // MARK: - Import tab
+    // MARK: - Add a recipe ("+" on Recipes)
 
     @MainActor
-    func testImportTabPassesAudit() throws {
+    func testAddRecipeSheetPassesAudit() throws {
         let app = launchApp()
 
-        app.tabBars.buttons["Import"].tap()
+        app.buttons["recipes.add"].tap()
         XCTAssertTrue(
-            app.staticTexts["Import a Recipe"].waitForExistence(timeout: 5),
-            "Import screen should be visible."
+            app.staticTexts["Add a Recipe"].waitForExistence(timeout: 5),
+            "Add a Recipe sheet should be visible."
         )
 
         // Skip contrast: import tiles use frosted `.appCard()` material, which the audit always flags over translucency.

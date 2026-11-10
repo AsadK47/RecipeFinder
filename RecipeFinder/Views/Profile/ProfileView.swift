@@ -1,6 +1,10 @@
 import SwiftUI
 
 struct ProfileView: View {
+    var title = "Profile"
+    /// The Me tab root shows a gear into Settings; pushed copies (from Settings, badge sheet) don't.
+    var showsSettingsLink = false
+
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
 
@@ -20,24 +24,17 @@ struct ProfileView: View {
             AppBackground()
 
             VStack(spacing: 0) {
-                VStack(spacing: AppTheme.spacing12) {
-                    GeometryReader { geometry in
-                        HStack(spacing: 0) {
-                            Spacer()
-
-                            Text("Profile")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-
-                            Spacer()
+                ScreenTitleHeader(title) {
+                    if showsSettingsLink {
+                        NavigationLink(destination: SettingsTabView()) {
+                            CircleButton(icon: "gearshape.fill") {}
+                                .allowsHitTesting(false)
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Settings")
+                        .accessibilityIdentifier("me.settings")
                     }
-                    .frame(height: AppTheme.buttonHeight)
                 }
-                .padding(.horizontal, AppTheme.cardHorizontalPadding)
-                .padding(.top, AppTheme.spacing16)
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
@@ -104,6 +101,8 @@ struct ProfileView: View {
             }
         }
         .appNavigationTitle("")
+        // Me's root draws its own title header; an empty bar above it would only waste space.
+        .toolbar(showsSettingsLink ? .hidden : .automatic, for: .navigationBar)
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
             case .privacyPolicy:

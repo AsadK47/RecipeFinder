@@ -1,8 +1,10 @@
 import SwiftUI
 
-/// Centre-tab import hub reusing RecipeImportView and RecipeWizardView for consistent behaviour, plus a share-sheet hint for social recipes.
+/// The Recipes "+" sheet: every way to add a recipe, reusing RecipeImportView and RecipeWizardView for consistent
+/// behaviour, plus a share-sheet hint for social recipes.
 struct ImportView: View {
     @Environment(\.recipeStore) private var recipeStore
+    @Environment(\.dismiss) private var dismiss
     private var recipes: [RecipeModel] { recipeStore.recipes }
 
 
@@ -11,6 +13,7 @@ struct ImportView: View {
     @State private var showWebSearch = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
+    @State private var showOtherApps = false
     @State private var saveError: String?
     #if DEBUG
     /// Screenshots hook (`-show-low-confidence-import`): opens the review on a deliberately poor import, once.
@@ -24,60 +27,17 @@ struct ImportView: View {
                 AppBackground()
 
                 VStack(spacing: 0) {
-                    ScreenTitleHeader("Import a Recipe") {
-                        Image(systemName: "tray.and.arrow.down.fill")
-                            .font(.system(size: AppTheme.fontSize20, weight: .semibold))
-                            .foregroundStyle(.orange)
-                            .frame(width: AppTheme.height44, alignment: .trailing)
-                            .accessibilityHidden(true)
+                    ScreenTitleHeader("Add a Recipe") {
+                        CircleButton(icon: "xmark") { dismiss() }
+                            .accessibilityLabel("Close")
+                            .accessibilityIdentifier("import.close")
                     }
 
                     ScrollView {
                         VStack(spacing: AppTheme.spacing16) {
-                            actionCard(
-                                icon: "link",
-                                color: .orange,
-                                title: "Paste a link",
-                                subtitle: "Import from a recipe website — we fetch and parse it for you.",
-                                action: { showLinkImport = true }
-                            )
-                            .accessibilityIdentifier("import.link")
-
-                            actionCard(
-                                icon: "globe",
-                                color: .blue,
-                                title: "Search the web",
-                                subtitle: "Find a recipe online, then import the page you're on.",
-                                action: { showWebSearch = true }
-                            )
-                            .accessibilityIdentifier("import.web")
-
-                            actionCard(
-                                icon: "doc.on.clipboard",
-                                color: .green,
-                                title: "Paste text",
-                                subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
-                                action: { showPasteImport = true }
-                            )
-                            .accessibilityIdentifier("import.paste")
-
-                            actionCard(
-                                icon: "text.viewfinder",
-                                color: .purple,
-                                title: "Scan a photo",
-                                subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
-                                action: { showPhotoImport = true }
-                            )
-                            .accessibilityIdentifier("import.photo")
-
-                            actionCard(
-                                icon: "square.and.pencil",
-                                color: .blue,
-                                title: "Create manually",
-                                subtitle: "Add a recipe yourself, step by step.",
-                                action: { showWizard = true }
-                            )
-                            .accessibilityIdentifier("import.wizard")
+                            ForEach(AddRecipeOption.allCases) { option in
+                                actionCard(option)
+                            }
 
                             shareHint
                         }
@@ -88,6 +48,10 @@ struct ImportView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
+            // Same Paprika/Mela/CSV import as Settings → Data Management.
+            .navigationDestination(isPresented: $showOtherApps) {
+                SettingsScreen("From Another App") { OtherAppImportSection() }
+            }
         }
         .sheet(isPresented: $showLinkImport) {
             RecipeImportView(initialURL: nil, existingNames: recipes.map(\.name)) { store($0, source: .link) }
@@ -129,13 +93,27 @@ struct ImportView: View {
         case .saved(let badge):
             HapticManager.shared.success()
             if let badge { BadgeManager.shared.unlockBadge(badge) }
+            // Back to the library so the new recipe (and any badge celebration) shows.
+            dismiss()
         }
     }
 
-    private func actionCard(icon: String, color: Color, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
-        Button(action: {
+    private func open(_ option: AddRecipeOption) {
+        switch option {
+        case .link: showLinkImport = true
+        case .web: showWebSearch = true
+        case .paste: showPasteImport = true
+        case .photo: showPhotoImport = true
+        case .otherApp: showOtherApps = true
+        case .manual: showWizard = true
+        }
+    }
+
+    private func actionCard(_ option: AddRecipeOption) -> some View {
+        let (icon, color, title, subtitle) = (option.icon, option.color, option.title, option.subtitle)
+        return Button(action: {
             HapticManager.shared.light()
-            action()
+            open(option)
         }) {
             HStack(spacing: AppTheme.spacing16) {
                 IconBadge(systemName: icon, tint: color, diameter: 44, iconSize: AppTheme.fontSize18, style: .solid)
@@ -163,6 +141,7 @@ struct ImportView: View {
             .appCard()
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(option.accessibilityID)
     }
 
     private var shareHint: some View {

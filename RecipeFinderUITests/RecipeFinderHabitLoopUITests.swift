@@ -126,9 +126,9 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
     func testImportScreenHasNoExampleLinks() {
         let app = launchApp()
 
-        app.tabBars.buttons["Import"].tap()
-        XCTAssertTrue(app.staticTexts["Import a Recipe"].waitForExistence(timeout: 5),
-                      "Import tab should be visible.")
+        app.buttons["recipes.add"].tap()
+        XCTAssertTrue(app.staticTexts["Add a Recipe"].waitForExistence(timeout: 5),
+                      "Add a Recipe sheet should be visible.")
         XCTAssertFalse(app.staticTexts["Try these examples:"].exists,
                        "The dead example links should no longer ship.")
     }
