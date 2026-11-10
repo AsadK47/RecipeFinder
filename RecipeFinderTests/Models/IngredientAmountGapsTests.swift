@@ -131,7 +131,7 @@ struct IngredientAmountEstimateTests {
 
     @Test("Devices without the on-device model decline")
     func unavailableDeclines() async throws {
-        let request = try #require(request())
-        #expect(try await UnavailableIngredientAmountEstimator().estimateAmounts(for: request) == nil)
+        let estimateRequest = try #require(request())
+        #expect(try await UnavailableIngredientAmountEstimator().estimateAmounts(for: estimateRequest) == nil)
     }
 }
