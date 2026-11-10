@@ -46,9 +46,9 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
 ## Queue
-- [ ] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
+- [x] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
   anything else. Audit result: 3 🔴 — all fixed 2026-11-10 (photo UUIDs, samples-only dedupe, restore merges state + streak), 14 🟡, 28 🟢; CI green.
-- [ ] **Sample recipes stop loading third-party photos** (🟡 privacy/copyright, owner OK 2026-11-09). ~164 bundled
+- [ ] **Sample recipes stop loading third-party photos** — 🚧 builder 2026-11-10 (🟡 privacy/copyright, owner OK 2026-11-09). ~164 bundled
   recipes hotlink hero images from recipe sites (`recipes_source_images.json`, applied in `BundledRecipeCatalogTests`),
   leaking the user's IP to those sites while browsing and showing others' copyrighted photos. Stop applying that
   mapping so bundled recipes have no remote `imageName` (the existing `RecipePlaceholderView` gradient shows instead);
@@ -209,8 +209,6 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
-- 🟡 `Utilities/Recipe/RecipeDiff.swift:64` — `applying(selections:)` omits `currentServings`, so refresh/Re-import resets the user's chosen servings — pass `stored.currentServings`; add test.
-- 🟡 Tests: `BundledRecipeCatalogTests` lacks cases for `currentServings` kept/reset, multiple history versions per id, and `""` image name.
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
@@ -236,3 +234,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · 🐞 Re-import polish · f1d8535 · Link imports no longer show Re-import (use refresh); re-import review opens with nothing ticked; blank page text isn't saved; pasted/photo/shared text capped at 50 KB.
 - 2026-11-10 · 🐞 Sample refresh off main thread · 3f50d9f · Stale bundled recipes now refresh in one background save; refresh retries next launch if bundle data can't be read. First launch after update should feel no slower.
 - 2026-11-10 · 🐞 🟠 Star rating accessibility · 5e3a19b · Stars on recipe detail + Made it: VoiceOver swipe up/down adjusts rating, stars grow with text size, 44pt taps. UI tests green (1 infra launch flake on Import audit, passed on rerun).
+- 2026-11-10 · 🐞 Servings + catalog gaps · 44e6fa3 · Refresh / Re-import keep your chosen servings; empty stored image name no longer blocks the bundled photo; 4 new catalog tests. Inbox findings all done (only the 🧹 branch-delete note remains for owner).
