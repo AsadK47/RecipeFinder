@@ -131,7 +131,7 @@ drop a line while moving it.
   ("Imported 182, skipped 3 duplicates") and set `sourceText`. Pure parsers with fixtures under
   `RecipeFinderTests/Fixtures/OtherApps/` (hand-made samples, no third-party user data). *Done when:* parser tests
   per format, import summary screenshot, CI green.
-- [ ] **Import PDFs and multi-page photos.** Accept PDFs (share sheet + Files) and up to 5 photos at once: PDF text
+- [ ] 🚧 **Import PDFs and multi-page photos.** Accept PDFs (share sheet + Files) and up to 5 photos at once: PDF text
   via PDFKit (`PDFDocument.string`), image-only pages via the existing Vision OCR; pages joined in order, then the
   normal text-import router. *Done when:* page-joining + PDF text extraction tested on fixtures, CI green.
 - [ ] **Video 1/3 — Import a recipe from a video (speech)** (owner OK 2026-11-09; big feature, all on-device).
