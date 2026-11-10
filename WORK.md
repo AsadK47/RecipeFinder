@@ -9,6 +9,15 @@
   If red: read failing log, fix. If green: dispatch Screenshots (13-web-search = start screen only; results pages
   need live network), ff main, tick, Log, notify.
 
+- **Bug sweep** — branch `agent/bug-sweep-1` (f9a9190), Build & Test run 42843360332 pending. Fixes audit §0
+  bugs 2–8: collection remove → contextMenu + a11y action; ½× servings `RecipeModel.servings(scaledBy:)`; week
+  groceries scale by `meal.servings/baseServings`; `NotificationManager.syncGroceriesReminder` + new
+  `RecipeFinderTests/Utilities/Notes/NotificationManagerTests.swift` (pbxproj ids A1B2C3D4E5F6…01/02); share inbox
+  is now a queue (`consumePayloads`, drains legacy single keys); extension says "Sent" and only hands over complete
+  recipes; ContentView alerts on file-import save failure after the sheet dismisses. Existing flour test now plans
+  `servings: 1` (recipes have base 1). Bug 1 (pantry expiry/quantity UI) deferred to Groceries + Kitchen batch.
+  If red: read log, fix. If green: rebase/ff main, tick, Log.
+
 ## Next action
 Work the BACKLOG "Next (owner order 2026-11-10)" line in order: Bug sweep → Tabs 1/3 → Tabs 2/3 Today →
 Plan my week → Groceries + Kitchen → Made-it celebration + Spoons → cooking mode → small sticky features →
