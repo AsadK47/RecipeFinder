@@ -58,7 +58,7 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Showcase screenshots → Plan my week → Groceries + Kitchen →
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Showcase screenshots → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
    (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
    skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
@@ -150,6 +150,23 @@ drop a line while moving it.
   fridge / New imports / Rediscover (absorbs "Recently cooked row" + RediscoveryCard); clipboard recipe-link card;
   new-user state = "Import your first recipe" + starters. *Done when:* hero/shelf selection logic tested,
   screenshots (new user, planned day, unplanned day), CI green.
+- [ ] **Add flow 1/3 — One recipe screen for import review + create** (owner 2026-11-10: importing and creating
+  "sucks … needs to be rethought well"; OK'd this direction). After any import, and for "Create manually", show the
+  recipe as it will look once saved (photo, title, time/servings chips, ingredients, steps — same look as
+  `RecipeDetailView`); tap any part to edit it in place (name, photo, times, servings, ingredient and step text boxes);
+  reader-struggled parts highlighted inline (Import 2/5 logic); one Save pinned at the bottom; Cancel asks only if
+  changed. Replaces the long `RecipeWizardView` form for create + import review (keep focused single-section edits
+  from detail working); delete `WizardIntroSheet` and step views it makes unused. *Done when:* draft/validation/save
+  logic tested, screenshots (blank, imported, low-confidence), existing import UI tests updated, net lines down, CI green.
+- [ ] **Add flow 2/3 — Fewer taps to get there.** "+" sheet leads with one box: paste a link or recipe text (or tap
+  "Paste" from the clipboard) — auto-detects link vs text; then Photo/PDF, Search the web, From another app, Start
+  blank. Link/paste/photo go straight to the Add flow 1/3 screen with a loading state (no in-between sheets); share
+  extension recipes open on the same screen. *Done when:* link-vs-text detection tested, tap count per path ≤ 3 to the
+  recipe screen (note in Log), screenshots, CI green.
+- [ ] **Add flow 3/3 — Imports come out right.** Collect ~10 real recipe pages/texts that import badly today (popular
+  sites, Instagram captions, cookbook photos) as `ImportRegressions` fixtures (red), fix the parsers until green;
+  amounts/units split correctly, section headers ("For the sauce") kept, junk lines (ads, "Jump to recipe") dropped.
+  *Done when:* every fixture green, CI green.
 - [ ] **Plan my week — a proper meal planner** (owner: "make the meal planner a proper feature"). 7-day agenda by
   default (tap empty slot → inline suggestions/picker; long-press to move/swap; per-meal servings); tap planned meal →
   open/cook; cooking it marks it done; pinned "Shop for this week (N items)" that scales by planned servings (fixes
