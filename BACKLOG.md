@@ -16,7 +16,9 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
 
 ## How an agent works this file (read fully before starting)
 1. Read root `CLAUDE.md`, `RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`, `RecipeFinder/DesignSystem.md`.
-2. Take the **first unticked item under Queue** that isn't marked 🙋 (needs the owner). One item per run (WIP=1).
+2. Work by **batch** (see *Batches* below): take the first unfinished batch, then its first unticked item that isn't
+   🙋. Break big items into slices that each fit one CI cycle; put small related items (same screen/area) in ONE
+   branch and ship them together. One batch in flight at a time.
    If the item is too big for one run, do a coherent first slice, tick nothing, and rewrite the item to say what's
    left. If it's unclear or would break a guardrail, move it to **Needs owner** with a one-line question and stop.
 3. **Claim it first:** append `— 🚧 <who> <YYYY-MM-DD>` to the item's title line and push that to `main` before
@@ -49,6 +51,16 @@ drop a line while moving it.
 - Skip, disable or weaken a test to get green.
 - New Swift files: no `XcodeWrite` in the cloud — register them in `project.pbxproj` by mirroring a sibling file's
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
+
+## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
+1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
+   photos, Video 1/3 → 3/3.
+2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
+   Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
+   planning nudge.
+3. **Polish & QA:** Polish batch + Scroll fade elsewhere (one branch), CI screenshots of key screens.
+4. **Onboarding:** Guide 1/2 → 2/2.
+5. **Refactors:** Smells Batch A → F, Large wizard. Interleave one after each batch above.
 
 ## Queue
 - [x] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
