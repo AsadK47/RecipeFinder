@@ -1,13 +1,19 @@
 # WORK.md — handoff (2026-11-10, end of long interactive session)
 
 ## In progress
-- Nothing in progress.
+- Nothing in progress. Tabs 2/3 slice 1 merged (69c3b21); item stays open in BACKLOG with what's left.
 
 ## Next action
-Start **Tabs 2/3 Today** (claim in BACKLOG first): flip `AppTab.launchDefault` to `.today`, update
-`RecipeFinderLaunchUITests` + `AppTabTests.launchLandsOnRecipesUntilTodayHasContent`. Then Add flow 1/3.
+Tabs 2/3 slice 2: flip `AppTab.launchDefault` to `.today`; in every UI test `launchApp` (AccessibilityAudit,
+HabitLoop, Import, SheetPresentation, Screenshot tests) tap `app.tabBars.buttons["Recipes"]` after launch; rename
+`RecipeFinderLaunchUITests` to assert Today; add launch-arg seeds for planned-day / unplanned-day Today screenshots.
 
 ## Decisions (why)
+- **Tabs 2/3 slice 1**: launch kept on Recipes this slice — flipping it breaks ~6 UI-test helpers that assume Recipes,
+  so it gets its own branch. Hero = open dinner plan, else earliest open plan, else best kitchen match (≥ half the
+  ingredients). Cook again = cooked ≤21 days; Rediscover = older (no overlap; `RecipeRediscovery.ranked`). New user =
+  every recipe is an uncooked sample. "Let's cook" opens the detail (cooking mode lives there). "New imports" skipped:
+  recipes have no add-date (Core Data change = guardrail). Today has its own NavigationStack path.
 - **Tabs 1/3**: launch stays on Recipes until Today has content (no placeholder landing for TestFlight users).
   "+" sits beside the search field (title row too narrow for + and menu). "+" sheet is presented from the app root
   and closes on save; badge celebrations wait for its onDismiss (`addRecipeBusy`) — a sheet over/mid-dismissal of
