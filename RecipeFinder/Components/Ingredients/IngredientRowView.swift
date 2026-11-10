@@ -131,7 +131,7 @@ struct IngredientRowView: View {
     }
 
     /// An "Add amount" button replaces the dropped amount column when a needed amount is missing and editing is wired.
-    static func showsAddAmount(for ingredient: Ingredient, amount: (quantity: String?, unit: String?), canEdit: Bool) -> Bool {
+    nonisolated static func showsAddAmount(for ingredient: Ingredient, amount: (quantity: String?, unit: String?), canEdit: Bool) -> Bool {
         canEdit && amount.quantity == nil && amount.unit == nil && ingredient.isMissingAmount
     }
 
