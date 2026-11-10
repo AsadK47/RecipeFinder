@@ -213,7 +213,7 @@ enum StepTextBlock {
         text.components(separatedBy: .newlines)
             .map { line in
                 line.trimmingCharacters(in: .whitespaces)
-                    .replacingOccurrences(of: #"^(?:step\s*)?\d+\s*[.):\-]\s*"#, with: "",
+                    .replacingOccurrences(of: #"^(?:step\s*)?\d+\s*(?:[.)](?!\d)|:)\s*"#, with: "",
                                           options: [.regularExpression, .caseInsensitive])
                     .trimmingCharacters(in: .whitespaces)
             }

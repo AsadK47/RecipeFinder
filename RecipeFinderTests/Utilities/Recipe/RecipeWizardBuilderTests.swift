@@ -362,5 +362,6 @@ struct RecipeWizardBuilderTests {
     @Test("a step starting with a quantity isn't mistaken for numbering")
     func stepWithLeadingQuantityKept() {
         #expect(StepTextBlock.steps(from: "2 cups of water go in the pot") == ["2 cups of water go in the pot"])
+        #expect(StepTextBlock.steps(from: "1.5 cups stock, then 10-15 min") == ["1.5 cups stock, then 10-15 min"])
     }
 }
