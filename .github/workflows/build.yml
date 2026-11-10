@@ -30,8 +30,8 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   # Pushes to main queue rather than cancel each other, so every commit gets tested and the build cache gets
-  # saved; superseded PR runs are still cancelled.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # saved; a newer push to an agent branch or PR cancels the now-outdated run.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   test:
@@ -40,6 +40,18 @@ jobs:
     timeout-minutes: 30
 
     steps:
+      # main is fast-forwarded to an agent branch that already passed here, so the same commit was already tested:
+      # then main only compiles (no simulator, no tests) to refresh the build cache every branch reads from.
+      - name: Check whether this commit already passed
+        id: already
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          N=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&status=success" \
+            --jq '[.workflow_runs[] | select(.id != ${{ github.run_id }})] | length')
+          echo "passed=$([ "$N" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0   # full history, so file dates can be restored below
@@ -67,6 +79,7 @@ jobs:
       # Booting the simulator took ~4 of the ~8 minutes, idle after compiling. Start it now, in the background,
       # so it boots while the cache restores and the app compiles.
       - name: Boot simulator early
+        if: steps.already.outputs.passed != 'true'
         run: |
           SIM=$(xcrun simctl list devices available -j \
             | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
@@ -80,7 +93,19 @@ jobs:
           key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
           restore-keys: deriveddata-test-${{ runner.os }}-
 
+      - name: Refresh build cache only
+        if: steps.already.outputs.passed == 'true'
+        run: |
+          set -o pipefail
+          # Same simulator destination as the test run, so the cached output matches what branches build.
+          SIM=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          xcodebuild build-for-testing -scheme RecipeFinder -destination "id=$SIM" \
+            -derivedDataPath DerivedData -skipPackagePluginValidation -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
+
       - name: Build & test
+        if: steps.already.outputs.passed != 'true'
         env:
           EVENT: ${{ github.event_name }}
         run: |
