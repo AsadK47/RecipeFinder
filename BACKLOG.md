@@ -209,7 +209,6 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
-- 🟠 `Views/Recipes/RecipeDetailView+Content.swift:4` (`StarRatingView`, used by MadeItSheet) — combined element with no adjustable action, fixed 18pt font, ~20pt targets — add `.accessibilityAdjustableAction` + value, scalable font, 44pt targets.
 - 🟡 `Utilities/Recipe/RecipeDiff.swift:64` — `applying(selections:)` omits `currentServings`, so refresh/Re-import resets the user's chosen servings — pass `stored.currentServings`; add test.
 - 🟡 Tests: `BundledRecipeCatalogTests` lacks cases for `currentServings` kept/reset, multiple history versions per id, and `""` image name.
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
@@ -236,3 +235,4 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-10 · 🐞 🟠 Add amount button · e880b4f · Ingredient rows with no amount (e.g. imported "flour") show "Add amount" → opens the amount editor. Not for "to taste" items.
 - 2026-11-10 · 🐞 Re-import polish · f1d8535 · Link imports no longer show Re-import (use refresh); re-import review opens with nothing ticked; blank page text isn't saved; pasted/photo/shared text capped at 50 KB.
 - 2026-11-10 · 🐞 Sample refresh off main thread · 3f50d9f · Stale bundled recipes now refresh in one background save; refresh retries next launch if bundle data can't be read. First launch after update should feel no slower.
+- 2026-11-10 · 🐞 🟠 Star rating accessibility · 5e3a19b · Stars on recipe detail + Made it: VoiceOver swipe up/down adjusts rating, stars grow with text size, 44pt taps. UI tests green (1 infra launch flake on Import audit, passed on rerun).
