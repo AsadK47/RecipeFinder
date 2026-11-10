@@ -18,6 +18,32 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # file dates restored below so the reused build cache stays valid
+
+      # Reuse Build & Test's compiled output (read-only) instead of building from scratch every time.
+      - name: Restore file dates
+        run: |
+          python3 - <<'EOF'
+          import os, subprocess
+          out = subprocess.run(["git", "log", "--format=@%ct", "--name-only"],
+                               capture_output=True, text=True, check=True).stdout
+          seen, ts = set(), None
+          for line in out.splitlines():
+              if line.startswith("@"):
+                  ts = int(line[1:])
+              elif line and line not in seen and os.path.isfile(line):
+                  seen.add(line)
+                  os.utime(line, (ts, ts))
+          EOF
+          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
+
+      - name: Restore build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: DerivedData
+          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
+          restore-keys: deriveddata-test-${{ runner.os }}-
 
       - name: Boot simulator with a clean status bar
         run: |
@@ -37,7 +63,10 @@ jobs:
             -scheme RecipeFinder \
             -destination "id=$SIM" \
             -only-testing:RecipeFinderUITests/RecipeFinderScreenshotTests \
+            -derivedDataPath DerivedData \
             -resultBundlePath Screenshots.xcresult \
+            -parallel-testing-enabled NO \
+            -enableCodeCoverage NO \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
           ls -la "$RUNNER_TEMP/shots"
 
@@ -50,8 +79,17 @@ jobs:
               --out "$RUNNER_TEMP/shots/$(basename "$f" .png)-web.jpg" >/dev/null
           done
 
+      # Only main updates the shared release; branch runs keep their screenshots as a run artifact.
+      - name: Keep branch screenshots
+        if: (success() || failure()) && github.ref != 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: ${{ runner.temp }}/shots
+          retention-days: 7
+
       - name: Publish to the "screenshots" release
-        if: success() || failure()
+        if: (success() || failure()) && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
