@@ -58,6 +58,7 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
+   Plus Web search redesign (in progress) and Settings tidy-up.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
    Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.
@@ -116,6 +117,20 @@ drop a line while moving it.
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
   intent: cook → sheet → Done → button disabled → rating shown → streak chip). UI tests only run nightly or on
   "Run workflow", so verify with a `workflow_dispatch` run on your branch. *Done when:* that test passes in CI.
+- [ ] **Web search redesign** (owner OK 2026-11-10). Import button only where it helps: hidden on search-engine result
+  pages and while loading; green "Import this recipe ✓" pill when the page parses as a recipe (same check as the
+  importer, not just JSON-LD); small grey "Try importing this page" on other pages (failure → existing "Paste the
+  recipe text instead"); re-checked on every navigation. Look: Safari-style compact top bar (site name, tap to search),
+  thin progress line, bottom bar back/forward/reload, frosted floating import pill that slides in with a haptic,
+  start screen with suggestion chips + recent searches, app theme colours light/dark. *Done when:* button-state +
+  recent-searches + site-name logic tested, screenshots (start, results, recipe page), CI green.
+- [ ] **Settings tidy-up** (owner OK 2026-11-10; one batch). New order: Profile → Preferences (Appearance = merged
+  Appearance & Theme + Display, Units, Recipe Search, Notifications, Confirmations moved out of Data Management) →
+  Import & Backup (other-app import, backup, restore) → Privacy → Support (Help, Join the beta =
+  https://testflight.apple.com/join/UJWrMbk2, Send feedback = recipefinderuk@gmail.com, Rate RecipeFinder) → About
+  (version, licences, Legal). Every row shows its current value; search field at the top; one icon colour per
+  section. No legal text changes. *Done when:* settings search + row-value logic tested, screenshot of every
+  settings screen, CI green.
 - [ ] **Guide 1/2 — "Get to know RecipeFinder" checklist + contextual tips** (owner OK 2026-11-09). A dismissible
   checklist card on the Recipes home: import a recipe · cook one ("Made it") · build a grocery list · plan a meal · add
   a store · try Siri ("What's for dinner?"). Each step deep-links to the feature and shows a TipKit popover on the
