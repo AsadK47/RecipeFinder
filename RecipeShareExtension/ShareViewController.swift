@@ -128,8 +128,10 @@ final class ShareViewController: UIViewController {
         Task { @MainActor in
             do {
                 let outcome = try await RecipeImportPipeline().fetchAndParse(from: url)
-                if SharedImportInbox.storeExtractedRecipe(outcome.data) {
-                    finish(message: "Recipe saved to RecipeFinder")
+                // The app still checks for duplicates, so say it's on its way rather than "saved".
+                if SharedImportInbox.isCompleteRecipe(outcome.data),
+                   SharedImportInbox.storeExtractedRecipe(outcome.data) {
+                    finish(message: "Sent — open RecipeFinder to add it")
                 } else {
                     SharedImportInbox.storeURL(rawURLFallback)
                     finish(message: "Saved — open RecipeFinder to import")

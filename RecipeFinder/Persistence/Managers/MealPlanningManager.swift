@@ -252,8 +252,10 @@ final class MealPlanningManager: MealPlanningManaging {
 
             mealsCovered += 1
 
+            // Buy for the servings planned for this meal, not the recipe's base servings.
+            let scaleFactor = recipe.baseServings > 0 ? Double(meal.servings) / Double(recipe.baseServings) : 1
             for ingredient in recipe.ingredients {
-                guard let line = RecipeShoppingList.item(from: ingredient) else { continue }
+                guard let line = RecipeShoppingList.item(from: ingredient, scaleFactor: scaleFactor) else { continue }
                 let key = Key(name: line.name, unit: line.unit)
                 if quantities[key] == nil {
                     itemOrder.append(key)

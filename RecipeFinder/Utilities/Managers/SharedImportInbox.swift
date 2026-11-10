@@ -1,40 +1,54 @@
 import Foundation
 
-/// Share-extension↔app hand-off via App Group defaults: extension stores parsed `ExtractedRecipeData` (app saves silently) or, if it can't finish, raw URL/text for the interactive flow. Compiled into both targets, so Foundation-only (no app singletons/UI).
+/// Share-extension↔app hand-off via App Group defaults: extension queues parsed `ExtractedRecipeData` (app saves silently) or, if it can't finish, raw URL/text for the interactive flow. Compiled into both targets, so Foundation-only (no app singletons/UI).
 enum SharedImportInbox {
     static let appGroupID = "group.com.asadkhan.recipefinder"
     private static let recipeKey = "pendingSharedImportRecipeJSON"
     private static let urlKey = "pendingSharedImportURL"
     private static let textKey = "pendingSharedImportText"
 
-    private static var defaults: UserDefaults? {
+    /// Every share appends here, so a second share before the app opens no longer overwrites the first.
+    private static let queueKey = "pendingSharedImportQueue"
+
+    static var appGroupDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)
     }
 
     // MARK: - Extension side (producers)
 
-    /// Stores fetched+parsed recipe data. Returns false when encoding or the
+    /// Queues fetched+parsed recipe data. Returns false when encoding or the
     /// App Group is unavailable so the caller can fall back to `storeURL`.
     @discardableResult
-    static func storeExtractedRecipe(_ data: ExtractedRecipeData) -> Bool {
-        guard let defaults, let encoded = try? JSONEncoder().encode(data) else {
-            return false
-        }
-        defaults.set(encoded, forKey: recipeKey)
+    static func storeExtractedRecipe(_ data: ExtractedRecipeData, in defaults: UserDefaults? = appGroupDefaults) -> Bool {
+        enqueue(.extracted(data), in: defaults)
+    }
+
+    static func storeURL(_ urlString: String, in defaults: UserDefaults? = appGroupDefaults) {
+        enqueue(.url(urlString), in: defaults)
+    }
+
+    static func storeText(_ text: String, in defaults: UserDefaults? = appGroupDefaults) {
+        enqueue(.text(text), in: defaults)
+    }
+
+    /// Whether parsed data is complete enough for the app to save without review; otherwise the extension hands
+    /// over the link so the app imports it interactively instead of telling the user it was saved.
+    static func isCompleteRecipe(_ data: ExtractedRecipeData) -> Bool {
+        !data.rawIngredients.isEmpty && !data.instructions.isEmpty
+    }
+
+    @discardableResult
+    private static func enqueue(_ payload: Payload, in defaults: UserDefaults?) -> Bool {
+        guard let defaults, let encoded = try? JSONEncoder().encode(payload) else { return false }
+        var queue = defaults.array(forKey: queueKey) as? [Data] ?? []
+        queue.append(encoded)
+        defaults.set(queue, forKey: queueKey)
         return true
-    }
-
-    static func storeURL(_ urlString: String) {
-        defaults?.set(urlString, forKey: urlKey)
-    }
-
-    static func storeText(_ text: String) {
-        defaults?.set(text, forKey: textKey)
     }
 
     // MARK: - App side (consumer)
 
-    enum Payload: Equatable {
+    enum Payload: Equatable, Codable {
         /// The extension finished fetch + parse; build and save silently.
         case extracted(ExtractedRecipeData)
         /// A link to import interactively.
@@ -43,19 +57,29 @@ enum SharedImportInbox {
         case text(String)
     }
 
-    /// Returns whatever the extension left behind (extracted data, link, or text) and clears the inbox.
-    static func consumePayload() -> Payload? {
-        guard let defaults else { return nil }
+    /// Returns everything the extension left behind, oldest first, and clears the inbox. Also drains the
+    /// single-slot keys an older extension build may have written before an update.
+    static func consumePayloads(from defaults: UserDefaults? = appGroupDefaults) -> [Payload] {
+        guard let defaults else { return [] }
 
-        let recipeData = defaults.data(forKey: recipeKey)
-        let urlString = defaults.string(forKey: urlKey)
-        let text = defaults.string(forKey: textKey)
+        let legacy = resolvePayload(
+            recipeData: defaults.data(forKey: recipeKey),
+            urlString: defaults.string(forKey: urlKey),
+            text: defaults.string(forKey: textKey)
+        )
+        let queued = (defaults.array(forKey: queueKey) as? [Data] ?? []).compactMap { entry -> Payload? in
+            guard let payload = try? JSONDecoder().decode(Payload.self, from: entry) else { return nil }
+            if case let .text(text) = payload {
+                return resolvePayload(recipeData: nil, urlString: nil, text: text)
+            }
+            return payload
+        }
 
-        defaults.removeObject(forKey: recipeKey)
-        defaults.removeObject(forKey: urlKey)
-        defaults.removeObject(forKey: textKey)
+        for key in [recipeKey, urlKey, textKey, queueKey] {
+            defaults.removeObject(forKey: key)
+        }
 
-        return resolvePayload(recipeData: recipeData, urlString: urlString, text: text)
+        return (legacy.map { [$0] } ?? []) + queued
     }
 
     /// Pure precedence resolution (decodable recipe > link > text, with embedded links promoted to `.url`); kept off `UserDefaults` so it's unit-testable.

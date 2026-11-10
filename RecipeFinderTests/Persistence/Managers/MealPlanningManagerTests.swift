@@ -200,9 +200,9 @@ final class MealPlanningManagerTests: XCTestCase {
         let d1 = Calendar.current.date(byAdding: .day, value: 1, to: start)!
         let d2 = Calendar.current.date(byAdding: .day, value: 2, to: start)!
         let d3 = Calendar.current.date(byAdding: .day, value: 3, to: start)!
-        sut.addMealPlan(makePlan(recipeId: a.id, recipeName: a.name, date: d1, mealTime: .dinner))
-        sut.addMealPlan(makePlan(recipeId: b.id, recipeName: b.name, date: d2, mealTime: .dinner))
-        sut.addMealPlan(makePlan(recipeId: c.id, recipeName: c.name, date: d3, mealTime: .dinner))
+        sut.addMealPlan(makePlan(recipeId: a.id, recipeName: a.name, date: d1, mealTime: .dinner, servings: 1))
+        sut.addMealPlan(makePlan(recipeId: b.id, recipeName: b.name, date: d2, mealTime: .dinner, servings: 1))
+        sut.addMealPlan(makePlan(recipeId: c.id, recipeName: c.name, date: d3, mealTime: .dinner, servings: 1))
 
         let summary = sut.weekShoppingSummary(forWeekStarting: start, recipes: [a, b, c])
         let flour = summary.items.filter { $0.name.lowercased().contains("flour") }
@@ -285,13 +285,15 @@ final class MealPlanningManagerTests: XCTestCase {
         recipeId: UUID? = nil,
         recipeName: String = "Test Recipe",
         date: Date = Date(),
-        mealTime: MealTime = .breakfast
+        mealTime: MealTime = .breakfast,
+        servings: Int = 4
     ) -> MealPlanModel {
         MealPlanModel(
             recipeId: recipeId ?? self.recipeId,
             recipeName: recipeName,
             date: date,
-            mealTime: mealTime
+            mealTime: mealTime,
+            servings: servings
         )
     }
 
@@ -526,5 +528,44 @@ struct MealPlanRemovalPersistenceTests {
 
         let reloaded = MealPlanningManager(storage: storage)
         #expect(reloaded.mealPlans.map(\.recipeName) == ["Soup"])
+    }
+}
+
+// MARK: - Week shopping summary servings
+
+@MainActor
+@Suite("Week shopping summary scales to planned servings")
+struct WeekShoppingSummaryServingsTests {
+
+    private func makeRecipe(baseServings: Int) -> RecipeModel {
+        RecipeModel(
+            name: "Stew", category: "Test", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+            baseServings: baseServings, ingredients: [Ingredient(baseQuantity: 200, unit: "g", name: "beef")],
+            prePrepInstructions: [], instructions: [], notes: ""
+        )
+    }
+
+    private func summary(planned servings: Int, baseServings: Int) -> WeekShoppingSummary {
+        let sut = MealPlanningManager(storage: LocalStore(
+            userDefaults: UserDefaults(suiteName: UUID().uuidString)!
+        ))
+        let recipe = makeRecipe(baseServings: baseServings)
+        let start = Calendar.current.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
+        sut.addMealPlan(MealPlanModel(
+            recipeId: recipe.id, recipeName: recipe.name, date: start, mealTime: .dinner, servings: servings
+        ))
+        return sut.weekShoppingSummary(forWeekStarting: start, recipes: [recipe])
+    }
+
+    @Test(arguments: [(2, 2, 200), (4, 2, 400), (1, 2, 100)])
+    func buysForPlannedServings(planned: Int, base: Int, expectedGrams: Int) {
+        let beef = summary(planned: planned, baseServings: base).items.first { $0.name.contains("beef") }
+        #expect(beef?.quantity == expectedGrams)
+        #expect(beef?.unit == "g")
+    }
+
+    @Test func zeroBaseServingsFallsBackToRecipeAmounts() {
+        let beef = summary(planned: 4, baseServings: 0).items.first { $0.name.contains("beef") }
+        #expect(beef?.quantity == 200)
     }
 }
