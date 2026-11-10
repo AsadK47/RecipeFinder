@@ -117,7 +117,7 @@ drop a line while moving it.
   run's log / `test-results` artifact, fix the app or update the test to the new Made it flow (never weaken the
   intent: cook → sheet → Done → button disabled → rating shown → streak chip). UI tests only run nightly or on
   "Run workflow", so verify with a `workflow_dispatch` run on your branch. *Done when:* that test passes in CI.
-- [ ] **Web search redesign** (owner OK 2026-11-10). Import button only where it helps: hidden on search-engine result
+- [ ] 🚧 **Web search redesign** (owner OK 2026-11-10). Import button only where it helps: hidden on search-engine result
   pages and while loading; green "Import this recipe ✓" pill when the page parses as a recipe (same check as the
   importer, not just JSON-LD); small grey "Try importing this page" on other pages (failure → existing "Paste the
   recipe text instead"); re-checked on every navigation. Look: Safari-style compact top bar (site name, tap to search),
