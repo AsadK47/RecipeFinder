@@ -131,6 +131,19 @@ drop a line while moving it.
   (version, licences, Legal). Every row shows its current value; search field at the top; one icon colour per
   section. No legal text changes. *Done when:* settings search + row-value logic tested, screenshot of every
   settings screen, CI green.
+- [ ] **Bug sweep (audit 2026-11-10)** — the 8 likely bugs in `docs/AUDIT-2026-11-10.md` §0 (pantry expiry/quantity
+  UI, collection remove swipe, ½× servings → 0, week-to-groceries servings, unused shopping reminders toggle,
+  one-slot share inbox, premature "Recipe saved", silent file-import failure). Test first for each. *Done when:*
+  each has a failing-then-passing test (UI ones a screenshot), CI green.
+- [ ] **Spoons 1/2 — earn** (owner OK 2026-11-10). On-device reward currency for real cooking: Made it +10, first cook
+  of a recipe +15, weekly streak kept +25, Kitchen item used before expiry +10, week planned +5, badge +20–50;
+  "Cook for someone" toggle on Made it (+bonus, badge). Balance + recent earnings in Me/Profile; earn animation on
+  Made it. No purchase, no cash-out, nothing leaves the device. *Done when:* earning rules tested (no double
+  counting, undo-safe), screenshot, CI green.
+- [ ] **Spoons 2/2 — spend + impact.** Spend on cosmetics only (themes, app icons, badge frames, share-card styles,
+  celebration effects, one streak freeze). Impact stats card: meals cooked at home, ~kg food saved (Kitchen items used
+  before expiry), techniques learned, meals cooked for others. *Done when:* unlock + stats logic tested,
+  screenshots, CI green.
 - [ ] **Guide 1/2 — "Get to know RecipeFinder" checklist + contextual tips** (owner OK 2026-11-09). A dismissible
   checklist card on the Recipes home: import a recipe · cook one ("Made it") · build a grocery list · plan a meal · add
   a store · try Siri ("What's for dinner?"). Each step deep-links to the feature and shows a TipKit popover on the
@@ -235,6 +248,7 @@ drop a line while moving it.
   own words in batches (same curated-JSON + seed + drift-test process), or trim the bundled set. Owner to confirm
   before agents start.
 - 🙋 Home-screen widget ("Tonight" + streak) — needs a new Widget Extension target; do at a Mac.
+- 🙋 Later, once there is revenue: owner-funded charity pledge (e.g. "every 1,000 community Spoons funds a meal" via a UK food charity). Needs your decision + a Charities Act-compliant statement/agreement; agents never link money to Spoons.
 - 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
