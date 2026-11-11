@@ -151,7 +151,7 @@ drop a line while moving it.
   16-today, 18-today-planned, 19-today-lets-cook; prep-ahead nudge for tomorrow's plans (marinate/soak/defrost…).
   ✅ Slice 4b (601c162): "Copied a recipe link?" card (PasteButton → link import) + 20-today-new-user.
   Moved out: New imports shelf → Needs owner; Spoons on Today → Spoons 1/2.
-- [ ] **Add flow 1/3 — One recipe screen for import review + create** (owner 2026-11-10: importing and creating
+- [ ] **Add flow 1/3 — One recipe screen for import review + create** — 🚧 builder agent 2026-11-11 (owner 2026-11-10: importing and creating
   "sucks … needs to be rethought well"; OK'd this direction). After any import, and for "Create manually", show the
   recipe as it will look once saved (photo, title, time/servings chips, ingredients, steps — same look as
   `RecipeDetailView`); tap any part to edit it in place (name, photo, times, servings, ingredient and step text boxes);
