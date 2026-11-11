@@ -11,6 +11,11 @@ enum TonightTiming {
     static func eatAt(stored: Int) -> Int {
         eatTimeChoices.contains(stored) ? stored : defaultEatAt
     }
+    /// Whether the card offers "Dinner at": every pick except a planned lunch/breakfast/snack (not counted from dinner).
+    static func asksEatTime(for hero: TodayFeed.Hero) -> Bool {
+        if case .planned(let meal) = hero.reason { return meal == .dinner }
+        return true
+    }
     private static let eveningStartsAt = 18 * 60
     /// After this, "Quick tonight?" is too late to be useful.
     private static let eveningEndsAt = 22 * 60
@@ -21,13 +26,14 @@ enum TonightTiming {
     /// - Morning (5am–noon), tonight's planned dinner needs a head start: "Defrost this morning for tonight".
     /// - Before the start time: "Start by 5:40 to eat at 7" (prep + cook back from `eatAt`).
     /// - Past the start time but before `eatAt`: "Start now to eat by 7:25".
-    /// - Evening (6–10pm), unless a planned dinner can still be timed: "Quick tonight? 12 under 30 min".
+    /// - Evening (6–10pm, or from an hour before a later `eatAt`), unless a planned dinner can still be timed: "Quick tonight? 12 under 30 min".
     /// - A planned lunch/breakfast/snack before evening: nothing (its time isn't dinner's).
     /// Nil when there's nothing useful to say (no time on the recipe, too late, nothing quick).
     static func line(hero: TodayFeed.Hero?, quickCount: Int, minuteOfDay now: Int, eatAt: Int = defaultEatAt) -> String? {
         let isPlannedDinner = hero?.reason == .planned(.dinner)
         let quickLine = quickCount > 0 && now < eveningEndsAt ? "Quick tonight? \(quickCount) under \(TodayFeed.quickLimitMinutes) min" : nil
-        let isEvening = now >= eveningStartsAt
+        // A late dinner (9pm) keeps its "Start by" line past 6pm: quick ideas start an hour before eating at the earliest.
+        let isEvening = now >= max(eveningStartsAt, eatAt - 60)
 
         if isEvening, !isPlannedDinner { return quickLine }
         guard let hero else { return nil }

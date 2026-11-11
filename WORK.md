@@ -3,16 +3,18 @@
 ## In progress
 - `agent/today-eat-time` — Today+ 1/3 slice 2: eat-time menu on the Tonight timing line (`today.eatAt` AppStorage,
   `TonightTiming.eatTimeChoices` / `eatAt(stored:)`), calmer layout (groceries shortcut card dropped, shelf tiles
-  without cards and bigger photos, tinted badges). Waiting on Build & Test.
+  without cards and bigger photos, tinted badges). Review (2 confirmed) + challenge (3) fixed in 2nd commit. Waiting on Build & Test.
 
 ## Next action
-Check Build & Test on `agent/today-eat-time`; then Screenshots on the branch (16/18/24–28), deep-review (high) +
-challenge pass in separate agents, merge, tick Today+ 1/3.
+Check Build & Test on `agent/today-eat-time`; then Screenshots on the branch, look at 16/18/24–28, merge, tick
+Today+ 1/3 (review + challenge already done).
 
 ## Decisions (why)
-- **Today+ 1/3 slice 2**: eat time is picked by tapping the timing line (Menu + Picker, 5–10pm on the half hour), not
-  in Settings — it's where the number shows, and Settings tidy-up comes later. Stored minutes not in the choices fall
-  back to 7pm. The Menu sits outside the hero's open button (nested buttons don't fire). "Calmer": dropped the
+- **Today+ 1/3 slice 2**: eat time is a "Dinner at 7 pm" pill (Menu + Picker, 5–10pm on the half hour) beside
+  Shuffle, not in Settings and not on the timing line — review found the line vanishes once the time passes (stranding
+  the choice) and some lines ("Quick tonight?", morning prep) ignore it. Hidden for a planned lunch/snack
+  (`asksEatTime`). Stored minutes not in the choices fall back to 7pm. Quick-ideas evening starts at
+  max(6pm, eatAt − 1h). Action row uses ViewThatFits (pills drop below "Cook this" at large text). "Calmer": dropped the
   bottom "Check your groceries" card (Groceries is a tab), shelf tiles are bare photos (no card each), Plan-tonight
   and prep-ahead badges tinted so "Cook this" is the one accent. **Pre-mortem:** (1) picked time ignored / not saved
   → `aLaterEatTimeMovesTheStartTime` + UI step asserting "eat at 8" (shot 28); (2) garbage stored value shows odd

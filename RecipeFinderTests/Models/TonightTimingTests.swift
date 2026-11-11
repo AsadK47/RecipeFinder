@@ -111,6 +111,19 @@ import Foundation
         #expect(TonightTiming.eatAt(stored: stored) == expected)
     }
 
+    @Test func dinnerTimeIsOfferedForDinnerAndSuggestionsButNotAPlannedLunch() {
+        #expect(TonightTiming.asksEatTime(for: planned(recipe())))
+        #expect(TonightTiming.asksEatTime(for: .init(recipe: recipe(), reason: .quick(minutes: 20))))
+        #expect(TonightTiming.asksEatTime(for: .init(recipe: recipe(), reason: .kitchenMatch(have: 2, total: 3))))
+        #expect(!TonightTiming.asksEatTime(for: .init(recipe: recipe(), reason: .planned(.lunch))))
+    }
+
+    @Test func aLateDinnerKeepsItsStartLineUntilAnHourBefore() {
+        let hero = TodayFeed.Hero(recipe: recipe(), reason: .kitchenMatch(have: 3, total: 4))
+        #expect(TonightTiming.line(hero: hero, quickCount: 5, minuteOfDay: at(18, 30), eatAt: at(21)) == "Start by 8:20 to eat at 9")
+        #expect(TonightTiming.line(hero: hero, quickCount: 5, minuteOfDay: at(20), eatAt: at(21)) == "Quick tonight? 5 under 30 min")
+    }
+
     @Test func aLaterEatTimeMovesTheStartTime() {
         let hero = planned(recipe(prep: "40 min", cook: "40 min"))
         let line = TonightTiming.line(hero: hero, quickCount: 0, minuteOfDay: at(15), eatAt: TonightTiming.eatAt(stored: at(21)))

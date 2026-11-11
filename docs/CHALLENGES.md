@@ -63,3 +63,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [UX] "Quick tonight? 12 under 30 min" counts every quick recipe but Shuffle reaches 3 and the line isn't tappable — make it open a filtered list (Today+ later slice) — cost if wrong: a number that promises more than it shows.
   → Owner:
+
+## 2026-11-11 (item pass: Today+ 1/3 slice 2 — fixed: eat-time picker vanished once the time passed / for untimed recipes and sat on lines it didn't change (now a separate "Dinner at" pill), late dinners lost their start line at 6pm, VoiceOver read the timing twice, three pills with no large-text fallback)
+- ⚔️ [Tests] TodayView passing the stored `eatAt` into `TonightTiming.line` is only checked by the Screenshots UI test (not in push CI) — a view-model seam would let a unit test catch it — cost if wrong: picked time silently ignored until the nightly run.
+  → Owner:
+- ⚔️ [Locale] "8 pm" / "Start by 5:40" are spoken 12-hour by spec; 24-hour locales still see them — `Date.FormatStyle` if owner wants locale times — cost if wrong: reads oddly outside UK/US.
+  → Owner:

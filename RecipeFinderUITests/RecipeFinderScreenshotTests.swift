@@ -327,12 +327,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                 XCTAssertTrue(hero.label.contains("Quick tonight?"), "Evening should offer quick ideas: \(hero.label)")
             }
             if time == "15:00" {
-                // Slice 2: tapping the timing line picks when dinner is; the start time follows.
-                let timing = app.buttons["today.hero.timing"]
-                XCTAssertTrue(timing.waitForExistence(timeout: 5), "The Tonight card should show when to start.")
+                // Slice 2: the "Dinner at" pill picks when dinner is; the start time follows.
+                let timing = app.buttons["today.hero.eatAt"]
+                XCTAssertTrue(timing.waitForExistence(timeout: 5), "The Tonight card should offer a dinner time.")
                 timing.tap()
                 let eight = app.buttons["8 pm"]
-                XCTAssertTrue(eight.waitForExistence(timeout: 5), "The timing line should offer dinner times.")
+                XCTAssertTrue(eight.waitForExistence(timeout: 5), "The pill should offer dinner times.")
                 eight.tap()
                 settle(1)
                 XCTAssertTrue(hero.label.contains("eat at 8"), "Start time should count back from 8pm: \(hero.label)")
