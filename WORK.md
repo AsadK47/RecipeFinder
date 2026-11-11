@@ -3,10 +3,12 @@
 ## In progress
 - `agent/today-eat-time` — Today+ 1/3 slice 2: eat-time menu on the Tonight timing line (`today.eatAt` AppStorage,
   `TonightTiming.eatTimeChoices` / `eatAt(stored:)`), calmer layout (groceries shortcut card dropped, shelf tiles
-  without cards and bigger photos, tinted badges). Review (2 confirmed) + challenge (3) fixed in 2nd commit. Waiting on Build & Test.
+  without cards and bigger photos, tinted badges). Review (2 confirmed) + challenge (3) fixed in 2nd commit. Build & Test green (run 842, 1cfcae3). Screenshots run
+  43097103898 hit `startup_failure` twice on 2026-11-11 ~20:40–21:00 UTC (a Linux TestFlight-feedback job also sat queued) —
+  GitHub Actions not starting jobs (likely minutes/billing). Branch is up to date with main, NOT merged.
 
 ## Next action
-Check Build & Test on `agent/today-eat-time`; then Screenshots on the branch, look at 16/18/24–28, merge, tick
+Re-run Screenshots on `agent/today-eat-time` once Actions starts jobs again (Build & Test already green); then on the branch, look at 16/18/24–28, merge, tick
 Today+ 1/3 (review + challenge already done).
 
 ## Decisions (why)
