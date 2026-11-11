@@ -145,12 +145,12 @@ drop a line while moving it.
   photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
   later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
   tested, every tab screenshot, existing UI tests updated (not weakened), CI green.
-- [ ] **Tabs 2/3 — Today.** — 🚧 builder agent 2026-11-11 Slices 1–4a done (69c3b21, cec3f49, ff6e658, cce65ff): greeting + streak, Tonight hero (planned meal,
+- [x] **Tabs 2/3 — Today.** Slices 1–4a (69c3b21, cec3f49, ff6e658, cce65ff): greeting + streak, Tonight hero (planned meal,
   else best kitchen match) whose "Let's cook" opens cooking mode, shelves Cook again / Fits your kitchen / Rediscover,
   new-user "Bring in your first recipe" + Starters; app opens on Today; Recipes' rediscovery card removed; screenshots
   16-today, 18-today-planned, 19-today-lets-cook; prep-ahead nudge for tomorrow's plans (marinate/soak/defrost…).
-  **Left:** New imports shelf (no recipe add-date — needs a Core Data field = owner OK, or skip);
-  clipboard recipe-link card; Spoons (after Spoons 1/2); new-user screenshot. *Done when:* those land, CI green.
+  ✅ Slice 4b (601c162): "Copied a recipe link?" card (PasteButton → link import) + 20-today-new-user.
+  Moved out: New imports shelf → Needs owner; Spoons on Today → Spoons 1/2.
 - [ ] **Add flow 1/3 — One recipe screen for import review + create** (owner 2026-11-10: importing and creating
   "sucks … needs to be rethought well"; OK'd this direction). After any import, and for "Create manually", show the
   recipe as it will look once saved (photo, title, time/servings chips, ingredients, steps — same look as
@@ -187,7 +187,7 @@ drop a line while moving it.
 - [ ] **Spoons 1/2 — earn** (owner OK 2026-11-10). On-device reward currency for real cooking: Made it +10, first cook
   of a recipe +15, weekly streak kept +25, Kitchen item used before expiry +10, week planned +5, badge +20–50;
   "Cook for someone" toggle on Made it (+bonus, badge). Balance + recent earnings in Me/Profile; earn animation on
-  Made it. No purchase, no cash-out, nothing leaves the device. *Done when:* earning rules tested (no double
+  Made it, and on Today (from Tabs 2/3). No purchase, no cash-out, nothing leaves the device. *Done when:* earning rules tested (no double
   counting, undo-safe), screenshot, CI green.
 - [ ] **Spoons 2/2 — spend + impact.** Spend on cosmetics only (themes, app icons, badge frames, share-card styles,
   celebration effects, one streak freeze). Impact stats card: meals cooked at home, ~kg food saved (Kitchen items used
@@ -356,6 +356,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
 ## Needs owner
+- 🙋 Today "New imports" shelf needs a recipe add-date = new Core Data field (model 16, guardrail). Add it, or drop the shelf?
 - 🙋 Starter photos (optional, nice-to-have): pick ~6 photos you own or free-licensed ones (e.g. Unsplash, licence
   allows bundling in a free app) for the 6 starter recipes; drop the files in and agents will bundle them in
   `Assets.xcassets` — shipped inside the app, no runtime API calls.
@@ -428,3 +429,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-10 · Tabs 2/3 slice 2 · cec3f49 · App now opens on Today. New DEBUG `-seed-tonight-plan` + screenshot 18-today-planned; UI tests tap Recipes after launch (nightly UI run will confirm). On phone: cold-launch lands on Today.
 - 2026-11-11 · Tabs 2/3 slice 3 · ff6e658 · Today's "Let's cook" opens cooking mode (card tap still opens the recipe); "Cook it again" card removed from Recipes (Today's Rediscover shelf replaces it). Screenshot 19-today-lets-cook. On phone: Today → Let's cook → cooking mode; finish → Made it on the recipe.
 - 2026-11-11 · Tabs 2/3 slice 4a · cce65ff · Today shows a "Marinate tonight for tomorrow's dinner" row when tomorrow's plan needs a head start (overnight, defrost, 2h+ marinate/soak/prove/chill). New PrepAhead.swift registered in pbxproj. `-seed-tonight-plan` now also plans tomorrow's dinner; 18-today-planned asserts the row (nightly UI run will confirm). On phone: plan a marinade recipe for tomorrow → row on Today.
+- 2026-11-11 · Tabs 2/3 slice 4b (item done) · 601c162 · Today shows "Copied a recipe link?" when the clipboard holds a web link (checked without iOS's paste prompt); tap Paste → link import → save; ✕ hides it for that copy. New ClipboardRecipeLink.swift + tests registered in pbxproj. Screenshot 20-today-new-user (new UI test sorts first); Estimate-amounts shot now swipes away a badge sheet (order artefact). On phone: copy a recipe URL in Safari, open the app → Today → Paste.

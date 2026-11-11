@@ -1,13 +1,20 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Tabs 2/3 slice 4a (prep-ahead) merged (cce65ff); item stays open in BACKLOG.
+- Nothing in progress. Tabs 2/3 done (slice 4b merged 601c162).
 
 ## Next action
-Check the nightly UI-test run (03:00 UTC 2026-11-11) passes — incl. the new prep-ahead assert in
-`testCaptureTodayPlanned`. Then Tabs 2/3 slice 4b: clipboard recipe-link card + new-user screenshot.
+Check the nightly UI run (03:00 UTC 2026-11-12) is green, incl. new `testCaptureAFirstLaunchToday`. Then
+Add flow 1/3 (next in owner order): one recipe screen for import review + create — plan slices first.
 
 ## Decisions (why)
+- **Tabs 2/3 slice 4b (clipboard card)**: detection via `UIPasteboard.detectPatterns(.probableWebURL)` (no paste
+  prompt); the read happens only through SwiftUI `PasteButton` (user tap = consent). First http(s) link in the paste
+  → `RecipeImportView(initialURL:)` presented from ContentView (`addRecipeBusy` holds badge sheets). Pasted/dismissed
+  copy remembered by pasteboard `changeCount` in @AppStorage. Re-probed on scene active (no Combine notification).
+  New-user shot = UI test named to sort first; that made Estimate-amounts run 2nd, where its seeded recipe unlocks
+  "First Bite" → shared `dismissBadgeSheet` helper. In CI the Paste button renders greyed (clipboard really empty).
+  "New imports" shelf → Needs owner (Core Data guardrail); Spoons-on-Today folded into Spoons 1/2.
 - **Tabs 2/3 slice 4a (prep-ahead)**: nudge = tomorrow's open plans whose steps say "overnight", defrost/thaw, or a
   long-lead verb (marinate/soak/prove/rise/chill/refrigerate) with a 2+ hour wait. Short waits ("marinate 15 minutes")
   and "no need to thaw" excluded; "chilli" isn't "chill". Uses `String.range(of:options:.regularExpression)` (no
