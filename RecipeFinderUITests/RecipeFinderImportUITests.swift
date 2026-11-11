@@ -34,8 +34,8 @@ final class RecipeFinderImportUITests: XCTestCase {
         app.buttons["import.wizard"].tap()
 
         XCTAssertTrue(
-            app.staticTexts["Let's start with a name"].waitForExistence(timeout: 5),
-            "Tapping 'Create manually' should open the recipe wizard."
+            app.buttons["draft.name"].waitForExistence(timeout: 5),
+            "Tapping 'Create manually' should open the new-recipe screen."
         )
 
         let shot = XCTAttachment(screenshot: app.screenshot())

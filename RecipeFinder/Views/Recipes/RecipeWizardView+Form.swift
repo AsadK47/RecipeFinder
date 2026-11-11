@@ -63,23 +63,33 @@ extension RecipeWizardView {
         }
     }
 
-    private func shouldShow(_ section: Section) -> Bool {
-        Section.shown(for: focus).contains(section)
-    }
-
     /// True when the import couldn't read any of `fields` and the low-confidence banner is up.
     private func needsCheck(_ fields: ImportQuality.Field...) -> Bool {
         guard let importQuality else { return false }
         return !importQuality.missing.isDisjoint(with: fields)
     }
 
+    /// The sections the import couldn't read, for the draft screen's outlines.
+    var sectionsNeedingCheck: Set<Section> {
+        importQuality.map { Section.needingCheck($0.missing) } ?? []
+    }
+
+    /// Focused edit: the one section, under the low-confidence banner when it's up.
     @ViewBuilder
     var sections: some View {
         if importQuality != nil {
             ImportQualityBanner()
         }
+        ForEach(Section.shown(for: focus)) { section in
+            sectionEditor(section)
+        }
+    }
 
-        if shouldShow(.basics) {
+    /// One section's editor — shown alone for a focused edit, or in a sheet from the draft screen.
+    @ViewBuilder
+    func sectionEditor(_ section: Section) -> some View {
+        switch section {
+        case .basics:
             RecipeNameStepView(
                 recipeName: $recipeName,
                 selectedRecipeImage: $selectedRecipeImage,
@@ -96,9 +106,7 @@ extension RecipeWizardView {
                 }
             )
             .importHighlight(needsCheck(.name))
-        }
-
-        if shouldShow(.details) {
+        case .details:
             BasicInfoStepView(
                 prepTime: $prepTime,
                 cookTime: $cookTime,
@@ -109,16 +117,12 @@ extension RecipeWizardView {
                 categories: categories
             )
             .importHighlight(needsCheck(.times))
-        }
-
-        if shouldShow(.ingredients) {
+        case .ingredients:
             IngredientsStepView(
                 ingredientItems: $ingredientItems
             )
             .importHighlight(needsCheck(.ingredients, .amounts))
-        }
-
-        if shouldShow(.prePrep) {
+        case .prePrep:
             EditableStepsStepView(
                 steps: $prePrepSteps,
                 title: "Pre-prep Instructions",
@@ -127,9 +131,7 @@ extension RecipeWizardView {
                 fieldPlaceholder: "Describe the pre-prep step",
                 addButtonTitle: "Add Pre-prep Step"
             )
-        }
-
-        if shouldShow(.instructions) {
+        case .instructions:
             EditableStepsStepView(
                 steps: $mainInstructions,
                 title: "Cooking Instructions",
@@ -139,9 +141,7 @@ extension RecipeWizardView {
                 addButtonTitle: "Add Cooking Step"
             )
             .importHighlight(needsCheck(.steps))
-        }
-
-        if shouldShow(.notes) {
+        case .notes:
             NotesStepView(
                 notes: $notes,
                 tags: $recipeTags,

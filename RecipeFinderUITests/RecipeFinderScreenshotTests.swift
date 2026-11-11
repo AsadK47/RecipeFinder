@@ -164,8 +164,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(startFromText.waitForExistence(timeout: 10), "A paste with no recipe should offer Start from this text.")
         snap(app, "10-import-no-recipe")
         startFromText.tap()
-        XCTAssertTrue(app.staticTexts["Let's start with a name"].waitForExistence(timeout: 5),
-                      "Start from this text should open the editor.")
+        XCTAssertTrue(app.buttons["draft.name"].waitForExistence(timeout: 5),
+                      "Start from this text should open the recipe screen.")
         snap(app, "11-start-from-text")
         app.terminate()
 
@@ -184,6 +184,27 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.buttons["import.pasteInstead"].waitForExistence(timeout: 10),
                       "A failed link should offer Paste the recipe text instead.")
         snap(app, "12-link-failed")
+    }
+
+    /// Add flow 1/3: a blank new recipe shown as it will look once saved; tapping the name opens just that editor.
+    @MainActor
+    func testCaptureNewRecipeDraft() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Recipes"].tap()
+        app.buttons["recipes.add"].tap()
+        settle()
+        app.buttons["import.wizard"].tap()
+        let name = app.buttons["draft.name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5), "Create manually should open the new-recipe screen.")
+        XCTAssertTrue(app.buttons["draft.save"].exists, "Save should be pinned on the new-recipe screen.")
+        snap(app, "21-new-recipe")
+        name.tap()
+        XCTAssertTrue(app.staticTexts["Let's start with a name"].waitForExistence(timeout: 5),
+                      "Tapping the name should open the name & photo editor.")
+        snap(app, "22-new-recipe-edit-name")
     }
 
     /// Import 5/5: the in-app recipe search (empty state; results need the network, so they aren't captured here).

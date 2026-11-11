@@ -61,8 +61,8 @@ struct RecipeWizardView: View {
     @State var recipeCuisine = ""
 
     @State private var errorMessage: String?
-    @AppStorage("hasSeenWizardIntro") private var hasSeenWizardIntro = false
-    @State private var showIntro = false
+    /// The part being edited from the draft screen (create / import review), shown in its own sheet.
+    @State private var editingSection: Section?
     @State var showPhotoPicker = false
     @State var selectedRecipeImage: UIImage?
     @State var existingImageReference: String?
@@ -92,9 +92,27 @@ struct RecipeWizardView: View {
     let categories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
 
     var body: some View {
+        // Draft screen: the pickers live on the section sheet (where the photo buttons are); focused edit: here.
+        if focus == nil { editor } else { photoPickers(editor) }
+    }
+
+    private var editor: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                sections
+                if focus == nil {
+                    if importQuality != nil { ImportQualityBanner() }
+                    RecipeDraftView(
+                        preview: RecipeDraftPreview(draft: currentDraft),
+                        selectedImage: selectedRecipeImage,
+                        imageReference: existingImageReference,
+                        needsCheck: sectionsNeedingCheck
+                    ) { section in
+                        HapticManager.shared.selection()
+                        editingSection = section
+                    }
+                } else {
+                    sections
+                }
             }
             .padding(.top, AppTheme.spacing16)
             .padding(.horizontal, AppTheme.spacing20)
@@ -107,9 +125,14 @@ struct RecipeWizardView: View {
                 importQuality = assessment.isLow ? assessment : nil
             }
             if initialDraft == nil { initialDraft = currentDraft }
-            // First full create-flow only — not focused edits or updates.
-            if focus == nil, editingRecipeId == nil, !hasSeenWizardIntro {
-                showIntro = true
+        }
+        .safeAreaInset(edge: .bottom) {
+            // Draft screen: one Save pinned under the recipe. Focused edits keep theirs in the toolbar.
+            if focus == nil {
+                PrimaryButton(saveTitle, systemImage: "checkmark", fillWidth: true) { createRecipe() }
+                    .accessibilityIdentifier("draft.save")
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.vertical, AppTheme.spacing12)
             }
         }
         .toolbar {
@@ -119,11 +142,11 @@ struct RecipeWizardView: View {
                     if hasUnsavedChanges { showDiscardConfirm = true } else { dismiss() }
                 }
             }
-            ToolbarItem(placement: .confirmationAction) {
-                Button(editingRecipeId != nil ? "Update" : "Save") {
-                    createRecipe()
+            if focus != nil {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(saveTitle) { createRecipe() }
+                        .fontWeight(.semibold)
                 }
-                .fontWeight(.semibold)
             }
         }
         .sheetScaffold(navigationTitleText)
@@ -135,19 +158,18 @@ struct RecipeWizardView: View {
         } message: {
             Text("Your changes haven't been saved.")
         }
-        .sheet(isPresented: $showIntro) {
-            WizardIntroSheet {
-                hasSeenWizardIntro = true
-                showIntro = false
+        .sheet(item: $editingSection) { section in
+            // Pickers attach to whichever sheet is on top — a sheet can't present from the screen beneath it.
+            photoPickers(ScrollView {
+                sectionEditor(section)
+                    .padding(.top, AppTheme.spacing16)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.bottom, AppTheme.spacing32)
             }
+            .sheetDismissButton()
+            .sheetScaffold(section.title))
         }
         .errorAlert("Validation Error", message: $errorMessage)
-        .photoSourcePicker(isPresented: $showPhotoPicker) { image in
-            selectedRecipeImage = image
-        }
-        .photoSourcePicker(isPresented: $showGalleryPhotoPicker) { image in
-            pendingGalleryImage = image
-        }
         .onChange(of: selectedRecipeImage) { _, newImage in
             if newImage != nil {
                 existingImageReference = nil
@@ -174,6 +196,19 @@ struct RecipeWizardView: View {
     private var hasUnsavedChanges: Bool {
         selectedRecipeImage != nil || !selectedGalleryImages.isEmpty
             || initialDraft.map { $0 != currentDraft } ?? false
+    }
+
+    private var saveTitle: String { editingRecipeId != nil ? "Update" : "Save" }
+
+    /// The main and gallery photo pickers, writing into this editor's state.
+    private func photoPickers<V: View>(_ content: V) -> some View {
+        content
+            .photoSourcePicker(isPresented: $showPhotoPicker) { image in
+                selectedRecipeImage = image
+            }
+            .photoSourcePicker(isPresented: $showGalleryPhotoPicker) { image in
+                pendingGalleryImage = image
+            }
     }
 
     private var navigationTitleText: String {
