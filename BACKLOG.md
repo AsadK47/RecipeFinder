@@ -58,9 +58,8 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Showcase screenshots → Plan my week → Groceries + Kitchen →
-   Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
-   (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Me 1/3 → 3/3 (3/3 = Settings tidy-up) → Showcase screenshots → Plan my week → Groceries + Kitchen →
+   Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
    skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
    Shared family cookbooks: still undecided — revisit after.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
@@ -129,7 +128,7 @@ drop a line while moving it.
   thin progress line, bottom bar back/forward/reload, frosted floating import pill that slides in with a haptic,
   start screen with suggestion chips + recent searches, app theme colours light/dark. *Done when:* button-state +
   recent-searches + site-name logic tested, screenshots (start, results, recipe page), CI green.
-- [ ] **Settings tidy-up** (owner OK 2026-11-10; one batch). New order: Profile → Preferences (Appearance = merged
+- [ ] **Me 3/3 = Settings tidy-up** (owner OK 2026-11-10; one batch; reached via the gear on Me). New order: Profile → Preferences (Appearance = merged
   Appearance & Theme + Display, Units, Recipe Search, Notifications, Confirmations moved out of Data Management) →
   Import & Backup (other-app import, backup, restore) → Privacy → Support (Help, Join the beta =
   https://testflight.apple.com/join/UJWrMbk2, Send feedback = recipefinderuk@gmail.com, Rate RecipeFinder) → About
@@ -183,6 +182,34 @@ drop a line while moving it.
   (Spoons slot once Spoons 1/2 ships). "Try something new" card: one never-cooked recipe per week (stable for the week;
   uses taste profile once it exists). *Done when:* weekly pick (stable, never-cooked) + progress logic tested,
   screenshots, CI green. Note: Today looks flat without photos — Recipe pictures lifts it further.
+- [ ] **Badges 1/2 — Earning feels big, browsing feels alive** (owner OK 2026-11-11: "give the achievements more
+  impact … scrollable or swipable … not just a static something"). (a) Earn reveal: full-screen badge flip-in, shine
+  sweep, confetti in the badge colour, its own haptic pattern, settles onto the shelf (replaces the 380pt sheet; still
+  waits for Made it / "+" sheets). (b) Tap any badge → full-screen card pager, swipe left/right through all badges;
+  tilt-to-shine via CoreMotion (on device, respects Reduce Motion). (c) Locked badges: silhouette + progress ring
+  ("7 / 10 cooks") + a button to where you earn it (e.g. "Plan a meal" → Plan tab). (d) Trophy shelf on Me grouped
+  Cooking / Streaks / Importing / Planning with "12 / 30" counts, newest first. *Done when:* pager order, progress,
+  grouping + earn-here routing tested, screenshots (shelf, pager, locked card, reveal), CI green.
+- [ ] **Badges 2/2 — Tiers, stories, sharing, next up.** Bronze → Silver → Gold → Platinum tiers on count badges
+  (e.g. cook 10/25/50/100; existing unlocks map to their tier, no data loss — new stored fields only with owner OK if
+  Core Data is needed, else `LocalStore`) with a tier-up animation; "Earned 3 Nov — cooking Thai green curry" story
+  line (recipe that unlocked it); share card image via `ShareLink` (rendered on device); "2 more cooks to Head Chef"
+  on the Made it sheet and Today. *Done when:* tier mapping/migration, story capture and next-badge logic tested,
+  screenshots, CI green.
+- [ ] **Me 1/3 — Your cooking life: chef card, this month, goals** (owner OK 2026-11-11: Me "lacks character"; wants
+  better than a stats page). Order top→bottom: chef card → this month → taste fingerprint → skills → goals + wins →
+  trophy shelf (Badges 1/2) → your story. This slice: chef card (cover = best Made-it photo, kitchen name e.g.
+  "Asad's Kitchen", earned title from real behaviour refreshed monthly — "Midweek Hero", "Spice Explorer", "Sunday
+  Baker"); "This month" swipeable story-style recap (cooks, new cuisines, top dish, best photo; shareable image);
+  personal goals ("3 new recipes this month", "cook 4 nights a week") with progress rings + celebration; kitchen
+  wins (meals cooked at home, items used before expiry, recipes saved). *Done when:* title rules, monthly recap and
+  goal progress tested, screenshots (new user, active cook), CI green.
+- [ ] **Me 2/3 — Taste fingerprint, skills, your story.** Taste fingerprint: radial shape (spicy, comforting, quick,
+  baking, fresh + cuisines) from cooked recipes, tap a segment → its recipes (feeds taste profile later). Skills row
+  (Knife work Lv 3 …, "cook this next to level up") — shows once skill tree ships, hidden before. "Your cooking
+  story": scrollable scrapbook timeline (first save, first cook, streak milestones, badges, photos, first cuisine,
+  heirloom notes later), tap to open the moment. *Done when:* fingerprint scoring + timeline building tested,
+  screenshots, CI green.
 - [ ] **Plan my week — a proper meal planner** (owner: "make the meal planner a proper feature"). 7-day agenda by
   default (tap empty slot → inline suggestions/picker; long-press to move/swap; per-meal servings); tap planned meal →
   open/cook; cooking it marks it done; pinned "Shop for this week (N items)" that scales by planned servings (fixes
