@@ -164,7 +164,7 @@ drop a line while moving it.
   blank. Link/paste/photo go straight to the Add flow 1/3 screen with a loading state (no in-between sheets); share
   extension recipes open on the same screen. *Done when:* link-vs-text detection tested, tap count per path ≤ 3 to the
   recipe screen (note in Log), screenshots, CI green.
-- [ ] **Add flow 3/3 — Imports come out right.** Slice 1 merged 2026-11-11 (10 fixtures green: junk dropped,
+- [ ] **Add flow 3/3 — Imports come out right.** — 🚧 builder agent 2026-11-11 Slice 1 merged 2026-11-11 (10 fixtures green: junk dropped,
   amounts/units split, steps kept out of ingredients). **Left (slice 2):** keep ingredient section headers ("For the
   sauce") — there's no ingredient-group model yet, and storing a header as an ingredient row would leak into
   groceries/scaling/"Add amount", so pick a representation first (no Core Data change without owner OK); also run the
