@@ -220,6 +220,7 @@
 		F3B7D909307005DF00991908 /* CookingStreakManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D908307005DF00991908 /* CookingStreakManagerTests.swift */; };
 		F3B7D90B30726A0E00991908 /* RecipeRediscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */; };
 		4FD8E304505C48DCBCD39869 /* TodayFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D44F1E425DD426BA6CFAF40 /* TodayFeed.swift */; };
+		A0D4CEDE1B8346F69DF021AF /* PrepAhead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E62EBA35C4C4D86B3F83086 /* PrepAhead.swift */; };
 		F3B7D90D30726A2200991908 /* RecipeRediscoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */; };
 		DECDAC8D7490437FADA58B3B /* TodayFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5F94E24BDC4803A467E87D /* TodayFeedTests.swift */; };
 		F3B7D9113074FCFF00991908 /* StreakChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9103074FCFF00991908 /* StreakChip.swift */; };
@@ -708,6 +709,7 @@
 		F3B7D908307005DF00991908 /* CookingStreakManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingStreakManagerTests.swift; sourceTree = "<group>"; };
 		F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRediscovery.swift; sourceTree = "<group>"; };
 		2D44F1E425DD426BA6CFAF40 /* TodayFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayFeed.swift; sourceTree = "<group>"; };
+		8E62EBA35C4C4D86B3F83086 /* PrepAhead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepAhead.swift; sourceTree = "<group>"; };
 		F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRediscoveryTests.swift; sourceTree = "<group>"; };
 		2B5F94E24BDC4803A467E87D /* TodayFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayFeedTests.swift; sourceTree = "<group>"; };
 		F3B7D9103074FCFF00991908 /* StreakChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakChip.swift; sourceTree = "<group>"; };
@@ -1897,6 +1899,7 @@
 				F3B7D9003070054400991908 /* CookingStreak.swift */,
 				F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */,
 				2D44F1E425DD426BA6CFAF40 /* TodayFeed.swift */,
+				8E62EBA35C4C4D86B3F83086 /* PrepAhead.swift */,
 			);
 			path = Engagement;
 			sourceTree = "<group>";
@@ -2374,6 +2377,7 @@
 				9E5B39992FACFF9000C96DB3 /* QuickAddItems.swift in Sources */,
 				F3B7D90B30726A0E00991908 /* RecipeRediscovery.swift in Sources */,
 				4FD8E304505C48DCBCD39869 /* TodayFeed.swift in Sources */,
+				A0D4CEDE1B8346F69DF021AF /* PrepAhead.swift in Sources */,
 				F3E9D264304A1DFB008BF231 /* ScreenTitleHeader.swift in Sources */,
 				F3E9D1B030457AEA008BF231 /* AppTheme+Colors.swift in Sources */,
 				F3D4057730599DC80076834D /* RecipeIntents.swift in Sources */,

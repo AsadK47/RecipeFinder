@@ -39,6 +39,8 @@ struct TodayFeed: Equatable {
     let isNewUser: Bool
     /// Sample recipes to try, shown to new users.
     let starters: [RecipeModel]
+    /// Tomorrow's planned meals that need starting tonight (marinate, soak, defrost…).
+    let prepAhead: [PrepAheadNudge]
 
     static let shelfLimit = 10
 
@@ -46,6 +48,7 @@ struct TodayFeed: Equatable {
         recipes: [RecipeModel],
         todaysPlans: [MealPlanModel],
         kitchenItemNames: [String],
+        tomorrowsPlans: [MealPlanModel] = [],
         now: Date = Date(),
         calendar: Calendar = .current,
         thresholdDays: Int = 21
@@ -77,7 +80,8 @@ struct TodayFeed: Equatable {
             fitsYourKitchen: Array(matches.filter { $0.recipe.id != heroID }.prefix(shelfLimit)),
             rediscover: Array(rediscover.prefix(shelfLimit)),
             isNewUser: isNewUser,
-            starters: Array(starters.prefix(shelfLimit))
+            starters: Array(starters.prefix(shelfLimit)),
+            prepAhead: PrepAhead.nudges(recipes: recipes, tomorrowsPlans: tomorrowsPlans)
         )
     }
 

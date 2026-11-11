@@ -65,10 +65,14 @@ struct TodayView: View {
     }
 
     private func refresh() {
+        let now = Date()
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now
         feed = TodayFeed.make(
             recipes: recipeStore.recipes,
-            todaysPlans: mealPlanning.mealPlans(for: Date()),
-            kitchenItemNames: kitchen.items.map(\.name)
+            todaysPlans: mealPlanning.mealPlans(for: now),
+            kitchenItemNames: kitchen.items.map(\.name),
+            tomorrowsPlans: tomorrow == now ? [] : mealPlanning.mealPlans(for: tomorrow),
+            now: now
         )
     }
 
@@ -103,6 +107,10 @@ struct TodayView: View {
             TodayHeroCard(hero: hero, onOpen: { open(hero.recipe) }, onCook: { cook(hero.recipe) })
         } else if !feed.isNewUser {
             shortcut(.plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.", color: .blue)
+        }
+
+        ForEach(feed.prepAhead, id: \.recipe.id) { nudge in
+            TodayPrepAheadRow(nudge: nudge) { open(nudge.recipe) }
         }
 
         if feed.isNewUser, !feed.starters.isEmpty {

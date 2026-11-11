@@ -18,19 +18,20 @@ import Foundation
         isSample: Bool = false,
         cookCount: Int = 0,
         lastCookedAt: Date? = nil,
-        isFavorite: Bool = false
+        isFavorite: Bool = false,
+        steps: [String] = ["Cook"]
     ) -> RecipeModel {
         RecipeModel(
             name: name, category: "Main", difficulty: "Basic", prepTime: "5 min",
             cookingTime: "10 min", baseServings: 2,
             ingredients: ingredients.map { Ingredient(baseQuantity: 1, unit: "", name: $0) },
-            prePrepInstructions: [], instructions: ["Cook"], notes: "",
+            prePrepInstructions: [], instructions: steps, notes: "",
             isFavorite: isFavorite, isSampleRecipe: isSample, cookCount: cookCount, lastCookedAt: lastCookedAt
         )
     }
 
-    private func plan(_ recipe: RecipeModel, _ time: MealTime, completed: Bool = false) -> MealPlanModel {
-        MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: now, mealTime: time, isCompleted: completed)
+    private func plan(_ recipe: RecipeModel, _ time: MealTime, completed: Bool = false, on date: Date? = nil) -> MealPlanModel {
+        MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: date ?? now, mealTime: time, isCompleted: completed)
     }
 
     private func feed(
@@ -133,5 +134,62 @@ import Foundation
         let result = feed([recipe("A", isSample: true), other])
         #expect(!result.isNewUser)
         #expect(result.starters.isEmpty)
+    }
+
+    // MARK: Prep ahead
+
+    @Test(arguments: [
+        ("Marinate the chicken overnight.", "Marinate"),
+        ("Cover and marinate for at least 4 hours.", "Marinate"),
+        ("Soak the chickpeas overnight in cold water.", "Soak"),
+        ("Defrost the pastry.", "Defrost"),
+        ("Cover and leave the dough to rise for 2-3 hours.", "Prove"),
+        ("Cover and refrigerate for at least 4 hours.", "Chill"),
+        ("Chill until set, about 6 hours.", "Chill"),
+        ("Leave in the fridge overnight.", "Prep"),
+    ])
+    func longLeadStepsGetACue(step: String, expected: String) {
+        #expect(PrepAhead.cue(forStep: step) == expected)
+    }
+
+    @Test(arguments: [
+        "Marinate for at least 15 minutes.",
+        "Soak the noodles in boiling water for 10 minutes.",
+        "No need to thaw the corn.",
+        "Add the chillies and simmer for 2 hours.",
+        "Chill for 1 hour.",
+        "Cook",
+    ])
+    func shortOrNoWaitHasNoCue(step: String) {
+        #expect(PrepAhead.cue(forStep: step) == nil)
+    }
+
+    @Test func tomorrowsOpenPlansThatNeedPrepAreNudgedInMealOrder() {
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: now) ?? now
+        let tikka = recipe("Tikka", steps: ["Marinate the chicken overnight.", "Grill."])
+        let oats = recipe("Overnight oats", steps: ["Mix and chill overnight."])
+        let salad = recipe("Salad", steps: ["Toss."])
+        let done = recipe("Bread", steps: ["Leave to rise overnight."])
+        let result = TodayFeed.make(
+            recipes: [tikka, oats, salad, done],
+            todaysPlans: [],
+            kitchenItemNames: [],
+            tomorrowsPlans: [
+                plan(tikka, .dinner, on: tomorrow), plan(oats, .breakfast, on: tomorrow),
+                plan(salad, .lunch, on: tomorrow), plan(done, .snack, completed: true, on: tomorrow),
+            ],
+            now: now, calendar: cal
+        )
+        #expect(result.prepAhead == [
+            PrepAheadNudge(recipe: oats, mealTime: .breakfast, cue: "Chill"),
+            PrepAheadNudge(recipe: tikka, mealTime: .dinner, cue: "Marinate"),
+        ])
+        #expect(result.prepAhead.last?.message == "Marinate tonight for tomorrow's dinner")
+    }
+
+    @Test func sameRecipeTwiceTomorrowIsNudgedOnce() {
+        let beans = recipe("Beans", steps: ["Soak the beans overnight."])
+        let nudges = PrepAhead.nudges(recipes: [beans], tomorrowsPlans: [plan(beans, .lunch), plan(beans, .dinner)])
+        #expect(nudges == [PrepAheadNudge(recipe: beans, mealTime: .lunch, cue: "Soak")])
     }
 }

@@ -226,8 +226,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "15-other-app-import")
     }
 
-    /// Tabs 2/3: Today's "Planned for tonight" hero, with tonight's dinner seeded via the DEBUG `-seed-tonight-plan`
-    /// flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
+    /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded
+    /// via the DEBUG `-seed-tonight-plan` flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
     @MainActor
     func testCaptureTodayPlanned() {
         let app = XCUIApplication()
@@ -243,6 +243,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let hero = app.descendants(matching: .any).matching(identifier: "today.hero").firstMatch
         XCTAssertTrue(hero.waitForExistence(timeout: 10), "Today should lead with a Tonight card.")
         XCTAssertTrue(hero.label.contains("Planned for tonight"), "The Tonight card should be the planned dinner.")
+        // Tabs 2/3 slice 4: tomorrow's seeded dinner needs starting tonight, so Today nudges it.
+        let prepAhead = app.descendants(matching: .any).matching(identifier: "today.prepAhead").firstMatch
+        XCTAssertTrue(prepAhead.waitForExistence(timeout: 5), "Today should nudge tomorrow's prep-ahead dinner.")
+        XCTAssertTrue(prepAhead.label.contains("tonight for tomorrow's dinner"), "The nudge should say when to prep.")
         settle()
         snap(app, "18-today-planned")
 

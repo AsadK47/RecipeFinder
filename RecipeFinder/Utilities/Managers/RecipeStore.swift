@@ -192,14 +192,22 @@ final class RecipeStore: RecipeStoring {
         return library + [recipe]
     }
 
-    /// UI-test hook (`-seed-tonight-plan`): plans tonight's dinner (first recipe by name) so Screenshots can capture
-    /// Today's "Planned for tonight" hero. Leaves an existing dinner plan alone.
+    /// UI-test hook (`-seed-tonight-plan`): plans tonight's dinner (first recipe by name) and tomorrow's dinner (first
+    /// recipe that needs prepping ahead) so Screenshots can capture Today's "Planned for tonight" hero and prep-ahead
+    /// nudge. Leaves existing dinner plans alone.
     private func seedUITestTonightPlanIfRequested(from library: [RecipeModel]) {
         let planner = MealPlanningManager.shared
-        guard ProcessInfo.processInfo.arguments.contains("-seed-tonight-plan"),
-              planner.mealPlan(for: Date(), mealTime: .dinner) == nil,
-              let recipe = library.min(by: { $0.name < $1.name }) else { return }
-        planner.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: Date(), mealTime: .dinner))
+        guard ProcessInfo.processInfo.arguments.contains("-seed-tonight-plan") else { return }
+        let now = Date()
+        let sorted = library.sorted { $0.name < $1.name }
+        if planner.mealPlan(for: now, mealTime: .dinner) == nil, let recipe = sorted.first {
+            planner.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: now, mealTime: .dinner))
+        }
+        if let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now),
+           planner.mealPlan(for: tomorrow, mealTime: .dinner) == nil,
+           let recipe = sorted.first(where: { PrepAhead.cue(for: $0) != nil }) {
+            planner.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: tomorrow, mealTime: .dinner))
+        }
     }
     #endif
 

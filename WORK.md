@@ -1,13 +1,18 @@
-# WORK.md — handoff (2026-11-10, end of long interactive session)
+# WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Tabs 2/3 slice 3 merged (ff6e658); item stays open in BACKLOG.
+- `agent/today-prep-ahead` — Tabs 2/3 slice 4a: prep-ahead nudge row on Today (`PrepAhead.swift`, `TodayPrepAheadRow`,
+  `TodayFeed.prepAhead`, seed of tomorrow's dinner under `-seed-tonight-plan`). Waiting on Build & Test.
 
 ## Next action
-Check the nightly UI-test run (03:00 UTC 2026-11-11) passes with the Today launch. Then Tabs 2/3 slice 4: prep-ahead
-nudge row + clipboard recipe-link card + new-user screenshot.
+If green: ff main, tick nothing (item still open), Log line. Then slice 4b: clipboard recipe-link card + new-user shot.
 
 ## Decisions (why)
+- **Tabs 2/3 slice 4a (prep-ahead)**: nudge = tomorrow's open plans whose steps say "overnight", defrost/thaw, or a
+  long-lead verb (marinate/soak/prove/rise/chill/refrigerate) with a 2+ hour wait. Short waits ("marinate 15 minutes")
+  and "no need to thaw" excluded; "chilli" isn't "chill". Uses `String.range(of:options:.regularExpression)` (no
+  `try?`, no non-Sendable static Regex). Shown all day, under the hero. Clipboard card deferred to its own slice
+  (reading the pasteboard shows iOS's paste prompt — needs `detectPatterns` care).
 - **Tabs 2/3 slice 3**: "Let's cook" pushes the recipe detail with `startsCooking: true` (one-shot onAppear) instead of
   presenting CookingModeView from Today, so finishing reuses detail's Made-it / streak / badge path. Card split into
   two sibling buttons (open vs cook). `RecipeRediscovery.pick` now only used by its tests — kept (tested, tiny); drop
