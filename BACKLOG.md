@@ -163,11 +163,11 @@ drop a line while moving it.
   blank. Link/paste/photo go straight to the Add flow 1/3 screen with a loading state (no in-between sheets); share
   extension recipes open on the same screen. *Done when:* link-vs-text detection tested, tap count per path ≤ 3 to the
   recipe screen (note in Log), screenshots, CI green.
-- [ ] **Add flow 3/3 — Imports come out right.** — 🚧 builder agent 2026-11-11 Slice 1 merged 2026-11-11 (10 fixtures green: junk dropped,
-  amounts/units split, steps kept out of ingredients). **Left (slice 2):** keep ingredient section headers ("For the
-  sauce") — there's no ingredient-group model yet, and storing a header as an ingredient row would leak into
-  groceries/scaling/"Add amount", so pick a representation first (no Core Data change without owner OK); also run the
-  HTML text path through `RecipeTextCleanup`. *Done when:* a fixture pins the headers, CI green.
+- [x] **Add flow 3/3 — Imports come out right.** Slice 1 (855b148): junk dropped, amounts/units split, steps kept out
+  of ingredients. Slice 2 (911ec53): ingredient groups ("For the sauce") kept as `Ingredient.section` (no Core Data
+  change), shown on recipe + draft screen, editable as "Title:" lines; 2 fixtures pin them.
+- [ ] **Add flow 3/3 follow-up** (small): run the HTML text path through `RecipeTextCleanup`; keep groups from
+  JSON-LD/DOM ingredient lists (they're dropped today); show groups in cooking mode, print and share text.
 - [ ] **Today+ 1/3 — Tonight, decided** (owner 2026-11-11: "the Today page is lacking"; OK'd all 7 ideas, after Add
   flow). Big Tonight hero (photo, time, "Cook this") with **Shuffle** → 2–3 alternatives from plan / kitchen match /
   quick picks, never repeating the last cooked. Time-aware line under it: morning = prep/defrost for tonight's plan,
@@ -476,3 +476,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-11 · Tabs 2/3 slice 4b (item done) · 601c162 · Today shows "Copied a recipe link?" when the clipboard holds a web link (checked without iOS's paste prompt); tap Paste → link import → save; ✕ hides it for that copy. New ClipboardRecipeLink.swift + tests registered in pbxproj. Screenshot 20-today-new-user (new UI test sorts first); Estimate-amounts shot now swipes away a badge sheet (order artefact). On phone: copy a recipe URL in Safari, open the app → Today → Paste.
 - 2026-11-11 · Add flow 1/3 slice 1 · 29850eb · "+" → Create manually, and every import review, now show the recipe as it will look (photo, name, time/servings chips, ingredients, method); tap any part to edit just that part; one Save pinned at the bottom; struggled parts outlined orange. First-run wizard intro sheet removed. New RecipeDraftPreview, RecipeDraftView, RecipeDraftPreviewTests registered in pbxproj; WizardIntroSheet removed from it. Screenshots 21-new-recipe, 22-new-recipe-edit-name (Screenshots run green on branch). On phone: + → Create manually → tap Ingredients, paste a list, Done → Save.
 - 2026-11-11 · Add flow 1/3 slice 2 (done) · 910a7f6 · Section editors opened from the new-recipe screen lose the big title + icon headers (the sheet title already names them) and Notes loses the "Recipe Summary" card (the draft screen is the summary); `WizardStepHeader`, `WizardSummaryRow`, `WizardRecipeSummary` deleted, −138 lines. Screenshot test 22 now waits for the name field (`wizard.recipeName`). On phone: + → Create manually → tap each part — editor opens straight to its fields.
+- 2026-11-11 · Add flow 3/3 slice 2 · 911ec53 · Ingredient groups: "FOR THE SAUCE", "For the sponge:", "Garnish" in pasted/scanned/other-app text now become group titles above their ingredients on the recipe and the add screen, never an ingredient row (groceries/scaling unaffected). In the ingredients box, a line like "For the sauce:" starts a group. Stored inside the ingredients JSON — no Core Data change. On phone: + → Paste a recipe with "For the sauce" sections → check the titles; Edit → ingredients keeps them.

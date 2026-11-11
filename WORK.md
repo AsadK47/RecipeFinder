@@ -1,10 +1,10 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- `agent/add-flow-3-sections` (Add flow 3/3 slice 2): ingredient groups — pushed, waiting on Build & Test.
+- Nothing in progress. Add flow 3/3 slice 2 merged (911ec53).
 
 ## Next action
-Check Build & Test for `agent/add-flow-3-sections`; fix; when green ff main, tick Add flow 3/3, Log line. Then Today+ 1/3.
+Today+ 1/3 (owner order). The "Add flow 3/3 follow-up" Queue line is small — fold in when touching import.
 
 ## Decisions (why)
 - **Add flow 3/3 slice 2 (groups)**: a group is `Ingredient.section: String?` — a label on each row, not a header row,
