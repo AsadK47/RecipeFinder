@@ -1,13 +1,23 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Today+ 1/3 slice 1 merged (64206db).
+- `agent/today-eat-time` — Today+ 1/3 slice 2: eat-time menu on the Tonight timing line (`today.eatAt` AppStorage,
+  `TonightTiming.eatTimeChoices` / `eatAt(stored:)`), calmer layout (groceries shortcut card dropped, shelf tiles
+  without cards and bigger photos, tinted badges). Waiting on Build & Test.
 
 ## Next action
-Today+ 1/3 slice 2: eat-time setting (TonightTiming.line takes `eatAt`; app passes the 7pm default) + calmer Today
-layout; then deep-review (high) on the item, Screenshots 16/18/24–27, tick.
+Check Build & Test on `agent/today-eat-time`; then Screenshots on the branch (16/18/24–28), deep-review (high) +
+challenge pass in separate agents, merge, tick Today+ 1/3.
 
 ## Decisions (why)
+- **Today+ 1/3 slice 2**: eat time is picked by tapping the timing line (Menu + Picker, 5–10pm on the half hour), not
+  in Settings — it's where the number shows, and Settings tidy-up comes later. Stored minutes not in the choices fall
+  back to 7pm. The Menu sits outside the hero's open button (nested buttons don't fire). "Calmer": dropped the
+  bottom "Check your groceries" card (Groceries is a tab), shelf tiles are bare photos (no card each), Plan-tonight
+  and prep-ahead badges tinted so "Cook this" is the one accent. **Pre-mortem:** (1) picked time ignored / not saved
+  → `aLaterEatTimeMovesTheStartTime` + UI step asserting "eat at 8" (shot 28); (2) garbage stored value shows odd
+  times → `storedEatTimeFallsBackToSeven…`; (3) shelf text unreadable without a card on light gradients → look at
+  shots 16/18 (and Light if available).
 - **Today+ 1/3 slice 1**: Shuffle cycles `[hero] + alternatives` (≤3): today's open plans (dinner first), kitchen
   matches, quick recipes (≤30 min known time; favourites, own over samples, most cooked, name). Suggestions skip the
   single most recently cooked recipe; plans never skipped. With nothing planned and no kitchen match, a quick recipe is

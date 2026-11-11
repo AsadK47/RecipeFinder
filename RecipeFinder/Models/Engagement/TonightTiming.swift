@@ -5,6 +5,12 @@ import Foundation
 enum TonightTiming {
     /// 7pm — when dinner is assumed to be eaten until the cook picks another time.
     static let defaultEatAt = 19 * 60
+    /// What the cook can pick for "Dinner at": 5pm to 10pm on the half hour.
+    static let eatTimeChoices = Array(stride(from: 17 * 60, through: 22 * 60, by: 30))
+    /// The saved eat time, or 7pm when the stored value isn't one of the choices (first launch, corrupt defaults).
+    static func eatAt(stored: Int) -> Int {
+        eatTimeChoices.contains(stored) ? stored : defaultEatAt
+    }
     private static let eveningStartsAt = 18 * 60
     /// After this, "Quick tonight?" is too late to be useful.
     private static let eveningEndsAt = 22 * 60

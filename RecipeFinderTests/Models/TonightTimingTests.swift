@@ -98,6 +98,25 @@ import Foundation
         #expect(TonightTiming.line(hero: planned(recipe(prep: "1 hr", cook: "20 hours")), quickCount: 0, minuteOfDay: at(9)) == nil)
     }
 
+    @Test func eatTimeChoicesRunFiveToTenEveryHalfHourAndIncludeSeven() {
+        let choices = TonightTiming.eatTimeChoices
+        #expect(choices.first == at(17))
+        #expect(choices.last == at(22))
+        #expect(choices.count == 11)
+        #expect(choices.contains(TonightTiming.defaultEatAt))
+    }
+
+    @Test(arguments: [(19 * 60, 19 * 60), (20 * 60 + 30, 20 * 60 + 30), (0, 19 * 60), (-5, 19 * 60), (24 * 60, 19 * 60), (19 * 60 + 7, 19 * 60)])
+    func storedEatTimeFallsBackToSevenUnlessItsAChoice(stored: Int, expected: Int) {
+        #expect(TonightTiming.eatAt(stored: stored) == expected)
+    }
+
+    @Test func aLaterEatTimeMovesTheStartTime() {
+        let hero = planned(recipe(prep: "40 min", cook: "40 min"))
+        let line = TonightTiming.line(hero: hero, quickCount: 0, minuteOfDay: at(15), eatAt: TonightTiming.eatAt(stored: at(21)))
+        #expect(line == "Start by 7:40 to eat at 9")
+    }
+
     @Test(arguments: [(0, "12"), (19 * 60, "7"), (17 * 60 + 40, "5:40"), (12 * 60 + 5, "12:05"), (25 * 60, "1"), (-20, "11:40")])
     func clockReadsLikeSpeech(minute: Int, expected: String) {
         #expect(TonightTiming.clock(minute) == expected)

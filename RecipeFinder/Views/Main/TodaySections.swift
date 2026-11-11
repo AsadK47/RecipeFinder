@@ -8,6 +8,8 @@ struct TodayHeroCard: View {
     let hero: TodayFeed.Hero
     /// Time-aware hint ("Start by 5:40 to eat at 7"), when there's one.
     let timing: String?
+    /// When dinner is eaten (minutes since midnight), picked from the timing line.
+    @Binding var eatAt: Int
     /// Nil when there's nothing else to shuffle to.
     let onShuffle: (() -> Void)?
     let onOpen: () -> Void
@@ -32,13 +34,6 @@ struct TodayHeroCard: View {
                             .adaptiveForegroundColor()
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
-                        if let timing {
-                            Label(timing, systemImage: "clock")
-                                .font(.subheadline.weight(.medium))
-                                .adaptiveForegroundColor()
-                                .fixedSize(horizontal: false, vertical: true)
-                                .accessibilityIdentifier("today.hero.timing")
-                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding([.horizontal, .top], AppTheme.spacing16)
@@ -50,6 +45,36 @@ struct TodayHeroCard: View {
             .accessibilityLabel(accessibilityText)
             .accessibilityHint("Opens the recipe")
             .accessibilityIdentifier("today.hero")
+
+            if let timing {
+                // Its own control, outside the open button: tapping the line picks when dinner is.
+                Menu {
+                    Picker("Dinner at", selection: $eatAt) {
+                        ForEach(TonightTiming.eatTimeChoices, id: \.self) { minute in
+                            Text("\(TonightTiming.clock(minute)) pm").tag(minute)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: AppTheme.spacing6) {
+                        Label(timing, systemImage: "clock")
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.caption2.weight(.semibold))
+                            .adaptiveSecondaryForeground()
+                            .accessibilityHidden(true)
+                    }
+                    .font(.subheadline.weight(.medium))
+                    .adaptiveForegroundColor()
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.top, AppTheme.spacing6)
+                .accessibilityLabel(timing)
+                .accessibilityHint("Changes when you eat dinner")
+                .accessibilityIdentifier("today.hero.timing")
+            }
 
             HStack(spacing: AppTheme.spacing12) {
                 Button(action: onCook) {
@@ -134,9 +159,10 @@ struct TodayShelf: View {
 
     private func tile(_ recipe: RecipeModel, caption: String?) -> some View {
         Button { onOpen(recipe) } label: {
+            // No card per tile: photos on the background keep the shelves calm under the Tonight card.
             VStack(alignment: .leading, spacing: AppTheme.spacing6) {
-                RecipeImageView(imageName: recipe.heroImageName, height: 100, recipeName: recipe.name)
-                    .frame(width: 140, height: 100)
+                RecipeImageView(imageName: recipe.heroImageName, height: 120, recipeName: recipe.name)
+                    .frame(width: 160, height: 120)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
                     .accessibilityHidden(true)
                 Text(recipe.name)
@@ -151,9 +177,8 @@ struct TodayShelf: View {
                         .lineLimit(1)
                 }
             }
-            .frame(width: 140, alignment: .leading)
-            .padding(AppTheme.spacing8)
-            .appCard()
+            .frame(width: 160, alignment: .leading)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
@@ -169,7 +194,7 @@ struct TodayPrepAheadRow: View {
     var body: some View {
         Button(action: onOpen) {
             HStack(spacing: AppTheme.spacing16) {
-                IconBadge(systemName: "timer", tint: .orange, diameter: 44, iconSize: AppTheme.fontSize18, style: .solid)
+                IconBadge(systemName: "timer", tint: .orange, diameter: 44, iconSize: AppTheme.fontSize18, style: .tinted)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                     Text(nudge.message)

@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Today tab: greeting + streak, a "Tonight" hero (planned meal, else kitchen match, else a quick recipe) that Shuffle
-/// steps through, with a time-aware "Start by" line, and shelves of recipes to cook.
+/// steps through, with a time-aware "Start by" line (tap it to change when dinner is), and shelves of recipes to cook.
+/// Kept calm on purpose: one card for tonight, plain photo shelves below, the theme accent on "Cook this" alone.
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
     let onOpen: (AppTab) -> Void
@@ -30,6 +31,8 @@ struct TodayView: View {
     /// The copy already pasted or dismissed, kept across launches so the same link doesn't come back.
     @AppStorage("today.handledClipboardChange") private var handledClipboardChange = -1
     @State private var showNoClipboardLink = false
+    /// "Dinner at" from the Tonight card's timing line; read through `TonightTiming.eatAt(stored:)`.
+    @AppStorage("today.eatAt") private var storedEatAt = TonightTiming.defaultEatAt
 
     /// Morning before noon, afternoon until 6pm, evening after.
     nonisolated static func greeting(forHour hour: Int) -> String {
@@ -171,7 +174,12 @@ struct TodayView: View {
             TodayHeroCard(
                 hero: hero,
                 timing: TonightTiming.line(
-                    hero: hero, quickCount: feed.quickCount, minuteOfDay: TonightTiming.minuteOfDay(Self.now())
+                    hero: hero, quickCount: feed.quickCount, minuteOfDay: TonightTiming.minuteOfDay(Self.now()),
+                    eatAt: TonightTiming.eatAt(stored: storedEatAt)
+                ),
+                eatAt: Binding(
+                    get: { TonightTiming.eatAt(stored: storedEatAt) },
+                    set: { storedEatAt = $0 }
                 ),
                 onShuffle: feed.tonightOptions.count > 1 ? { shuffle(feed, from: hero) } : nil,
                 onOpen: { open(hero.recipe) },
@@ -204,9 +212,6 @@ struct TodayView: View {
         if !rediscover.isEmpty {
             TodayShelf(title: "Rediscover", id: "rediscover", items: rediscover.map { ($0, nil) }, onOpen: open)
         }
-
-        shortcut(.groceries, title: "Check your groceries",
-                 subtitle: "See what to buy and what's at home.", color: .green)
     }
 
     private var firstRecipeCard: some View {
@@ -252,7 +257,7 @@ struct TodayView: View {
             onOpen(tab)
         } label: {
             HStack(spacing: AppTheme.spacing16) {
-                IconBadge(systemName: tab.icon, tint: color, diameter: 44, iconSize: AppTheme.fontSize18, style: .solid)
+                IconBadge(systemName: tab.icon, tint: color, diameter: 44, iconSize: AppTheme.fontSize18, style: .tinted)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                     Text(title)

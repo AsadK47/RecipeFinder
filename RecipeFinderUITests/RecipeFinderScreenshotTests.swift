@@ -308,7 +308,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
     }
 
     /// Today+ 1/3: the Tonight card's time-aware line in the morning, afternoon and evening (DEBUG `-today-time` pins
-    /// Today's clock), and Shuffle stepping to another pick. Sorts after `testCaptureTodayPlanned`; seeds the same plan.
+    /// Today's clock), picking a later dinner time, and Shuffle stepping to another pick. Sorts after `testCaptureTodayPlanned`; seeds the same plan.
     @MainActor
     func testCaptureTodayTimes() {
         for (time, shot) in [("08:30", "24-today-morning"), ("15:00", "25-today-afternoon"), ("21:00", "27-today-evening")] {
@@ -327,6 +327,23 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                 XCTAssertTrue(hero.label.contains("Quick tonight?"), "Evening should offer quick ideas: \(hero.label)")
             }
             if time == "15:00" {
+                // Slice 2: tapping the timing line picks when dinner is; the start time follows.
+                let timing = app.buttons["today.hero.timing"]
+                XCTAssertTrue(timing.waitForExistence(timeout: 5), "The Tonight card should show when to start.")
+                timing.tap()
+                let eight = app.buttons["8 pm"]
+                XCTAssertTrue(eight.waitForExistence(timeout: 5), "The timing line should offer dinner times.")
+                eight.tap()
+                settle(1)
+                XCTAssertTrue(hero.label.contains("eat at 8"), "Start time should count back from 8pm: \(hero.label)")
+                snap(app, "28-today-eat-at-8")
+                // Put 7pm back: the choice persists in the shared simulator.
+                timing.tap()
+                let seven = app.buttons["7 pm"]
+                XCTAssertTrue(seven.waitForExistence(timeout: 5), "7pm should be a dinner time.")
+                seven.tap()
+                settle(1)
+
                 let before = hero.label
                 let shuffle = app.buttons["today.hero.shuffle"]
                 XCTAssertTrue(shuffle.waitForExistence(timeout: 5), "Tonight should offer Shuffle.")
