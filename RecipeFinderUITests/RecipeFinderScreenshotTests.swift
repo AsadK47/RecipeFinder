@@ -210,6 +210,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-seed-missing-amounts-recipe", "-fake-amount-estimates"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
         app.tabBars.buttons["Recipes"].tap()
         settle()
         let row = app.staticTexts["1-Bowl Banana Bread"].firstMatch
@@ -255,12 +256,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-seed-tonight-plan"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        // Planning a meal can unlock a badge whose sheet would cover the shot; swipe it away.
-        let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
-        if badgeSheet.waitForExistence(timeout: 3) {
-            badgeSheet.swipeDown()
-            settle()
-        }
+        // Planning a meal can unlock a badge whose sheet would cover the shot.
+        dismissBadgeSheet(app)
         let hero = app.descendants(matching: .any).matching(identifier: "today.hero").firstMatch
         XCTAssertTrue(hero.waitForExistence(timeout: 10), "Today should lead with a Tonight card.")
         XCTAssertTrue(hero.label.contains("Planned for tonight"), "The Tonight card should be the planned dinner.")
@@ -282,6 +279,17 @@ final class RecipeFinderScreenshotTests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded
+    /// recipe isn't the first launch's); swipe it away.
+    @MainActor
+    private func dismissBadgeSheet(_ app: XCUIApplication) {
+        let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
+        if badgeSheet.waitForExistence(timeout: 3) {
+            badgeSheet.swipeDown()
+            settle()
+        }
+    }
 
     @MainActor
     private func tab(_ app: XCUIApplication, _ name: String, shot: String?) {
