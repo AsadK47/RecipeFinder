@@ -18,6 +18,8 @@ struct ContentView: View {
     /// True from opening the "+" sheet until it has fully dismissed: a badge earned by the import waits for it, since a
     /// second sheet presented over (or mid-dismissal of) another is silently dropped.
     @State private var addRecipeBusy = false
+    /// A link pasted on Today's clipboard card, imported straight away.
+    @State private var clipboardLink: ClipboardLinkImport?
     @State private var pendingFileImport: RecipeModel?
     @State private var fileImportError: String?
     /// Held until the import sheet finishes dismissing — an alert raised while it's still up never appears.
@@ -85,6 +87,15 @@ struct ContentView: View {
         .sheet(isPresented: $showAddRecipe, onDismiss: { addRecipeBusy = false }) {
             ImportView()
         }
+        .sheet(item: $clipboardLink, onDismiss: {
+            addRecipeBusy = false
+            fileSaveError = pendingFileSaveError
+            pendingFileSaveError = nil
+        }) { link in
+            RecipeImportView(initialURL: link.url.absoluteString, existingNames: store.recipes.map(\.name)) {
+                saveLinkImport($0)
+            }
+        }
         .sheet(item: $pendingFileImport, onDismiss: {
             fileSaveError = pendingFileSaveError
             pendingFileSaveError = nil
@@ -102,6 +113,23 @@ struct ContentView: View {
             return
         }
         select(.recipes)
+    }
+
+    /// Same outcome as the "+" sheet's link import: first-import badge on success (shown once the sheet closes).
+    private func saveLinkImport(_ recipe: RecipeModel) {
+        switch RecipeImportStore.outcome(didPersist: store.add(recipe), recipeName: recipe.name, source: .link) {
+        case .failed(let name):
+            logger.error("Failed to save clipboard-link recipe '\(name)'")
+            pendingFileSaveError = "\"\(name)\" couldn't be saved. Please try again."
+        case .saved(let badge):
+            HapticManager.shared.success()
+            if let badge { BadgeManager.shared.unlockBadge(badge) }
+        }
+    }
+
+    private func importClipboardLink(_ url: URL) {
+        addRecipeBusy = true
+        clipboardLink = ClipboardLinkImport(url: url)
     }
 
     private func openAddRecipe() {
@@ -167,7 +195,7 @@ struct ContentView: View {
     @ViewBuilder
     private func tabRoot(_ tab: AppTab) -> some View {
         switch tab {
-        case .today: TodayView(onOpen: { select($0) }, onAddRecipe: openAddRecipe)
+        case .today: TodayView(onOpen: { select($0) }, onAddRecipe: openAddRecipe, onImportLink: importClipboardLink)
         case .recipes: RecipeSearchView(isLoading: store.isLoading, onAddRecipe: openAddRecipe)
         case .plan: MealPlanningView()
         case .groceries: KitchenShoppingView()
@@ -232,4 +260,9 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
+}
+
+private struct ClipboardLinkImport: Identifiable {
+    let url: URL
+    var id: String { url.absoluteString }
 }

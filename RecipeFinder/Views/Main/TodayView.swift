@@ -6,11 +6,14 @@ struct TodayView: View {
     let onOpen: (AppTab) -> Void
     /// Opens the "+" add-recipe sheet.
     let onAddRecipe: () -> Void
+    /// Imports a recipe from a link pasted on the clipboard card.
+    let onImportLink: (URL) -> Void
 
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.mealPlanning) private var mealPlanning
     @Environment(\.kitchen) private var kitchen
     @Environment(\.cookingStreak) private var cookingStreak
+    @Environment(\.scenePhase) private var scenePhase
 
     /// Pushes the recipe with cooking mode already up, so finishing lands on its detail (Made it, rating).
     private struct CookRoute: Hashable { let recipeID: UUID }
@@ -18,6 +21,12 @@ struct TodayView: View {
     @State private var path = NavigationPath()
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
     @State private var feed: TodayFeed?
+    @State private var showsClipboardCard = false
+    /// Pasteboard change count when the card was last offered.
+    @State private var clipboardChange = 0
+    /// The copy already pasted or dismissed, kept across launches so the same link doesn't come back.
+    @AppStorage("today.handledClipboardChange") private var handledClipboardChange = -1
+    @State private var showNoClipboardLink = false
 
     /// Morning before noon, afternoon until 6pm, evening after.
     nonisolated static func greeting(forHour hour: Int) -> String {
@@ -39,6 +48,9 @@ struct TodayView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: AppTheme.spacing20) {
                             header
+                            if showsClipboardCard {
+                                TodayClipboardCard(onPaste: pasted, onDismiss: dismissClipboardCard)
+                            }
                             if let feed { content(feed) }
                         }
                         .padding(.horizontal, AppTheme.spacing20)
@@ -60,6 +72,15 @@ struct TodayView: View {
             }
         }
         .onAppear(perform: refresh)
+        .task { await probeClipboard() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Task { await probeClipboard() } }
+        }
+        .alert("No link found", isPresented: $showNoClipboardLink) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Copy the recipe's web address, then tap Paste again.")
+        }
         .onChange(of: recipeStore.recipes) { _, _ in refresh() }
         .onChange(of: kitchen.items) { _, _ in refresh() }
     }
@@ -74,6 +95,30 @@ struct TodayView: View {
             tomorrowsPlans: tomorrow == now ? [] : mealPlanning.mealPlans(for: tomorrow),
             now: now
         )
+    }
+
+    private func probeClipboard() async {
+        let change = ClipboardLinkProbe.changeCount
+        let hasLink = await ClipboardLinkProbe.hasWebLink()
+        clipboardChange = change
+        showsClipboardCard = ClipboardRecipeLink.shouldOffer(
+            hasWebLink: hasLink, changeCount: change, handledChangeCount: handledClipboardChange
+        )
+    }
+
+    private func pasted(_ url: URL?) {
+        guard let url else {
+            showNoClipboardLink = true
+            return
+        }
+        HapticManager.shared.light()
+        dismissClipboardCard()
+        onImportLink(url)
+    }
+
+    private func dismissClipboardCard() {
+        handledClipboardChange = clipboardChange
+        showsClipboardCard = false
     }
 
     private var header: some View {
@@ -196,5 +241,5 @@ struct TodayView: View {
 }
 
 #Preview {
-    TodayView(onOpen: { _ in }, onAddRecipe: {})
+    TodayView(onOpen: { _ in }, onAddRecipe: {}, onImportLink: { _ in })
 }

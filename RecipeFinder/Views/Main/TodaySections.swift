@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Today's "Tonight" card: the hero recipe's photo and why it was picked. Tapping the card opens the recipe;
 /// "Let's cook" goes straight into cooking mode (separate buttons — a button nested in a button's label never fires).
@@ -159,5 +160,87 @@ struct TodayPrepAheadRow: View {
         .accessibilityLabel("Prep ahead: \(nudge.message). \(nudge.recipe.name)")
         .accessibilityHint("Opens the recipe")
         .accessibilityIdentifier("today.prepAhead")
+    }
+}
+
+/// "Copied a recipe link?" card. The link is read only through `PasteButton` — the user's tap is the consent, so iOS
+/// shows no "Allow Paste" prompt — and goes straight to the link importer.
+struct TodayClipboardCard: View {
+    /// Gets the first web link in what was pasted, or nil when the paste held none. Main-actor (hence Sendable)
+    /// because PasteButton may call back from elsewhere.
+    let onPaste: @MainActor (URL?) -> Void
+    let onDismiss: () -> Void
+
+    var body: some View {
+        let handler = onPaste
+        return HStack(alignment: .top, spacing: AppTheme.spacing16) {
+            IconBadge(systemName: "link", tint: .blue, diameter: 44, iconSize: AppTheme.fontSize18, style: .solid)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                Text("Copied a recipe link?")
+                    .font(.headline)
+                    .adaptiveForegroundColor()
+                Text("Paste it here and RecipeFinder saves the recipe for you.")
+                    .font(.subheadline)
+                    .adaptiveSecondaryForeground()
+                    .fixedSize(horizontal: false, vertical: true)
+                PasteButton(payloadType: String.self) { [handler] strings in
+                    let url = ClipboardRecipeLink.url(in: strings)
+                    Task { @MainActor in handler(url) }
+                }
+                .buttonBorderShape(.capsule)
+                .labelStyle(.titleAndIcon)
+                .tint(AppTheme.accentColor)
+                .accessibilityIdentifier("today.clipboard.paste")
+            }
+            Spacer(minLength: 0)
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.top, -AppTheme.spacing10)
+            .padding(.trailing, -AppTheme.spacing10)
+            .accessibilityLabel("Dismiss")
+            .accessibilityIdentifier("today.clipboard.dismiss")
+        }
+        .padding(AppTheme.spacing20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .appCard()
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("today.clipboard")
+    }
+}
+
+/// Asks whether the clipboard looks like it holds a web link without reading it: `detectPatterns` doesn't trigger the
+/// "Allow Paste" prompt, so Today can offer the card without nagging.
+@MainActor
+enum ClipboardLinkProbe {
+    nonisolated private static let logger = AppLogger.logger(category: "ClipboardLinkProbe")
+
+    static var changeCount: Int { UIPasteboard.general.changeCount }
+
+    static func hasWebLink() async -> Bool {
+        #if DEBUG
+        // Screenshots hook: the simulator's clipboard is empty in CI.
+        if ProcessInfo.processInfo.arguments.contains("-fake-clipboard-link") { return true }
+        #endif
+        let pasteboard = UIPasteboard.general
+        guard pasteboard.hasStrings || pasteboard.hasURLs else { return false }
+        return await withCheckedContinuation { continuation in
+            // @Sendable: the handler runs off the main queue, so it must not inherit main-actor isolation.
+            pasteboard.detectPatterns(for: [.probableWebURL]) { @Sendable result in
+                switch result {
+                case .success(let patterns):
+                    continuation.resume(returning: patterns.contains(.probableWebURL))
+                case .failure(let error):
+                    logger.debug("Clipboard pattern check failed: \(error.localizedDescription)")
+                    continuation.resume(returning: false)
+                }
+            }
+        }
     }
 }

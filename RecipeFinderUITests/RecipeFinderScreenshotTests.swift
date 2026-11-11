@@ -11,6 +11,27 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         continueAfterFailure = true
     }
 
+    /// Tabs 2/3: a first launch's Today — "Bring in your first recipe" + Starters — with the "Copied a recipe link?"
+    /// card (DEBUG `-fake-clipboard-link`; CI's clipboard is empty). Named to sort first in this class, so on the
+    /// Screenshots workflow's fresh simulator nothing has been cooked or imported yet. Other UI classes may run first
+    /// on a shared simulator (nightly), so the new-user shot is taken only when that state is on screen.
+    @MainActor
+    func testCaptureAFirstLaunchToday() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-fake-clipboard-link"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        let card = app.descendants(matching: .any).matching(identifier: "today.clipboard").firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 10), "Today should offer to import a copied link.")
+        XCTAssertTrue(app.buttons["today.clipboard.dismiss"].exists, "The clipboard card should be dismissible.")
+        if app.buttons["today.addFirstRecipe"].waitForExistence(timeout: 5) {
+            settle()
+            snap(app, "20-today-new-user")
+        }
+        app.buttons["today.clipboard.dismiss"].tap()
+        XCTAssertTrue(card.waitForNonExistence(timeout: 5), "Dismissing should hide the clipboard card.")
+    }
+
     @MainActor
     func testCaptureScreenshots() {
         let app = XCUIApplication()
