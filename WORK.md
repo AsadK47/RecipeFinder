@@ -1,11 +1,11 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- `agent/today-prep-ahead` — Tabs 2/3 slice 4a: prep-ahead nudge row on Today (`PrepAhead.swift`, `TodayPrepAheadRow`,
-  `TodayFeed.prepAhead`, seed of tomorrow's dinner under `-seed-tonight-plan`). Waiting on Build & Test.
+- Nothing in progress. Tabs 2/3 slice 4a (prep-ahead) merged (cce65ff); item stays open in BACKLOG.
 
 ## Next action
-If green: ff main, tick nothing (item still open), Log line. Then slice 4b: clipboard recipe-link card + new-user shot.
+Check the nightly UI-test run (03:00 UTC 2026-11-11) passes — incl. the new prep-ahead assert in
+`testCaptureTodayPlanned`. Then Tabs 2/3 slice 4b: clipboard recipe-link card + new-user screenshot.
 
 ## Decisions (why)
 - **Tabs 2/3 slice 4a (prep-ahead)**: nudge = tomorrow's open plans whose steps say "overnight", defrost/thaw, or a
