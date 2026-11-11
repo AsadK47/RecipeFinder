@@ -159,7 +159,7 @@ drop a line while moving it.
   changed. Replaces the long `RecipeWizardView` form for create + import review (keep focused single-section edits
   from detail working); delete `WizardIntroSheet` and step views it makes unused. *Done when:* draft/validation/save
   logic tested, screenshots (blank, imported, low-confidence), existing import UI tests updated, net lines down, CI green.
-- [ ] **Add flow 2/3 — Fewer taps to get there.** "+" sheet leads with one box: paste a link or recipe text (or tap
+- [ ] **Add flow 2/3 — Fewer taps to get there.** — 🚧 builder agent 2026-11-11 "+" sheet leads with one box: paste a link or recipe text (or tap
   "Paste" from the clipboard) — auto-detects link vs text; then Photo/PDF, Search the web, From another app, Start
   blank. Link/paste/photo go straight to the Add flow 1/3 screen with a loading state (no in-between sheets); share
   extension recipes open on the same screen. *Done when:* link-vs-text detection tested, tap count per path ≤ 3 to the
