@@ -11,12 +11,6 @@ struct IngredientsStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            WizardStepHeader(
-                title: "Ingredients",
-                subtitle: "One per line — type or paste, e.g. “200 g flour”",
-                illustration: "cart.fill"
-            )
-
             WizardCard {
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     TextEditor(text: $text)

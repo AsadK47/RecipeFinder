@@ -202,7 +202,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.buttons["draft.save"].exists, "Save should be pinned on the new-recipe screen.")
         snap(app, "21-new-recipe")
         name.tap()
-        XCTAssertTrue(app.staticTexts["Let's start with a name"].waitForExistence(timeout: 5),
+        XCTAssertTrue(app.textFields["wizard.recipeName"].waitForExistence(timeout: 5),
                       "Tapping the name should open the name & photo editor.")
         snap(app, "22-new-recipe-edit-name")
     }

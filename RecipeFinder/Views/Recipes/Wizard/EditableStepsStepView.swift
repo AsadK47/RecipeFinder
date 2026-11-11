@@ -5,10 +5,7 @@ import SwiftUI
 struct EditableStepsStepView: View {
     @Binding var steps: [EditableStep]
     let title: String
-    let subtitle: String
-    let illustration: String
     let fieldPlaceholder: String
-    let addButtonTitle: String
 
     @State private var text = ""
     @State private var seeded = false
@@ -16,12 +13,6 @@ struct EditableStepsStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            WizardStepHeader(
-                title: title,
-                subtitle: subtitle,
-                illustration: illustration
-            )
-
             WizardCard {
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     TextEditor(text: $text)

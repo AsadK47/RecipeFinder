@@ -126,19 +126,13 @@ extension RecipeWizardView {
             EditableStepsStepView(
                 steps: $prePrepSteps,
                 title: "Pre-prep Instructions",
-                subtitle: "Any prep work before cooking? (Optional)",
-                illustration: "list.bullet.clipboard.fill",
-                fieldPlaceholder: "Describe the pre-prep step",
-                addButtonTitle: "Add Pre-prep Step"
+                fieldPlaceholder: "Describe the pre-prep step"
             )
         case .instructions:
             EditableStepsStepView(
                 steps: $mainInstructions,
                 title: "Cooking Instructions",
-                subtitle: "Walk us through the cooking process",
-                illustration: "flame.fill",
-                fieldPlaceholder: "Describe this cooking step",
-                addButtonTitle: "Add Cooking Step"
+                fieldPlaceholder: "Describe this cooking step"
             )
             .importHighlight(needsCheck(.steps))
         case .notes:
@@ -146,23 +140,8 @@ extension RecipeWizardView {
                 notes: $notes,
                 tags: $recipeTags,
                 cuisine: $recipeCuisine,
-                hasPrefilledNotes: prefilledData?.notes != nil,
-                summary: recipeSummary
+                hasPrefilledNotes: prefilledData?.notes != nil
             )
         }
-    }
-
-    private var recipeSummary: WizardRecipeSummary {
-        WizardRecipeSummary(
-            name: recipeName,
-            category: category,
-            difficulty: difficulty,
-            servings: servings,
-            prepTime: prepTime,
-            cookTime: cookTime,
-            ingredientCount: ingredientItems.filter { !$0.name.isEmpty }.count,
-            prePrepStepCount: prePrepSteps.nonEmptyTexts.count,
-            cookingStepCount: mainInstructions.nonEmptyTexts.count
-        )
     }
 }

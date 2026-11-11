@@ -1,18 +1,5 @@
 import SwiftUI
 
-/// A snapshot of the recipe used to render the summary on the final wizard step.
-struct WizardRecipeSummary {
-    let name: String
-    let category: String
-    let difficulty: String
-    let servings: Int
-    let prepTime: Int
-    let cookTime: Int
-    let ingredientCount: Int
-    let prePrepStepCount: Int
-    let cookingStepCount: Int
-}
-
 private let tagSuggestions = [
     "Quick", "Comfort Food", "Spicy", "Budget Friendly", "Family Friendly",
     "Date Night", "Batch Cook", "Healthy", "Sunday Roast", "Meal Prep",
@@ -24,24 +11,17 @@ private let cuisineSuggestions = [
     "French", "Greek", "American", "British", "Middle Eastern", "Mediterranean"
 ]
 
-/// Step 6 of the Recipe Wizard: tags, free-form notes, and the recipe summary.
+/// Notes section of the recipe editor: cuisine, tags and free-form notes.
 struct NotesStepView: View {
     @Binding var notes: String
     @Binding var tags: [String]
     @Binding var cuisine: String
     let hasPrefilledNotes: Bool
-    let summary: WizardRecipeSummary
 
     @State private var tagInput: String = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            WizardStepHeader(
-                title: "Final Touches",
-                subtitle: "Add tags or notes to help you find this recipe later",
-                illustration: "note.text"
-            )
-
             WizardCard {
                 VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                     cuisineSection
@@ -106,23 +86,6 @@ struct NotesStepView: View {
                                 quickNoteButton(icon: "star.fill", text: "Pro tip", template: "✨ Pro Tip:\n• ")
                             }
                         }
-                    }
-
-                    Divider()
-
-                    VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                        Text("Recipe Summary")
-                            .font(.headline)
-
-                        WizardSummaryRow(icon: "fork.knife", label: "Name", value: summary.name.isEmpty ? "—" : summary.name)
-                        WizardSummaryRow(icon: "tag", label: "Category", value: summary.category)
-                        WizardSummaryRow(icon: "chart.bar", label: "Difficulty", value: summary.difficulty)
-                        WizardSummaryRow(icon: "person.2", label: "Servings", value: "\(summary.servings)")
-                        WizardSummaryRow(icon: "clock", label: "Prep Time", value: "\(summary.prepTime) min")
-                        WizardSummaryRow(icon: "flame", label: "Cook Time", value: "\(summary.cookTime) min")
-                        WizardSummaryRow(icon: "list.bullet", label: "Ingredients", value: "\(summary.ingredientCount)")
-                        WizardSummaryRow(icon: "list.number", label: "Pre-prep Steps", value: "\(summary.prePrepStepCount)")
-                        WizardSummaryRow(icon: "list.number", label: "Cooking Steps", value: "\(summary.cookingStepCount)")
                     }
                 }
                 .padding()

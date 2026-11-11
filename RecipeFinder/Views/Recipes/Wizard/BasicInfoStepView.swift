@@ -12,12 +12,6 @@ struct BasicInfoStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            WizardStepHeader(
-                title: "Tell us more",
-                subtitle: "Add some details about your recipe",
-                illustration: "slider.horizontal.3"
-            )
-
             WizardCard {
                 VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {

@@ -16,18 +16,13 @@ struct RecipeNameStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            WizardStepHeader(
-                title: "Let's start with a name",
-                subtitle: "What would you like to call this recipe?",
-                illustration: "doc.text.fill"
-            )
-
             WizardCard {
                 VStack(spacing: AppTheme.spacing16) {
                     TextField("Recipe Name", text: $recipeName)
                         .font(.title2)
                         .textFieldStyle(.plain)
                         .appInputField()
+                        .accessibilityIdentifier("wizard.recipeName")
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing10) {
                         Text("Recipe Photo")
