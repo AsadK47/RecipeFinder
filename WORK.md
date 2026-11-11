@@ -1,13 +1,22 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Tabs 2/3 done (slice 4b merged 601c162).
+- **Add flow 1/3 slice 1** on `agent/add-flow-1-draft-screen` (29850eb): create + import review show `RecipeDraftView`
+  (recipe as it'll look; tap photo/name/chips/cards → that section's editor in a sheet via `sectionEditor(_:)`), Save
+  pinned at bottom, `WizardIntroSheet` deleted. Pure `RecipeDraftPreview` + tests. UI tests → `draft.name`; new
+  screenshot test `testCaptureNewRecipeDraft` (21/22). Waiting on Build & Test.
 
 ## Next action
-Check the nightly UI run (03:00 UTC 2026-11-12) is green, incl. new `testCaptureAFirstLaunchToday`. Then
-Add flow 1/3 (next in owner order): one recipe screen for import review + create — plan slices first.
+Check Build & Test for 29850eb; fix; ff-merge main. Then slice 2: run Screenshots workflow on the branch/main to eyeball
+21-new-recipe, 09-low-confidence, 11-start-from-text; trim step views now unused by the draft screen (WizardStepHeader
+subtitles, `WizardRecipeSummary` in NotesStepView?) for net lines down; then tick the item.
 
 ## Decisions (why)
+- **Add flow 1/3 slice 1**: kept the existing section editors (one canonical editor) and show them one at a time in a
+  sheet from the draft screen rather than editing inline — inline TextEditors inside a scroll of cards fight the
+  keyboard and would duplicate the step views. Photo pickers attach to the top-most sheet (section sheet on the draft
+  screen, root for focused edits) — a sheet can't present from the view beneath another sheet. Focused edits from
+  detail unchanged (toolbar Save). Full "Edit" (focus nil, editing id) also gets the draft screen, Save says "Update".
 - **Tabs 2/3 slice 4b (clipboard card)**: detection via `UIPasteboard.detectPatterns(.probableWebURL)` (no paste
   prompt); the read happens only through SwiftUI `PasteButton` (user tap = consent). First http(s) link in the paste
   → `RecipeImportView(initialURL:)` presented from ContentView (`addRecipeBusy` holds badge sheets). Pasted/dismissed
