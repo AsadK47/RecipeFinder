@@ -52,6 +52,16 @@ Owner-approved series are worked strictly in order, one item at a time: start it
 `main`'s Build & Test is green, and its screenshots were checked. Within a series you may go straight on to the next
 item in the same session (no need to wait for the nightly run) — then `fire_trigger` the builder again if needed.
 
+### Reviewer extra checks (each run, owner OK 2026-11-11)
+- **Process:** every item ticked since the last review has a Log line with its review count and screenshots looked
+  at (step 6). Missing → one Inbox line naming the skipped step.
+- **Tests that can't fail:** for 2–3 new tests, read the code under test — would the test fail if the feature broke?
+- **Coverage:** `curl -sSL https://github.com/AsadK47/RecipeFinder/releases/download/coverage/coverage.txt`; flag
+  changed logic files (Models/, Utilities/, Services/, Persistence/) under 60% line coverage.
+- **Look at the screens:** download main's `*-web.jpg` for screens touched (`gh api
+  repos/AsadK47/RecipeFinder/releases/tags/screenshots --jq '.assets[].name'`), Read them, flag clipping, overlap,
+  empty/broken states, unreadable text; note if Screenshots wasn't re-run on main after a UI change.
+
 ### Log rotation (reviewer, each run)
 Keep **Log** to the last 7 days. Move older lines, unchanged, to the top of `CHANGELOG.md` under a
 `## Week of <Monday YYYY-MM-DD>` heading (newest week first), in the same docs commit as the review. Never edit or
