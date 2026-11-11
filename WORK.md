@@ -1,12 +1,17 @@
 # WORK.md — handoff (2026-11-10, end of long interactive session)
 
 ## In progress
-- Nothing in progress. Tabs 2/3 slice 2 merged (cec3f49); item stays open in BACKLOG.
+- Nothing in progress. Tabs 2/3 slice 3 merged (ff6e658); item stays open in BACKLOG.
 
 ## Next action
-Check the nightly UI-test run passes with the Today launch (tests now tap Recipes first). Then Tabs 2/3 slice 3: "Let's cook" starts cooking mode, prep-ahead row, clipboard link card, remove RediscoveryCard from Recipes.
+Check the nightly UI-test run (03:00 UTC 2026-11-11) passes with the Today launch. Then Tabs 2/3 slice 4: prep-ahead
+nudge row + clipboard recipe-link card + new-user screenshot.
 
 ## Decisions (why)
+- **Tabs 2/3 slice 3**: "Let's cook" pushes the recipe detail with `startsCooking: true` (one-shot onAppear) instead of
+  presenting CookingModeView from Today, so finishing reuses detail's Made-it / streak / badge path. Card split into
+  two sibling buttons (open vs cook). `RecipeRediscovery.pick` now only used by its tests — kept (tested, tiny); drop
+  in a Smells pass if wanted. Verified by Screenshots run on the branch (UI tests aren't in push CI).
 - **Tabs 2/3 slice 2**: UI tests tap Recipes after launch (not a launch-arg override) so CI exercises the real default.
   Planned-day shot is its own test sorting after `testCaptureScreenshots`, so 16-today stays unplanned despite
   shared simulator data. Seed plans the first recipe by name; leaves an existing dinner plan alone.
