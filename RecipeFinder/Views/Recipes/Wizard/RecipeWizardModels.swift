@@ -34,6 +34,8 @@ extension RecipeWizardView {
         var quantity: String = ""
         var unit: String = ""
         var name: String = ""
+        /// Ingredient group ("For the sauce"); empty = ungrouped.
+        var section: String = ""
     }
 }
 
@@ -94,7 +96,9 @@ extension RecipeWizardView.PrefilledRecipeData {
             name: recipe.name,
             description: nil,
             // FractionFormatter shows ⅓ rather than "0.333333"; the editor's save path parses fractions back.
-            ingredients: recipe.ingredients.map { "\(FractionFormatter.format($0.baseQuantity)) \($0.unit) \($0.name)" },
+            ingredients: IngredientSections.lines(recipe.ingredients, section: \.section) {
+                "\(FractionFormatter.format($0.baseQuantity)) \($0.unit) \($0.name)"
+            },
             instructions: recipe.instructions,
             prePrepInstructions: recipe.prePrepInstructions,
             prepTime: TimeExtractor.extractMinutes(from: recipe.prepTime),

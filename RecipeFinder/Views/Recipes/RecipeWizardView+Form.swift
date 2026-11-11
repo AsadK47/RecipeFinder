@@ -26,10 +26,8 @@ extension RecipeWizardView {
         }
 
         if let ingredients = data.ingredients, !ingredients.isEmpty {
-            ingredientItems = ingredients.map { line in
-                let parsed = WizardIngredientParser.parse(line)
-                return IngredientItem(quantity: parsed.quantity, unit: parsed.unit, name: parsed.name)
-            }
+            // Same reader as the ingredients text box, so "For the sauce:" lines become groups, not rows.
+            ingredientItems = IngredientTextBlock.items(from: ingredients.joined(separator: "\n"))
             ingredientItems.append(IngredientItem())
         }
 

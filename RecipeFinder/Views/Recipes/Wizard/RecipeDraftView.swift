@@ -17,7 +17,7 @@ struct RecipeDraftView: View {
             photo
             titleAndChips
             listCard("Ingredients", section: .ingredients, lines: preview.ingredientLines, numbered: false,
-                     emptyPrompt: "Add ingredients")
+                     emptyPrompt: "Add ingredients", groupStarts: preview.ingredientGroupStarts)
             if !preview.prePrepSteps.isEmpty {
                 listCard("Pre-prep", section: .prePrep, lines: preview.prePrepSteps, numbered: true,
                          emptyPrompt: "Add pre-prep")
@@ -118,7 +118,8 @@ struct RecipeDraftView: View {
     }
 
     private func listCard(
-        _ title: String, section: Section, lines: [String], numbered: Bool, emptyPrompt: String
+        _ title: String, section: Section, lines: [String], numbered: Bool, emptyPrompt: String,
+        groupStarts: [Int: String] = [:]
     ) -> some View {
         Button { onEdit(section) } label: {
             VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -135,6 +136,9 @@ struct RecipeDraftView: View {
                         .adaptiveForegroundColor()
                 } else {
                     ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
+                        if let group = groupStarts[index] {
+                            IngredientGroupHeader(title: group)
+                        }
                         HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing8) {
                             Text(numbered ? "\(index + 1)." : "•")
                                 .font(.body.weight(.semibold))

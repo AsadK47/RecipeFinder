@@ -8,6 +8,8 @@ struct RecipeDraftPreview: Equatable {
     let servingsLabel: String
     let detailChips: [String]
     let ingredientLines: [String]
+    /// Group title ("For the sauce") keyed by the index in `ingredientLines` where that group starts.
+    let ingredientGroupStarts: [Int: String]
     let prePrepSteps: [String]
     let steps: [String]
     let notes: String?
@@ -17,11 +19,17 @@ struct RecipeDraftPreview: Equatable {
         timeSummary = Self.timeSummary(prep: draft.prepTime, cook: draft.cookTime)
         servingsLabel = "Serves \(draft.servings)"
         detailChips = [draft.category, draft.difficulty, draft.cuisine].filter { !$0.isEmpty } + draft.tags
-        ingredientLines = draft.ingredients.compactMap { parts in
+        let rows = zip(draft.ingredients, draft.ingredientSections).compactMap { parts, section -> (String, String)? in
             // A row with only an amount isn't an ingredient yet (the save path drops it too).
             guard let name = parts.last, !name.isEmpty else { return nil }
-            return parts.filter { !$0.isEmpty }.joined(separator: " ")
+            return (parts.filter { !$0.isEmpty }.joined(separator: " "), section)
         }
+        ingredientLines = rows.map(\.0)
+        var starts: [Int: String] = [:]
+        for (index, row) in rows.enumerated() where !row.1.isEmpty && (index == 0 || rows[index - 1].1 != row.1) {
+            starts[index] = row.1
+        }
+        ingredientGroupStarts = starts
         prePrepSteps = draft.prePrep
         steps = draft.steps
         notes = draft.notes.isEmpty ? nil : draft.notes

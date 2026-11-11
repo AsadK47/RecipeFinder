@@ -28,6 +28,8 @@ enum RecipeWizardBuilder {
         let category: String
         let servings: Int
         let ingredients: [[String]]
+        /// Each `ingredients` row's group ("" = none), kept parallel so a regrouping counts as an edit.
+        let ingredientSections: [String]
         let prePrep: [String]
         let steps: [String]
         let notes: String
@@ -48,9 +50,11 @@ enum RecipeWizardBuilder {
             self.difficulty = difficulty
             self.category = category
             self.servings = servings
-            self.ingredients = ingredientItems
-                .map { [$0.quantity.trimmed, $0.unit.trimmed, $0.name.trimmed] }
-                .filter { $0.contains { !$0.isEmpty } }
+            let filled = ingredientItems.filter { item in
+                [item.quantity, item.unit, item.name].contains { !$0.trimmed.isEmpty }
+            }
+            self.ingredients = filled.map { [$0.quantity.trimmed, $0.unit.trimmed, $0.name.trimmed] }
+            self.ingredientSections = filled.map(\.section.trimmed)
             self.prePrep = prePrepSteps.nonEmptyTexts
             self.steps = mainInstructions.nonEmptyTexts
             self.notes = notes.trimmed
@@ -88,7 +92,9 @@ enum RecipeWizardBuilder {
             } else if !text.isEmpty {
                 name = "\(text) \(name)"
             }
-            return Ingredient(baseQuantity: quantity, unit: item.unit.trimmed, name: name)
+            let section = item.section.trimmed
+            return Ingredient(baseQuantity: quantity, unit: item.unit.trimmed, name: name,
+                              section: section.isEmpty ? nil : section)
         }
     }
 
@@ -183,23 +189,21 @@ enum RecipeWizardBuilder {
 /// Manual entry as one text area: one ingredient per line, parsed by the same `IngredientLineParser` imports use,
 /// so typing, pasting and importing produce identical rows.
 enum IngredientTextBlock {
-    /// Rows for each non-blank line, in order.
+    /// Rows for each non-blank line, in order; a header line ("For the sauce:") groups the rows below it.
     static func items(from text: String) -> [RecipeWizardView.IngredientItem] {
-        text.components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
-            .map { line in
-                let parsed = IngredientLineParser.parse(line)
-                return RecipeWizardView.IngredientItem(quantity: parsed.quantityText, unit: parsed.unit, name: parsed.name)
-            }
+        IngredientSections.items(fromLines: text.components(separatedBy: .newlines)) { line, section in
+            let parsed = IngredientLineParser.parse(line)
+            return RecipeWizardView.IngredientItem(
+                quantity: parsed.quantityText, unit: parsed.unit, name: parsed.name, section: section ?? "")
+        }
     }
 
-    /// The text area's contents for existing rows ("200 g flour"); rows without a name are dropped.
+    /// The text area's contents for existing rows ("200 g flour"), with a header line where each group starts; rows
+    /// without a name are dropped.
     static func text(from items: [RecipeWizardView.IngredientItem]) -> String {
-        items.compactMap { item in
-            let name = item.name.trimmingCharacters(in: .whitespaces)
-            guard !name.isEmpty else { return nil }
-            return [item.quantity.trimmingCharacters(in: .whitespaces), item.unit, name]
+        let named = items.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        return IngredientSections.lines(named, section: { $0.section.trimmed.isEmpty ? nil : $0.section.trimmed }) { item in
+            [item.quantity.trimmingCharacters(in: .whitespaces), item.unit, item.name.trimmingCharacters(in: .whitespaces)]
                 .filter { !$0.isEmpty }
                 .joined(separator: " ")
         }

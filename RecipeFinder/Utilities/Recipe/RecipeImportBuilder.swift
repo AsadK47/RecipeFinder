@@ -6,9 +6,7 @@ struct RecipeImportBuilder {
     // MARK: - Public API
 
     func build(from data: RecipeImporter.ExtractedRecipeData) -> RecipeModel {
-        let ingredients = data.rawIngredients
-            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-            .map { parseIngredient($0) }
+        let ingredients = parseIngredients(data.rawIngredients)
 
         return RecipeModel(
             name: data.name,
@@ -32,9 +30,14 @@ struct RecipeImportBuilder {
     // MARK: - Ingredient parsing
 
     /// Delegates to shared `IngredientLineParser` so import and manual entry parse identically; missing amount stays 0, not a fake 1.
-    func parseIngredient(_ fullIngredient: String) -> Ingredient {
+    func parseIngredient(_ fullIngredient: String, section: String? = nil) -> Ingredient {
         let parsed = IngredientLineParser.parse(fullIngredient)
-        return Ingredient(baseQuantity: parsed.quantity, unit: parsed.unit, name: parsed.name)
+        return Ingredient(baseQuantity: parsed.quantity, unit: parsed.unit, name: parsed.name, section: section)
+    }
+
+    /// Ingredient lines → ingredients, with "For the sauce:" header lines grouping the lines below them.
+    func parseIngredients(_ lines: [String]) -> [Ingredient] {
+        IngredientSections.items(fromLines: lines) { parseIngredient($0, section: $1) }
     }
 
     // MARK: - Notes generation

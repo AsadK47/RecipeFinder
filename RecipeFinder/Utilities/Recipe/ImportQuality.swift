@@ -17,7 +17,7 @@ enum ImportQuality {
     /// A URL parse's confidence (or 1.0 for an on-device AI read) is the score when present; otherwise the score comes
     /// from which fields were found. Missing fields are always computed from the content itself.
     static func assess(_ prefill: RecipeWizardView.PrefilledRecipeData) -> Assessment {
-        let ingredients = (prefill.ingredients ?? []).filter { !$0.trimmed.isEmpty }
+        let ingredients = IngredientSections.ingredientLines(prefill.ingredients ?? [])
         let steps = (prefill.instructions ?? []).filter { !$0.trimmed.isEmpty }
 
         var missing = Set<Field>()

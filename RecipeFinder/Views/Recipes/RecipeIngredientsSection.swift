@@ -210,6 +210,9 @@ struct RecipeIngredientsSection: View {
             // ingredient.id identity lets SwiftUI diff individual rows, not rebuild all N on every pantry/shopping change.
             let substituteIDs = ingredientsWithSubstitutes
             ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
+                if let group = IngredientSections.title(startingAt: index, in: recipe.ingredients) {
+                    IngredientGroupHeader(title: group)
+                }
                 IngredientRowView(
                     ingredient: ingredient,
                     // Safe read: the parent resizes its state in onChange, which runs after this render sees an edited recipe.
@@ -227,5 +230,19 @@ struct RecipeIngredientsSection: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(AppTheme.spacing24)
         .appCard(elevated: true)
+    }
+}
+
+/// A group title ("For the sauce") above the ingredients in that group — on the recipe and on the add/review screen.
+struct IngredientGroupHeader: View {
+    let title: String
+
+    var body: some View {
+        Text(title)
+            .font(.headline)
+            .adaptiveForegroundColor()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, AppTheme.spacing8)
+            .accessibilityAddTraits(.isHeader)
     }
 }

@@ -101,9 +101,7 @@ extension RecipeDiff {
     /// parse didn't find keeps the stored value, so a weaker parse never proposes blanking something.
     static func reimport(stored: RecipeModel, prefill: RecipeWizardView.PrefilledRecipeData) -> RecipeDiff {
         let ingredientParser = RecipeImportBuilder()
-        let ingredients = (prefill.ingredients ?? [])
-            .filter { !$0.trimmed.isEmpty }
-            .map { ingredientParser.parseIngredient($0) }
+        let ingredients = ingredientParser.parseIngredients(prefill.ingredients ?? [])
         let instructions = (prefill.instructions ?? []).filter { !$0.trimmed.isEmpty }
         let name = prefill.name?.trimmed ?? ""
         let category = prefill.category?.trimmed ?? ""

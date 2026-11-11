@@ -102,10 +102,20 @@ enum TextRecipeParser {
         var current: Section?
         let hasInstructionHeader = lines.contains { RecipeParser.isHeader($0, in: RecipeParser.instructionHeaderWords) }
 
+        // Indices in `ingredientLines` of group headers kept as "For the sauce:" lines, so they're never mistaken for
+        // a step sub-heading below.
+        var groupHeaderIndices = Set<Int>()
+
         for line in lines {
-            if RecipeParser.isHeader(line, in: RecipeParser.ingredientHeaderWords)
+            if RecipeParser.isHeader(line, in: RecipeParser.ingredientSectionHeaderWords) {
+                current = .ingredients
+                continue
+            }
+            if RecipeParser.isHeader(line, in: RecipeParser.ingredientSubsectionHeaderWords)
                 || (current != .instructions && isIngredientGroupHeader(line)) {
                 current = .ingredients
+                groupHeaderIndices.insert(ingredientLines.count)
+                ingredientLines.append(IngredientSections.headerLine(for: groupTitle(line)))
                 continue
             }
             if RecipeParser.isHeader(line, in: RecipeParser.instructionHeaderWords) {
@@ -116,7 +126,8 @@ enum TextRecipeParser {
             // ("PREPARE THE DOUGH:") just above it along, instead of every step landing in ingredients.
             if current == .ingredients, !hasInstructionHeader, startsInstructions(line) {
                 current = .instructions
-                if let last = ingredientLines.last, isStepSubheading(last) {
+                if let last = ingredientLines.last, isStepSubheading(last),
+                   !groupHeaderIndices.contains(ingredientLines.count - 1) {
                     instructionLines.append(ingredientLines.removeLast())
                 }
             }
@@ -128,8 +139,24 @@ enum TextRecipeParser {
             }
         }
 
-        guard !ingredientLines.isEmpty || !instructionLines.isEmpty else { return nil }
-        return (ingredientLines, instructionLines)
+        let ingredients = droppingEmptyGroups(ingredientLines)
+        guard !ingredients.isEmpty || !instructionLines.isEmpty else { return nil }
+        return (ingredients, instructionLines)
+    }
+
+    /// "For the sauce" in sentence case, whatever the source's capitals, colon or emoji.
+    private static func groupTitle(_ line: String) -> String {
+        let words = RecipeParser.normalizedHeader(line)
+        return words.prefix(1).uppercased() + words.dropFirst()
+    }
+
+    /// Header lines with no ingredient under them (back-to-back or at the end) dropped, so a group never comes out empty.
+    private static func droppingEmptyGroups(_ lines: [String]) -> [String] {
+        lines.enumerated().compactMap { index, line in
+            guard IngredientSections.title(ofHeaderLine: line) != nil else { return line }
+            let next = lines.indices.contains(index + 1) ? lines[index + 1] : nil
+            return next.map { IngredientSections.title(ofHeaderLine: $0) == nil } == true ? line : nil
+        }
     }
 
     private enum Section {
