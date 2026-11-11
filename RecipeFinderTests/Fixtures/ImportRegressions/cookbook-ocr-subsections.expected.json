@@ -1,0 +1,13 @@
+{
+  "name": "Sticky Sesame Chicken",
+  "minIngredients": 9,
+  "maxIngredients": 9,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["FOR THE CHICKEN"],
+  "amounts": [
+    {"name": "chicken thighs", "quantity": 500, "unit": "g"},
+    {"name": "honey", "quantity": 3, "unit": "tbsp"}
+  ]
+}

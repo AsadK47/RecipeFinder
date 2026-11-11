@@ -1,0 +1,12 @@
+{
+  "name": "scones",
+  "minIngredients": 5,
+  "maxIngredients": 5,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "amounts": [
+    {"name": "self-raising flour", "quantity": 225, "unit": "g"},
+    {"name": "milk", "quantity": 150, "unit": "ml"}
+  ]
+}

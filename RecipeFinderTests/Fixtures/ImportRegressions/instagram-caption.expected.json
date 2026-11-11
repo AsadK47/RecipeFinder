@@ -1,0 +1,15 @@
+{
+  "name": "garlic pasta",
+  "minIngredients": 6,
+  "maxIngredients": 6,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["1️⃣", "4️⃣", "Follow @", "#pasta"],
+  "amounts": [
+    {"name": "spaghetti", "quantity": 250, "unit": "g"},
+    {"name": "garlic", "quantity": 4, "unit": ""},
+    {"name": "double cream", "quantity": 200, "unit": "ml"},
+    {"name": "parmesan", "quantity": 50, "unit": "g"}
+  ]
+}

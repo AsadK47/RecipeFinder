@@ -88,11 +88,22 @@ import Foundation
 /// heuristic text path must recover. Loaded from the source tree via `#filePath` — no bundle resources needed.
 @Suite struct ImportRegressionFixtureTests {
 
+    /// The optional fields pin quality, not just presence: caps catch junk lines (ads, ratings, nutrition) sneaking in
+    /// as ingredients/steps, and `amounts` pins how named ingredients split into quantity + canonical unit.
     private struct Expected: Decodable {
+        struct Amount: Decodable {
+            let name: String
+            let quantity: Double
+            let unit: String
+        }
         let name: String
         let minIngredients: Int
         let minSteps: Int
         let amountsPresent: Bool
+        var maxIngredients: Int?
+        var maxSteps: Int?
+        var forbidden: [String]?
+        var amounts: [Amount]?
     }
 
     private static var fixtureDirectory: URL {
@@ -106,9 +117,9 @@ import Foundation
         return files.filter { $0.hasSuffix(".txt") }.map { String($0.dropLast(4)) }.sorted()
     }()
 
-    @Test("There are at least three regression fixtures")
+    @Test("There are at least ten regression fixtures")
     func hasFixtures() {
-        #expect(Self.slugs.count >= 3, "No fixtures found in \(Self.fixtureDirectory.path)")
+        #expect(Self.slugs.count >= 10, "No fixtures found in \(Self.fixtureDirectory.path)")
     }
 
     @Test("Each regression fixture still imports at least as well as pinned", arguments: slugs)
@@ -131,6 +142,21 @@ import Foundation
         #expect(steps.count >= expected.minSteps, "\(report)")
         if expected.amountsPresent {
             #expect(ingredients.contains { IngredientLineParser.parse($0).quantity > 0 }, "\(report)")
+        }
+        if let max = expected.maxIngredients { #expect(ingredients.count <= max, "\(report) \(ingredients)") }
+        if let max = expected.maxSteps { #expect(steps.count <= max, "\(report) \(steps)") }
+        for junk in expected.forbidden ?? [] {
+            let hits = (ingredients + steps).filter { $0.localizedCaseInsensitiveContains(junk) }
+            #expect(hits.isEmpty, "\(slug): junk \"\(junk)\" kept in \(hits)")
+        }
+        let parsed = ingredients.map(IngredientLineParser.parse)
+        for amount in expected.amounts ?? [] {
+            let hit = parsed.first { $0.name.localizedCaseInsensitiveContains(amount.name) }
+            #expect(hit != nil, "\(slug): no ingredient named \(amount.name) in \(ingredients)")
+            if let hit {
+                #expect(abs(hit.quantity - amount.quantity) < 0.01 && hit.unit == amount.unit,
+                        "\(slug): \(amount.name) → \(hit.quantity) \"\(hit.unit)\" \"\(hit.name)\"")
+            }
         }
     }
 }

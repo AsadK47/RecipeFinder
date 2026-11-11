@@ -1,6 +1,12 @@
 {
   "name": "Hotteok",
-  "minIngredients": 1,
-  "minSteps": 1,
-  "amountsPresent": false
+  "minIngredients": 11,
+  "maxIngredients": 11,
+  "minSteps": 10,
+  "amountsPresent": true,
+  "forbidden": ["PREPARE THE DOUGH"],
+  "amounts": [
+    {"name": "instant yeast", "quantity": 2, "unit": "tsp"},
+    {"name": "all-purpose flour", "quantity": 2.3333, "unit": "cup"}
+  ]
 }

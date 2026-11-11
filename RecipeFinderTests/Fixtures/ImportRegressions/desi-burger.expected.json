@@ -1,6 +1,13 @@
 {
   "name": "burger",
-  "minIngredients": 1,
-  "minSteps": 1,
-  "amountsPresent": false
+  "minIngredients": 18,
+  "maxIngredients": 18,
+  "minSteps": 8,
+  "maxSteps": 12,
+  "amountsPresent": true,
+  "forbidden": ["Steps to Make It", "Recipe Variations", "How to Store", "freezer bags", "thespruceeats"],
+  "amounts": [
+    {"name": "ground beef", "quantity": 500, "unit": "g"},
+    {"name": "garlic paste", "quantity": 2, "unit": "tsp"}
+  ]
 }

@@ -1,0 +1,15 @@
+{
+  "name": "chicken traybake",
+  "minIngredients": 7,
+  "maxIngredients": 7,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["kcal", "saturates"],
+  "amounts": [
+    {"name": "chickpeas", "quantity": 400, "unit": "g"},
+    {"name": "cherry tomatoes", "quantity": 225, "unit": "g"},
+    {"name": "olive oil", "quantity": 2, "unit": "tbsp"},
+    {"name": "smoked paprika", "quantity": 1.5, "unit": "tsp"}
+  ]
+}

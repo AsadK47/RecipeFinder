@@ -1,0 +1,13 @@
+{
+  "name": "Banana Bread",
+  "minIngredients": 7,
+  "maxIngredients": 7,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["Advertisement", "Calories", "I Made It", "9g Fat"],
+  "amounts": [
+    {"name": "flour", "quantity": 2, "unit": "cup"},
+    {"name": "mashed overripe bananas", "quantity": 2.3333, "unit": "cup"}
+  ]
+}

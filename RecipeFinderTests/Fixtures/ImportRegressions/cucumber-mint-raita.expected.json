@@ -1,6 +1,13 @@
 {
   "name": "Raita",
-  "minIngredients": 1,
-  "minSteps": 1,
-  "amountsPresent": false
+  "minIngredients": 7,
+  "maxIngredients": 7,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["chiffonade", "mortar and pestle", "simplyrecipes"],
+  "amounts": [
+    {"name": "yogurt", "quantity": 2, "unit": "cup"},
+    {"name": "ground cumin", "quantity": 0.5, "unit": "tsp"}
+  ]
 }

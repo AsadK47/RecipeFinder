@@ -1,0 +1,15 @@
+{
+  "name": "Salmon",
+  "minIngredients": 9,
+  "maxIngredients": 9,
+  "minSteps": 5,
+  "maxSteps": 5,
+  "amountsPresent": true,
+  "forbidden": ["US Customary", "Metric", "1x2x3x", "Advertisement", "Calories", "Did you make", "Tag @", "Leftovers keep"],
+  "amounts": [
+    {"name": "olive oil", "quantity": 1, "unit": "tbsp"},
+    {"name": "butter", "quantity": 4, "unit": "tbsp"},
+    {"name": "lemon zest", "quantity": 1.5, "unit": "tsp"},
+    {"name": "chicken stock", "quantity": 0.5, "unit": "cup"}
+  ]
+}

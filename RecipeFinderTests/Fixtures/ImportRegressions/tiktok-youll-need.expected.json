@@ -1,0 +1,14 @@
+{
+  "name": "feta pasta",
+  "minIngredients": 6,
+  "maxIngredients": 6,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["Link in bio"],
+  "amounts": [
+    {"name": "feta", "quantity": 200, "unit": "g"},
+    {"name": "penne", "quantity": 300, "unit": "g"},
+    {"name": "chilli flakes", "quantity": 0.5, "unit": "tsp"}
+  ]
+}
