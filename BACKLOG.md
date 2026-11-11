@@ -145,7 +145,7 @@ drop a line while moving it.
   photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
   later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
   tested, every tab screenshot, existing UI tests updated (not weakened), CI green.
-- [ ] **Tabs 2/3 — Today.** Slices 1–4a done (69c3b21, cec3f49, ff6e658, cce65ff): greeting + streak, Tonight hero (planned meal,
+- [ ] **Tabs 2/3 — Today.** — 🚧 builder agent 2026-11-11 Slices 1–4a done (69c3b21, cec3f49, ff6e658, cce65ff): greeting + streak, Tonight hero (planned meal,
   else best kitchen match) whose "Let's cook" opens cooking mode, shelves Cook again / Fits your kitchen / Rediscover,
   new-user "Bring in your first recipe" + Starters; app opens on Today; Recipes' rediscovery card removed; screenshots
   16-today, 18-today-planned, 19-today-lets-cook; prep-ahead nudge for tomorrow's plans (marinate/soak/defrost…).
