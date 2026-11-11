@@ -1,13 +1,19 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Add flow 1/3 done (slices 29850eb + 910a7f6).
+- Add flow 2/3 slice 1 on `agent/add-flow-2-paste-box` (7cc63a6): "+" sheet leads with one paste box
+  (`AddRecipePasteBox` in ImportView.swift, `AddRecipeInput.classify` in AddRecipeOption.swift); link → RecipeImportView
+  auto-fetch, text → PasteTextImportSheet(initialText:) auto-read. Waiting on Build & Test 43004823815 + Screenshots 43004833449.
 
 ## Next action
-Add flow 2/3 (one paste box on "+"). First check the nightly UI run (03:00 UTC 2026-11-12) incl.
-`testCaptureNewRecipeDraft` (22 now waits on `wizard.recipeName`), `testCaptureAFirstLaunchToday`, `testCreateManuallyOpensWizard`.
+Check those runs; on green ff main. Then slice 2: link/text go straight to the Add flow 1/3 draft screen with a loading
+state (drop RecipeImportView/PasteTextImportSheet as in-between sheets); share-extension recipes open on the same screen.
 
 ## Decisions (why)
+- **Add flow 2/3 slice 1**: link vs text = a web link with ≤8 words total is a link; longer text (captions with a
+  recipe and a link) is read as text. Paste goes through `PasteButton` (no Allow-Paste prompt) and submits at once, so
+  "+" → Paste → importer = 2 taps; typed input = "+" → type → Continue. `.link`/`.paste` options removed (box covers
+  them); "Create manually" → "Start blank". Kept the existing sheets this slice so failure fallbacks keep working.
 - **Add flow 1/3 slice 2**: removed all step headers rather than shrinking them — each editor now opens in a sheet
   whose nav title is the section name, and placeholders already say "one per line". Ingredients' "e.g. 200 g flour"
   hint lives in the TextEditor placeholder. Stale "Step N of the Recipe Wizard" doc comments left for the Large-wizard smell.
