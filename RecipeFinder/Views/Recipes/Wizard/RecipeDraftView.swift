@@ -11,6 +11,8 @@ struct RecipeDraftView: View {
     /// Sections the import couldn't read — outlined so the cook checks them first.
     let needsCheck: Set<Section>
     let onEdit: (Section) -> Void
+    /// The photo goes straight to the camera/library choice — the name has its own button.
+    let onPickPhoto: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing20) {
@@ -34,7 +36,7 @@ struct RecipeDraftView: View {
     // MARK: - Parts
 
     private var photo: some View {
-        Button { onEdit(.basics) } label: {
+        Button(action: onPickPhoto) {
             Group {
                 if let selectedImage {
                     Image(uiImage: selectedImage)
@@ -83,7 +85,7 @@ struct RecipeDraftView: View {
             }
             .buttonStyle(.plain)
             .importHighlight(needsCheck.contains(.basics))
-            .accessibilityHint("Edit the name and photo")
+            .accessibilityHint("Edit the name, photo and extra photos")
             .accessibilityIdentifier("draft.name")
 
             Button { onEdit(.details) } label: {

@@ -59,6 +59,25 @@ final class RecipeFinderImportUITests: XCTestCase {
         )
     }
 
+    // MARK: - New recipe photo
+
+    /// Tapping the photo on a new recipe goes straight to the camera/library choice — not the name editor again.
+    @MainActor
+    func testDraftPhotoOpensPhotoChoiceNotNameEditor() {
+        let app = launchApp()
+
+        app.buttons["recipes.add"].tap()
+        app.buttons["import.wizard"].tap()
+        let photo = app.buttons["draft.photo"]
+        XCTAssertTrue(photo.waitForExistence(timeout: 5), "Start blank should open the new-recipe screen.")
+        photo.tap()
+
+        XCTAssertTrue(app.staticTexts["Add Photo"].waitForExistence(timeout: 5),
+                      "The photo should offer Take Photo / Choose from Library straight away.")
+        XCTAssertFalse(app.descendants(matching: .any)["wizard.recipeName"].exists,
+                       "The photo must not reopen the recipe-name editor.")
+    }
+
     // MARK: - Paste box
 
     /// Add flow 2/3: recipe text typed into the "+" sheet's box goes straight to the text reader — no second paste.

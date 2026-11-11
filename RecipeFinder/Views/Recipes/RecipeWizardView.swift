@@ -64,6 +64,7 @@ struct RecipeWizardView: View {
     /// The part being edited from the draft screen (create / import review), shown in its own sheet.
     @State private var editingSection: Section?
     @State var showPhotoPicker = false
+    @State private var showDraftPhotoPicker = false
     @State var selectedRecipeImage: UIImage?
     @State var existingImageReference: String?
     @State var selectedGalleryImages: [UIImage] = []
@@ -92,8 +93,13 @@ struct RecipeWizardView: View {
     let categories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
 
     var body: some View {
-        // Draft screen: the pickers live on the section sheet (where the photo buttons are); focused edit: here.
-        if focus == nil { editor } else { photoPickers(editor) }
+        // Draft screen: the hero photo's picker lives here (its own state, so it never fights the section sheet's
+        // pickers); the name sheet's photo buttons use the section sheet's. Focused edit: all pickers here.
+        if focus == nil {
+            editor.photoSourcePicker(isPresented: $showDraftPhotoPicker) { selectedRecipeImage = $0 }
+        } else {
+            photoPickers(editor)
+        }
     }
 
     private var editor: some View {
@@ -105,11 +111,16 @@ struct RecipeWizardView: View {
                         preview: RecipeDraftPreview(draft: currentDraft),
                         selectedImage: selectedRecipeImage,
                         imageReference: existingImageReference,
-                        needsCheck: sectionsNeedingCheck
-                    ) { section in
-                        HapticManager.shared.selection()
-                        editingSection = section
-                    }
+                        needsCheck: sectionsNeedingCheck,
+                        onEdit: { section in
+                            HapticManager.shared.selection()
+                            editingSection = section
+                        },
+                        onPickPhoto: {
+                            HapticManager.shared.light()
+                            showDraftPhotoPicker = true
+                        }
+                    )
                 } else {
                     sections
                 }
