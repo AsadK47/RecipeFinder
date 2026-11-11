@@ -53,6 +53,19 @@ import Foundation
         #expect(TonightTiming.line(hero: nil, quickCount: 2, minuteOfDay: at(20)) == "Quick tonight? 2 under 30 min")
     }
 
+    @Test func eveningStartsAtSixAndEndsAtTen() {
+        let hero = TodayFeed.Hero(recipe: recipe(), reason: .kitchenMatch(have: 3, total: 4))
+        #expect(TonightTiming.line(hero: hero, quickCount: 2, minuteOfDay: at(18)) == "Quick tonight? 2 under 30 min")
+        #expect(TonightTiming.line(hero: hero, quickCount: 2, minuteOfDay: at(17, 59)) == "Start by 6:20 to eat at 7")
+        #expect(TonightTiming.line(hero: hero, quickCount: 2, minuteOfDay: at(22)) == nil)
+    }
+
+    @Test func noMorningPrepCueInTheSmallHours() {
+        let tikka = recipe(steps: ["Marinate overnight."])
+        #expect(TonightTiming.line(hero: planned(tikka), quickCount: 0, minuteOfDay: at(0, 30)) == "Start by 6:20 to eat at 7")
+        #expect(TonightTiming.line(hero: planned(tikka), quickCount: 0, minuteOfDay: at(5)) == "Marinate this morning for tonight")
+    }
+
     @Test func eveningWithNothingQuickSaysNothing() {
         #expect(TonightTiming.line(hero: nil, quickCount: 0, minuteOfDay: at(19)) == nil)
     }

@@ -6,8 +6,8 @@
 
 ## Next action
 Check Build & Test for the branch head; fix; run Screenshots on the branch, look at 16/18/24–27; then merge.
-Left for slice 2: eat-time setting UI (stored in `@AppStorage("today.eatAtMinutes")`, no control yet) and the calmer
-layout (fewer stacked cards, one accent per section).
+Left for slice 2: eat-time setting (logic takes `eatAt`; app uses 7pm until a control exists — no storage added yet)
+and the calmer layout (fewer stacked cards, one accent per section).
 
 ## Decisions (why)
 - **Today+ 1/3 slice 1**: Shuffle cycles `[hero] + alternatives` (≤3): today's open plans (dinner first), kitchen
@@ -18,6 +18,8 @@ layout (fewer stacked cards, one accent per section).
   the shelf. New users: a quick pick can follow a plan/match but never lead (Starters lead). Time line is pure
   `TonightTiming.line(minuteOfDay:)`; planned lunch/snack never counted back from 7pm; evening falls back to "Quick
   tonight?" if the planned dinner can't be timed any more. Times read "5:40"/"7" (spoken 12-h, per spec).
+  Shuffle tracks the shown recipe id (`TodayFeed.tonightPick/nextTonightPick`), not an index; shelves drop the shown
+  pick. Evening quick line 6–10pm; morning prep cue 5am–noon. Challenge pass: 3 real fixed, 3 notes → CHALLENGES.md.
   **Pre-mortem:** (1) shuffle shows the same dish twice or the one cooked last night → `aRecipeShowsOnce…`,
   `suggestionsNeverRepeatTheLastCooked`; (2) "Start by" wrong for odd times (no time, 20-hour recipes, lunch plans,
   after 7pm) → TonightTimingTests nil cases; (3) hero card crowded/clipped on small screens or new users see a random

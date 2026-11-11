@@ -6,17 +6,21 @@ enum TonightTiming {
     /// 7pm — when dinner is assumed to be eaten until the cook picks another time.
     static let defaultEatAt = 19 * 60
     private static let eveningStartsAt = 18 * 60
+    /// After this, "Quick tonight?" is too late to be useful.
+    private static let eveningEndsAt = 22 * 60
+    /// Before this it's still night — no "this morning" prep cue at 00:30.
+    private static let morningStartsAt = 5 * 60
     private static let noon = 12 * 60
 
-    /// - Morning, tonight's planned dinner needs a head start: "Defrost this morning for tonight".
+    /// - Morning (5am–noon), tonight's planned dinner needs a head start: "Defrost this morning for tonight".
     /// - Before the start time: "Start by 5:40 to eat at 7" (prep + cook back from `eatAt`).
     /// - Past the start time but before `eatAt`: "Start now to eat by 7:25".
-    /// - Evening, unless a planned dinner can still be timed: "Quick tonight? 12 under 30 min".
+    /// - Evening (6–10pm), unless a planned dinner can still be timed: "Quick tonight? 12 under 30 min".
     /// - A planned lunch/breakfast/snack before evening: nothing (its time isn't dinner's).
     /// Nil when there's nothing useful to say (no time on the recipe, too late, nothing quick).
     static func line(hero: TodayFeed.Hero?, quickCount: Int, minuteOfDay now: Int, eatAt: Int = defaultEatAt) -> String? {
         let isPlannedDinner = hero?.reason == .planned(.dinner)
-        let quickLine = quickCount > 0 ? "Quick tonight? \(quickCount) under \(TodayFeed.quickMinutes) min" : nil
+        let quickLine = quickCount > 0 && now < eveningEndsAt ? "Quick tonight? \(quickCount) under \(TodayFeed.quickLimitMinutes) min" : nil
         let isEvening = now >= eveningStartsAt
 
         if isEvening, !isPlannedDinner { return quickLine }
@@ -24,7 +28,7 @@ enum TonightTiming {
         // "Start by … to eat at 7" is about dinner; a planned lunch or snack isn't counted back from it.
         if case .planned(let meal) = hero.reason, meal != .dinner { return nil }
 
-        if now < noon, isPlannedDinner, let cue = PrepAhead.cue(for: hero.recipe) {
+        if (morningStartsAt..<noon).contains(now), isPlannedDinner, let cue = PrepAhead.cue(for: hero.recipe) {
             return "\(cue) this morning for tonight"
         }
         return startLine(minutes: hero.recipe.totalMinutes, now: now, eatAt: eatAt) ?? (isEvening ? quickLine : nil)

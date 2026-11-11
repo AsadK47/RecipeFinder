@@ -22,10 +22,8 @@ struct TodayView: View {
     @State private var path = NavigationPath()
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
     @State private var feed: TodayFeed?
-    /// Which of `feed.tonightOptions` Shuffle is on.
-    @State private var tonightIndex = 0
-    /// When dinner is eaten, in minutes after midnight — Tonight's "Start by" line counts back from it.
-    @AppStorage("today.eatAtMinutes") private var eatAtMinutes = TonightTiming.defaultEatAt
+    /// The recipe Shuffle is showing (by id, so a refresh never swaps the card by position); nil = the hero.
+    @State private var tonightRecipeID: UUID?
     @State private var showsClipboardCard = false
     /// Pasteboard change count when the card was last offered.
     @State private var clipboardChange = 0
@@ -115,7 +113,6 @@ struct TodayView: View {
             tomorrowsPlans: tomorrow == now ? [] : mealPlanning.mealPlans(for: tomorrow),
             now: now
         )
-        if tonightIndex >= (feed?.tonightOptions.count ?? 0) { tonightIndex = 0 }
     }
 
     private func probeClipboard() async {
@@ -169,16 +166,14 @@ struct TodayView: View {
             firstRecipeCard
         }
 
-        let options = feed.tonightOptions
-        if !options.isEmpty {
-            let hero = options[tonightIndex % options.count]
+        let shown = feed.tonightPick(showing: tonightRecipeID)
+        if let hero = shown {
             TodayHeroCard(
                 hero: hero,
                 timing: TonightTiming.line(
-                    hero: hero, quickCount: feed.quickCount,
-                    minuteOfDay: TonightTiming.minuteOfDay(Self.now()), eatAt: eatAtMinutes
+                    hero: hero, quickCount: feed.quickCount, minuteOfDay: TonightTiming.minuteOfDay(Self.now())
                 ),
-                onShuffle: options.count > 1 ? { shuffle(count: options.count) } : nil,
+                onShuffle: feed.tonightOptions.count > 1 ? { shuffle(feed, from: hero) } : nil,
                 onOpen: { open(hero.recipe) },
                 onCook: { cook(hero.recipe) }
             )
@@ -194,17 +189,20 @@ struct TodayView: View {
             TodayShelf(title: "Starters to try", id: "starters",
                        items: feed.starters.map { ($0, $0.hasTotalTime ? $0.totalTime : nil) }, onOpen: open)
         }
-        if !feed.cookAgain.isEmpty {
-            TodayShelf(title: "Cook again", id: "cookAgain",
-                       items: feed.cookAgain.map { ($0, nil) }, onOpen: open)
+        // Shelves leave out the pick on the card, so a shuffled-to recipe isn't repeated just below it.
+        let shownID = shown?.recipe.id
+        let cookAgain = feed.cookAgain.filter { $0.id != shownID }
+        let kitchenMatches = feed.fitsYourKitchen.filter { $0.recipe.id != shownID }
+        let rediscover = feed.rediscover.filter { $0.id != shownID }
+        if !cookAgain.isEmpty {
+            TodayShelf(title: "Cook again", id: "cookAgain", items: cookAgain.map { ($0, nil) }, onOpen: open)
         }
-        if !feed.fitsYourKitchen.isEmpty {
+        if !kitchenMatches.isEmpty {
             TodayShelf(title: "Fits your kitchen", id: "kitchen",
-                       items: feed.fitsYourKitchen.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open)
+                       items: kitchenMatches.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open)
         }
-        if !feed.rediscover.isEmpty {
-            TodayShelf(title: "Rediscover", id: "rediscover",
-                       items: feed.rediscover.map { ($0, nil) }, onOpen: open)
+        if !rediscover.isEmpty {
+            TodayShelf(title: "Rediscover", id: "rediscover", items: rediscover.map { ($0, nil) }, onOpen: open)
         }
 
         shortcut(.groceries, title: "Check your groceries",
@@ -231,9 +229,11 @@ struct TodayView: View {
         .appCard()
     }
 
-    private func shuffle(count: Int) {
+    private func shuffle(_ feed: TodayFeed, from current: TodayFeed.Hero) {
         HapticManager.shared.light()
-        withAnimation(.easeInOut(duration: 0.25)) { tonightIndex = (tonightIndex + 1) % count }
+        withAnimation(.easeInOut(duration: 0.25)) {
+            tonightRecipeID = feed.nextTonightPick(after: current.recipe.id)?.recipe.id
+        }
     }
 
     private func open(_ recipe: RecipeModel) {

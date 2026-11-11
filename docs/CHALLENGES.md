@@ -55,3 +55,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
    whether any test would fail. If none would, that's a finding.
 
 <!-- challenger appends below this line -->
+
+## 2026-11-11 (item pass: Today+ 1/3 slice 1 — fixed: ambiguous `quickMinutes`, shuffled pick repeated on shelves, shuffle index drifting on refresh, night-time copy, unused eat-time storage)
+- ⚔️ [Time] The Tonight line is computed when Today re-renders — TodayView.swift `content(_:)` reads `Self.now()` in body; left open, "Start by 5:40" still shows at 5:55 — `TimelineView(.everyMinute)` around the line — cost if wrong: stale advice until the next state change.
+  → Owner:
+- ⚔️ [Break] "Cook this" + "Shuffle" share one HStack (TodaySections.swift hero card) with no large-text fallback — `ViewThatFits` → VStack, plus an AX-size screenshot — cost if wrong: squeezed buttons at AX3–AX5 on SE width.
+  → Owner:
+- ⚔️ [UX] "Quick tonight? 12 under 30 min" counts every quick recipe but Shuffle reaches 3 and the line isn't tappable — make it open a filtered list (Today+ later slice) — cost if wrong: a number that promises more than it shows.
+  → Owner:

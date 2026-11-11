@@ -7,7 +7,7 @@ struct TodayFeed: Equatable {
     enum HeroReason: Equatable {
         case planned(MealTime)
         case kitchenMatch(have: Int, total: Int)
-        /// A recipe that's on the table in `minutes` (≤ `TodayFeed.quickMinutes`).
+        /// A recipe that's on the table in `minutes` (≤ `TodayFeed.quickLimitMinutes`).
         case quick(minutes: Int)
 
         var caption: String {
@@ -34,7 +34,7 @@ struct TodayFeed: Equatable {
     let hero: Hero?
     /// Other picks for tonight that Shuffle steps through after the hero (other plans, kitchen matches, quick recipes).
     let alternatives: [Hero]
-    /// How many recipes are ready in `quickMinutes` or less — Today's evening "Quick tonight?" line.
+    /// How many recipes are ready in `quickLimitMinutes` or less — Today's evening "Quick tonight?" line.
     let quickCount: Int
     /// Cooked recently (within `thresholdDays`), newest first.
     let cookAgain: [RecipeModel]
@@ -51,10 +51,25 @@ struct TodayFeed: Equatable {
 
     static let shelfLimit = 10
     static let alternativesLimit = 3
-    static let quickMinutes = 30
+    static let quickLimitMinutes = 30
 
     /// The hero first, then its alternatives — what Shuffle cycles through.
     var tonightOptions: [Hero] { (hero.map { [$0] } ?? []) + alternatives }
+
+    /// The pick to show for `recipeID` (Shuffle's current choice), else the hero — so a refresh that reorders or
+    /// drops picks never swaps the card to a different recipe by position.
+    func tonightPick(showing recipeID: UUID?) -> Hero? {
+        tonightOptions.first { $0.recipe.id == recipeID } ?? hero
+    }
+
+    /// The pick after `recipeID`, wrapping round to the hero.
+    func nextTonightPick(after recipeID: UUID?) -> Hero? {
+        let options = tonightOptions
+        guard let index = options.firstIndex(where: { $0.recipe.id == recipeID }) else {
+            return options.dropFirst().first ?? options.first
+        }
+        return options[(index + 1) % options.count]
+    }
 
     static func make(
         recipes: [RecipeModel],
@@ -129,7 +144,7 @@ struct TodayFeed: Equatable {
         return Array(unique.prefix(1 + alternativesLimit))
     }
 
-    /// Recipes ready in `quickMinutes` or less: favourites, then your own over samples, then most cooked, then name.
+    /// Recipes ready in `quickLimitMinutes` or less: favourites, then your own over samples, then most cooked, then name.
     private static func quickPicks(_ recipes: [RecipeModel]) -> [Hero] {
         recipes
             .compactMap { recipe in quickMinutes(of: recipe).map { (recipe, $0) } }
@@ -142,10 +157,10 @@ struct TodayFeed: Equatable {
             .map { Hero(recipe: $0.0, reason: .quick(minutes: $0.1)) }
     }
 
-    /// Prep + cook minutes when known and no more than `quickMinutes`, else nil.
+    /// Prep + cook minutes when known and no more than `quickLimitMinutes`, else nil.
     static func quickMinutes(of recipe: RecipeModel) -> Int? {
         let minutes = recipe.totalMinutes
-        return (1...quickMinutes).contains(minutes) ? minutes : nil
+        return (1...quickLimitMinutes).contains(minutes) ? minutes : nil
     }
 
     /// Recipes whose ingredients the kitchen covers at least half of; best coverage, then most matched, then name.

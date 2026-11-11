@@ -96,6 +96,22 @@ import Foundation
         #expect(result.alternatives.count == TodayFeed.alternativesLimit)
     }
 
+    @Test func shuffleStepsThroughThePicksAndWrapsRound() {
+        let a = recipe("A"), b = recipe("B"), c = recipe("C", prepTime: "2 hr")
+        let result = feed([a, b, c])
+        #expect(result.nextTonightPick(after: nil)?.recipe == b)
+        #expect(result.nextTonightPick(after: a.id)?.recipe == b)
+        #expect(result.nextTonightPick(after: b.id)?.recipe == a)
+    }
+
+    @Test func theShownPickSurvivesARefreshByRecipeNotPosition() {
+        let a = recipe("A"), b = recipe("B"), gone = UUID()
+        let result = feed([a, b])
+        #expect(result.tonightPick(showing: b.id)?.recipe == b)
+        #expect(result.tonightPick(showing: gone)?.recipe == a)
+        #expect(result.tonightPick(showing: nil)?.recipe == a)
+    }
+
     @Test func otherPlansOfTheDayComeBeforeSuggestions() {
         let curry = recipe("Curry"), soup = recipe("Soup")
         let result = feed([curry, soup], plans: [plan(soup, .lunch), plan(curry, .dinner)])
