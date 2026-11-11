@@ -1,12 +1,27 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Add flow 3/3 slice 2 merged (911ec53).
+- Today+ 1/3 slice 1 on `agent/today-tonight-decided`: Tonight Shuffle (`TodayFeed.tonightOptions`), quick picks,
+  time line (`TonightTiming`), "Cook this", bigger hero, screenshots 24–27 (`-today-time HH:MM`). Waiting on CI.
 
 ## Next action
-Today+ 1/3 (owner order). The "Add flow 3/3 follow-up" Queue line is small — fold in when touching import.
+Check Build & Test for the branch head; fix; run Screenshots on the branch, look at 16/18/24–27; then merge.
+Left for slice 2: eat-time setting UI (stored in `@AppStorage("today.eatAtMinutes")`, no control yet) and the calmer
+layout (fewer stacked cards, one accent per section).
 
 ## Decisions (why)
+- **Today+ 1/3 slice 1**: Shuffle cycles `[hero] + alternatives` (≤3): today's open plans (dinner first), kitchen
+  matches, quick recipes (≤30 min known time; favourites, own over samples, most cooked, name). Suggestions skip the
+  single most recently cooked recipe; plans never skipped. With nothing planned and no kitchen match, a quick recipe is
+  now the hero (was the "Plan tonight" shortcut) — `noPlanAndEmptyKitchenHasNoHero` became "…and nothing quick"
+  (spec change, not a weakened test); `cookAgainIsRecentCooksNewestFirst` fixtures made slow so no quick hero drains
+  the shelf. New users: a quick pick can follow a plan/match but never lead (Starters lead). Time line is pure
+  `TonightTiming.line(minuteOfDay:)`; planned lunch/snack never counted back from 7pm; evening falls back to "Quick
+  tonight?" if the planned dinner can't be timed any more. Times read "5:40"/"7" (spoken 12-h, per spec).
+  **Pre-mortem:** (1) shuffle shows the same dish twice or the one cooked last night → `aRecipeShowsOnce…`,
+  `suggestionsNeverRepeatTheLastCooked`; (2) "Start by" wrong for odd times (no time, 20-hour recipes, lunch plans,
+  after 7pm) → TonightTimingTests nil cases; (3) hero card crowded/clipped on small screens or new users see a random
+  quick hero → Screenshots 20/24–27 looked at + `newUsersGetStartersNotQuickPicks`.
 - **Add flow 3/3 slice 2 (groups)**: a group is `Ingredient.section: String?` — a label on each row, not a header row,
   so groceries/scaling/"Add amount"/missing-amount checks never see it. Lives in the ingredients JSON blob → no Core
   Data change; old data decodes nil. In all text (editor box, import prefill, edit prefill) a group is a header line

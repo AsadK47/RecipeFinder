@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Today tab: greeting + streak, a "Tonight" hero (planned meal, else best kitchen match) and shelves of recipes to cook.
+/// Today tab: greeting + streak, a "Tonight" hero (planned meal, else kitchen match, else a quick recipe) that Shuffle
+/// steps through, with a time-aware "Start by" line, and shelves of recipes to cook.
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
     let onOpen: (AppTab) -> Void
@@ -21,6 +22,10 @@ struct TodayView: View {
     @State private var path = NavigationPath()
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
     @State private var feed: TodayFeed?
+    /// Which of `feed.tonightOptions` Shuffle is on.
+    @State private var tonightIndex = 0
+    /// When dinner is eaten, in minutes after midnight — Tonight's "Start by" line counts back from it.
+    @AppStorage("today.eatAtMinutes") private var eatAtMinutes = TonightTiming.defaultEatAt
     @State private var showsClipboardCard = false
     /// Pasteboard change count when the card was last offered.
     @State private var clipboardChange = 0
@@ -35,6 +40,21 @@ struct TodayView: View {
         case 12..<18: "Good afternoon"
         default: "Good evening"
         }
+    }
+
+    /// The clock Today reads. DEBUG `-today-time HH:MM` pins it so Screenshots can show morning/afternoon/evening.
+    private static func now() -> Date {
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        if let flag = args.firstIndex(of: "-today-time"), args.indices.contains(flag + 1) {
+            let parts = args[flag + 1].split(separator: ":").compactMap { Int($0) }
+            if parts.count == 2,
+               let pinned = Calendar.current.date(bySettingHour: parts[0], minute: parts[1], second: 0, of: Date()) {
+                return pinned
+            }
+        }
+        #endif
+        return Date()
     }
 
     var body: some View {
@@ -86,7 +106,7 @@ struct TodayView: View {
     }
 
     private func refresh() {
-        let now = Date()
+        let now = Self.now()
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now
         feed = TodayFeed.make(
             recipes: recipeStore.recipes,
@@ -95,6 +115,7 @@ struct TodayView: View {
             tomorrowsPlans: tomorrow == now ? [] : mealPlanning.mealPlans(for: tomorrow),
             now: now
         )
+        if tonightIndex >= (feed?.tonightOptions.count ?? 0) { tonightIndex = 0 }
     }
 
     private func probeClipboard() async {
@@ -123,7 +144,7 @@ struct TodayView: View {
 
     private var header: some View {
         HStack(alignment: .center, spacing: AppTheme.spacing12) {
-            Text(Self.greeting(forHour: Calendar.current.component(.hour, from: Date())))
+            Text(Self.greeting(forHour: Calendar.current.component(.hour, from: Self.now())))
                 .font(.title2.weight(.bold))
                 .adaptiveForegroundColor()
             Spacer(minLength: 0)
@@ -148,8 +169,19 @@ struct TodayView: View {
             firstRecipeCard
         }
 
-        if let hero = feed.hero {
-            TodayHeroCard(hero: hero, onOpen: { open(hero.recipe) }, onCook: { cook(hero.recipe) })
+        let options = feed.tonightOptions
+        if !options.isEmpty {
+            let hero = options[tonightIndex % options.count]
+            TodayHeroCard(
+                hero: hero,
+                timing: TonightTiming.line(
+                    hero: hero, quickCount: feed.quickCount,
+                    minuteOfDay: TonightTiming.minuteOfDay(Self.now()), eatAt: eatAtMinutes
+                ),
+                onShuffle: options.count > 1 ? { shuffle(count: options.count) } : nil,
+                onOpen: { open(hero.recipe) },
+                onCook: { cook(hero.recipe) }
+            )
         } else if !feed.isNewUser {
             shortcut(.plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.", color: .blue)
         }
@@ -197,6 +229,11 @@ struct TodayView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(AppTheme.spacing20)
         .appCard()
+    }
+
+    private func shuffle(count: Int) {
+        HapticManager.shared.light()
+        withAnimation(.easeInOut(duration: 0.25)) { tonightIndex = (tonightIndex + 1) % count }
     }
 
     private func open(_ recipe: RecipeModel) {

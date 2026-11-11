@@ -297,14 +297,46 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         settle()
         snap(app, "18-today-planned")
 
-        // Tabs 2/3: "Let's cook" goes straight into cooking mode, not just the recipe page.
+        // Tabs 2/3: "Cook this" goes straight into cooking mode, not just the recipe page.
         let cook = app.buttons["today.hero.cook"]
-        XCTAssertTrue(cook.waitForExistence(timeout: 5), "The Tonight card should offer Let's cook.")
+        XCTAssertTrue(cook.waitForExistence(timeout: 5), "The Tonight card should offer Cook this.")
         cook.tap()
         XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 10),
-                      "Let's cook should open cooking mode.")
+                      "Cook this should open cooking mode.")
         settle()
         snap(app, "19-today-lets-cook")
+    }
+
+    /// Today+ 1/3: the Tonight card's time-aware line in the morning, afternoon and evening (DEBUG `-today-time` pins
+    /// Today's clock), and Shuffle stepping to another pick. Sorts after `testCaptureTodayPlanned`; seeds the same plan.
+    @MainActor
+    func testCaptureTodayTimes() {
+        for (time, shot) in [("08:30", "24-today-morning"), ("15:00", "25-today-afternoon"), ("21:00", "27-today-evening")] {
+            let app = XCUIApplication()
+            app.launchArguments += ["-ui-testing", "-seed-tonight-plan", "-today-time", time]
+            app.launch()
+            XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+            dismissBadgeSheet(app)
+            let hero = app.descendants(matching: .any).matching(identifier: "today.hero").firstMatch
+            XCTAssertTrue(hero.waitForExistence(timeout: 10), "Today should lead with a Tonight card at \(time).")
+            settle()
+            snap(app, shot)
+
+            if time == "21:00" {
+                // Past 7pm with tonight's dinner not cooked yet, Today offers quick ideas instead.
+                XCTAssertTrue(hero.label.contains("Quick tonight?"), "Evening should offer quick ideas: \(hero.label)")
+            }
+            if time == "15:00" {
+                let before = hero.label
+                let shuffle = app.buttons["today.hero.shuffle"]
+                XCTAssertTrue(shuffle.waitForExistence(timeout: 5), "Tonight should offer Shuffle.")
+                shuffle.tap()
+                settle(1)
+                XCTAssertNotEqual(hero.label, before, "Shuffle should show another pick.")
+                snap(app, "26-today-shuffled")
+            }
+            app.terminate()
+        }
     }
 
     // MARK: - Helpers

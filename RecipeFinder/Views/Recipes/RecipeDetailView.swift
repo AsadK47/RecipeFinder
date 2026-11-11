@@ -52,7 +52,7 @@ struct RecipeDetailView: View {
         var id: String { section.map(String.init(describing:)) ?? "__all__" }
     }
 
-    /// `startsCooking` opens cooking mode as soon as the screen appears (Today's "Let's cook").
+    /// `startsCooking` opens cooking mode as soon as the screen appears (Today's "Cook this").
     init(recipe: RecipeModel, startsCooking: Bool = false) {
         _recipe = State(initialValue: recipe)
         self.startsCooking = startsCooking

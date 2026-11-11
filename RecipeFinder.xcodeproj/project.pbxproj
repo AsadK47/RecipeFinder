@@ -221,9 +221,11 @@
 		F3B7D90B30726A0E00991908 /* RecipeRediscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */; };
 		4FD8E304505C48DCBCD39869 /* TodayFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D44F1E425DD426BA6CFAF40 /* TodayFeed.swift */; };
 		A0D4CEDE1B8346F69DF021AF /* PrepAhead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E62EBA35C4C4D86B3F83086 /* PrepAhead.swift */; };
+		9AA659538B431F45084C520F /* TonightTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */; };
 		39080F3DF876433E53B3C53F /* ClipboardRecipeLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */; };
 		F3B7D90D30726A2200991908 /* RecipeRediscoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */; };
 		DECDAC8D7490437FADA58B3B /* TodayFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5F94E24BDC4803A467E87D /* TodayFeedTests.swift */; };
+		AB5601EDB01A434906CDB11D /* TonightTimingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7EFF4E5E7A027CC4DB7A26 /* TonightTimingTests.swift */; };
 		F58295A3D95AC30CD5B0C575 /* ClipboardRecipeLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */; };
 		F3B7D9113074FCFF00991908 /* StreakChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9103074FCFF00991908 /* StreakChip.swift */; };
 		F3B7D91330765C9600991908 /* RecipeFinderHabitLoopUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91230765C9600991908 /* RecipeFinderHabitLoopUITests.swift */; };
@@ -714,9 +716,11 @@
 		F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRediscovery.swift; sourceTree = "<group>"; };
 		2D44F1E425DD426BA6CFAF40 /* TodayFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayFeed.swift; sourceTree = "<group>"; };
 		8E62EBA35C4C4D86B3F83086 /* PrepAhead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepAhead.swift; sourceTree = "<group>"; };
+		4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTiming.swift; sourceTree = "<group>"; };
 		9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardRecipeLink.swift; sourceTree = "<group>"; };
 		F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRediscoveryTests.swift; sourceTree = "<group>"; };
 		2B5F94E24BDC4803A467E87D /* TodayFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayFeedTests.swift; sourceTree = "<group>"; };
+		CD7EFF4E5E7A027CC4DB7A26 /* TonightTimingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTimingTests.swift; sourceTree = "<group>"; };
 		BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardRecipeLinkTests.swift; sourceTree = "<group>"; };
 		F3B7D9103074FCFF00991908 /* StreakChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakChip.swift; sourceTree = "<group>"; };
 		F3B7D91230765C9600991908 /* RecipeFinderHabitLoopUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderHabitLoopUITests.swift; sourceTree = "<group>"; };
@@ -1169,6 +1173,7 @@
 				F3B7D906307005D500991908 /* CookingStreakTests.swift */,
 				F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */,
 				2B5F94E24BDC4803A467E87D /* TodayFeedTests.swift */,
+				CD7EFF4E5E7A027CC4DB7A26 /* TonightTimingTests.swift */,
 				BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */,
 				F3B7D91C30793B9100991908 /* CookingPlanTests.swift */,
 			);
@@ -1910,6 +1915,7 @@
 				F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */,
 				2D44F1E425DD426BA6CFAF40 /* TodayFeed.swift */,
 				8E62EBA35C4C4D86B3F83086 /* PrepAhead.swift */,
+				4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */,
 				9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */,
 			);
 			path = Engagement;
@@ -2389,6 +2395,7 @@
 				F3B7D90B30726A0E00991908 /* RecipeRediscovery.swift in Sources */,
 				4FD8E304505C48DCBCD39869 /* TodayFeed.swift in Sources */,
 				A0D4CEDE1B8346F69DF021AF /* PrepAhead.swift in Sources */,
+				9AA659538B431F45084C520F /* TonightTiming.swift in Sources */,
 				39080F3DF876433E53B3C53F /* ClipboardRecipeLink.swift in Sources */,
 				F3E9D264304A1DFB008BF231 /* ScreenTitleHeader.swift in Sources */,
 				F3E9D1B030457AEA008BF231 /* AppTheme+Colors.swift in Sources */,
@@ -2587,6 +2594,7 @@
 				F3B837C93055CD5A0003AEF8 /* ProfileNameFormatterTests.swift in Sources */,
 				F3B7D90D30726A2200991908 /* RecipeRediscoveryTests.swift in Sources */,
 				DECDAC8D7490437FADA58B3B /* TodayFeedTests.swift in Sources */,
+				AB5601EDB01A434906CDB11D /* TonightTimingTests.swift in Sources */,
 				F58295A3D95AC30CD5B0C575 /* ClipboardRecipeLinkTests.swift in Sources */,
 				F3E9D289304E056A008BF231 /* CoreDataStorePersistenceTests.swift in Sources */,
 				9E6C2C532FB478290083A08B /* ProfileSheetTests.swift in Sources */,

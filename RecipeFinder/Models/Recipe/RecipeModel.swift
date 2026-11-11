@@ -143,8 +143,11 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     }
 
     /// False when no time is known (imports without timings) — cards hide the clock rather than show "0 minutes".
-    var hasTotalTime: Bool {
-        TimeExtractor.extractMinutes(from: prepTime) + TimeExtractor.extractMinutes(from: cookingTime) > 0
+    var hasTotalTime: Bool { totalMinutes > 0 }
+
+    /// Prep + cook time in minutes; 0 when neither is known.
+    var totalMinutes: Int {
+        TimeExtractor.extractMinutes(from: prepTime) + TimeExtractor.extractMinutes(from: cookingTime)
     }
 
     var totalTime: String {

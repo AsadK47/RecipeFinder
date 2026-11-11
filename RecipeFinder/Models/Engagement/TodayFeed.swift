@@ -7,12 +7,15 @@ struct TodayFeed: Equatable {
     enum HeroReason: Equatable {
         case planned(MealTime)
         case kitchenMatch(have: Int, total: Int)
+        /// A recipe that's on the table in `minutes` (≤ `TodayFeed.quickMinutes`).
+        case quick(minutes: Int)
 
         var caption: String {
             switch self {
             case .planned(.dinner): "Planned for tonight"
             case .planned(let time): "Planned for \(time.rawValue.lowercased())"
             case .kitchenMatch(let have, let total): "You have \(have)/\(total) ingredients"
+            case .quick(let minutes): "Ready in \(DurationFormatter.label(minutes: minutes))"
             }
         }
     }
@@ -29,6 +32,10 @@ struct TodayFeed: Equatable {
     }
 
     let hero: Hero?
+    /// Other picks for tonight that Shuffle steps through after the hero (other plans, kitchen matches, quick recipes).
+    let alternatives: [Hero]
+    /// How many recipes are ready in `quickMinutes` or less — Today's evening "Quick tonight?" line.
+    let quickCount: Int
     /// Cooked recently (within `thresholdDays`), newest first.
     let cookAgain: [RecipeModel]
     /// Recipes the kitchen covers at least half of, best coverage first.
@@ -43,6 +50,11 @@ struct TodayFeed: Equatable {
     let prepAhead: [PrepAheadNudge]
 
     static let shelfLimit = 10
+    static let alternativesLimit = 3
+    static let quickMinutes = 30
+
+    /// The hero first, then its alternatives — what Shuffle cycles through.
+    var tonightOptions: [Hero] { (hero.map { [$0] } ?? []) + alternatives }
 
     static func make(
         recipes: [RecipeModel],
@@ -54,8 +66,11 @@ struct TodayFeed: Equatable {
         thresholdDays: Int = 21
     ) -> TodayFeed {
         let matches = kitchenMatches(recipes: recipes, kitchenItemNames: kitchenItemNames)
-        let hero = plannedHero(recipes: recipes, plans: todaysPlans)
-            ?? matches.first.map { Hero(recipe: $0.recipe, reason: .kitchenMatch(have: $0.have, total: $0.total)) }
+        let isNewUser = recipes.allSatisfy { $0.isSampleRecipe && $0.cookCount == 0 }
+        let options = tonightOptions(
+            recipes: recipes, plans: todaysPlans, matches: matches, quickCanLead: !isNewUser
+        )
+        let hero = options.first
         let heroID = hero?.recipe.id
 
         let cutoff = calendar.date(byAdding: .day, value: -thresholdDays, to: now) ?? now
@@ -69,13 +84,14 @@ struct TodayFeed: Equatable {
         let rediscover = RecipeRediscovery.ranked(from: recipes, now: now, calendar: calendar, thresholdDays: thresholdDays)
             .filter { $0.id != heroID }
 
-        let isNewUser = recipes.allSatisfy { $0.isSampleRecipe && $0.cookCount == 0 }
         let starters = isNewUser
             ? recipes.filter(\.isSampleRecipe).sorted { $0.name < $1.name }
             : []
 
         return TodayFeed(
             hero: hero,
+            alternatives: Array(options.dropFirst()),
+            quickCount: recipes.filter { quickMinutes(of: $0) != nil }.count,
             cookAgain: Array(cookAgain.prefix(shelfLimit)),
             fitsYourKitchen: Array(matches.filter { $0.recipe.id != heroID }.prefix(shelfLimit)),
             rediscover: Array(rediscover.prefix(shelfLimit)),
@@ -85,17 +101,51 @@ struct TodayFeed: Equatable {
         )
     }
 
-    /// Tonight's dinner if planned, else the next unfinished plan of the day; skips plans whose recipe was deleted.
-    private static func plannedHero(recipes: [RecipeModel], plans: [MealPlanModel]) -> Hero? {
+    /// Tonight's picks, best first: today's open plans (dinner, then the rest in meal order), then kitchen matches,
+    /// then quick recipes (favourites and your own first). One entry per recipe, capped at hero + `alternativesLimit`.
+    /// Suggestions never repeat the last recipe cooked; a plan always shows (the cook chose it). A new user's Today
+    /// leads with importing + Starters, so a quick pick can only follow a plan or kitchen match there, not lead.
+    private static func tonightOptions(
+        recipes: [RecipeModel], plans: [MealPlanModel], matches: [KitchenMatch], quickCanLead: Bool
+    ) -> [Hero] {
+        let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let open = plans.filter { !$0.isCompleted }
-        let ordered = open.filter { $0.mealTime == .dinner }
+        let orderedPlans = open.filter { $0.mealTime == .dinner }
             + open.filter { $0.mealTime != .dinner }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
-        for plan in ordered {
-            if let recipe = recipes.first(where: { $0.id == plan.recipeId }) {
-                return Hero(recipe: recipe, reason: .planned(plan.mealTime))
-            }
+        let planned = orderedPlans.compactMap { plan in
+            byID[plan.recipeId].map { Hero(recipe: $0, reason: .planned(plan.mealTime)) }
         }
-        return nil
+
+        let lastCookedID = recipes
+            .filter { $0.lastCookedAt != nil }
+            .max { ($0.lastCookedAt ?? .distantPast) < ($1.lastCookedAt ?? .distantPast) }?.id
+        let kitchen = matches.map { Hero(recipe: $0.recipe, reason: .kitchenMatch(have: $0.have, total: $0.total)) }
+        let quick = quickPicks(recipes)
+        let suggested = (kitchen + quick).filter { $0.recipe.id != lastCookedID }
+
+        var seen = Set<UUID>()
+        let unique = (planned + suggested).filter { seen.insert($0.recipe.id).inserted }
+        if !quickCanLead, case .quick? = unique.first?.reason { return [] }
+        return Array(unique.prefix(1 + alternativesLimit))
+    }
+
+    /// Recipes ready in `quickMinutes` or less: favourites, then your own over samples, then most cooked, then name.
+    private static func quickPicks(_ recipes: [RecipeModel]) -> [Hero] {
+        recipes
+            .compactMap { recipe in quickMinutes(of: recipe).map { (recipe, $0) } }
+            .sorted { a, b in
+                if a.0.isFavorite != b.0.isFavorite { return a.0.isFavorite }
+                if a.0.isSampleRecipe != b.0.isSampleRecipe { return !a.0.isSampleRecipe }
+                if a.0.cookCount != b.0.cookCount { return a.0.cookCount > b.0.cookCount }
+                return a.0.name < b.0.name
+            }
+            .map { Hero(recipe: $0.0, reason: .quick(minutes: $0.1)) }
+    }
+
+    /// Prep + cook minutes when known and no more than `quickMinutes`, else nil.
+    static func quickMinutes(of recipe: RecipeModel) -> Int? {
+        let minutes = recipe.totalMinutes
+        return (1...quickMinutes).contains(minutes) ? minutes : nil
     }
 
     /// Recipes whose ingredients the kitchen covers at least half of; best coverage, then most matched, then name.

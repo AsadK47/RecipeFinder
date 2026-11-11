@@ -19,10 +19,11 @@ import Foundation
         cookCount: Int = 0,
         lastCookedAt: Date? = nil,
         isFavorite: Bool = false,
-        steps: [String] = ["Cook"]
+        steps: [String] = ["Cook"],
+        prepTime: String = "5 min"
     ) -> RecipeModel {
         RecipeModel(
-            name: name, category: "Main", difficulty: "Basic", prepTime: "5 min",
+            name: name, category: "Main", difficulty: "Basic", prepTime: prepTime,
             cookingTime: "10 min", baseServings: 2,
             ingredients: ingredients.map { Ingredient(baseQuantity: 1, unit: "", name: $0) },
             prePrepInstructions: [], instructions: steps, notes: "",
@@ -70,14 +71,84 @@ import Foundation
         #expect(result.hero == TodayFeed.Hero(recipe: most, reason: .kitchenMatch(have: 3, total: 3)))
     }
 
-    @Test func noPlanAndEmptyKitchenHasNoHero() {
-        #expect(feed([recipe("Soup", ingredients: ["leek"])]).hero == nil)
+    @Test func noPlanEmptyKitchenAndNothingQuickHasNoHero() {
+        #expect(feed([recipe("Soup", ingredients: ["leek"], prepTime: "1 hr")]).hero == nil)
+    }
+
+    @Test func noPlanAndEmptyKitchenFallsBackToAQuickRecipe() {
+        let slow = recipe("Stew", prepTime: "2 hr"), quick = recipe("Omelette")
+        #expect(feed([slow, quick]).hero == TodayFeed.Hero(recipe: quick, reason: .quick(minutes: 15)))
+    }
+
+    // MARK: Shuffle
+
+    @Test func shuffleGoesPlanThenKitchenThenQuick() {
+        let curry = recipe("Curry", prepTime: "1 hr")
+        let toast = recipe("Toast", ingredients: ["bread"], prepTime: "1 hr")
+        let wrap = recipe("Wrap"), eggs = recipe("Eggs", isFavorite: true), salad = recipe("Salad")
+        let result = feed([curry, toast, wrap, eggs, salad], plans: [plan(curry, .dinner)], kitchen: ["bread"])
+        #expect(result.tonightOptions == [
+            .init(recipe: curry, reason: .planned(.dinner)),
+            .init(recipe: toast, reason: .kitchenMatch(have: 1, total: 1)),
+            .init(recipe: eggs, reason: .quick(minutes: 15)),
+            .init(recipe: salad, reason: .quick(minutes: 15)),
+        ])
+        #expect(result.alternatives.count == TodayFeed.alternativesLimit)
+    }
+
+    @Test func otherPlansOfTheDayComeBeforeSuggestions() {
+        let curry = recipe("Curry"), soup = recipe("Soup")
+        let result = feed([curry, soup], plans: [plan(soup, .lunch), plan(curry, .dinner)])
+        #expect(result.tonightOptions.map(\.reason) == [.planned(.dinner), .planned(.lunch)])
+    }
+
+    @Test func suggestionsNeverRepeatTheLastCooked() {
+        let last = recipe("Tacos", ingredients: ["tortilla"], cookCount: 3, lastCookedAt: daysAgo(1))
+        let older = recipe("Chilli", cookCount: 1, lastCookedAt: daysAgo(5))
+        let result = feed([last, older], kitchen: ["tortilla"])
+        #expect(result.tonightOptions.map(\.recipe) == [older])
+    }
+
+    @Test func aPlannedLastCookedRecipeStillShows() {
+        let last = recipe("Tacos", cookCount: 3, lastCookedAt: daysAgo(1))
+        #expect(feed([last], plans: [plan(last, .dinner)]).hero?.recipe == last)
+    }
+
+    @Test func aRecipeShowsOnceEvenWhenItIsAMatchAndQuick() {
+        let toast = recipe("Toast", ingredients: ["bread"])
+        let result = feed([toast], kitchen: ["bread"])
+        #expect(result.tonightOptions == [.init(recipe: toast, reason: .kitchenMatch(have: 1, total: 1))])
+    }
+
+    @Test func quickPicksPreferYourOwnRecipesOverSamples() {
+        let sample = recipe("A sample", isSample: true), mine = recipe("Z mine")
+        #expect(feed([sample, mine]).tonightOptions.map(\.recipe) == [mine, sample])
+    }
+
+    @Test func newUsersGetStartersNotQuickPicks() {
+        let result = feed([recipe("A", isSample: true)])
+        #expect(result.hero == nil)
+        #expect(result.quickCount == 1)
+    }
+
+    @Test func newUserWithAPlanCanShuffleToQuickPicks() {
+        let curry = recipe("Curry", isSample: true, prepTime: "1 hr"), eggs = recipe("Eggs", isSample: true)
+        let result = feed([curry, eggs], plans: [plan(curry, .dinner)])
+        #expect(result.isNewUser)
+        #expect(result.tonightOptions.map(\.recipe) == [curry, eggs])
+    }
+
+    @Test func quickCountIsRecipesWithAKnownTimeUpToHalfAnHour() {
+        let recipes = [recipe("Q"), recipe("Edge", prepTime: "20 min"), recipe("Slow", prepTime: "21 min"), recipe("Unknown", prepTime: "")]
+        // "Unknown" still has 10 min cooking, so it counts; "Slow" is 31 min.
+        #expect(feed(recipes).quickCount == 3)
     }
 
     @Test(arguments: [
         (TodayFeed.HeroReason.planned(.dinner), "Planned for tonight"),
         (.planned(.lunch), "Planned for lunch"),
         (.kitchenMatch(have: 8, total: 10), "You have 8/10 ingredients"),
+        (.quick(minutes: 25), "Ready in 25 minutes"),
     ])
     func heroCaptionSaysWhy(reason: TodayFeed.HeroReason, expected: String) {
         #expect(reason.caption == expected)
@@ -95,9 +166,10 @@ import Foundation
     }
 
     @Test func cookAgainIsRecentCooksNewestFirst() {
-        let older = recipe("Chilli", cookCount: 1, lastCookedAt: daysAgo(10))
-        let newest = recipe("Tacos", cookCount: 2, lastCookedAt: daysAgo(1))
-        let cold = recipe("Lasagne", cookCount: 3, lastCookedAt: daysAgo(40))
+        // Slow recipes, so none becomes a quick Tonight pick (the hero is left off the shelves).
+        let older = recipe("Chilli", cookCount: 1, lastCookedAt: daysAgo(10), prepTime: "1 hr")
+        let newest = recipe("Tacos", cookCount: 2, lastCookedAt: daysAgo(1), prepTime: "1 hr")
+        let cold = recipe("Lasagne", cookCount: 3, lastCookedAt: daysAgo(40), prepTime: "1 hr")
         let result = feed([older, cold, newest])
         #expect(result.cookAgain == [newest, older])
         #expect(result.rediscover == [cold])

@@ -1,10 +1,15 @@
 import SwiftUI
 import UIKit
 
-/// Today's "Tonight" card: the hero recipe's photo and why it was picked. Tapping the card opens the recipe;
-/// "Let's cook" goes straight into cooking mode (separate buttons — a button nested in a button's label never fires).
+/// Today's "Tonight" card: the hero recipe's photo, why it was picked and when to start. Tapping the card opens the
+/// recipe; "Cook this" goes straight into cooking mode; Shuffle steps to the next pick (separate buttons — a button
+/// nested in a button's label never fires).
 struct TodayHeroCard: View {
     let hero: TodayFeed.Hero
+    /// Time-aware hint ("Start by 5:40 to eat at 7"), when there's one.
+    let timing: String?
+    /// Nil when there's nothing else to shuffle to.
+    let onShuffle: (() -> Void)?
     let onOpen: () -> Void
     let onCook: () -> Void
 
@@ -12,9 +17,9 @@ struct TodayHeroCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: onOpen) {
                 VStack(alignment: .leading, spacing: 0) {
-                    RecipeImageView(imageName: hero.recipe.heroImageName, height: 180, recipeName: hero.recipe.name)
+                    RecipeImageView(imageName: hero.recipe.heroImageName, height: 220, recipeName: hero.recipe.name)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 180)
+                        .frame(height: 220)
                         .clipped()
                         .accessibilityHidden(true)
 
@@ -23,10 +28,17 @@ struct TodayHeroCard: View {
                             .font(.caption.weight(.semibold))
                             .adaptiveSecondaryForeground()
                         Text(hero.recipe.name)
-                            .font(.title3.weight(.bold))
+                            .font(.title2.weight(.bold))
                             .adaptiveForegroundColor()
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
+                        if let timing {
+                            Label(timing, systemImage: "clock")
+                                .font(.subheadline.weight(.medium))
+                                .adaptiveForegroundColor()
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityIdentifier("today.hero.timing")
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding([.horizontal, .top], AppTheme.spacing16)
@@ -35,36 +47,60 @@ struct TodayHeroCard: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Tonight: \(hero.recipe.name). \(hero.reason.caption)")
+            .accessibilityLabel(accessibilityText)
             .accessibilityHint("Opens the recipe")
             .accessibilityIdentifier("today.hero")
 
-            Button(action: onCook) {
-                HStack(spacing: AppTheme.spacing4) {
-                    Text("Let's cook")
-                    Image(systemName: "arrow.right")
+            HStack(spacing: AppTheme.spacing12) {
+                Button(action: onCook) {
+                    HStack(spacing: AppTheme.spacing4) {
+                        Text("Cook this")
+                        Image(systemName: "arrow.right")
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, AppTheme.spacing16)
+                    .padding(.vertical, AppTheme.spacing10)
+                    .background(Capsule().fill(AppTheme.accentColor))
                 }
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, AppTheme.spacing16)
-                .padding(.vertical, AppTheme.spacing8)
-                .background(Capsule().fill(AppTheme.accentColor))
+                .buttonStyle(.plain)
+                .accessibilityLabel("Cook \(hero.recipe.name)")
+                .accessibilityHint("Starts cooking mode")
+                .accessibilityIdentifier("today.hero.cook")
+
+                Spacer(minLength: 0)
+
+                if let onShuffle {
+                    Button(action: onShuffle) {
+                        Label("Shuffle", systemImage: "shuffle")
+                            .font(.subheadline.weight(.semibold))
+                            .adaptiveForegroundColor()
+                            .padding(.horizontal, AppTheme.spacing16)
+                            .padding(.vertical, AppTheme.spacing10)
+                            .appCard(in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Shuffle")
+                    .accessibilityHint("Shows another idea for tonight")
+                    .accessibilityIdentifier("today.hero.shuffle")
+                }
             }
-            .buttonStyle(.plain)
             .padding([.horizontal, .bottom], AppTheme.spacing16)
-            .padding(.top, AppTheme.spacing10)
-            .accessibilityLabel("Let's cook \(hero.recipe.name)")
-            .accessibilityHint("Starts cooking mode")
-            .accessibilityIdentifier("today.hero.cook")
+            .padding(.top, AppTheme.spacing12)
         }
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
         .appCard(elevated: true)
+    }
+
+    private var accessibilityText: String {
+        ["Tonight: \(hero.recipe.name)", hero.reason.caption, timing].compactMap { $0 }.joined(separator: ". ")
     }
 
     private var icon: String {
         switch hero.reason {
         case .planned(let time): time.icon
         case .kitchenMatch: "refrigerator.fill"
+        case .quick: "bolt.fill"
         }
     }
 }
