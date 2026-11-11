@@ -193,7 +193,7 @@ drop a line while moving it.
   change), shown on recipe + draft screen, editable as "Title:" lines; 2 fixtures pin them.
 - [ ] **Add flow 3/3 follow-up** (small): run the HTML text path through `RecipeTextCleanup`; keep groups from
   JSON-LD/DOM ingredient lists (they're dropped today); show groups in cooking mode, print and share text.
-- [ ] **Today+ 1/3 — Tonight, decided** (owner 2026-11-11: "the Today page is lacking"; OK'd all 7 ideas, after Add
+- [ ] **Today+ 1/3 — Tonight, decided** — 🚧 builder agent 2026-11-11 (owner 2026-11-11: "the Today page is lacking"; OK'd all 7 ideas, after Add
   flow). Big Tonight hero (photo, time, "Cook this") with **Shuffle** → 2–3 alternatives from plan / kitchen match /
   quick picks, never repeating the last cooked. Time-aware line under it: morning = prep/defrost for tonight's plan,
   afternoon = "Start by 5:40 to eat at 7" (from prep + cook time, eat-time setting default 19:00), evening = "Quick
