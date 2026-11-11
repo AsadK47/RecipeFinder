@@ -1,0 +1,14 @@
+{
+  "name": "Lemon Drizzle Traybake",
+  "minIngredients": 8,
+  "maxIngredients": 8,
+  "minSteps": 5,
+  "maxSteps": 5,
+  "amountsPresent": true,
+  "forbidden": ["For the sponge", "Drizzle:", "To decorate"],
+  "sections": ["For the sponge", "Drizzle", "To decorate"],
+  "amounts": [
+    {"name": "self-raising flour", "quantity": 275, "unit": "g"},
+    {"name": "lemon curd", "quantity": 2, "unit": "tbsp"}
+  ]
+}

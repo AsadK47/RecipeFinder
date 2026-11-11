@@ -30,7 +30,8 @@ import Foundation
         return entries.map { e in
             let name = e["name"] ?? "?"
             guard let pre = TextRecipeParser.parse(e["rawText"] ?? "") else { return (name, false) }
-            let lines = pre.ingredients ?? []
+            // Group header lines ("For the sauce:") aren't ingredients, so they don't count as amount-less ones.
+            let lines = IngredientSections.ingredientLines(pre.ingredients ?? [])
             let zero = lines.map { IngredientLineParser.parse($0) }.filter { $0.quantity == 0 }.count
             let zeroFrac = lines.isEmpty ? 1.0 : Double(zero) / Double(lines.count)
             return (name, lines.count >= 2 && zeroFrac <= 0.5)
@@ -104,6 +105,8 @@ import Foundation
         var maxSteps: Int?
         var forbidden: [String]?
         var amounts: [Amount]?
+        /// Ingredient group titles, in order ("For the sauce"), kept as header lines rather than ingredients.
+        var sections: [String]?
     }
 
     private static var fixtureDirectory: URL {
@@ -133,7 +136,10 @@ import Foundation
         let prefill = try #require(
             await RecipeTextImportRouter(interpreter: UnavailableRecipeTextInterpreter()).prefill(for: text),
             "\(slug): no recipe found")
-        let ingredients = prefill.ingredients ?? []
+        let lines = prefill.ingredients ?? []
+        // Group headers ("For the sauce:") travel as lines but aren't ingredients — counted and checked separately.
+        let ingredients = IngredientSections.ingredientLines(lines)
+        let sections = lines.compactMap(IngredientSections.title(ofHeaderLine:))
         let steps = prefill.instructions ?? []
         let report = "\(slug): name=\(prefill.name ?? "nil") ingredients=\(ingredients.count) steps=\(steps.count)"
 
@@ -148,6 +154,9 @@ import Foundation
         for junk in expected.forbidden ?? [] {
             let hits = (ingredients + steps).filter { $0.localizedCaseInsensitiveContains(junk) }
             #expect(hits.isEmpty, "\(slug): junk \"\(junk)\" kept in \(hits)")
+        }
+        if let expectedSections = expected.sections {
+            #expect(sections == expectedSections, "\(slug): groups \(sections)")
         }
         let parsed = ingredients.map(IngredientLineParser.parse)
         for amount in expected.amounts ?? [] {

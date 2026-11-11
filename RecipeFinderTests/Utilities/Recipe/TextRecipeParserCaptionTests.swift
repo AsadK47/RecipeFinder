@@ -125,7 +125,8 @@ import Testing
         Fry spoonfuls in a hot pan until golden.
         """
         let result = TextRecipeParser.parse(text)
-        #expect(result?.ingredients == ["1 cup flour", "1 egg", "2 tbsp maple syrup"])
+        // Group headers stay as "Title:" lines so the editor files each ingredient under its group.
+        #expect(result?.ingredients == ["For the batter:", "1 cup flour", "1 egg", "For the topping:", "2 tbsp maple syrup"])
         #expect(result?.instructions?.count == 2)
     }
 

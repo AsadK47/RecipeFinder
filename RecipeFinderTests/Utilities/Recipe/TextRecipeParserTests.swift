@@ -57,7 +57,9 @@ final class TextRecipeParserTests: XCTestCase {
         XCTAssertTrue(ingredients.contains("2 tablespoons cornflour"))
         XCTAssertTrue(ingredients.contains("1 spring onion, julienned"))   // garnish item kept
         XCTAssertFalse(ingredients.contains("2"))                          // stray servings number dropped
-        XCTAssertFalse(ingredients.contains { line in
+        // GARNISH is kept as a group header line ("Garnish:"), never an ingredient.
+        XCTAssertEqual(ingredients.compactMap(IngredientSections.title(ofHeaderLine:)), ["Garnish"])
+        XCTAssertFalse(IngredientSections.ingredientLines(ingredients).contains { line in
             line.range(of: #"(?i)^(garnish|serves|time|prep|cook)\b"#, options: .regularExpression) != nil
         }, "sidebar/metadata lines must not appear as ingredients")
         XCTAssertEqual(result?.servings, 2)

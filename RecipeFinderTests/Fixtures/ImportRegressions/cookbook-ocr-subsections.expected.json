@@ -5,9 +5,23 @@
   "minSteps": 4,
   "maxSteps": 4,
   "amountsPresent": true,
-  "forbidden": ["FOR THE CHICKEN"],
+  "forbidden": [
+    "FOR THE CHICKEN"
+  ],
+  "sections": [
+    "For the chicken",
+    "For the sauce"
+  ],
   "amounts": [
-    {"name": "chicken thighs", "quantity": 500, "unit": "g"},
-    {"name": "honey", "quantity": 3, "unit": "tbsp"}
+    {
+      "name": "chicken thighs",
+      "quantity": 500,
+      "unit": "g"
+    },
+    {
+      "name": "honey",
+      "quantity": 3,
+      "unit": "tbsp"
+    }
   ]
 }

@@ -365,3 +365,101 @@ struct RecipeWizardBuilderTests {
         #expect(StepTextBlock.steps(from: "1.5 cups stock, then 10-15 min") == ["1.5 cups stock, then 10-15 min"])
     }
 }
+
+/// Add flow 3/3 slice 2: ingredient groups ("For the sauce") are a label on each row, written as "Title:" header lines
+/// in text — never an ingredient row of their own.
+@Suite("Ingredient sections")
+struct IngredientSectionsTests {
+
+    @Test("Header lines are recognised and read back as the group title", arguments: [
+        ("For the sauce:", "For the sauce"), ("FOR THE CHICKEN", "For the chicken"), ("To make the glaze:", "To make the glaze"),
+        ("Topping:", "Topping"), ("For the Dressing", "For the Dressing")
+    ])
+    func headerTitles(line: String, title: String) {
+        #expect(IngredientSections.title(ofHeaderLine: line) == title)
+    }
+
+    @Test("Ingredient lines are never headers", arguments: [
+        "200 g flour", "salt, to taste", "For 4 people: 2 eggs", "Butter", "1 tbsp oil:", "Note: use ripe bananas"
+    ])
+    func ingredientLinesAreNotHeaders(line: String) {
+        #expect(IngredientSections.title(ofHeaderLine: line) == nil)
+    }
+
+    @Test("The text box groups rows under each header and drops the header itself")
+    func textBlockGroupsRows() {
+        let items = IngredientTextBlock.items(from: "2 eggs\nFor the sauce:\n3 tbsp honey\n2 tbsp soy sauce")
+        #expect(items.map(\.name) == ["eggs", "honey", "soy sauce"])
+        #expect(items.map(\.section) == ["", "For the sauce", "For the sauce"])
+    }
+
+    @Test("Groups survive text → rows → text → rows")
+    func textBlockRoundTrip() {
+        let text = "For the chicken:\n500 g chicken thighs\n1 egg\nFor the sauce:\n3 tbsp honey"
+        let once = IngredientTextBlock.items(from: text)
+        let twice = IngredientTextBlock.items(from: IngredientTextBlock.text(from: once))
+        #expect(IngredientTextBlock.text(from: once) == text)
+        #expect(twice.map(\.section) == once.map(\.section))
+        #expect(twice.map(\.name) == once.map(\.name))
+    }
+
+    @Test("Saving keeps each row's group; ungrouped rows have none")
+    func makeIngredientsKeepsSection() {
+        let items = IngredientTextBlock.items(from: "salt\nFor the sauce:\n3 tbsp honey")
+        let ingredients = RecipeWizardBuilder.makeIngredients(from: items)
+        #expect(ingredients.map(\.section) == [nil, "For the sauce"])
+        #expect(ingredients.count == 2)
+    }
+
+    @Test("Editing a saved recipe writes its groups back as header lines")
+    func editPrefillWritesHeaders() {
+        let recipe = RecipeModel(
+            name: "Sticky Chicken", category: "Main", difficulty: "Basic", prepTime: "10 minutes",
+            cookingTime: "20 minutes", baseServings: 4, currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 1, unit: "", name: "egg"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "honey", section: "For the sauce"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "soy sauce", section: "For the sauce")
+            ],
+            prePrepInstructions: [], instructions: ["Cook."], notes: ""
+        )
+        let lines = RecipeWizardView.PrefilledRecipeData(recipe: recipe).ingredients ?? []
+        #expect(lines.count == 4)
+        #expect(lines[1] == "For the sauce:")
+        let items = IngredientTextBlock.items(from: lines.joined(separator: "\n"))
+        #expect(items.map(\.section) == ["", "For the sauce", "For the sauce"])
+    }
+
+    @Test("A group title shows only where the group starts")
+    func titleStartingAt() {
+        let ingredients = [
+            Ingredient(baseQuantity: 1, unit: "", name: "egg"),
+            Ingredient(baseQuantity: 3, unit: "tbsp", name: "honey", section: "Sauce"),
+            Ingredient(baseQuantity: 2, unit: "tbsp", name: "soy", section: "Sauce"),
+            Ingredient(baseQuantity: 1, unit: "tsp", name: "sesame", section: "To serve")
+        ]
+        #expect((0..<5).map { IngredientSections.title(startingAt: $0, in: ingredients) } == [nil, "Sauce", nil, "To serve", nil])
+    }
+
+    @Test("Imports with header lines group the ingredients and never make a header an ingredient")
+    func importBuilderGroups() {
+        let ingredients = RecipeImportBuilder().parseIngredients(["FOR THE SAUCE", "3 tbsp honey", "", "Garnish:", "1 tsp sesame seeds"])
+        #expect(ingredients.map(\.section) == ["For the sauce", "Garnish"])
+        #expect(ingredients.map(\.baseQuantity) == [3, 1])
+    }
+
+    @Test("Section round-trips through JSON, and stored ingredients without one still decode")
+    func codable() throws {
+        let original = Ingredient(baseQuantity: 2, unit: "tbsp", name: "honey", section: "For the sauce")
+        let decoded = try JSONDecoder().decode(Ingredient.self, from: JSONEncoder().encode(original))
+        #expect(decoded.section == "For the sauce")
+        let legacy = Data(#"{"id":"\#(UUID().uuidString)","baseQuantity":1,"unit":"","name":"egg"}"#.utf8)
+        #expect(try JSONDecoder().decode(Ingredient.self, from: legacy).section == nil)
+    }
+
+    @Test("Accepting an estimated amount keeps the group")
+    func withAmountKeepsSection() {
+        let row = Ingredient(baseQuantity: 0, unit: "", name: "honey", section: "Sauce")
+        #expect(row.withAmount(2, unit: "tbsp").section == "Sauce")
+    }
+}

@@ -37,6 +37,14 @@ struct RecipeDraftPreviewTests {
         #expect(preview.notes == nil)
     }
 
+    @Test("Ingredient groups start where their first row is, and headers are never ingredient lines")
+    func ingredientGroupStarts() {
+        let items = IngredientTextBlock.items(from: "2 eggs\nFor the sauce:\n3 tbsp honey\n2 tbsp soy sauce\nTo serve:\nsesame seeds")
+        let preview = RecipeDraftPreview(draft: draft(items: items))
+        #expect(preview.ingredientLines.count == 4)
+        #expect(preview.ingredientGroupStarts == [1: "For the sauce", 3: "To serve"])
+    }
+
     @Test("The title is the trimmed name")
     func titleTrimmed() {
         #expect(RecipeDraftPreview(draft: draft(name: "  Lemon Cake ")).title == "Lemon Cake")
