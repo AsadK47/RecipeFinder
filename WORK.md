@@ -1,13 +1,11 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- **Add flow 3/3 slice 1** on `agent/add-flow-3-imports` (01c3be5 red fixtures, 7a76c28 fix). 10 ImportRegressions
-  fixtures with new optional `maxIngredients/maxSteps/forbidden/amounts` checks; fixes in TextRecipeParser,
-  IngredientLineParser, new RecipeTextCleanup.swift (registered in pbxproj). Waiting on Build & Test.
+- Nothing in progress. Add flow 3/3 slice 1 merged (855b148).
 
 ## Next action
-Check Build & Test for agent/add-flow-3-imports; fix failures (a Python port of the text parser in the run's scratchpad
-predicted all 10 green — CI is the truth). When green: ff main, Log line, rewrite the item to say what's left (slice 2).
+Add flow 3/3 slice 2 (ingredient section headers — decide a representation first; if it needs a Core Data change, move
+to Needs owner), else Today+ 1/3.
 
 ## Decisions (why)
 - **Add flow 3/3 slice 1**: fixtures are self-written in the formats of real sources (WPRM blog card, recipe-card site

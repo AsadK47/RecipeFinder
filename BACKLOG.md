@@ -164,10 +164,11 @@ drop a line while moving it.
   blank. Link/paste/photo go straight to the Add flow 1/3 screen with a loading state (no in-between sheets); share
   extension recipes open on the same screen. *Done when:* link-vs-text detection tested, tap count per path ≤ 3 to the
   recipe screen (note in Log), screenshots, CI green.
-- [ ] **Add flow 3/3 — Imports come out right.** — 🚧 builder agent 2026-11-11 Collect ~10 real recipe pages/texts that import badly today (popular
-  sites, Instagram captions, cookbook photos) as `ImportRegressions` fixtures (red), fix the parsers until green;
-  amounts/units split correctly, section headers ("For the sauce") kept, junk lines (ads, "Jump to recipe") dropped.
-  *Done when:* every fixture green, CI green.
+- [ ] **Add flow 3/3 — Imports come out right.** Slice 1 merged 2026-11-11 (10 fixtures green: junk dropped,
+  amounts/units split, steps kept out of ingredients). **Left (slice 2):** keep ingredient section headers ("For the
+  sauce") — there's no ingredient-group model yet, and storing a header as an ingredient row would leak into
+  groceries/scaling/"Add amount", so pick a representation first (no Core Data change without owner OK); also run the
+  HTML text path through `RecipeTextCleanup`. *Done when:* a fixture pins the headers, CI green.
 - [ ] **Today+ 1/3 — Tonight, decided** (owner 2026-11-11: "the Today page is lacking"; OK'd all 7 ideas, after Add
   flow). Big Tonight hero (photo, time, "Cook this") with **Shuffle** → 2–3 alternatives from plan / kitchen match /
   quick picks, never repeating the last cooked. Time-aware line under it: morning = prep/defrost for tonight's plan,
@@ -388,6 +389,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
+- 2026-11-11 · Add flow 3/3 slice 1 · 855b148 · Pasted/shared/scanned recipe text imports cleaner: "Jump to Recipe", Print/Pin/Save, ratings, ads, "US Customary/Metric", 1x2x3x, hashtags, "Follow @…", "Link in bio" dropped; Notes / Variations / How to store go into the recipe's notes, Nutrition panels dropped; 1️⃣ keycap and "- " bullet steps split properly; "FOR THE CHICKEN" groups and steps with no "Method" header no longer pile into ingredients; "1-1/2 tsp" = 1½, "1 tbsp." and "225g/8oz" split right, scale artifacts like "0.84 2 cups" read as 2 cups. 10 ImportRegressions fixtures (7 new, 3 tightened); 12 bundled recipes left the known-poor list. New RecipeTextCleanup.swift registered in pbxproj. On phone: copy a food-blog recipe or Instagram caption → + → Paste.
 - 2026-11-11 · Add flow 2/3 · 7cc63a6 + 5ae6624 · "+" opens with one box: paste a link or recipe text (auto-detected) → "Reading the recipe…" → the recipe screen in the same sheet; no URL screen or paste sheet in between (RecipeImportView + PasteTextImportSheet deleted, −176 lines). Today's clipboard card, shared links and web-search imports use the same flow. Link that can't be read → paste the text right there or start blank; text with no recipe → edit and retry or "Start from this text". Taps to the recipe screen: paste link 2 (+, Paste), typed text 2 + typing, photo 3 (+, Scan, pick). Interactive session took over the builder run's branch (builder told to stand down). New AddRecipeImportFlow.swift registered in pbxproj. On phone: copy a recipe link → + → Paste.
 - 2026-11-10 · Tabs 1/3 · 9167662 · Tabs are Today · Recipes · Plan · Groceries · Me (app still opens on Recipes until Today is filled in 2/3). Import tab → "+" beside the Recipes search field (link, web search, paste, photo/PDF, other app, manual) + one-time tip; sheet closes on save. Settings → gear on Me (Me = profile + badges); "View all badges" opens Me. New AppTab, TodayView, MeView, AddRecipeOption, AppNavigationTests registered in pbxproj. UI tests moved to the new routes; screenshots 16-today, 17-me. Gear first used a NavigationLink around a Button and never pushed (caught by screenshots) → plain Button + navigationDestination. On phone: tap + → add a link; Me → gear → Settings.
 - 2026-11-10 · Site look · RecipeFinderWebsite 44bc61a · recipefinder.uk home + whats-new: frosted translucent cards (blur, 0.5px hairline) over the gradient, capsule PrimaryButton-style CTAs (deep teal, white text), segmented tour tabs, tinted circular icon badges with SF Symbols-style line icons (no emoji; theme toggle is a moon/sun glyph), solid teal day/step badges. Legal pages unchanged. Lighthouse 99–100 on all four. Compared side by side with the app shots in light + dark.
