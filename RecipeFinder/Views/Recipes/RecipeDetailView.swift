@@ -16,6 +16,9 @@ struct RecipeDetailView: View {
     @State private var confettiCounter = 0
     @State private var showAddToCollection = false
     @State var showCookingMode = false
+    private let startsCooking: Bool
+    // One-shot: coming back to this screen later must not reopen cooking mode.
+    @State private var didAutoStartCooking = false
     @State var shopSheetRecipe: RecipeModel?
     @State var saveError: String?
     static let saveErrorMessage = "Your changes couldn't be saved. Please try again."
@@ -49,8 +52,10 @@ struct RecipeDetailView: View {
         var id: String { section.map(String.init(describing:)) ?? "__all__" }
     }
 
-    init(recipe: RecipeModel) {
+    /// `startsCooking` opens cooking mode as soon as the screen appears (Today's "Let's cook").
+    init(recipe: RecipeModel, startsCooking: Bool = false) {
         _recipe = State(initialValue: recipe)
+        self.startsCooking = startsCooking
         _galleryImageNames = State(initialValue: RecipeDetailView.galleryNames(for: recipe))
 
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
@@ -175,6 +180,11 @@ struct RecipeDetailView: View {
             if let fresh = newRecipes.first(where: { $0.id == recipe.id }), fresh != recipe {
                 recipe = fresh
             }
+        }
+        .onAppear {
+            guard startsCooking, !didAutoStartCooking else { return }
+            didAutoStartCooking = true
+            showCookingMode = true
         }
         .task(id: recipe.id) {
             // Re-read the persisted copy first, then refresh — so the diff runs against saved state, not the stale navigation snapshot (avoids the two-task race).

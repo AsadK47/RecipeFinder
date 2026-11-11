@@ -12,6 +12,9 @@ struct TodayView: View {
     @Environment(\.kitchen) private var kitchen
     @Environment(\.cookingStreak) private var cookingStreak
 
+    /// Pushes the recipe with cooking mode already up, so finishing lands on its detail (Made it, rating).
+    private struct CookRoute: Hashable { let recipeID: UUID }
+
     @State private var path = NavigationPath()
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
     @State private var feed: TodayFeed?
@@ -48,6 +51,11 @@ struct TodayView: View {
             .navigationDestination(for: UUID.self) { id in
                 if let recipe = recipeStore.recipes.first(where: { $0.id == id }) {
                     RecipeDetailView(recipe: recipe)
+                }
+            }
+            .navigationDestination(for: CookRoute.self) { route in
+                if let recipe = recipeStore.recipes.first(where: { $0.id == route.recipeID }) {
+                    RecipeDetailView(recipe: recipe, startsCooking: true)
                 }
             }
         }
@@ -92,7 +100,7 @@ struct TodayView: View {
         }
 
         if let hero = feed.hero {
-            TodayHeroCard(hero: hero) { open(hero.recipe) }
+            TodayHeroCard(hero: hero, onOpen: { open(hero.recipe) }, onCook: { cook(hero.recipe) })
         } else if !feed.isNewUser {
             shortcut(.plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.", color: .blue)
         }
@@ -141,6 +149,11 @@ struct TodayView: View {
     private func open(_ recipe: RecipeModel) {
         HapticManager.shared.light()
         path.append(recipe.id)
+    }
+
+    private func cook(_ recipe: RecipeModel) {
+        HapticManager.shared.light()
+        path.append(CookRoute(recipeID: recipe.id))
     }
 
     private func shortcut(_ tab: AppTab, title: String, subtitle: String, color: Color) -> some View {

@@ -1,49 +1,63 @@
 import SwiftUI
 
-/// Today's "Tonight" card: the hero recipe's photo, why it was picked, and a button into it.
+/// Today's "Tonight" card: the hero recipe's photo and why it was picked. Tapping the card opens the recipe;
+/// "Let's cook" goes straight into cooking mode (separate buttons — a button nested in a button's label never fires).
 struct TodayHeroCard: View {
     let hero: TodayFeed.Hero
     let onOpen: () -> Void
+    let onCook: () -> Void
 
     var body: some View {
-        Button(action: onOpen) {
-            VStack(alignment: .leading, spacing: 0) {
-                RecipeImageView(imageName: hero.recipe.heroImageName, height: 180, recipeName: hero.recipe.name)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 180)
-                    .clipped()
-                    .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 0) {
+            Button(action: onOpen) {
+                VStack(alignment: .leading, spacing: 0) {
+                    RecipeImageView(imageName: hero.recipe.heroImageName, height: 180, recipeName: hero.recipe.name)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 180)
+                        .clipped()
+                        .accessibilityHidden(true)
 
-                VStack(alignment: .leading, spacing: AppTheme.spacing6) {
-                    Label(hero.reason.caption, systemImage: icon)
-                        .font(.caption.weight(.semibold))
-                        .adaptiveSecondaryForeground()
-                    Text(hero.recipe.name)
-                        .font(.title3.weight(.bold))
-                        .adaptiveForegroundColor()
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                    HStack(spacing: AppTheme.spacing4) {
-                        Text("Let's cook")
-                        Image(systemName: "arrow.right")
+                    VStack(alignment: .leading, spacing: AppTheme.spacing6) {
+                        Label(hero.reason.caption, systemImage: icon)
+                            .font(.caption.weight(.semibold))
+                            .adaptiveSecondaryForeground()
+                        Text(hero.recipe.name)
+                            .font(.title3.weight(.bold))
+                            .adaptiveForegroundColor()
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, AppTheme.spacing16)
-                    .padding(.vertical, AppTheme.spacing8)
-                    .background(Capsule().fill(AppTheme.accentColor))
-                    .padding(.top, AppTheme.spacing4)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding([.horizontal, .top], AppTheme.spacing16)
                 }
-                .padding(AppTheme.spacing16)
+                .contentShape(Rectangle())
             }
-            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
-            .appCard(elevated: true)
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Tonight: \(hero.recipe.name). \(hero.reason.caption)")
+            .accessibilityHint("Opens the recipe")
+            .accessibilityIdentifier("today.hero")
+
+            Button(action: onCook) {
+                HStack(spacing: AppTheme.spacing4) {
+                    Text("Let's cook")
+                    Image(systemName: "arrow.right")
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.vertical, AppTheme.spacing8)
+                .background(Capsule().fill(AppTheme.accentColor))
+            }
+            .buttonStyle(.plain)
+            .padding([.horizontal, .bottom], AppTheme.spacing16)
+            .padding(.top, AppTheme.spacing10)
+            .accessibilityLabel("Let's cook \(hero.recipe.name)")
+            .accessibilityHint("Starts cooking mode")
+            .accessibilityIdentifier("today.hero.cook")
         }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Tonight: \(hero.recipe.name). \(hero.reason.caption)")
-        .accessibilityHint("Opens the recipe")
-        .accessibilityIdentifier("today.hero")
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
+        .appCard(elevated: true)
     }
 
     private var icon: String {

@@ -245,6 +245,15 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(hero.label.contains("Planned for tonight"), "The Tonight card should be the planned dinner.")
         settle()
         snap(app, "18-today-planned")
+
+        // Tabs 2/3: "Let's cook" goes straight into cooking mode, not just the recipe page.
+        let cook = app.buttons["today.hero.cook"]
+        XCTAssertTrue(cook.waitForExistence(timeout: 5), "The Tonight card should offer Let's cook.")
+        cook.tap()
+        XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 10),
+                      "Let's cook should open cooking mode.")
+        settle()
+        snap(app, "19-today-lets-cook")
     }
 
     // MARK: - Helpers

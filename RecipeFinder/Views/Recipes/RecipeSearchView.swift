@@ -261,18 +261,6 @@ struct RecipeSearchView: View {
         }
     }
 
-    /// "Cook it again" nudge for a loved recipe gone cold — only on the plain browse home (no search/filter).
-    /// Rendered as the first row of the results list so it scrolls away rather than pinning screen space.
-    @ViewBuilder
-    private var rediscoverySection: some View {
-        if searchText.isEmpty, activeFilterCount == 0, let pick = RecipeRediscovery.pick(from: recipes) {
-            RediscoveryCard(recipe: pick) {
-                HapticManager.shared.light()
-                navigationPath.append(pick.id)
-            }
-        }
-    }
-
     private var collectionsSheet: some View {
         NavigationStack {
             ZStack {
@@ -335,9 +323,7 @@ struct RecipeSearchView: View {
                     filteredRecipes: current,
                     onRequestDelete: { recipeToDelete = $0 },
                     onRefresh: refreshRecipesAsync
-                ) {
-                    rediscoverySection
-                }
+                )
             }
         }
     }

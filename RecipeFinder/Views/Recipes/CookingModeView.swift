@@ -114,6 +114,7 @@ struct CookingModeView: View {
                 }
                     .font(.body.weight(.semibold))
                     .adaptiveForegroundColor()
+                    .accessibilityIdentifier("cooking.done")
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 timerToolbarButton
