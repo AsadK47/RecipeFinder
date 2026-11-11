@@ -4,6 +4,10 @@ name: Build & Test
 # Nightly and "Run workflow": everything, including the slow UI tests.
 # Build cache: written only by main, read by every run (cold build 8m41s vs restore ~3 min + incremental build).
 
+permissions:
+  contents: write   # publish coverage.txt to the "coverage" release
+  actions: read     # the gate job lists earlier runs
+
 on:
   push:
     branches: [ main, 'agent/**' ]   # agent/** = scheduled agent loop branches (see BACKLOG.md)
@@ -109,12 +113,15 @@ jobs:
           restore-keys: deriveddata-test-${{ runner.os }}-
 
       # Build once, then test that exact build, so compile and test time show separately.
-      # No index store and no coverage (nobody reads them in CI); no macro/plugin validation prompts.
+      # No index store; coverage only on nightly / "Run workflow" (published to the "coverage" release), so pushes
+      # stay fast. No macro/plugin validation prompts.
       - name: Build
+        env:
+          COVERAGE: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'YES' || 'NO' }}
         run: |
           set -o pipefail
           xcodebuild build-for-testing -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
-            -enableCodeCoverage NO -skipPackagePluginValidation -skipMacroValidation \
+            -enableCodeCoverage "$COVERAGE" -skipPackagePluginValidation -skipMacroValidation \
             COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
       - name: Test
@@ -125,12 +132,33 @@ jobs:
         run: |
           set -o pipefail
           SKIP="-skip-testing:RecipeFinderUITests"
-          if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "workflow_dispatch" ]; then SKIP=""; fi
+          COVERAGE=NO
+          if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "workflow_dispatch" ]; then SKIP=""; COVERAGE=YES; fi
           time xcrun simctl bootstatus "$SIM" -b
           # -collect-test-diagnostics never: no `simctl diagnose` dump after the run (Nuke measured 610s -> 6s).
           xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult -collect-test-diagnostics never \
-            $SKIP | tee -a xcodebuild.log
+            -enableCodeCoverage "$COVERAGE" $SKIP | tee -a xcodebuild.log
+
+      # Nightly: per-file line coverage for the app, as a text file agents can read (they can't open run artifacts).
+      - name: Publish coverage
+        if: always() && needs.gate.outputs.run == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && hashFiles('TestResults.xcresult/**') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Coverage for ${GITHUB_REF_NAME} @ ${GITHUB_SHA::7} ($(date -u +%F))"
+            xcrun xccov view --report --only-targets TestResults.xcresult
+            echo
+            echo "App files, lowest coverage first:"
+            xcrun xccov view --report --json TestResults.xcresult \
+              | jq -r '.targets[] | select(.name == "RecipeFinder.app") | .files
+                       | sort_by(.lineCoverage)[] | "\(.lineCoverage * 100 | floor)%\t\(.executableLines)\t\(.path | sub(".*/RecipeFinder/"; ""))"'
+          } > coverage.txt
+          head -5 coverage.txt >> "$GITHUB_STEP_SUMMARY"
+          gh release view coverage >/dev/null 2>&1 || \
+            gh release create coverage --title "Test coverage" --notes "Nightly line coverage." --latest=false
+          gh release upload coverage coverage.txt --clobber
 
       # Only main writes the cache (Home Assistant, Element X): per-branch saves filled the 10 GB limit and evicted it.
       - name: Save build cache

@@ -29,6 +29,12 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 7. **Don't over-ask, don't over-talk.** Lead with the result; ask only when the
    answer changes what you build. (Concise-answers gate is in `CLAUDE.md`.)
 
+8. **Green tests ≠ right.** 2026-11-10: the Me gear (a `NavigationLink` wrapping `CircleButton`'s own `Button`)
+   built and unit-tested green but never pushed Settings — only the screenshot UI test caught it. Run Screenshots
+   for UI work and *look at* the images (BACKLOG step 6b); prefer a plain `Button` + `navigationDestination`.
+9. **Argue with yourself, on a schedule.** The weekly challenger (`docs/CHALLENGES.md`) exists because the agent that
+   builds also tests and reviews — it can be consistently wrong. Treat a challenge as a real question, not noise.
+
 ## Repo gotchas (see also memory)
 - StoreKit scheme `identifier` = `../../RecipeFinder.storekit` (anchored at the
   `xcshareddata` dir, NOT SRCROOT). Cost several wrong guesses — see memory.

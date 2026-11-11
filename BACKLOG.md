@@ -32,10 +32,20 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
    for that commit with the GitHub tools; on failure read the job log, fix, push, re-check. Give up after 4 failed
    attempts — log what broke and leave the branch unmerged. Docs-only branches (`*.md`, `tools/`, CI scripts) don't
    trigger Build & Test (paths-ignore), so don't wait for a run — merge them directly.
-6. When green: rebase on `origin/main`; if that brought in new commits, push and wait for green again. Then
+6. **Before landing, check it three ways** (owner OK 2026-11-11 — "no way we're right all the time"):
+   a. **Pre-mortem** (written at the start, in WORK.md Decisions): 3 ways this item could fail for the cook and which
+      test or screenshot would catch each. Missing catch → add the test.
+   b. **Visual check** (anything with UI): run Screenshots on the branch, then download and *look at* every screen the
+      item touched: `curl -sSLO https://github.com/AsadK47/RecipeFinder/releases/download/screenshots-preview/<name>-web.jpg`
+      (list: `gh api repos/AsadK47/RecipeFinder/releases/tags/screenshots-preview --jq '.assets[].name'`), Read each
+      image, fix what looks wrong (clipping, empty states, contrast, layout). A passing screenshot test is not a look.
+   c. **Independent review** on the item's last slice: run the `deep-review` skill at `high` on `origin/main..HEAD`
+      in a *separate* agent (not the one that wrote the code); fix confirmed findings, log the count.
+7. When green: rebase on `origin/main`; if that brought in new commits, push and wait for green again. Then
    fast-forward `main` to the branch and push `main` (this ships a TestFlight build with auto-filled "What to Test").
    Merged `agent/*` branches are deleted daily by `cleanup-agent-branches.yml` — no need to delete them yourself.
-7. Tick the item, append one line to **Log** (date · item · commit · what to check on device), commit to `main`.
+8. Tick the item, append one line to **Log** (date · item · commit · what to check on device · review: N fixed ·
+   looked at: <shots>), commit to `main`. A mistake that cost a CI cycle goes in `AGENT_LESSONS.md` (one line).
 
 ### Numbered series (e.g. "Import 2/5")
 Owner-approved series are worked strictly in order, one item at a time: start item N only after item N-1 is merged,

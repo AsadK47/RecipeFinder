@@ -88,6 +88,23 @@ jobs:
           path: ${{ runner.temp }}/shots
           retention-days: 7
 
+      # Agents can't download run artifacts (blob storage is blocked in their sandbox) but can read release assets,
+      # so branch runs also publish the small JPEGs here for a visual check before merging.
+      - name: Publish branch preview to the "screenshots-preview" release
+        if: (success() || failure()) && github.ref != 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view screenshots-preview >/dev/null 2>&1 || \
+            gh release create screenshots-preview --title "Branch screenshot preview" \
+              --notes "Latest branch Screenshots run (${GITHUB_REF_NAME}). Overwritten by each run." --latest=false
+          gh release edit screenshots-preview --notes "Latest branch Screenshots run: ${GITHUB_REF_NAME} @ ${GITHUB_SHA::7}."
+          # Drop the previous branch's shots so a missing screen can't pass for a fresh one.
+          for asset in $(gh release view screenshots-preview --json assets -q '.assets[].name'); do
+            gh release delete-asset screenshots-preview "$asset" --yes
+          done
+          gh release upload screenshots-preview "$RUNNER_TEMP"/shots/*-web.jpg --clobber
+
       - name: Publish to the "screenshots" release
         if: (success() || failure()) && github.ref == 'refs/heads/main'
         env:
