@@ -1,13 +1,11 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Today+ 1/3 slice 1 on `agent/today-tonight-decided`: Tonight Shuffle (`TodayFeed.tonightOptions`), quick picks,
-  time line (`TonightTiming`), "Cook this", bigger hero, screenshots 24–27 (`-today-time HH:MM`). Waiting on CI.
+- Nothing in progress. Today+ 1/3 slice 1 merged (64206db).
 
 ## Next action
-Check Build & Test for the branch head; fix; run Screenshots on the branch, look at 16/18/24–27; then merge.
-Left for slice 2: eat-time setting (logic takes `eatAt`; app uses 7pm until a control exists — no storage added yet)
-and the calmer layout (fewer stacked cards, one accent per section).
+Today+ 1/3 slice 2: eat-time setting (TonightTiming.line takes `eatAt`; app passes the 7pm default) + calmer Today
+layout; then deep-review (high) on the item, Screenshots 16/18/24–27, tick.
 
 ## Decisions (why)
 - **Today+ 1/3 slice 1**: Shuffle cycles `[hero] + alternatives` (≤3): today's open plans (dinner first), kitchen
