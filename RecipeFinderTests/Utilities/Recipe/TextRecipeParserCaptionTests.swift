@@ -68,4 +68,75 @@ import Testing
         #expect(result?.ingredients == ["1/2 cup oats", "1 cup milk"])
         #expect(result?.instructions?.count == 2)
     }
+
+    @Test func dropsPageFurnitureAndKeepsNotesSeparate() {
+        let text = """
+        Garlic Butter Rice
+        Jump to Recipe
+        4.9 from 88 votes
+        Ingredients
+        US Customary
+        1x2x3x
+        1 cup rice
+        2 tbsp butter
+        Instructions
+        Rinse the rice well.
+        Advertisement
+        Cook with the butter and 2 cups water for 15 minutes.
+        Notes
+        Leftovers keep for 2 days.
+        Nutrition
+        Calories: 210kcal
+        #rice #easy
+        """
+        let result = TextRecipeParser.parse(text)
+        #expect(result?.ingredients == ["1 cup rice", "2 tbsp butter"])
+        #expect(result?.instructions == ["Rinse the rice well.", "Cook with the butter and 2 cups water for 15 minutes."])
+        #expect(result?.notes == "Leftovers keep for 2 days.")
+    }
+
+    @Test func keycapAndBulletStepsStaySeparate() {
+        let text = """
+        Quick Oats
+        Ingredients
+        1/2 cup oats
+        1 cup milk
+        Method:
+        1️⃣ Warm the milk.
+        2️⃣ Stir in the oats.
+        Steps:
+        - Top with fruit.
+        - Serve warm.
+        """
+        let result = TextRecipeParser.parse(text)
+        #expect(result?.instructions == ["Warm the milk.", "Stir in the oats.", "Top with fruit.", "Serve warm."])
+    }
+
+    @Test func firstStepEndsIngredientsWhenThereIsNoMethodHeader() {
+        let text = """
+        Simple Pancakes
+        FOR THE BATTER
+        1 cup flour
+        1 egg
+        FOR THE TOPPING
+        2 tbsp maple syrup
+        ASSEMBLE:
+        Whisk the flour and egg into a smooth batter.
+        Fry spoonfuls in a hot pan until golden.
+        """
+        let result = TextRecipeParser.parse(text)
+        #expect(result?.ingredients == ["1 cup flour", "1 egg", "2 tbsp maple syrup"])
+        #expect(result?.instructions?.count == 2)
+    }
+
+    @Test func countedTitleIsKept() {
+        let text = """
+        15 minute garlic pasta
+        Ingredients
+        200g spaghetti
+        Method
+        Boil the pasta.
+        """
+        #expect(TextRecipeParser.parse(text)?.name == "15 minute garlic pasta")
+    }
 }

@@ -40,6 +40,9 @@ enum IngredientLineParser {
         // 4b. UK multipack "1 x 400g tin ..." — drop leading "N x" so the pack size parses, not the count.
         working = working.replacingOccurrences(of: #"^\d+\s*[x×]\s+(?=\d)"#, with: "", options: .regularExpression)
 
+        // 4c. US hyphenated mixed number "1-1/2 teaspoons" is 1½, not the range 1 to ½.
+        working = working.replacingOccurrences(of: #"^(\d{1,2})-(\d+/\d+)(?=\s|$)"#, with: "$1 $2", options: .regularExpression)
+
         // 5. Split a leading number glued to letters: "200g" → "200 g".
         working = working.replacingOccurrences(of: #"^([0-9][0-9/.]*)([a-zA-Z])"#, with: "$1 $2", options: .regularExpression)
 
@@ -50,12 +53,12 @@ enum IngredientLineParser {
         // 6. Resolve quantity once (range upper-bound → mixed → simple) so no later pass clobbers an earlier match.
         var (quantityText, afterQuantity) = extractQuantity(from: working)
 
-        // 6b. Drop a prepended scrape/scale artifact: a bare integer immediately followed by ANOTHER number
-        // ("750 500 grams", "5 1 teaspoon", "8421052632 2 cups") is a scaled/garbage value — prefer the real
-        // second amount. Only fires integer-then-number, so "3 chicken" / "1 1/2 tbsp" / ranges are untouched.
+        // 6b. Drop a prepended scrape/scale artifact: a bare number immediately followed by ANOTHER number
+        // ("750 500 grams", "1.5 1 teaspoon", "0.8421052632 2 cups") is a scaled/garbage value — prefer the real
+        // second amount. Only fires number-then-number, so "3 chicken" / "1 1/2 tbsp" / ranges are untouched.
         var hops = 0
         while hops < 4,
-              quantityText.range(of: #"^\d+$"#, options: .regularExpression) != nil {
+              quantityText.range(of: #"^\d+(\.\d+)?$"#, options: .regularExpression) != nil {
             // Re-split a glued "<number><letter>" ("900g") the line-start pass in step 5 couldn't reach.
             let rest = afterQuantity.trimmingCharacters(in: .whitespaces)
                 .replacingOccurrences(of: #"^([0-9][0-9/.]*)([a-zA-Z])"#, with: "$1 $2", options: .regularExpression)
@@ -67,8 +70,10 @@ enum IngredientLineParser {
             hops += 1
         }
 
-        // 7. Canonical unit.
-        let (unit, afterUnit) = extractUnit(from: afterQuantity)
+        // 7. Canonical unit, then drop a slash-separated second measure ("225g/8oz butter", "2 tbsp / 30 ml oil").
+        let (unit, unitRemainder) = extractUnit(from: afterQuantity)
+        let afterUnit = unit.isEmpty ? unitRemainder : unitRemainder.replacingOccurrences(
+            of: alternateMeasurePattern, with: "", options: [.regularExpression, .caseInsensitive])
 
         // 8. Name = remainder (keep commas/prep notes); drop a leading "of".
         var name = afterUnit.trimmingCharacters(in: .whitespaces)
@@ -189,14 +194,18 @@ enum IngredientLineParser {
     }
 
 
-    /// Anchored synonym alternation, longest-first ("tablespoons" beats "tbsp", "lb" beats "l"), trailed by \s/end so a unit never eats a name ("l" vs "lemon").
-    private static let unitPattern: String = {
-        let alternatives = UnitConversion.unitSynonyms.keys
-            .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }
-            .map { NSRegularExpression.escapedPattern(for: $0) }
-            .joined(separator: "|")
-        return "^(\(alternatives))(?:\\s+|$)"
-    }()
+    /// Every unit spelling, longest-first ("tablespoons" beats "tbsp", "lb" beats "l"), as a regex alternation.
+    private static let unitAlternatives: String = UnitConversion.unitSynonyms.keys
+        .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }
+        .map { NSRegularExpression.escapedPattern(for: $0) }
+        .joined(separator: "|")
+
+    /// Anchored unit, optionally abbreviated with a dot ("tbsp."), trailed by \s/end so a unit never eats a name
+    /// ("l" vs "lemon") — or by "/" when a second measure follows ("225g/8oz").
+    private static let unitPattern = "^(\(unitAlternatives))\\.?(?:\\s+|$|(?=/))"
+
+    /// "/8oz " or "/ 30 ml " right after the first unit: the same amount in another system.
+    private static let alternateMeasurePattern = "^\\s*/\\s*[\\d./]+\\s*(?:\(unitAlternatives))\\.?(?:\\s+|$)"
 
     // MARK: - Unicode fractions
 

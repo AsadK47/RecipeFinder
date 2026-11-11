@@ -128,6 +128,7 @@ struct RecipeParser {
         "direction",          // singular — seen in some scraped recipes
         "before you start",   // bosh.tv recipe format
         "how to make", "how to", "procedure",
+        "steps to make it", "how to make it", "cooking instructions", "recipe instructions",
         "to cook", "to prepare", "to make", "make it",
         "cooking order",      // used on some Chinese/Korean recipe sites
         "method of preparation"

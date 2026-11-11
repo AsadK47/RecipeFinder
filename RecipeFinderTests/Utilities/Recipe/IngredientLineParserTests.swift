@@ -28,7 +28,15 @@ import Foundation
             ("1½ red pepper, cut into chunks", 1.5, "1 1/2", "", "red pepper, cut into chunks"),
             ("½ green pepper, cut into chunks", 0.5, "1/2", "", "green pepper, cut into chunks"),
             ("300g raw peeled king prawns", 300.0, "300", "g", "raw peeled king prawns"),
-            ("I onion, thinly sliced", 1.0, "1", "", "onion, thinly sliced")
+            ("I onion, thinly sliced", 1.0, "1", "", "onion, thinly sliced"),
+            // Import regressions (Add flow 3/3):
+            ("1-1/2 teaspoons lemon zest", 1.5, "1 1/2", "tsp", "lemon zest"),     // US hyphenated mixed number
+            ("1 tbsp. olive oil", 1.0, "1", "tbsp", "olive oil"),                  // dotted abbreviation
+            ("225g/8oz cherry tomatoes", 225.0, "225", "g", "cherry tomatoes"),    // second measure dropped
+            ("2 tbsp / 30 ml olive oil", 2.0, "2", "tbsp", "olive oil"),
+            ("0.8421052632 2 cups plain yogurt", 2.0, "2", "cup", "plain yogurt"), // decimal scale artifact
+            ("1.5 1 teaspoon ginger paste", 1.0, "1", "tsp", "ginger paste"),
+            ("1.75 tbsp ghee", 1.75, "1.75", "tbsp", "ghee")                       // a real decimal stays
         ]
     )
     func parses(input: String, quantity: Double, quantityText: String, unit: String, name: String) {

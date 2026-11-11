@@ -4,10 +4,12 @@ import Foundation
 enum TextRecipeParser {
 
     static func parse(_ text: String) -> RecipeWizardView.PrefilledRecipeData? {
-        let lines = text
+        let cleaned = text
             .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
+            .map { RecipeTextCleanup.normalizingKeycapNumber($0.trimmingCharacters(in: .whitespaces)) }
+            .filter { !$0.isEmpty && !RecipeTextCleanup.isBoilerplate($0) }
+        let (lines, trailingNotes) = RecipeTextCleanup.separatingTrailingSections(cleaned)
+        var noteLines = trailingNotes
 
         guard lines.count >= 3 else { return nil }
 
@@ -33,7 +35,8 @@ enum TextRecipeParser {
             instructions = mergeInstructionLines(instructions)
         }
 
-        // Drop footnotes on the raw line first (before markers stripped) so a leading "*" footnote is recognisable.
+        // Footnotes move to notes on the raw line first (before markers stripped) so a leading "*" footnote is recognisable.
+        noteLines += (ingredients + instructions).filter(isAsideLine).map(stripListMarker)
         ingredients = ingredients.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
         // isMetadataLine NOT applied to instructions: a merged step like "Prep the tin…10 minutes" would be wrongly dropped.
         instructions = instructions.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty }
@@ -49,7 +52,7 @@ enum TextRecipeParser {
             cookTime: cookTime,
             servings: servings,
             difficulty: nil,
-            notes: nil,
+            notes: noteLines.isEmpty ? nil : noteLines.joined(separator: "\n"),
             category: nil,
             isFavorite: nil,
             imageURL: nil
@@ -65,7 +68,10 @@ enum TextRecipeParser {
         var cleaned = stripTrailingBullets(stripLeadingBullets(first))
             .replacingOccurrences(of: #"^(recipe\s*:?\s*)"#, with: "", options: [.regularExpression, .caseInsensitive])
             .trimmingCharacters(in: .whitespaces)
-        guard cleaned.count <= 80, !looksLikeIngredient(cleaned) else { return nil }
+        // "15 minute garlic pasta" is a title, not an amount: a count of minutes/ingredients/steps leads it.
+        let isCountedTitle = cleaned.range(of: #"^\d+[\s-]*(minutes?|mins?|hours?|ingredients?|steps?|ways?)\b"#,
+                                           options: [.regularExpression, .caseInsensitive]) != nil
+        guard cleaned.count <= 80, isCountedTitle || !looksLikeIngredient(cleaned) else { return nil }
 
         // OCR may split a wrapped ALL-CAPS title across two lines; merge line 2 when both are short, all-caps, digit-free.
         if candidates.count >= 2 {
@@ -94,15 +100,25 @@ enum TextRecipeParser {
         var ingredientLines: [String] = []
         var instructionLines: [String] = []
         var current: Section?
+        let hasInstructionHeader = lines.contains { RecipeParser.isHeader($0, in: RecipeParser.instructionHeaderWords) }
 
         for line in lines {
-            if RecipeParser.isHeader(line, in: RecipeParser.ingredientHeaderWords) {
+            if RecipeParser.isHeader(line, in: RecipeParser.ingredientHeaderWords)
+                || (current != .instructions && isIngredientGroupHeader(line)) {
                 current = .ingredients
                 continue
             }
             if RecipeParser.isHeader(line, in: RecipeParser.instructionHeaderWords) {
                 current = .instructions
                 continue
+            }
+            // No method header: the first real step ends the ingredient list, taking a step sub-heading
+            // ("PREPARE THE DOUGH:") just above it along, instead of every step landing in ingredients.
+            if current == .ingredients, !hasInstructionHeader, startsInstructions(line) {
+                current = .instructions
+                if let last = ingredientLines.last, isStepSubheading(last) {
+                    instructionLines.append(ingredientLines.removeLast())
+                }
             }
 
             switch current {
@@ -119,6 +135,25 @@ enum TextRecipeParser {
     private enum Section {
         case ingredients
         case instructions
+    }
+
+    /// Cookbook group headers outside the fixed vocabulary: "FOR THE CHICKEN", "To make the glaze:".
+    private static func isIngredientGroupHeader(_ line: String) -> Bool {
+        line.split(separator: " ").count <= 6
+            && line.range(of: #"^(for|to make) the [^\d:.]{2,30}:?$"#, options: [.regularExpression, .caseInsensitive]) != nil
+    }
+
+    /// A line that can only be a method step: a numbered step that isn't an amount, or a full sentence with no amount.
+    private static func startsInstructions(_ line: String) -> Bool {
+        if looksLikeNumberedStep(line) { return !looksLikeIngredient(stripListMarker(line)) }
+        let words = line.split(separator: " ").count
+        return !looksLikeIngredient(line) && words >= 6 && ".!?".contains(line.last ?? " ")
+    }
+
+    /// A short label ending in ":" or in ALL CAPS ("ASSEMBLY:", "PREPARE THE DOUGH:") with no amount in it.
+    private static func isStepSubheading(_ line: String) -> Bool {
+        guard line.split(separator: " ").count <= 6, !line.contains(where: \.isNumber) else { return false }
+        return line.hasSuffix(":") || (line == line.uppercased() && line.contains(where: \.isLetter))
     }
 
     private static func isSectionHeader(_ line: String) -> Bool {
@@ -211,6 +246,9 @@ enum TextRecipeParser {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         return trimmed.range(of: #"^(note|notes|tip|tips)\b\s*[:.\-]"#, options: [.regularExpression, .caseInsensitive]) != nil
             || trimmed.range(of: #"^\*[^\s*]"#, options: .regularExpression) != nil
+            // "* To slice the mint…" / "** If whole cumin…": a starred full sentence is a footnote, not a "* 2 eggs" bullet.
+            || (trimmed.range(of: #"^\*{1,3}\s*[A-Za-z]"#, options: .regularExpression) != nil
+                && trimmed.split(separator: " ").count >= 6 && ".!?".contains(trimmed.last ?? " "))
     }
 
     /// Non-ingredient sidebar/metadata lines OCR/captions mix in (servings, times, lone labels/numbers) so they never become "ingredients".
@@ -248,7 +286,7 @@ enum TextRecipeParser {
     }
 
     private static func beginsNewStep(_ line: String, afterLine previous: String) -> Bool {
-        if looksLikeNumberedStep(line) { return true }
+        if looksLikeNumberedStep(line) || startsWithBullet(line) { return true }
         let prevEndsSentence = ".!?".contains(previous.last ?? " ")
         return prevEndsSentence && (line.first?.isUppercase ?? false)
     }
