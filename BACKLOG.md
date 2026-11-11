@@ -41,6 +41,10 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
       image, fix what looks wrong (clipping, empty states, contrast, layout). A passing screenshot test is not a look.
    c. **Independent review** on the item's last slice: run the `deep-review` skill at `high` on `origin/main..HEAD`
       in a *separate* agent (not the one that wrote the code); fix confirmed findings, log the count.
+   d. **Challenge pass** (every item, owner 2026-11-11: "challenge aggressively"): a separate agent, told to assume
+      the change is wrong, answers for the diff — *Break it* (what input/state breaks it?), *Attack it* (any
+      injection path?), *Simplify it* (what's the smallest version — why isn't this it?), *Delete it* (what if this
+      part didn't exist?). Fix what's real; anything you decide not to fix goes to `docs/CHALLENGES.md` with why.
 7. When green: rebase on `origin/main`; if that brought in new commits, push and wait for green again. Then
    fast-forward `main` to the branch and push `main` (this ships a TestFlight build with auto-filled "What to Test").
    Merged `agent/*` branches are deleted daily by `cleanup-agent-branches.yml` — no need to delete them yourself.
