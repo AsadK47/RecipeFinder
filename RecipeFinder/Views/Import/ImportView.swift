@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The Recipes "+" sheet: one box for a pasted link or recipe text (auto-detected), then the other ways to add a recipe,
-/// reusing RecipeImportView, PasteTextImportSheet and RecipeWizardView, plus a share-sheet hint for social recipes.
+/// which go straight to the recipe screen via AddRecipeImportFlow, plus a share-sheet hint for social recipes.
 struct ImportView: View {
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.dismiss) private var dismiss
@@ -9,8 +9,7 @@ struct ImportView: View {
 
 
     @State private var pastedInput = ""
-    @State private var linkToImport: PastedInput?
-    @State private var textToImport: PastedInput?
+    @State private var flowSource: AddRecipeImportFlow.Source?
     @State private var showWebSearch = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
@@ -56,14 +55,13 @@ struct ImportView: View {
                 SettingsScreen("From Another App") { OtherAppImportSection() }
             }
         }
-        .sheet(item: $linkToImport) { link in
-            RecipeImportView(initialURL: link.value, existingNames: recipes.map(\.name)) { store($0, source: .link) }
+        .sheet(item: $flowSource) { source in
+            AddRecipeImportFlow(source: source, existingNames: recipes.map(\.name)) { recipe in
+                if case .link = source { store(recipe, source: .link) } else { store(recipe, source: .paste) }
+            }
         }
         .sheet(isPresented: $showWebSearch) {
             RecipeWebSearchView(existingNames: recipes.map(\.name)) { store($0, source: .link) }
-        }
-        .sheet(item: $textToImport) { pasted in
-            PasteTextImportSheet(initialText: pasted.value) { store($0, source: .paste) }
         }
         .sheet(isPresented: $showPhotoImport) {
             PhotoImportSheet { store($0, source: .photo) }
@@ -105,8 +103,8 @@ struct ImportView: View {
     private func submit(_ raw: String) {
         switch AddRecipeInput.classify(raw) {
         case .empty: return
-        case .link(let url): linkToImport = PastedInput(value: url.absoluteString)
-        case .text(let text): textToImport = PastedInput(value: text)
+        case .link(let url): flowSource = .link(url)
+        case .text(let text): flowSource = .text(text)
         }
     }
 
@@ -169,11 +167,6 @@ struct ImportView: View {
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
         .padding(.top, AppTheme.spacing8)
     }
-}
-
-private struct PastedInput: Identifiable {
-    let id = UUID()
-    let value: String
 }
 
 /// One box for a link or recipe text. Paste reads the clipboard only through `PasteButton` (the tap is consent, so no

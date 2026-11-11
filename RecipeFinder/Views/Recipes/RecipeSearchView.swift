@@ -91,7 +91,7 @@ struct RecipeSearchView: View {
                 ))
                 .recipeDeleteFlow(pending: $recipeToDelete)
                 .sheet(item: $sharedImportURL) { shared in
-                    RecipeImportView(initialURL: shared.url, existingNames: recipes.map { $0.name }) { importedRecipe in
+                    AddRecipeImportFlow(source: .from(shared.url), existingNames: recipes.map { $0.name }) { importedRecipe in
                         addRecipe(importedRecipe, successMessage: "Imported \"\(importedRecipe.name)\"")
                     }
                 }

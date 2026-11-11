@@ -21,6 +21,23 @@ enum AddRecipeInput: Equatable {
     }
 }
 
+/// What the add flow does once a link has been read: straight to the recipe screen, or ask first when the library
+/// already has a recipe of that name (case and spacing ignored).
+enum AddRecipeLinkResult: Equatable {
+    case review
+    case duplicate
+
+    static func decide(recipeName: String, existingNames: [String]) -> AddRecipeLinkResult {
+        let key = normalized(recipeName)
+        guard !key.isEmpty else { return .review }
+        return existingNames.contains { normalized($0) == key } ? .duplicate : .review
+    }
+
+    private static func normalized(_ name: String) -> String {
+        name.split(whereSeparator: \.isWhitespace).joined(separator: " ").lowercased()
+    }
+}
+
 /// The other ways to add a recipe, listed under the paste box in the Recipes "+" sheet.
 enum AddRecipeOption: String, CaseIterable, Identifiable {
     case photo, web, otherApp, manual

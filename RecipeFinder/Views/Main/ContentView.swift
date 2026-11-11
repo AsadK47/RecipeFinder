@@ -92,7 +92,7 @@ struct ContentView: View {
             fileSaveError = pendingFileSaveError
             pendingFileSaveError = nil
         }) { link in
-            RecipeImportView(initialURL: link.url.absoluteString, existingNames: store.recipes.map(\.name)) {
+            AddRecipeImportFlow(source: .link(link.url), existingNames: store.recipes.map(\.name)) {
                 saveLinkImport($0)
             }
         }

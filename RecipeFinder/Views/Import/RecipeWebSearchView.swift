@@ -50,7 +50,7 @@ struct RecipeWebSearchView: View {
         .sheetDismissButton("Done", placement: .cancellationAction)
         .sheetScaffold("Search the Web")
         .sheet(item: $importTarget) { target in
-            RecipeImportView(initialURL: target.url.absoluteString, existingNames: existingNames) { recipe in
+            AddRecipeImportFlow(source: .link(target.url), existingNames: existingNames) { recipe in
                 onImport(recipe)
                 dismiss()
             }

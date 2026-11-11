@@ -103,3 +103,44 @@ import Testing
         #expect(TodayView.greeting(forHour: hour) == expected)
     }
 }
+
+/// Add flow 2/3: a read link goes straight to the recipe screen unless the library already has that recipe.
+@Suite struct AddRecipeLinkResultTests {
+
+    @Test func newRecipeGoesStraightToReview() {
+        #expect(AddRecipeLinkResult.decide(recipeName: "Lemon Cake", existingNames: ["Banana Bread"]) == .review)
+    }
+
+    @Test(arguments: ["lemon cake", "  Lemon   Cake ", "LEMON CAKE"])
+    func sameNameIgnoringCaseAndSpacingAsksFirst(existing: String) {
+        #expect(AddRecipeLinkResult.decide(recipeName: "Lemon Cake", existingNames: [existing]) == .duplicate)
+    }
+
+    @Test func unnamedRecipeIsNeverADuplicate() {
+        #expect(AddRecipeLinkResult.decide(recipeName: "  ", existingNames: ["", "  "]) == .review)
+    }
+
+    @Test func emptyLibraryGoesStraightToReview() {
+        #expect(AddRecipeLinkResult.decide(recipeName: "Lemon Cake", existingNames: []) == .review)
+    }
+}
+
+@MainActor @Suite struct AddRecipeFlowSourceTests {
+
+    @Test func sharedLinkIsReadAsLink() {
+        guard case .link(let url) = AddRecipeImportFlow.Source.from("https://example.com/cake") else {
+            Issue.record("Expected a link")
+            return
+        }
+        #expect(url.host() == "example.com")
+    }
+
+    @Test func sharedCaptionIsReadAsText() {
+        let caption = "Nan's lemon cake\n200 g flour\n2 eggs\nBake 30 minutes"
+        guard case .text(let text) = AddRecipeImportFlow.Source.from(caption) else {
+            Issue.record("Expected text")
+            return
+        }
+        #expect(text == caption)
+    }
+}
