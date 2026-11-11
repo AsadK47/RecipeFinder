@@ -1,12 +1,23 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress.
+- **Add flow 3/3 slice 1** on `agent/add-flow-3-imports` (01c3be5 red fixtures, 7a76c28 fix). 10 ImportRegressions
+  fixtures with new optional `maxIngredients/maxSteps/forbidden/amounts` checks; fixes in TextRecipeParser,
+  IngredientLineParser, new RecipeTextCleanup.swift (registered in pbxproj). Waiting on Build & Test.
 
 ## Next action
-Start **Add flow 3/3 — Imports come out right** (claim in BACKLOG first). Then Today+ 1/3.
+Check Build & Test for agent/add-flow-3-imports; fix failures (a Python port of the text parser in the run's scratchpad
+predicted all 10 green — CI is the truth). When green: ff main, Log line, rewrite the item to say what's left (slice 2).
 
 ## Decisions (why)
+- **Add flow 3/3 slice 1**: fixtures are self-written in the formats of real sources (WPRM blog card, recipe-card site
+  with ratings, BBC-style STEP n, Instagram keycap caption, TikTok "You'll need", cookbook OCR with FOR THE X groups,
+  family message) — not copied page text. Junk is dropped at line level (`RecipeTextCleanup.isBoilerplate`); Notes /
+  Variations / How to store go to the recipe's notes, Nutrition panels are dropped. With no method header, the first
+  full sentence or numbered step ends the ingredient list. "N.N M unit" treats the first number as a scale artifact
+  (was integers only). **Not done → slice 2:** keep ingredient section headers ("For the sauce") — the model has no
+  ingredient groups; storing them as ingredient rows would hit groceries/scaling/"Add amount", so it needs a
+  representation decision. Also HTML text path doesn't use RecipeTextCleanup yet.
 - **Add flow 2/3 slice 2**: one `AddRecipeImportFlow` sheet (reading → `RecipeWizardView` draft swapped in place) for
   link + text from "+", Today clipboard, share-extension links and web search. Incomplete link imports now open the
   draft (its orange highlights replace the old "Recipe looks incomplete" alert); duplicates still ask first
