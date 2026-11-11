@@ -1,13 +1,20 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Add flow 3/3 slice 1 merged (855b148).
+- `agent/add-flow-3-sections` (Add flow 3/3 slice 2): ingredient groups — pushed, waiting on Build & Test.
 
 ## Next action
-Add flow 3/3 slice 2 (ingredient section headers — decide a representation first; if it needs a Core Data change, move
-to Needs owner), else Today+ 1/3.
+Check Build & Test for `agent/add-flow-3-sections`; fix; when green ff main, tick Add flow 3/3, Log line. Then Today+ 1/3.
 
 ## Decisions (why)
+- **Add flow 3/3 slice 2 (groups)**: a group is `Ingredient.section: String?` — a label on each row, not a header row,
+  so groceries/scaling/"Add amount"/missing-amount checks never see it. Lives in the ingredients JSON blob → no Core
+  Data change; old data decodes nil. In all text (editor box, import prefill, edit prefill) a group is a header line
+  "Title:" (`IngredientSections`); header = ≤6 words, no digits, ends ":" or "For/To make the X". Bare vocab words
+  ("GARNISH", "Sauce") are headers only in `TextRecipeParser` (in the editor "Sauce" alone stays an ingredient).
+  Shown as a headline on recipe detail + draft screen. Not done: cooking mode / print / share text don't show groups;
+  HTML (JSON-LD/DOM) paths still drop headers; HTML text path not run through `RecipeTextCleanup`.
+  `WizardIngredientParser` now unused by app code (tests only) — Smell candidate.
 - **Add flow 3/3 slice 1**: fixtures are self-written in the formats of real sources (WPRM blog card, recipe-card site
   with ratings, BBC-style STEP n, Instagram keycap caption, TikTok "You'll need", cookbook OCR with FOR THE X groups,
   family message) — not copied page text. Junk is dropped at line level (`RecipeTextCleanup.isBoilerplate`); Notes /
