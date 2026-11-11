@@ -164,7 +164,7 @@ drop a line while moving it.
   blank. Link/paste/photo go straight to the Add flow 1/3 screen with a loading state (no in-between sheets); share
   extension recipes open on the same screen. *Done when:* link-vs-text detection tested, tap count per path ≤ 3 to the
   recipe screen (note in Log), screenshots, CI green.
-- [ ] **Add flow 3/3 — Imports come out right.** Collect ~10 real recipe pages/texts that import badly today (popular
+- [ ] **Add flow 3/3 — Imports come out right.** — 🚧 builder agent 2026-11-11 Collect ~10 real recipe pages/texts that import badly today (popular
   sites, Instagram captions, cookbook photos) as `ImportRegressions` fixtures (red), fix the parsers until green;
   amounts/units split correctly, section headers ("For the sauce") kept, junk lines (ads, "Jump to recipe") dropped.
   *Done when:* every fixture green, CI green.
