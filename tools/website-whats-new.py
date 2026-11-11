@@ -44,7 +44,7 @@ def render(items):
     for monday in sorted(weeks, reverse=True):
         label = f"Week of {monday.day} {monday.strftime('%B %Y')}"
         lis = "\n".join(
-            f'                    <li><time datetime="{d.isoformat()}">{d.day} {d.strftime("%b")}</time> {html.escape(t)}</li>'
+            f'                    <li><time datetime="{d.isoformat()}">{d.day} {d.strftime("%b")}</time> {html.escape(t, quote=False).replace("'", "’")}</li>'
             for d, t in sorted(weeks[monday], key=lambda x: x[0], reverse=True))
         parts.append(f'            <section class="wn-week">\n                <h2>{label}</h2>\n'
                      f'                <ul class="wn-list">\n{lis}\n                </ul>\n            </section>')
