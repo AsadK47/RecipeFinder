@@ -228,7 +228,7 @@ enum OtherAppImportPlanner {
             prepTime: "\(recipe.prepMinutes ?? 0) minutes",
             cookingTime: "\(recipe.cookMinutes ?? 0) minutes",
             baseServings: recipe.servings ?? 4,
-            ingredients: recipe.ingredients.map(builder.parseIngredient),
+            ingredients: builder.parseIngredients(recipe.ingredients),
             prePrepInstructions: [],
             instructions: recipe.instructions,
             notes: notes.joined(separator: "\n"),
