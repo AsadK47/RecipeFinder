@@ -59,10 +59,11 @@ final class RecipeFinderImportUITests: XCTestCase {
         )
     }
 
-    // MARK: - Paste text
+    // MARK: - Paste box
 
+    /// Add flow 2/3: recipe text typed into the "+" sheet's box goes straight to the text reader — no second paste.
     @MainActor
-    func testPasteTextOpensSheet() {
+    func testPastedTextGoesStraightToReview() {
         let app = launchApp()
 
         app.buttons["recipes.add"].tap()
@@ -71,15 +72,23 @@ final class RecipeFinderImportUITests: XCTestCase {
             "Recipes + should open the Add a Recipe sheet."
         )
 
-        app.buttons["import.paste"].tap()
+        // A multi-line SwiftUI TextField surfaces as a text view or a text field depending on the OS.
+        let box = app.descendants(matching: .any).matching(identifier: "add.input").firstMatch
+        XCTAssertTrue(box.waitForExistence(timeout: 5), "The Add a Recipe sheet should lead with the paste box.")
+        box.tap()
+        box.typeText("Pancakes\nIngredients\n200 g flour\n2 eggs\nMethod\nWhisk and fry.")
+        app.buttons["add.continue"].tap()
 
-        XCTAssertTrue(
-            app.staticTexts["Paste Text"].waitForExistence(timeout: 5),
-            "Tapping 'Paste text' should open the paste text sheet."
-        )
+        // The text is read straight away: either the recipe screen or (if nothing was found) the paste sheet's fallback.
+        let reviewed = NSPredicate { _, _ in
+            app.buttons["draft.name"].exists || app.buttons["import.startFromText"].exists
+        }
+        let wait = XCTNSPredicateExpectation(predicate: reviewed, object: nil)
+        XCTAssertEqual(XCTWaiter().wait(for: [wait], timeout: 15), .completed,
+                       "Continue should read the pasted text without asking for it again.")
 
         let shot = XCTAttachment(screenshot: app.screenshot())
-        shot.name = "Import — Paste text sheet"
+        shot.name = "Import — Pasted text reviewed"
         shot.lifetime = .keepAlways
         add(shot)
     }

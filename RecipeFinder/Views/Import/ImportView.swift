@@ -1,15 +1,16 @@
 import SwiftUI
 
-/// The Recipes "+" sheet: every way to add a recipe, reusing RecipeImportView and RecipeWizardView for consistent
-/// behaviour, plus a share-sheet hint for social recipes.
+/// The Recipes "+" sheet: one box for a pasted link or recipe text (auto-detected), then the other ways to add a recipe,
+/// reusing RecipeImportView, PasteTextImportSheet and RecipeWizardView, plus a share-sheet hint for social recipes.
 struct ImportView: View {
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.dismiss) private var dismiss
     private var recipes: [RecipeModel] { recipeStore.recipes }
 
 
-    @State private var showLinkImport = false
-    @State private var showPasteImport = false
+    @State private var pastedInput = ""
+    @State private var linkToImport: PastedInput?
+    @State private var textToImport: PastedInput?
     @State private var showWebSearch = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
@@ -35,6 +36,8 @@ struct ImportView: View {
 
                     ScrollView {
                         VStack(spacing: AppTheme.spacing16) {
+                            AddRecipePasteBox(text: $pastedInput, onSubmit: submit)
+
                             ForEach(AddRecipeOption.allCases) { option in
                                 actionCard(option)
                             }
@@ -53,14 +56,14 @@ struct ImportView: View {
                 SettingsScreen("From Another App") { OtherAppImportSection() }
             }
         }
-        .sheet(isPresented: $showLinkImport) {
-            RecipeImportView(initialURL: nil, existingNames: recipes.map(\.name)) { store($0, source: .link) }
+        .sheet(item: $linkToImport) { link in
+            RecipeImportView(initialURL: link.value, existingNames: recipes.map(\.name)) { store($0, source: .link) }
         }
         .sheet(isPresented: $showWebSearch) {
             RecipeWebSearchView(existingNames: recipes.map(\.name)) { store($0, source: .link) }
         }
-        .sheet(isPresented: $showPasteImport) {
-            PasteTextImportSheet { store($0, source: .paste) }
+        .sheet(item: $textToImport) { pasted in
+            PasteTextImportSheet(initialText: pasted.value) { store($0, source: .paste) }
         }
         .sheet(isPresented: $showPhotoImport) {
             PhotoImportSheet { store($0, source: .photo) }
@@ -98,11 +101,18 @@ struct ImportView: View {
         }
     }
 
+    /// Link → link importer (fetches straight away); anything else → the text reader.
+    private func submit(_ raw: String) {
+        switch AddRecipeInput.classify(raw) {
+        case .empty: return
+        case .link(let url): linkToImport = PastedInput(value: url.absoluteString)
+        case .text(let text): textToImport = PastedInput(value: text)
+        }
+    }
+
     private func open(_ option: AddRecipeOption) {
         switch option {
-        case .link: showLinkImport = true
         case .web: showWebSearch = true
-        case .paste: showPasteImport = true
         case .photo: showPhotoImport = true
         case .otherApp: showOtherApps = true
         case .manual: showWizard = true
@@ -158,6 +168,56 @@ struct ImportView: View {
         .padding(AppTheme.spacing16)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
         .padding(.top, AppTheme.spacing8)
+    }
+}
+
+private struct PastedInput: Identifiable {
+    let id = UUID()
+    let value: String
+}
+
+/// One box for a link or recipe text. Paste reads the clipboard only through `PasteButton` (the tap is consent, so no
+/// "Allow Paste" prompt) and goes straight on, so link → recipe takes two taps from the "+" button.
+private struct AddRecipePasteBox: View {
+    @Binding var text: String
+    /// Main-actor (hence Sendable) because PasteButton may call back from elsewhere.
+    let onSubmit: @MainActor (String) -> Void
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        let handler = onSubmit
+        return VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            Text("Paste a link or recipe")
+                .font(.headline)
+                .foregroundStyle(.primary)
+            TextField("A recipe link, caption, or ingredients and steps", text: $text, axis: .vertical)
+                .lineLimit(2...8)
+                .textFieldStyle(.plain)
+                .focused($focused)
+                .appInputField()
+                .accessibilityIdentifier("add.input")
+            HStack(spacing: AppTheme.spacing12) {
+                PasteButton(payloadType: String.self) { [handler] strings in
+                    let pasted = strings.joined(separator: "\n")
+                    Task { @MainActor in handler(pasted) }
+                }
+                .buttonBorderShape(.capsule)
+                .labelStyle(.titleAndIcon)
+                .tint(AppTheme.accentColor)
+                .accessibilityIdentifier("add.paste")
+                Spacer(minLength: 0)
+                if !text.isBlank {
+                    PrimaryButton("Continue", systemImage: "arrow.right", size: .compact) {
+                        focused = false
+                        handler(text)
+                    }
+                    .accessibilityIdentifier("add.continue")
+                }
+            }
+        }
+        .padding(AppTheme.spacing20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .appCard()
     }
 }
 

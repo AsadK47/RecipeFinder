@@ -10,6 +10,8 @@ struct PasteTextImportSheet: View {
     @State private var errorMessage: String?
     @FocusState private var focused: Bool
 
+    /// Text already pasted into the "+" sheet's box: read straight away instead of asking for it again.
+    var initialText: String = ""
     /// Called with the finished recipe once the user confirms it in the wizard.
     var onImport: (RecipeModel) -> Void
 
@@ -62,7 +64,11 @@ struct PasteTextImportSheet: View {
             }
         }
         .sheetDismissButton("Cancel", placement: .cancellationAction)
-        .onAppear { focused = true }
+        .onAppear {
+            guard text.isEmpty, !initialText.isBlank else { focused = true; return }
+            text = initialText
+            run()
+        }
         .sheetScaffold("Paste Text")
         .sheet(item: $prefill) { prefill in
             RecipeWizardView(prefilledData: prefill) { recipe in

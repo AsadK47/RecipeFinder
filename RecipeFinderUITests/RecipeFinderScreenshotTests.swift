@@ -153,13 +153,15 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.buttons["recipes.add"].tap()
         settle()
 
+        // Add flow 2/3: the sheet leads with one box for a link or recipe text.
+        snap(app, "23-add-sheet")
+
         // Paste: no recipe found → keep the text.
-        app.buttons["import.paste"].tap()
-        let editor = app.textViews.firstMatch
-        XCTAssertTrue(editor.waitForExistence(timeout: 5), "The paste sheet should show a text box.")
+        let editor = addInput(in: app)
+        XCTAssertTrue(editor.waitForExistence(timeout: 5), "The + sheet should lead with the paste box.")
         editor.tap()
         editor.typeText("Nan's lemon cake\nzest two lemons, bake till golden")
-        app.buttons["paste.import"].tap()
+        app.buttons["add.continue"].tap()
         let startFromText = app.buttons["import.startFromText"]
         XCTAssertTrue(startFromText.waitForExistence(timeout: 10), "A paste with no recipe should offer Start from this text.")
         snap(app, "10-import-no-recipe")
@@ -175,15 +177,21 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.tabBars.buttons["Recipes"].tap()
         app.buttons["recipes.add"].tap()
         settle()
-        app.buttons["import.link"].tap()
-        let field = app.textFields.firstMatch
-        XCTAssertTrue(field.waitForExistence(timeout: 5), "The link sheet should show a URL field.")
+        // Link: detected in the same box and fetched straight away (no second URL field).
+        let field = addInput(in: app)
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "The + sheet should lead with the paste box.")
         field.tap()
         field.typeText("https://example.com/not-a-recipe")
-        app.buttons["Import Recipe"].firstMatch.tap()
+        app.buttons["add.continue"].tap()
         XCTAssertTrue(app.buttons["import.pasteInstead"].waitForExistence(timeout: 10),
                       "A failed link should offer Paste the recipe text instead.")
         snap(app, "12-link-failed")
+    }
+
+    /// The "+" sheet's paste box: a multi-line SwiftUI TextField surfaces as a text view or a text field by OS version.
+    @MainActor
+    private func addInput(in app: XCUIApplication) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: "add.input").firstMatch
     }
 
     /// Add flow 1/3: a blank new recipe shown as it will look once saved; tapping the name opens just that editor.

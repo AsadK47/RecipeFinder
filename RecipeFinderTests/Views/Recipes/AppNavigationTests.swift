@@ -36,15 +36,14 @@ import Testing
 
 @Suite struct AddRecipeOptionTests {
 
-    @Test func sheetOffersEveryWayToAddInOrder() {
-        #expect(AddRecipeOption.allCases == [.link, .web, .paste, .photo, .otherApp, .manual])
+    /// Link and text go through the paste box at the top; these are the other ways in, in order.
+    @Test func sheetOffersTheOtherWaysToAddInOrder() {
+        #expect(AddRecipeOption.allCases == [.photo, .web, .otherApp, .manual])
     }
 
     /// The old Import tab's identifiers stay, so UI tests and screenshots keep finding each card.
     @Test func keepsImportIdentifiers() {
-        #expect(AddRecipeOption.link.accessibilityID == "import.link")
         #expect(AddRecipeOption.web.accessibilityID == "import.web")
-        #expect(AddRecipeOption.paste.accessibilityID == "import.paste")
         #expect(AddRecipeOption.photo.accessibilityID == "import.photo")
         #expect(AddRecipeOption.manual.accessibilityID == "import.wizard")
     }
@@ -54,6 +53,44 @@ import Testing
         #expect(Set(options.map(\.accessibilityID)).count == options.count)
         #expect(Set(options.map(\.title)).count == options.count)
         #expect(options.allSatisfy { !$0.subtitle.isEmpty && !$0.icon.isEmpty })
+    }
+}
+
+/// The "+" sheet's one paste box: links go to the link importer, everything else to the text reader.
+@Suite struct AddRecipeInputTests {
+
+    @Test(arguments: ["", "   ", "\n\n  \t"])
+    func blankIsEmpty(raw: String) {
+        #expect(AddRecipeInput.classify(raw) == .empty)
+    }
+
+    @Test(arguments: [
+        ("https://www.bbcgoodfood.com/recipes/lemon-drizzle", "https://www.bbcgoodfood.com/recipes/lemon-drizzle"),
+        ("  http://example.com/stew \n", "http://example.com/stew"),
+        ("Made this last night!! https://cooking.example.org/pasta so good", "https://cooking.example.org/pasta"),
+    ])
+    func aLinkWithFewWordsIsALink(raw: String, expected: String) {
+        #expect(AddRecipeInput.classify(raw) == .link(URL(string: expected) ?? URL(fileURLWithPath: "/")))
+    }
+
+    @Test func recipeTextIsText() {
+        let raw = "Pancakes\n200 g flour\n2 eggs\n300 ml milk\nWhisk everything, then fry in a hot pan."
+        #expect(AddRecipeInput.classify(raw) == .text(raw))
+    }
+
+    /// An Instagram-style caption with the recipe in it and a link at the end is read as the recipe text.
+    @Test func longCaptionMentioningALinkIsText() {
+        let raw = "Easy lemon cake: 200 g flour, 2 eggs, zest of two lemons, bake 30 min. More at https://example.com/cake"
+        #expect(AddRecipeInput.classify(raw) == .text(raw))
+    }
+
+    @Test func textIsTrimmed() {
+        #expect(AddRecipeInput.classify("  Nan's stew\nbeef, carrots  \n") == .text("Nan's stew\nbeef, carrots"))
+    }
+
+    @Test(arguments: ["ftp://example.com/recipe", "example dot com"])
+    func nonWebLinksAreText(raw: String) {
+        #expect(AddRecipeInput.classify(raw) == .text(raw))
     }
 }
 
