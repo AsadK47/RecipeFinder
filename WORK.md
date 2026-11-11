@@ -1,15 +1,17 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Add flow 2/3 slice 1 on `agent/add-flow-2-paste-box` (7cc63a6): "+" sheet leads with one paste box
-  (`AddRecipePasteBox` in ImportView.swift, `AddRecipeInput.classify` in AddRecipeOption.swift); link → RecipeImportView
-  auto-fetch, text → PasteTextImportSheet(initialText:) auto-read. Waiting on Build & Test 43004823815 + Screenshots 43004833449.
+- Nothing in progress.
 
 ## Next action
-Check those runs; on green ff main. Then slice 2: link/text go straight to the Add flow 1/3 draft screen with a loading
-state (drop RecipeImportView/PasteTextImportSheet as in-between sheets); share-extension recipes open on the same screen.
+Start **Add flow 3/3 — Imports come out right** (claim in BACKLOG first). Then Today+ 1/3.
 
 ## Decisions (why)
+- **Add flow 2/3 slice 2**: one `AddRecipeImportFlow` sheet (reading → `RecipeWizardView` draft swapped in place) for
+  link + text from "+", Today clipboard, share-extension links and web search. Incomplete link imports now open the
+  draft (its orange highlights replace the old "Recipe looks incomplete" alert); duplicates still ask first
+  (`AddRecipeLinkResult`). Fake staged progress (sleeps) dropped — just a spinner + site name. Photo keeps its picker
+  sheet (picking photos needs it).
 - **Add flow 2/3 slice 1**: link vs text = a web link with ≤8 words total is a link; longer text (captions with a
   recipe and a link) is read as text. Paste goes through `PasteButton` (no Allow-Paste prompt) and submits at once, so
   "+" → Paste → importer = 2 taps; typed input = "+" → type → Continue. `.link`/`.paste` options removed (box covers
