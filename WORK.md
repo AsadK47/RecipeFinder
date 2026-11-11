@@ -1,13 +1,27 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- Nothing in progress. Today+ 1/3 slice 1 merged (64206db).
+- `agent/today-eat-time` — Today+ 1/3 slice 2: eat-time menu on the Tonight timing line (`today.eatAt` AppStorage,
+  `TonightTiming.eatTimeChoices` / `eatAt(stored:)`), calmer layout (groceries shortcut card dropped, shelf tiles
+  without cards and bigger photos, tinted badges). Review (2 confirmed) + challenge (3) fixed in 2nd commit. Build & Test green (run 842, 1cfcae3). Screenshots run
+  43097103898 hit `startup_failure` twice on 2026-11-11 ~20:40–21:00 UTC (a Linux TestFlight-feedback job also sat queued) —
+  GitHub Actions not starting jobs (likely minutes/billing). Branch is up to date with main, NOT merged.
 
 ## Next action
-Today+ 1/3 slice 2: eat-time setting (TonightTiming.line takes `eatAt`; app passes the 7pm default) + calmer Today
-layout; then deep-review (high) on the item, Screenshots 16/18/24–27, tick.
+Re-run Screenshots on `agent/today-eat-time` once Actions starts jobs again (Build & Test already green); then on the branch, look at 16/18/24–28, merge, tick
+Today+ 1/3 (review + challenge already done).
 
 ## Decisions (why)
+- **Today+ 1/3 slice 2**: eat time is a "Dinner at 7 pm" pill (Menu + Picker, 5–10pm on the half hour) beside
+  Shuffle, not in Settings and not on the timing line — review found the line vanishes once the time passes (stranding
+  the choice) and some lines ("Quick tonight?", morning prep) ignore it. Hidden for a planned lunch/snack
+  (`asksEatTime`). Stored minutes not in the choices fall back to 7pm. Quick-ideas evening starts at
+  max(6pm, eatAt − 1h). Action row uses ViewThatFits (pills drop below "Cook this" at large text). "Calmer": dropped the
+  bottom "Check your groceries" card (Groceries is a tab), shelf tiles are bare photos (no card each), Plan-tonight
+  and prep-ahead badges tinted so "Cook this" is the one accent. **Pre-mortem:** (1) picked time ignored / not saved
+  → `aLaterEatTimeMovesTheStartTime` + UI step asserting "eat at 8" (shot 28); (2) garbage stored value shows odd
+  times → `storedEatTimeFallsBackToSeven…`; (3) shelf text unreadable without a card on light gradients → look at
+  shots 16/18 (and Light if available).
 - **Today+ 1/3 slice 1**: Shuffle cycles `[hero] + alternatives` (≤3): today's open plans (dinner first), kitchen
   matches, quick recipes (≤30 min known time; favourites, own over samples, most cooked, name). Suggestions skip the
   single most recently cooked recipe; plans never skipped. With nothing planned and no kitchen match, a quick recipe is
