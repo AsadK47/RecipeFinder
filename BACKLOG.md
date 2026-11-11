@@ -58,7 +58,7 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Showcase screenshots → Plan my week → Groceries + Kitchen →
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Showcase screenshots → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
    (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
    skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
@@ -183,6 +183,20 @@ drop a line while moving it.
   (Spoons slot once Spoons 1/2 ships). "Try something new" card: one never-cooked recipe per week (stable for the week;
   uses taste profile once it exists). *Done when:* weekly pick (stable, never-cooked) + progress logic tested,
   screenshots, CI green. Note: Today looks flat without photos — Recipe pictures lifts it further.
+- [ ] **Badges 1/2 — Earning feels big, browsing feels alive** (owner OK 2026-11-11: "give the achievements more
+  impact … scrollable or swipable … not just a static something"). (a) Earn reveal: full-screen badge flip-in, shine
+  sweep, confetti in the badge colour, its own haptic pattern, settles onto the shelf (replaces the 380pt sheet; still
+  waits for Made it / "+" sheets). (b) Tap any badge → full-screen card pager, swipe left/right through all badges;
+  tilt-to-shine via CoreMotion (on device, respects Reduce Motion). (c) Locked badges: silhouette + progress ring
+  ("7 / 10 cooks") + a button to where you earn it (e.g. "Plan a meal" → Plan tab). (d) Trophy shelf on Me grouped
+  Cooking / Streaks / Importing / Planning with "12 / 30" counts, newest first. *Done when:* pager order, progress,
+  grouping + earn-here routing tested, screenshots (shelf, pager, locked card, reveal), CI green.
+- [ ] **Badges 2/2 — Tiers, stories, sharing, next up.** Bronze → Silver → Gold → Platinum tiers on count badges
+  (e.g. cook 10/25/50/100; existing unlocks map to their tier, no data loss — new stored fields only with owner OK if
+  Core Data is needed, else `LocalStore`) with a tier-up animation; "Earned 3 Nov — cooking Thai green curry" story
+  line (recipe that unlocked it); share card image via `ShareLink` (rendered on device); "2 more cooks to Head Chef"
+  on the Made it sheet and Today. *Done when:* tier mapping/migration, story capture and next-badge logic tested,
+  screenshots, CI green.
 - [ ] **Plan my week — a proper meal planner** (owner: "make the meal planner a proper feature"). 7-day agenda by
   default (tap empty slot → inline suggestions/picker; long-press to move/swap; per-meal servings); tap planned meal →
   open/cook; cooking it marks it done; pinned "Shop for this week (N items)" that scales by planned servings (fixes
