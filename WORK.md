@@ -1,15 +1,12 @@
 # WORK.md — handoff (2026-11-11, builder agent)
 
 ## In progress
-- **Add flow 1/3 slice 1** on `agent/add-flow-1-draft-screen` (29850eb): create + import review show `RecipeDraftView`
-  (recipe as it'll look; tap photo/name/chips/cards → that section's editor in a sheet via `sectionEditor(_:)`), Save
-  pinned at bottom, `WizardIntroSheet` deleted. Pure `RecipeDraftPreview` + tests. UI tests → `draft.name`; new
-  screenshot test `testCaptureNewRecipeDraft` (21/22). Waiting on Build & Test.
+- Nothing in progress. Add flow 1/3 slice 1 merged (29850eb).
 
 ## Next action
-Check Build & Test for 29850eb; fix; ff-merge main. Then slice 2: run Screenshots workflow on the branch/main to eyeball
-21-new-recipe, 09-low-confidence, 11-start-from-text; trim step views now unused by the draft screen (WizardStepHeader
-subtitles, `WizardRecipeSummary` in NotesStepView?) for net lines down; then tick the item.
+Add flow 1/3 slice 2: eyeball 21/22/09/11 in the Screenshots run 42974732204 artifact (or nightly); remove what the draft
+screen makes redundant (NotesStepView `WizardRecipeSummary` card, step-header illustrations) for net lines down; tick.
+Also check the nightly UI run (03:00 UTC 2026-11-12) incl. `testCaptureAFirstLaunchToday` + `testCreateManuallyOpensWizard`.
 
 ## Decisions (why)
 - **Add flow 1/3 slice 1**: kept the existing section editors (one canonical editor) and show them one at a time in a
