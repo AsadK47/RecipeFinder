@@ -58,7 +58,7 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Showcase screenshots → Plan my week → Groceries + Kitchen →
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Showcase screenshots → Plan my week → Groceries + Kitchen →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → Settings tidy-up
    (now inside Me) + polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
    skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
@@ -168,6 +168,20 @@ drop a line while moving it.
   sites, Instagram captions, cookbook photos) as `ImportRegressions` fixtures (red), fix the parsers until green;
   amounts/units split correctly, section headers ("For the sauce") kept, junk lines (ads, "Jump to recipe") dropped.
   *Done when:* every fixture green, CI green.
+- [ ] **Today+ 1/3 — Tonight, decided** (owner 2026-11-11: "the Today page is lacking"; OK'd all 7 ideas, after Add
+  flow). Big Tonight hero (photo, time, "Cook this") with **Shuffle** → 2–3 alternatives from plan / kitchen match /
+  quick picks, never repeating the last cooked. Time-aware line under it: morning = prep/defrost for tonight's plan,
+  afternoon = "Start by 5:40 to eat at 7" (from prep + cook time, eat-time setting default 19:00), evening = "Quick
+  tonight? N under 30 min". Calmer layout: fewer stacked cards, bigger imagery, one accent per section.
+  *Done when:* hero/shuffle/alternatives + time-line logic tested, screenshots (morning, afternoon, evening), CI green.
+- [ ] **Today+ 2/3 — Use it up + week at a glance.** "Use soon" row: Kitchen items expiring ≤3 days, each paired with
+  one recipe that uses it ("Spinach goes off Thu → Saag paneer"). 7-day strip (planned/unplanned dots); tap an empty
+  day → plan it; "Plan tomorrow" one-tap pick. *Done when:* expiry→recipe pairing + strip logic tested, screenshots,
+  CI green.
+- [ ] **Today+ 3/3 — Progress + something new.** Progress row: streak, cooks this week, next badge with progress bar
+  (Spoons slot once Spoons 1/2 ships). "Try something new" card: one never-cooked recipe per week (stable for the week;
+  uses taste profile once it exists). *Done when:* weekly pick (stable, never-cooked) + progress logic tested,
+  screenshots, CI green. Note: Today looks flat without photos — Recipe pictures lifts it further.
 - [ ] **Plan my week — a proper meal planner** (owner: "make the meal planner a proper feature"). 7-day agenda by
   default (tap empty slot → inline suggestions/picker; long-press to move/swap; per-meal servings); tap planned meal →
   open/cook; cooking it marks it done; pinned "Shop for this week (N items)" that scales by planned servings (fixes
