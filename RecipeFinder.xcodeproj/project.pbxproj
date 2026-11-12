@@ -703,6 +703,7 @@
 		F3AD2EBC3061884B00274E33 /* RecipeModel 13.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 13.xcdatamodel"; sourceTree = "<group>"; };
 		F3AD2EBD3061884B00274E33 /* RecipeModel 14.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 14.xcdatamodel"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B21 /* RecipeModel 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 15.xcdatamodel"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B22 /* RecipeModel 16.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 16.xcdatamodel"; sourceTree = "<group>"; };
 		F3AD2EBD3061940600274E33 /* View+AppCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AppCard.swift"; sourceTree = "<group>"; };
 		F3AD2ED43064062D00274E33 /* RecipeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRow.swift; sourceTree = "<group>"; };
 		F3AD2ED63064063100274E33 /* RecipeLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeLink.swift; sourceTree = "<group>"; };
@@ -3291,6 +3292,7 @@
 				F3AD2EBC3061884B00274E33 /* RecipeModel 13.xcdatamodel */,
 				F3AD2EBD3061884B00274E33 /* RecipeModel 14.xcdatamodel */,
 				A1B2C3D4E5F60718293A4B21 /* RecipeModel 15.xcdatamodel */,
+				A1B2C3D4E5F60718293A4B22 /* RecipeModel 16.xcdatamodel */,
 				9E212D6F2EB12315005743F7 /* RecipeModel 9.xcdatamodel */,
 				9E212D702EB12315005743F7 /* RecipeModel 10.xcdatamodel */,
 				9E45FAE32DC690E300F46909 /* RecipeModel 8.xcdatamodel */,
@@ -3303,7 +3305,7 @@
 				9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */,
 				9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */,
 			);
-			currentVersion = A1B2C3D4E5F60718293A4B21 /* RecipeModel 15.xcdatamodel */;
+			currentVersion = A1B2C3D4E5F60718293A4B22 /* RecipeModel 16.xcdatamodel */;
 			path = RecipeModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

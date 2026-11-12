@@ -197,4 +197,84 @@ import Foundation
         #expect(row.value(forKey: "cookCount") as? Int == 3)
         #expect(row.value(forKey: "sourceText") as? String == nil)
     }
+
+    /// Pins the v15→v16 upgrade (v16 adds the entities that replace the UserDefaults blobs): recipes survive and the
+    /// new entities can be written straight away.
+    @Test func v15StoreMigratesAndGainsTheNewEntities() throws {
+        let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
+        let source = try #require(NSManagedObjectModel(contentsOf: momd.appendingPathComponent("RecipeModel 15.mom")))
+        let current = try #require(NSManagedObjectModel(contentsOf: momd))
+
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString).appendingPathExtension("sqlite")
+        defer { for s in ["", "-wal", "-shm"] { try? FileManager.default.removeItem(at: URL(fileURLWithPath: url.path + s)) } }
+
+        let recipeId = UUID()
+        let sourceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: source)
+        try sourceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+        let writeContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        writeContext.persistentStoreCoordinator = sourceCoordinator
+        let obj = NSManagedObject(
+            entity: try #require(NSEntityDescription.entity(forEntityName: "Recipe", in: writeContext)),
+            insertInto: writeContext
+        )
+        obj.setValue(recipeId, forKey: "id")
+        obj.setValue("Legacy Dish", forKey: "name")
+        obj.setValue("Pasted text", forKey: "sourceText")
+        try writeContext.save()
+        try sourceCoordinator.remove(try #require(sourceCoordinator.persistentStores.first))
+
+        let currentCoordinator = NSPersistentStoreCoordinator(managedObjectModel: current)
+        try currentCoordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType, configurationName: nil, at: url,
+            options: [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+        )
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = currentCoordinator
+        let row = try #require(try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "Recipe")).first)
+        #expect(row.value(forKey: "id") as? UUID == recipeId)
+        #expect(row.value(forKey: "sourceText") as? String == "Pasted text")
+
+        let planId = UUID()
+        let plan = NSManagedObject(
+            entity: try #require(NSEntityDescription.entity(forEntityName: "MealPlanEntity", in: context)),
+            insertInto: context
+        )
+        plan.setValue(planId, forKey: "id")
+        plan.setValue(recipeId, forKey: "recipeId")
+        try context.save()
+        let plans = try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "MealPlanEntity"))
+        #expect(plans.compactMap { $0.value(forKey: "id") as? UUID } == [planId])
+        #expect(plans.first?.value(forKey: "servings") as? Int == 1)
+    }
+
+    /// Every blob that lives in UserDefaults today has an entity to move into (Data safety 1/4).
+    @Test(arguments: [
+        "MealPlanEntity", "ShoppingItemEntity", "ShoppingStoreEntity", "KitchenItemEntity", "InventoryItemEntity",
+        "CollectionEntity", "EarnedBadgeEntity", "CookDateEntity", "ProfileEntity",
+    ])
+    func currentModelHasAnEntityForEachBlob(entityName: String) throws {
+        let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
+        let current = try #require(NSManagedObjectModel(contentsOf: momd))
+        #expect(current.entitiesByName[entityName] != nil)
+    }
+
+    /// CloudKit (Data safety 2/4) refuses a model with required attributes lacking defaults, unique constraints, or
+    /// required / one-way relationships — catch that here, not when sync first switches on.
+    @Test func currentModelIsCloudKitReady() throws {
+        let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
+        let current = try #require(NSManagedObjectModel(contentsOf: momd))
+        for entity in current.entities {
+            let name = entity.name ?? "?"
+            #expect(entity.uniquenessConstraints.isEmpty, "\(name) has unique constraints")
+            for attribute in entity.attributesByName.values {
+                #expect(attribute.isOptional || attribute.defaultValue != nil, "\(name).\(attribute.name) is required")
+            }
+            for relationship in entity.relationshipsByName.values {
+                #expect(relationship.isOptional, "\(name).\(relationship.name) is required")
+                #expect(relationship.inverseRelationship != nil, "\(name).\(relationship.name) has no inverse")
+                #expect(relationship.deleteRule != .denyDeleteRule, "\(name).\(relationship.name) denies delete")
+            }
+        }
+    }
 }

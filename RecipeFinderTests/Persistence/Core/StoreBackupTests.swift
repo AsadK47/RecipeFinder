@@ -239,7 +239,7 @@ import Foundation
 
     /// The model before the current one — what TestFlight users have on their phones when the next version ships.
     private func olderModel() throws -> NSManagedObjectModel {
-        try #require(NSManagedObjectModel(contentsOf: try momd().appendingPathComponent("RecipeModel 14.mom")))
+        try #require(NSManagedObjectModel(contentsOf: try momd().appendingPathComponent("RecipeModel 15.mom")))
     }
 
     @discardableResult

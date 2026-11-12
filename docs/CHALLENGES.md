@@ -121,5 +121,5 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Time] Before first unlock, store reads fail and `attemptStoreRecovery` moves a healthy store aside (pre-existing, not this change) — check `isProtectedDataAvailable` before "recovering".
   → Owner:
-- ⚔️ [Tests] `olderModel()` pins `RecipeModel 14.mom`; when 16 ships, bump it to 15 with `.xccurrentversion` (tracked in WORK.md).
+- ⚔️ [Tests] `olderModel()` pins the model before current (now `RecipeModel 15.mom`); bump it whenever `.xccurrentversion` moves.
   → Owner:
