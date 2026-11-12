@@ -9,17 +9,6 @@ protocol CollectionStoring: AnyObject {
     /// Every stored collection, in list order.
     func fetchCollections() throws -> [RecipeCollection]
     /// Makes the store hold exactly these collections, in this order.
-    /// One unreadable row keeps its name and loses its members rather than failing every collection.
-    private static func recipeIDs(in row: NSManagedObject, decoder: JSONDecoder) -> [UUID] {
-        guard let data = row.value(forKey: "recipeIDs") as? Data else { return [] }
-        do {
-            return try decoder.decode([UUID].self, from: data)
-        } catch {
-            collectionStoreLogger.error("❌ Unreadable recipe list in a collection row: \(error.localizedDescription)")
-            return []
-        }
-    }
-
     func replaceCollections(with collections: [RecipeCollection]) throws
 }
 
@@ -72,6 +61,17 @@ final class CoreDataCollectionStore: CollectionStoring {
                 recipeIDs: Self.recipeIDs(in: row, decoder: decoder),
                 createdAt: row.value(forKey: "createdAt") as? Date ?? .distantPast
             )
+        }
+    }
+
+    /// One unreadable row keeps its name and loses its members rather than failing every collection.
+    private static func recipeIDs(in row: NSManagedObject, decoder: JSONDecoder) -> [UUID] {
+        guard let data = row.value(forKey: "recipeIDs") as? Data else { return [] }
+        do {
+            return try decoder.decode([UUID].self, from: data)
+        } catch {
+            collectionStoreLogger.error("❌ Unreadable recipe list in a collection row: \(error.localizedDescription)")
+            return []
         }
     }
 
