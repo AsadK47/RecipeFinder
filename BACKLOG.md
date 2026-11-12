@@ -202,7 +202,7 @@ drop a line while moving it.
 - [x] **Today+ 2/3 — Use it up + week at a glance.** Slice 1 (afea2cf): "Use it up" row. Slice 2 (25165c1): "This
   week" strip (filled dot = planned, ring = not; empty day → pick its dinner; planned day → Plan tab) + "Plan tomorrow"
   one-tap pick when tomorrow has no dinner; shots 30/31.
-- [ ] **Today+ 3/3 — Progress + something new.** Progress row: streak, cooks this week, next badge with progress bar
+- [ ] **Today+ 3/3 — Progress + something new.** — 🚧 builder agent 2026-11-12 Progress row: streak, cooks this week, next badge with progress bar
   (Spoons slot once Spoons 1/2 ships). "Try something new" card: one never-cooked recipe per week (stable for the week;
   uses taste profile once it exists). *Done when:* weekly pick (stable, never-cooked) + progress logic tested,
   screenshots, CI green. Note: Today looks flat without photos — Recipe pictures lifts it further.
