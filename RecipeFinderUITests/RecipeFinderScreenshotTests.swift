@@ -376,6 +376,41 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "29-today-use-soon")
     }
 
+    /// Today+ 2/3 slice 2: the "This week" strip and planning an empty day's dinner from it. Sorts after
+    /// `testCaptureTodayUseSoon`; earlier tests leave tonight and tomorrow planned, so a later day is the empty one.
+    @MainActor
+    func testCaptureTodayWeek() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        let days = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'today.week.day.'"))
+        let first = days.firstMatch
+        XCTAssertTrue(first.waitForExistence(timeout: 10), "Today should show the week strip.")
+        for _ in 0..<5 where !first.isHittable { app.swipeUp() }
+        XCTAssertEqual(days.count, 7, "The week strip should show seven days.")
+        XCTAssertTrue(first.label.hasPrefix("Today"), "The strip should start today: \(first.label)")
+        settle()
+        snap(app, "30-today-week")
+
+        let empty = days.matching(NSPredicate(format: "label ENDSWITH 'nothing planned'")).firstMatch
+        XCTAssertTrue(empty.exists, "Some day this week should be unplanned.")
+        let emptyID = empty.identifier
+        empty.tap()
+        let pick = app.buttons.matching(identifier: "mealPicker.recipe").firstMatch
+        XCTAssertTrue(pick.waitForExistence(timeout: 5), "Tapping an empty day should offer recipes for its dinner.")
+        settle()
+        snap(app, "31-today-plan-day")
+        pick.tap()
+        dismissBadgeSheet(app)
+        let planned = app.buttons[emptyID]
+        XCTAssertTrue(planned.waitForExistence(timeout: 5), "The day should still be on the strip.")
+        let markedPlanned = NSPredicate(format: "label CONTAINS 'dinner:'")
+        expectation(for: markedPlanned, evaluatedWith: planned)
+        waitForExpectations(timeout: 5)
+    }
+
     // MARK: - Helpers
 
     /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded

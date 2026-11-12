@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Today tab: greeting + streak, a "Tonight" hero (planned meal, else kitchen match, else a quick recipe) that Shuffle
-/// steps through, with a time-aware "Start by" line (tap it to change when dinner is), and shelves of recipes to cook.
+/// steps through, with a time-aware "Start by" line (tap it to change when dinner is), a "This week" strip with a
+/// one-tap "Plan tomorrow", and shelves of recipes to cook.
 /// Kept calm on purpose: one card for tonight, plain photo shelves below, the theme accent on "Cook this" alone.
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
@@ -19,10 +20,16 @@ struct TodayView: View {
 
     /// Pushes the recipe with cooking mode already up, so finishing lands on its detail (Made it, rating).
     private struct CookRoute: Hashable { let recipeID: UUID }
+    /// A day whose dinner is being picked from the week strip.
+    private struct PlanningDay: Identifiable { let date: Date; var id: Date { date } }
 
     @State private var path = NavigationPath()
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
     @State private var feed: TodayFeed?
+    @State private var week: TodayWeek?
+    @State private var planningDay: PlanningDay?
+    /// Picked in the sheet, planned once it has closed (a badge sheet can't show over one mid-dismissal).
+    @State private var pendingPlan: (recipe: RecipeModel, date: Date)?
     /// The recipe Shuffle is showing (by id, so a refresh never swaps the card by position); nil = the hero.
     @State private var tonightRecipeID: UUID?
     @State private var showsClipboardCard = false
@@ -102,6 +109,12 @@ struct TodayView: View {
         } message: {
             Text("Copy the recipe's web address, then tap Paste again.")
         }
+        .sheet(item: $planningDay, onDismiss: planPicked) { day in
+            RecipeSelectionSheet(mealTime: .dinner) { recipe in
+                pendingPlan = (recipe, day.date)
+                planningDay = nil
+            }
+        }
         .onChange(of: recipeStore.recipes) { _, _ in refresh() }
         .onChange(of: kitchen.items) { _, _ in refresh() }
         .onChange(of: kitchen.inventoryItems) { _, _ in refresh() }
@@ -110,7 +123,7 @@ struct TodayView: View {
     private func refresh() {
         let now = Self.now()
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now
-        feed = TodayFeed.make(
+        let newFeed = TodayFeed.make(
             recipes: recipeStore.recipes,
             todaysPlans: mealPlanning.mealPlans(for: now),
             kitchenItemNames: kitchen.items.map(\.name),
@@ -118,6 +131,28 @@ struct TodayView: View {
             inventoryItems: kitchen.inventoryItems,
             now: now
         )
+        feed = newFeed
+        let weekPlans = (0..<TodayWeek.dayCount).flatMap { offset in
+            Calendar.current.date(byAdding: .day, value: offset, to: now).map(mealPlanning.mealPlans(for:)) ?? []
+        }
+        week = TodayWeek.make(
+            recipes: recipeStore.recipes, plans: weekPlans,
+            tonightIDs: Set(newFeed.tonightOptions.map(\.recipe.id)), now: now
+        )
+    }
+
+    private func planDinner(_ recipe: RecipeModel, on date: Date) {
+        mealPlanning.addMealPlan(MealPlanModel(
+            recipeId: recipe.id, recipeName: recipe.name, date: date, mealTime: .dinner, servings: recipe.currentServings
+        ))
+        HapticManager.shared.success()
+        refresh()
+    }
+
+    private func planPicked() {
+        guard let pendingPlan else { return }
+        self.pendingPlan = nil
+        planDinner(pendingPlan.recipe, on: pendingPlan.date)
     }
 
     private func probeClipboard() async {
@@ -197,6 +232,17 @@ struct TodayView: View {
 
         if !feed.useSoon.isEmpty {
             TodayUseSoonCard(pairs: feed.useSoon, onOpen: open)
+        }
+
+        if let week {
+            TodayWeekCard(
+                week: week,
+                onPlanDay: { planningDay = PlanningDay(date: $0) },
+                onPlanTomorrow: { recipe in
+                    if let tomorrow = week.days.dropFirst().first { planDinner(recipe, on: tomorrow.date) }
+                },
+                onOpenPlan: { onOpen(.plan) }
+            )
         }
 
         if feed.isNewUser, !feed.starters.isEmpty {

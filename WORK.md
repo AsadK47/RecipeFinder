@@ -1,11 +1,25 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-(none) — Today+ 2/3 slice 1 merged (afea2cf). Slice 2 (7-day strip + "Plan tomorrow") is next.
+Today+ 2/3 slice 2 on `agent/today-week-strip` (claimed on main a766735): `TodayWeek` model + tests, `TodayWeekCard`,
+TodayView wiring, UI test `testCaptureTodayWeek` (shots 30/31). Waiting on Build & Test.
 
 ## Next action
-Claim Today+ 2/3 slice 2 on main, branch `agent/today-week-strip`; deep-review (item's last slice) + challenge before merge.
+Get Build & Test green → Screenshots run on the branch → look at 16, 30, 31 → deep-review + challenge (separate agents)
+→ merge main into branch, ff main, tick item, Log line.
 ## Decisions (why)
+- **Today+ 2/3 slice 2 (week strip)**: own "This week" card after Use it up, before shelves: 7 days from today, filled
+  dot = any plan (cooked ones too), ring = nothing. Empty day → `RecipeSelectionSheet` (dinner) for that day; a
+  planned day → Plan tab (no per-day deep link into Plan yet). "Plan tomorrow" shows only when tomorrow has no dinner;
+  pick = favourite → own → most cooked → name, skipping Tonight's options, this week's planned recipes and anything
+  cooked in the past 7 days. "Plan it" plans directly; "Choose" opens the picker for tomorrow. The picker's choice is
+  planned in the sheet's onDismiss (mealPlanner badge sheet can't show over a sheet mid-dismissal). Both buttons are
+  frosted secondary (Cook this keeps the one accent). Shown for new users too (planning a starter is fine).
+  TodayView is now ~340 lines → Smell candidate (extract refresh/plan helpers). **Pre-mortem:** (1) dots on the wrong
+  day (time zones / late-night plans) → `lateNightPlanCountsForItsOwnDay`, `plansOutsideTheSevenDaysAreLeftOut`;
+  (2) "Plan tomorrow" offers tonight's dish or one just cooked, or shows when tomorrow is planned →
+  `pickSkips…`, `tomorrowWithADinnerNeedsNoSuggestion`; (3) tapping a day does nothing / plan doesn't appear →
+  UI test `testCaptureTodayWeek` asserts the tapped day reads "dinner:" after picking (shots 30, 31).
 - **Today+ 2/3 slice 1 (Use it up)**: reads `kitchen.inventoryItems` (the ones with expiry dates), window 0–3 calendar
   days (matches `isExpiringSoon`), expired items left out (Kitchen's alerts cover them). One row per recipe, max 3
   rows: each item gets its best recipe not already on the row; if all its recipes are taken it joins that row

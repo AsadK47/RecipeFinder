@@ -43,6 +43,7 @@ struct RecipeSelectionSheet: View {
                                 MealPickerRecipeCard(recipe: recipe)
                             }
                             .buttonStyle(.plain)
+                            .accessibilityIdentifier("mealPicker.recipe")
                         }
                     }
                     .padding(.horizontal)
