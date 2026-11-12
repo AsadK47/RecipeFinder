@@ -93,9 +93,9 @@ import Foundation
     }
 
     @Test func planTomorrowNeverOffersTonightsDish() {
-        // Both slow, so neither is a quick Shuffle pick; Curry is tonight's plan, so Pie is offered for tomorrow.
-        let curry = recipe("Curry", cookingTime: "2 hours"), pie = recipe("Pie", cookingTime: "2 hours")
-        let result = snapshot([curry, pie], plans: [plan(curry, on: 0)])
+        // Nothing planned: quick Curry is tonight's hero. Without the tonight IDs, Curry would win tomorrow by name.
+        let curry = recipe("Curry"), pie = recipe("Pie", cookingTime: "2 hours")
+        let result = snapshot([curry, pie])
         #expect(result.feed.hero?.recipe == curry)
         #expect(result.week.planTomorrow == pie)
     }
@@ -109,27 +109,27 @@ import Foundation
     // MARK: Shelves
 
     @Test func shelvesLeaveOutRecipesOnTheCards() {
-        let a = recipe("A", cookCount: 1, lastCooked: day(-2))
-        let b = recipe("B", cookCount: 1, lastCooked: day(-3))
-        let old = recipe("Old", cookCount: 3, lastCooked: day(-60))
+        // All slow, nothing planned, empty kitchen: no hero, so the feed drops nothing itself.
+        let a = recipe("A", cookCount: 1, lastCooked: day(-2), cookingTime: "2 hours")
+        let b = recipe("B", cookCount: 1, lastCooked: day(-3), cookingTime: "2 hours")
+        let old = recipe("Old", cookCount: 3, lastCooked: day(-60), cookingTime: "2 hours")
         let feed = TodayFeed.make(recipes: [a, b, old], todaysPlans: [], kitchenItemNames: [], now: now, calendar: cal)
-        let all = feed.shelves(excluding: [])
-        #expect(all.cookAgain == feed.cookAgain)
-        #expect(all.rediscover == feed.rediscover)
-        #expect(all.kitchenMatches == feed.fitsYourKitchen)
+        #expect(feed.hero == nil)
+        #expect(feed.cookAgain == [a, b])
+        #expect(feed.rediscover == [old])
+        #expect(feed.shelves(excluding: []) == TodayFeed.Shelves(cookAgain: [a, b], kitchenMatches: [], rediscover: [old]))
 
-        let ids = [a.id, b.id, old.id]
-        let without = feed.shelves(excluding: ids.map { Optional($0) })
-        #expect(without.cookAgain.isEmpty)
+        let without = feed.shelves(excluding: [a.id, nil, old.id])
+        #expect(without.cookAgain == [b])
         #expect(without.rediscover.isEmpty)
     }
 
     @Test func kitchenShelfLeavesOutRecipesOnTheCards() {
+        // A wins the name tie and is the hero (already off the shelf), so B is the one on the shelf.
         let a = recipe("A", ingredients: ["egg"]), b = recipe("B", ingredients: ["egg"])
         let feed = TodayFeed.make(recipes: [a, b], todaysPlans: [], kitchenItemNames: ["egg"], now: now, calendar: cal)
-        let kept = Set(feed.fitsYourKitchen.map(\.recipe.id)).subtracting([feed.hero?.recipe.id].compactMap { $0 })
-        let shelves = feed.shelves(excluding: [nil, a.id])
-        #expect(shelves.kitchenMatches.map(\.recipe.id).allSatisfy { $0 != a.id && kept.contains($0) })
-        #expect(shelves.kitchenMatches.count == feed.fitsYourKitchen.filter { $0.recipe.id != a.id }.count)
+        #expect(feed.fitsYourKitchen.map(\.recipe) == [b])
+        #expect(feed.shelves(excluding: [nil]).kitchenMatches.map(\.recipe) == [b])
+        #expect(feed.shelves(excluding: [b.id]).kitchenMatches.isEmpty)
     }
 }
