@@ -105,13 +105,21 @@ final class CoreDataCollectionStore: CollectionStoring {
         let encoder = JSONEncoder()
         for (index, collection) in collections.enumerated() {
             let row = rowsByID.removeValue(forKey: collection.id) ?? NSManagedObject(entity: entity, insertInto: context)
-            row.setValue(collection.id, forKey: "id")
-            row.setValue(collection.name, forKey: "name")
-            row.setValue(collection.colorName.rawValue, forKey: "colorName")
-            row.setValue(try encoder.encode(collection.recipeIDs), forKey: "recipeIDs")
-            row.setValue(collection.createdAt, forKey: "createdAt")
-            row.setValue(NSNumber(value: Int32(clamping: index)), forKey: "sortOrder")
+            row.setIfChanged(collection.id as NSUUID, forKey: "id")
+            row.setIfChanged(collection.name as NSString, forKey: "name")
+            row.setIfChanged(collection.colorName.rawValue as NSString, forKey: "colorName")
+            row.setIfChanged(try encoder.encode(collection.recipeIDs) as NSData, forKey: "recipeIDs")
+            row.setIfChanged(collection.createdAt as NSDate, forKey: "createdAt")
+            row.setIfChanged(NSNumber(value: Int32(clamping: index)), forKey: "sortOrder")
         }
         for leftover in rowsByID.values { context.delete(leftover) }
+    }
+}
+
+private extension NSManagedObject {
+    /// Unchanged rows stay unchanged, so a save (and later sync) only sees the collections that were edited.
+    func setIfChanged(_ value: NSObject, forKey key: String) {
+        guard (self.value(forKey: key) as? NSObject) != value else { return }
+        setValue(value, forKey: key)
     }
 }

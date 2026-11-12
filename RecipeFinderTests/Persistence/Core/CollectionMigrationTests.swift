@@ -45,7 +45,7 @@ final class InMemoryCollectionStore: CollectionStoring {
     }
 
     private func migrated() -> Bool {
-        storage.bool(forKey: LegacyBlobMigration.flagKey(for: blobKey))
+        storage.bool(forKey: MirroredSnapshot<RecipeCollection>.flagKey(for: blobKey))
     }
 
     private func manager(_ store: any CollectionStoring) -> CollectionManager {
@@ -154,6 +154,34 @@ final class InMemoryCollectionStore: CollectionStoring {
         #expect(store.collections == [baking])
     }
 
+    @Test func aSingleRenameWhoseSaveFailsIsKeptNextLaunch() {
+        writeBlob(both)
+        let store = InMemoryCollectionStore()
+        let sut = manager(store)
+        store.failWrites = true
+        sut.rename(soups, to: "Winter soups")
+
+        store.failWrites = false
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.collections.map(\.name) == ["Winter soups", "Baking"])
+        #expect(store.collections.map(\.name) == ["Winter soups", "Baking"])
+    }
+
+    @Test func anUnreadableStoreWithNoKeptCopyIsNeverOverwritten() {
+        let store = InMemoryCollectionStore(both)   // e.g. kept copy was corrupt and set aside
+        _ = manager(store)
+        store.failReads = true
+        let broken = manager(store)
+        #expect(broken.collections.isEmpty)
+        broken.createCollection(name: "Quick")
+        broken.purge(recipeID: soups.recipeIDs[0])
+
+        store.failReads = false
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.collections == both)
+        #expect(store.collections == both)
+    }
+
     @Test func aChangeWhoseSaveFailsIsKeptNextLaunch() {
         let store = InMemoryCollectionStore()
         let sut = manager(store)
@@ -218,6 +246,17 @@ final class InMemoryCollectionStore: CollectionStoring {
         #expect(manager(store).collections.isEmpty)
     }
 
+    @Test func resetAsSettingsRunsItClearsCollections() {
+        // DataManagementSettingsView: LocalStore.clearAll() (drops blob + flag), then removeAllCollections().
+        writeBlob(both)
+        let store = InMemoryCollectionStore()
+        let sut = manager(store)
+        storage.clearAll()
+        sut.removeAllCollections()
+        #expect(sut.collections.isEmpty)
+        #expect(manager(store).collections.isEmpty)
+    }
+
     @Test func aResetWhoseDeleteFailsIsFinishedNextLaunch() {
         let store = InMemoryCollectionStore(both)
         let sut = manager(store)
@@ -264,9 +303,25 @@ final class InMemoryCollectionStore: CollectionStoring {
         try sut.replaceCollections(with: [renamed])
         #expect(try sut.fetchCollections() == [renamed])
         let request = NSFetchRequest<NSManagedObject>(entityName: CoreDataCollectionStore.entityName)
-        #expect(try persistence.container.viewContext.count(for: request) == 1)
+        let rows = try persistence.container.viewContext.fetch(request)
+        #expect(rows.count == 1)
+        #expect(rows.first?.value(forKey: "name") as? String == "Winter soups")
         try sut.replaceCollections(with: [])
         #expect(try sut.fetchCollections().isEmpty)
+    }
+
+    @Test func coreDataStoreUpdatesExistingRowsInsteadOfReinserting() throws {
+        let persistence = PersistenceController(inMemory: true)
+        let context = persistence.container.viewContext
+        let sut = CoreDataCollectionStore(persistence: persistence)
+        try sut.replaceCollections(with: both)
+        let request = NSFetchRequest<NSManagedObject>(entityName: CoreDataCollectionStore.entityName)
+        let idsBefore = Set(try context.fetch(request).map(\.objectID))
+
+        var renamed = soups
+        renamed.name = "Winter soups"
+        try sut.replaceCollections(with: [renamed, baking])
+        #expect(Set(try context.fetch(request).map(\.objectID)) == idsBefore)
     }
 
     @Test func coreDataStoreCleansUpRowsWithASharedOrMissingId() throws {

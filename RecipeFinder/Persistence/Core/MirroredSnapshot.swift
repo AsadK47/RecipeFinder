@@ -20,6 +20,8 @@ enum MirroredSnapshotError: LocalizedError {
 /// - A store that differs from the blob (save cut short, a blob-only build ran in between, recovery emptied the store)
 ///   is replaced by the blob. Sync (Data safety 2/4) will need its own rule here, since then the store can be newer.
 /// - Reset records a pending wipe, retried each launch, so a failed delete never brings erased data back.
+/// - If the store can't be read and there's no readable blob either, nothing is written this launch: replacing the
+///   store from a blob that doesn't hold its contents would erase them.
 @MainActor
 final class MirroredSnapshot<Value: Codable & Equatable> {
     private let blobKey: String
@@ -29,7 +31,9 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     private let logger = AppLogger.logger(category: "MirroredSnapshot")
 
     /// False when the store can't be used this launch: the blob is read and written instead.
-    private(set) var usesEntities = false
+    private var usesEntities = false
+    /// Store unreadable and no blob to stand in for it: edits stay in memory only this launch.
+    private var savesDisabled = false
 
     init(
         blobKey: String,
@@ -43,10 +47,11 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         self.replace = replace
     }
 
-    static func wipePendingKey(for blobKey: String) -> String { "wipePending.\(blobKey)" }
+    /// Own namespace: `LegacyBlobMigration`'s flag means "added what was missing", this one "store mirrors the blob".
+    static func flagKey(for blobKey: String) -> String { "mirroredToCoreData.\(blobKey)" }
 
-    private var flagKey: String { LegacyBlobMigration.flagKey(for: blobKey) }
-    private var wipePendingKey: String { Self.wipePendingKey(for: blobKey) }
+    private var flagKey: String { Self.flagKey(for: blobKey) }
+    private var wipePendingKey: String { "wipePending.\(blobKey)" }
 
     /// `LocalStore` keeps an undecodable blob aside as `<key>.corrupt`, so nil means missing or corrupt.
     private func blob() -> [Value]? {
@@ -54,12 +59,13 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     }
 
     func load() -> [Value] {
+        savesDisabled = false
         guard finishPendingWipe() else { return fallBackToBlob() }
         do {
             if !storage.bool(forKey: flagKey) {
                 if let values = blob() {
                     try copyIn(values)
-                    logger.info("✅ \(self.blobKey): moved \(values.count) values to Core Data")
+                    logger.info("✅ \(self.blobKey, privacy: .public): moved \(values.count) values to Core Data")
                 }
                 storage.set(true, forKey: flagKey)
             }
@@ -67,28 +73,29 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             if let kept = blob(), kept != values {
                 // The kept copy is written first, so it's never behind: a save cut short by the app being killed, an
                 // older build that only wrote the blob, or recovery replacing the store with an empty one.
-                logger.error("⚠️ \(self.blobKey): store differs from the kept copy; copying the kept copy in")
+                logger.error("⚠️ \(self.blobKey, privacy: .public): store differs from the kept copy; copying the kept copy in")
                 try copyIn(kept)
                 values = kept
             }
             usesEntities = true
             return values
         } catch {
-            logger.error("❌ \(self.blobKey): store unusable, using the kept copy: \(error.localizedDescription)")
+            logger.error("❌ \(self.blobKey, privacy: .public): store unusable, using the kept copy: \(error.localizedDescription)")
             return fallBackToBlob()
         }
     }
 
     func save(_ values: [Value]) {
-        storage.setEncodable(values, forKey: blobKey)
-        guard usesEntities else {
-            storage.removeObject(forKey: flagKey)
+        guard !savesDisabled else {
+            logger.error("❌ \(self.blobKey, privacy: .public): not saved, store and kept copy both unreadable")
             return
         }
+        storage.setEncodable(values, forKey: blobKey)
+        guard usesEntities else { return }
         do {
             try replace(values)
         } catch {
-            logger.error("❌ \(self.blobKey): failed to save, kept in the old copy: \(error.localizedDescription)")
+            logger.error("❌ \(self.blobKey, privacy: .public): failed to save, kept in the old copy: \(error.localizedDescription)")
             usesEntities = false
             storage.removeObject(forKey: flagKey)
         }
@@ -105,10 +112,17 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         guard try fetch() == values else { throw MirroredSnapshotError.verificationFailed }
     }
 
+    /// Unmarks so the next launch replaces the store with the blob — only safe when there is a blob to replace it
+    /// with, or a pending wipe will empty the store first anyway.
     private func fallBackToBlob() -> [Value] {
         usesEntities = false
+        let kept = blob()
+        guard kept != nil || storage.bool(forKey: wipePendingKey) else {
+            savesDisabled = true
+            return []
+        }
         storage.removeObject(forKey: flagKey)
-        return blob() ?? []
+        return kept ?? []
     }
 
     /// True when no Reset wipe is outstanding.
@@ -119,7 +133,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             storage.removeObject(forKey: wipePendingKey)
             return true
         } catch {
-            logger.error("❌ \(self.blobKey): failed to erase, will retry next launch: \(error.localizedDescription)")
+            logger.error("❌ \(self.blobKey, privacy: .public): failed to erase, will retry next launch: \(error.localizedDescription)")
             return false
         }
     }

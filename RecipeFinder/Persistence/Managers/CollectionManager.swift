@@ -147,6 +147,7 @@ final class CollectionManager: CollectionManaging {
 
     /// Remove a deleted recipe from all collections.
     func purge(recipeID: UUID) {
+        guard collections.contains(where: { $0.contains(recipeID) }) else { return }
         var updated = collections
         for idx in updated.indices {
             updated[idx].remove(recipeID)

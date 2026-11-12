@@ -137,3 +137,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Tests] Reset wiring (`resetToDefault` → `removeAllCookDates`) is untested; the view calls `.shared` directly (pre-existing).
   → Owner:
+
+### 2026-11-12 · Data safety 1/4 slice 3b (collections → CollectionEntity) — noted, not fixed
+- **Sync (2/4) breaks "the kept blob is never behind the store".** Once CloudKit adds rows this device's blob lacks,
+  `MirroredSnapshot`'s blob-wins rule (differs → replace, fallback → replace next launch) would delete synced rows
+  everywhere. 2/4 must drop the blob path (or make it add-only) before turning sync on. Cook dates' refill has a milder
+  version (re-adds dates deleted elsewhere).
+- **Shared `viewContext`:** store saves also commit/rollback other pending viewContext edits (same as CookDateStore).
+  A private context per store would isolate it — revisit with 2/4.
+- **Integrity check re-reads the same context**, so it checks memory, not disk (same as LegacyBlobMigration).
+- **Whole-list rewrite per edit** on the main thread; fine for realistic sizes (rows untouched unless changed). A
+  crafted backup with repeated ids makes rows churn but stay consistent (pre-existing BackupMerge gap).
+- **Two migration helpers** (`LegacyBlobMigration` add-only for cook dates, `MirroredSnapshot` whole-list); flags now
+  in separate namespaces. Port cook dates only if it shrinks code.
