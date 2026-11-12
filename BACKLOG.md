@@ -199,10 +199,9 @@ drop a line while moving it.
   afternoon = "Start by 5:40 to eat at 7" (from prep + cook time, eat-time setting default 19:00), evening = "Quick
   tonight? N under 30 min". Calmer layout: fewer stacked cards, bigger imagery, one accent per section.
   *Done when:* hero/shuffle/alternatives + time-line logic tested, screenshots (morning, afternoon, evening), CI green.
-- [ ] **Today+ 2/3 — Use it up + week at a glance.** — 🚧 builder agent 2026-11-12 "Use soon" row: Kitchen items expiring ≤3 days, each paired with
-  one recipe that uses it ("Spinach goes off Thu → Saag paneer"). 7-day strip (planned/unplanned dots); tap an empty
-  day → plan it; "Plan tomorrow" one-tap pick. *Done when:* expiry→recipe pairing + strip logic tested, screenshots,
-  CI green.
+- [ ] **Today+ 2/3 — Use it up + week at a glance.** Slice 1 done ("Use it up" row, afea2cf). Left (slice 2): 7-day
+  strip (planned/unplanned dots); tap an empty day → plan it; "Plan tomorrow" one-tap pick. *Done when:* strip +
+  plan-tomorrow logic tested, screenshots, CI green.
 - [ ] **Today+ 3/3 — Progress + something new.** Progress row: streak, cooks this week, next badge with progress bar
   (Spoons slot once Spoons 1/2 ships). "Try something new" card: one never-cooked recipe per week (stable for the week;
   uses taste profile once it exists). *Done when:* weekly pick (stable, never-cooked) + progress logic tested,
@@ -441,6 +440,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
+- 2026-11-12 · Today+ 2/3 slice 1 · afea2cf · Today gets a "Use it up" card: Kitchen items with an expiry in the next 3 days, each paired with a recipe that uses it ("Spinach: use by tomorrow → Mary Berry's Fish Pie"); max 3 rows, one recipe per row (an item whose recipes are taken joins that row); tap opens the recipe. New UseSoon.swift, TodayUseSoonCard.swift, UseSoonTests.swift registered in pbxproj by hand. On phone: Kitchen → add spinach expiring tomorrow → Today. · review: challenge 5 fixed, 3 noted (CHALLENGES.md); screenshots caught "Lemons goes off" grammar + a permission alert over the shot, both fixed · looked at: 16, 18, 29
 - 2026-11-11 · 🐞 Photo asks for the name again (owner report) · 9acbc14 · On the new-recipe screen the photo now opens Take Photo / Choose from Library straight away (it used to open the Name & Photo editor); extra gallery photos stay in that editor via the name. New UI test testDraftPhotoOpensPhotoChoiceNotNameEditor (green in a UI-test run). review: owner-reported, UI test proves it · looked at: — (dialog, not in screenshots). On phone: + → Start blank → tap the photo.
 - 2026-11-11 · Quality gates (owner OK, interactive) · see this commit · Nightly/"Run workflow" CI publishes per-file coverage to the `coverage` release (first run: app 53.7%; logic lows: NetworkMonitor 0%, RecipeImageTextRecognizer 6%, NotificationManager 31%, DietaryInfo 39%, KitchenInventoryModel 41%, SmartCollection 44%). Branch Screenshots runs publish `*-web.jpg` to `screenshots-preview` so agents can look before merging. BACKLOG step 6 adds pre-mortem, visual check, independent deep-review and a challenge pass; reviewer extra checks; daily challenger (Sonnet, 12:37 London) using the Playbook in docs/CHALLENGES.md (Key Assumptions Check, Premortem, Shostack 4Q + STRIDE, OWASP MASVS 2.1, OWASP LLM Top 10, HTSM/SFDIPOT, Chesterton's fence, mutation mindset). Nothing on device.
 - 2026-11-11 · Add flow 3/3 slice 1 · 855b148 · Pasted/shared/scanned recipe text imports cleaner: "Jump to Recipe", Print/Pin/Save, ratings, ads, "US Customary/Metric", 1x2x3x, hashtags, "Follow @…", "Link in bio" dropped; Notes / Variations / How to store go into the recipe's notes, Nutrition panels dropped; 1️⃣ keycap and "- " bullet steps split properly; "FOR THE CHICKEN" groups and steps with no "Method" header no longer pile into ingredients; "1-1/2 tsp" = 1½, "1 tbsp." and "225g/8oz" split right, scale artifacts like "0.84 2 cups" read as 2 cups. 10 ImportRegressions fixtures (7 new, 3 tightened); 12 bundled recipes left the known-poor list. New RecipeTextCleanup.swift registered in pbxproj. On phone: copy a food-blog recipe or Instagram caption → + → Paste.

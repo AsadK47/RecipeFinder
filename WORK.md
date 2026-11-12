@@ -1,12 +1,10 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Today+ 2/3 slice 1 ("Use it up" row) on `agent/today-use-soon`: `UseSoon.pairs` (Models/Engagement/UseSoon.swift),
-`TodayFeed.useSoon`, `TodayUseSoonCard` (Views/Main), DEBUG `-seed-use-soon`, screenshot 29-today-use-soon.
-Waiting on Build & Test / Screenshots. Slice 2 left: 7-day strip + "Plan tomorrow".
+(none) — Today+ 2/3 slice 1 merged (afea2cf). Slice 2 (7-day strip + "Plan tomorrow") is next.
 
 ## Next action
-Check Build & Test for the branch head; when green run Screenshots, look at 29 (+16/18), deep-review + challenge, merge.
+Claim Today+ 2/3 slice 2 on main, branch `agent/today-week-strip`; deep-review (item's last slice) + challenge before merge.
 ## Decisions (why)
 - **Today+ 2/3 slice 1 (Use it up)**: reads `kitchen.inventoryItems` (the ones with expiry dates), window 0–3 calendar
   days (matches `isExpiringSoon`), expired items left out (Kitchen's alerts cover them). One row per recipe, max 3
