@@ -59,7 +59,7 @@ import Foundation
         let soup = recipe("Soup", cookCount: 4, lastCooked: date(10))
         let result = progress([soup], streak: CookingStreak(currentWeeks: 1, cooksThisWeek: 1), unlocked: [.headChef])
         #expect(result.nextBadge?.type == .sameRecipeFive)
-        #expect(result.nextBadge?.text == "1 more cook to Signature Dish")
+        #expect(result.nextBadge?.text == "1 more cook of one dish to Signature Dish")
     }
 
     @Test func aTieGoesToTheBadgeWithFewerLeft() {

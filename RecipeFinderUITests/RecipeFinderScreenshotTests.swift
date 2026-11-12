@@ -413,6 +413,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
     /// Today's "Your cooking" row (streak, cooks this week, next badge) and the weekly "Try something new" pick;
     /// tapping the row opens the Cooking sheet.
+    @MainActor
     func testCaptureTodayProgress() {
         let app = XCUIApplication()
         app.launchArguments += ["-ui-testing"]

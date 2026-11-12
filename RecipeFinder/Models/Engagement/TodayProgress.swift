@@ -19,7 +19,9 @@ struct TodayProgress: Equatable {
             case .recipesRated: unit = remaining == 1 ? "rating" : "ratings"
             case .cookPhotos: unit = remaining == 1 ? "cook photo" : "cook photos"
             case .recipesCollected: unit = remaining == 1 ? "recipe" : "recipes"
-            case .recipesCooked, .sameRecipeCooked, nil: unit = remaining == 1 ? "cook" : "cooks"
+            // Only repeats of one dish count toward Signature Dish, so say so.
+            case .sameRecipeCooked: unit = remaining == 1 ? "cook of one dish" : "cooks of one dish"
+            case .recipesCooked, nil: unit = remaining == 1 ? "cook" : "cooks"
             }
             return "\(remaining) more \(unit) to \(type.badge.title)"
         }

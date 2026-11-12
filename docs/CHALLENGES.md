@@ -85,3 +85,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Tests] Which day "Plan it" uses and the Tonight exclusions are wired in TodayView (only the nightly UI test covers the view) — view-model seam — cost if wrong: plans tonight instead of tomorrow, caught late.
   → Owner:
+
+## 2026-11-12 (item pass: Today+ 3/3 — fixed: UI test missing @MainActor (Swift 6 compile), "cooks this week" stale after a new week (streak only recomputed on a cook — now reloaded on appear/return), weekly pick repeated on shelves, Signature Dish copy implied any cook counts, duplicated cooking-badge set)
+- ⚔️ [Flow] When the weekly pick is tonight's card, "Try something new" hides rather than showing the next-lowest pick — cost if wrong: one less suggestion that evening.
+  → Owner:
+- ⚔️ [Time] Today left open across Sunday→Monday keeps last week's streak/pick until the next appear/return (same as other Today cards) — cost if wrong: stale numbers until reopened.
+  → Owner:
