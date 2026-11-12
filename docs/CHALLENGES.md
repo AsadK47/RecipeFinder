@@ -123,3 +123,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Tests] `olderModel()` pins the model before current (now `RecipeModel 15.mom`); bump it whenever `.xccurrentversion` moves.
   → Owner:
+
+## 2026-11-12 (item pass: Data safety 1/4 slice 2 — fixed: Swift `Int` stored as Integer 32, servings default 1 vs struct 4, four entities without an `id` (CloudKit duplicates can't be deduped), test only checked entities exist (now every attribute + type), Recipe v15==v16 not pinned)
+- ⚔️ [Docs] Root CLAUDE.md's `valueForUndefinedKey: isSampleRecipe` hint now names 16, but reverting to 15 would show as missing `*Entity` errors instead — reword when slice 3 starts reading the entities.
+  → Owner:
+- ⚔️ [Format] `recipeIDs` / `stores` are plain Binary; slice 3 must JSON-encode them (WORK.md Decisions).
+  → Owner:

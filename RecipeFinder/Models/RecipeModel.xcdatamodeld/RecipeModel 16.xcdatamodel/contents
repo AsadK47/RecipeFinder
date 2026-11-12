@@ -10,11 +10,13 @@
     </entity>
     <entity name="CookDateEntity" representedClassName="CookDateEntity" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
     </entity>
     <entity name="EarnedBadgeEntity" representedClassName="EarnedBadgeEntity" syncable="YES" codeGenerationType="class">
         <attribute name="badgeId" optional="YES" attributeType="String"/>
         <attribute name="celebrationShown" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="dateEarned" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isUnlocked" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
     </entity>
     <entity name="InventoryItemEntity" representedClassName="InventoryItemEntity" syncable="YES" codeGenerationType="class">
@@ -51,13 +53,14 @@
         <attribute name="recipeId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="recipeName" optional="YES" attributeType="String"/>
         <attribute name="reminderTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="servings" optional="YES" attributeType="Integer 32" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="servings" optional="YES" attributeType="Integer 64" defaultValueString="4" usesScalarValueType="YES"/>
         <attribute name="sortOrder" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="ProfileEntity" representedClassName="ProfileEntity" syncable="YES" codeGenerationType="class">
         <attribute name="chefType" optional="YES" attributeType="String"/>
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="firstName" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="imageData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
         <attribute name="lastName" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
@@ -95,12 +98,13 @@
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isRecurring" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="quantity" optional="YES" attributeType="Integer 32" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="quantity" optional="YES" attributeType="Integer 64" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="sortOrder" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="stores" optional="YES" attributeType="Binary"/>
         <attribute name="unit" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ShoppingStoreEntity" representedClassName="ShoppingStoreEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="sortOrder" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>

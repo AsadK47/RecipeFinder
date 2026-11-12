@@ -245,18 +245,48 @@ import Foundation
         try context.save()
         let plans = try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "MealPlanEntity"))
         #expect(plans.compactMap { $0.value(forKey: "id") as? UUID } == [planId])
-        #expect(plans.first?.value(forKey: "servings") as? Int == 1)
+        #expect(plans.first?.value(forKey: "servings") as? Int == 4)
+        #expect(source.entitiesByName["Recipe"]?.versionHash == current.entitiesByName["Recipe"]?.versionHash)
     }
 
-    /// Every blob that lives in UserDefaults today has an entity to move into (Data safety 1/4).
+    /// Every field of every UserDefaults blob has a typed home (Data safety 1/4); a dropped or mistyped attribute
+    /// fails here, not as silently lost data in the migration slice. Array fields are JSON-encoded `Binary`.
     @Test(arguments: [
-        "MealPlanEntity", "ShoppingItemEntity", "ShoppingStoreEntity", "KitchenItemEntity", "InventoryItemEntity",
-        "CollectionEntity", "EarnedBadgeEntity", "CookDateEntity", "ProfileEntity",
-    ])
-    func currentModelHasAnEntityForEachBlob(entityName: String) throws {
+        ("MealPlanEntity", ["id": .UUIDAttributeType, "recipeId": .UUIDAttributeType, "recipeName": .stringAttributeType,
+                            "date": .dateAttributeType, "mealTime": .stringAttributeType, "servings": .integer64AttributeType,
+                            "notes": .stringAttributeType, "isCompleted": .booleanAttributeType,
+                            "isRecurring": .booleanAttributeType, "createdDate": .dateAttributeType,
+                            "reminderTime": .dateAttributeType, "sortOrder": .integer32AttributeType]),
+        ("ShoppingItemEntity", ["id": .UUIDAttributeType, "name": .stringAttributeType, "quantity": .integer64AttributeType,
+                                "unit": .stringAttributeType, "isChecked": .booleanAttributeType,
+                                "isCompleted": .booleanAttributeType, "category": .stringAttributeType,
+                                "dateAdded": .dateAttributeType, "stores": .binaryDataAttributeType,
+                                "isRecurring": .booleanAttributeType, "sortOrder": .integer32AttributeType]),
+        ("ShoppingStoreEntity", ["id": .UUIDAttributeType, "name": .stringAttributeType, "sortOrder": .integer32AttributeType]),
+        ("KitchenItemEntity", ["id": .UUIDAttributeType, "name": .stringAttributeType, "category": .stringAttributeType,
+                               "quantity": .doubleAttributeType, "unit": .stringAttributeType,
+                               "dateAdded": .dateAttributeType, "sortOrder": .integer32AttributeType]),
+        ("InventoryItemEntity", ["id": .UUIDAttributeType, "name": .stringAttributeType, "category": .stringAttributeType,
+                                 "quantity": .doubleAttributeType, "unit": .stringAttributeType,
+                                 "storageLocation": .stringAttributeType, "purchaseDate": .dateAttributeType,
+                                 "expiryDate": .dateAttributeType, "notes": .stringAttributeType,
+                                 "isLowStock": .booleanAttributeType, "minimumQuantity": .doubleAttributeType,
+                                 "sortOrder": .integer32AttributeType]),
+        ("CollectionEntity", ["id": .UUIDAttributeType, "name": .stringAttributeType, "colorName": .stringAttributeType,
+                              "recipeIDs": .binaryDataAttributeType, "createdAt": .dateAttributeType,
+                              "sortOrder": .integer32AttributeType]),
+        ("EarnedBadgeEntity", ["id": .UUIDAttributeType, "badgeId": .stringAttributeType, "dateEarned": .dateAttributeType,
+                               "isUnlocked": .booleanAttributeType, "celebrationShown": .booleanAttributeType]),
+        ("CookDateEntity", ["id": .UUIDAttributeType, "date": .dateAttributeType]),
+        ("ProfileEntity", ["id": .UUIDAttributeType, "uuid": .stringAttributeType, "firstName": .stringAttributeType,
+                           "lastName": .stringAttributeType, "chefType": .stringAttributeType,
+                           "imageData": .binaryDataAttributeType, "createdDate": .dateAttributeType]),
+    ] as [(String, [String: NSAttributeType])])
+    func currentModelHasATypedHomeForEachBlobField(entityName: String, attributes: [String: NSAttributeType]) throws {
         let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
         let current = try #require(NSManagedObjectModel(contentsOf: momd))
-        #expect(current.entitiesByName[entityName] != nil)
+        let entity = try #require(current.entitiesByName[entityName])
+        #expect(entity.attributesByName.mapValues(\.attributeType) == attributes)
     }
 
     /// CloudKit (Data safety 2/4) refuses a model with required attributes lacking defaults, unique constraints, or
@@ -270,6 +300,7 @@ import Foundation
             for attribute in entity.attributesByName.values {
                 #expect(attribute.isOptional || attribute.defaultValue != nil, "\(name).\(attribute.name) is required")
             }
+            // No relationships yet (v16 stores links as ids); this guards the first one added.
             for relationship in entity.relationshipsByName.values {
                 #expect(relationship.isOptional, "\(name).\(relationship.name) is required")
                 #expect(relationship.inverseRelationship != nil, "\(name).\(relationship.name) has no inverse")

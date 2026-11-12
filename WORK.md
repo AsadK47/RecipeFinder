@@ -12,6 +12,10 @@ Green → ff main, Log line. Then slice 3: per-manager blob→entity migration (
   must not clash with `Badge`/`MealPlanModel`…). `sortOrder` on list entities keeps the arrays' order. Legacy
   `KitchenItem` and `KitchenInventoryModel` both live → both get entities. Shown badge celebrations = a flag on
   `EarnedBadgeEntity`. Profile photo Binary with external storage (CKAsset later). Enums stored as raw String.
+  Challenge pass (7, 6 fixed): `Integer 64` for Swift `Int` (servings default 4 like the struct); `id` UUID on every
+  entity (CloudKit can't have unique constraints → slice 3/2/4 dedupe by id); typed per-attribute test; Recipe
+  versionHash pinned v15==v16. **Array Binary fields (`recipeIDs`, `stores`) are JSONEncoder-encoded** — slice 3
+  must use that. Noted: CLAUDE.md `isSampleRecipe` crash hint is now historical (CHALLENGES.md).
   **Pre-mortem:** (1) v15 store fails to upgrade / loses recipes → `v15StoreMigratesAndGainsTheNewEntities` + slice-1
   store copy; (2) model CloudKit can't take in 2/4 → `currentModelIsCloudKitReady`; (3) a blob has no entity →
   `currentModelHasAnEntityForEachBlob`.
