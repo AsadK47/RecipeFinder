@@ -1,12 +1,11 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Pictures 1/4 slice 2 on `agent/pictures-1b`: `RecipePlaceholderArt` (pure mapping) + illustrated `RecipePlaceholderView`,
-category/cuisine plumbed via `RecipeImageView(recipe:imageName:height:)`. Pushed; waiting on Build & Test.
+Nothing on a branch. Pictures 1/4 done (9c2025b on main).
 
 ## Next action
-Check Build & Test for `agent/pictures-1b`; when green run Screenshots on it and look at recipe list/Today shots, then
-challenge + deep-review agents, then fast-forward main.
+Screenshots `testCaptureBadgeReveal` failed on agent/pictures-1b (run 43239640890: `badge.reveal.close` not found —
+likely the 8 s auto-close beating the tap); check main's next Screenshots run, fix if it repeats. Then Data safety 1/4.
 
 ## Decisions (why)
 - **Pictures 1/4 slice 2 (placeholder art)**: SF Symbols composition (no bundled assets → no app-size cost, adapts to
