@@ -1,10 +1,11 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 slice 2: `agent/data-safety-1-v16-entities` (0055d13) — RecipeModel 16 + tests, waiting on Build & Test.
+Data safety 1/4 (claimed): slices 1–2 merged (store copy; RecipeModel 16 entities). Nothing on a branch.
 
 ## Next action
-Green → ff main, Log line. Then slice 3: per-manager blob→entity migration (count check, keep blobs one release).
+Slice 3: per-manager blob→entity migration (start with CookingStreakManager → CookDateEntity; read blob, write
+entities, verify count, then mark migrated; keep blobs one release; corrupt/missing blob tests).
 
 ## Decisions (why)
 - **Data safety 1/4 slice 2 (v16 entities)**: one entity per blob, no relationships (CloudKit-easy; collection
