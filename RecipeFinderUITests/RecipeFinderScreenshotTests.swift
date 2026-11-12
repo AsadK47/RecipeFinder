@@ -364,10 +364,13 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launchArguments += ["-ui-testing", "-seed-use-soon"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        // Seeding kitchen items schedules expiry reminders, which asks for notification permission over the shot.
+        let allowPrompt = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Don’t Allow"]
+        if allowPrompt.waitForExistence(timeout: 5) { allowPrompt.tap() }
         dismissBadgeSheet(app)
         let row = app.buttons.matching(identifier: "today.useSoon.row").firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 10), "Today should pair spinach going off with a recipe.")
-        XCTAssertTrue(row.label.contains("Spinach goes off tomorrow"), "The row should say when the spinach goes off.")
+        XCTAssertTrue(row.label.contains("Spinach: use by tomorrow"), "The row should say when to use the spinach.")
         for _ in 0..<3 where !row.isHittable { app.swipeUp() }
         settle()
         snap(app, "29-today-use-soon")

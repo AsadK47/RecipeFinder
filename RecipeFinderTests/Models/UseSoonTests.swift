@@ -117,7 +117,7 @@ import Foundation
         let result = pairs([item("Spinach", days: 1), item("Feta", days: 2)], [pie])
         #expect(result.count == 1)
         #expect(result.first?.itemNames == ["Spinach", "Feta"])
-        #expect(result.first?.message == "Spinach and Feta go off tomorrow")
+        #expect(result.first?.message == "Spinach and Feta: use by tomorrow")
     }
 
     @Test func withTheRowsFullAnItemJoinsAShownRecipeThatUsesIt() {
@@ -134,7 +134,7 @@ import Foundation
     @Test func threeNamesReadAsAList() {
         let traybake = recipe("Traybake", ["leeks", "feta", "spinach"])
         let result = pairs([item("Leeks", days: 1), item("Feta", days: 1), item("Spinach", days: 1)], [traybake])
-        #expect(result.first?.message == "Feta, Leeks and Spinach go off tomorrow")
+        #expect(result.first?.message == "Feta, Leeks and Spinach: use by tomorrow")
     }
 
     @Test func wholeWordsOnlySoGingerIsNotGin() {
@@ -143,7 +143,7 @@ import Foundation
 
     // MARK: Wording
 
-    @Test(arguments: [(0, "Spinach goes off today"), (1, "Spinach goes off tomorrow"), (3, "Spinach goes off Thu")])
+    @Test(arguments: [(0, "Spinach: use by today"), (1, "Spinach: use by tomorrow"), (3, "Spinach: use by Thu")])
     func messageSaysWhenItGoesOff(days: Int, expected: String) {
         #expect(pairs([item("Spinach", days: days)], [recipe("Saag", ["spinach"])]).first?.message == expected)
     }

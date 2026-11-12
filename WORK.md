@@ -11,12 +11,12 @@ Check Build & Test for the branch head; when green run Screenshots, look at 29 (
 - **Today+ 2/3 slice 1 (Use it up)**: reads `kitchen.inventoryItems` (the ones with expiry dates), window 0–3 calendar
   days (matches `isExpiringSoon`), expired items left out (Kitchen's alerts cover them). One row per recipe, max 3
   rows: each item gets its best recipe not already on the row; if all its recipes are taken it joins that row
-  ("Spinach and Feta go off tomorrow"). Best = uses more expiring items → more kitchen coverage → favourite → own
+  ("Spinach and Feta: use by tomorrow"). Best = uses more expiring items → more kitchen coverage → favourite → own
   over sample → name. Same ingredient twice = one entry at its soonest date. Placed after prep-ahead, before shelves;
   one card with photo rows (calm). Kept existing Plan-tab `PantryExpirySuggestions` (recipe-centric, different job)
   — possible Smell (two expiry matchers). **Pre-mortem:** (1) wrong items (expired / 4+ days / no date / used-up)
   → UseSoonTests window cases; (2) same recipe twice or an odd pick (gin→ginger, sample over own) → pairing tests;
-  (3) row clipped / unreadable or missing → screenshot 29 + UI assert on "Spinach goes off tomorrow".
+  (3) row clipped / unreadable or missing → screenshot 29 + UI assert on "Spinach: use by tomorrow".
 - **Today+ 1/3 slice 2**: eat time is a "Dinner at 7 pm" pill (Menu + Picker, 5–10pm on the half hour) beside
   Shuffle, not in Settings and not on the timing line — review found the line vanishes once the time passes (stranding
   the choice) and some lines ("Quick tonight?", morning prep) ignore it. Hidden for a planned lunch/snack

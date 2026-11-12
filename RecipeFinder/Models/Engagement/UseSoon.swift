@@ -10,13 +10,13 @@ struct UseSoonPair: Equatable {
     let when: String
     let recipe: RecipeModel
 
-    /// "Spinach goes off Thu", "Spinach and Feta go off tomorrow" (names as entered). English throughout, like the
-    /// rest of the app, so a device locale can't mix languages into one sentence.
+    /// "Spinach: use by Thu", "Lemons and Feta: use by tomorrow" (names as entered; no verb to agree with "Lemons").
+    /// English throughout, like the rest of the app, so a device locale can't mix languages into one sentence.
     var message: String {
         let names = itemNames.count <= 1
             ? itemNames.joined()
             : itemNames.dropLast().joined(separator: ", ") + " and " + (itemNames.last ?? "")
-        return "\(names) \(itemNames.count == 1 ? "goes" : "go") off \(when)"
+        return "\(names): use by \(when)"
     }
 }
 
@@ -27,7 +27,7 @@ enum UseSoon {
 
     /// Items going off today…in `windowDays` days, soonest first, each with the best recipe that uses it. A recipe
     /// shows once: an item whose recipes are all taken (or with the rows full) joins the best row already showing a
-    /// recipe that uses it ("Spinach and Feta go off Thu").
+    /// recipe that uses it ("Spinach and Feta: use by Thu").
     /// Items no recipe uses are left out. Best = uses more of the expiring items, then more of the kitchen overall,
     /// then favourites, your own over samples, then name.
     static func pairs(
