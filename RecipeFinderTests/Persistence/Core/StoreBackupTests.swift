@@ -105,6 +105,38 @@ import Foundation
         #expect(try backupFolders().count == 3)
     }
 
+    @Test func backupsAreKeptOutOfTheDeviceBackup() throws {
+        defer { cleanUp() }
+        try writeStoreFiles()
+
+        try StoreBackup.backUp(storeURL: storeURL, into: backups)
+
+        #expect(try backups.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup == true)
+    }
+
+    @Test func oldCopiesMakeRoomBeforeTheNewOneIsWritten() throws {
+        defer { cleanUp() }
+        try writeStoreFiles()
+        for second in 0..<3 {
+            try StoreBackup.backUp(storeURL: storeURL, into: backups, now: Date(timeIntervalSince1970: Double(second)))
+        }
+        let before = try backupFolders()
+        // A -wal that can't be read makes this copy fail part-way.
+        let wal = URL(fileURLWithPath: storeURL.path + "-wal")
+        try FileManager.default.removeItem(at: wal)
+        try FileManager.default.createDirectory(at: wal, withIntermediateDirectories: false)
+        let locked = wal.appendingPathComponent("locked")
+        try Data("x".utf8).write(to: locked)
+        try FileManager.default.setAttributes([.posixPermissions: 0], ofItemAtPath: locked.path)
+        defer { try? FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: locked.path) }
+
+        #expect(throws: (any Error).self) {
+            try StoreBackup.backUp(storeURL: storeURL, into: backups, now: Date(timeIntervalSince1970: 9))
+        }
+
+        #expect(try backupFolders() == Array(before.suffix(2)))
+    }
+
     @Test func folderNamesSortInTimeOrder() {
         let early = StoreBackup.folderName(for: Date(timeIntervalSince1970: 9))
         let late = StoreBackup.folderName(for: Date(timeIntervalSince1970: 10))

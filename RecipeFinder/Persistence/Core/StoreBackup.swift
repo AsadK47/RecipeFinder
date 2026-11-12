@@ -30,6 +30,7 @@ enum StoreBackup {
 
     /// Copies the store files into a new dated folder in `directory`, then keeps the newest `keep` folders.
     /// Returns the new folder, or nil when there's no store to copy. A failed copy removes its half-made folder.
+    /// The folder is kept out of the iCloud/device backup.
     @discardableResult
     static func backUp(
         storeURL: URL,
@@ -40,6 +41,11 @@ enum StoreBackup {
     ) throws -> URL? {
         guard fileManager.fileExists(atPath: storeURL.path) else { return nil }
 
+        // Make room first: on a nearly full disk the upgrade that follows needs the space more than a 4th copy.
+        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+        try excludeFromDeviceBackup(directory)
+        prune(directory, keep: max(0, keep - 1), fileManager: fileManager)
+
         let folder = directory.appendingPathComponent(folderName(for: now), isDirectory: true)
         try fileManager.createDirectory(at: folder, withIntermediateDirectories: true)
         do {
@@ -49,11 +55,23 @@ enum StoreBackup {
                 try fileManager.copyItem(at: source, to: folder.appendingPathComponent(storeURL.lastPathComponent + sidecar))
             }
         } catch {
-            try? fileManager.removeItem(at: folder)
+            do {
+                try fileManager.removeItem(at: folder)
+            } catch let cleanupError {
+                persistenceLogger.error("❌ Could not remove half-made store copy: \(cleanupError.localizedDescription)")
+            }
             throw error
         }
-        try prune(directory, keep: keep, fileManager: fileManager)
         return folder
+    }
+
+    /// The live store is already in the iCloud/device backup; three more copies of it would only fill the cook's
+    /// iCloud. These are on-phone rollback points.
+    private static func excludeFromDeviceBackup(_ directory: URL) throws {
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        var url = directory
+        try url.setResourceValues(values)
     }
 
     /// `store-<ms since 1970, zero-padded>-<random>`: names sort in time order, and two copies in the same
@@ -65,13 +83,18 @@ enum StoreBackup {
         return folderPrefix + padded + "-" + String(UUID().uuidString.prefix(8))
     }
 
-    /// Deletes all but the newest `keep` backup folders; anything else in the directory is left alone.
-    private static func prune(_ directory: URL, keep: Int, fileManager: FileManager) throws {
-        let folders = try fileManager.contentsOfDirectory(atPath: directory.path)
-            .filter { $0.hasPrefix(folderPrefix) }
-            .sorted()
-        for name in folders.dropLast(keep) {
-            try fileManager.removeItem(at: directory.appendingPathComponent(name))
+    /// Deletes all but the newest `keep` backup folders; anything else in the directory is left alone. A failed
+    /// delete is logged, not thrown — it mustn't stop the new copy being made.
+    private static func prune(_ directory: URL, keep: Int, fileManager: FileManager) {
+        do {
+            let folders = try fileManager.contentsOfDirectory(atPath: directory.path)
+                .filter { $0.hasPrefix(folderPrefix) }
+                .sorted()
+            for name in folders.dropLast(keep) {
+                try fileManager.removeItem(at: directory.appendingPathComponent(name))
+            }
+        } catch {
+            persistenceLogger.error("❌ Could not prune old store copies: \(error.localizedDescription)")
         }
     }
 }

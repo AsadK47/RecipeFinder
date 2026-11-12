@@ -6,7 +6,7 @@ let persistenceLogger = AppLogger.logger(category: "PersistenceController")
 /// Core Data stack owner; store lifecycle here, reads/writes/maintenance in focused extensions.
 @MainActor
 final class PersistenceController {
-    static let shared = PersistenceController()
+    static let shared = PersistenceController(backupDirectory: StoreBackup.defaultDirectory())
 
     let container: NSPersistentContainer
     private(set) var loadError: Error?
@@ -43,8 +43,9 @@ final class PersistenceController {
     }
 
     /// `inMemory`: back store with `/dev/null` for tests (still SQLite so batch ops work).
-    /// `backupDirectory`: where the store is copied before a model upgrade (`StoreBackup`); nil = no copy.
-    init(inMemory: Bool = false, storeURL: URL? = nil, backupDirectory: URL? = StoreBackup.defaultDirectory()) {
+    /// `backupDirectory`: where the store is copied before a model upgrade (`StoreBackup`); nil = no copy (tests),
+    /// so only `.shared` writes to the real Application Support.
+    init(inMemory: Bool = false, storeURL: URL? = nil, backupDirectory: URL? = nil) {
         container = NSPersistentContainer(name: "RecipeModel")
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
