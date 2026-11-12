@@ -22,6 +22,14 @@ struct BadgeRevealView: View {
     private var badgeColor: Color { Badge.color(for: badge.badge.color) }
     private var motion: BadgeReveal.Motion { BadgeReveal.motion(reduceMotion: reduceMotion) }
 
+    private var heldForUITest: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-show-badge-reveal")
+        #else
+        false
+        #endif
+    }
+
     var body: some View {
         ZStack {
             AppBackground()
@@ -131,10 +139,9 @@ struct BadgeRevealView: View {
         if motion.sweepsShine {
             withAnimation(.easeInOut(duration: 1.1).delay(0.2)) { shine = CGSize(width: 1.8, height: 1.8) }
         }
-        // 8 s, not 4: 4 was too short to reach "View all badges". VoiceOver users close it themselves — it would
-        // vanish mid-read.
-        guard !voiceOverEnabled else { return }
-        try? await Task.sleep(for: .seconds(8))
+        guard let delay = BadgeReveal.autoCloseAfter(voiceOverOn: voiceOverEnabled, heldForUITest: heldForUITest)
+        else { return }
+        try? await Task.sleep(for: delay)
         guard !Task.isCancelled else { return }
         close(then: onDismiss)
     }

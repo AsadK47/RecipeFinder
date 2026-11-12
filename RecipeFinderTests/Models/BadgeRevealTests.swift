@@ -19,6 +19,20 @@ struct BadgeRevealTests {
         #expect(BadgeReveal.showing(nil, isAnotherSheetUp: false) == nil)
     }
 
+    // MARK: - Closing by itself
+
+    @Test func revealClosesItselfAfterEightSeconds() {
+        #expect(BadgeReveal.autoCloseAfter(voiceOverOn: false, heldForUITest: false) == .seconds(8))
+    }
+
+    @Test func voiceOverUsersCloseTheRevealThemselves() {
+        #expect(BadgeReveal.autoCloseAfter(voiceOverOn: true, heldForUITest: false) == nil)
+    }
+
+    @Test func screenshotRunHoldsTheRevealOpen() {
+        #expect(BadgeReveal.autoCloseAfter(voiceOverOn: false, heldForUITest: true) == nil)
+    }
+
     // MARK: - Motion
 
     @Test func fullMotionFlipsSweepsCelebratesAndSettles() {
