@@ -115,7 +115,8 @@ drop a line while moving it.
   defaulted, no unique constraints, relationships optional with inverses) for Data safety 2/4. ✅ Slice 1 (4ec1589):
   `StoreBackup` copies the store before any migration (StoreBackups/, newest 3, excluded from device backup). ✅ Slice 2 (c50c771):
   `RecipeModel 16` adds CloudKit-ready `*Entity` per blob (id UUID each, JSON Binary arrays). ✅ Slice 3a (941868c):
-  cook dates → `CookDateEntity` via generic `LegacyBlobMigration`. Left: same move for collections, meal plans,
+  cook dates → `CookDateEntity` via generic `LegacyBlobMigration`. ✅ Slice 3b (f68fc84): collections →
+  `CollectionEntity` via new generic `MirroredSnapshot` (whole-list blob ↔ entities, reuse it). Left: meal plans,
   shopping list, kitchen items/inventory, badges, profile. *Done when:*
   migration tested per manager (incl. corrupt/missing blobs), store-backup tested, migration test from the shipped
   model, backup/restore round-trip still green, CI green.
@@ -573,3 +574,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-12 · Data safety 1/4 slice 1 (store copy before upgrade) · 4ec1589 · nothing visible; next TestFlight upgrade should open with all recipes · review: 3 fixed (backup exclusion, prune-first, prune error) · looked at: n/a (no UI). Also fixed flaky `testCaptureBadgeReveal` (69187fa, reveal held open under `-show-badge-reveal`) · looked at: 36. New files registered in pbxproj by hand.
 - 2026-11-12 · Data safety 1/4 slice 2 (RecipeModel 16 entities) · c50c771 · nothing visible; app should open with all recipes after updating · review: challenge 7 found, 6 fixed (Int64, ids, typed attribute test, Recipe hash pin) · looked at: n/a (no UI). Model version registered in pbxproj by hand.
 - 2026-11-12 · Data safety 1/4 slice 3a (cook dates → Core Data) · 941868c · nothing visible; after updating, the cooking streak on Today/Me should be unchanged and a new cook should still count · review: deep-review 3 fixed, challenge 4 fixed (dead blob fallback, lost cooks on failed save/read, Reset resurrecting history, weak relaunch test), 3 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New CookDateStore.swift, LegacyBlobMigration.swift, CookDateMigrationTests.swift registered in pbxproj by hand.
+- 2026-11-12 · Data safety 1/4 slice 3b (collections → Core Data) · f68fc84 · nothing visible; after updating, every collection (names, colours, recipes, order) should be unchanged, and Settings → Erase & Reset should leave none · review: deep-review 4 fixed (newer kept copy wins, per-row decode, stale doc, dead reload), challenge 4 fixed (no overwrite from a missing kept copy, rows updated in place, Reset + single-failed-rename tests), 5 noted in docs/CHALLENGES.md (sync breaks blob-wins rule — 2/4 must handle) · looked at: n/a (no UI). New MirroredSnapshot.swift, CollectionStore.swift, CollectionMigrationTests.swift registered in pbxproj by hand. 1 CI cycle lost (helper pasted into protocol).

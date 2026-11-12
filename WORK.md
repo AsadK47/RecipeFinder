@@ -1,13 +1,12 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slice 3b (collections) on `agent/data-safety-1-collections` — waiting on Build & Test.
-New `MirroredSnapshot<Value>` (whole-list blob ↔ entities), `CoreDataCollectionStore`, CollectionManager on it,
-Reset → `removeAllCollections()`.
+Data safety 1/4 (claimed): slices 1–2, 3a (cook dates), 3b (collections, f68fc84) merged. Nothing on a branch.
 
 ## Next action
-Green → challenge pass + deep-review, then merge. Next slices reuse `MirroredSnapshot`: meal plans, shopping list,
-kitchen items/inventory, badges, profile (one per branch).
+Slice 3c: meal plans → MealPlanEntity via `MirroredSnapshot` (copy CollectionManager: `*Storing` protocol with
+fetch/replace, CoreData store upserting by id with sortOrder + `setIfChanged`, in-memory fake, Reset →
+`removeAll…()` in DataManagementSettingsView). Then shopping list, kitchen, badges, profile.
 
 ## Decisions (why)
 - **Data safety 1/4 slice 3b (collections)**: whole-list data ≠ append-only cook dates, so new generic
