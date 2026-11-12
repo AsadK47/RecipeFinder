@@ -121,9 +121,9 @@ drop a line while moving it.
   change). `NSPersistentCloudKitContainer` with the private database; recipes + everything moved in 1/4 sync across the
   user's devices; photos synced (Core Data binary attribute with "Allows External Storage", or CKAsset-backed records)
   without loading every photo into memory. Settings → "iCloud sync" on by default when signed in to iCloud, with
-  status (synced / syncing / off / iCloud full) and a clear off switch; works fully offline. Owner steps (🙋 when
-  reached): enable iCloud + CloudKit on the App ID and create container `iCloud.com.asadkhan.recipefinder` in the
-  developer portal, regenerate the CI provisioning profile; deploy the CloudKit schema to production before App Store
+  status (synced / syncing / off / iCloud full) and a clear off switch; works fully offline. Owner steps: ✅ 2026-11-12 container
+  `iCloud.com.asadkhan.recipefinder` created and iCloud + CloudKit enabled on App ID `com.asadkhan.recipefinder`
+  (CI uses automatic signing + ASC key with -allowProvisioningUpdates, so no manual profile); 🙋 later: deploy the CloudKit schema to production before App Store
   release. Privacy Policy section 7: describe the sync (owner OK to update that legal text in line with this
   feature). Dedupe on first sync (same recipe on two devices). *Done when:* container setup + conflict/dedupe logic
   tested, sync verified on two devices via TestFlight (owner), CI + TestFlight green.
