@@ -1,12 +1,25 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-(none) — Today+ 2/3 done (slice 2 merged 25165c1, ticked).
+Today+ 3/3 on `agent/today-progress` (single slice): `TodayProgress.swift` (progress + `TrySomethingNew`),
+`TodayProgressCard.swift` (`TodayProgressCard`, `TodayTryNewCard`), wired in `TodayView` after the week card;
+`TodayProgressTests`; UI shot test `testCaptureTodayProgress` (32/33). Files registered in pbxproj by hand.
 
 ## Next action
-Today+ 3/3 (Progress row + "Try something new") on a new `agent/today-progress` branch — series still mid-way, so
-before the next Smell. Consider extracting TodayView refresh/plan helpers first (now ~350 lines).
+Check Build & Test for the branch; then Screenshots run → look at 16, 32, 33; challenge + deep-review; merge.
 ## Decisions (why)
+- **Today+ 3/3 (progress + something new)**: "Your cooking" card after This week: streak weeks, cooks this week
+  (from `CookingStreak`), next badge = locked *cooking* badge (library-size badges stay on Me — Today rewards cooking)
+  with the highest share done (integer cross-multiply), then fewest left, then list order; reached-but-unrecorded
+  badges skipped (no "0 more"). Tap → existing `CookingSheet`. "Try something new" = never cooked (cookCount 0 and no
+  lastCookedAt), own recipes before samples, lowest FNV-1a(weekStart + id) wins (stable all week, across launches and
+  list order — Swift `hashValue` is per-launch seeded). Hidden for new users (Starters shelf) and when it's the recipe
+  on the Tonight card. Once cooked, next pick appears (no "done" state). Header streak chip kept (small overlap with
+  the row) — tidy in Me/polish. TodayView now ~370 lines → Smell (extract refresh/plan helpers).
+  **Pre-mortem:** (1) pick changes every launch/refresh or shows a cooked recipe → `pickHoldsAllWeek…`,
+  `pickIsNeverCooked`, `aRecipeWithACookDateCountsAsCooked`; (2) next badge silly ("0 more", library badge, far one
+  over near one) → `theClosestBadgeWins…`, `aBadgeAlreadyReached…`, `libraryBadgesAreNot…`; (3) row missing/clipped or
+  tap does nothing → UI `testCaptureTodayProgress` asserts labels + Cooking sheet (shots 32, 33).
 - **Today+ 2/3 slice 2 (week strip)**: own "This week" card after Use it up, before shelves: 7 days from today, filled
   dot = any plan (cooked ones too), ring = nothing. Empty day → `RecipeSelectionSheet` (dinner) for that day; a
   planned day → Plan tab (no per-day deep link into Plan yet). "Plan tomorrow" shows only when tomorrow has no dinner;

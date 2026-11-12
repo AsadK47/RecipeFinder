@@ -2,7 +2,8 @@ import SwiftUI
 
 /// Today tab: greeting + streak, a "Tonight" hero (planned meal, else kitchen match, else a quick recipe) that Shuffle
 /// steps through, with a time-aware "Start by" line (tap it to change when dinner is), a "This week" strip with a
-/// one-tap "Plan tomorrow", and shelves of recipes to cook.
+/// one-tap "Plan tomorrow", your cooking progress (streak, cooks this week, next badge), a weekly never-cooked pick,
+/// and shelves of recipes to cook.
 /// Kept calm on purpose: one card for tonight, plain photo shelves below, the theme accent on "Cook this" alone.
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
@@ -16,6 +17,7 @@ struct TodayView: View {
     @Environment(\.mealPlanning) private var mealPlanning
     @Environment(\.kitchen) private var kitchen
     @Environment(\.cookingStreak) private var cookingStreak
+    @Environment(\.badges) private var badges
     @Environment(\.scenePhase) private var scenePhase
 
     /// Pushes the recipe with cooking mode already up, so finishing lands on its detail (Made it, rating).
@@ -27,6 +29,9 @@ struct TodayView: View {
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
     @State private var feed: TodayFeed?
     @State private var week: TodayWeek?
+    @State private var progress: TodayProgress?
+    @State private var tryNew: RecipeModel?
+    @State private var showsCookingSheet = false
     @State private var planningDay: PlanningDay?
     /// Picked in the sheet, planned once it has closed (a badge sheet can't show over one mid-dismissal).
     @State private var pendingPlan: (recipe: RecipeModel, date: Date)?
@@ -118,7 +123,9 @@ struct TodayView: View {
                 planningDay = nil
             }
         }
+        .sheet(isPresented: $showsCookingSheet) { CookingSheet(streak: cookingStreak.streak) }
         .onChange(of: recipeStore.recipes) { _, _ in refresh() }
+        .onChange(of: cookingStreak.streak) { _, _ in refresh() }
         .onChange(of: kitchen.items) { _, _ in refresh() }
         .onChange(of: kitchen.inventoryItems) { _, _ in refresh() }
     }
@@ -144,6 +151,12 @@ struct TodayView: View {
             recipes: recipeStore.recipes, plans: weekPlans,
             tonightIDs: Set(newFeed.tonightOptions.map(\.recipe.id)), now: now
         )
+        progress = TodayProgress.make(
+            recipes: recipeStore.recipes, streak: cookingStreak.streak,
+            unlockedBadgeIDs: Set(badges.getAllBadges(recipeCount: 0).filter(\.isUnlocked).map(\.id))
+        )
+        // New users already get a Starters shelf of uncooked recipes.
+        tryNew = newFeed.isNewUser ? nil : TrySomethingNew.pick(recipes: recipeStore.recipes, now: now)
     }
 
     /// Plans dinner unless one appeared since the strip was built (another path, a recurring copy) — never replaces it.
@@ -258,12 +271,20 @@ struct TodayView: View {
             )
         }
 
+        if let progress {
+            TodayProgressCard(progress: progress) { showsCookingSheet = true }
+        }
+
+        // Shelves and the weekly pick leave out the recipe on the card, so a shuffled-to dish isn't repeated below it.
+        let shownID = shown?.recipe.id
+        if let tryNew, tryNew.id != shownID {
+            TodayTryNewCard(recipe: tryNew, onOpen: open)
+        }
+
         if feed.isNewUser, !feed.starters.isEmpty {
             TodayShelf(title: "Starters to try", id: "starters",
                        items: feed.starters.map { ($0, $0.hasTotalTime ? $0.totalTime : nil) }, onOpen: open)
         }
-        // Shelves leave out the pick on the card, so a shuffled-to recipe isn't repeated just below it.
-        let shownID = shown?.recipe.id
         let cookAgain = feed.cookAgain.filter { $0.id != shownID }
         let kitchenMatches = feed.fitsYourKitchen.filter { $0.recipe.id != shownID }
         let rediscover = feed.rediscover.filter { $0.id != shownID }

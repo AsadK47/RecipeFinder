@@ -411,6 +411,30 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    /// Today's "Your cooking" row (streak, cooks this week, next badge) and the weekly "Try something new" pick;
+    /// tapping the row opens the Cooking sheet.
+    func testCaptureTodayProgress() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        let progress = app.buttons["today.progress"]
+        XCTAssertTrue(progress.waitForExistence(timeout: 10), "Today should show the progress row.")
+        let tryNew = app.buttons["today.tryNew"]
+        for _ in 0..<6 where !(progress.isHittable && (!tryNew.exists || tryNew.isHittable)) { app.swipeUp() }
+        XCTAssertTrue(progress.label.contains("week streak"), "Progress should read the streak: \(progress.label)")
+        XCTAssertTrue(progress.label.contains("this week"), "Progress should read cooks this week: \(progress.label)")
+        settle()
+        snap(app, "32-today-progress")
+
+        progress.tap()
+        XCTAssertTrue(app.staticTexts["Cooking badges"].waitForExistence(timeout: 5),
+                      "Tapping progress should open the Cooking sheet.")
+        settle()
+        snap(app, "33-today-cooking-sheet")
+    }
+
     // MARK: - Helpers
 
     /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded
