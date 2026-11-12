@@ -1,12 +1,11 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Today+ 2/3 slice 2 on `agent/today-week-strip` (claimed on main a766735): `TodayWeek` model + tests, `TodayWeekCard`,
-TodayView wiring, UI test `testCaptureTodayWeek` (shots 30/31). Waiting on Build & Test.
+(none) — Today+ 2/3 done (slice 2 merged 25165c1, ticked).
 
 ## Next action
-Get Build & Test green → Screenshots run on the branch → look at 16, 30, 31 → deep-review + challenge (separate agents)
-→ merge main into branch, ff main, tick item, Log line.
+Today+ 3/3 (Progress row + "Try something new") on a new `agent/today-progress` branch — series still mid-way, so
+before the next Smell. Consider extracting TodayView refresh/plan helpers first (now ~350 lines).
 ## Decisions (why)
 - **Today+ 2/3 slice 2 (week strip)**: own "This week" card after Use it up, before shelves: 7 days from today, filled
   dot = any plan (cooked ones too), ring = nothing. Empty day → `RecipeSelectionSheet` (dinner) for that day; a

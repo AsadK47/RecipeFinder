@@ -77,3 +77,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Time] Today left open past midnight keeps "tomorrow" until the next refresh (same as the Tonight line) — refresh on `.NSCalendarDayChanged` — cost if wrong: one stale day word.
   → Owner:
+
+## 2026-11-12 (item pass: Today+ 2/3 slice 2 — fixed: recurring dinners showed as empty and could be planned over, overnight-backgrounded "Plan it" dated today, "Plan it" could replace an existing dinner, date circles clipped at AX sizes; review: Voice Control label, picker empty-state action)
+- ⚔️ [Flow] Tapping a planned day opens Plan on today, not the tapped day (no date deep link) — pass the date through `onOpen(.plan)` — cost if wrong: tap Saturday, land on Thursday.
+  → Owner:
+- ⚔️ [Structure] Two week-strip looks: Plan's per-meal coloured dots on calendar weeks vs Today's single dot on a rolling 7 days — shared `DayCell` in a Smell pass — cost if wrong: "planned" reads two ways.
+  → Owner:
+- ⚔️ [Tests] Which day "Plan it" uses and the Tonight exclusions are wired in TodayView (only the nightly UI test covers the view) — view-model seam — cost if wrong: plans tonight instead of tomorrow, caught late.
+  → Owner:

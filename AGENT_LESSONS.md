@@ -39,3 +39,4 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 - StoreKit scheme `identifier` = `../../RecipeFinder.storekit` (anchored at the
   `xcshareddata` dir, NOT SRCROOT). Cost several wrong guesses — see memory.
 - New Swift files via `XcodeWrite`; new tests via Swift Testing (no new XCTest).
+10. **Query once, act on the coordinate.** 2026-11-12: `dismissBadgeSheet` waited for the badge sheet, then `swipeDown()` re-queried it after it had closed → Screenshots red on an unrelated branch. In UI-test helpers for transient UI, drag a window coordinate instead of re-querying the element.
