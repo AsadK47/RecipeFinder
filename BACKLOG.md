@@ -98,7 +98,7 @@ drop a line while moving it.
 6. **Website** (repo AsadK47/RecipeFinderWebsite; runs in its own parallel session, owner OK 2026-11-10): Site 1/6 → 6/6.
 
 ## Queue
-- [ ] **Pictures 1/4 — Keep imported photos + nicer placeholders** (owner OK 2026-11-12: pictures are "a major thing
+- [ ] **Pictures 1/4 — Keep imported photos + nicer placeholders** — 🚧 builder agent 2026-11-12 (owner OK 2026-11-12: pictures are "a major thing
   that's lacking"). Link/web/share imports download the page's image at import and store it like a user photo
   (`RecipeImageStore`, `RecipeImages/<id>.jpg`, relative path) instead of keeping the site's URL; downscale to ≤1600px
   JPEG; failure → no image, never blocks the import. Existing recipes whose `imageName` is an http(s) URL: download
