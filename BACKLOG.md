@@ -83,8 +83,10 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
+   **Top priority (owner 2026-11-12: "move them to the top"):** finish the item in progress (Badges 1/2), then
+   Pictures 1/4 → Data safety 1/4 → 2/4 → Pictures 2/4 → 3/4 → 4/4 → Data safety 3/4 → 4/4, then continue below.
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Me 1/3 → 3/3 (3/3 = Settings tidy-up) → Showcase screenshots → Plan my week 1/3 → 2/3 → Groceries + Kitchen → Plan my week 3/3 →
-   Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
+   Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity. Then (owner OK 2026-11-10): taste profile →
    skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
    Shared family cookbooks: still undecided — revisit after.
 2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
@@ -96,6 +98,55 @@ drop a line while moving it.
 6. **Website** (repo AsadK47/RecipeFinderWebsite; runs in its own parallel session, owner OK 2026-11-10): Site 1/6 → 6/6.
 
 ## Queue
+- [ ] **Pictures 1/4 — Keep imported photos + nicer placeholders** (owner OK 2026-11-12: pictures are "a major thing
+  that's lacking"). Link/web/share imports download the page's image at import and store it like a user photo
+  (`RecipeImageStore`, `RecipeImages/<id>.jpg`, relative path) instead of keeping the site's URL; downscale to ≤1600px
+  JPEG; failure → no image, never blocks the import. Existing recipes whose `imageName` is an http(s) URL: download
+  once in the background on launch (skip `isSampleRecipe`; keep the URL if the download fails; never overwrite a user
+  photo). Placeholder: replace the plain gradient with illustrated art per category/cuisine (SF Symbols composition or
+  a small bundled SVG/PDF set) so recipes without a photo still look finished. Trust boundary: only http(s), size cap
+  (e.g. 10 MB), image types only, decode with ImageIO. *Done when:* download/size/type/fallback + launch migration
+  tested (fake fetcher), screenshots (imported recipe offline, placeholders), CI green.
+- [ ] **Data safety 1/4 — Everything in Core Data, upgrades that can't lose data** (owner OK 2026-11-12, incl. Core
+  Data model change). Move meal plans, shopping list, kitchen items/inventory, collections, badges, cooking streak and
+  profile out of UserDefaults (`LocalStore` JSON blobs) into Core Data entities in a new model version (+ point
+  `.xccurrentversion` at it and update every "RecipeModel N" mention in CLAUDE.md files in the same commit). One-time
+  migration on launch: read each blob, write entities, verify counts, only then mark migrated (keep the old blobs for
+  one release as a fallback). Before any store migration, copy the SQLite store (+ -wal/-shm) to
+  `Application Support/StoreBackups/` (keep last 3). Design the new entities CloudKit-ready (all attributes optional or
+  defaulted, no unique constraints, relationships optional with inverses) for Data safety 2/4. *Done when:*
+  migration tested per manager (incl. corrupt/missing blobs), store-backup tested, migration test from the shipped
+  model, backup/restore round-trip still green, CI green.
+- [ ] **Data safety 2/4 — iCloud sync** (owner OK 2026-11-12: iCloud entitlement + CloudKit container + model
+  change). `NSPersistentCloudKitContainer` with the private database; recipes + everything moved in 1/4 sync across the
+  user's devices; photos synced (Core Data binary attribute with "Allows External Storage", or CKAsset-backed records)
+  without loading every photo into memory. Settings → "iCloud sync" on by default when signed in to iCloud, with
+  status (synced / syncing / off / iCloud full) and a clear off switch; works fully offline. Owner steps (🙋 when
+  reached): enable iCloud + CloudKit on the App ID and create container `iCloud.com.asadkhan.recipefinder` in the
+  developer portal, regenerate the CI provisioning profile; deploy the CloudKit schema to production before App Store
+  release. Privacy Policy section 7: describe the sync (owner OK to update that legal text in line with this
+  feature). Dedupe on first sync (same recipe on two devices). *Done when:* container setup + conflict/dedupe logic
+  tested, sync verified on two devices via TestFlight (owner), CI + TestFlight green.
+- [ ] **Pictures 2/4 — "Make a picture"** for recipes without a photo: Image Playground (`ImageCreator`, on device,
+  iOS 18.4+ with Apple Intelligence) generates an illustration from the recipe name + key ingredients; user picks one,
+  saved like a photo. Hidden where unavailable (placeholder art stays). *Done when:* prompt building + availability
+  logic tested, screenshot, CI green.
+- [ ] **Pictures 3/4 — Built-in recipes get pictures.** One consistent illustrated set for the 332 bundled recipes.
+  Agents can't run Image Playground in CI, so: a small macOS tool in `tools/` (Swift, `ImageCreator`) the owner runs
+  once on their Mac to generate one image per bundled recipe into a folder (🙋 owner step), then agents compress
+  (WebP/HEIC, ~40–80 KB each), bundle them, and map them in the seed (sampleRefreshVersion bump; never replace a user's
+  photo). If the owner prefers another source, ask first. *Done when:* every bundled recipe shows a picture, app size
+  increase noted in Log, screenshots, CI green.
+- [ ] **Pictures 4/4 — Photos everywhere they help:** Today hero, shelves, Plan, Made it and Me use the recipe picture
+  consistently (large, rounded, same aspect); Made it nudges "Add a photo of yours" when only illustrated art exists.
+  *Done when:* screenshots of each surface, CI green.
+- [ ] **Data safety 3/4 — Backups that include everything.** Backup file becomes a zip-style archive with photos
+  (own zip writer already exists for other-app import); restore puts photos back; old JSON backups still restore.
+  Optional automatic backup (weekly, keep last 4) to iCloud Drive / Files via `BGTaskScheduler`, on by default when
+  iCloud is available; Settings shows the last backup time. *Done when:* archive round-trip with photos tested, old
+  format still restores, screenshot, CI green.
+- [ ] **Data safety 4/4 — Recently deleted.** Deleted recipes go to "Recently deleted" for 30 days (restore or delete
+  now), photos kept until then; synced. *Done when:* soft-delete/restore/purge tested, screenshot, CI green.
 - [x] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
   anything else. Audit result: 3 🔴 — all fixed 2026-11-10 (photo UUIDs, samples-only dedupe, restore merges state + streak), 14 🟡, 28 🟢; CI green.
 - [x] **Sample recipes stop loading third-party photos** (🟡 privacy/copyright, owner OK 2026-11-09). ~164 bundled
@@ -349,10 +400,7 @@ drop a line while moving it.
   network. Creating the target by hand in `project.pbxproj` from the cloud is risky — if CI can't sign/build it after
   2 tries, leave the branch and ask the owner to add the target in Xcode. *Done when:* timeline/snapshot logic tested,
   widget preview screenshot, CI + TestFlight green.
-- [ ] **Recipe pictures** (owner idea 2026-11-10: "pictures for the recipes"). Recipes without a photo get one.
-  First slice: confirm with owner which route — (a) on-device Image Playground illustration (iOS 18.1+, Apple
-  Intelligence, nothing leaves the device), (b) owner-supplied/free-licensed photos bundled for starters, or (c) both.
-  *Done when:* chosen route shipped, fallback for unsupported devices, screenshot, CI green.
+- [x] **Recipe pictures** — replaced by the Pictures 1/4 → 4/4 series at the top of Queue (owner 2026-11-12).
 
 - [ ] 🙋 **Shared family cookbooks (iCloud)** (owner idea 2026-11-10; revisit with medium features). Invite family or
   friends to a collection via CloudKit sharing (`CKShare`, private DB — Apple hosts it, no backend of ours, invite-only
