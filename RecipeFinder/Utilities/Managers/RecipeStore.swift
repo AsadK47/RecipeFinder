@@ -37,12 +37,14 @@ final class RecipeStore: RecipeStoring {
     var recipes: [RecipeModel] = []
     private(set) var isLoading = true
 
-    // Internal (not private) so the picture-download extension in RecipeStore+RemoteImages.swift can use them.
-    @ObservationIgnored let persistence: PersistenceController
-    @ObservationIgnored let imageStore: RecipeImageStore
+    @ObservationIgnored private let persistence: PersistenceController
+    @ObservationIgnored private let imageStore: RecipeImageStore
+    // Internal so RecipeStore+RemoteImages.swift can use them.
     @ObservationIgnored let imageLocalizer: RecipeImageLocalizer
-    /// Latest queued picture download; each waits for the one before, so downloads run one at a time.
+    /// Latest queued picture download; each waits for the one before.
     @ObservationIgnored var imageLocalization: Task<Void, Never>?
+    /// Web pictures already tried this launch.
+    @ObservationIgnored var attemptedPictures: Set<String> = []
     /// Bumped on each load so a slow earlier fetch can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
 
@@ -296,6 +298,7 @@ final class RecipeStore: RecipeStoring {
         if let recipe = recipes.first(where: { $0.id == id }) {
             if let hero = recipe.imageName { imageStore.deleteIfLocal(hero) }
             recipe.photoNames.forEach { imageStore.deleteIfLocal($0) }
+            removeKeptPicture(of: recipe)
         }
         recipes.removeAll { $0.id == id }
         persistence.deleteRecipe(withId: id)

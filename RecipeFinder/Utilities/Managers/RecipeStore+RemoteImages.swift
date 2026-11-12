@@ -1,39 +1,33 @@
 import Foundation
 
-/// Imported recipes arrive with the website's picture URL; these download it once and point the recipe at the
-/// stored copy, in the background, never blocking the import or the launch.
+/// Imported recipes arrive with the website's picture URL; this keeps a phone copy of it in the background (after
+/// launch and after each save), never blocking the import or the launch. The recipe itself is never rewritten.
 extension RecipeStore {
-    /// Queues a download for every recipe still showing a web picture (after launch, and after each save).
+    /// Queues a download for each web picture in `library` that has no phone copy yet. Each URL is tried once per
+    /// launch, so a dead link doesn't refetch on every save; downloads run one at a time.
     func keepWebPictures(of library: [RecipeModel]) {
-        let ids = library.filter(RecipeImageLocalizer.needsLocalizing).map(\.id)
-        guard !ids.isEmpty else { return }
+        var references: [String] = []
+        for recipe in library {
+            guard let reference = imageLocalizer.pictureToKeep(for: recipe),
+                  !attemptedPictures.contains(reference) else { continue }
+            attemptedPictures.insert(reference)
+            references.append(reference)
+        }
+        guard !references.isEmpty else { return }
         let previous = imageLocalization
-        imageLocalization = Task { [weak self] in
+        let localizer = imageLocalizer
+        imageLocalization = Task {
             await previous?.value
-            for id in ids {
-                await self?.keepWebPicture(ofRecipe: id)
+            for reference in references {
+                _ = await localizer.keep(reference: reference)
             }
         }
     }
 
-    /// Swaps the web URL for the stored copy, but only if the recipe still shows that same URL when the download
-    /// finishes — a photo the cook picked meanwhile always wins. On any failure the URL stays.
-    func keepWebPicture(ofRecipe id: UUID) async {
-        guard let recipe = recipes.first(where: { $0.id == id }),
-              RecipeImageLocalizer.needsLocalizing(recipe),
-              let url = recipe.imageName else { return }
-        guard let path = await imageLocalizer.localize(reference: url, recipeId: id) else { return }
-        guard let index = recipes.firstIndex(where: { $0.id == id }), recipes[index].imageName == url else {
-            // Picture changed or recipe deleted mid-download: drop our copy unless the recipe now uses that file.
-            if recipes.first(where: { $0.id == id })?.imageName != path { imageStore.deleteIfLocal(path) }
-            return
-        }
-        var updated = recipes[index]
-        updated.imageName = path
-        guard persistence.saveRecipeModel(updated) else {
-            imageStore.deleteIfLocal(path)
-            return
-        }
-        recipes[index] = updated
+    /// Drops the phone copy of a deleted recipe's web picture unless another recipe still shows it.
+    func removeKeptPicture(of deleted: RecipeModel) {
+        guard let reference = deleted.imageName, RemoteRecipeImage.storedPath(for: reference) != nil,
+              !recipes.contains(where: { $0.id != deleted.id && $0.imageName == reference }) else { return }
+        imageLocalizer.removeCopy(of: reference)
     }
 }

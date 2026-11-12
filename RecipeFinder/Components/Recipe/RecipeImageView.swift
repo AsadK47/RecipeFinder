@@ -24,6 +24,14 @@ struct RecipeImageView: View {
     static func resolvedSource(for imageName: String?) -> Source? {
         guard let imageName = imageName, !imageName.isEmpty else { return nil }
         if imageName.hasPrefix("http"), let url = URL(string: imageName) {
+            // Prefer the phone copy kept by RecipeStore+RemoteImages so the picture shows offline.
+            if let stored = RemoteRecipeImage.storedPath(for: imageName),
+               let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                let file = docs.appendingPathComponent(stored)
+                if FileManager.default.fileExists(atPath: file.path) {
+                    return .provider(localProvider(for: file))
+                }
+            }
             return .network(url)
         }
         // Legacy absolute path (pre relative-path migration); container path changes on reinstall, so fall back to looking up by filename.

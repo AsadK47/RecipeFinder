@@ -32,25 +32,52 @@ enum RemoteImageFixtures {
 @Suite("RemoteRecipeImage")
 struct RemoteRecipeImageTests {
 
-    @Test("Web links are downloadable", arguments: [
-        "https://example.com/pie.jpg", "http://example.com/pie.png", "HTTPS://Example.com/a.webp",
-        "  https://example.com/pie.jpg  "
+    @Test("Public https links are downloadable", arguments: [
+        "https://example.com/pie.jpg", "HTTPS://Example.com/a.webp", "  https://example.com/pie.jpg  "
     ])
     func webLinksAreDownloadable(reference: String) {
         #expect(RemoteRecipeImage.downloadableURL(from: reference)?.host?.lowercased() == "example.com")
     }
 
-    @Test("Anything that isn't a web link is never fetched", arguments: [
+    @Test("Anything that isn't a public https link is never fetched", arguments: [
         "", "RecipeImages/ABC.jpg", "/var/mobile/RecipeImages/ABC.jpg", "file:///etc/passwd",
-        "ftp://example.com/pie.jpg", "data:image/png;base64,AAAA", "javascript:alert(1)", "https://", "pie"
+        "ftp://example.com/pie.jpg", "data:image/png;base64,AAAA", "javascript:alert(1)", "https://", "pie",
+        "http://example.com/pie.jpg", "https://localhost/pie.jpg", "https://printer.local/pie.jpg",
+        "https://192.168.1.1/pie.jpg", "https://10.0.0.2/pie.jpg", "https://127.0.0.1/pie.jpg",
+        "https://172.20.1.1/pie.jpg", "https://169.254.1.1/pie.jpg", "https://[::1]/pie.jpg"
     ])
     func otherReferencesAreNotDownloadable(reference: String) {
         #expect(RemoteRecipeImage.downloadableURL(from: reference) == nil)
+        #expect(RemoteRecipeImage.storedPath(for: reference) == nil)
+    }
+
+    @Test("Public addresses that only look private are allowed", arguments: [
+        "https://172.32.0.1/pie.jpg", "https://8.8.8.8/pie.jpg", "https://cdn.10.example.com/pie.jpg"
+    ])
+    func publicAddressesAreAllowed(reference: String) {
+        #expect(RemoteRecipeImage.downloadableURL(from: reference) != nil)
     }
 
     @Test("A missing reference is not downloadable")
     func nilIsNotDownloadable() {
         #expect(RemoteRecipeImage.downloadableURL(from: nil) == nil)
+    }
+
+    @Test("Each picture URL has its own stable file under RecipeImages")
+    func storedPathIsStablePerURL() throws {
+        let pie = try #require(RemoteRecipeImage.storedPath(for: "https://example.com/pie.jpg"))
+        #expect(pie == RemoteRecipeImage.storedPath(for: "https://example.com/pie.jpg"))
+        #expect(pie != RemoteRecipeImage.storedPath(for: "https://example.com/cake.jpg"))
+        #expect(pie.hasPrefix("RecipeImages/web-"))
+        #expect(pie.hasSuffix(".jpg"))
+    }
+
+    @Test("A picture declaring more pixels than the cap is refused before decoding")
+    func hugeCanvasIsRejected() {
+        let png = RemoteImageFixtures.png(width: 100, height: 100)
+        #expect(throws: RemoteImageError.tooLarge) {
+            try RemoteRecipeImage.normalisedJPEG(from: png, maxSourcePixels: 9_999)
+        }
     }
 
     @Test("A big picture becomes a JPEG no wider than 1600px, keeping its shape")

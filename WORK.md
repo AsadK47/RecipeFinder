@@ -8,20 +8,20 @@ Slice 2 left: illustrated placeholders per category/cuisine (`Components/Recipe/
 Check Build & Test for `agent/pictures-1`; fix; merge to main. Then slice 2 (placeholders) on `agent/pictures-1b`.
 
 ## Decisions (why)
-- **Pictures 1/4 slice 1 (keep web pictures)**: one seam for every import path — `RecipeStore.save/add` (all imports
-  go through it) + a launch pass queue a background download (`RecipeStore+RemoteImages.swift`), serialised one at a
-  time via a chained `imageLocalization` task. Not done in `RecipeImportBuilder`: 5 call sites, and the wizard needs
-  the URL to preview before save. Trust boundary in `RemoteRecipeImage`: http(s) + host only, 10 MB cap (streamed in
-  `URLSessionRemoteImageFetcher`, also re-checked before decode), ImageIO type must conform to `.image`, re-encoded as
-  JPEG ≤1600px (never upscaled). Stored at `RecipeImages/<id>.jpg` with `.withoutOverwriting` so a cook's photo is
-  never replaced; applied only if the recipe still shows the same URL when the download ends, else our file is
-  removed (unless the recipe now points at it). Samples skipped. Failures keep the URL and retry next launch/save
-  (dead links re-fetch each launch — cheap, accepted). Gallery `photoNames` URLs out of scope.
-  **Pre-mortem:** (1) cook's own photo overwritten by a late download → `existingPhotoIsKept`,
-  `cooksPhotoWinsOverDownload`; (2) non-image / huge / non-web link stored or fetched → `htmlIsNotAnImage`,
-  `oversizedIsRejected`, `otherReferencesAreNotDownloadable`, `localReferenceIsNotFetched`; (3) import picture lost
-  offline or swap not persisted → `importKeepsPicture` (re-reads persistence), `failureKeepsURL`,
-  `launchPassCoversExistingImports`.
+- **Pictures 1/4 slice 1 (keep web pictures)**: the recipe KEEPS its web URL in `imageName`; a phone copy lives at
+  `RecipeImages/web-<sha256(url)>.jpg` (Documents, not purgeable cache) and `RecipeImageView.resolvedSource` prefers it.
+  First build swapped `imageName` to a local path (as the backlog wording said) — challenge pass showed that breaks
+  refresh-from-source (diff sees a new image every open), `.recipe` export (only exports http) and backups (no image
+  files → dead path on restore), plus a fixed `<id>.jpg` + `.withoutOverwriting` got stuck. URL-keyed copy fixes all,
+  needs no Core Data change, recipes sharing a URL share a file. Queued from `RecipeStore.save/add` (every import path)
+  + after load; one at a time; each URL tried once per launch (dead links don't refetch on every save). Trust
+  boundary in `RemoteRecipeImage`: https only (ATS blocks http anyway), no localhost/.local/private/link-local/IPv6
+  literal hosts, 10 MB streamed cap, ≤50 MP declared, ImageIO type check, re-encoded JPEG ≤1600px. Fetcher: ephemeral
+  session, Safari UA (as page import), skips Low Data Mode. Delete removes the copy unless another recipe uses it.
+  **Pre-mortem:** (1) picture still gone offline → `importKeepsPicture`, `launchKeepsExistingImports` (+ display
+  path is one function, all screens use it); (2) hostile link fetched/stored → `otherReferencesAreNotDownloadable`,
+  `htmlIsNotAnImage`, `oversizedIsRejected`, `hugeCanvasIsRejected`; (3) refetch storms / leaked files →
+  `failureIsTriedOncePerLaunch`, `keptPictureIsNotRefetched`, `deleteRemovesUnsharedCopy`.
 - **Badges 1/2 slice 2 (reveal + tilt)**: `.fullScreenCover` replaces the 380pt sheet; same wait rule (Made it / "+"
   busy) now pure `BadgeReveal.showing`. Covers don't swipe away, so the reveal has its own drag-down-to-close (keeps
   UI-test helpers that drag the window working), a ✕, `.escape` action and the 8 s auto-close. Close = medallion

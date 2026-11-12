@@ -9,7 +9,7 @@ enum RemoteImageError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .unsupportedURL: "The picture's address isn't a web link."
+        case .unsupportedURL: "The picture's address isn't a public https link."
         case .badResponse(let code): "The website answered \(code) for the picture."
         case .tooLarge: "The picture is too large to keep."
         case .notAnImage: "The link isn't a picture."
@@ -24,16 +24,23 @@ protocol RemoteImageFetching: Sendable {
 }
 
 /// Live fetcher: streams the body so an oversized or lying `Content-Length` response is cut off at the cap.
+/// Ephemeral (no cookies or cache kept) and skips Low Data Mode — pictures can wait for a better connection.
 struct URLSessionRemoteImageFetcher: RemoteImageFetching {
     private let session: URLSession
 
-    init(session: URLSession = .shared) {
+    init(session: URLSession = URLSession(configuration: .ephemeral)) {
         self.session = session
     }
 
     func fetchImageData(from url: URL, maxBytes: Int) async throws -> Data {
         var request = URLRequest(url: url, timeoutInterval: 30)
         request.setValue("image/*", forHTTPHeaderField: "Accept")
+        // Same browser identity as the page import, so sites that block unknown clients serve the picture too.
+        request.setValue(
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+            forHTTPHeaderField: "User-Agent"
+        )
+        request.allowsConstrainedNetworkAccess = false
         let (bytes, response) = try await session.bytes(for: request)
         guard let http = response as? HTTPURLResponse else { throw RemoteImageError.badResponse(statusCode: 0) }
         guard (200..<300).contains(http.statusCode) else {
