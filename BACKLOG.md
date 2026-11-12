@@ -399,6 +399,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   doodles, card hover motion. Proper 1200×630 share image, sitemap updated, Lighthouse ≥ 95 on all four scores.
 
 ## Smells (refactors — reviewer adds, builder works; see rule at top)
+- [ ] **Large Class: `TodayView` (379 lines)** — Extract Method/Class: pure `TodaySnapshot` (feed/week/progress/pick from one refresh) + shelf filtering, header/first-recipe/shortcut views out. Target ≤300. — 🚧 builder agent 2026-11-12
 - [ ] **Primitive Obsession: recipe times stored as text** (owner OK incl. Core Data change, 2026-11-09).
   `RecipeModel.prepTime`/`cookingTime` are Strings ("30 minutes") parsed back with regexes for sorting, filtering,
   the wizard and bundled seeds. Replace Data Value with Object: store `prepMinutes`/`cookMinutes: Int` (new model
