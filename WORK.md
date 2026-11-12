@@ -1,12 +1,11 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Today+ 3/3 on `agent/today-progress` (single slice): `TodayProgress.swift` (progress + `TrySomethingNew`),
-`TodayProgressCard.swift` (`TodayProgressCard`, `TodayTryNewCard`), wired in `TodayView` after the week card;
-`TodayProgressTests`; UI shot test `testCaptureTodayProgress` (32/33). Files registered in pbxproj by hand.
+(none) — Today+ 3/3 done (merged 9c8d7c5, ticked). Today+ series complete.
 
 ## Next action
-Check Build & Test for the branch; then Screenshots run → look at 16, 32, 33; challenge + deep-review; merge.
+Smell first (series finished): extract TodayView refresh/plan helpers (~375 lines) or top Smell; then Badges 1/2.
+Not shown in screenshots: "Try something new" (UI-test sim is a new user) — logic covered by TodayProgressTests.
 ## Decisions (why)
 - **Today+ 3/3 (progress + something new)**: "Your cooking" card after This week: streak weeks, cooks this week
   (from `CookingStreak`), next badge = locked *cooking* badge (library-size badges stay on Me — Today rewards cooking)
