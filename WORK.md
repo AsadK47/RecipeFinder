@@ -1,14 +1,20 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slice 1 merged (store copy before upgrade). Nothing on a branch.
+Data safety 1/4 slice 2: `agent/data-safety-1-v16-entities` (0055d13) — RecipeModel 16 + tests, waiting on Build & Test.
 
 ## Next action
-Data safety 1/4 slice 2: add `RecipeModel 16` with CloudKit-ready entities for meal plans, shopping list, kitchen
-items, collections, badges, streak, profile; point `.xccurrentversion` at it; update "RecipeModel 15" in CLAUDE.md
-files; bump `olderModel()` in StoreBackupTests to 15. Then slice 3: per-manager blob→entity migration.
+Green → ff main, Log line. Then slice 3: per-manager blob→entity migration (count check, keep blobs one release).
 
 ## Decisions (why)
+- **Data safety 1/4 slice 2 (v16 entities)**: one entity per blob, no relationships (CloudKit-easy; collection
+  recipe ids + shopping item stores are JSON Binary, like Recipe's arrays). Entities named `*Entity` (codegen classes
+  must not clash with `Badge`/`MealPlanModel`…). `sortOrder` on list entities keeps the arrays' order. Legacy
+  `KitchenItem` and `KitchenInventoryModel` both live → both get entities. Shown badge celebrations = a flag on
+  `EarnedBadgeEntity`. Profile photo Binary with external storage (CKAsset later). Enums stored as raw String.
+  **Pre-mortem:** (1) v15 store fails to upgrade / loses recipes → `v15StoreMigratesAndGainsTheNewEntities` + slice-1
+  store copy; (2) model CloudKit can't take in 2/4 → `currentModelIsCloudKitReady`; (3) a blob has no entity →
+  `currentModelHasAnEntityForEachBlob`.
 - **Data safety 1/4 slice 1 (store backup)**: copy only when opening would migrate (metadata incompatible with
   current model, or unreadable) — not every launch (disk churn). Copy happens before `loadPersistentStores`, store
   not yet open, so plain file copies of sqlite/-wal/-shm are consistent. Folders `store-<15-digit ms>-<8 hex>` in
