@@ -40,6 +40,7 @@ struct ContentView: View {
                 store.load()
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .openToday)) { select(AppTab.destination(for: $0.name)) }
         .onReceive(NotificationCenter.default.publisher(for: .openRecipes)) { select(AppTab.destination(for: $0.name)) }
         .onReceive(NotificationCenter.default.publisher(for: .openGroceries)) { select(AppTab.destination(for: $0.name)) }
         .onReceive(NotificationCenter.default.publisher(for: .openMealPlan)) { select(AppTab.destination(for: $0.name)) }

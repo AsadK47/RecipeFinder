@@ -4,6 +4,7 @@ import Foundation
 /// (a mistyped or orphaned name silently does nothing — "OpenTimer" was posted for months with no observer).
 extension Notification.Name {
     // Notification taps / intents → navigation (observed by ContentView).
+    static let openToday    = Notification.Name("OpenToday")
     static let openRecipes  = Notification.Name("OpenRecipes")
     static let openRecipe   = Notification.Name("OpenRecipe")
     static let openGroceries = Notification.Name("OpenGroceries")

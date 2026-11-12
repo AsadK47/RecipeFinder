@@ -1,12 +1,24 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-(none) — Smell Large Class TodayView merged (d81af16, ticked).
+Badges 1/2 slice 1 on `agent/badges-shelf`: trophy shelf (grouped rows, newest first, locked silhouettes + progress
+ring), full-screen swipe pager (replaces BadgeDetailView sheet), "earn it here" button → tab. Waiting on Build & Test.
 
 ## Next action
-Badges 1/2 (next in owner order). Notes for later: `TodayFeed.Shelves` lives in TodaySnapshot.swift (move to
-TodayFeed.swift on next touch); `TodayShortcutCard` has one caller (.plan).
+Get `agent/badges-shelf` green → Screenshots run (look at 34, 35, 17) → deep-review + challenge → merge. Then slice 2:
+(a) full-screen earn reveal replacing the 380pt BadgeEarnedSheet (flip-in, shine, colour confetti, haptic) and
+(b) tilt-to-shine on pager cards (CoreMotion, Reduce Motion off).
 ## Decisions (why)
+- **Badges 1/2 slice 1**: groups by metric — Cooking = cooks/cuisines/same dish/rated/cook photo; Streaks; Importing =
+  library size + first import/photo import + Welcome Aboard; Planning = meal plan + groceries. Earned newest first
+  (undated earned after dated), locked in list (earning) order — not "closest", keeps rows stable. Pager = shelf order
+  flattened, "3 of 24" instead of 24 page dots. Earn routes reuse ContentView's open* notifications (+ new
+  `.openToday` for cook/streak badges); posted in the cover's onDismiss so the tab switches after it closes. Rating /
+  cook-photo badges → Recipes. Collapsible "Achievements" header dropped (shelf is the point of Me). Metrics refresh on
+  Me appear (badges unlock on other tabs). **Pre-mortem:** (1) a badge missing/duplicated on the shelf or in the
+  pager → `everyBadgeSitsOnTheShelfExactlyOnce`, `pagerSwipesThroughTheShelfInShelfOrder`; (2) wrong progress
+  ("12 / 10", wrong unit) → `progressNeverOverflowsTheTarget`, `progressReadsCurrentOverTarget…`; (3) earn button does
+  nothing / wrong tab, or pager can't swipe → `earnActionOpensItsTab` + UI `testCaptureTrophyShelf` (shots 34, 35).
 - **TodayView smell**: behaviour-preserving only. Snapshot takes `plansOn: (Date) -> [MealPlanModel]` (the planner's
   lookup) + an injected calendar; `propagateRecurring` stays in the view (it mutates the store — CQS). Pre-mortem:
   (1) week/feed built with different plans than before → `eachPartMatchesBuildingItAlone`, `theWeekShowsPlans…`;

@@ -1,60 +1,69 @@
 import SwiftUI
 
-/// Collapsible "Achievements" badges grid on the Profile screen.
+/// Trophy shelf on Me: one swipeable row per badge group (Cooking / Streaks / Importing / Planning), newest earned
+/// first, locked badges as silhouettes with a progress ring. Tap any badge → the full-screen pager.
 struct ProfileBadgesSection: View {
-    let badgeManager: any BadgeManaging
-    @Binding var isExpanded: Bool
+    let sections: [BadgeShelfSection]
+    let metrics: BadgeMetrics
     let onSelectBadge: (Badge) -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            Button(action: {
-                withAnimation(.appSpring) {
-                    isExpanded.toggle()
-                }
-                HapticManager.shared.light()
-            }) {
-                HStack {
-                    Image(systemName: "trophy.fill")
-                        .adaptiveForegroundColor()
-                    Text("Achievements")
-                        .font(.headline)
-                        .adaptiveForegroundColor()
-                    Spacer()
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .adaptiveSecondaryForeground()
-                        .font(.caption)
-                }
-                .padding(.horizontal, AppTheme.cardHorizontalPadding)
-                .padding(.vertical, AppTheme.spacing12)
-                .background(Color.secondary.opacity(AppTheme.shadowLightOpacity))
+        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+            HStack {
+                Label("Trophy shelf", systemImage: "trophy.fill")
+                    .font(.headline)
+                    .adaptiveForegroundColor()
+                Spacer()
+                Text(BadgeShelf.countText(sections))
+                    .font(.subheadline.weight(.semibold))
+                    .adaptiveSecondaryForeground()
+                    .accessibilityLabel("\(BadgeShelf.countText(sections)) badges earned")
             }
-            .buttonStyle(PlainButtonStyle())
-            
-            if isExpanded {
-                VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                    let recipeCount = PersistenceController.shared.getRecipeCount()
-                    let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
-                        .sorted { $0.isUnlocked && !$1.isUnlocked }
-                    
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
-                        ForEach(allBadges) { badge in
-                            Button(action: {
-                                onSelectBadge(badge)
-                                HapticManager.shared.light()
-                            }) {
-                                BadgeCard(badge: badge)
+
+            ForEach(sections) { section in
+                VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                    HStack(spacing: AppTheme.spacing6) {
+                        Image(systemName: section.group.icon)
+                            .font(.caption)
+                            .adaptiveSecondaryForeground()
+                        Text(section.group.title)
+                            .font(.subheadline.weight(.semibold))
+                            .adaptiveForegroundColor()
+                        Spacer()
+                        Text(section.countText)
+                            .font(.caption.weight(.semibold))
+                            .adaptiveSecondaryForeground()
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(alignment: .top, spacing: AppTheme.spacing4) {
+                            ForEach(section.badges) { badge in
+                                tile(badge)
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .accessibilityLabel(badge.title)
-                            .accessibilityHint(badge.isUnlocked ? "Unlocked badge. Double tap for details" : "Locked badge. \(badge.description)")
-                            .accessibilityAddTraits(.isButton)
                         }
                     }
                 }
-                .padding(AppTheme.spacing24)
             }
         }
+        .padding(AppTheme.cardHorizontalPadding)
         .appCard(cornerRadius: AppTheme.cornerRadius16)
+    }
+
+    private func tile(_ badge: Badge) -> some View {
+        let type = BadgeType(rawValue: badge.id)
+        let progressText = badge.isUnlocked ? nil : type?.progressText(for: metrics)
+        return Button {
+            HapticManager.shared.light()
+            onSelectBadge(badge)
+        } label: {
+            BadgeCard(badge: badge, progress: badge.isUnlocked ? nil : type?.progressFraction(for: metrics))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(badge.title)
+        .accessibilityValue(badge.isUnlocked ? "Earned" : ["Locked", progressText].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityHint("Opens the badge")
+        .accessibilityIdentifier("me.badge.\(badge.id)")
     }
 }

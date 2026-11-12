@@ -15,7 +15,8 @@ import Testing
     }
 
     @Test(arguments: [
-        (Notification.Name.openRecipes, AppTab.recipes),
+        (Notification.Name.openToday, AppTab.today),
+        (.openRecipes, .recipes),
         (.openRecipe, .recipes),
         (.openGroceries, .groceries),
         (.openMealPlan, .plan),

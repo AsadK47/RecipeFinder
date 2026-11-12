@@ -32,6 +32,7 @@ enum AppTab: String, CaseIterable, Hashable, Identifiable {
     /// The tab a navigation notification (notification tap, intent, imported file) opens; nil for ones that don't switch tabs.
     static func destination(for name: Notification.Name) -> AppTab? {
         switch name {
+        case .openToday: .today
         case .openRecipes, .openRecipe: .recipes
         case .openGroceries: .groceries
         case .openMealPlan: .plan

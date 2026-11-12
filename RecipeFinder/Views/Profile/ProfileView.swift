@@ -7,6 +7,8 @@ struct ProfileView: View {
 
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
+    @Environment(\.recipeStore) private var recipeStore
+    @Environment(\.cookingStreak) private var cookingStreak
 
     @State private var activeSheet: ProfileSheet?
     @State private var showSettings = false
@@ -14,7 +16,10 @@ struct ProfileView: View {
     @State private var editingName = false
     @State private var tempName = ""
     @State private var showSuccessFeedback = false
-    @State private var badgesSectionExpanded = true
+    @State private var badgeMetrics = BadgeMetrics()
+    @State private var pagerStart: BadgePagerStart?
+    /// Set by a locked badge's "earn it here" button; acted on once the pager has fully closed.
+    @State private var pendingEarn: BadgeEarnAction?
 
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -53,10 +58,10 @@ struct ProfileView: View {
                         )
 
                         ProfileBadgesSection(
-                            badgeManager: badgeManager,
-                            isExpanded: $badgesSectionExpanded,
+                            sections: shelf,
+                            metrics: badgeMetrics,
                             onSelectBadge: { badge in
-                                activeSheet = .badge(badge)
+                                pagerStart = BadgePagerStart(badgeID: badge.id)
                             }
                         )
 
@@ -109,20 +114,36 @@ struct ProfileView: View {
                 PrivacyPolicyView()
             case .imagePicker:
                 ImagePicker(image: $profileImage)
-            case .badge(let badge):
-                BadgeDetailView(badge: badge)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.hidden)
             }
+        }
+        .fullScreenCover(item: $pagerStart, onDismiss: openPendingEarn) { start in
+            BadgePagerView(
+                badges: BadgeShelf.pagerOrder(shelf),
+                startID: start.badgeID,
+                metrics: badgeMetrics,
+                onEarn: { pendingEarn = $0 }
+            )
         }
         .animation(.appSpring, value: editingName)
         .animation(.appSpring, value: showSuccessFeedback)
         .onAppear {
             loadCurrentProfile()
+            cookingStreak.reload()
+            badgeMetrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
         }
         .onChange(of: profileImage) { _, newImage in
             profileManager.saveProfileImage(newImage)
         }
+    }
+
+    private var shelf: [BadgeShelfSection] {
+        BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
+    }
+
+    private func openPendingEarn() {
+        guard let action = pendingEarn else { return }
+        pendingEarn = nil
+        NotificationCenter.default.post(name: action.notification, object: nil)
     }
 
     private func getInitials() -> String {

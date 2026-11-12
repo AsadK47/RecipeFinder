@@ -441,6 +441,48 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "33-today-cooking-sheet")
     }
 
+    /// Badges 1/2: Me's trophy shelf, a locked badge in the full-screen pager (progress + earn-here button), a swipe
+    /// to the next card, and the earn-here button switching tab.
+    @MainActor
+    func testCaptureTrophyShelf() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Me", shot: nil)
+
+        // Third in the Streaks row, so it's on screen without a sideways scroll; nobody has a 12-week streak in CI.
+        let locked = app.buttons["me.badge.streak_twelve_weeks"]
+        for _ in 0..<8 where !(locked.exists && locked.isHittable) { app.swipeUp() }
+        XCTAssertTrue(locked.waitForExistence(timeout: 5), "Me should show the trophy shelf.")
+        XCTAssertTrue(app.staticTexts["Trophy shelf"].exists, "The shelf should have its title.")
+        settle()
+        snap(app, "34-me-trophy-shelf")
+
+        locked.tap()
+        let progress = app.staticTexts["badge.pager.progress"]
+        XCTAssertTrue(progress.waitForExistence(timeout: 5), "A locked badge should show its progress.")
+        XCTAssertTrue(progress.label.hasSuffix("/ 12 weeks"), "Progress should count weeks: \(progress.label)")
+        XCTAssertTrue(app.buttons["badge.pager.earn"].exists, "A locked badge should offer where to earn it.")
+        settle()
+        snap(app, "35-badge-pager-locked")
+
+        let position = app.staticTexts["badge.pager.position"]
+        let before = position.label
+        app.swipeLeft()
+        settle(1)
+        XCTAssertNotEqual(position.label, before, "Swiping should move to the next badge.")
+        app.swipeRight()
+        settle(1)
+
+        app.buttons["badge.pager.earn"].tap()
+        let today = app.tabBars.buttons["Today"]
+        let selected = NSPredicate(format: "isSelected == true")
+        expectation(for: selected, evaluatedWith: today)
+        waitForExpectations(timeout: 5)
+    }
+
     // MARK: - Helpers
 
     /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded
