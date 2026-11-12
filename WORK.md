@@ -1,12 +1,10 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Badges 1/2 slice 2 on `agent/badges-reveal`: full-screen `BadgeRevealView` (replaces BadgeEarnedSheet; file renamed),
-shared `BadgeMedallion`, pure `BadgeReveal`/`BadgeShine` + `BadgeRevealTests`, `TiltMotion` (CoreMotion) on pager
-cards, `HapticManager.badgeReveal()`, UI shot 36 (`-show-badge-reveal`). Waiting on Build & Test.
+(none) — Badges 1/2 done (slice 2 merged 089ac88).
 
 ## Next action
-Green → Screenshots on the branch, look at 36 + 35 + a Me shot → deep-review + challenge pass → merge, tick Badges 1/2.
+Pictures 1/4 (top priority list in BACKLOG Batches 1) on a new `agent/pictures-1` branch: claim it first.
 
 ## Decisions (why)
 - **Badges 1/2 slice 2 (reveal + tilt)**: `.fullScreenCover` replaces the 380pt sheet; same wait rule (Made it / "+"
