@@ -79,6 +79,7 @@ drop a line while moving it.
 - Skip, disable or weaken a test to get green.
 - New Swift files: no `XcodeWrite` in the cloud — register them in `project.pbxproj` by mirroring a sibling file's
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
+- 2026-11-12 · Data safety 1/4 slice 1 (store copy before upgrade) · 4ec1589 · nothing visible; next TestFlight upgrade should open with all recipes · review: 3 fixed (backup exclusion, prune-first, prune error) · looked at: n/a (no UI). Also fixed flaky `testCaptureBadgeReveal` (69187fa, reveal held open under `-show-badge-reveal`) · looked at: 36. New files registered in pbxproj by hand.
 
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
@@ -112,7 +113,9 @@ drop a line while moving it.
   migration on launch: read each blob, write entities, verify counts, only then mark migrated (keep the old blobs for
   one release as a fallback). Before any store migration, copy the SQLite store (+ -wal/-shm) to
   `Application Support/StoreBackups/` (keep last 3). Design the new entities CloudKit-ready (all attributes optional or
-  defaulted, no unique constraints, relationships optional with inverses) for Data safety 2/4. *Done when:*
+  defaulted, no unique constraints, relationships optional with inverses) for Data safety 2/4. ✅ Slice 1 (4ec1589):
+  `StoreBackup` copies the store before any migration (StoreBackups/, newest 3, excluded from device backup). Left:
+  v16 entities + `.xccurrentversion`, then per-manager blob→entity migration. *Done when:*
   migration tested per manager (incl. corrupt/missing blobs), store-backup tested, migration test from the shipped
   model, backup/restore round-trip still green, CI green.
 - [ ] **Data safety 2/4 — iCloud sync** (owner OK 2026-11-12: iCloud entitlement + CloudKit container + model

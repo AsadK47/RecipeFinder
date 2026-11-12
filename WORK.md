@@ -1,13 +1,12 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-- `agent/fix-badge-reveal-shot` (69187fa): reveal no auto-close under `-show-badge-reveal` (`BadgeReveal.autoCloseAfter`);
-  Build & Test + Screenshots triggered.
-- `agent/data-safety-1-store-backup` (80ff624): Data safety 1/4 slice 1 — `StoreBackup` + PersistenceController
-  copies store before migration. Build & Test pending.
+Data safety 1/4 (claimed): slice 1 merged (store copy before upgrade). Nothing on a branch.
 
 ## Next action
-Check both branches' CI; land each when green. Then Data safety 1/4 slice 2: model v16 entities (CloudKit-ready).
+Data safety 1/4 slice 2: add `RecipeModel 16` with CloudKit-ready entities for meal plans, shopping list, kitchen
+items, collections, badges, streak, profile; point `.xccurrentversion` at it; update "RecipeModel 15" in CLAUDE.md
+files; bump `olderModel()` in StoreBackupTests to 15. Then slice 3: per-manager blob→entity migration.
 
 ## Decisions (why)
 - **Data safety 1/4 slice 1 (store backup)**: copy only when opening would migrate (metadata incompatible with
