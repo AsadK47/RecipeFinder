@@ -199,7 +199,7 @@ drop a line while moving it.
   afternoon = "Start by 5:40 to eat at 7" (from prep + cook time, eat-time setting default 19:00), evening = "Quick
   tonight? N under 30 min". Calmer layout: fewer stacked cards, bigger imagery, one accent per section.
   *Done when:* hero/shuffle/alternatives + time-line logic tested, screenshots (morning, afternoon, evening), CI green.
-- [ ] **Today+ 2/3 — Use it up + week at a glance.** Slice 1 done ("Use it up" row, afea2cf). Left (slice 2): 7-day
+- [ ] **Today+ 2/3 — Use it up + week at a glance.** — 🚧 builder agent 2026-11-12 Slice 1 done ("Use it up" row, afea2cf). Left (slice 2): 7-day
   strip (planned/unplanned dots); tap an empty day → plan it; "Plan tomorrow" one-tap pick. *Done when:* strip +
   plan-tomorrow logic tested, screenshots, CI green.
 - [ ] **Today+ 3/3 — Progress + something new.** Progress row: streak, cooks this week, next badge with progress bar
