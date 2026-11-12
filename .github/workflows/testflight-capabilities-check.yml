@@ -1,0 +1,29 @@
+name: Check app capabilities
+
+# "Run workflow" to read, from App Store Connect, which capabilities (iCloud, App Groups, …) the app's bundle IDs
+# have — e.g. to confirm a developer-portal change. Read-only; uses the same API key as the TestFlight workflow.
+# Named testflight-* so Build & Test's paths-ignore skips it.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read capabilities
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          cd .github/scripts
+          ASC_KEY_PATH="$KEY_PATH" python3 asc_capabilities.py \
+            com.asadkhan.recipefinder com.asadkhan.recipefinder.RecipeShareExtension | tee -a "$GITHUB_STEP_SUMMARY"
