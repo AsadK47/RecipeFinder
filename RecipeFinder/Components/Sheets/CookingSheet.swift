@@ -14,10 +14,8 @@ struct CookingSheet: View {
 
     /// Only the cook-centric badges live here (this screen is their home); feature-first badges stay on Profile.
     private var cookingBadges: [BadgeType] {
-        let cookingMetrics: Set<BadgeMetric> = [.recipesCooked, .weeklyStreak, .cuisinesCooked,
-                                                .sameRecipeCooked, .recipesRated, .cookPhotos]
-        return BadgeType.allCases.filter {
-            if let metric = $0.criterion.metric { return cookingMetrics.contains(metric) }
+        BadgeType.allCases.filter {
+            if let metric = $0.criterion.metric { return TodayProgress.cookingMetrics.contains(metric) }
             return false
         }
     }

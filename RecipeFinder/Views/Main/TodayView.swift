@@ -104,11 +104,16 @@ struct TodayView: View {
                 }
             }
         }
-        .onAppear(perform: refresh)
+        .onAppear {
+            // The streak is only recomputed on a cook; a new week since then must reset "cooks this week".
+            cookingStreak.reload()
+            refresh()
+        }
         .task { await probeClipboard() }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
             // Back after midnight: "today" and "tomorrow" move on, so Plan it never dates a plan from yesterday's view.
+            cookingStreak.reload()
             refresh()
             Task { await probeClipboard() }
         }
@@ -285,9 +290,10 @@ struct TodayView: View {
             TodayShelf(title: "Starters to try", id: "starters",
                        items: feed.starters.map { ($0, $0.hasTotalTime ? $0.totalTime : nil) }, onOpen: open)
         }
-        let cookAgain = feed.cookAgain.filter { $0.id != shownID }
-        let kitchenMatches = feed.fitsYourKitchen.filter { $0.recipe.id != shownID }
-        let rediscover = feed.rediscover.filter { $0.id != shownID }
+        let onCards: Set<UUID?> = [shownID, tryNew?.id]
+        let cookAgain = feed.cookAgain.filter { !onCards.contains($0.id) }
+        let kitchenMatches = feed.fitsYourKitchen.filter { !onCards.contains($0.recipe.id) }
+        let rediscover = feed.rediscover.filter { !onCards.contains($0.id) }
         if !cookAgain.isEmpty {
             TodayShelf(title: "Cook again", id: "cookAgain", items: cookAgain.map { ($0, nil) }, onOpen: open)
         }
