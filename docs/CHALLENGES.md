@@ -113,3 +113,13 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Data] Placeholder art (Pictures 1/4 slice 2) is keyword-based: "Radish Cake" [Starter] gets cake art, "Scallion Pancakes" [Side] breakfast art, "Pad See Ew"/"Char Kway Teow" fall back to fork & knife; soup glyph (`humidity`) is weak; hashed colours can coincide with a cuisine colour — cost if wrong: a few odd-looking tiles until Pictures 3/4 gives bundled recipes real pictures.
   → Owner:
+
+## 2026-11-12 (item pass: Data safety 1/4 slice 1 — fixed: store copies went into the iCloud/device backup (now excluded), pruned after copying (now makes room first, so a new copy is never pruned and the upgrade keeps disk headroom), prune failure logged as backup failure, bare `try?` cleanup, tests defaulting to the real Application Support)
+- ⚔️ [Structure] The file copy is consistent only while nothing else opens the store at launch (share extension doesn't today); if a widget/extension ever shares it, switch to `replacePersistentStore` (SQLite backup API).
+  → Owner:
+- ⚔️ [Flow] Nothing restores from `StoreBackups/` yet (no user/support path), and `.corrupt-*` files from recovery are never pruned — a "Restore earlier copy" in Settings → Data could come with Data safety 3/4.
+  → Owner:
+- ⚔️ [Time] Before first unlock, store reads fail and `attemptStoreRecovery` moves a healthy store aside (pre-existing, not this change) — check `isProtectedDataAvailable` before "recovering".
+  → Owner:
+- ⚔️ [Tests] `olderModel()` pins `RecipeModel 14.mom`; when 16 ships, bump it to 15 with `.xccurrentversion` (tracked in WORK.md).
+  → Owner:
