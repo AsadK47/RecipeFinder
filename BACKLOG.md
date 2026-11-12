@@ -257,7 +257,7 @@ drop a line while moving it.
   (Spoons slot once Spoons 1/2 ships). "Try something new" card: one never-cooked recipe per week (stable for the week;
   uses taste profile once it exists). *Done when:* weekly pick (stable, never-cooked) + progress logic tested,
   screenshots, CI green. Note: Today looks flat without photos — Recipe pictures lifts it further.
-- [ ] **Badges 1/2 — Earning feels big, browsing feels alive** (owner OK 2026-11-11: "give the achievements more
+- [ ] **Badges 1/2 — Earning feels big, browsing feels alive** — 🚧 builder agent 2026-11-12 (owner OK 2026-11-11: "give the achievements more
   impact … scrollable or swipable … not just a static something"). ✅ slice 1 (1471585): (b) pager, (c) locked
   silhouette + ring + earn-here button, (d) trophy shelf. **Left (slice 2):** (a) earn reveal: full-screen badge
   flip-in, shine sweep, confetti in the badge colour, its own haptic pattern, settles onto the shelf (replaces the
