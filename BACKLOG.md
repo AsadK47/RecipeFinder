@@ -83,7 +83,7 @@ drop a line while moving it.
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Me 1/3 → 3/3 (3/3 = Settings tidy-up) → Showcase screenshots → Plan my week → Groceries + Kitchen →
+   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Me 1/3 → 3/3 (3/3 = Settings tidy-up) → Showcase screenshots → Plan my week 1/3 → 2/3 → Groceries + Kitchen → Plan my week 3/3 →
    Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity → Recipe pictures. Then (owner OK 2026-11-10): taste profile →
    skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
    Shared family cookbooks: still undecided — revisit after.
@@ -234,12 +234,22 @@ drop a line while moving it.
   story": scrollable scrapbook timeline (first save, first cook, streak milestones, badges, photos, first cuisine,
   heirloom notes later), tap to open the moment. *Done when:* fingerprint scoring + timeline building tested,
   screenshots, CI green.
-- [ ] **Plan my week — a proper meal planner** (owner: "make the meal planner a proper feature"). 7-day agenda by
-  default (tap empty slot → inline suggestions/picker; long-press to move/swap; per-meal servings); tap planned meal →
-  open/cook; cooking it marks it done; pinned "Shop for this week (N items)" that scales by planned servings (fixes
-  audit bug 4) and skips what's At home; copy last week / repeat a week; leftovers chain hook. Delete code made
-  redundant by the agenda (single-day empty states etc.). *Done when:* agenda/move/servings/shop-list logic tested,
-  screenshots (empty week, full week), CI green.
+- [ ] **Plan my week 1/3 — Week agenda** (owner: "make the meal planner a proper feature"; series OK 2026-11-12).
+  7-day agenda by default with recipe photos and per-meal colours; tap empty slot → inline suggestions (picker as
+  fallback); long-press to move/swap; per-meal servings; tap planned meal → open/cook; cooking it marks it done; copy
+  last week / repeat a week. Delete code made redundant by the agenda (single-day empty states etc.).
+  *Done when:* agenda/move/swap/servings logic tested, screenshots (empty week, full week), CI green.
+- [ ] **Plan my week 2/3 — Fill my week.** One tap plans every empty dinner by visible rules: quick on weeknights,
+  longer at weekends, no cuisine/main ingredient twice in a row, uses Kitchen items expiring soon, prefers shared
+  ingredients ("uses the rest of Tuesday's coriander"). Lock slots, re-roll one or all. Mark busy evenings (quick
+  only). Leftovers: cooking extra servings fills the next lunch with "Leftovers: <recipe>". Week summary line
+  ("5 dinners · 2 quick nights · uses 4 expiring items"). *Done when:* fill/variety/lock/leftover rules tested
+  (pure, seeded), screenshot of a filled week, CI green.
+- [ ] **Plan my week 3/3 — Shop & prep for the week** (after Groceries + Kitchen, which it builds on). Pinned
+  "Shop for this week (N items)": scaled by planned servings (fixes audit bug 4), minus what's At home, grouped by
+  aisle. Sunday prep list merging the week's make-ahead steps (reuse Today's prep-ahead detection); evening-before
+  reminders ("Defrost the chicken for tomorrow"); Sunday planning nudge when next week is empty. *Done when:*
+  shop-list/prep-list logic tested, screenshots, CI green.
 - [ ] **Groceries + Kitchen, one feature** (owner: "lost cohesiveness … delete redundant code"). One Groceries tab
   with a To buy | At home switch (Kitchen no longer an overflow-menu sheet); add/edit expiry + quantity (audit
   bug 1); ticked items → "Put away" moves them into At home with an expiry suggestion (instead of
@@ -423,6 +433,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
 ## Needs owner
+- 🙋 Planner: read your iOS calendar (on-device, permission prompt) to mark busy evenings automatically in Fill my week? Default: manual busy nights only.
 - 🙋 Today "New imports" shelf needs a recipe add-date = new Core Data field (model 16, guardrail). Add it, or drop the shelf?
 - 🙋 Starter photos (optional, nice-to-have): pick ~6 photos you own or free-licensed ones (e.g. Unsplash, licence
   allows bundling in a free app) for the 6 starter recipes; drop the files in and agents will bundle them in
