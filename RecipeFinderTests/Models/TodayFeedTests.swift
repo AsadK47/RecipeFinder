@@ -280,4 +280,19 @@ import Foundation
         let nudges = PrepAhead.nudges(recipes: [beans], tomorrowsPlans: [plan(beans, .lunch), plan(beans, .dinner)])
         #expect(nudges == [PrepAheadNudge(recipe: beans, mealTime: .lunch, cue: "Soak")])
     }
+
+    // MARK: Use it up
+
+    @Test func kitchenItemsGoingOffArePairedWithARecipe() {
+        let saag = recipe("Saag paneer", ingredients: ["spinach", "paneer"])
+        let spinach = KitchenInventoryModel(
+            name: "Spinach", category: .produce, quantity: 1, unit: "",
+            expiryDate: cal.date(byAdding: .day, value: 1, to: now)
+        )
+        let result = TodayFeed.make(
+            recipes: [saag], todaysPlans: [], kitchenItemNames: [], inventoryItems: [spinach], now: now, calendar: cal
+        )
+        #expect(result.useSoon.map(\.recipe) == [saag])
+        #expect(result.useSoon.first?.itemNames == ["Spinach"])
+    }
 }

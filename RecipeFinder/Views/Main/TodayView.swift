@@ -104,6 +104,7 @@ struct TodayView: View {
         }
         .onChange(of: recipeStore.recipes) { _, _ in refresh() }
         .onChange(of: kitchen.items) { _, _ in refresh() }
+        .onChange(of: kitchen.inventoryItems) { _, _ in refresh() }
     }
 
     private func refresh() {
@@ -114,6 +115,7 @@ struct TodayView: View {
             todaysPlans: mealPlanning.mealPlans(for: now),
             kitchenItemNames: kitchen.items.map(\.name),
             tomorrowsPlans: tomorrow == now ? [] : mealPlanning.mealPlans(for: tomorrow),
+            inventoryItems: kitchen.inventoryItems,
             now: now
         )
     }
@@ -191,6 +193,10 @@ struct TodayView: View {
 
         ForEach(feed.prepAhead, id: \.recipe.id) { nudge in
             TodayPrepAheadRow(nudge: nudge) { open(nudge.recipe) }
+        }
+
+        if !feed.useSoon.isEmpty {
+            TodayUseSoonCard(pairs: feed.useSoon, onOpen: open)
         }
 
         if feed.isNewUser, !feed.starters.isEmpty {

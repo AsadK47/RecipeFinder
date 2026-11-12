@@ -48,6 +48,8 @@ struct TodayFeed: Equatable {
     let starters: [RecipeModel]
     /// Tomorrow's planned meals that need starting tonight (marinate, soak, defrost…).
     let prepAhead: [PrepAheadNudge]
+    /// Kitchen items going off in the next few days, each with a recipe that uses them.
+    let useSoon: [UseSoonPair]
 
     static let shelfLimit = 10
     static let alternativesLimit = 3
@@ -76,6 +78,7 @@ struct TodayFeed: Equatable {
         todaysPlans: [MealPlanModel],
         kitchenItemNames: [String],
         tomorrowsPlans: [MealPlanModel] = [],
+        inventoryItems: [KitchenInventoryModel] = [],
         now: Date = Date(),
         calendar: Calendar = .current,
         thresholdDays: Int = 21
@@ -112,7 +115,10 @@ struct TodayFeed: Equatable {
             rediscover: Array(rediscover.prefix(shelfLimit)),
             isNewUser: isNewUser,
             starters: Array(starters.prefix(shelfLimit)),
-            prepAhead: PrepAhead.nudges(recipes: recipes, tomorrowsPlans: tomorrowsPlans)
+            prepAhead: PrepAhead.nudges(recipes: recipes, tomorrowsPlans: tomorrowsPlans),
+            useSoon: UseSoon.pairs(
+                items: inventoryItems, recipes: recipes, kitchenItemNames: kitchenItemNames, now: now, calendar: calendar
+            )
         )
     }
 

@@ -74,6 +74,7 @@ final class RecipeStore: RecipeStoring {
             fetched = seedUITestReimportRecipeIfRequested(into: fetched)
             fetched = seedUITestMissingAmountsRecipeIfRequested(into: fetched)
             seedUITestTonightPlanIfRequested(from: fetched)
+            seedUITestUseSoonIfRequested()
             #endif
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
@@ -207,6 +208,20 @@ final class RecipeStore: RecipeStoring {
            planner.mealPlan(for: tomorrow, mealTime: .dinner) == nil,
            let recipe = sorted.first(where: { PrepAhead.cue(for: $0) != nil }) {
             planner.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: tomorrow, mealTime: .dinner))
+        }
+    }
+
+    /// UI-test hook (`-seed-use-soon`): spinach going off tomorrow and lemons in three days, so Screenshots can
+    /// capture Today's "Use it up" card. The bundled recipes use both. Re-adding is a no-op (duplicate names skip).
+    private func seedUITestUseSoonIfRequested() {
+        guard ProcessInfo.processInfo.arguments.contains("-seed-use-soon") else { return }
+        let kitchen = KitchenInventoryManager.shared
+        for (name, days) in [("Spinach", 1), ("Lemons", 3)] {
+            guard !kitchen.inventoryItems.contains(where: { $0.name == name }),
+                  let expiry = Calendar.current.date(byAdding: .day, value: days, to: Date()) else { continue }
+            kitchen.addInventoryItem(KitchenInventoryModel(
+                name: name, category: .produce, quantity: 1, unit: "", storageLocation: .fridge, expiryDate: expiry
+            ))
         }
     }
     #endif

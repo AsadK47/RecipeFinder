@@ -356,6 +356,23 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
     }
 
+    /// Today+ 2/3: "Use it up" pairs kitchen items going off soon with a recipe (DEBUG `-seed-use-soon` adds spinach
+    /// for tomorrow and lemons in three days). Sorts after `testCaptureTodayTimes`.
+    @MainActor
+    func testCaptureTodayUseSoon() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-use-soon"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        let row = app.buttons.matching(identifier: "today.useSoon.row").firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Today should pair spinach going off with a recipe.")
+        XCTAssertTrue(row.label.contains("Spinach goes off tomorrow"), "The row should say when the spinach goes off.")
+        for _ in 0..<3 where !row.isHittable { app.swipeUp() }
+        settle()
+        snap(app, "29-today-use-soon")
+    }
+
     // MARK: - Helpers
 
     /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded
