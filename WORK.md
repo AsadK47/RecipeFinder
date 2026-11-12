@@ -1,13 +1,25 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Nothing on a branch. Pictures 1/4 done (9c2025b on main).
+- `agent/fix-badge-reveal-shot` (69187fa): reveal no auto-close under `-show-badge-reveal` (`BadgeReveal.autoCloseAfter`);
+  Build & Test + Screenshots triggered.
+- `agent/data-safety-1-store-backup` (80ff624): Data safety 1/4 slice 1 — `StoreBackup` + PersistenceController
+  copies store before migration. Build & Test pending.
 
 ## Next action
-Screenshots `testCaptureBadgeReveal` failed on agent/pictures-1b (run 43239640890: `badge.reveal.close` not found —
-likely the 8 s auto-close beating the tap); check main's next Screenshots run, fix if it repeats. Then Data safety 1/4.
+Check both branches' CI; land each when green. Then Data safety 1/4 slice 2: model v16 entities (CloudKit-ready).
 
 ## Decisions (why)
+- **Data safety 1/4 slice 1 (store backup)**: copy only when opening would migrate (metadata incompatible with
+  current model, or unreadable) — not every launch (disk churn). Copy happens before `loadPersistentStores`, store
+  not yet open, so plain file copies of sqlite/-wal/-shm are consistent. Folders `store-<15-digit ms>-<8 hex>` in
+  Application Support/StoreBackups, newest 3 kept, other files untouched. A failed copy logs and the upgrade proceeds
+  (blocking launch locks the cook out; recovery still preserves unopenable stores). Remaining slices: v16 entities
+  (CloudKit-ready) + `.xccurrentversion` + CLAUDE.md "RecipeModel N" mentions; per-manager blob→entity migration
+  with count check, old blobs kept one release. **Pre-mortem:** (1) upgrade loses recipes and no copy exists →
+  `upgradingAnOlderStoreKeepsACopyAndTheRecipes`, `theBackupHoldsTheStoreAsItWasBeforeTheUpgrade`; (2) backups pile
+  up / delete the wrong thing → `onlyTheNewestThree…`, `otherFilesInTheBackupFolder…`; (3) copy on every launch or
+  on fresh install → `openingACurrentStoreMakesNoBackup`, `aFreshInstallMakesNoBackup`.
 - **Pictures 1/4 slice 2 (placeholder art)**: SF Symbols composition (no bundled assets → no app-size cost, adapts to
   Dynamic Type/dark mode). Drink category → drink (iced/cold → cold, chai/latte → hot); Dessert → always sweet
   (challenge pass: "Espresso Cookies"/"No-Bake Bars"/"Apple Crisp with Oat" looked wrong); else first food word in the
