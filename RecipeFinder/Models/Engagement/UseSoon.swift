@@ -10,9 +10,12 @@ struct UseSoonPair: Equatable {
     let when: String
     let recipe: RecipeModel
 
-    /// "Spinach goes off Thu", "Spinach and feta go off tomorrow".
+    /// "Spinach goes off Thu", "Spinach and Feta go off tomorrow" (names as entered). English throughout, like the
+    /// rest of the app, so a device locale can't mix languages into one sentence.
     var message: String {
-        let names = ListFormatter.localizedString(byJoining: itemNames)
+        let names = itemNames.count <= 1
+            ? itemNames.joined()
+            : itemNames.dropLast().joined(separator: ", ") + " and " + (itemNames.last ?? "")
         return "\(names) \(itemNames.count == 1 ? "goes" : "go") off \(when)"
     }
 }
@@ -23,7 +26,8 @@ enum UseSoon {
     static let limit = 3
 
     /// Items going off today…in `windowDays` days, soonest first, each with the best recipe that uses it. A recipe
-    /// shows once: an item whose recipes are all taken joins the row of its best one ("Spinach and feta go off Thu").
+    /// shows once: an item whose recipes are all taken (or with the rows full) joins the best row already showing a
+    /// recipe that uses it ("Spinach and Feta go off Thu").
     /// Items no recipe uses are left out. Best = uses more of the expiring items, then more of the kitchen overall,
     /// then favourites, your own over samples, then name.
     static func pairs(
@@ -53,10 +57,12 @@ enum UseSoon {
         var rows: [(names: [String], days: Int, date: Date, recipe: RecipeModel)] = []
         for item in expiring {
             let uses = candidates.filter { $0.terms.contains(item.term) }
-            if let fresh = uses.first(where: { candidate in !rows.contains { $0.recipe.id == candidate.recipe.id } }) {
-                guard rows.count < limit else { continue }
+            let isShown = { (candidate: Candidate) in rows.contains { $0.recipe.id == candidate.recipe.id } }
+            if rows.count < limit, let fresh = uses.first(where: { !isShown($0) }) {
                 rows.append(([item.name], item.daysLeft, item.day, fresh.recipe))
-            } else if let best = uses.first, let index = rows.firstIndex(where: { $0.recipe.id == best.recipe.id }) {
+            } else if let shown = uses.first(where: isShown),
+                      let index = rows.firstIndex(where: { $0.recipe.id == shown.recipe.id }) {
+                // No room or no other recipe: mention it on the best row already showing a recipe that uses it.
                 rows[index].names.append(item.name)
             }
         }
@@ -74,7 +80,9 @@ enum UseSoon {
         case ..<1: return "today"
         case 1: return "tomorrow"
         default:
-            let symbols = calendar.shortWeekdaySymbols
+            var english = calendar
+            english.locale = Locale(identifier: "en_GB")
+            let symbols = english.shortWeekdaySymbols
             let index = calendar.component(.weekday, from: day) - 1
             return symbols.indices.contains(index) ? symbols[index] : "soon"
         }

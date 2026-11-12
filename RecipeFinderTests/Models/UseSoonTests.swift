@@ -82,14 +82,16 @@ import Foundation
     // MARK: Which recipe
 
     @Test func aRecipeUsingMoreOfWhatsGoingOffWins() {
-        let soup = recipe("Spinach soup", ["spinach", "stock"])
-        let pie = recipe("Spinach and feta pie", ["spinach", "feta", "pastry"])
-        let result = pairs([item("Spinach", days: 1), item("Feta", days: 2)], [soup, pie])
+        // The soup is first by name and the kitchen covers all of it, so only "uses more of what's going off" picks the pie.
+        let soup = recipe("A spinach soup", ["spinach", "stock"])
+        let pie = recipe("Z spinach and feta pie", ["spinach", "feta", "pastry"])
+        let result = pairs([item("Spinach", days: 1), item("Feta", days: 2)], [soup, pie], kitchen: ["Stock"])
         #expect(result.first?.recipe == pie)
     }
 
     @Test func thenTheRecipeTheKitchenCoversMostOf() {
-        let curry = recipe("Spinach curry", ["spinach", "coconut milk", "lentils"])
+        // First by name, so only kitchen coverage puts the saag ahead.
+        let curry = recipe("A spinach curry", ["spinach", "coconut milk", "lentils"])
         let saag = recipe("Saag paneer", ["spinach", "paneer", "garam masala"])
         let result = pairs([item("Spinach", days: 1)], [curry, saag], kitchen: ["Paneer", "Garam masala"])
         #expect(result.first?.recipe == saag)
@@ -116,6 +118,23 @@ import Foundation
         #expect(result.count == 1)
         #expect(result.first?.itemNames == ["Spinach", "Feta"])
         #expect(result.first?.message == "Spinach and Feta go off tomorrow")
+    }
+
+    @Test func withTheRowsFullAnItemJoinsAShownRecipeThatUsesIt() {
+        let items = [item("Spinach", days: 0), item("Leeks", days: 1), item("Feta", days: 2), item("Milk", days: 3)]
+        let recipes = [
+            recipe("Saag", ["spinach"]), recipe("Leek soup", ["leeks"]),
+            recipe("Feta and milk bake", ["feta", "milk"]), recipe("Rice pudding", ["milk"])
+        ]
+        let result = pairs(items, recipes)
+        #expect(result.count == UseSoon.limit)
+        #expect(result.last?.itemNames == ["Feta", "Milk"])
+    }
+
+    @Test func threeNamesReadAsAList() {
+        let traybake = recipe("Traybake", ["leeks", "feta", "spinach"])
+        let result = pairs([item("Leeks", days: 1), item("Feta", days: 1), item("Spinach", days: 1)], [traybake])
+        #expect(result.first?.message == "Feta, Leeks and Spinach go off tomorrow")
     }
 
     @Test func wholeWordsOnlySoGingerIsNotGin() {

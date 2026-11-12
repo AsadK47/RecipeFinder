@@ -69,3 +69,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Locale] "8 pm" / "Start by 5:40" are spoken 12-hour by spec; 24-hour locales still see them — `Date.FormatStyle` if owner wants locale times — cost if wrong: reads oddly outside UK/US.
   → Owner:
+
+## 2026-11-12 (item pass: Today+ 2/3 slice 1 — fixed: two ranking tests passed with their rule deleted, item skipped once rows were full though a shown recipe used it, device-locale list/weekday mixed into English copy, seeded UI-test items kept stale dates on a reused simulator)
+- ⚔️ [Matching] "Use it up" reuses the shared-word matcher, so expiring "Milk" can pair with "coconut milk" and "Chicken stock" with "chicken breast" — exact-term match for expiring items if owner sees odd pairs — cost if wrong: a pairing that doesn't use the item.
+  → Owner:
+- ⚔️ [Smell] `UseSoon` re-derives days-to-expiry (with injected now/calendar) beside `KitchenInventoryModel.daysUntilExpiry` (Date()/Calendar.current), and the Plan tab's `PantryExpirySuggestions` is a second expiry→recipe matcher — consolidate in a Smell pass — cost if wrong: Kitchen and Today disagree on "soon".
+  → Owner:
+- ⚔️ [Time] Today left open past midnight keeps "tomorrow" until the next refresh (same as the Tonight line) — refresh on `.NSCalendarDayChanged` — cost if wrong: one stale day word.
+  → Owner:
