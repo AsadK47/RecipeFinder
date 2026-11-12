@@ -422,8 +422,13 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         dismissBadgeSheet(app)
         let progress = app.buttons["today.progress"]
         XCTAssertTrue(progress.waitForExistence(timeout: 10), "Today should show the progress row.")
-        let tryNew = app.buttons["today.tryNew"]
-        for _ in 0..<6 where !(progress.isHittable && (!tryNew.exists || tryNew.isHittable)) { app.swipeUp() }
+        // The tab bar floats over the scroll, so "hittable" isn't "visible": nudge up until the card clears it.
+        let tabBarTop = app.tabBars.firstMatch.frame.minY
+        let window = app.windows.firstMatch
+        for _ in 0..<12 where progress.frame.maxY > tabBarTop - 16 {
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+        }
         XCTAssertTrue(progress.label.contains("week streak"), "Progress should read the streak: \(progress.label)")
         XCTAssertTrue(progress.label.contains("this week"), "Progress should read cooks this week: \(progress.label)")
         settle()
