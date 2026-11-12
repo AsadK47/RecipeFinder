@@ -5,6 +5,8 @@ struct RecipeImageView: View {
     let imageName: String?
     let height: CGFloat
     var recipeName: String? = nil
+    var category: String? = nil
+    var cuisine: String? = nil
 
     @State private var loadFailed = false
 
@@ -12,10 +14,19 @@ struct RecipeImageView: View {
         static let defaultHeight: CGFloat = 200
     }
 
-    init(imageName: String?, height: CGFloat = Layout.defaultHeight, recipeName: String? = nil) {
+    init(imageName: String?, height: CGFloat = Layout.defaultHeight, recipeName: String? = nil,
+         category: String? = nil, cuisine: String? = nil) {
         self.imageName = imageName
         self.height = height
         self.recipeName = recipeName
+        self.category = category
+        self.cuisine = cuisine
+    }
+
+    /// Picture (or illustrated placeholder) for a recipe — passes name, category and cuisine so the art fits the dish.
+    init(recipe: RecipeModel, imageName: String?, height: CGFloat = Layout.defaultHeight) {
+        self.init(imageName: imageName, height: height, recipeName: recipe.name,
+                  category: recipe.category, cuisine: recipe.cuisine)
     }
 
     private var kfSource: Source? { Self.resolvedSource(for: imageName) }
@@ -92,7 +103,7 @@ struct RecipeImageView: View {
     private var imageContent: some View {
         if let source = kfSource, !loadFailed {
             KFImage(source: source)
-                .placeholder { RecipePlaceholderView(recipeName: recipeName, showShimmer: true) }
+                .placeholder { RecipePlaceholderView(recipeName: recipeName, category: category, cuisine: cuisine, showShimmer: true) }
                 .onFailure { _ in loadFailed = true }
                 .setProcessor(DownsamplingImageProcessor(size: targetPixelSize))
                 .scaleFactor(UIScreen.main.scale)
@@ -105,7 +116,7 @@ struct RecipeImageView: View {
                 .resizable()
                 .scaledToFill()
         } else {
-            RecipePlaceholderView(recipeName: recipeName)
+            RecipePlaceholderView(recipeName: recipeName, category: category, cuisine: cuisine)
         }
     }
 

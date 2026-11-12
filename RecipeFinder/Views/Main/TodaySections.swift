@@ -19,7 +19,7 @@ struct TodayHeroCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: onOpen) {
                 VStack(alignment: .leading, spacing: 0) {
-                    RecipeImageView(imageName: hero.recipe.heroImageName, height: 220, recipeName: hero.recipe.name)
+                    RecipeImageView(recipe: hero.recipe, imageName: hero.recipe.heroImageName, height: 220)
                         .frame(maxWidth: .infinity)
                         .frame(height: 220)
                         .clipped()
@@ -174,7 +174,7 @@ struct TodayShelf: View {
         Button { onOpen(recipe) } label: {
             // No card per tile: photos on the background keep the shelves calm under the Tonight card.
             VStack(alignment: .leading, spacing: AppTheme.spacing6) {
-                RecipeImageView(imageName: recipe.heroImageName, height: 120, recipeName: recipe.name)
+                RecipeImageView(recipe: recipe, imageName: recipe.heroImageName, height: 120)
                     .frame(width: 160, height: 120)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
                     .accessibilityHidden(true)

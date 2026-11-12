@@ -91,7 +91,7 @@ private struct MealPickerRecipeCard: View {
                 .scaledToFill()
         } else {
             // Per-recipe coloured placeholder — matches the main recipe tab.
-            RecipePlaceholderView(recipeName: recipe.name)
+            RecipePlaceholderView(recipeName: recipe.name, category: recipe.category, cuisine: recipe.cuisine)
         }
     }
 

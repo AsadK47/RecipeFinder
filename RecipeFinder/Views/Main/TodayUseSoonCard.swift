@@ -32,7 +32,7 @@ struct TodayUseSoonCard: View {
     private func row(_ pair: UseSoonPair) -> some View {
         Button { onOpen(pair.recipe) } label: {
             HStack(spacing: AppTheme.spacing12) {
-                RecipeImageView(imageName: pair.recipe.heroImageName, height: 56, recipeName: pair.recipe.name)
+                RecipeImageView(recipe: pair.recipe, imageName: pair.recipe.heroImageName, height: 56)
                     .frame(width: 56, height: 56)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius10))
                     .accessibilityHidden(true)

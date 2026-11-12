@@ -80,13 +80,13 @@ extension RecipeDetailView {
     private var galleryContent: some View {
         let names = galleryImageNames
         if names.count == 1 {
-            RecipeImageView(imageName: names[0], height: 220, recipeName: recipe.name)
+            RecipeImageView(recipe: recipe, imageName: names[0], height: 220)
                 .contentShape(Rectangle())
                 .onTapGesture { openViewer(names, at: 0) }
         } else {
             TabView {
                 ForEach(Array(names.enumerated()), id: \.offset) { index, name in
-                    RecipeImageView(imageName: name, height: 220, recipeName: recipe.name)
+                    RecipeImageView(recipe: recipe, imageName: name, height: 220)
                         .contentShape(Rectangle())
                         .onTapGesture { openViewer(names, at: index) }
                 }

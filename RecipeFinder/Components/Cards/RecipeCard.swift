@@ -18,7 +18,7 @@ struct RecipeCard: View {
     var body: some View {
         HStack(spacing: AppTheme.cardVerticalSpacing) {
             ZStack(alignment: .topLeading) {
-                RecipeImageView(imageName: recipe.heroImageName, height: AppTheme.cardImageSize, recipeName: recipe.name)
+                RecipeImageView(recipe: recipe, imageName: recipe.heroImageName, height: AppTheme.cardImageSize)
                     .frame(width: AppTheme.cardImageSize, height: AppTheme.cardImageSize)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius * AppTheme.goldenRatioInverse))
 

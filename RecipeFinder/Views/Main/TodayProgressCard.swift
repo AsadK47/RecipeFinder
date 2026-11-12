@@ -117,7 +117,7 @@ struct TodayTryNewCard: View {
 
             Button { onOpen(recipe) } label: {
                 HStack(spacing: AppTheme.spacing12) {
-                    RecipeImageView(imageName: recipe.heroImageName, height: 72, recipeName: recipe.name)
+                    RecipeImageView(recipe: recipe, imageName: recipe.heroImageName, height: 72)
                         .frame(width: 72, height: 72)
                         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
                         .accessibilityHidden(true)

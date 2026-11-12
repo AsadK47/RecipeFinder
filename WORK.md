@@ -1,13 +1,23 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Pictures 1/4 slice 1 merged (6a77647). Slice 2 (illustrated placeholders) not started.
+Pictures 1/4 slice 2 on `agent/pictures-1b`: `RecipePlaceholderArt` (pure mapping) + illustrated `RecipePlaceholderView`,
+category/cuisine plumbed via `RecipeImageView(recipe:imageName:height:)`. Pushed; waiting on Build & Test.
 
 ## Next action
-Pictures 1/4 slice 2 on `agent/pictures-1b`: read `Components/Recipe/RecipePlaceholderView.swift`, add a pure
-category/cuisine → art mapping (tests first), render it, run Screenshots and look at recipe list/detail shots.
+Check Build & Test for `agent/pictures-1b`; when green run Screenshots on it and look at recipe list/Today shots, then
+challenge + deep-review agents, then fast-forward main.
 
 ## Decisions (why)
+- **Pictures 1/4 slice 2 (placeholder art)**: SF Symbols composition (no bundled assets → no app-size cost, adapts to
+  Dynamic Type/dark mode). Motif = first dish word in the name (whole words, plural-stripped, fixed priority: drinks →
+  sweet → breakfast → soup → curry → wok/rice/pasta → baked → fish → poultry → meat → veg → snack), else category; a
+  Drink category always stays a drink. Colour = cuisine family (from `cuisine` or a cuisine word in the name — bundled
+  recipes have no cuisine field) else the old name hash, so lists stay varied. Accents only on tiles ≥90pt.
+  Memoised with MemoCache. MealTimeCard only has the name → name keywords still work there.
+  **Pre-mortem:** (1) blank tile from a symbol missing on the OS → `symbolsExist` per motif; (2) wrong/odd art
+  ("Pancakes" as cake, chicken curry as bird) → `nameBeatsCategory`, `pancakesAreNotCake`; (3) cramped/cluttered on
+  small thumbnails or hard to see on a theme → Screenshots of recipe list + Today, looked at.
 - **Pictures 1/4 slice 1 (keep web pictures)**: the recipe KEEPS its web URL in `imageName`; a phone copy lives at
   `RecipeImages/web-<sha256(url)>.jpg` (Documents, not purgeable cache) and `RecipeImageView.resolvedSource` prefers it.
   First build swapped `imageName` to a local path (as the backlog wording said) — challenge pass showed that breaks

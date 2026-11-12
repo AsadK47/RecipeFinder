@@ -7,9 +7,9 @@ struct RecipeRow: View {
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
             RecipeImageView(
+                recipe: recipe,
                 imageName: recipe.imageName,
-                height: Constants.Sizes.recipeImageSize,
-                recipeName: recipe.name
+                height: Constants.Sizes.recipeImageSize
             )
             .frame(width: Constants.Sizes.recipeImageSize, height: Constants.Sizes.recipeImageSize)
             .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius8))

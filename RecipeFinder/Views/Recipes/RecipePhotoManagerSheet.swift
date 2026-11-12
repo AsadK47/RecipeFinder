@@ -65,7 +65,7 @@ struct RecipePhotoManagerSheet: View {
     private var photoGrid: some View {
         LazyVGrid(columns: columns, spacing: AppTheme.spacing12) {
             ForEach(Array(allImageNames.enumerated()), id: \.element) { index, name in
-                RecipeImageView(imageName: name, height: 100, recipeName: recipe.name)
+                RecipeImageView(recipe: recipe, imageName: name, height: 100)
                     .frame(height: 100)
                     .frame(maxWidth: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
