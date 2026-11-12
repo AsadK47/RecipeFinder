@@ -22,6 +22,10 @@ Green → Screenshots on the branch, look at 36 + 35 + a Me shot → deep-review
   for it to go; screenshot suite's drag helper; (2) a badge reveals twice or out of order → the two new
   BadgeManagerTests; (3) reveal pops over the Made it sheet or motion ignores Reduce Motion → `revealWaits…`,
   `reduceMotionShowsTheBadgeStill`.
+  Review + challenge (separate agents): 8 fixed — flick-to-close via predictedEndTranslation + audit helper drags the
+  window, confetti `hapticFeedback: false`, `.title.bold()`, ViewThatFits→ScrollView at AX sizes, no auto-close under
+  VoiceOver, lazy CMMotionManager, shine moves by `.offset` (animatable), shine nil until a sensor reading. 4 noted
+  in docs/CHALLENGES.md (other covers stall the queue, wiring untested, sheet-vs-cover, tilt baseline/settle).
 
 - **Badges 1/2 slice 1**: groups by metric — Cooking = cooks/cuisines/same dish/rated/cook photo; Streaks; Importing =
   library size + first import/photo import + Welcome Aboard; Planning = meal plan + groceries. Earned newest first

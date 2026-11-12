@@ -101,3 +101,13 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Structure] `.onReceive(NotificationCenter.publisher)` in ContentView is Combine (repo bans it); `.openToday` copied the existing four lines — move all five to an async `notifications(named:)` loop in a Smell pass.
   → Owner:
+
+## 2026-11-12 (item pass: Badges 1/2 slice 2 — fixed: quick flick didn't close the full-screen reveal (UI audit helper swiped the label), confetti haptic on top of the reveal pattern, fixed-28pt title ignored Dynamic Type, no scroll at AX sizes, 8 s auto-close under VoiceOver, a CMMotionManager per view init, shine sweep animated gradient points (may not interpolate) → offset, resting shine washed the pager icon in the Simulator)
+- ⚔️ [Flow] The reveal waits only for Made it and "+"; it can try to present over another cover (cooking mode when the cook was already recorded today, onboarding) and stall the queue with `pendingCelebration` set — one "is anything else up?" signal or present from the top-most screen — cost if wrong: badges silently stop revealing until relaunch.
+  → Owner:
+- ⚔️ [Tests] View wiring is untested: deleting `guard !closing`, hard-coding full motion, or passing `isAnotherSheetUp: false` stays green (pure rules are tested, not their use) — cost if wrong: a double dismiss swallows the next badge.
+  → Owner:
+- ⚔️ [Structure] Chesterton: a `.large` sheet would give native flick-to-close for free; chose a cover for the "full-screen" spec + custom drag — cost if wrong: a gesture to maintain.
+  → Owner:
+- ⚔️ [Time] Tilt baseline is set on the first reading and never reset (posture change / return from background leaves the shine at an edge until the pager reopens); "settle toward the Me tab" drops straight down (no tab bar under a cover, none on iPad).
+  → Owner:

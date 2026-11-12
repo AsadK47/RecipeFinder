@@ -76,11 +76,14 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         app.launchArguments += ["-ui-testing"]
         app.launch()
         _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
-        // State left by earlier suites can unlock a badge on launch; its bottom sheet covers the tab bar and a
+        // State left by earlier suites can unlock a badge on launch; its full-screen reveal covers the tab bar and a
         // tab tap lands on "View all badges" (opening Profile). Swipe it away. Case-insensitive: the title is uppercased.
         let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
         if badgeSheet.waitForExistence(timeout: 2) {
-            badgeSheet.swipeDown()
+            // Drag the window, not the label: the reveal can close itself between the wait and the swipe.
+            let window = app.windows.firstMatch
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
             let dismissed = XCTNSPredicateExpectation(
                 predicate: NSPredicate(format: "exists == false"),
                 object: badgeSheet

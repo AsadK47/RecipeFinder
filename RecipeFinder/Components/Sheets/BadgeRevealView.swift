@@ -2,8 +2,9 @@ import SwiftUI
 import ConfettiSwiftUI
 
 /// Full-screen moment for each badge unlock: the medallion flips in, a shine sweeps across, confetti in the badge's
-/// colour and its own haptic pattern; on close it shrinks down toward the Me tab. Closes by the ✕, a swipe down,
-/// "View all badges", or on its own after 8 s. The caller dequeues the next badge via `BadgeManager.dismissCelebration()`.
+/// colour and its own haptic pattern; on close it shrinks down toward the tab bar. Closes by the ✕, a swipe down,
+/// "View all badges", or on its own after 8 s (not under VoiceOver). The caller dequeues the next badge via
+/// `BadgeManager.dismissCelebration()`.
 struct BadgeRevealView: View {
     let badge: BadgeType
     let onDismiss: () -> Void
@@ -11,6 +12,7 @@ struct BadgeRevealView: View {
     let onViewAllBadges: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
     @State private var flip: Double?
     @State private var shine = CGSize(width: -1.8, height: -1.8)
     @State private var settled = false
@@ -40,40 +42,11 @@ struct BadgeRevealView: View {
                 .padding(.horizontal, AppTheme.cardHorizontalPadding)
                 .padding(.top, AppTheme.spacing12)
 
-                Spacer()
-
-                BadgeMedallion(
-                    icon: badge.badge.icon,
-                    color: badgeColor,
-                    isUnlocked: true,
-                    shine: motion.sweepsShine ? shine : nil
-                )
-                .rotation3DEffect(.degrees(flip ?? motion.flipFromDegrees), axis: (x: 0, y: 1, z: 0), perspective: 0.6)
-                .scaleEffect(settled ? 0.2 : 1)
-                .offset(y: settled ? 420 : 0)
-                .opacity(settled ? 0 : 1)
-
-                VStack(spacing: AppTheme.spacing8) {
-                    Text("Badge Earned!")
-                        .font(.caption.weight(.semibold))
-                        .adaptiveSecondaryForeground()
-                        .textCase(.uppercase)
-                        .tracking(1.2)
-
-                    Text(badge.badge.title)
-                        .font(.system(size: AppTheme.fontSize28, weight: .bold))
-                        .adaptiveForegroundColor()
-                        .accessibilityAddTraits(.isHeader)
-                        .accessibilityIdentifier("badge.reveal.title")
-
-                    Text(badge.badge.description)
-                        .font(.title3)
-                        .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
+                // Large text sizes on a small phone don't fit medallion + words: let the middle scroll.
+                ViewThatFits(in: .vertical) {
+                    reveal
+                    ScrollView { reveal }.scrollIndicators(.hidden)
                 }
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, AppTheme.spacing32)
-
-                Spacer()
 
                 PrimaryButton("View all badges", systemImage: "trophy.fill", fillWidth: true) {
                     close(then: onViewAllBadges)
@@ -84,10 +57,10 @@ struct BadgeRevealView: View {
             }
         }
         .contentShape(Rectangle())
-        // Full-screen covers don't swipe away on their own; a downward drag keeps the old sheet gesture working.
+        // Full-screen covers don't swipe away on their own; a drag or quick flick down closes it like the old sheet.
         .gesture(
             DragGesture(minimumDistance: 20).onEnded { value in
-                if value.translation.height > 80 { close(then: onDismiss) }
+                if max(value.translation.height, value.predictedEndTranslation.height) > 80 { close(then: onDismiss) }
             }
         )
         .accessibilityAction(.escape) { close(then: onDismiss) }
@@ -95,14 +68,57 @@ struct BadgeRevealView: View {
             trigger: $confettiCounter,
             num: AppTheme.confettiCount,
             colors: [badgeColor, badgeColor.opacity(0.6), .white],
-            radius: AppTheme.confettiRadius
+            radius: AppTheme.confettiRadius,
+            // The reveal plays its own haptic pattern; the cannon's would land on top of it.
+            hapticFeedback: false
         )
         .task { await play() }
     }
 
+    private var reveal: some View {
+        VStack(spacing: AppTheme.spacing24) {
+            Spacer(minLength: 0)
+
+            BadgeMedallion(
+                icon: badge.badge.icon,
+                color: badgeColor,
+                isUnlocked: true,
+                shine: motion.sweepsShine ? shine : nil
+            )
+            .rotation3DEffect(.degrees(flip ?? motion.flipFromDegrees), axis: (x: 0, y: 1, z: 0), perspective: 0.6)
+            .scaleEffect(settled ? 0.2 : 1)
+            .offset(y: settled ? 420 : 0)
+            .opacity(settled ? 0 : 1)
+
+            VStack(spacing: AppTheme.spacing8) {
+                Text("Badge Earned!")
+                    .font(.caption.weight(.semibold))
+                    .adaptiveSecondaryForeground()
+                    .textCase(.uppercase)
+                    .tracking(1.2)
+
+                Text(badge.badge.title)
+                    .font(.title.bold())
+                    .adaptiveForegroundColor()
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityIdentifier("badge.reveal.title")
+
+                Text(badge.badge.description)
+                    .font(.title3)
+                    .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, AppTheme.spacing32)
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
     /// Flip in → land (confetti + haptic) → shine sweep → close by itself after 8 s. Cancelled when the view goes.
     private func play() async {
-        let motion = motion
+        let motion = self.motion
         if motion.flipFromDegrees != 0 {
             withAnimation(.spring(response: 0.7, dampingFraction: 0.55)) { flip = 0 }
             try? await Task.sleep(for: .milliseconds(350))
@@ -115,14 +131,16 @@ struct BadgeRevealView: View {
         if motion.sweepsShine {
             withAnimation(.easeInOut(duration: 1.1).delay(0.2)) { shine = CGSize(width: 1.8, height: 1.8) }
         }
-        // 8 s, not 4: 4 was too short to reach "View all badges".
+        // 8 s, not 4: 4 was too short to reach "View all badges". VoiceOver users close it themselves — it would
+        // vanish mid-read.
+        guard !voiceOverEnabled else { return }
         try? await Task.sleep(for: .seconds(8))
         guard !Task.isCancelled else { return }
         close(then: onDismiss)
     }
 
-    /// Settle the medallion down toward the tab bar, then hand back to the caller (once — taps, swipes and the timer
-    /// can race).
+    /// Settle the medallion down toward the tab bar, then hand back to the caller — once: the ✕, a swipe and the
+    /// timer can race, and a second `dismissCelebration()` would swallow the next queued badge.
     private func close(then action: @escaping () -> Void) {
         guard !closing else { return }
         closing = true

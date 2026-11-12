@@ -7,14 +7,18 @@ import CoreGraphics
 @MainActor
 @Observable
 final class TiltMotion {
-    /// -1…1 per axis; see `BadgeShine.offset`.
-    private(set) var shine: CGSize = .zero
+    /// -1…1 per axis (see `BadgeShine.offset`); nil until the first reading, so no shine shows without a sensor.
+    private(set) var shine: CGSize?
 
-    @ObservationIgnored private let manager = CMMotionManager()
+    /// Made on first start, not in init: SwiftUI re-runs a `@State` default on every view init and Apple asks for
+    /// one motion manager per app, not one per throwaway.
+    @ObservationIgnored private var manager: CMMotionManager?
     @ObservationIgnored private var baselineRoll: Double?
     @ObservationIgnored private var baselinePitch: Double?
 
     func start() {
+        let manager = manager ?? CMMotionManager()
+        self.manager = manager
         guard manager.isDeviceMotionAvailable, !manager.isDeviceMotionActive else { return }
         baselineRoll = nil
         baselinePitch = nil
@@ -31,8 +35,8 @@ final class TiltMotion {
     }
 
     func stop() {
-        manager.stopDeviceMotionUpdates()
-        shine = .zero
+        manager?.stopDeviceMotionUpdates()
+        shine = nil
     }
 
     private func update(roll: Double, pitch: Double) {

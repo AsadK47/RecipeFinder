@@ -59,25 +59,24 @@ struct BadgeMedallion: View {
         .accessibilityHidden(true)
     }
 
-    /// A diagonal white band clipped to the disc; `offset` slides it across.
+    /// A diagonal white band clipped to the disc. It moves by `.offset` (which animates) rather than by moving the
+    /// gradient's points, so the reveal's sweep is a smooth slide.
     private func shineBand(_ offset: CGSize) -> some View {
-        let centreX = 0.5 + offset.width * 0.5
-        let centreY = 0.5 + offset.height * 0.5
-        return Circle()
-            .fill(
-                LinearGradient(
-                    stops: [
-                        .init(color: .white.opacity(0), location: 0),
-                        .init(color: .white.opacity(0.45), location: 0.5),
-                        .init(color: .white.opacity(0), location: 1)
-                    ],
-                    startPoint: UnitPoint(x: centreX - 0.3, y: centreY - 0.3),
-                    endPoint: UnitPoint(x: centreX + 0.3, y: centreY + 0.3)
-                )
-            )
-            .frame(width: discSize, height: discSize)
-            .blendMode(.plusLighter)
-            .allowsHitTesting(false)
+        LinearGradient(
+            stops: [
+                .init(color: .white.opacity(0), location: 0.3),
+                .init(color: .white.opacity(0.45), location: 0.5),
+                .init(color: .white.opacity(0), location: 0.7)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .frame(width: discSize, height: discSize)
+        .offset(x: offset.width * discSize / 2, y: offset.height * discSize / 2)
+        .frame(width: discSize, height: discSize)
+        .mask(Circle())
+        .blendMode(.plusLighter)
+        .allowsHitTesting(false)
     }
 }
 
