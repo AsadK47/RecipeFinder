@@ -1,13 +1,24 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2 merged (store copy; RecipeModel 16 entities). Nothing on a branch.
+Data safety 1/4 (claimed): slices 1–2 merged. Slice 3a (cook dates → CookDateEntity) on
+`agent/data-safety-1-cook-dates` — waiting on Build & Test, review/challenge.
 
 ## Next action
-Slice 3: per-manager blob→entity migration (start with CookingStreakManager → CookDateEntity; read blob, write
-entities, verify count, then mark migrated; keep blobs one release; corrupt/missing blob tests).
+Land slice 3a; then slice 3b: next manager via `LegacyBlobMigration.run` (collections → CollectionEntity), same shape:
+`*Storing` protocol + CoreData store + fake, manager `usesEntities` fallback, Reset deletes rows.
 
 ## Decisions (why)
+- **Data safety 1/4 slice 3a (cook dates)**: `LegacyBlobMigration.run` is generic (decode blob → write only what the
+  store lacks (multiset, so a half-finished run never duplicates) → re-read and check every value is there → set
+  `migratedToCoreData.<key>` flag). Corrupt/missing blob → marked, nothing moved (LocalStore already keeps
+  `.corrupt`). Failure → not marked; manager keeps reading/writing the blob this launch so cooks aren't lost, next
+  launch moves the extra ones. Blob is never deleted or updated after the move (fallback for one release, stale by
+  design). Store uses KVC on NSManagedObject (codegen `init(context:)` breaks with many test containers). Reset
+  must delete rows (clearAll alone would leave them) → `removeAllCookDates()`. **Pre-mortem:** (1) streak lost on
+  update → `everyBlobCookBecomesARow…`, `blobMovesIntoARealStoreAndSurvivesARelaunch`; (2) store write fails → streak
+  vanishes/duplicates → `aFailedWrite…`, `cooksRecordedWhileTheMoveFailed…`, `aRetryAfterAHalfFinishedRun…`;
+  (3) Reset leaves old streak → `removeAllCookDatesEmptiesTheStoreAndTheStreak`.
 - **Data safety 1/4 slice 2 (v16 entities)**: one entity per blob, no relationships (CloudKit-easy; collection
   recipe ids + shopping item stores are JSON Binary, like Recipe's arrays). Entities named `*Entity` (codegen classes
   must not clash with `Badge`/`MealPlanModel`…). `sortOrder` on list entities keeps the arrays' order. Legacy
