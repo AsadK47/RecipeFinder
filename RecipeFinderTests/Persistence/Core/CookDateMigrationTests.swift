@@ -79,13 +79,25 @@ final class InMemoryCookDateStore: CookDateStoring {
         #expect(store.dates.sorted() == cooks.sorted())
     }
 
-    @Test func aMigratedKeyIsNotMigratedAgain() {
+    @Test func aMigratedKeyIsNotWrittenAgain() {
         writeBlob(cooks)
         let store = InMemoryCookDateStore()
         _ = manager(store)
-        store.dates = []   // e.g. cleared since; the blob must not resurrect it
+        store.failWrites = true   // a second move would throw and fall back to the blob
         let again = manager(store)
-        #expect(again.recordedCookDates.isEmpty)
+        #expect(again.recordedCookDates == cooks.sorted())
+        #expect(migrated())
+    }
+
+    @Test func aStoreThatComesBackEmptyIsRefilledFromTheKeptCopy() {
+        writeBlob(cooks)
+        let store = InMemoryCookDateStore()
+        let sut = manager(store)
+        let tonight = Date(timeIntervalSinceReferenceDate: 800_000_000 + 20 * day)
+        sut.recordCook(on: tonight)    // after the move: the kept copy must stay current
+        store.dates = []               // recovery replaced an unreadable store with an empty one
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.recordedCookDates == (cooks + [tonight]).sorted())
     }
 
     @Test func noBlobMeansNothingToMoveAndIsMarked() {
@@ -150,12 +162,13 @@ final class InMemoryCookDateStore: CookDateStoring {
 
     // MARK: - Manager on entities
 
-    @Test func newCooksGoToTheStoreNotTheBlob() {
+    @Test func newCooksGoToTheStoreAndTheKeptCopy() {
         let store = InMemoryCookDateStore()
         let sut = manager(store)
         sut.recordCook(on: cooks[0])
         #expect(store.dates == [cooks[0]])
-        #expect(storage.data(forKey: blobKey) == nil)
+        #expect(storage.decodable([Date].self, forKey: blobKey) == [cooks[0]])
+        #expect(migrated())
     }
 
     @Test func mergeAddsOnlyNewCooks() {
@@ -245,11 +258,15 @@ final class InMemoryCookDateStore: CookDateStoring {
         #expect(rows.first?.value(forKey: "id") is UUID)
     }
 
-    @Test func blobMovesIntoARealStoreAndSurvivesARelaunch() {
+    @Test func blobMovesIntoARealStoreAndSurvivesARelaunch() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("CookDates-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let storeURL = folder.appendingPathComponent("RecipeModel.sqlite")
         writeBlob(cooks)
-        let persistence = PersistenceController(inMemory: true)
-        _ = manager(CoreDataCookDateStore(persistence: persistence))
-        let relaunch = manager(CoreDataCookDateStore(persistence: persistence))
+        _ = manager(CoreDataCookDateStore(persistence: PersistenceController(storeURL: storeURL)))
+        storage.removeObject(forKey: blobKey)   // prove the relaunch reads the store, not the kept copy
+        let relaunch = manager(CoreDataCookDateStore(persistence: PersistenceController(storeURL: storeURL)))
         #expect(relaunch.recordedCookDates == cooks.sorted())
         #expect(migrated())
     }

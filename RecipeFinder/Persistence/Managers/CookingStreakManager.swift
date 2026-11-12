@@ -109,15 +109,18 @@ final class CookingStreakManager: CookingStreakTracking {
             recompute()
             return
         }
-        let result = LegacyBlobMigration.run(
-            blobKey: saveKey, as: Date.self, storage: storage,
-            fetch: { try cookDateStore.fetchCookDates() },
-            insert: { try cookDateStore.addCookDates($0) }
-        )
-        usesEntities = result != .failed
+        usesEntities = migrateBlob() != .failed
         if usesEntities {
             do {
                 cookDates = try cookDateStore.fetchCookDates()
+                if cookDates.isEmpty, storage.decodable([Date].self, forKey: saveKey)?.isEmpty == false {
+                    // The store came back empty (e.g. recovery replaced an unreadable one) but the kept copy has
+                    // cooks: move them in again rather than show an empty streak.
+                    streakLogger.error("⚠️ Cook-date store is empty but the old copy isn't; moving it again")
+                    storage.removeObject(forKey: LegacyBlobMigration.flagKey(for: saveKey))
+                    usesEntities = migrateBlob() != .failed
+                    cookDates = try cookDateStore.fetchCookDates()
+                }
             } catch {
                 streakLogger.error("❌ Failed to read cook dates, using the old copy: \(error.localizedDescription)")
                 usesEntities = false
@@ -127,6 +130,14 @@ final class CookingStreakManager: CookingStreakTracking {
             cookDates = storage.decodable([Date].self, forKey: saveKey) ?? []
         }
         recompute()
+    }
+
+    private func migrateBlob() -> BlobMigrationResult {
+        LegacyBlobMigration.run(
+            blobKey: saveKey, as: Date.self, storage: storage,
+            fetch: { try cookDateStore.fetchCookDates() },
+            insert: { try cookDateStore.addCookDates($0) }
+        )
     }
 
     /// True when no Reset wipe is outstanding.
@@ -142,19 +153,21 @@ final class CookingStreakManager: CookingStreakTracking {
         }
     }
 
+    /// Writes the store and, for this release, keeps the old copy current too, so losing the store loses nothing.
     private func persist(added: [Date]) {
-        if usesEntities {
-            do {
-                try cookDateStore.addCookDates(added)
-                return
-            } catch {
-                streakLogger.error("❌ Failed to save cook dates, keeping them in the old copy: \(error.localizedDescription)")
-                usesEntities = false
-            }
-        }
         storage.setEncodable(cookDates, forKey: saveKey)
-        // Unmarking makes the next launch move these cooks into the store (only the ones it lacks).
-        storage.removeObject(forKey: LegacyBlobMigration.flagKey(for: saveKey))
+        guard usesEntities else {
+            // Unmarking makes the next launch move these cooks into the store (only the ones it lacks).
+            storage.removeObject(forKey: LegacyBlobMigration.flagKey(for: saveKey))
+            return
+        }
+        do {
+            try cookDateStore.addCookDates(added)
+        } catch {
+            streakLogger.error("❌ Failed to save cook dates, kept in the old copy: \(error.localizedDescription)")
+            usesEntities = false
+            storage.removeObject(forKey: LegacyBlobMigration.flagKey(for: saveKey))
+        }
     }
 
     private func recompute() {

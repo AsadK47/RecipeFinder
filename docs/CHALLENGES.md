@@ -129,3 +129,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Format] `recipeIDs` / `stores` are plain Binary; slice 3 must JSON-encode them (WORK.md Decisions).
   → Owner:
+
+## 2026-11-12 (item pass: Data safety 1/4 slice 3a cook dates — fixed: kept blob was a dead fallback (now kept current + refills an empty store), failed save/read lost cooks (now unmarks → next launch moves them), failed Reset delete resurrected history (now a pending wipe retried each launch), relaunch test reused one container)
+- ⚔️ [Data] `merge` (backup restore) uses set semantics, so two cooks at the same instant in a backup collapse to one, unlike the migration's multiset rule. Pre-existing; practically unreachable (`Date()` per cook).
+  → Owner:
+- ⚔️ [Data] `CoreDataCookDateStore.save` rolls back the shared `viewContext` on failure, which would drop any other unsaved change there; other writers save immediately, so none today. Revisit when more managers write to viewContext (slice 3b+).
+  → Owner:
+- ⚔️ [Tests] Reset wiring (`resetToDefault` → `removeAllCookDates`) is untested; the view calls `.shared` directly (pre-existing).
+  → Owner:
