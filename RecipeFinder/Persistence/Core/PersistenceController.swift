@@ -43,7 +43,8 @@ final class PersistenceController {
     }
 
     /// `inMemory`: back store with `/dev/null` for tests (still SQLite so batch ops work).
-    init(inMemory: Bool = false, storeURL: URL? = nil) {
+    /// `backupDirectory`: where the store is copied before a model upgrade (`StoreBackup`); nil = no copy.
+    init(inMemory: Bool = false, storeURL: URL? = nil, backupDirectory: URL? = StoreBackup.defaultDirectory()) {
         container = NSPersistentContainer(name: "RecipeModel")
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
@@ -51,7 +52,24 @@ final class PersistenceController {
             container.persistentStoreDescriptions.first?.url = storeURL
         }
         configureStore()
+        if !inMemory, let backupDirectory { backUpBeforeMigration(into: backupDirectory) }
         loadStore()
+    }
+
+    /// Copies the store aside when opening it is about to upgrade it. A failed copy is logged and the upgrade goes
+    /// ahead: refusing to open would lock the cook out of every recipe, and recovery still preserves a store it
+    /// can't open.
+    private func backUpBeforeMigration(into directory: URL) {
+        guard let storeURL = container.persistentStoreDescriptions.first?.url, storeURL.isFileURL,
+              StoreBackup.needsMigration(storeURL: storeURL, model: container.managedObjectModel)
+        else { return }
+        do {
+            if let folder = try StoreBackup.backUp(storeURL: storeURL, into: directory) {
+                persistenceLogger.debug("💾 Store copied to \(folder.lastPathComponent) before upgrade")
+            }
+        } catch {
+            persistenceLogger.error("❌ Store backup before upgrade failed: \(error.localizedDescription)")
+        }
     }
 
     private func configureStore() {

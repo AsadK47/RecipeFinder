@@ -16,7 +16,7 @@ import Foundation
         let storeURL = directory.appendingPathComponent("RecipeModel.sqlite")
         try Data("this is not a valid sqlite store".utf8).write(to: storeURL)
 
-        let controller = PersistenceController(storeURL: storeURL)
+        let controller = PersistenceController(storeURL: storeURL, backupDirectory: directory.appendingPathComponent("StoreBackups"))
 
         // Recovery started a fresh, usable store...
         #expect(controller.isStoreLoaded)
