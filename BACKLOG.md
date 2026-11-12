@@ -98,15 +98,13 @@ drop a line while moving it.
 6. **Website** (repo AsadK47/RecipeFinderWebsite; runs in its own parallel session, owner OK 2026-11-10): Site 1/6 → 6/6.
 
 ## Queue
-- [ ] **Pictures 1/4 — Keep imported photos + nicer placeholders** — 🚧 builder agent 2026-11-12 (owner OK 2026-11-12: pictures are "a major thing
-  that's lacking"). Link/web/share imports download the page's image at import and store it like a user photo
-  (`RecipeImageStore`, `RecipeImages/<id>.jpg`, relative path) instead of keeping the site's URL; downscale to ≤1600px
-  JPEG; failure → no image, never blocks the import. Existing recipes whose `imageName` is an http(s) URL: download
-  once in the background on launch (skip `isSampleRecipe`; keep the URL if the download fails; never overwrite a user
-  photo). Placeholder: replace the plain gradient with illustrated art per category/cuisine (SF Symbols composition or
-  a small bundled SVG/PDF set) so recipes without a photo still look finished. Trust boundary: only http(s), size cap
-  (e.g. 10 MB), image types only, decode with ImageIO. *Done when:* download/size/type/fallback + launch migration
-  tested (fake fetcher), screenshots (imported recipe offline, placeholders), CI green.
+- [ ] **Pictures 1/4 — Keep imported photos + nicer placeholders** — 🚧 builder agent 2026-11-12 (owner OK 2026-11-12:
+  pictures are "a major thing that's lacking"). ✅ Slice 1 (6a77647): imported web pictures get a phone copy
+  (`RecipeImages/web-<sha256(url)>.jpg`, recipe keeps the URL so refresh/export/backup still work), on save + launch,
+  validated (https public hosts, 10 MB, ≤50 MP, ImageIO, JPEG ≤1600px). **Left (slice 2):** placeholder — replace the
+  plain gradient in `Components/Recipe/RecipePlaceholderView.swift` with illustrated art per category/cuisine (SF
+  Symbols composition or a small bundled SVG/PDF set) so recipes without a photo still look finished; screenshots of
+  placeholders. *Done when:* placeholder tests (category/cuisine → art mapping), screenshots looked at, CI green.
 - [ ] **Data safety 1/4 — Everything in Core Data, upgrades that can't lose data** (owner OK 2026-11-12, incl. Core
   Data model change). Move meal plans, shopping list, kitchen items/inventory, collections, badges, cooking streak and
   profile out of UserDefaults (`LocalStore` JSON blobs) into Core Data entities in a new model version (+ point
@@ -495,6 +493,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
+- 2026-11-12 · Pictures 1/4 slice 1 · 6a77647 · Imported recipes now keep a copy of their web picture on the phone (downloaded in the background after import and once on launch for older imports), so the picture shows offline and after the site changes; the recipe keeps its source URL. New RemoteImageFetcher.swift, RemoteRecipeImage.swift, RecipeImageLocalizer.swift, RecipeStore+RemoteImages.swift + 2 test files registered in pbxproj by hand. On phone: import a recipe from a link, wait a few seconds, turn on Airplane Mode, force-quit, reopen — picture still shows. · review: challenge 8 (redesigned: first build swapped imageName → broke refresh/export/backup; now URL-keyed copy, private-host block, 50 MP cap, once-per-launch retries, ephemeral session), deep-review 4 (all covered by redesign) · looked at: none (no visible UI change; placeholders in slice 2)
 - 2026-11-12 · Smell Large Class TodayView · d81af16 · 379→292 lines: Today's refresh is one pure `TodaySnapshot.make` (feed, week, progress, weekly pick), shelf de-dup is `TodayFeed.shelves(excluding:)`, greeting/first-recipe/shortcut cards moved to TodayIntroCards.swift. New TodaySnapshot.swift, TodayIntroCards.swift, TodaySnapshotTests.swift registered in pbxproj by hand. Not user-visible: Today should look and behave exactly as before. · review: deep-review + challenge 0 code issues, 3 tests that couldn't fail fixed · looked at: 16, 32
 - 2026-11-12 · Today+ 3/3 (series done) · 9c8d7c5 · Today gets "Your cooking": week streak, cooks this week and the closest cooking badge with a bar ("1 more cook to Head Chef"); tap → Cooking sheet. "Try something new" shows one never-cooked recipe, same all week (your own before samples; hidden for new users, who get Starters). Streak now reloads when Today appears/returns so a new week resets "cooks this week". New TodayProgress.swift, TodayProgressCard.swift, TodayProgressTests.swift registered in pbxproj by hand. On phone: Today → scroll to Your cooking → tap it; after one cook the weekly pick appears. · review: deep-review 3 fixed (stale week streak, pick repeated on shelves, duplicated badge set); challenge 2 fixed (UI test @MainActor, Signature Dish copy), 2 noted (CHALLENGES.md) · looked at: 16, 32, 33
 - 2026-11-12 · Today+ 2/3 slice 2 · 25165c1 · Today gets a "This week" card: the next 7 days with a dot for planned days and a ring for empty ones; tap an empty day → pick its dinner; tap a planned day → Plan tab. When tomorrow has no dinner, "Plan tomorrow: <recipe> [+ Plan it]" plans it in one tap (favourite → own → most cooked; skips tonight's picks, this week's plans and anything cooked in the last 7 days). Recurring meals now show on Today without opening Plan; Plan it never replaces a dinner. New TodayWeek.swift, TodayWeekCard.swift, TodayWeekTests.swift registered in pbxproj by hand; UI badge-sheet helper hardened (flaked once). On phone: Today → scroll to This week → tap an empty day; check Plan it. · review: challenge 4 fixed, 3 noted (CHALLENGES.md); deep-review 4 (2 dup, 2 fixed) · looked at: 16, 30, 31

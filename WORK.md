@@ -1,11 +1,11 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Pictures 1/4 slice 1 (keep web pictures) on `agent/pictures-1` — waiting on Build & Test.
-Slice 2 left: illustrated placeholders per category/cuisine (`Components/Recipe/RecipePlaceholderView.swift`) + screenshots.
+Pictures 1/4 slice 1 merged (6a77647). Slice 2 (illustrated placeholders) not started.
 
 ## Next action
-Check Build & Test for `agent/pictures-1`; fix; merge to main. Then slice 2 (placeholders) on `agent/pictures-1b`.
+Pictures 1/4 slice 2 on `agent/pictures-1b`: read `Components/Recipe/RecipePlaceholderView.swift`, add a pure
+category/cuisine → art mapping (tests first), render it, run Screenshots and look at recipe list/detail shots.
 
 ## Decisions (why)
 - **Pictures 1/4 slice 1 (keep web pictures)**: the recipe KEEPS its web URL in `imageName`; a phone copy lives at
