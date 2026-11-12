@@ -1,12 +1,27 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-(none) — Badges 1/2 done (slice 2 merged 089ac88).
+Pictures 1/4 slice 1 (keep web pictures) on `agent/pictures-1` — waiting on Build & Test.
+Slice 2 left: illustrated placeholders per category/cuisine (`Components/Recipe/RecipePlaceholderView.swift`) + screenshots.
 
 ## Next action
-Pictures 1/4 (top priority list in BACKLOG Batches 1) on a new `agent/pictures-1` branch: claim it first.
+Check Build & Test for `agent/pictures-1`; fix; merge to main. Then slice 2 (placeholders) on `agent/pictures-1b`.
 
 ## Decisions (why)
+- **Pictures 1/4 slice 1 (keep web pictures)**: one seam for every import path — `RecipeStore.save/add` (all imports
+  go through it) + a launch pass queue a background download (`RecipeStore+RemoteImages.swift`), serialised one at a
+  time via a chained `imageLocalization` task. Not done in `RecipeImportBuilder`: 5 call sites, and the wizard needs
+  the URL to preview before save. Trust boundary in `RemoteRecipeImage`: http(s) + host only, 10 MB cap (streamed in
+  `URLSessionRemoteImageFetcher`, also re-checked before decode), ImageIO type must conform to `.image`, re-encoded as
+  JPEG ≤1600px (never upscaled). Stored at `RecipeImages/<id>.jpg` with `.withoutOverwriting` so a cook's photo is
+  never replaced; applied only if the recipe still shows the same URL when the download ends, else our file is
+  removed (unless the recipe now points at it). Samples skipped. Failures keep the URL and retry next launch/save
+  (dead links re-fetch each launch — cheap, accepted). Gallery `photoNames` URLs out of scope.
+  **Pre-mortem:** (1) cook's own photo overwritten by a late download → `existingPhotoIsKept`,
+  `cooksPhotoWinsOverDownload`; (2) non-image / huge / non-web link stored or fetched → `htmlIsNotAnImage`,
+  `oversizedIsRejected`, `otherReferencesAreNotDownloadable`, `localReferenceIsNotFetched`; (3) import picture lost
+  offline or swap not persisted → `importKeepsPicture` (re-reads persistence), `failureKeepsURL`,
+  `launchPassCoversExistingImports`.
 - **Badges 1/2 slice 2 (reveal + tilt)**: `.fullScreenCover` replaces the 380pt sheet; same wait rule (Made it / "+"
   busy) now pure `BadgeReveal.showing`. Covers don't swipe away, so the reveal has its own drag-down-to-close (keeps
   UI-test helpers that drag the window working), a ✕, `.escape` action and the 8 s auto-close. Close = medallion

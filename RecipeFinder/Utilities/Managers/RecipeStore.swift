@@ -37,14 +37,23 @@ final class RecipeStore: RecipeStoring {
     var recipes: [RecipeModel] = []
     private(set) var isLoading = true
 
-    @ObservationIgnored private let persistence: PersistenceController
-    @ObservationIgnored private let imageStore: RecipeImageStore
+    // Internal (not private) so the picture-download extension in RecipeStore+RemoteImages.swift can use them.
+    @ObservationIgnored let persistence: PersistenceController
+    @ObservationIgnored let imageStore: RecipeImageStore
+    @ObservationIgnored let imageLocalizer: RecipeImageLocalizer
+    /// Latest queued picture download; each waits for the one before, so downloads run one at a time.
+    @ObservationIgnored var imageLocalization: Task<Void, Never>?
     /// Bumped on each load so a slow earlier fetch can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
 
-    init(persistence: PersistenceController = .shared, imageStore: RecipeImageStore = RecipeImageStore()) {
+    init(
+        persistence: PersistenceController = .shared,
+        imageStore: RecipeImageStore = RecipeImageStore(),
+        imageLocalizer: RecipeImageLocalizer = RecipeImageLocalizer()
+    ) {
         self.persistence = persistence
         self.imageStore = imageStore
+        self.imageLocalizer = imageLocalizer
     }
 
     /// Loads the library, seeding starter + bundled recipes on first run.
@@ -83,6 +92,7 @@ final class RecipeStore: RecipeStoring {
             let deduped = removeDuplicateCopies(from: repaired)
             recipes = await refreshStaleSamples(in: deduped)
             isLoading = false
+            keepWebPictures(of: recipes)
         }
     }
 
@@ -271,6 +281,7 @@ final class RecipeStore: RecipeStoring {
         } else {
             recipes.append(recipe)
         }
+        keepWebPictures(of: [recipe])
         return true
     }
 

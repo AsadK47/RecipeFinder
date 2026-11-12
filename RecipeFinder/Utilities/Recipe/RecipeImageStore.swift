@@ -61,6 +61,22 @@ struct RecipeImageStore {
         }
     }
 
+    /// Saves an already-encoded JPEG (a downloaded web picture) as the recipe's photo. Refuses to replace an existing
+    /// file there, so a photo the cook picked while the download ran is never overwritten.
+    func persistDownloaded(_ jpegData: Data, recipeId: UUID) -> String? {
+        guard let documentsDirectory else { return nil }
+        let relativePath = "RecipeImages/\(recipeId.uuidString).jpg"
+        let imageURL = documentsDirectory.appendingPathComponent(relativePath)
+        do {
+            try fileManager.createDirectory(at: imageURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try jpegData.write(to: imageURL, options: .withoutOverwriting)
+            return relativePath
+        } catch {
+            logger.error("❌ Failed to keep downloaded picture for \(recipeId): \(error)")
+            return nil
+        }
+    }
+
     /// Persists non-hero gallery images as `<id>_g<uuid>.jpg`. A count-based index repeated after a delete and
     /// overwrote a kept photo, so every file gets a fresh UUID.
     func persistGallery(_ images: [UIImage], recipeId: UUID) -> [String] {
