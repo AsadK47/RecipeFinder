@@ -1,6 +1,6 @@
 import Foundation
 
-/// User-created recipe group; local-only (CollectionManager JSON), membership by ID so RecipeModel stays untouched.
+/// User-created recipe group; stored on the phone (`CollectionEntity` rows), membership by ID so RecipeModel stays untouched.
 struct RecipeCollection: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String

@@ -17,7 +17,8 @@ enum MirroredSnapshotError: LocalizedError {
 /// - The blob is always written first, so it's never behind the store. That makes it safe to copy it in again
 ///   whenever the key is unmarked: any launch where the store can't be read or written runs on the blob and unmarks,
 ///   so the next launch replaces the store with the blob (edits, renames and deletes all carry over, no duplicates).
-/// - A store that comes back empty while the blob isn't (recovery replaced an unreadable store) is refilled.
+/// - A store that differs from the blob (save cut short, a blob-only build ran in between, recovery emptied the store)
+///   is replaced by the blob. Sync (Data safety 2/4) will need its own rule here, since then the store can be newer.
 /// - Reset records a pending wipe, retried each launch, so a failed delete never brings erased data back.
 @MainActor
 final class MirroredSnapshot<Value: Codable & Equatable> {
@@ -63,8 +64,10 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
                 storage.set(true, forKey: flagKey)
             }
             var values = try fetch()
-            if values.isEmpty, let kept = blob(), !kept.isEmpty {
-                logger.error("⚠️ \(self.blobKey): store is empty but the kept copy isn't; copying it in again")
+            if let kept = blob(), kept != values {
+                // The kept copy is written first, so it's never behind: a save cut short by the app being killed, an
+                // older build that only wrote the blob, or recovery replacing the store with an empty one.
+                logger.error("⚠️ \(self.blobKey): store differs from the kept copy; copying the kept copy in")
                 try copyIn(kept)
                 values = kept
             }

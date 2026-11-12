@@ -176,6 +176,19 @@ final class InMemoryCollectionStore: CollectionStoring {
         #expect(store.collections.map(\.name) == ["Weeknight"])
     }
 
+    @Test func aKeptCopyNewerThanTheStoreWinsNextLaunch() {
+        // The app was killed between writing the kept copy and the store, or an older blob-only build ran in between.
+        let store = InMemoryCollectionStore()
+        let sut = manager(store)
+        sut.createCollection(name: "Weeknight")
+        var renamed = sut.collections
+        renamed[0].name = "School nights"
+        writeBlob(renamed)
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.collections == renamed)
+        #expect(store.collections == renamed)
+    }
+
     @Test func deletingTheLastCollectionIsNotUndoneByTheRefill() {
         let store = InMemoryCollectionStore([soups])
         let sut = manager(store)
@@ -271,5 +284,21 @@ final class InMemoryCollectionStore: CollectionStoring {
         let request = NSFetchRequest<NSManagedObject>(entityName: CoreDataCollectionStore.entityName)
         #expect(try context.count(for: request) == 1)
         #expect(try sut.fetchCollections() == [soups])
+    }
+
+    @Test func coreDataStoreKeepsOtherCollectionsWhenOneRowIsUnreadable() throws {
+        let persistence = PersistenceController(inMemory: true)
+        let context = persistence.container.viewContext
+        let sut = CoreDataCollectionStore(persistence: persistence)
+        try sut.replaceCollections(with: both)
+        let request = NSFetchRequest<NSManagedObject>(entityName: CoreDataCollectionStore.entityName)
+        request.predicate = NSPredicate(format: "id == %@", soups.id as CVarArg)
+        try context.fetch(request).first?.setValue(Data("not json".utf8), forKey: "recipeIDs")
+        try context.save()
+
+        let fetched = try sut.fetchCollections()
+        #expect(fetched.map(\.name) == ["Soups", "Baking"])
+        #expect(fetched.first?.recipeIDs.isEmpty == true)
+        #expect(fetched.last == baking)
     }
 }

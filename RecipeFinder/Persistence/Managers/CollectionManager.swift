@@ -59,10 +59,6 @@ final class CollectionManager: CollectionManaging {
         )
     }
 
-    func reload() {
-        loadCollections()
-    }
-
     /// Erase & Reset: removes every collection. If the store can't delete now, the next launch finishes it.
     func removeAllCollections() {
         mirror.removeAll()
