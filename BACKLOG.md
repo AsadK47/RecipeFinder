@@ -206,14 +206,12 @@ drop a line while moving it.
   (Spoons slot once Spoons 1/2 ships). "Try something new" card: one never-cooked recipe per week (stable for the week;
   uses taste profile once it exists). *Done when:* weekly pick (stable, never-cooked) + progress logic tested,
   screenshots, CI green. Note: Today looks flat without photos — Recipe pictures lifts it further.
-- [ ] **Badges 1/2 — Earning feels big, browsing feels alive** — 🚧 builder agent 2026-11-12 (owner OK 2026-11-11: "give the achievements more
-  impact … scrollable or swipable … not just a static something"). (a) Earn reveal: full-screen badge flip-in, shine
-  sweep, confetti in the badge colour, its own haptic pattern, settles onto the shelf (replaces the 380pt sheet; still
-  waits for Made it / "+" sheets). (b) Tap any badge → full-screen card pager, swipe left/right through all badges;
-  tilt-to-shine via CoreMotion (on device, respects Reduce Motion). (c) Locked badges: silhouette + progress ring
-  ("7 / 10 cooks") + a button to where you earn it (e.g. "Plan a meal" → Plan tab). (d) Trophy shelf on Me grouped
-  Cooking / Streaks / Importing / Planning with "12 / 30" counts, newest first. *Done when:* pager order, progress,
-  grouping + earn-here routing tested, screenshots (shelf, pager, locked card, reveal), CI green.
+- [ ] **Badges 1/2 — Earning feels big, browsing feels alive** (owner OK 2026-11-11: "give the achievements more
+  impact … scrollable or swipable … not just a static something"). ✅ slice 1 (1471585): (b) pager, (c) locked
+  silhouette + ring + earn-here button, (d) trophy shelf. **Left (slice 2):** (a) earn reveal: full-screen badge
+  flip-in, shine sweep, confetti in the badge colour, its own haptic pattern, settles onto the shelf (replaces the
+  380pt sheet; still waits for Made it / "+" sheets); tilt-to-shine on pager cards via CoreMotion (on device, respects
+  Reduce Motion). *Done when:* reveal shown once per unlock + queue order tested, screenshot of the reveal, CI green.
 - [ ] **Badges 2/2 — Tiers, stories, sharing, next up.** Bronze → Silver → Gold → Platinum tiers on count badges
   (e.g. cook 10/25/50/100; existing unlocks map to their tier, no data loss — new stored fields only with owner OK if
   Core Data is needed, else `LocalStore`) with a tier-up animation; "Earned 3 Nov — cooking Thai green curry" story
@@ -521,3 +519,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-11 · Add flow 3/3 slice 2 · 911ec53 · Ingredient groups: "FOR THE SAUCE", "For the sponge:", "Garnish" in pasted/scanned/other-app text now become group titles above their ingredients on the recipe and the add screen, never an ingredient row (groceries/scaling unaffected). In the ingredients box, a line like "For the sauce:" starts a group. Stored inside the ingredients JSON — no Core Data change. On phone: + → Paste a recipe with "For the sauce" sections → check the titles; Edit → ingredients keeps them.
 - 2026-11-11 · Today+ 1/3 slice 1 · 64206db · Tonight card: Shuffle steps through up to 3 more ideas (other plans, kitchen matches, recipes under 30 min; never the one you cooked last); a line under the name says "Start by 6:20 to eat at 7", "Marinate this morning for tonight" or, 6–10pm, "Quick tonight? N under 30 min"; button now "Cook this"; bigger photo. With nothing planned and an empty kitchen, a quick recipe now fills the card. New files registered in pbxproj by hand. On phone: Today → Shuffle; check the line at different times. · review: challenge pass 3 fixed, 3 noted (deep-review on last slice) · looked at: 16, 24, 25, 26, 27
 - 2026-11-11 · Today+ 1/3 slice 2 (item done) · 74f6597 · Tonight card gets a "7 pm" dinner-time pill beside Shuffle (5–10pm, half hours; hidden for planned lunch/snack); "Start by…" counts back from it. Groceries shortcut card dropped, shelf tiles are bare photos, badges tinted so "Cook this" is the one accent. On phone: Today → tap "7 pm" → pick 8 pm → line reads "…to eat at 8". · review: deep-review 2 fixed, challenge 3 fixed · looked at: 16, 18, 20, 24, 27, 28
+- 2026-11-12 · Badges 1/2 slice 1 · 1471585 · Me's badges become a trophy shelf: rows for Cooking / Streaks / Importing / Planning with "2 / 9" counts, swipe sideways along each row, newest earned first. Locked badges are grey silhouettes with a progress ring. Tap any badge → full-screen card; swipe left/right through all 24 ("12 of 24"). Locked cards show "0 / 12 weeks" and a button to where you earn it (e.g. Pick something to cook → Today). New BadgeShelf.swift, BadgeShelfTests.swift registered in pbxproj by hand; BadgeDetailView.swift renamed BadgePagerView.swift. On phone: Me → scroll to Trophy shelf → tap a locked badge → swipe → tap its button. · review: deep-review + challenge 13 fixed (1 compile blocker), 4 noted (CHALLENGES.md); screenshots caught clipped/grey titles, fixed · looked at: 17, 34, 35

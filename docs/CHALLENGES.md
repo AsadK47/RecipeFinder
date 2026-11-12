@@ -91,3 +91,13 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Time] Today left open across Sunday→Monday keeps last week's streak/pick until the next appear/return (same as other Today cards) — cost if wrong: stale numbers until reopened.
   → Owner:
+
+## 2026-11-12 (item pass: Badges 1/2 slice 1 — fixed: ProfileSheetTests still used the removed `.badge` case (compile), pager ids not unique per page, ring metrics stale until Me reappears, Domain→View `tab` dependency, button copy promised "Add a recipe"/"Plan a meal" but only switches tab, catch-all group, VoiceOver "slash", header trait, 44pt close, year on dates, same-date tie-break test, UI test asserts pager closed; screenshots: clipped/grey locked titles)
+- ⚔️ [Flow] "Go to Recipes and tap +" switches tab but doesn't open the "+" sheet — post a notification ContentView turns into `showAddRecipe` — cost if wrong: one extra tap.
+  → Owner:
+- ⚔️ [Operations] VoiceOver pages the badge pager with a three-finger swipe only; "3 of 24" is the one cue — add next/previous accessibility actions — cost if wrong: VoiceOver users see one card.
+  → Owner:
+- ⚔️ [Structure] Pager medallion + progress ring hand-build `ZStack { Circle(); Image }` with literal 156/170 sizes instead of extending `IconBadge` — fold into slice 2's reveal medallion — cost if wrong: drift between shelf, pager and reveal.
+  → Owner:
+- ⚔️ [Structure] `.onReceive(NotificationCenter.publisher)` in ContentView is Combine (repo bans it); `.openToday` copied the existing four lines — move all five to an async `notifications(named:)` loop in a Smell pass.
+  → Owner:

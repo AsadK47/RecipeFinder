@@ -1,13 +1,13 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Badges 1/2 slice 1 on `agent/badges-shelf`: trophy shelf (grouped rows, newest first, locked silhouettes + progress
-ring), full-screen swipe pager (replaces BadgeDetailView sheet), "earn it here" button → tab. Waiting on Build & Test.
+(none) — Badges 1/2 slice 1 merged (1471585); item stays open for slice 2.
 
 ## Next action
-Get `agent/badges-shelf` green → Screenshots run (look at 34, 35, 17) → deep-review + challenge → merge. Then slice 2:
-(a) full-screen earn reveal replacing the 380pt BadgeEarnedSheet (flip-in, shine, colour confetti, haptic) and
-(b) tilt-to-shine on pager cards (CoreMotion, Reduce Motion off).
+Badges 1/2 slice 2 on a new `agent/badges-reveal` branch: full-screen earn reveal replacing `BadgeEarnedSheet`
+(flip-in, shine, badge-colour confetti, haptic; keep the Made it / "+" wait in ContentView) + CoreMotion tilt-to-shine
+on `BadgePagerView` cards (off under Reduce Motion). Reuse one medallion view for shelf/pager/reveal (CHALLENGES note).
+
 ## Decisions (why)
 - **Badges 1/2 slice 1**: groups by metric — Cooking = cooks/cuisines/same dish/rated/cook photo; Streaks; Importing =
   library size + first import/photo import + Welcome Aboard; Planning = meal plan + groceries. Earned newest first
