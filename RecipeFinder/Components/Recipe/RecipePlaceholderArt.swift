@@ -10,7 +10,8 @@ struct RecipePlaceholderArt: Equatable, Sendable {
     static let paletteCount = 8
 
     enum Motif: String, CaseIterable, Sendable {
-        case hotDrink, coldDrink, sweet, breakfast, soup, curry, wok, baked, fish, poultry, meat, veg, snack, main
+        // Order = match priority: sweet first so "Coffee Cake" is cake, then drinks so "Masala Chai" isn't curry.
+        case sweet, hotDrink, coldDrink, breakfast, soup, curry, wok, baked, fish, poultry, meat, veg, snack, main
 
         /// Main SF Symbol, drawn large in the middle.
         var symbol: String {

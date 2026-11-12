@@ -10,8 +10,8 @@ challenge + deep-review agents, then fast-forward main.
 
 ## Decisions (why)
 - **Pictures 1/4 slice 2 (placeholder art)**: SF Symbols composition (no bundled assets → no app-size cost, adapts to
-  Dynamic Type/dark mode). Motif = first dish word in the name (whole words, plural-stripped, fixed priority: drinks →
-  sweet → breakfast → soup → curry → wok/rice/pasta → baked → fish → poultry → meat → veg → snack), else category; a
+  Dynamic Type/dark mode). Motif = first dish word in the name (whole words, plural-stripped, fixed priority: sweet →
+  drinks → breakfast → soup → curry → wok/rice/pasta → baked → fish → poultry → meat → veg → snack), else category; a
   Drink category always stays a drink. Colour = cuisine family (from `cuisine` or a cuisine word in the name — bundled
   recipes have no cuisine field) else the old name hash, so lists stay varied. Accents only on tiles ≥90pt.
   Memoised with MemoCache. MealTimeCard only has the name → name keywords still work there.

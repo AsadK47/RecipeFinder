@@ -34,6 +34,7 @@ struct RecipePlaceholderArtTests {
         ("Lamb Kebab", "Main", .meat),
         ("Fluffy Pancakes", "Dessert", .breakfast),
         ("Masala Chai", "Main", .hotDrink),
+        ("Coffee Cake", "Dessert", .sweet),
     ])
     func nameBeatsCategory(name: String, category: String, motif: RecipePlaceholderArt.Motif) {
         #expect(RecipePlaceholderArt.motif(name: name, category: category) == motif)
