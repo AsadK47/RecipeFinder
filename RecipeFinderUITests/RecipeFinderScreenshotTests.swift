@@ -418,8 +418,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
     @MainActor
     private func dismissBadgeSheet(_ app: XCUIApplication) {
         let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
+        // The sheet can close on its own between the wait and the swipe (seen in CI), so drag the window rather than
+        // the element — a drag never fails on a missing match, and with no sheet it lands harmlessly on Today.
         if badgeSheet.waitForExistence(timeout: 3) {
-            badgeSheet.swipeDown()
+            let window = app.windows.firstMatch
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
             settle()
         }
     }
