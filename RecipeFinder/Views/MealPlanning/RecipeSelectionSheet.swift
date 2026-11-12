@@ -26,7 +26,9 @@ struct RecipeSelectionSheet: View {
                 EmptyStateView(
                     icon: "book.closed",
                     title: "No recipes found",
-                    message: "Try a different search, or add a recipe to your library."
+                    message: "Try a different search, or add a recipe to your library.",
+                    actionTitle: searchText.isEmpty ? nil : "Clear search",
+                    onAction: searchText.isEmpty ? nil : { searchText = "" }
                 )
                 Spacer()
             } else {

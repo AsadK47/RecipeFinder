@@ -21,6 +21,9 @@ Get Build & Test green → Screenshots run on the branch → look at 16, 30, 31 
   VoiceOver day names en_GB like Use it up. Skipped `NSCalendarDayChanged` async loop (Notification isn't Sendable —
   Swift 6 risk); scene-active refresh covers the overnight case. Notes → CHALLENGES.md: planned-day tap opens Plan on
   today (no date deep link); two week-strip visual languages (Plan's per-meal colours vs Today's single dot).
+  Deep-review (high): 4 findings — 2 already fixed by the challenge pass (rollover, ScaledMetric); fixed "Plan it"
+  Voice Control input label, picker "Clear search" empty-state action (+ empty library → empty day opens "+"); method
+  reference → closure (MainActor conversion risk).
   TodayView is now ~340 lines → Smell candidate (extract refresh/plan helpers). **Pre-mortem:** (1) dots on the wrong
   day (time zones / late-night plans) → `lateNightPlanCountsForItsOwnDay`, `plansOutsideTheSevenDaysAreLeftOut`;
   (2) "Plan tomorrow" offers tonight's dish or one just cooked, or shows when tomorrow is planned →

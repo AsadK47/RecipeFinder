@@ -120,6 +120,7 @@ struct TodayWeekCard: View {
             onPlanTomorrow(pick)
         }
         .accessibilityLabel("Plan \(pick.name) for tomorrow")
+        .accessibilityInputLabels(["Plan it", "Plan \(pick.name) for tomorrow"])
         .accessibilityIdentifier("today.planTomorrow.add")
     }
 }

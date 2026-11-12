@@ -138,7 +138,7 @@ struct TodayView: View {
         )
         feed = newFeed
         let weekPlans = (0..<TodayWeek.dayCount).flatMap { offset in
-            Calendar.current.date(byAdding: .day, value: offset, to: now).map(mealPlanning.mealPlans(for:)) ?? []
+            Calendar.current.date(byAdding: .day, value: offset, to: now).map { mealPlanning.mealPlans(for: $0) } ?? []
         }
         week = TodayWeek.make(
             recipes: recipeStore.recipes, plans: weekPlans,
@@ -247,7 +247,10 @@ struct TodayView: View {
         if let week {
             TodayWeekCard(
                 week: week,
-                onPlanDay: { planningDay = PlanningDay(date: $0) },
+                // With no recipes yet there's nothing to pick, so an empty day leads to adding one.
+                onPlanDay: { date in
+                    if recipeStore.recipes.isEmpty { onAddRecipe() } else { planningDay = PlanningDay(date: date) }
+                },
                 onPlanTomorrow: { recipe in
                     if let tomorrow = week.tomorrow { planDinner(recipe, on: tomorrow) }
                 },
