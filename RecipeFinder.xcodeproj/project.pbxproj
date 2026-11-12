@@ -382,6 +382,7 @@
 		F3E9D1B830457DC8008BF231 /* PersistenceController+RecipeWrites.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */; };
 		F3E9D1BA30457DDB008BF231 /* PersistenceController+RecipeFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */; };
 		F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */; };
+		0941BE84B024D313914B4BB7 /* StoreBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E52FE5FD03F62A0470F865 /* StoreBackup.swift */; };
 		F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C33045D76D008BF231 /* Ingredient.swift */; };
 		F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */; };
 		F3E9D1CA3045D78D008BF231 /* RecipeFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */; };
@@ -451,6 +452,7 @@
 		F3E9D294304FF7D7008BF231 /* TextRecipeFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D293304FF7D7008BF231 /* TextRecipeFixtures.swift */; };
 		F3E9D296304FF803008BF231 /* TextRecipeFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */; };
 		F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */; };
+		00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */; };
 		F3E9D29A30500069008BF231 /* PersistenceRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */; };
 		F3E9D2A230515C08008BF231 /* TimeExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */; };
 		F3E9D2A430515C14008BF231 /* RecipeIngredientMatchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */; };
@@ -897,6 +899,7 @@
 		F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeWrites.swift"; sourceTree = "<group>"; };
 		F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeFetch.swift"; sourceTree = "<group>"; };
 		F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+Database.swift"; sourceTree = "<group>"; };
+		06E52FE5FD03F62A0470F865 /* StoreBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackup.swift; sourceTree = "<group>"; };
 		F3E9D1C33045D76D008BF231 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNameFormatter.swift; sourceTree = "<group>"; };
 		F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFormatters.swift; sourceTree = "<group>"; };
@@ -964,6 +967,7 @@
 		F3E9D293304FF7D7008BF231 /* TextRecipeFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeFixtures.swift; sourceTree = "<group>"; };
 		F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeFixtureTests.swift; sourceTree = "<group>"; };
 		F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationTests.swift; sourceTree = "<group>"; };
+		E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackupTests.swift; sourceTree = "<group>"; };
 		F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceRecoveryTests.swift; sourceTree = "<group>"; };
 		F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeExtractorTests.swift; sourceTree = "<group>"; };
 		F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIngredientMatchingTests.swift; sourceTree = "<group>"; };
@@ -1521,6 +1525,7 @@
 				F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */,
 				F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */,
 				F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */,
+				06E52FE5FD03F62A0470F865 /* StoreBackup.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1830,6 +1835,7 @@
 				9E97EED3300D894700D35FAB /* PersistenceControllerTests.swift */,
 				F3E9D288304E056A008BF231 /* CoreDataStorePersistenceTests.swift */,
 				F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */,
+				E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */,
 				F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */,
 				F3E9D2A53052A02E008BF231 /* RecipeSaveResultTests.swift */,
 				F3D4056330585ED10076834D /* RecipePersistenceRoundTripTests.swift */,
@@ -2376,6 +2382,7 @@
 				F3FF62EC305C1F2A0008B191 /* MadeItSheet.swift in Sources */,
 				F3B7D8FC3070007600991908 /* RecipeShoppingList.swift in Sources */,
 				F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */,
+				0941BE84B024D313914B4BB7 /* StoreBackup.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				C721558A8AB2C6ADFFEDE856 /* RemoteImageFetcher.swift in Sources */,
 				F3B7D91530766CA400991908 /* StreakReminderScheduling.swift in Sources */,
@@ -2679,6 +2686,7 @@
 				F3E9D285304E049C008BF231 /* RecipeImportPersistenceTests.swift in Sources */,
 				F3E9D2A230515C08008BF231 /* TimeExtractorTests.swift in Sources */,
 				F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */,
+				00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */,
 				F3B7D9173079017B00991908 /* SeedCorpusParseQualityTests.swift in Sources */,
 				F3B7D8DC30684E5900991908 /* RecipeImageViewTests.swift in Sources */,
 				A1C0FFEE0000000000000A04 /* RecipePlaceholderArtTests.swift in Sources */,
