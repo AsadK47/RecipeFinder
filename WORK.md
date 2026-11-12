@@ -1,14 +1,26 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2 and 3a (cook dates) merged. Nothing on a branch.
+Data safety 1/4 (claimed): slice 3b (collections) on `agent/data-safety-1-collections` — waiting on Build & Test.
+New `MirroredSnapshot<Value>` (whole-list blob ↔ entities), `CoreDataCollectionStore`, CollectionManager on it,
+Reset → `removeAllCollections()`.
 
 ## Next action
-Slice 3b: collections → CollectionEntity via `LegacyBlobMigration.run`, copying CookingStreakManager's shape:
-`*Storing` protocol + CoreData store + fake, `usesEntities` fallback, blob kept current, refill-if-empty, pending wipe
-on Reset. Consider extracting that shape into a reusable helper before the 3rd manager (smell, own commit).
+Green → challenge pass + deep-review, then merge. Next slices reuse `MirroredSnapshot`: meal plans, shopping list,
+kitchen items/inventory, badges, profile (one per branch).
 
 ## Decisions (why)
+- **Data safety 1/4 slice 3b (collections)**: whole-list data ≠ append-only cook dates, so new generic
+  `MirroredSnapshot` instead of `LegacyBlobMigration.run` (its multiset "insert what's missing" would duplicate a
+  collection renamed while in blob mode, and can't carry deletes). Rule: blob is always written first, so it's never
+  behind the store → whenever the key is unmarked, the store is *replaced* by the blob (edits/renames/deletes carry
+  over). Any read/write failure → blob mode + unmark. Store is upsert-by-id with sortOrder = index (rows updated in
+  place, sync-friendly), drops rows without id / duplicate ids. Cook dates left on their own path (append-only; port
+  later only if it shrinks code — WIP=1). **Pre-mortem:** (1) collections lost/duplicated on update →
+  `everyBlobCollectionBecomesARowInOrder…`, `aRetryAfterAHalfFinishedRunDoesNotDuplicate`; (2) edits/deletes made
+  while the store fails are lost or resurrected → `editsMadeWhileTheStoreCouldNotBeWritten…`,
+  `aDeleteMadeWhileTheStoreCannotBeReadStaysDeleted`, `aChangeWhoseSaveFailsIsKeptNextLaunch`; (3) Reset leaves
+  collections → `removeAllCollectionsEmptiesTheStore`, `aResetWhoseDeleteFailsIsFinishedNextLaunch`.
 - **Data safety 1/4 slice 3a (cook dates)**: `LegacyBlobMigration.run` is generic (decode blob → write only what the
   store lacks (multiset, so a half-finished run never duplicates) → re-read and check every value is there → set
   `migratedToCoreData.<key>` flag). Corrupt/missing blob → marked, nothing moved (LocalStore already keeps

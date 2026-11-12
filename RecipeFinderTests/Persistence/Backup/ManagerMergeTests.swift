@@ -125,7 +125,8 @@ import Foundation
 
     @Test func collections_mergeIsNonDestructiveAndPersists() {
         let storage = Self.makeStorage()
-        let sut = CollectionManager(storage: storage)
+        let store = InMemoryCollectionStore()
+        let sut = CollectionManager(storage: storage, collectionStore: store)
         sut.createCollection(name: "Local")
 
         sut.merge([RecipeCollection(name: "Backup Collection")])
@@ -133,12 +134,12 @@ import Foundation
         #expect(sut.collections.contains { $0.name == "Local" })
         #expect(sut.collections.contains { $0.name == "Backup Collection" })
 
-        let reloaded = CollectionManager(storage: storage)
+        let reloaded = CollectionManager(storage: storage, collectionStore: store)
         #expect(reloaded.collections.count == 2)
     }
 
     @Test func collections_mergeDedupesById() {
-        let sut = CollectionManager(storage: Self.makeStorage())
+        let sut = CollectionManager(storage: Self.makeStorage(), collectionStore: InMemoryCollectionStore())
         let existing = RecipeCollection(name: "Pasta Night")
         sut.merge([existing])
         sut.merge([existing])
@@ -147,17 +148,18 @@ import Foundation
 
     @Test func collections_mergePreservesRecipeMembership() {
         let storage = Self.makeStorage()
-        let sut = CollectionManager(storage: storage)
+        let store = InMemoryCollectionStore()
+        let sut = CollectionManager(storage: storage, collectionStore: store)
         let recipeID = UUID()
         let collection = RecipeCollection(name: "Soups", recipeIDs: [recipeID])
         sut.merge([collection])
 
-        let reloaded = CollectionManager(storage: storage)
+        let reloaded = CollectionManager(storage: storage, collectionStore: store)
         #expect(reloaded.collections.first?.contains(recipeID) == true)
     }
 
     @Test func collections_purgeRemovesRecipeFromAllCollections() {
-        let sut = CollectionManager(storage: Self.makeStorage())
+        let sut = CollectionManager(storage: Self.makeStorage(), collectionStore: InMemoryCollectionStore())
         sut.createCollection(name: "A")
         sut.createCollection(name: "B")
         let id = UUID()

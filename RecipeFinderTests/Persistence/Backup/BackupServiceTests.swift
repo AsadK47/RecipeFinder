@@ -36,7 +36,7 @@ import Foundation
         let kitchen = KitchenInventoryManager(storage: storage)
         let mealPlans = MealPlanningManager(storage: storage)
         let badges = BadgeManager(storage: storage)
-        let collections = CollectionManager(storage: storage)
+        let collections = CollectionManager(storage: storage, collectionStore: InMemoryCollectionStore())
         let streak = CookingStreakManager(
             storage: storage, cookDateStore: InMemoryCookDateStore(),
             reminders: CookingStreakManagerTests.FakeStreakReminderScheduler()

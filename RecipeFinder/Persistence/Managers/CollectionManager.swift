@@ -35,36 +35,47 @@ extension EnvironmentValues {
 final class CollectionManager: CollectionManaging {
     static let shared = CollectionManager()
 
-    @ObservationIgnored private let saveKey = Constants.UserDefaultsKeys.collections
-    @ObservationIgnored private let storage: LocalStore
+    /// Collections live in `CollectionEntity` rows; the old `LocalStore` blob is kept current for one release.
+    @ObservationIgnored private let mirror: MirroredSnapshot<RecipeCollection>
 
     private(set) var collections: [RecipeCollection] = []
 
     private init() {
-        self.storage = .shared
+        let store = CoreDataCollectionStore(persistence: .shared)
+        self.mirror = CollectionManager.makeMirror(storage: .shared, store: store)
         loadCollections()
     }
 
-    init(storage: LocalStore) {
-        self.storage = storage
+    init(storage: LocalStore, collectionStore: any CollectionStoring) {
+        self.mirror = CollectionManager.makeMirror(storage: storage, store: collectionStore)
         loadCollections()
+    }
+
+    private static func makeMirror(storage: LocalStore, store: any CollectionStoring) -> MirroredSnapshot<RecipeCollection> {
+        MirroredSnapshot(
+            blobKey: Constants.UserDefaultsKeys.collections, storage: storage,
+            fetch: { try store.fetchCollections() },
+            replace: { try store.replaceCollections(with: $0) }
+        )
     }
 
     func reload() {
         loadCollections()
     }
 
+    /// Erase & Reset: removes every collection. If the store can't delete now, the next launch finishes it.
+    func removeAllCollections() {
+        mirror.removeAll()
+        loadCollections()
+    }
+
     private func loadCollections() {
-        if let decoded = storage.decodable([RecipeCollection].self, forKey: saveKey) {
-            collections = decoded
-        } else {
-            collections = []
-        }
+        collections = mirror.load()
     }
 
     private func saveCollections(_ updated: [RecipeCollection]) {
         collections = updated
-        storage.setEncodable(updated, forKey: saveKey)
+        mirror.save(updated)
     }
 
     // MARK: - CRUD
