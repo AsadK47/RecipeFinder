@@ -1,12 +1,11 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Smell Large Class `TodayView` on `agent/today-view-extract` (379→292 lines): pure `TodaySnapshot.make` (feed/week/
-progress/tryNew), `TodayFeed.shelves(excluding:)`, views `TodayGreetingHeader`/`TodayFirstRecipeCard`/
-`TodayShortcutCard` in new `TodayIntroCards.swift`. Tests `TodaySnapshotTests`. 3 files registered in pbxproj by hand.
+(none) — Smell Large Class TodayView merged (d81af16, ticked).
 
 ## Next action
-Check Build & Test on the branch; when green → Screenshots look (16), ff main, tick; then Badges 1/2.
+Badges 1/2 (next in owner order). Notes for later: `TodayFeed.Shelves` lives in TodaySnapshot.swift (move to
+TodayFeed.swift on next touch); `TodayShortcutCard` has one caller (.plan).
 ## Decisions (why)
 - **TodayView smell**: behaviour-preserving only. Snapshot takes `plansOn: (Date) -> [MealPlanModel]` (the planner's
   lookup) + an injected calendar; `propagateRecurring` stays in the view (it mutates the store — CQS). Pre-mortem:
