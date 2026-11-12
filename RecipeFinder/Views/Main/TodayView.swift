@@ -102,7 +102,10 @@ struct TodayView: View {
         .onAppear(perform: refresh)
         .task { await probeClipboard() }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await probeClipboard() } }
+            guard phase == .active else { return }
+            // Back after midnight: "today" and "tomorrow" move on, so Plan it never dates a plan from yesterday's view.
+            refresh()
+            Task { await probeClipboard() }
         }
         .alert("No link found", isPresented: $showNoClipboardLink) {
             Button("OK", role: .cancel) {}
@@ -123,6 +126,8 @@ struct TodayView: View {
     private func refresh() {
         let now = Self.now()
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now
+        // Recurring meals are copied in when Plan opens a week; do it here too so Tonight and the strip show them.
+        mealPlanning.propagateRecurring(toWeekStarting: Calendar.current.startOfDay(for: now))
         let newFeed = TodayFeed.make(
             recipes: recipeStore.recipes,
             todaysPlans: mealPlanning.mealPlans(for: now),
@@ -141,7 +146,12 @@ struct TodayView: View {
         )
     }
 
+    /// Plans dinner unless one appeared since the strip was built (another path, a recurring copy) — never replaces it.
     private func planDinner(_ recipe: RecipeModel, on date: Date) {
+        guard mealPlanning.mealPlan(for: date, mealTime: .dinner) == nil else {
+            refresh()
+            return
+        }
         mealPlanning.addMealPlan(MealPlanModel(
             recipeId: recipe.id, recipeName: recipe.name, date: date, mealTime: .dinner, servings: recipe.currentServings
         ))
@@ -239,7 +249,7 @@ struct TodayView: View {
                 week: week,
                 onPlanDay: { planningDay = PlanningDay(date: $0) },
                 onPlanTomorrow: { recipe in
-                    if let tomorrow = week.days.dropFirst().first { planDinner(recipe, on: tomorrow.date) }
+                    if let tomorrow = week.tomorrow { planDinner(recipe, on: tomorrow) }
                 },
                 onOpenPlan: { onOpen(.plan) }
             )

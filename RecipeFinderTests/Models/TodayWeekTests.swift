@@ -89,6 +89,10 @@ import Foundation
 
     // MARK: Plan tomorrow
 
+    @Test func planTomorrowPlansForTheDayAfterToday() {
+        #expect(week([]).tomorrow == cal.startOfDay(for: day(1)))
+    }
+
     @Test func tomorrowWithADinnerNeedsNoSuggestion() {
         let curry = recipe("Curry"), pasta = recipe("Pasta")
         let result = week([curry, pasta], plans: [plan(curry, .dinner, on: 1)])

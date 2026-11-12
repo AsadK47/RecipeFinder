@@ -20,6 +20,9 @@ struct TodayWeek: Equatable {
     /// A dinner to plan for tomorrow in one tap; nil when tomorrow's dinner is planned or nothing fits.
     let planTomorrow: RecipeModel?
 
+    /// The day "Plan tomorrow" plans for.
+    var tomorrow: Date? { days.dropFirst().first?.date }
+
     static let dayCount = 7
     /// Recipes cooked this recently aren't suggested again for tomorrow.
     static let recentCookDays = 7

@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// Today's "This week": seven day cells (a filled dot = something planned, a ring = nothing yet) and, when tomorrow
-/// has no dinner, a "Plan tomorrow" row with a one-tap pick. Tapping an empty day plans its dinner; a planned day opens
-/// the Plan tab. Lesser actions stay frosted so "Cook this" on the Tonight card keeps the one accent.
+/// has no dinner, a "Plan tomorrow" row with a one-tap pick (tapping tomorrow's cell picks another). Tapping an empty
+/// day plans its dinner; a planned day opens the Plan tab. "Plan it" stays frosted so "Cook this" keeps the one accent.
 struct TodayWeekCard: View {
     let week: TodayWeek
     /// Opens the recipe picker for that day's dinner.
@@ -10,6 +10,9 @@ struct TodayWeekCard: View {
     /// Plans `recipe` for tomorrow's dinner.
     let onPlanTomorrow: (RecipeModel) -> Void
     let onOpenPlan: () -> Void
+
+    /// Grows with Dynamic Type so two-digit dates fit at the largest sizes.
+    @ScaledMetric(relativeTo: .subheadline) private var dateCircle: CGFloat = 32
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -24,9 +27,9 @@ struct TodayWeekCard: View {
                         dayCell(day, index: index)
                     }
                 }
-                if let pick = week.planTomorrow, let tomorrow = week.days.dropFirst().first {
+                if let pick = week.planTomorrow {
                     Divider().overlay(AppTheme.subtleStroke)
-                    planTomorrowRow(pick, tomorrow: tomorrow.date)
+                    planTomorrowRow(pick)
                 }
             }
             .padding(AppTheme.spacing16)
@@ -45,10 +48,13 @@ struct TodayWeekCard: View {
                 Text(day.date.formatted(.dateTime.weekday(.narrow)))
                     .font(.caption2.weight(.medium))
                     .adaptiveSecondaryForeground()
+                    .lineLimit(1)
                 Text(day.date.formatted(.dateTime.day()))
                     .font(.subheadline.weight(day.isToday ? .bold : .regular))
                     .adaptiveForegroundColor()
-                    .frame(width: 32, height: 32)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .frame(width: dateCircle, height: dateCircle)
                     .overlay {
                         if day.isToday { Circle().stroke(AppTheme.accentColor, lineWidth: 1.5) }
                     }
@@ -71,22 +77,24 @@ struct TodayWeekCard: View {
     }
 
     private func accessibilityLabel(_ day: TodayWeek.Day) -> String {
-        let name = day.isToday ? "Today" : day.date.formatted(.dateTime.weekday(.wide).day())
+        // English like the rest of the label (same as Use it up's weekday names).
+        let name = day.isToday
+            ? "Today" : day.date.formatted(.dateTime.weekday(.wide).day().locale(Locale(identifier: "en_GB")))
         if let dinner = day.dinnerName { return "\(name), dinner: \(dinner)" }
         if day.isPlanned { return "\(name), \(day.mealTimes.map { $0.rawValue.lowercased() }.joined(separator: ", ")) planned" }
         return "\(name), nothing planned"
     }
 
-    private func planTomorrowRow(_ pick: RecipeModel, tomorrow: Date) -> some View {
+    private func planTomorrowRow(_ pick: RecipeModel) -> some View {
         ViewThatFits(in: .horizontal) {
             HStack(spacing: AppTheme.spacing12) {
                 pickLabel(pick)
                 Spacer(minLength: 0)
-                planButtons(pick, tomorrow: tomorrow)
+                planButton(pick)
             }
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 pickLabel(pick)
-                HStack(spacing: AppTheme.spacing8) { planButtons(pick, tomorrow: tomorrow) }
+                planButton(pick)
             }
         }
     }
@@ -107,17 +115,11 @@ struct TodayWeekCard: View {
         .accessibilityIdentifier("today.planTomorrow")
     }
 
-    @ViewBuilder
-    private func planButtons(_ pick: RecipeModel, tomorrow: Date) -> some View {
+    private func planButton(_ pick: RecipeModel) -> some View {
         PrimaryButton("Plan it", systemImage: "plus", size: .compact, variant: .secondary) {
             onPlanTomorrow(pick)
         }
         .accessibilityLabel("Plan \(pick.name) for tomorrow")
         .accessibilityIdentifier("today.planTomorrow.add")
-        PrimaryButton("Choose", size: .compact, variant: .secondary) {
-            onPlanDay(tomorrow)
-        }
-        .accessibilityLabel("Choose tomorrow's dinner")
-        .accessibilityIdentifier("today.planTomorrow.choose")
     }
 }

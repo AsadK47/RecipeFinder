@@ -14,7 +14,13 @@ Get Build & Test green → Screenshots run on the branch → look at 16, 30, 31 
   pick = favourite → own → most cooked → name, skipping Tonight's options, this week's planned recipes and anything
   cooked in the past 7 days. "Plan it" plans directly; "Choose" opens the picker for tomorrow. The picker's choice is
   planned in the sheet's onDismiss (mealPlanner badge sheet can't show over a sheet mid-dismissal). Both buttons are
-  frosted secondary (Cook this keeps the one accent). Shown for new users too (planning a starter is fine).
+  frosted (Cook this keeps the one accent). Shown for new users too (planning a starter is fine). Challenge pass
+  (4 real fixed): Today now runs `propagateRecurring` from today (recurring dinners showed as empty and got planned
+  over); refresh on scene active (overnight-background "Plan it" dated today); `planDinner` never replaces an existing
+  dinner; date circle `@ScaledMetric` + scale factor; "Choose" button dropped (same as tapping tomorrow's cell);
+  VoiceOver day names en_GB like Use it up. Skipped `NSCalendarDayChanged` async loop (Notification isn't Sendable —
+  Swift 6 risk); scene-active refresh covers the overnight case. Notes → CHALLENGES.md: planned-day tap opens Plan on
+  today (no date deep link); two week-strip visual languages (Plan's per-meal colours vs Today's single dot).
   TodayView is now ~340 lines → Smell candidate (extract refresh/plan helpers). **Pre-mortem:** (1) dots on the wrong
   day (time zones / late-night plans) → `lateNightPlanCountsForItsOwnDay`, `plansOutsideTheSevenDaysAreLeftOut`;
   (2) "Plan tomorrow" offers tonight's dish or one just cooked, or shows when tomorrow is planned →
