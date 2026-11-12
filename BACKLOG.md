@@ -199,7 +199,7 @@ drop a line while moving it.
   afternoon = "Start by 5:40 to eat at 7" (from prep + cook time, eat-time setting default 19:00), evening = "Quick
   tonight? N under 30 min". Calmer layout: fewer stacked cards, bigger imagery, one accent per section.
   *Done when:* hero/shuffle/alternatives + time-line logic tested, screenshots (morning, afternoon, evening), CI green.
-- [ ] **Today+ 2/3 — Use it up + week at a glance.** "Use soon" row: Kitchen items expiring ≤3 days, each paired with
+- [ ] **Today+ 2/3 — Use it up + week at a glance.** — 🚧 builder agent 2026-11-12 "Use soon" row: Kitchen items expiring ≤3 days, each paired with
   one recipe that uses it ("Spinach goes off Thu → Saag paneer"). 7-day strip (planned/unplanned dots); tap an empty
   day → plan it; "Plan tomorrow" one-tap pick. *Done when:* expiry→recipe pairing + strip logic tested, screenshots,
   CI green.
