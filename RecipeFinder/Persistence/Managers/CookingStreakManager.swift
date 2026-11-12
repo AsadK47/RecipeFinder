@@ -28,6 +28,8 @@ extension EnvironmentValues {
     }
 }
 
+private let streakLogger = AppLogger.logger(category: "CookingStreakManager")
+
 /// Owns the cook-date log and derives the weekly cooking streak. Recording is called from the
 /// single cook choke point (`RecipeDetailView.recordCook`, which cooking-mode's finish also routes through).
 @MainActor
@@ -42,15 +44,25 @@ final class CookingStreakManager: CookingStreakTracking {
     @ObservationIgnored private let saveKey = "cookDatesLog"
     @ObservationIgnored private let reminderId = "cooking-streak-lapse"
     @ObservationIgnored private var cookDates: [Date] = []
+    @ObservationIgnored private let cookDateStore: any CookDateStoring
+    /// False only when moving the blob into Core Data failed this launch: keep reading/writing the blob so nothing is
+    /// lost, and the next launch retries the move (it writes whatever the store is missing).
+    @ObservationIgnored private var usesEntities = false
 
     private init() {
         self.storage = .shared
+        self.cookDateStore = CoreDataCookDateStore(persistence: .shared)
         self.reminders = NotificationManager.shared
         load()
     }
 
-    init(storage: LocalStore, reminders: any StreakReminderScheduling = NotificationManager.shared) {
+    init(
+        storage: LocalStore,
+        cookDateStore: any CookDateStoring,
+        reminders: any StreakReminderScheduling = NotificationManager.shared
+    ) {
         self.storage = storage
+        self.cookDateStore = cookDateStore
         self.reminders = reminders
         load()
     }
@@ -59,7 +71,7 @@ final class CookingStreakManager: CookingStreakTracking {
     func recordCook(on date: Date = Date()) -> Bool {
         let weeksBefore = streak.currentWeeks
         cookDates.append(date)
-        storage.setEncodable(cookDates, forKey: saveKey)
+        persist(added: [date])
         recompute()
         return streak.currentWeeks > weeksBefore
     }
@@ -73,20 +85,56 @@ final class CookingStreakManager: CookingStreakTracking {
 
     /// Restores cook dates from a backup: unions with what's here (same instant counted once), never removes.
     func merge(cookDates incoming: [Date]) {
-        let merged = Array(Set(cookDates).union(incoming)).sorted()
-        guard merged.count != cookDates.count else { return }
-        cookDates = merged
-        storage.setEncodable(cookDates, forKey: saveKey)
+        let known = Set(cookDates)
+        let added = Array(Set(incoming).subtracting(known)).sorted()
+        guard !added.isEmpty else { return }
+        cookDates = (cookDates + added).sorted()
+        persist(added: added)
         recompute()
     }
 
+    /// Erase & Reset: removes every stored cook (the blob is cleared with the rest of `LocalStore` by the caller).
+    func removeAllCookDates() {
+        do {
+            try cookDateStore.deleteAllCookDates()
+        } catch {
+            streakLogger.error("❌ Failed to delete cook dates: \(error.localizedDescription)")
+        }
+        storage.removeObject(forKey: saveKey)
+        load()
+    }
+
     private func load() {
-        if let decoded = storage.decodable([Date].self, forKey: saveKey) {
-            cookDates = decoded
-        } else {
-            cookDates = []
+        let result = LegacyBlobMigration.run(
+            blobKey: saveKey, as: Date.self, storage: storage,
+            fetch: { try cookDateStore.fetchCookDates() },
+            insert: { try cookDateStore.addCookDates($0) }
+        )
+        usesEntities = result != .failed
+        if usesEntities {
+            do {
+                cookDates = try cookDateStore.fetchCookDates()
+            } catch {
+                streakLogger.error("❌ Failed to read cook dates, using the old copy: \(error.localizedDescription)")
+                usesEntities = false
+            }
+        }
+        if !usesEntities {
+            cookDates = storage.decodable([Date].self, forKey: saveKey) ?? []
         }
         recompute()
+    }
+
+    private func persist(added: [Date]) {
+        guard usesEntities else {
+            storage.setEncodable(cookDates, forKey: saveKey)
+            return
+        }
+        do {
+            try cookDateStore.addCookDates(added)
+        } catch {
+            streakLogger.error("❌ Failed to save cook dates: \(error.localizedDescription)")
+        }
     }
 
     private func recompute() {

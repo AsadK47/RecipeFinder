@@ -295,7 +295,7 @@ struct DataManagementSettingsView: View {
         MealPlanningManager.shared.reload()
         CollectionManager.shared.reload()
         BadgeManager.shared.reload()  // else cleared badges stay in memory and get re-persisted on the next write
-        CookingStreakManager.shared.reload()
+        CookingStreakManager.shared.removeAllCookDates()
         ProfileManager.shared.loadProfile()
         ProfileManager.shared.updateStats()
 

@@ -7,7 +7,10 @@ import Foundation
 @Suite struct CookingStreakManagerTests {
 
     private func makeManager() -> CookingStreakManager {
-        CookingStreakManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!))
+        CookingStreakManager(
+            storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            cookDateStore: InMemoryCookDateStore()
+        )
     }
 
     /// Records what the streak manager asks of the notification seam.
@@ -24,6 +27,7 @@ import Foundation
         let fake = FakeStreakReminderScheduler()
         let sut = CookingStreakManager(
             storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            cookDateStore: InMemoryCookDateStore(),
             reminders: fake
         )
         sut.recordCook(on: Date())   // cooked this week → not at risk
@@ -56,12 +60,13 @@ import Foundation
     @Test func recordCook_persistsAcrossReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = LocalStore(userDefaults: defaults)
+        let cookDates = InMemoryCookDateStore()
 
-        let first = CookingStreakManager(storage: storage)
+        let first = CookingStreakManager(storage: storage, cookDateStore: cookDates)
         first.recordCook(on: Date())
 
         // Fresh instance, same storage → the cook log survives.
-        let second = CookingStreakManager(storage: storage)
+        let second = CookingStreakManager(storage: storage, cookDateStore: cookDates)
         #expect(second.streak.cooksThisWeek == 1)
         #expect(second.streak.currentWeeks == 1)
     }
@@ -69,11 +74,12 @@ import Foundation
     @Test func reload_picksUpStoredLog() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = LocalStore(userDefaults: defaults)
+        let cookDates = InMemoryCookDateStore()
 
-        let writer = CookingStreakManager(storage: storage)
+        let writer = CookingStreakManager(storage: storage, cookDateStore: cookDates)
         writer.recordCook(on: Date())
 
-        let reader = CookingStreakManager(storage: storage)
+        let reader = CookingStreakManager(storage: storage, cookDateStore: cookDates)
         reader.reload()
         #expect(reader.streak.cookedThisWeek)
     }

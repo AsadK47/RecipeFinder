@@ -38,7 +38,8 @@ import Foundation
         let badges = BadgeManager(storage: storage)
         let collections = CollectionManager(storage: storage)
         let streak = CookingStreakManager(
-            storage: storage, reminders: CookingStreakManagerTests.FakeStreakReminderScheduler()
+            storage: storage, cookDateStore: InMemoryCookDateStore(),
+            reminders: CookingStreakManagerTests.FakeStreakReminderScheduler()
         )
 
         let service = BackupService(
