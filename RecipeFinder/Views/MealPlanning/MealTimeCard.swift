@@ -12,6 +12,8 @@ struct MealTimeCard: View {
             MealThumbnail(
                 imageName: recipe?.imageName ?? "",
                 recipeName: recipe?.name,
+                category: recipe?.category,
+                cuisine: recipe?.cuisine,
                 fallbackIcon: mealTime.icon
             )
 
@@ -86,6 +88,8 @@ private struct MealThumbnail: View {
     let imageName: String
     /// Non-nil = recipe assigned (drives the coloured placeholder when it has no photo); nil = empty slot keeping the "tap to add" icon.
     let recipeName: String?
+    let category: String?
+    let cuisine: String?
     let fallbackIcon: String
 
     private static let size: CGFloat = 52
@@ -118,7 +122,7 @@ private struct MealThumbnail: View {
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
         } else if let recipeName {
             // Recipe assigned but no photo → per-recipe coloured placeholder.
-            RecipePlaceholderView(recipeName: recipeName)
+            RecipePlaceholderView(recipeName: recipeName, category: category, cuisine: cuisine)
                 .frame(width: Self.size, height: Self.size)
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
         } else {

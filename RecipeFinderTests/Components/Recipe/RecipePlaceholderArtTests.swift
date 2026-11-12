@@ -32,9 +32,9 @@ struct RecipePlaceholderArtTests {
         ("Baked Cod", "Main", .fish),
         ("Crispy Chicken Wings", "Starter", .poultry),
         ("Lamb Kebab", "Main", .meat),
-        ("Fluffy Pancakes", "Dessert", .breakfast),
-        ("Masala Chai", "Main", .hotDrink),
-        ("Coffee Cake", "Dessert", .sweet),
+        ("Fluffy Pancakes", "Main", .breakfast),
+        ("Masala Chips", "Side", .snack),
+        ("Shami Kebab", "Main", .main),
     ])
     func nameBeatsCategory(name: String, category: String, motif: RecipePlaceholderArt.Motif) {
         #expect(RecipePlaceholderArt.motif(name: name, category: category) == motif)
@@ -51,10 +51,32 @@ struct RecipePlaceholderArtTests {
         #expect(RecipePlaceholderArt.motif(name: "SPICY-CURRY!", category: "") == .curry)
     }
 
-    @Test("A Drink stays a drink even with sweet words; hot words make it a hot drink")
-    func drinksStayDrinks() {
-        #expect(RecipePlaceholderArt.motif(name: "Chocolate Milkshake", category: "Drink") == .coldDrink)
-        #expect(RecipePlaceholderArt.motif(name: "Matcha Latte", category: "Drink") == .hotDrink)
+    @Test("A Drink stays a drink even with food words; hot words make it hot unless it's iced", arguments: [
+        ("Chocolate Milkshake", RecipePlaceholderArt.Motif.coldDrink),
+        ("Matcha Latte", .hotDrink),
+        ("Masala Chai", .hotDrink),
+        ("Thai Iced Tea", .coldDrink),
+    ])
+    func drinksStayDrinks(name: String, motif: RecipePlaceholderArt.Motif) {
+        #expect(RecipePlaceholderArt.motif(name: name, category: "Drink") == motif)
+    }
+
+    @Test("Drink words outside a Drink don't make food look like a cup")
+    func drinkWordsNeedDrinkCategory() {
+        #expect(RecipePlaceholderArt.motif(name: "Coffee Rubbed Steak", category: "Main") == .meat)
+    }
+
+    @Test("A Dessert keeps sweet art whatever it's named after", arguments: [
+        "Coffee Cake", "Espresso Chocolate Cookies", "No-Bake Matcha Bars", "Apple Crisp with Oat Topping", "Banana Bread",
+    ])
+    func dessertsStaySweet(name: String) {
+        #expect(RecipePlaceholderArt.motif(name: name, category: "Dessert") == .sweet)
+    }
+
+    @Test("Meat-free dishes named after meat don't get meat art")
+    func meatFreeSkipsMeat() {
+        #expect(RecipePlaceholderArt.motif(name: "Moroccan Jackfruit 'Lamb' Tagine", category: "Main") == .main)
+        #expect(RecipePlaceholderArt.motif(name: "Vegan Chicken Nuggets", category: "Main") == .main)
     }
 
     @Test("Unknown name and category fall back to the general dish art")
@@ -97,7 +119,8 @@ struct RecipePlaceholderArtTests {
         let a = RecipePlaceholderArt(name: "Banana Bread", category: "Dessert", cuisine: nil)
         let b = RecipePlaceholderArt(name: "Banana Bread", category: "Dessert", cuisine: nil)
         #expect(a == b)
-        #expect(RecipePlaceholderArt.paletteCount > a.paletteIndex && a.paletteIndex >= 0)
+        // Pinned value: a per-launch hash (String.hashValue) would fail this.
+        #expect(a.paletteIndex == 7)
     }
 
     @Test("Every cuisine palette index is in range")

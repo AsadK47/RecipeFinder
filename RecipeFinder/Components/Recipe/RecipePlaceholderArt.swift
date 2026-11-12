@@ -10,8 +10,8 @@ struct RecipePlaceholderArt: Equatable, Sendable {
     static let paletteCount = 8
 
     enum Motif: String, CaseIterable, Sendable {
-        // Order = match priority: sweet first so "Coffee Cake" is cake, then drinks so "Masala Chai" isn't curry.
-        case sweet, hotDrink, coldDrink, breakfast, soup, curry, wok, baked, fish, poultry, meat, veg, snack, main
+        // Order = match priority for food words ("Masala Chips" is a snack, not curry); drink words only count in a Drink.
+        case sweet, breakfast, soup, snack, curry, wok, baked, fish, poultry, meat, veg, hotDrink, coldDrink, main
 
         /// Main SF Symbol, drawn large in the middle.
         var symbol: String {
@@ -70,12 +70,12 @@ struct RecipePlaceholderArt: Equatable, Sendable {
             case .wok: ["stir", "noodle", "mein", "rice", "biryani", "pulao", "pilaf", "risotto", "pasta", "spaghetti",
                         "linguine", "penne", "fettuccine", "udon"]
             case .baked: ["bread", "bun", "bao", "roti", "naan", "chapati", "paratha", "loaf", "focaccia", "mantou",
-                          "pizza", "pie", "quiche", "lasagne", "lasagna", "bake", "scone", "bagel", "pretzel", "croissant",
+                          "pizza", "pie", "quiche", "lasagne", "lasagna", "scone", "bagel", "pretzel", "croissant",
                           "bing"]
             case .fish: ["fish", "cod", "salmon", "tuna", "prawn", "shrimp", "seafood", "mackerel", "haddock", "crab",
                          "mussel", "squid", "sardine", "trout", "tilapia", "lobster", "scallop"]
             case .poultry: ["chicken", "wing", "turkey", "duck", "poussin"]
-            case .meat: ["beef", "lamb", "pork", "steak", "kebab", "burger", "meatball", "mince", "keema", "sausage",
+            case .meat: ["beef", "lamb", "pork", "steak", "burger", "meatball", "mince", "keema", "sausage",
                          "bacon", "ham", "mutton", "goat", "brisket", "rib", "meat"]
             case .veg: ["salad", "vegetable", "veg", "veggie", "tofu", "sabzi", "slaw", "coleslaw", "carrot", "broccoli",
                         "cabbage", "cauliflower", "aloo", "potato", "spinach", "mushroom", "aubergine", "eggplant",
@@ -137,9 +137,17 @@ struct RecipePlaceholderArt: Equatable, Sendable {
         let words = Self.words(in: name)
         let category = (category ?? "").trimmingCharacters(in: .whitespaces).lowercased()
         if category == "drink" {
+            if !words.isDisjoint(with: Self.coldWords) { return .coldDrink }
             return words.isDisjoint(with: Motif.hotDrink.keywords) ? .coldDrink : .hotDrink
         }
-        if let match = Motif.allCases.first(where: { !words.isDisjoint(with: $0.keywords) }) {
+        // Desserts keep cake art even when named after a drink or bake ("Espresso Cookies", "Apple Crisp with Oat").
+        if category == "dessert" { return .sweet }
+        let meatFree = !words.isDisjoint(with: Self.meatFreeWords)
+        let food = Motif.allCases.filter { $0 != .hotDrink && $0 != .coldDrink }
+        if let match = food.first(where: { motif in
+            if meatFree, [Motif.meat, .poultry, .fish].contains(motif) { return false }
+            return !words.isDisjoint(with: motif.keywords)
+        }) {
             return match
         }
         switch category {
@@ -151,6 +159,10 @@ struct RecipePlaceholderArt: Equatable, Sendable {
         default: return .main
         }
     }
+
+    private static let coldWords: Set<String> = ["iced", "cold", "boba", "frozen"]
+    // "Jackfruit 'Lamb'" or a vegan "chicken" shouldn't get meat art.
+    private static let meatFreeWords: Set<String> = ["vegan", "vegetarian", "jackfruit", "meatless", "plant"]
 
     static func cuisine(name: String?, cuisine: String?) -> Cuisine? {
         let fromField = Self.words(in: cuisine)
