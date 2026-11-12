@@ -13,11 +13,12 @@ struct ProfileBadgesSection: View {
                 Label("Trophy shelf", systemImage: "trophy.fill")
                     .font(.headline)
                     .adaptiveForegroundColor()
+                    .accessibilityAddTraits(.isHeader)
                 Spacer()
                 Text(BadgeShelf.countText(sections))
                     .font(.subheadline.weight(.semibold))
                     .adaptiveSecondaryForeground()
-                    .accessibilityLabel("\(BadgeShelf.countText(sections)) badges earned")
+                    .accessibilityLabel(BadgeShelf.spokenCount(sections))
             }
 
             ForEach(sections) { section in

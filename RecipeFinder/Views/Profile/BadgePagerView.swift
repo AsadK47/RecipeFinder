@@ -55,6 +55,8 @@ struct BadgePagerView: View {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
                             .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
                     .accessibilityLabel("Close")
                     .accessibilityIdentifier("badge.pager.close")
@@ -161,7 +163,7 @@ private struct BadgePage: View {
                     Text(progressText)
                         .font(.subheadline.weight(.semibold))
                         .monospacedDigit()
-                        .accessibilityIdentifier("badge.pager.progress")
+                        .accessibilityIdentifier("badge.pager.progress.\(badge.id)")
                 }
             }
             .font(.subheadline)
@@ -176,7 +178,7 @@ private struct BadgePage: View {
 
             if let action = type?.earnAction {
                 PrimaryButton(action.title, systemImage: action.icon, fillWidth: true) { onEarn(action) }
-                    .accessibilityIdentifier("badge.pager.earn")
+                    .accessibilityIdentifier("badge.pager.earn.\(badge.id)")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

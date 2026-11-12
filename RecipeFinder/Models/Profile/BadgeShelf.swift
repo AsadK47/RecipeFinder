@@ -33,9 +33,9 @@ enum BadgeEarnAction: Equatable {
         switch self {
         case .cook: "Pick something to cook"
         case .rate: "Open your recipes"
-        case .addRecipe: "Add a recipe"
-        case .plan: "Plan a meal"
-        case .groceries: "Open groceries"
+        case .addRecipe: "Go to Recipes and tap +"
+        case .plan: "Open Plan"
+        case .groceries: "Open Groceries"
         }
     }
 
@@ -59,14 +59,6 @@ enum BadgeEarnAction: Equatable {
         }
     }
 
-    var tab: AppTab {
-        switch self {
-        case .cook: .today
-        case .rate, .addRecipe: .recipes
-        case .plan: .plan
-        case .groceries: .groceries
-        }
-    }
 }
 
 extension BadgeMetric {
@@ -93,7 +85,13 @@ extension BadgeType {
         case nil:
             switch self {
             case .mealPlanner, .shoppingExpert: return .planning
-            default: return .importing
+            case .firstImport, .firstPhotoImport: return .importing
+            case .welcomeAboard, .firstRecipe, .fiveRecipes, .tenRecipes, .twentyFiveRecipes, .fiftyRecipes,
+                 .hundredRecipes, .headChef, .cookedTen, .cookedTwentyFive, .cookedFifty, .cookedHundred,
+                 .streakTwoWeeks, .streakFourWeeks, .streakTwelveWeeks, .streakFiftyTwoWeeks, .cuisinesFive,
+                 .sameRecipeFive, .ratedTen, .firstCookPhoto:
+                // Threshold badges are grouped by metric above; a new event badge must pick its row here.
+                return .importing
             }
         }
     }
@@ -166,6 +164,11 @@ enum BadgeShelf {
 
     static func startIndex(of badgeID: String, in pager: [Badge]) -> Int {
         pager.firstIndex { $0.id == badgeID } ?? 0
+    }
+
+    /// VoiceOver reads "/" as "slash".
+    static func spokenCount(_ sections: [BadgeShelfSection]) -> String {
+        "\(sections.reduce(0) { $0 + $1.earnedCount }) of \(sections.reduce(0) { $0 + $1.total }) badges earned"
     }
 
     static func countText(_ sections: [BadgeShelfSection]) -> String {

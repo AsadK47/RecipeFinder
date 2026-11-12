@@ -42,7 +42,7 @@ struct BadgeCard: View {
                 .lineLimit(2, reservesSpace: true)
 
             if badge.isUnlocked, let date = badge.dateEarned {
-                Text(date.formatted(.dateTime.day().month(.abbreviated)))
+                Text(date.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)))
                     .font(.system(size: AppTheme.fontSize11))
                     .adaptiveSecondaryForeground()
             } else {

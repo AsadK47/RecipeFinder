@@ -461,10 +461,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "34-me-trophy-shelf")
 
         locked.tap()
-        let progress = app.staticTexts["badge.pager.progress"]
+        let progress = app.staticTexts["badge.pager.progress.streak_twelve_weeks"]
         XCTAssertTrue(progress.waitForExistence(timeout: 5), "A locked badge should show its progress.")
         XCTAssertTrue(progress.label.hasSuffix("/ 12 weeks"), "Progress should count weeks: \(progress.label)")
-        XCTAssertTrue(app.buttons["badge.pager.earn"].exists, "A locked badge should offer where to earn it.")
+        let earn = app.buttons["badge.pager.earn.streak_twelve_weeks"]
+        XCTAssertTrue(earn.exists, "A locked badge should offer where to earn it.")
         settle()
         snap(app, "35-badge-pager-locked")
 
@@ -476,11 +477,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.swipeRight()
         settle(1)
 
-        app.buttons["badge.pager.earn"].tap()
+        earn.tap()
         let today = app.tabBars.buttons["Today"]
         let selected = NSPredicate(format: "isSelected == true")
         expectation(for: selected, evaluatedWith: today)
         waitForExpectations(timeout: 5)
+        XCTAssertFalse(app.staticTexts["badge.pager.position"].exists, "The pager should be closed before the tab switches.")
     }
 
     // MARK: - Helpers

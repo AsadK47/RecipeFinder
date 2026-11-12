@@ -129,8 +129,10 @@ struct ProfileView: View {
         .onAppear {
             loadCurrentProfile()
             cookingStreak.reload()
-            badgeMetrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
+            refreshBadgeMetrics()
         }
+        // Recipes can load after Me appears, or change under a sheet; keep the rings in step with the shelf.
+        .onChange(of: recipeStore.recipes) { _, _ in refreshBadgeMetrics() }
         .onChange(of: profileImage) { _, newImage in
             profileManager.saveProfileImage(newImage)
         }
@@ -138,6 +140,10 @@ struct ProfileView: View {
 
     private var shelf: [BadgeShelfSection] {
         BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
+    }
+
+    private func refreshBadgeMetrics() {
+        badgeMetrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
     }
 
     private func openPendingEarn() {

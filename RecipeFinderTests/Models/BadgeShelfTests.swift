@@ -63,6 +63,7 @@ import Testing
         #expect(cooking?.total == 9)
         #expect(cooking?.countText == "2 / 9")
         #expect(BadgeShelf.countText(sections) == "2 / \(BadgeType.allCases.count)")
+        #expect(BadgeShelf.spokenCount(sections) == "2 of \(BadgeType.allCases.count) badges earned")
     }
 
     @Test func newestEarnedComesFirstThenLockedInEarningOrder() {
@@ -85,6 +86,12 @@ import Testing
         let ids = BadgeShelf.sections(all([undated, earned(.cookedTen, daysAgo: 2)]))
             .first { $0.group == .cooking }?.badges.map(\.id) ?? []
         #expect(Array(ids.prefix(3)) == [BadgeType.cookedTen, .headChef, .cookedTwentyFive].map(\.rawValue))
+    }
+
+    @Test func badgesEarnedAtTheSameMomentKeepEarningOrder() {
+        let ids = BadgeShelf.sections(all([earned(.cookedTen, daysAgo: 2), earned(.headChef, daysAgo: 2)]))
+            .first { $0.group == .cooking }?.badges.map(\.id) ?? []
+        #expect(Array(ids.prefix(2)) == [BadgeType.headChef, .cookedTen].map(\.rawValue))
     }
 
     @Test func unknownStoredBadgesAreLeftOff() {
@@ -176,12 +183,11 @@ import Testing
     @Test(arguments: [
         (BadgeEarnAction.cook, AppTab.today, "Pick something to cook"),
         (.rate, .recipes, "Open your recipes"),
-        (.addRecipe, .recipes, "Add a recipe"),
-        (.plan, .plan, "Plan a meal"),
-        (.groceries, .groceries, "Open groceries"),
+        (.addRecipe, .recipes, "Go to Recipes and tap +"),
+        (.plan, .plan, "Open Plan"),
+        (.groceries, .groceries, "Open Groceries"),
     ])
     func earnActionOpensItsTab(action: BadgeEarnAction, tab: AppTab, title: String) {
-        #expect(action.tab == tab)
         #expect(action.title == title)
         #expect(AppTab.destination(for: action.notification) == tab)
     }
