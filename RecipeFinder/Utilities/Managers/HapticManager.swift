@@ -88,6 +88,19 @@ final class HapticManager: Sendable {
         }
     }
     
+    /// A badge reveal's own pattern: a firm tap as the medallion lands, a success buzz, then two sparkles.
+    func badgeReveal() {
+        Task { @MainActor in
+            UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 1)
+            try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalShort)
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalMedium)
+            UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.7)
+            try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalShort)
+            UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.5)
+        }
+    }
+
     func delete() {
         warning()
         Task { @MainActor in

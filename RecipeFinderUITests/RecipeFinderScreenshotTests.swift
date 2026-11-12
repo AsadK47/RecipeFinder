@@ -492,6 +492,27 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertFalse(app.staticTexts["badge.pager.position"].exists, "The pager should be closed before the tab switches.")
     }
 
+    /// Badges 1/2 slice 2: the full-screen earn reveal (flip, shine, confetti) and closing it with the ✕.
+    @MainActor
+    func testCaptureBadgeReveal() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-show-badge-reveal"]
+        app.launch()
+        let title = app.staticTexts["badge.reveal.title"]
+        XCTAssertTrue(title.waitForExistence(timeout: 15), "The reveal should open full screen on launch.")
+        XCTAssertEqual(title.label, "Head Chef", "The reveal should name the badge.")
+        XCTAssertTrue(app.buttons["badge.reveal.viewAll"].exists, "The reveal should offer View all badges.")
+        settle(2.5)
+        snap(app, "36-badge-reveal")
+
+        app.buttons["badge.reveal.close"].tap()
+        let headChef = app.staticTexts.matching(
+            NSPredicate(format: "identifier == 'badge.reveal.title' AND label == 'Head Chef'")
+        ).firstMatch
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: headChef)
+        waitForExpectations(timeout: 8)
+    }
+
     // MARK: - Helpers
 
     /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded

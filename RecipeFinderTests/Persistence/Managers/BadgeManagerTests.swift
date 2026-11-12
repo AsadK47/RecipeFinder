@@ -98,6 +98,30 @@ struct BadgeManagerTests {
         #expect(sut.pendingCelebration == nil)
     }
 
+    @Test func badgesEarnedDuringARevealEachRevealOnceInEarnOrder() {
+        let sut = makeSUT()
+        let earned: [BadgeType] = [.headChef, .mealPlanner, .shoppingExpert]
+        earned.forEach { sut.unlockBadge($0) }
+        var revealed: [BadgeType] = []
+        while let next = sut.pendingCelebration {
+            revealed.append(next)
+            sut.dismissCelebration()
+        }
+        #expect(revealed == earned)
+    }
+
+    @Test func aBadgeLostAndEarnedAgainDoesNotRevealTwice() {
+        let sut = makeSUT()
+        sut.unlockBadge(.fiveRecipes)
+        sut.dismissCelebration()
+        sut.revokeUnearnedCollectionBadges(collectedCount: 0)
+        #expect(!sut.isBadgeUnlocked(BadgeType.fiveRecipes.rawValue))
+
+        sut.unlockBadge(.fiveRecipes)
+        #expect(sut.isBadgeUnlocked(BadgeType.fiveRecipes.rawValue))
+        #expect(sut.pendingCelebration == nil)
+    }
+
     // MARK: - Bulk import suppression (restore crosses count thresholds without a parade of sheets)
 
     @Test func bulkImporting_unlocksBadgeWithoutCelebration() {

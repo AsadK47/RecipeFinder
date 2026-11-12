@@ -12,7 +12,7 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.badges) private var badgeManager
     @Environment(\.madeItPresenter) private var madeItPresenter
-    /// Set by "View all badges"; the Me tab opens once the badge sheet has fully dismissed.
+    /// Set by "View all badges"; the Me tab opens once the badge reveal has fully closed.
     @State private var openMeAfterBadge = false
     @State private var showAddRecipe = false
     /// True from opening the "+" sheet until it has fully dismissed: a badge earned by the import waits for it, since a
@@ -66,8 +66,13 @@ struct ContentView: View {
         .errorAlert("Couldn't Open Recipe", message: $fileImportError)
         // A celebration waits for the Made it sheet: the same cook often unlocks a badge, and presenting both at once
         // left neither on screen.
-        .sheet(item: Binding(
-            get: { madeItPresenter.isBusy || addRecipeBusy ? nil : badgeManager.pendingCelebration },
+        .fullScreenCover(item: Binding(
+            get: {
+                BadgeReveal.showing(
+                    badgeManager.pendingCelebration,
+                    isAnotherSheetUp: madeItPresenter.isBusy || addRecipeBusy
+                )
+            },
             set: { if $0 == nil { badgeManager.dismissCelebration() } }
         ), onDismiss: {
             if openMeAfterBadge {
@@ -75,14 +80,12 @@ struct ContentView: View {
                 select(.me)
             }
         }) { badge in
-            BadgeEarnedSheet(badge: badge, onDismiss: {
+            BadgeRevealView(badge: badge, onDismiss: {
                 badgeManager.dismissCelebration()
             }, onViewAllBadges: {
                 openMeAfterBadge = true
                 badgeManager.dismissCelebration()
             })
-            .presentationDetents([.height(380)])
-            .presentationDragIndicator(.visible)
         }
         .errorAlert("Couldn't Save Recipe", message: $fileSaveError)
         .sheet(isPresented: $showAddRecipe, onDismiss: { addRecipeBusy = false }) {

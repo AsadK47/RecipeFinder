@@ -158,7 +158,7 @@ features pull their weight. All 🟢 done unless a *Remaining* note says otherwi
   `RecipeTimerManager` on first timer use, never at launch.
 - **🟢 Kill the empty state** — `SeedRecipeProvider` ships 6 bundled starters with
   stable fixed UUIDs (idempotent); new installs get them seeded once.
-- **🟢 Engagement surfaces** — `BadgeEarnedSheet` on any `pendingCelebration`;
+- **🟢 Engagement surfaces** — `BadgeRevealView` (full-screen) on any `pendingCelebration`;
   `RequestReviewAction` after the 3rd cook; TipKit (`CanMakeNowTip`, `CookingModeTip`).
 - **🟢 iPad layout** — `ContentView` switches on size class: iPhone `TabView`, iPad
   `NavigationSplitView` (section sidebar + detail). *Optional future:* three-column

@@ -15,7 +15,10 @@ struct BadgePagerView: View {
     let onEarn: (BadgeEarnAction) -> Void
 
     @State private var selection: String
+    /// Earned cards catch the light as the phone tilts (off under Reduce Motion — the sensors stay idle).
+    @State private var tilt = TiltMotion()
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(badges: [Badge], startID: String, metrics: BadgeMetrics, onEarn: @escaping (BadgeEarnAction) -> Void) {
         self.badges = badges
@@ -33,7 +36,7 @@ struct BadgePagerView: View {
 
             TabView(selection: $selection) {
                 ForEach(badges) { badge in
-                    BadgePage(badge: badge, metrics: metrics, onEarn: { action in
+                    BadgePage(badge: badge, metrics: metrics, tilt: reduceMotion ? nil : tilt, onEarn: { action in
                         dismiss()
                         onEarn(action)
                     })
@@ -42,6 +45,11 @@ struct BadgePagerView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .onAppear { if !reduceMotion { tilt.start() } }
+            .onDisappear { tilt.stop() }
+            .onChange(of: reduceMotion) { _, isReduced in
+                if isReduced { tilt.stop() } else { tilt.start() }
+            }
 
             VStack {
                 HStack {
@@ -73,6 +81,7 @@ struct BadgePagerView: View {
 private struct BadgePage: View {
     let badge: Badge
     let metrics: BadgeMetrics
+    let tilt: TiltMotion?
     let onEarn: (BadgeEarnAction) -> Void
 
     private var type: BadgeType? { BadgeType(rawValue: badge.id) }
@@ -113,28 +122,13 @@ private struct BadgePage: View {
         .scrollIndicators(.hidden)
     }
 
+    @ViewBuilder
     private var medallion: some View {
-        ZStack {
-            Circle()
-                .fill(badge.isUnlocked ? badgeColor.opacity(AppTheme.cardDarkMediumOpacity) : AppTheme.subtleFill)
-                .frame(width: AppTheme.width140, height: AppTheme.width140)
-            if !badge.isUnlocked, let fraction = type?.progressFraction(for: metrics) {
-                Circle()
-                    .stroke(AppTheme.subtleStroke, lineWidth: 6)
-                    .frame(width: 156, height: 156)
-                Circle()
-                    .trim(from: 0, to: max(0.02, min(fraction, 1)))
-                    .stroke(badgeColor, style: StrokeStyle(lineWidth: 6, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .frame(width: 156, height: 156)
-            }
-            Image(systemName: badge.icon)
-                .font(.system(size: AppTheme.fontSize60))
-                .foregroundStyle(badge.isUnlocked ? badgeColor : AppTheme.secondaryText.opacity(AppTheme.glassLightOpacity))
+        if badge.isUnlocked, let tilt {
+            TiltingMedallion(badge: badge, tilt: tilt)
+        } else {
+            BadgeMedallion(badge: badge, progress: type?.progressFraction(for: metrics))
         }
-        .frame(width: 170, height: 170)
-        .shadow(color: badge.isUnlocked ? badgeColor.opacity(AppTheme.shadowDarkOpacity) : .clear, radius: 20)
-        .accessibilityHidden(true)
     }
 
     private var earnedCard: some View {
@@ -184,5 +178,15 @@ private struct BadgePage: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .appCard(cornerRadius: AppTheme.cornerRadius12)
+    }
+}
+
+/// Reads the tilt in its own body so 30 Hz motion updates redraw only the medallion, not the whole card.
+private struct TiltingMedallion: View {
+    let badge: Badge
+    let tilt: TiltMotion
+
+    var body: some View {
+        BadgeMedallion(badge: badge, shine: tilt.shine)
     }
 }

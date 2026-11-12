@@ -15,6 +15,9 @@ struct RecipeFinderApp: App {
                 // Deterministic, flicker-free UI so element queries don't race animations.
                 UIView.setAnimationsEnabled(false)
             }
+            if ProcessInfo.processInfo.arguments.contains("-show-badge-reveal") {
+                BadgeManager.shared.showRevealForUITesting(.headChef)
+            }
         }
         #endif
 

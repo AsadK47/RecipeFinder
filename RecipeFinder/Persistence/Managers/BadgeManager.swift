@@ -152,6 +152,15 @@ final class BadgeManager: BadgeManaging {
         drainQueueIfIdle()
     }
 
+    #if DEBUG
+    /// UI-test hook (`-show-badge-reveal`): opens a reveal without unlocking or recording anything, so later launches
+    /// see the same shelf.
+    func showRevealForUITesting(_ badgeType: BadgeType) {
+        guard pendingCelebration == nil else { return }
+        pendingCelebration = badgeType
+    }
+    #endif
+
     func isBadgeUnlocked(_ badgeId: String) -> Bool {
         unlockedBadges[badgeId] != nil
     }

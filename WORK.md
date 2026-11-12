@@ -1,14 +1,28 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-(none) — Badges 1/2 slice 1 merged (1471585); item stays open for slice 2.
+Badges 1/2 slice 2 on `agent/badges-reveal`: full-screen `BadgeRevealView` (replaces BadgeEarnedSheet; file renamed),
+shared `BadgeMedallion`, pure `BadgeReveal`/`BadgeShine` + `BadgeRevealTests`, `TiltMotion` (CoreMotion) on pager
+cards, `HapticManager.badgeReveal()`, UI shot 36 (`-show-badge-reveal`). Waiting on Build & Test.
 
 ## Next action
-Badges 1/2 slice 2 on a new `agent/badges-reveal` branch: full-screen earn reveal replacing `BadgeEarnedSheet`
-(flip-in, shine, badge-colour confetti, haptic; keep the Made it / "+" wait in ContentView) + CoreMotion tilt-to-shine
-on `BadgePagerView` cards (off under Reduce Motion). Reuse one medallion view for shelf/pager/reveal (CHALLENGES note).
+Green → Screenshots on the branch, look at 36 + 35 + a Me shot → deep-review + challenge pass → merge, tick Badges 1/2.
 
 ## Decisions (why)
+- **Badges 1/2 slice 2 (reveal + tilt)**: `.fullScreenCover` replaces the 380pt sheet; same wait rule (Made it / "+"
+  busy) now pure `BadgeReveal.showing`. Covers don't swipe away, so the reveal has its own drag-down-to-close (keeps
+  UI-test helpers that drag the window working), a ✕, `.escape` action and the 8 s auto-close. Close = medallion
+  shrinks/drops toward the tab bar (the "settle onto the shelf") then dequeues — guarded so ✕/swipe/timer can't fire
+  twice. Reduce Motion: no flip, sweep, confetti or settle; haptic + text stay. Tilt shine is relative to how the
+  phone was held when the pager opened (baseline), clamped ±1, NaN → centre; sensors run only while the pager is up.
+  Shelf tiles keep `BadgeCard` (60pt, different layout) — `BadgeMedallion` is shared by pager + reveal only.
+  Shown-once + order come from existing BadgeManager queue (new tests: 3 earned mid-reveal reveal once in order;
+  revoked-then-re-earned never reveals twice). DEBUG `showRevealForUITesting` sets pending without unlocking.
+  **Pre-mortem:** (1) reveal can't be closed / covers tabs forever (UI tests stuck) → shot 36 test taps ✕ and waits
+  for it to go; screenshot suite's drag helper; (2) a badge reveals twice or out of order → the two new
+  BadgeManagerTests; (3) reveal pops over the Made it sheet or motion ignores Reduce Motion → `revealWaits…`,
+  `reduceMotionShowsTheBadgeStill`.
+
 - **Badges 1/2 slice 1**: groups by metric — Cooking = cooks/cuisines/same dish/rated/cook photo; Streaks; Importing =
   library size + first import/photo import + Welcome Aboard; Planning = meal plan + groceries. Earned newest first
   (undated earned after dated), locked in list (earning) order — not "closest", keeps rows stable. Pager = shelf order
