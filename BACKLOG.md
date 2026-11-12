@@ -114,8 +114,9 @@ drop a line while moving it.
   `Application Support/StoreBackups/` (keep last 3). Design the new entities CloudKit-ready (all attributes optional or
   defaulted, no unique constraints, relationships optional with inverses) for Data safety 2/4. ✅ Slice 1 (4ec1589):
   `StoreBackup` copies the store before any migration (StoreBackups/, newest 3, excluded from device backup). ✅ Slice 2 (c50c771):
-  `RecipeModel 16` adds CloudKit-ready `*Entity` per blob (id UUID each, JSON Binary arrays). Left: per-manager
-  blob→entity migration. *Done when:*
+  `RecipeModel 16` adds CloudKit-ready `*Entity` per blob (id UUID each, JSON Binary arrays). ✅ Slice 3a (941868c):
+  cook dates → `CookDateEntity` via generic `LegacyBlobMigration`. Left: same move for collections, meal plans,
+  shopping list, kitchen items/inventory, badges, profile. *Done when:*
   migration tested per manager (incl. corrupt/missing blobs), store-backup tested, migration test from the shipped
   model, backup/restore round-trip still green, CI green.
 - [ ] **Data safety 2/4 — iCloud sync** (owner OK 2026-11-12: iCloud entitlement + CloudKit container + model
@@ -571,3 +572,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-12 · Badges 1/2 slice 2 · 089ac88 · Earning a badge now takes the whole screen: the medallion flips in, a shine sweeps across it, confetti in the badge's colour and a tap–buzz–sparkle haptic; close with ✕, a swipe/flick down or View all badges (shrinks away first; 8 s auto-close, not under VoiceOver). Earned cards in the badge pager catch the light as you tilt the phone (off with Reduce Motion). New BadgeReveal.swift, BadgeMedallion.swift, TiltMotion.swift, BadgeRevealTests.swift registered in pbxproj by hand; BadgeEarnedSheet.swift renamed BadgeRevealView.swift. On phone: cook a recipe for a badge you don't have (or plan a first meal) → watch the reveal → Me → tap an earned badge → tilt the phone. · review: deep-review + challenge 8 fixed, 4 noted (CHALLENGES.md) · looked at: 35, 36
 - 2026-11-12 · Data safety 1/4 slice 1 (store copy before upgrade) · 4ec1589 · nothing visible; next TestFlight upgrade should open with all recipes · review: 3 fixed (backup exclusion, prune-first, prune error) · looked at: n/a (no UI). Also fixed flaky `testCaptureBadgeReveal` (69187fa, reveal held open under `-show-badge-reveal`) · looked at: 36. New files registered in pbxproj by hand.
 - 2026-11-12 · Data safety 1/4 slice 2 (RecipeModel 16 entities) · c50c771 · nothing visible; app should open with all recipes after updating · review: challenge 7 found, 6 fixed (Int64, ids, typed attribute test, Recipe hash pin) · looked at: n/a (no UI). Model version registered in pbxproj by hand.
+- 2026-11-12 · Data safety 1/4 slice 3a (cook dates → Core Data) · 941868c · nothing visible; after updating, the cooking streak on Today/Me should be unchanged and a new cook should still count · review: deep-review 3 fixed, challenge 4 fixed (dead blob fallback, lost cooks on failed save/read, Reset resurrecting history, weak relaunch test), 3 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New CookDateStore.swift, LegacyBlobMigration.swift, CookDateMigrationTests.swift registered in pbxproj by hand.

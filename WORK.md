@@ -1,12 +1,12 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2 merged. Slice 3a (cook dates → CookDateEntity) on
-`agent/data-safety-1-cook-dates` — waiting on Build & Test, review/challenge.
+Data safety 1/4 (claimed): slices 1–2 and 3a (cook dates) merged. Nothing on a branch.
 
 ## Next action
-Land slice 3a; then slice 3b: next manager via `LegacyBlobMigration.run` (collections → CollectionEntity), same shape:
-`*Storing` protocol + CoreData store + fake, manager `usesEntities` fallback, Reset deletes rows.
+Slice 3b: collections → CollectionEntity via `LegacyBlobMigration.run`, copying CookingStreakManager's shape:
+`*Storing` protocol + CoreData store + fake, `usesEntities` fallback, blob kept current, refill-if-empty, pending wipe
+on Reset. Consider extracting that shape into a reusable helper before the 3rd manager (smell, own commit).
 
 ## Decisions (why)
 - **Data safety 1/4 slice 3a (cook dates)**: `LegacyBlobMigration.run` is generic (decode blob → write only what the
@@ -14,7 +14,9 @@ Land slice 3a; then slice 3b: next manager via `LegacyBlobMigration.run` (collec
   `migratedToCoreData.<key>` flag). Corrupt/missing blob → marked, nothing moved (LocalStore already keeps
   `.corrupt`). Failure → not marked; manager keeps reading/writing the blob this launch so cooks aren't lost, next
   launch moves the extra ones. Blob is never deleted or updated after the move (fallback for one release, stale by
-  design). Store uses KVC on NSManagedObject (codegen `init(context:)` breaks with many test containers). Reset
+  design → changed after challenge: blob is now KEPT CURRENT (dual-write) for the release, and an empty store with a
+  non-empty blob is refilled, since recovery can replace an unreadable store). Failed save/read → blob mode + unmark.
+  Reset = pending-wipe flag retried each launch (a failed delete must not resurrect history). Store uses KVC on NSManagedObject (codegen `init(context:)` breaks with many test containers). Reset
   must delete rows (clearAll alone would leave them) → `removeAllCookDates()`. **Pre-mortem:** (1) streak lost on
   update → `everyBlobCookBecomesARow…`, `blobMovesIntoARealStoreAndSurvivesARelaunch`; (2) store write fails → streak
   vanishes/duplicates → `aFailedWrite…`, `cooksRecordedWhileTheMoveFailed…`, `aRetryAfterAHalfFinishedRun…`;
