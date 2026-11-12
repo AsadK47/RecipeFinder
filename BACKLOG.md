@@ -135,7 +135,7 @@ drop a line while moving it.
   Agents can't run Image Playground in CI, so: a small macOS tool in `tools/` (Swift, `ImageCreator`) the owner runs
   once on their Mac to generate one image per bundled recipe into a folder (🙋 owner step), then agents compress
   (WebP/HEIC, ~40–80 KB each), bundle them, and map them in the seed (sampleRefreshVersion bump; never replace a user's
-  photo). If the owner prefers another source, ask first. *Done when:* every bundled recipe shows a picture, app size
+  photo). Owner chose Image Playground 2026-11-12 (Unsplash rejected: API requires hotlinking + attribution, poor dish matches, mixed look). Give the owner ≤5 short steps when the tool is ready. *Done when:* every bundled recipe shows a picture, app size
   increase noted in Log, screenshots, CI green.
 - [ ] **Pictures 4/4 — Photos everywhere they help:** Today hero, shelves, Plan, Made it and Me use the recipe picture
   consistently (large, rounded, same aspect); Made it nudges "Add a photo of yours" when only illustrated art exists.
