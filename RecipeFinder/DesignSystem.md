@@ -41,6 +41,10 @@ inputs **blend** into the glass via translucent fills, not solid fills.
   (segmented pickers) look left-aligned. See the Details section.
 
 ## Lessons (dated — newest first)
+- **2026-11-12 — Text in a horizontal scroll needs its own width.** A horizontal `ScrollView` proposes infinite width,
+  so a `lineLimit(2)` title never wraps and is clipped by the tile's frame ("Kitchen Veterar" on the trophy shelf).
+  Put `.frame(width:)` on the `Text` itself. Locked/disabled text uses `adaptiveForegroundColor(opacity:)`, never a
+  fixed grey — fixed grey vanished on the blue end of the gradient.
 - **2026-11-08 — A transparent nav bar needs a scroll fade.** With `.toolbarBackground(.hidden)`
   and a transparent bar appearance, scrolled content showed straight through the floating
   toolbar buttons (recipe detail). Fix: put `NavigationBarScrollFade()` above the ScrollView in

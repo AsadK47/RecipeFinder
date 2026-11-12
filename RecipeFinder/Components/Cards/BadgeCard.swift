@@ -34,12 +34,15 @@ struct BadgeCard: View {
             .frame(width: AppTheme.width70, height: AppTheme.width70)
 
             // Full title — first-word truncation turned "First Bite" / "Head Chef" into "First" / "Head".
+            // Fixed width on the Text itself: a horizontal scroll proposes infinite width, so without it the title
+            // stays on one line and is clipped ("Kitchen Veterar"). Fixed grey was unreadable on the gradient.
             Text(badge.title)
                 .font(.caption2)
                 .fontWeight(.semibold)
-                .foregroundStyle(badge.isUnlocked ? AppTheme.adaptiveEmphasis() : AppTheme.secondaryText)
+                .adaptiveForegroundColor(opacity: badge.isUnlocked ? 1 : AppTheme.subduedEmphasisOpacity)
                 .multilineTextAlignment(.center)
                 .lineLimit(2, reservesSpace: true)
+                .frame(width: AppTheme.width88)
 
             if badge.isUnlocked, let date = badge.dateEarned {
                 Text(date.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)))

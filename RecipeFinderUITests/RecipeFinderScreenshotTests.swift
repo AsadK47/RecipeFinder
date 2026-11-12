@@ -457,6 +457,13 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         for _ in 0..<8 where !(locked.exists && locked.isHittable) { app.swipeUp() }
         XCTAssertTrue(locked.waitForExistence(timeout: 5), "Me should show the trophy shelf.")
         XCTAssertTrue(app.staticTexts["Trophy shelf"].exists, "The shelf should have its title.")
+        // The tab bar floats over the scroll, so "hittable" isn't "visible": nudge up until the row clears it.
+        let tabBarTop = app.tabBars.firstMatch.frame.minY
+        let window = app.windows.firstMatch
+        for _ in 0..<6 where locked.frame.maxY > tabBarTop - 60 {
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+        }
         settle()
         snap(app, "34-me-trophy-shelf")
 
