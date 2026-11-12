@@ -42,11 +42,12 @@ final class CookingStreakManager: CookingStreakTracking {
     @ObservationIgnored private let storage: LocalStore
     @ObservationIgnored private let reminders: any StreakReminderScheduling
     @ObservationIgnored private let saveKey = "cookDatesLog"
+    @ObservationIgnored private let wipePendingKey = "cookDatesWipePending"
     @ObservationIgnored private let reminderId = "cooking-streak-lapse"
     @ObservationIgnored private var cookDates: [Date] = []
     @ObservationIgnored private let cookDateStore: any CookDateStoring
-    /// False only when moving the blob into Core Data failed this launch: keep reading/writing the blob so nothing is
-    /// lost, and the next launch retries the move (it writes whatever the store is missing).
+    /// False when the store can't be used this launch (move, read, write or a Reset wipe failed): read/write the blob
+    /// instead and unmark it, so the next launch moves whatever the store is missing.
     @ObservationIgnored private var usesEntities = false
 
     private init() {
@@ -93,18 +94,21 @@ final class CookingStreakManager: CookingStreakTracking {
         recompute()
     }
 
-    /// Erase & Reset: removes every stored cook (the blob is cleared with the rest of `LocalStore` by the caller).
+    /// Erase & Reset: removes every stored cook. The wipe is recorded first, so if the store can't delete now the next
+    /// launch finishes it — an erased history never comes back.
     func removeAllCookDates() {
-        do {
-            try cookDateStore.deleteAllCookDates()
-        } catch {
-            streakLogger.error("❌ Failed to delete cook dates: \(error.localizedDescription)")
-        }
         storage.removeObject(forKey: saveKey)
+        storage.set(true, forKey: wipePendingKey)
         load()
     }
 
     private func load() {
+        guard finishPendingWipe() else {
+            usesEntities = false
+            cookDates = storage.decodable([Date].self, forKey: saveKey) ?? []
+            recompute()
+            return
+        }
         let result = LegacyBlobMigration.run(
             blobKey: saveKey, as: Date.self, storage: storage,
             fetch: { try cookDateStore.fetchCookDates() },
@@ -125,16 +129,32 @@ final class CookingStreakManager: CookingStreakTracking {
         recompute()
     }
 
-    private func persist(added: [Date]) {
-        guard usesEntities else {
-            storage.setEncodable(cookDates, forKey: saveKey)
-            return
-        }
+    /// True when no Reset wipe is outstanding.
+    private func finishPendingWipe() -> Bool {
+        guard storage.bool(forKey: wipePendingKey) else { return true }
         do {
-            try cookDateStore.addCookDates(added)
+            try cookDateStore.deleteAllCookDates()
+            storage.removeObject(forKey: wipePendingKey)
+            return true
         } catch {
-            streakLogger.error("❌ Failed to save cook dates: \(error.localizedDescription)")
+            streakLogger.error("❌ Failed to delete cook dates, will retry next launch: \(error.localizedDescription)")
+            return false
         }
+    }
+
+    private func persist(added: [Date]) {
+        if usesEntities {
+            do {
+                try cookDateStore.addCookDates(added)
+                return
+            } catch {
+                streakLogger.error("❌ Failed to save cook dates, keeping them in the old copy: \(error.localizedDescription)")
+                usesEntities = false
+            }
+        }
+        storage.setEncodable(cookDates, forKey: saveKey)
+        // Unmarking makes the next launch move these cooks into the store (only the ones it lacks).
+        storage.removeObject(forKey: LegacyBlobMigration.flagKey(for: saveKey))
     }
 
     private func recompute() {

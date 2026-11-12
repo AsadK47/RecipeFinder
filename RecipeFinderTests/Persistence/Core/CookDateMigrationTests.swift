@@ -174,6 +174,58 @@ final class InMemoryCookDateStore: CookDateStoring {
         #expect(sut.streak == .empty)
     }
 
+    @Test func aCookRecordedWhileTheStoreCannotBeReadIsKeptNextLaunch() {
+        let store = InMemoryCookDateStore([cooks[0]])
+        _ = manager(store)                     // migrated, flag set
+        store.failReads = true
+        let brokenLaunch = manager(store)
+        let tonight = Date(timeIntervalSinceReferenceDate: 800_000_000 + 20 * day)
+        brokenLaunch.recordCook(on: tonight)
+
+        store.failReads = false
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.recordedCookDates == [cooks[0], tonight])
+    }
+
+    @Test func aCookWhoseSaveFailsIsKeptNextLaunch() {
+        let store = InMemoryCookDateStore([cooks[0]])
+        let sut = manager(store)
+        store.failWrites = true
+        let tonight = Date(timeIntervalSinceReferenceDate: 800_000_000 + 20 * day)
+        sut.recordCook(on: tonight)
+
+        store.failWrites = false
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.recordedCookDates == [cooks[0], tonight])
+        #expect(store.dates.sorted() == [cooks[0], tonight])
+    }
+
+    @Test func aResetWhoseDeleteFailsIsFinishedNextLaunch() {
+        let store = InMemoryCookDateStore(cooks)
+        let sut = manager(store)
+        store.failWrites = true
+        sut.removeAllCookDates()
+        #expect(sut.streak == .empty)
+
+        store.failWrites = false
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.recordedCookDates.isEmpty)
+        #expect(store.dates.isEmpty)
+    }
+
+    @Test func cooksAfterAFailedResetSurviveTheRetriedWipe() {
+        let store = InMemoryCookDateStore(cooks)
+        let sut = manager(store)
+        store.failWrites = true
+        sut.removeAllCookDates()
+        let tonight = Date(timeIntervalSinceReferenceDate: 800_000_000 + 20 * day)
+        sut.recordCook(on: tonight)
+
+        store.failWrites = false
+        let nextLaunch = manager(store)
+        #expect(nextLaunch.recordedCookDates == [tonight])
+    }
+
     // MARK: - Core Data store (framework exemption: in-memory SQLite, like CoreDataStorePersistenceTests)
 
     @Test func coreDataStoreRoundTripsDatesOldestFirst() throws {
