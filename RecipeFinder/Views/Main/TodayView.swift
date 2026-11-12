@@ -27,10 +27,7 @@ struct TodayView: View {
 
     @State private var path = NavigationPath()
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
-    @State private var feed: TodayFeed?
-    @State private var week: TodayWeek?
-    @State private var progress: TodayProgress?
-    @State private var tryNew: RecipeModel?
+    @State private var snapshot: TodaySnapshot?
     @State private var showsCookingSheet = false
     @State private var planningDay: PlanningDay?
     /// Picked in the sheet, planned once it has closed (a badge sheet can't show over one mid-dismissal).
@@ -80,11 +77,14 @@ struct TodayView: View {
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: AppTheme.spacing20) {
-                            header
+                            TodayGreetingHeader(
+                                greeting: Self.greeting(forHour: Calendar.current.component(.hour, from: Self.now())),
+                                streak: cookingStreak.streak
+                            )
                             if showsClipboardCard {
                                 TodayClipboardCard(onPaste: pasted, onDismiss: dismissClipboardCard)
                             }
-                            if let feed { content(feed) }
+                            if let snapshot { content(snapshot) }
                         }
                         .padding(.horizontal, AppTheme.spacing20)
                         .padding(.top, AppTheme.spacing16)
@@ -137,31 +137,17 @@ struct TodayView: View {
 
     private func refresh() {
         let now = Self.now()
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now
         // Recurring meals are copied in when Plan opens a week; do it here too so Tonight and the strip show them.
         mealPlanning.propagateRecurring(toWeekStarting: Calendar.current.startOfDay(for: now))
-        let newFeed = TodayFeed.make(
+        snapshot = TodaySnapshot.make(
             recipes: recipeStore.recipes,
-            todaysPlans: mealPlanning.mealPlans(for: now),
+            plansOn: { mealPlanning.mealPlans(for: $0) },
             kitchenItemNames: kitchen.items.map(\.name),
-            tomorrowsPlans: tomorrow == now ? [] : mealPlanning.mealPlans(for: tomorrow),
             inventoryItems: kitchen.inventoryItems,
+            streak: cookingStreak.streak,
+            unlockedBadgeIDs: Set(badges.getAllBadges(recipeCount: 0).filter(\.isUnlocked).map(\.id)),
             now: now
         )
-        feed = newFeed
-        let weekPlans = (0..<TodayWeek.dayCount).flatMap { offset in
-            Calendar.current.date(byAdding: .day, value: offset, to: now).map { mealPlanning.mealPlans(for: $0) } ?? []
-        }
-        week = TodayWeek.make(
-            recipes: recipeStore.recipes, plans: weekPlans,
-            tonightIDs: Set(newFeed.tonightOptions.map(\.recipe.id)), now: now
-        )
-        progress = TodayProgress.make(
-            recipes: recipeStore.recipes, streak: cookingStreak.streak,
-            unlockedBadgeIDs: Set(badges.getAllBadges(recipeCount: 0).filter(\.isUnlocked).map(\.id))
-        )
-        // New users already get a Starters shelf of uncooked recipes.
-        tryNew = newFeed.isNewUser ? nil : TrySomethingNew.pick(recipes: recipeStore.recipes, now: now)
     }
 
     /// Plans dinner unless one appeared since the strip was built (another path, a recurring copy) — never replaces it.
@@ -207,31 +193,11 @@ struct TodayView: View {
         showsClipboardCard = false
     }
 
-    private var header: some View {
-        HStack(alignment: .center, spacing: AppTheme.spacing12) {
-            Text(Self.greeting(forHour: Calendar.current.component(.hour, from: Self.now())))
-                .font(.title2.weight(.bold))
-                .adaptiveForegroundColor()
-            Spacer(minLength: 0)
-            if cookingStreak.streak.currentWeeks > 0 {
-                StreakChip(streak: cookingStreak.streak)
-            } else {
-                Label("Start a streak", systemImage: "flame")
-                    .font(.footnote.weight(.semibold))
-                    .adaptiveSecondaryForeground()
-                    .padding(.horizontal, AppTheme.spacing10)
-                    .padding(.vertical, AppTheme.spacing6)
-                    .appCard(in: Capsule())
-                    .accessibilityLabel("Start a streak: cook anything this week")
-                    .accessibilityIdentifier("today.startStreak")
-            }
-        }
-    }
-
     @ViewBuilder
-    private func content(_ feed: TodayFeed) -> some View {
+    private func content(_ snapshot: TodaySnapshot) -> some View {
+        let feed = snapshot.feed
         if feed.isNewUser {
-            firstRecipeCard
+            TodayFirstRecipeCard(onAddRecipe: onAddRecipe)
         }
 
         let shown = feed.tonightPick(showing: tonightRecipeID)
@@ -251,7 +217,10 @@ struct TodayView: View {
                 onCook: { cook(hero.recipe) }
             )
         } else if !feed.isNewUser {
-            shortcut(.plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.", color: .blue)
+            TodayShortcutCard(
+                tab: .plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.",
+                color: .blue, onOpen: onOpen
+            )
         }
 
         ForEach(feed.prepAhead, id: \.recipe.id) { nudge in
@@ -262,27 +231,24 @@ struct TodayView: View {
             TodayUseSoonCard(pairs: feed.useSoon, onOpen: open)
         }
 
-        if let week {
-            TodayWeekCard(
-                week: week,
-                // With no recipes yet there's nothing to pick, so an empty day leads to adding one.
-                onPlanDay: { date in
-                    if recipeStore.recipes.isEmpty { onAddRecipe() } else { planningDay = PlanningDay(date: date) }
-                },
-                onPlanTomorrow: { recipe in
-                    if let tomorrow = week.tomorrow { planDinner(recipe, on: tomorrow) }
-                },
-                onOpenPlan: { onOpen(.plan) }
-            )
-        }
+        let week = snapshot.week
+        TodayWeekCard(
+            week: week,
+            // With no recipes yet there's nothing to pick, so an empty day leads to adding one.
+            onPlanDay: { date in
+                if recipeStore.recipes.isEmpty { onAddRecipe() } else { planningDay = PlanningDay(date: date) }
+            },
+            onPlanTomorrow: { recipe in
+                if let tomorrow = week.tomorrow { planDinner(recipe, on: tomorrow) }
+            },
+            onOpenPlan: { onOpen(.plan) }
+        )
 
-        if let progress {
-            TodayProgressCard(progress: progress) { showsCookingSheet = true }
-        }
+        TodayProgressCard(progress: snapshot.progress) { showsCookingSheet = true }
 
         // Shelves and the weekly pick leave out the recipe on the card, so a shuffled-to dish isn't repeated below it.
         let shownID = shown?.recipe.id
-        if let tryNew, tryNew.id != shownID {
+        if let tryNew = snapshot.tryNew, tryNew.id != shownID {
             TodayTryNewCard(recipe: tryNew, onOpen: open)
         }
 
@@ -290,40 +256,17 @@ struct TodayView: View {
             TodayShelf(title: "Starters to try", id: "starters",
                        items: feed.starters.map { ($0, $0.hasTotalTime ? $0.totalTime : nil) }, onOpen: open)
         }
-        let onCards: Set<UUID?> = [shownID, tryNew?.id]
-        let cookAgain = feed.cookAgain.filter { !onCards.contains($0.id) }
-        let kitchenMatches = feed.fitsYourKitchen.filter { !onCards.contains($0.recipe.id) }
-        let rediscover = feed.rediscover.filter { !onCards.contains($0.id) }
-        if !cookAgain.isEmpty {
-            TodayShelf(title: "Cook again", id: "cookAgain", items: cookAgain.map { ($0, nil) }, onOpen: open)
+        let shelves = feed.shelves(excluding: [shownID, snapshot.tryNew?.id])
+        if !shelves.cookAgain.isEmpty {
+            TodayShelf(title: "Cook again", id: "cookAgain", items: shelves.cookAgain.map { ($0, nil) }, onOpen: open)
         }
-        if !kitchenMatches.isEmpty {
+        if !shelves.kitchenMatches.isEmpty {
             TodayShelf(title: "Fits your kitchen", id: "kitchen",
-                       items: kitchenMatches.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open)
+                       items: shelves.kitchenMatches.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open)
         }
-        if !rediscover.isEmpty {
-            TodayShelf(title: "Rediscover", id: "rediscover", items: rediscover.map { ($0, nil) }, onOpen: open)
+        if !shelves.rediscover.isEmpty {
+            TodayShelf(title: "Rediscover", id: "rediscover", items: shelves.rediscover.map { ($0, nil) }, onOpen: open)
         }
-    }
-
-    private var firstRecipeCard: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            Text("Bring in your first recipe")
-                .font(.headline)
-                .adaptiveForegroundColor()
-            Text("Add one from a link, a photo, pasted text or your own notes, and Today starts suggesting what to cook.")
-                .font(.subheadline)
-                .adaptiveSecondaryForeground()
-                .fixedSize(horizontal: false, vertical: true)
-            PrimaryButton("Add a recipe", systemImage: "plus.circle.fill") {
-                HapticManager.shared.light()
-                onAddRecipe()
-            }
-            .accessibilityIdentifier("today.addFirstRecipe")
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(AppTheme.spacing20)
-        .appCard()
     }
 
     private func shuffle(_ feed: TodayFeed, from current: TodayFeed.Hero) {
@@ -341,36 +284,6 @@ struct TodayView: View {
     private func cook(_ recipe: RecipeModel) {
         HapticManager.shared.light()
         path.append(CookRoute(recipeID: recipe.id))
-    }
-
-    private func shortcut(_ tab: AppTab, title: String, subtitle: String, color: Color) -> some View {
-        Button {
-            HapticManager.shared.light()
-            onOpen(tab)
-        } label: {
-            HStack(spacing: AppTheme.spacing16) {
-                IconBadge(systemName: tab.icon, tint: color, diameter: 44, iconSize: AppTheme.fontSize18, style: .tinted)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                    Text(title)
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(.primary)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
-            }
-            .padding(AppTheme.spacing20)
-            .appCard()
-        }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("today.open.\(tab.rawValue)")
     }
 }
 

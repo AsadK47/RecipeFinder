@@ -1,12 +1,18 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-(none) — Today+ 3/3 done (merged 9c8d7c5, ticked). Today+ series complete.
+Smell Large Class `TodayView` on `agent/today-view-extract` (379→292 lines): pure `TodaySnapshot.make` (feed/week/
+progress/tryNew), `TodayFeed.shelves(excluding:)`, views `TodayGreetingHeader`/`TodayFirstRecipeCard`/
+`TodayShortcutCard` in new `TodayIntroCards.swift`. Tests `TodaySnapshotTests`. 3 files registered in pbxproj by hand.
 
 ## Next action
-Smell first (series finished): extract TodayView refresh/plan helpers (~375 lines) or top Smell; then Badges 1/2.
-Not shown in screenshots: "Try something new" (UI-test sim is a new user) — logic covered by TodayProgressTests.
+Check Build & Test on the branch; when green → Screenshots look (16), ff main, tick; then Badges 1/2.
 ## Decisions (why)
+- **TodayView smell**: behaviour-preserving only. Snapshot takes `plansOn: (Date) -> [MealPlanModel]` (the planner's
+  lookup) + an injected calendar; `propagateRecurring` stays in the view (it mutates the store — CQS). Pre-mortem:
+  (1) week/feed built with different plans than before → `eachPartMatchesBuildingItAlone`, `theWeekShowsPlans…`;
+  (2) tomorrow's prep-ahead lost → `tomorrowsPlansReachPrepAhead`; (3) a card/shelf missing or repeated → shelves tests
+  + Today UI tests / shot 16.
 - **Today+ 3/3 (progress + something new)**: "Your cooking" card after This week: streak weeks, cooks this week
   (from `CookingStreak`), next badge = locked *cooking* badge (library-size badges stay on Me — Today rewards cooking)
   with the highest share done (integer cross-multiply), then fewest left, then list order; reached-but-unrecorded
