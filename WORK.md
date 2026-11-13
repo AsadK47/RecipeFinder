@@ -1,7 +1,7 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 2a merged (f44a58c); item still claimed 🚧.
+Data safety 2/4 slice 2b (profile sync rules) on `agent/data-safety-2-profile-sync`, waiting on Build & Test.
 
 ## Next action
 Slice 2b = ProfileManager sync rules (constant id) + profile store keeps the newest row instead
@@ -10,6 +10,18 @@ of deleting other-uuid rows, and reload managers on `NSPersistentStoreRemoteChan
 `SyncPreference.key`). Slice 4 = recipe photos entity + first-sync dedupe. Slice 5 = Privacy Policy §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 2b (profile)**: sync id is a constant ("profile") — every device's profile row is the same
+  row. No modified date on `ProfileEntity` (adding one = RecipeModel 17), so the store picks deterministically on
+  every device via `ProfileRecord.shared(from:)`: named over empty, then oldest `createdDate`, then uuid; a photo /
+  chef type only a losing row holds is kept. Every write still deletes the other rows → after the first save it's
+  last-writer-wins. Accepted: a device still holding its own profile in memory (no remote-change reload yet) and
+  saving overwrites the iCloud one. Remote-change reload moved to slice 3 (the notification only fires once the
+  CloudKit container sets history tracking + remote-change options, so nothing to wire or test before then).
+  **Pre-mortem:** (1) a new device starts a second, empty profile and it wins → `aNamedProfileIsPickedOver…`,
+  `withSyncOnANewDeviceTakesTheProfileAlreadyInICloud`; (2) devices disagree on which profile is theirs →
+  `ofTwoNamedProfilesEveryDevicePicksTheOldest` (both orders), `…SameMomentArePickedByUUID`; (3) this device's kept
+  copy overwrites the shared profile → `withSyncOnTheProfileInICloudReplacesThisDevicesOwn`; photo lost on merge →
+  `aPhotoOrChefTypeOnlyTheOtherProfileHoldsIsKept`, `coreDataStoreReadsTheSharedProfile…`.
 - **Data safety 2/4 slice 2a (wire rules)**: profile left out — its store deletes other-uuid rows and two devices
   have different uuids, so it needs the newest-row store change in the same slice (2b). Shopping stores use the
   name as id (a store name added on two devices is one store — wanted). Flag lives in `LocalStore`, read per

@@ -69,6 +69,109 @@ final class InMemoryProfileStore: ProfileStoring {
         }
     }
 
+    // MARK: - iCloud sync (Data safety 2/4)
+
+    /// A profile another device started later and left unnamed (a new phone before the cook typed anything).
+    private var newDevice: ProfileRecord {
+        ProfileRecord(uuid: "00000000-new-device", createdDate: joined.addingTimeInterval(86_400))
+    }
+
+    @Test func withSyncOnANewDeviceTakesTheProfileAlreadyInICloud() {
+        storage.set(true, forKey: SyncPreference.key)
+        let store = InMemoryProfileStore(asad)
+        let sut = manager(store)
+        #expect(sut.uuid == asad.uuid)
+        #expect(sut.firstName == "Asad")
+        #expect(store.record == asad)
+        #expect(store.writeCount == 0)
+        #expect(storage.string(forKey: ProfileManager.uuidKey) == asad.uuid)
+    }
+
+    @Test func withSyncOnTheProfileInICloudReplacesThisDevicesOwn() {
+        var sam = newDevice
+        sam.firstName = "Sam"
+        writeOldKeys(sam)
+        let store = InMemoryProfileStore()
+        _ = manager(store)
+        store.record = asad   // the store settled on the shared profile once iCloud brought it in
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.uuid == asad.uuid)
+        #expect(sut.firstName == "Asad")
+        #expect(store.record == asad)
+        #expect(storage.string(forKey: ProfileManager.uuidKey) == asad.uuid)
+        #expect(storage.string(forKey: ProfileManager.firstNameKey) == "Asad")
+    }
+
+    @Test func withSyncOnAnEditReachesTheSharedProfile() {
+        storage.set(true, forKey: SyncPreference.key)
+        let store = InMemoryProfileStore(asad)
+        let sut = manager(store)
+        sut.updateProfile(firstName: " Asad ", lastName: "K", chefType: .foodie)
+        #expect(store.record?.uuid == asad.uuid)
+        #expect(store.record?.lastName == "K")
+        #expect(store.record?.chefType == ChefType.foodie.rawValue)
+        #expect(store.record?.imageData == photo)
+        #expect(storage.string(forKey: ProfileManager.lastNameKey) == "K")
+    }
+
+    @Test func withSyncOnAnotherDevicesEditIsTakenOnTheNextLaunch() {
+        storage.set(true, forKey: SyncPreference.key)
+        let store = InMemoryProfileStore(asad)
+        _ = manager(store)
+        store.record?.firstName = "Asadullah"   // edited on another device
+        let sut = manager(store)
+        #expect(sut.firstName == "Asadullah")
+        #expect(store.record?.firstName == "Asadullah")
+        #expect(storage.string(forKey: ProfileManager.firstNameKey) == "Asadullah")
+    }
+
+    @Test(arguments: [false, true])
+    func aNamedProfileIsPickedOverANewDevicesEmptyOne(reversed: Bool) {
+        let rows = reversed ? [asad, newDevice] : [newDevice, asad]
+        #expect(ProfileRecord.shared(from: rows) == asad)
+    }
+
+    @Test(arguments: [false, true])
+    func ofTwoNamedProfilesEveryDevicePicksTheOldest(reversed: Bool) {
+        var later = newDevice
+        later.firstName = "Sam"
+        var older = asad
+        older.uuid = "ffffffff-first-device"   // sorts after the later one: age decides, not the uuid
+        let rows = reversed ? [older, later] : [later, older]
+        #expect(ProfileRecord.shared(from: rows) == older)
+    }
+
+    @Test func profilesStartedAtTheSameMomentArePickedByUUID() {
+        let first = ProfileRecord(uuid: "a", firstName: "A", createdDate: joined)
+        let second = ProfileRecord(uuid: "b", firstName: "B", createdDate: joined)
+        #expect(ProfileRecord.shared(from: [second, first]) == first)
+        #expect(ProfileRecord.shared(from: [first, second]) == first)
+    }
+
+    @Test func aProfileWithAStartDateIsPickedOverOneWithout() {
+        let undated = ProfileRecord(uuid: "a", firstName: "A")
+        let dated = ProfileRecord(uuid: "b", firstName: "B", createdDate: joined)
+        #expect(ProfileRecord.shared(from: [undated, dated]) == dated)
+    }
+
+    @Test func aPhotoOrChefTypeOnlyTheOtherProfileHoldsIsKept() {
+        var bare = asad
+        bare.imageData = nil
+        bare.chefType = nil
+        var other = newDevice
+        other.imageData = Data([0x01])
+        other.chefType = ChefType.foodie.rawValue
+        var expected = bare
+        expected.imageData = Data([0x01])
+        expected.chefType = ChefType.foodie.rawValue
+        #expect(ProfileRecord.shared(from: [other, bare]) == expected)
+    }
+
+    @Test func noProfilesPickNothing() {
+        #expect(ProfileRecord.shared(from: []) == nil)
+    }
+
     // MARK: - Migration
 
     @Test func everyProfileKeyBecomesOneRowAndTheKeyIsMarked() {
@@ -298,5 +401,35 @@ final class InMemoryProfileStore: ProfileStoring {
         let request = NSFetchRequest<NSManagedObject>(entityName: CoreDataProfileStore.entityName)
         #expect(try context.count(for: request) == 1)
         #expect(try sut.fetchProfile() == asad)
+    }
+
+    @Test func coreDataStoreReadsTheSharedProfileAndASaveLeavesOnlyIt() throws {
+        let persistence = PersistenceController(inMemory: true)
+        let context = persistence.container.viewContext
+        let sut = CoreDataProfileStore(persistence: persistence)
+        var phone = newDevice
+        phone.imageData = Data([0x01])
+        try sut.replaceProfile(with: phone)
+        let entity = try #require(NSEntityDescription.entity(
+            forEntityName: CoreDataProfileStore.entityName, in: context
+        ))
+        let fromICloud = NSManagedObject(entity: entity, insertInto: context)
+        fromICloud.setValue(UUID(), forKey: "id")
+        fromICloud.setValue(asad.uuid, forKey: "uuid")
+        fromICloud.setValue(asad.firstName, forKey: "firstName")
+        fromICloud.setValue(asad.lastName, forKey: "lastName")
+        fromICloud.setValue(asad.createdDate, forKey: "createdDate")
+        try context.save()
+
+        var expected = asad   // the older, named profile, with the photo only the phone's row held
+        expected.chefType = nil
+        expected.imageData = phone.imageData
+        let shared = try #require(try sut.fetchProfile())
+        #expect(shared == expected)
+
+        try sut.replaceProfile(with: shared)
+        let request = NSFetchRequest<NSManagedObject>(entityName: CoreDataProfileStore.entityName)
+        #expect(try context.count(for: request) == 1)
+        #expect(try sut.fetchProfile() == expected)
     }
 }

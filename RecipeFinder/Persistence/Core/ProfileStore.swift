@@ -10,6 +10,27 @@ struct ProfileRecord: Codable, Equatable {
     var chefType: String?
     var createdDate: Date?
     var imageData: Data?
+
+    private var hasName: Bool { !firstName.isEmpty || !lastName.isEmpty }
+
+    /// Under iCloud sync each device starts its own profile, so the store can hold several. Every device must pick
+    /// the same one: a named profile over an empty one (a new device's), then the oldest (the cook's first), then
+    /// by uuid. A chef type or photo only the others hold is kept rather than dropped.
+    static func shared(from records: [ProfileRecord]) -> ProfileRecord? {
+        let ordered = records.sorted { lhs, rhs in
+            if lhs.hasName != rhs.hasName { return lhs.hasName }
+            switch (lhs.createdDate, rhs.createdDate) {
+            case let (left?, right?) where left != right: return left < right
+            case (.some, .none): return true
+            case (.none, .some): return false
+            default: return lhs.uuid < rhs.uuid
+            }
+        }
+        guard var chosen = ordered.first else { return nil }
+        chosen.chefType = chosen.chefType ?? ordered.lazy.compactMap(\.chefType).first
+        chosen.imageData = chosen.imageData ?? ordered.lazy.compactMap(\.imageData).first
+        return chosen
+    }
 }
 
 /// Where the profile lives once moved out of its `LocalStore` keys: Core Data in the app, a fake in tests.
@@ -31,8 +52,9 @@ enum ProfileStoreError: LocalizedError {
     }
 }
 
-/// One `ProfileEntity` row matched by `uuid` and updated in place. A row without a uuid, or a second row (a sync
-/// duplicate), is ignored on read and deleted on the next write.
+/// One `ProfileEntity` row matched by `uuid` and updated in place. A row without a uuid is ignored on read; other
+/// devices' profiles (iCloud) are read through `ProfileRecord.shared(from:)`. Every write deletes all other rows, so
+/// once a device saves, every device holds the one profile it saved.
 @MainActor
 final class CoreDataProfileStore: ProfileStoring {
     static let entityName = "ProfileEntity"
@@ -48,29 +70,23 @@ final class CoreDataProfileStore: ProfileStoring {
         return persistence.container.viewContext
     }
 
-    /// Rows with a uuid first, then by uuid, so the same row is picked every launch.
     private func fetchRows(in context: NSManagedObjectContext) throws -> [NSManagedObject] {
-        let rows = try context.fetch(NSFetchRequest<NSManagedObject>(entityName: Self.entityName))
-        return rows.sorted { lhs, rhs in
-            switch (lhs.value(forKey: "uuid") as? String, rhs.value(forKey: "uuid") as? String) {
-            case let (left?, right?): return left < right
-            case (.some, .none): return true
-            default: return false
-            }
-        }
+        try context.fetch(NSFetchRequest<NSManagedObject>(entityName: Self.entityName))
     }
 
     func fetchProfile() throws -> ProfileRecord? {
-        guard let row = try fetchRows(in: readyContext()).first,
-              let uuid = row.value(forKey: "uuid") as? String else { return nil }
-        return ProfileRecord(
-            uuid: uuid,
-            firstName: row.value(forKey: "firstName") as? String ?? "",
-            lastName: row.value(forKey: "lastName") as? String ?? "",
-            chefType: row.value(forKey: "chefType") as? String,
-            createdDate: row.value(forKey: "createdDate") as? Date,
-            imageData: row.value(forKey: "imageData") as? Data
-        )
+        let records = try fetchRows(in: readyContext()).compactMap { row -> ProfileRecord? in
+            guard let uuid = row.value(forKey: "uuid") as? String else { return nil }
+            return ProfileRecord(
+                uuid: uuid,
+                firstName: row.value(forKey: "firstName") as? String ?? "",
+                lastName: row.value(forKey: "lastName") as? String ?? "",
+                chefType: row.value(forKey: "chefType") as? String,
+                createdDate: row.value(forKey: "createdDate") as? Date,
+                imageData: row.value(forKey: "imageData") as? Data
+            )
+        }
+        return ProfileRecord.shared(from: records)
     }
 
     /// Saved or rolled back together.
