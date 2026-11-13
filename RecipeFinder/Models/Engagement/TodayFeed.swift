@@ -86,7 +86,8 @@ struct TodayFeed: Equatable {
         let matches = kitchenMatches(recipes: recipes, kitchenItemNames: kitchenItemNames)
         let isNewUser = recipes.allSatisfy { $0.isSampleRecipe && $0.cookCount == 0 }
         let options = tonightOptions(
-            recipes: recipes, plans: todaysPlans, matches: matches, quickCanLead: !isNewUser
+            recipes: recipes, plans: todaysPlans, matches: matches, quickCanLead: !isNewUser,
+            slot: MealSlot(at: now, calendar: calendar), dayKey: dayKey(now, calendar: calendar)
         )
         let hero = options.first
         let heroID = hero?.recipe.id
@@ -127,7 +128,8 @@ struct TodayFeed: Equatable {
     /// Suggestions never repeat the last recipe cooked; a plan always shows (the cook chose it). A new user's Today
     /// leads with importing + Starters, so a quick pick can only follow a plan or kitchen match there, not lead.
     private static func tonightOptions(
-        recipes: [RecipeModel], plans: [MealPlanModel], matches: [KitchenMatch], quickCanLead: Bool
+        recipes: [RecipeModel], plans: [MealPlanModel], matches: [KitchenMatch], quickCanLead: Bool,
+        slot: MealSlot, dayKey: String
     ) -> [Hero] {
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let open = plans.filter { !$0.isCompleted }
@@ -141,8 +143,8 @@ struct TodayFeed: Equatable {
             .filter { $0.lastCookedAt != nil }
             .max { ($0.lastCookedAt ?? .distantPast) < ($1.lastCookedAt ?? .distantPast) }?.id
         let kitchen = matches.map { Hero(recipe: $0.recipe, reason: .kitchenMatch(have: $0.have, total: $0.total)) }
-        let quick = quickPicks(recipes)
-        let suggested = (kitchen + quick).filter { $0.recipe.id != lastCookedID }
+        let quick = quickPicks(recipes, slot: slot, dayKey: dayKey)
+        let suggested = slot.suitable(kitchen + quick).filter { $0.recipe.id != lastCookedID }
 
         var seen = Set<UUID>()
         let unique = (planned + suggested).filter { seen.insert($0.recipe.id).inserted }
@@ -150,17 +152,65 @@ struct TodayFeed: Equatable {
         return Array(unique.prefix(1 + alternativesLimit))
     }
 
-    /// Recipes ready in `quickLimitMinutes` or less: favourites, then your own over samples, then most cooked, then name.
-    private static func quickPicks(_ recipes: [RecipeModel]) -> [Hero] {
+    /// Recipes ready in `quickLimitMinutes` or less, your own before built-in samples, in an order that changes each
+    /// day (and meal) but holds still within it — a fixed "favourites, most cooked, A–Z" order put the same recipe on
+    /// Today every day, which the owner found jarring.
+    private static func quickPicks(_ recipes: [RecipeModel], slot: MealSlot, dayKey: String) -> [Hero] {
         recipes
             .compactMap { recipe in quickMinutes(of: recipe).map { (recipe, $0) } }
             .sorted { a, b in
-                if a.0.isFavorite != b.0.isFavorite { return a.0.isFavorite }
                 if a.0.isSampleRecipe != b.0.isSampleRecipe { return !a.0.isSampleRecipe }
-                if a.0.cookCount != b.0.cookCount { return a.0.cookCount > b.0.cookCount }
-                return a.0.name < b.0.name
+                let ra = dailyRank(a.0.id, slot: slot, dayKey: dayKey), rb = dailyRank(b.0.id, slot: slot, dayKey: dayKey)
+                return ra != rb ? ra < rb : a.0.name < b.0.name
             }
             .map { Hero(recipe: $0.0, reason: .quick(minutes: $0.1)) }
+    }
+
+    /// Stable across launches (FNV-1a, not Swift's per-launch seeded `Hasher`), different per day and meal.
+    static func dailyRank(_ id: UUID, slot: MealSlot, dayKey: String) -> UInt64 {
+        var hash: UInt64 = 0xcbf29ce484222325
+        for byte in "\(dayKey)|\(slot.rawValue)|\(id.uuidString)".utf8 {
+            hash ^= UInt64(byte)
+            hash = hash &* 0x100000001b3
+        }
+        return hash
+    }
+
+    static func dayKey(_ date: Date, calendar: Calendar) -> String {
+        let parts = calendar.dateComponents([.year, .month, .day], from: date)
+        return "\(parts.year ?? 0)-\(parts.month ?? 0)-\(parts.day ?? 0)"
+    }
+
+    /// Which meal Today is suggesting for, by the clock: breakfast 5–11am, lunch 11am–4pm, otherwise dinner.
+    enum MealSlot: String {
+        case breakfast, lunch, dinner
+
+        init(at date: Date, calendar: Calendar) {
+            switch calendar.component(.hour, from: date) {
+            case 5..<11: self = .breakfast
+            case 11..<16: self = .lunch
+            default: self = .dinner
+            }
+        }
+
+        /// Recipe categories that make sense as this meal (no desserts, sides or drinks as the main suggestion).
+        var categories: Set<String> {
+            switch self {
+            case .breakfast: ["breakfast"]
+            case .lunch: ["main", "soup", "starter", "breakfast"]
+            case .dinner: ["main", "soup"]
+            }
+        }
+
+        /// Suggestions fitting this meal; if none do, mains/soups; if still none, everything (a sparse library still
+        /// gets a suggestion). Plans aren't passed through here — the cook chose those.
+        func suitable(_ heroes: [Hero]) -> [Hero] {
+            let fits = { (set: Set<String>) in heroes.filter { set.contains($0.recipe.category.lowercased()) } }
+            let mine = fits(categories)
+            if !mine.isEmpty { return mine }
+            let mains = fits(MealSlot.dinner.categories)
+            return mains.isEmpty ? heroes : mains
+        }
     }
 
     /// Prep + cook minutes when known and no more than `quickLimitMinutes`, else nil.

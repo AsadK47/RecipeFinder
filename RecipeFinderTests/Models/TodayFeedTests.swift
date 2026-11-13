@@ -20,10 +20,11 @@ import Foundation
         lastCookedAt: Date? = nil,
         isFavorite: Bool = false,
         steps: [String] = ["Cook"],
-        prepTime: String = "5 min"
+        prepTime: String = "5 min",
+        category: String = "Main"
     ) -> RecipeModel {
         RecipeModel(
-            name: name, category: "Main", difficulty: "Basic", prepTime: prepTime,
+            name: name, category: category, difficulty: "Basic", prepTime: prepTime,
             cookingTime: "10 min", baseServings: 2,
             ingredients: ingredients.map { Ingredient(baseQuantity: 1, unit: "", name: $0) },
             prePrepInstructions: [], instructions: steps, notes: "",
@@ -87,29 +88,35 @@ import Foundation
         let toast = recipe("Toast", ingredients: ["bread"], prepTime: "1 hr")
         let wrap = recipe("Wrap"), eggs = recipe("Eggs", isFavorite: true), salad = recipe("Salad")
         let result = feed([curry, toast, wrap, eggs, salad], plans: [plan(curry, .dinner)], kitchen: ["bread"])
-        #expect(result.tonightOptions == [
+        let options = result.tonightOptions
+        #expect(Array(options.prefix(2)) == [
             .init(recipe: curry, reason: .planned(.dinner)),
             .init(recipe: toast, reason: .kitchenMatch(have: 1, total: 1)),
-            .init(recipe: eggs, reason: .quick(minutes: 15)),
-            .init(recipe: salad, reason: .quick(minutes: 15)),
         ])
+        // Quick picks rotate daily, so which two of the three lead isn't fixed — only that they're quick and distinct.
+        let quick = options.dropFirst(2)
+        #expect(quick.allSatisfy { $0.reason == .quick(minutes: 15) })
+        #expect(Set(quick.map(\.recipe.id)).count == 2)
+        #expect(Set(quick.map(\.recipe.id)).isSubset(of: [wrap.id, eggs.id, salad.id]))
         #expect(result.alternatives.count == TodayFeed.alternativesLimit)
     }
 
     @Test func shuffleStepsThroughThePicksAndWrapsRound() {
         let a = recipe("A"), b = recipe("B"), c = recipe("C", prepTime: "2 hr")
         let result = feed([a, b, c])
-        #expect(result.nextTonightPick(after: nil)?.recipe == b)
-        #expect(result.nextTonightPick(after: a.id)?.recipe == b)
-        #expect(result.nextTonightPick(after: b.id)?.recipe == a)
+        let order = result.tonightOptions.map(\.recipe)
+        #expect(Set(order.map(\.id)) == [a.id, b.id])
+        #expect(result.nextTonightPick(after: nil)?.recipe == order[1])
+        #expect(result.nextTonightPick(after: order[0].id)?.recipe == order[1])
+        #expect(result.nextTonightPick(after: order[1].id)?.recipe == order[0])
     }
 
     @Test func theShownPickSurvivesARefreshByRecipeNotPosition() {
         let a = recipe("A"), b = recipe("B"), gone = UUID()
         let result = feed([a, b])
         #expect(result.tonightPick(showing: b.id)?.recipe == b)
-        #expect(result.tonightPick(showing: gone)?.recipe == a)
-        #expect(result.tonightPick(showing: nil)?.recipe == a)
+        #expect(result.tonightPick(showing: gone)?.recipe == result.hero?.recipe)
+        #expect(result.tonightPick(showing: nil)?.recipe == result.hero?.recipe)
     }
 
     @Test func otherPlansOfTheDayComeBeforeSuggestions() {
@@ -134,6 +141,53 @@ import Foundation
         let toast = recipe("Toast", ingredients: ["bread"])
         let result = feed([toast], kitchen: ["bread"])
         #expect(result.tonightOptions == [.init(recipe: toast, reason: .kitchenMatch(have: 1, total: 1))])
+    }
+
+    // MARK: Meal by time of day, varied by day
+
+    private func at(_ hour: Int, dayOffset: Int = 0) -> Date {
+        let day = cal.date(byAdding: .day, value: dayOffset, to: cal.startOfDay(for: now)) ?? now
+        return cal.date(byAdding: .hour, value: hour, to: day) ?? day
+    }
+
+    private func feed(_ recipes: [RecipeModel], at date: Date) -> TodayFeed {
+        TodayFeed.make(recipes: recipes, todaysPlans: [], kitchenItemNames: [], now: date, calendar: cal)
+    }
+
+    @Test(arguments: [(8, "Breakfast"), (13, "Main"), (19, "Main")])
+    func suggestionFitsTheMealOfTheDay(hour: Int, expected: String) {
+        let library = [recipe("Pancakes", category: "Breakfast"), recipe("Stir fry", category: "Main"),
+                       recipe("Brownie", category: "Dessert"), recipe("Lassi", category: "Drink"),
+                       recipe("Slaw", category: "Side")]
+        let options = feed(library, at: at(hour)).tonightOptions
+        #expect(options.first?.recipe.category == expected)
+        #expect(options.allSatisfy { !["Dessert", "Drink", "Side"].contains($0.recipe.category) })
+    }
+
+    @Test func aMorningWithoutBreakfastRecipesStillSuggestsAMain() {
+        let library = [recipe("Stir fry", category: "Main"), recipe("Brownie", category: "Dessert")]
+        #expect(feed(library, at: at(8)).hero?.recipe.category == "Main")
+    }
+
+    @Test func aLibraryOfOnlyDessertsStillGetsASuggestion() {
+        #expect(feed([recipe("Brownie", category: "Dessert")], at: at(19)).hero != nil)
+    }
+
+    @Test func theSuggestionChangesFromDayToDay() {
+        let library = (1...12).map { recipe("Dish \($0)") }
+        let heroes = (0..<10).compactMap { feed(library, at: at(19, dayOffset: $0)).hero?.recipe.id }
+        #expect(heroes.count == 10)
+        #expect(Set(heroes).count >= 4)
+    }
+
+    @Test func theSuggestionHoldsStillWithinAMeal() {
+        let library = (1...12).map { recipe("Dish \($0)") }
+        #expect(feed(library, at: at(18)).hero?.recipe == feed(library, at: at(21)).hero?.recipe)
+    }
+
+    @Test(arguments: [(4, TodayFeed.MealSlot.dinner), (5, .breakfast), (10, .breakfast), (11, .lunch), (15, .lunch), (16, .dinner), (23, .dinner)])
+    func mealSlotFollowsTheClock(hour: Int, expected: TodayFeed.MealSlot) {
+        #expect(TodayFeed.MealSlot(at: at(hour), calendar: cal) == expected)
     }
 
     @Test func quickPicksPreferYourOwnRecipesOverSamples() {
