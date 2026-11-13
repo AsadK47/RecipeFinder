@@ -1,12 +1,12 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 slice 3e (kitchen items + inventory) on `agent/data-safety-1-kitchen`: `KitchenStore.swift`
-(`KitchenStoring`, `CoreDataKitchenStore`), `KitchenInventoryManager` on two `MirroredSnapshot`s,
-`removeAllKitchenData()` wired into Reset, `KitchenMigrationTests`. Waiting on Build & Test.
+Data safety 1/4 (claimed): slices 1–2, 3a–3e merged (3e kitchen = bf326cb). Nothing on a branch.
 
 ## Next action
-Check Build & Test for the branch head; fix; challenge pass; ff main; tick slice 3e. Then slice 3f badges, 3g profile.
+Slice 3f: badges → `EarnedBadgeEntity` via `MirroredSnapshot` (copy KitchenStore.swift: `*Storing` protocol,
+CoreData store upserting by id with sortOrder + `setIfChanged`, in-memory fake, Reset → `removeAll…()` in
+DataManagementSettingsView instead of `reload()`; shown-celebration flag lives on the entity). Then profile.
 
 ## Decisions (why)
 - **Data safety 1/4 slice 3e (kitchen)**: one `KitchenStoring` for both lists (same manager, two `MirroredSnapshot`s),
