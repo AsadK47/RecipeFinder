@@ -34,7 +34,7 @@ struct TodayFeed: Equatable {
     let hero: Hero?
     /// Other picks for tonight that Shuffle steps through after the hero (other plans, kitchen matches, quick recipes).
     let alternatives: [Hero]
-    /// How many recipes are ready in `quickLimitMinutes` or less — Today's evening "Quick tonight?" line.
+    /// How many recipes are ready in `quickLimitMinutes` or less (guards the same rule the quick picks use).
     let quickCount: Int
     /// Cooked recently (within `thresholdDays`), newest first.
     let cookAgain: [RecipeModel]

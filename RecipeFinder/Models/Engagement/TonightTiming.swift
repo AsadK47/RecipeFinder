@@ -17,7 +17,7 @@ enum TonightTiming {
         return true
     }
     private static let eveningStartsAt = 18 * 60
-    /// After this, "Quick tonight?" is too late to be useful.
+    /// After this, an evening line is too late to be useful.
     private static let eveningEndsAt = 22 * 60
     /// Before this it's still night — no "this morning" prep cue at 00:30.
     private static let morningStartsAt = 5 * 60
@@ -26,12 +26,14 @@ enum TonightTiming {
     /// - Morning (5am–noon), tonight's planned dinner needs a head start: "Defrost this morning for tonight".
     /// - Before the start time: "Start by 5:40 to eat at 7" (prep + cook back from `eatAt`).
     /// - Past the start time but before `eatAt`: "Start now to eat by 7:25".
-    /// - Evening (6–10pm, or from an hour before a later `eatAt`), unless a planned dinner can still be timed: "Quick tonight? 12 under 30 min".
+    /// - Evening (6–10pm, or from an hour before a later `eatAt`), unless a planned dinner can still be timed: about
+    ///   *this* recipe — "Start now to eat by 7:40", or for a long one "Takes 1 hr 10 min · Shuffle for something quicker".
+    ///   (A library-wide count like "12 under 30 min" read as gibberish to the owner — it named nothing to act on.)
     /// - A planned lunch/breakfast/snack before evening: nothing (its time isn't dinner's).
     /// Nil when there's nothing useful to say (no time on the recipe, too late, nothing quick).
-    static func line(hero: TodayFeed.Hero?, quickCount: Int, minuteOfDay now: Int, eatAt: Int = defaultEatAt) -> String? {
+    static func line(hero: TodayFeed.Hero?, minuteOfDay now: Int, eatAt: Int = defaultEatAt) -> String? {
         let isPlannedDinner = hero?.reason == .planned(.dinner)
-        let quickLine = quickCount > 0 && now < eveningEndsAt ? "Quick tonight? \(quickCount) under \(TodayFeed.quickLimitMinutes) min" : nil
+        let quickLine = hero.flatMap { eveningLine(minutes: $0.recipe.totalMinutes, now: now) }
         // A late dinner (9pm) keeps its "Start by" line past 6pm: quick ideas start an hour before eating at the earliest.
         let isEvening = now >= max(eveningStartsAt, eatAt - 60)
 
@@ -44,6 +46,22 @@ enum TonightTiming {
             return "\(cue) this morning for tonight"
         }
         return startLine(minutes: hero.recipe.totalMinutes, now: now, eatAt: eatAt) ?? (isEvening ? quickLine : nil)
+    }
+
+    /// Longest recipe that still reads as "start now" in the evening; longer ones suggest a quicker pick.
+    static let eveningQuickLimit = 45
+
+    private static func eveningLine(minutes: Int, now: Int) -> String? {
+        guard minutes > 0, now < eveningEndsAt else { return nil }
+        if minutes <= eveningQuickLimit { return "Start now to eat by \(clock(now + minutes))" }
+        return "Takes \(duration(minutes)) · Shuffle for something quicker"
+    }
+
+    /// "45 min", "1 hr", "1 hr 10 min".
+    static func duration(_ minutes: Int) -> String {
+        let hours = minutes / 60, rest = minutes % 60
+        if hours == 0 { return "\(rest) min" }
+        return rest == 0 ? "\(hours) hr" : "\(hours) hr \(rest) min"
     }
 
     private static func startLine(minutes: Int, now: Int, eatAt: Int) -> String? {

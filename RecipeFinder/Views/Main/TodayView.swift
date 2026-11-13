@@ -205,7 +205,7 @@ struct TodayView: View {
             TodayHeroCard(
                 hero: hero,
                 timing: TonightTiming.line(
-                    hero: hero, quickCount: feed.quickCount, minuteOfDay: TonightTiming.minuteOfDay(Self.now()),
+                    hero: hero, minuteOfDay: TonightTiming.minuteOfDay(Self.now()),
                     eatAt: TonightTiming.eatAt(stored: storedEatAt)
                 ),
                 eatAt: Binding(
