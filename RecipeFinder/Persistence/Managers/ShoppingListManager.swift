@@ -47,49 +47,68 @@ extension EnvironmentValues {
 final class ShoppingListManager: ShoppingListManaging {
     static let shared = ShoppingListManager()
 
-    @ObservationIgnored private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
-    @ObservationIgnored private let storesKey = Constants.UserDefaultsKeys.groceryStores
+    static let itemsBlobKey = Constants.UserDefaultsKeys.shoppingListItems
+    static let storesBlobKey = Constants.UserDefaultsKeys.groceryStores
+
+    /// Items and grocery stores live in Core Data rows; the old `LocalStore` blobs are kept current for one release.
+    @ObservationIgnored private let itemsMirror: MirroredSnapshot<ShoppingListModel>
+    @ObservationIgnored private let storesMirror: MirroredSnapshot<String>
     @ObservationIgnored private let storage: LocalStore
     @ObservationIgnored private let badgeManager: BadgeManager
 
     private(set) var items: [ShoppingListModel] = []
     private(set) var stores: [String] = []
 
-    private init() {
-        self.storage = .shared
-        self.badgeManager = .shared
+    private convenience init() {
+        self.init(storage: .shared, shoppingListStore: CoreDataShoppingListStore(persistence: .shared), badgeManager: .shared)
+    }
+
+    init(storage: LocalStore, shoppingListStore: any ShoppingListStoring, badgeManager: BadgeManager = .shared) {
+        self.storage = storage
+        self.badgeManager = badgeManager
+        self.itemsMirror = MirroredSnapshot(
+            blobKey: Self.itemsBlobKey, storage: storage,
+            fetch: { try shoppingListStore.fetchItems() },
+            replace: { try shoppingListStore.replaceItems(with: $0) }
+        )
+        self.storesMirror = MirroredSnapshot(
+            blobKey: Self.storesBlobKey, storage: storage,
+            fetch: { try shoppingListStore.fetchStores() },
+            replace: { try shoppingListStore.replaceStores(with: $0) }
+        )
         loadItems()
     }
 
-    init(storage: LocalStore, badgeManager: BadgeManager = .shared) {
-        self.storage = storage
-        self.badgeManager = badgeManager
-        loadItems()
-    }
-    
     func reload() {
         loadItems()
     }
-    
+
+    /// Erase & Reset: removes every item and grocery store. If the store can't delete now, the next launch finishes it.
+    func removeAllShoppingData() {
+        itemsMirror.removeAll()
+        storesMirror.removeAll()
+        loadItems()
+    }
+
     private func loadItems() {
-        if var decoded = storage.decodable([ShoppingListModel].self, forKey: saveKey) {
-            // One-time migration: items saved under catalog/legacy category names were split into parallel groups.
-            var changed = false
-            for index in decoded.indices {
-                let normalized = CategoryClassifier.normalizedCategory(decoded[index].category, for: decoded[index].name)
-                if normalized != decoded[index].category { decoded[index].category = normalized; changed = true }
-            }
-            if changed { storage.setEncodable(decoded, forKey: saveKey) }
-            items = decoded
-        } else {
-            items = []
+        var loaded = itemsMirror.load()
+        // One-time migration: items saved under catalog/legacy category names were split into parallel groups.
+        var changed = false
+        for index in loaded.indices {
+            let normalized = CategoryClassifier.normalizedCategory(loaded[index].category, for: loaded[index].name)
+            if normalized != loaded[index].category { loaded[index].category = normalized; changed = true }
         }
+        items = loaded
+        if changed { itemsMirror.save(loaded) }
         loadStores()
     }
 
     /// First run after stores became user-defined: seed the list from tags items already carry, so nothing disappears.
     private func loadStores() {
-        if let saved = storage.decodable([String].self, forKey: storesKey) {
+        // Checked before loading: an empty list the user saved is kept, only a never-saved one is seeded.
+        let neverSaved = storage.object(forKey: Self.storesBlobKey) == nil
+        let saved = storesMirror.load()
+        guard saved.isEmpty, neverSaved else {
             stores = saved
             return
         }
@@ -102,7 +121,7 @@ final class ShoppingListManager: ShoppingListManaging {
 
     private func saveStores(_ newStores: [String]) {
         stores = newStores
-        storage.setEncodable(newStores, forKey: storesKey)
+        storesMirror.save(newStores)
     }
     
     func getItems() -> [ShoppingListModel] {
@@ -111,7 +130,7 @@ final class ShoppingListManager: ShoppingListManaging {
     
     private func saveItems(_ newItems: [ShoppingListModel]) {
         items = newItems
-        storage.setEncodable(newItems, forKey: saveKey)
+        itemsMirror.save(newItems)
     }
     
     /// Non-destructive restore: unions incoming items by id, without the name-merge or re-classify that `addItem` applies.

@@ -32,7 +32,7 @@ import Foundation
         let storage = LocalStore(userDefaults: defaults)
 
         let recipeStore = InMemoryRecipeStore(recipes)
-        let shopping = ShoppingListManager(storage: storage)
+        let shopping = ShoppingListManager(storage: storage, shoppingListStore: InMemoryShoppingListStore())
         let kitchen = KitchenInventoryManager(storage: storage)
         let mealPlans = MealPlanningManager(storage: storage, mealPlanStore: InMemoryMealPlanStore())
         let badges = BadgeManager(storage: storage)

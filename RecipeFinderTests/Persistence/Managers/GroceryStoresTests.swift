@@ -58,7 +58,7 @@ struct GroceryStoresTests {
         ]
         storage.setEncodable(tagged, forKey: Constants.UserDefaultsKeys.shoppingListItems)
 
-        let sut = ShoppingListManager(storage: storage)
+        let sut = ShoppingListManager(storage: storage, shoppingListStore: InMemoryShoppingListStore())
         #expect(sut.stores == ["Tesco", "Lidl"])
     }
 
@@ -67,16 +67,17 @@ struct GroceryStoresTests {
     @Test("Added stores persist across relaunch")
     func addedStoresPersist() throws {
         let storage = try makeStorage()
-        let sut = ShoppingListManager(storage: storage)
+        let shoppingListStore = InMemoryShoppingListStore()
+        let sut = ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore)
         #expect(sut.addStore("Lidl"))
         #expect(!sut.addStore("lidl"))
 
-        #expect(ShoppingListManager(storage: storage).stores == ["Lidl"])
+        #expect(ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore).stores == ["Lidl"])
     }
 
     @Test("Renaming a store retags its items")
     func renameRetagsItems() throws {
-        let sut = ShoppingListManager(storage: try makeStorage())
+        let sut = ShoppingListManager(storage: try makeStorage(), shoppingListStore: InMemoryShoppingListStore())
         sut.addStore("Sainsburys")
         sut.addItem(name: "Eggs")
         let id = try #require(sut.items.first?.id)
@@ -89,7 +90,7 @@ struct GroceryStoresTests {
 
     @Test("Deleting a store untags its items but keeps them")
     func deleteUntagsItems() throws {
-        let sut = ShoppingListManager(storage: try makeStorage())
+        let sut = ShoppingListManager(storage: try makeStorage(), shoppingListStore: InMemoryShoppingListStore())
         sut.addStore("Aldi")
         sut.addItem(name: "Rice")
         let id = try #require(sut.items.first?.id)
@@ -103,7 +104,7 @@ struct GroceryStoresTests {
 
     @Test("Assigning tags only the chosen items, and unassigning removes the tag")
     func bulkAssignAndUnassign() throws {
-        let sut = ShoppingListManager(storage: try makeStorage())
+        let sut = ShoppingListManager(storage: try makeStorage(), shoppingListStore: InMemoryShoppingListStore())
         sut.addStore("Lidl")
         sut.addItem(name: "Apples")
         sut.addItem(name: "Pasta")

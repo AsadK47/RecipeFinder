@@ -18,7 +18,8 @@ import Foundation
 
     @Test func shopping_mergeIsNonDestructiveAndPersists() {
         let storage = Self.makeStorage()
-        let sut = ShoppingListManager(storage: storage)
+        let shoppingListStore = InMemoryShoppingListStore()
+        let sut = ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore)
         sut.addItem(name: "Milk")
 
         sut.merge([ShoppingListModel(name: "Backup Bread")])
@@ -26,12 +27,12 @@ import Foundation
         #expect(sut.items.contains { $0.name == "Milk" })
         #expect(sut.items.contains { $0.name == "Backup Bread" })
 
-        let reloaded = ShoppingListManager(storage: storage)
+        let reloaded = ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore)
         #expect(reloaded.items.count == 2)
     }
 
     @Test func shopping_mergeDedupesById() {
-        let sut = ShoppingListManager(storage: Self.makeStorage())
+        let sut = ShoppingListManager(storage: Self.makeStorage(), shoppingListStore: InMemoryShoppingListStore())
         let id = UUID()
         sut.merge([ShoppingListModel(id: id, name: "Eggs")])
         sut.merge([ShoppingListModel(id: id, name: "Eggs-dupe")])

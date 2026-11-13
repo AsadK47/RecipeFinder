@@ -6,15 +6,18 @@ final class ShoppingListManagerTests: XCTestCase {
 
     private var storage: LocalStore!
     private var sut: ShoppingListManager!
+    private var shoppingListStore: InMemoryShoppingListStore!
 
     override func setUp() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         storage = LocalStore(userDefaults: defaults)
-        sut = ShoppingListManager(storage: storage)
+        shoppingListStore = InMemoryShoppingListStore()
+        sut = ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore)
     }
 
     override func tearDown() async throws {
         sut = nil
+        shoppingListStore = nil
         storage = nil
     }
 
@@ -264,7 +267,7 @@ final class ShoppingListManagerTests: XCTestCase {
 
     func testPersistence_acrossReload() {
         sut.addItem(name: "Tomatoes", quantity: 3, category: "Produce")
-        let sut2 = ShoppingListManager(storage: storage)
+        let sut2 = ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore)
         XCTAssertEqual(sut2.items.count, 1)
         XCTAssertEqual(sut2.items[0].name, "Tomatoes")
     }

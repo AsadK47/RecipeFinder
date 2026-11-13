@@ -1,14 +1,25 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2, 3a cook dates, 3b collections, 3c meal plans (c32a754) merged. Nothing on a branch.
+Data safety 1/4 (claimed): slice 3d shopping list + grocery stores → `ShoppingItemEntity`/`ShoppingStoreEntity` on
+branch `agent/shopping-core-data` (new `Persistence/Core/ShoppingListStore.swift`, two `MirroredSnapshot`s in
+`ShoppingListManager`, Reset → `removeAllShoppingData()`, tests `ShoppingListMigrationTests`). Waiting on CI.
 
 ## Next action
-Slice 3d: shopping list → ShoppingListItemEntity via `MirroredSnapshot` (copy MealPlanStore.swift: `*Storing`
-protocol + CoreData store upserting by id with sortOrder + `setIfChanged`, `stores` JSON-encoded, in-memory fake,
-Reset → `removeAll…()` in DataManagementSettingsView). Then kitchen, badges, profile.
+Check Build & Test on `agent/shopping-core-data`; fix; challenge pass; merge. Then slice 3e kitchen items/inventory,
+then badges, profile.
 
 ## Decisions (why)
+- **Data safety 1/4 slice 3d (shopping)**: one `ShoppingListStoring` for both items and grocery stores (same manager,
+  two `MirroredSnapshot`s, each its own flag). Store names have no id → rows matched by name (unique per
+  `GroceryStoreNames`), new rows get a fresh UUID, a rename = delete + insert (acceptable; sync dedupe later). "Seed
+  stores from item tags" now only when the stores blob never existed AND the loaded list is empty (blob checked
+  before load), so a saved empty list stays empty. Legacy-category normalisation still runs on load and saves through
+  the mirror. **Pre-mortem:** (1) list/stores lost on update → `everyBlobItemAndStore…`, `aFailedWriteLeavesTheKeys…`;
+  (2) a field lost in Core Data (stores tags, isCompleted≠isChecked, recurring, sub-second dateAdded) →
+  `coreDataStoreRoundTripsEveryFieldInOrder`, `…KeepsTodaysExactTimes`, `anItemAddedNowIsNotRewrittenOnRelaunch`;
+  (3) Reset leaves items/stores or seeds them back → `resetAsSettingsRunsItClearsTheList`,
+  `aResetWhoseDeleteFailsIsFinishedNextLaunch`, `anEmptyStoreListTheCookSavedIsNotReseeded`.
 - **Data safety 1/4 slice 3c (meal plans)**: reuses `MirroredSnapshot` unchanged; `setIfChanged` made internal and
   takes `NSObject?` (notes/reminderTime can be cleared). A row without id/recipeId/date is skipped on read; unknown
   mealTime → dinner, missing servings → 4. Reset doesn't cancel pending reminders (wasn't before either — not this

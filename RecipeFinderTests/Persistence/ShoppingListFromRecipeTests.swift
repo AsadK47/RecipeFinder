@@ -9,7 +9,7 @@ import Foundation
     private func makeManager() -> ShoppingListManager {
         ShoppingListManager(storage: LocalStore(
             userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-        ))
+        ), shoppingListStore: InMemoryShoppingListStore())
     }
 
     private func ing(_ name: String, qty: Double = 1.0, unit: String = "") -> Ingredient {
@@ -240,10 +240,11 @@ import Foundation
     @Test func addIngredients_persistsAcrossManagerRestart() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = LocalStore(userDefaults: defaults)
-        let first = ShoppingListManager(storage: storage)
+        let shoppingListStore = InMemoryShoppingListStore()
+        let first = ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore)
         first.addIngredients(from: recipe(ingredients: [ing("Oats", qty: 2.0)]))
 
-        let second = ShoppingListManager(storage: storage)
+        let second = ShoppingListManager(storage: storage, shoppingListStore: shoppingListStore)
         #expect(second.items.count == 1)
         #expect(second.items.first?.name == "Oats")
         #expect(second.items.first?.quantity == 2)

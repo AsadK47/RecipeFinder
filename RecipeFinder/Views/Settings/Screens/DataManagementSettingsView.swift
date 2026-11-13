@@ -290,7 +290,7 @@ struct DataManagementSettingsView: View {
         recipeStore.load()
 
         // Refresh in-memory managers so the UI reflects the reset immediately.
-        ShoppingListManager.shared.reload()
+        ShoppingListManager.shared.removeAllShoppingData()
         KitchenInventoryManager.shared.reload()
         MealPlanningManager.shared.removeAllMealPlans()
         CollectionManager.shared.removeAllCollections()
