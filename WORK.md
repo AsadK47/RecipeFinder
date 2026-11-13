@@ -1,16 +1,23 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 1 merged (38feeee); item still claimed 🚧.
+`agent/data-safety-2-wire-sync` (1f4cb8c): Data safety 2/4 slice 2a — `SyncPreference` flag (key
+`iCloudSyncEnabled`, off) + `SyncRules.iCloudRules(storage:id:)` wired into collections, meal plans, shopping
+items/stores, kitchen items/inventory, badges. Waiting on Build & Test; challenge pass running.
 
 ## Next action
-Data safety 2/4 slice 2 = wire `SyncRules` into every manager (id closures; `isOn` reads a
-`SyncPreference` flag, still false), reload managers on `NSPersistentStoreRemoteChange`, profile store keeps
-newest row instead of deleting other-uuid rows. Slice 3 = `NSPersistentCloudKitContainer` + entitlement
-(iCloud.com.asadkhan.recipefinder) + Settings toggle/status. Slice 4 = recipe photos entity + first-sync dedupe.
-Slice 5 = Privacy Policy §7.
+Merge 2a when green. Slice 2b = ProfileManager sync rules (constant id) + profile store keeps the newest row instead
+of deleting other-uuid rows, and reload managers on `NSPersistentStoreRemoteChange`. Slice 3 =
+`NSPersistentCloudKitContainer` + entitlement (iCloud.com.asadkhan.recipefinder) + Settings toggle/status (sets
+`SyncPreference.key`). Slice 4 = recipe photos entity + first-sync dedupe. Slice 5 = Privacy Policy §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 2a (wire rules)**: profile left out — its store deletes other-uuid rows and two devices
+  have different uuids, so it needs the newest-row store change in the same slice (2b). Shopping stores use the
+  name as id (a store name added on two devices is one store — wanted). Flag lives in `LocalStore`, read per
+  `load()`, so slice 3's toggle only has to set it. **Pre-mortem:** (1) a manager missed → its list loses other
+  devices' rows → one `withSyncOn…AnotherDeviceAdded…IsKept` test per manager; (2) sync switches on by accident →
+  `syncIsOffUntilTheCookTurnsItOn`; (3) sync-off behaviour changes → existing migration suites unchanged and green.
 - **Data safety 2/4 slice 1 (sync-safe snapshot)**: under sync the store can hold rows this device never saw, so the
   1/4 "kept copy wins / replace store" rule would delete them everywhere. With `SyncRules.isOn()` true (read per
   `load()`): store wins on load and the kept copy follows it; save = `SyncMerge.applyEdits(base: lastKnown, local,
