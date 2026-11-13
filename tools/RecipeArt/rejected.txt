@@ -1,43 +1,32 @@
-# Pictures that looked wrong in review (2026-11-13). Removed from Output so RecipeArt redraws them;
-# tools/bundle-recipe-art.py skips these ids until a redraw is reviewed and the line is deleted.
+# Pictures that failed review. Removed from Output so RecipeArt redraws them; tools/bundle-recipe-art.py skips these
+# ids until a redraw passes review and its line is deleted. Third review 2026-11-13: 43 redraws accepted, these remain.
 ABDC4CAD-A07E-5FAE-89EF-27F7E6307D15  # Apple Jalebi (Gluten-Free, Vegan)
 3F442B16-6891-5CF6-9624-479AC1F72621  # Chocolate Chip Shortbread
-8414B685-0EE4-5AA2-9DB6-16541BDF99E7  # Chocolate Mud Cake
-8BCF6D05-08F7-53DC-B774-11EB1A5A6653  # Chocolate Tiramisu with Cream Cheese
-14BB3879-662D-568E-912B-DB62936CD11B  # Classic Chocolate Brownies
 51AEEBDB-4A00-5D34-A800-B992E1AE7E52  # Edible Cookie Dough
-C5DF0156-A996-5B50-9E0D-F9E77C124C64  # Instant Pot Chocolate Cheesecake
 1C02EC7A-E493-542E-A97F-CF0B44C2C255  # Instant Pot Kheer
 94F90ACB-F2D4-5831-9987-C785FB9A8F66  # Pastry Cream
 5C27C796-2FE8-52AD-9F03-10A0C08ADF12  # Snow Skin Mooncakes with Custard Filling
 E0E715C7-60DB-5FCC-8179-7803482538DE  # Snowy Mooncakes with Custard Filling
-41A250F1-11A1-51F4-B07B-C537FC795A2E  # Soft & Chewy Sugar Cookies
-FE6E9A71-6FC4-5364-980E-F49B56456C4D  # Sourdough Discard Steamed Cakes (Huat Kueh)
-A28173B3-523D-5925-BCFB-30C64480A614  # Thai Banana Pancakes (Banana Roti)
-29483355-96DD-5142-8507-5780FCD8398A  # Vegan Lemon Drizzle Buns
-4F5BEAEE-200D-5697-9CA0-1B4910366DFE  # Yule Log
 84CF6698-F334-5503-B22A-04C50EAA3F87  # Homemade Chai Concentrate
-491032DE-217E-59D2-8436-6F7AAF272B08  # Air Fryer Chicken Nuggets
 3A39471A-95CD-59E3-AB3A-EFD9DBF1B660  # Air Fryer Crispy Chilli Beef
 E10DDDB3-92F2-5F5E-BB33-2559632752B5  # Beef in Black Bean Sauce
 B2DC5108-C423-52BE-91C3-57A0F357E958  # Beijing Beef
 995F45FD-B7D5-5757-9554-9530AD407FD8  # Chinese Salt and Pepper Chicken
 8972EDC4-134F-55F4-82C7-60E1480D8B8F  # Crunchy Panko-Crusted Cod
 1B67F2AB-0F3B-5AB7-BE98-E56CAFEFA64D  # Harissa Fish Pie
-ABCF9B09-4223-5EA7-B51C-EDC6370F908B  # Instant Pot Chicken Congee
-01820B4D-E202-5E87-94BF-F3495A4AE514  # Instant Pot Kerala Ground Meat Coconut Curry
 E1ECE4B9-A74A-531D-8062-6127E1E295EB  # Instant Pot Shami Kebab
 D9E89694-2D6A-5BE9-AE33-16F7D06A3E54  # Mary Berry's Fish Pie
 FE860029-E310-5DE8-A92C-0A513B166441  # Moroccan Jackfruit 'Lamb' with Lemon Couscous
 F77C971C-EC26-553B-A769-3549CBD6A77C  # Salt and Pepper Tofu
 899C1D53-0308-54CE-9444-611D2AC5273B  # Slow Cooker Tamil-Style Dal
-121924F5-4885-59C1-8CAC-C01E908AEC64  # Tandoori Chicken
 D0644D5D-5A83-52FD-9970-BABFBE628E3F  # Yin Yang Fried Rice
 7E845D5B-D730-50C9-94F6-E84B5DECB06F  # Crispy Bing Bread
 F267A604-E8A9-50A5-9265-3AE34846C4BD  # Masala Chips
 101A4917-3941-5710-A83F-3C6A333DC8F1  # Red Onion Pickle
 806B9C72-3492-592C-93A6-97981C61A43D  # Rice Cooker Mexican Rice
-E2C37878-8F7E-5D9F-A424-89C5E519CBA0  # Rice Cooker Pilau
-497E4FD0-4947-50FA-8E31-8335464B2FD0  # Whole Wheat Sourdough Bread
-CAFEC7B3-9904-5670-922A-47B1D8C0F50D  # Tomato Tofu Soup
 88BB2EB0-8433-527D-A276-FAAD3E92C837  # Radish Cake
+285D210A-9C7E-5203-8553-1F2FAE67962C  # Sri Lankan Chicken Kottu Roti
+61AF68AF-085E-537C-8782-AD99449717A0  # Chicken Kothu Roti
+84F0302A-131A-5AD1-92E9-DE0E5CD921A1  # Fudgy Eggless Brownies
+AA7C40D6-4750-55BC-9756-5086CE84D718  # Wholemeal Flatbreads
+DC7B1424-7563-50D1-9371-5B2FDD47459F  # Baked Smoked Turkey Legs
