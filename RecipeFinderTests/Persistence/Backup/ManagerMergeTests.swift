@@ -77,7 +77,8 @@ import Foundation
 
     @Test func mealPlans_mergeIsNonDestructiveAndPersists() {
         let storage = Self.makeStorage()
-        let sut = MealPlanningManager(storage: storage)
+        let mealPlanStore = InMemoryMealPlanStore()
+        let sut = MealPlanningManager(storage: storage, mealPlanStore: mealPlanStore)
         let existing = MealPlanModel(recipeId: UUID(), recipeName: "Existing", date: Date(), mealTime: .breakfast)
         sut.addMealPlan(existing)
 
@@ -87,12 +88,12 @@ import Foundation
         #expect(sut.mealPlans.contains { $0.recipeName == "Existing" })
         #expect(sut.mealPlans.contains { $0.recipeName == "Imported" })
 
-        let reloaded = MealPlanningManager(storage: storage)
+        let reloaded = MealPlanningManager(storage: storage, mealPlanStore: mealPlanStore)
         #expect(reloaded.mealPlans.count == 2)
     }
 
     @Test func mealPlans_mergePreservesIncomingDate() {
-        let sut = MealPlanningManager(storage: Self.makeStorage())
+        let sut = MealPlanningManager(storage: Self.makeStorage(), mealPlanStore: InMemoryMealPlanStore())
         let created = Date(timeIntervalSince1970: 5_000)
         let plan = MealPlanModel(recipeId: UUID(), recipeName: "Backup", date: Date(), mealTime: .lunch, createdDate: created)
 

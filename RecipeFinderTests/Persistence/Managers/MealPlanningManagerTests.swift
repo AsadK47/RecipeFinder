@@ -7,16 +7,19 @@ final class MealPlanningManagerTests: XCTestCase {
 
     private var storage: LocalStore!
     private var sut: MealPlanningManager!
+    private var mealPlanStore: InMemoryMealPlanStore!
     private let recipeId = UUID()
 
     override func setUp() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         storage = LocalStore(userDefaults: defaults)
-        sut = MealPlanningManager(storage: storage)
+        mealPlanStore = InMemoryMealPlanStore()
+        sut = MealPlanningManager(storage: storage, mealPlanStore: mealPlanStore)
     }
 
     override func tearDown() async throws {
         sut = nil
+        mealPlanStore = nil
         storage = nil
     }
 
@@ -151,7 +154,7 @@ final class MealPlanningManagerTests: XCTestCase {
 
     func testPersistence_acrossReload() {
         sut.addMealPlan(makePlan(recipeName: "Pancakes"))
-        let sut2 = MealPlanningManager(storage: storage)
+        let sut2 = MealPlanningManager(storage: storage, mealPlanStore: mealPlanStore)
         XCTAssertEqual(sut2.mealPlans.count, 1)
         XCTAssertEqual(sut2.mealPlans[0].recipeName, "Pancakes")
     }
@@ -357,7 +360,7 @@ struct RecurringMealPlanTests {
     private func makeManager() -> MealPlanningManager {
         MealPlanningManager(storage: LocalStore(
             userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-        ))
+        ), mealPlanStore: InMemoryMealPlanStore())
     }
 
     private func makePlan(
@@ -520,13 +523,14 @@ struct MealPlanRemovalPersistenceTests {
     func removeBySlot_persistsAcrossReload() throws {
         let storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
         let date = Date()
-        let sut = MealPlanningManager(storage: storage)
+        let mealPlanStore = InMemoryMealPlanStore()
+        let sut = MealPlanningManager(storage: storage, mealPlanStore: mealPlanStore)
         sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Porridge", date: date, mealTime: .breakfast))
         sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Soup", date: date, mealTime: .lunch))
 
         sut.removeMealPlan(for: date, mealTime: .breakfast)
 
-        let reloaded = MealPlanningManager(storage: storage)
+        let reloaded = MealPlanningManager(storage: storage, mealPlanStore: mealPlanStore)
         #expect(reloaded.mealPlans.map(\.recipeName) == ["Soup"])
     }
 }
@@ -548,7 +552,7 @@ struct WeekShoppingSummaryServingsTests {
     private func summary(planned servings: Int, baseServings: Int) -> WeekShoppingSummary {
         let sut = MealPlanningManager(storage: LocalStore(
             userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-        ))
+        ), mealPlanStore: InMemoryMealPlanStore())
         let recipe = makeRecipe(baseServings: baseServings)
         let start = Calendar.current.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
         sut.addMealPlan(MealPlanModel(

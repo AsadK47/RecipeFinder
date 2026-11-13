@@ -38,13 +38,17 @@ final class MealPlanningManager: MealPlanningManaging {
 
     private(set) var mealPlans: [MealPlanModel] = []
 
-    @ObservationIgnored private let saveKey = "mealPlansStorage"
-    @ObservationIgnored private let storage: LocalStore
+    /// Plans live in `MealPlanEntity` rows; the old `LocalStore` blob is kept current for one release.
+    @ObservationIgnored private let mirror: MirroredSnapshot<MealPlanModel>
     @ObservationIgnored private let badgeManager: BadgeManager
     @ObservationIgnored private let reminders: any MealReminderScheduling
 
+    static let blobKey = "mealPlansStorage"
+
     private init() {
-        self.storage = .shared
+        self.mirror = MealPlanningManager.makeMirror(
+            storage: .shared, store: CoreDataMealPlanStore(persistence: .shared)
+        )
         self.badgeManager = .shared
         self.reminders = NotificationManager.shared
         loadMealPlans()
@@ -52,12 +56,27 @@ final class MealPlanningManager: MealPlanningManaging {
 
     init(
         storage: LocalStore,
+        mealPlanStore: any MealPlanStoring,
         badgeManager: BadgeManager = .shared,
         reminders: any MealReminderScheduling = NotificationManager.shared
     ) {
-        self.storage = storage
+        self.mirror = MealPlanningManager.makeMirror(storage: storage, store: mealPlanStore)
         self.badgeManager = badgeManager
         self.reminders = reminders
+        loadMealPlans()
+    }
+
+    private static func makeMirror(storage: LocalStore, store: any MealPlanStoring) -> MirroredSnapshot<MealPlanModel> {
+        MirroredSnapshot(
+            blobKey: blobKey, storage: storage,
+            fetch: { try store.fetchMealPlans() },
+            replace: { try store.replaceMealPlans(with: $0) }
+        )
+    }
+
+    /// Erase & Reset: removes every plan. If the store can't delete now, the next launch finishes it.
+    func removeAllMealPlans() {
+        mirror.removeAll()
         loadMealPlans()
     }
 
@@ -340,14 +359,10 @@ final class MealPlanningManager: MealPlanningManaging {
     }
 
     private func saveMealPlans() {
-        storage.setEncodable(mealPlans, forKey: saveKey)
+        mirror.save(mealPlans)
     }
-    
+
     private func loadMealPlans() {
-        if let decoded = storage.decodable([MealPlanModel].self, forKey: saveKey) {
-            mealPlans = decoded
-        } else {
-            mealPlans = []
-        }
+        mealPlans = mirror.load()
     }
 }

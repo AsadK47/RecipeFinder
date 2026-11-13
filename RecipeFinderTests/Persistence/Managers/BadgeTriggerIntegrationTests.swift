@@ -25,7 +25,7 @@ struct BadgeTriggerIntegrationTests {
     private func makeMealManager(badgeManager: BadgeManager) -> MealPlanningManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         return MealPlanningManager(
-            storage: LocalStore(userDefaults: defaults),
+            storage: LocalStore(userDefaults: defaults), mealPlanStore: InMemoryMealPlanStore(),
             badgeManager: badgeManager
         )
     }

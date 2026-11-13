@@ -1,14 +1,21 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2, 3a (cook dates), 3b (collections, f68fc84) merged. Nothing on a branch.
+Data safety 1/4 slice 3c (meal plans → MealPlanEntity) on `agent/data-safety-1-meal-plans`: MealPlanStore.swift
+(protocol + CoreDataMealPlanStore), MealPlanningManager on `MirroredSnapshot`, Reset → `removeAllMealPlans()`,
+MealPlanMigrationTests. Waiting on Build & Test.
 
 ## Next action
-Slice 3c: meal plans → MealPlanEntity via `MirroredSnapshot` (copy CollectionManager: `*Storing` protocol with
-fetch/replace, CoreData store upserting by id with sortOrder + `setIfChanged`, in-memory fake, Reset →
-`removeAll…()` in DataManagementSettingsView). Then shopping list, kitchen, badges, profile.
+Get the branch green, run deep-review + challenge agents, merge. Then slice 3d: shopping list (same pattern).
 
 ## Decisions (why)
+- **Data safety 1/4 slice 3c (meal plans)**: reuses `MirroredSnapshot` unchanged; `setIfChanged` made internal and
+  takes `NSObject?` (notes/reminderTime can be cleared). A row without id/recipeId/date is skipped on read; unknown
+  mealTime → dinner, missing servings → 4. Reset doesn't cancel pending reminders (wasn't before either — not this
+  slice). **Pre-mortem:** (1) plans lost on update → `everyBlobPlanBecomesARow…`, `aFailedWriteLeavesTheKeyUnmarked…`;
+  (2) a field lost in Core Data (notes, reminder, recurring) or sub-second dates failing the check every launch →
+  `coreDataStoreRoundTripsEveryFieldInOrder`, `…KeepsTodaysExactTimes`, `…ClearsOptionalFields`; (3) Reset leaves
+  plans → `resetAsSettingsRunsItClearsPlans`, `aResetWhoseDeleteFailsIsFinishedNextLaunch`.
 - **Data safety 1/4 slice 3b (collections)**: whole-list data ≠ append-only cook dates, so new generic
   `MirroredSnapshot` instead of `LegacyBlobMigration.run` (its multiset "insert what's missing" would duplicate a
   collection renamed while in blob mode, and can't carry deletes). Rule: blob is always written first, so it's never

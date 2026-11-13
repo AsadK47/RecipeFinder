@@ -386,6 +386,7 @@
 		436B6ECE6549A3AF93D16465 /* LegacyBlobMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD34D0E247985BEB47EA62EB /* LegacyBlobMigration.swift */; };
 		FF454AC3E71B1FC112817BB4 /* CookDateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7450BAA6559F962B1042426D /* CookDateStore.swift */; };
 		65CEBB52A31864FD96940B68 /* CollectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF0424B94EFE55BBA89C1BD /* CollectionStore.swift */; };
+		5726CFE47960FF1B397B93B3 /* MealPlanStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3090189F2711AE1FA04B2956 /* MealPlanStore.swift */; };
 		678D5AA6B6A42AEF6B0AC868 /* MirroredSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */; };
 		F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C33045D76D008BF231 /* Ingredient.swift */; };
 		F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */; };
@@ -459,6 +460,7 @@
 		00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */; };
 		2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */; };
 		41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */; };
+		B14BF369957DA93E91581116 /* MealPlanMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */; };
 		F3E9D29A30500069008BF231 /* PersistenceRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */; };
 		F3E9D2A230515C08008BF231 /* TimeExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */; };
 		F3E9D2A430515C14008BF231 /* RecipeIngredientMatchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */; };
@@ -910,6 +912,7 @@
 		AD34D0E247985BEB47EA62EB /* LegacyBlobMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyBlobMigration.swift; sourceTree = "<group>"; };
 		7450BAA6559F962B1042426D /* CookDateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateStore.swift; sourceTree = "<group>"; };
 		0FF0424B94EFE55BBA89C1BD /* CollectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionStore.swift; sourceTree = "<group>"; };
+		3090189F2711AE1FA04B2956 /* MealPlanStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanStore.swift; sourceTree = "<group>"; };
 		8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirroredSnapshot.swift; sourceTree = "<group>"; };
 		F3E9D1C33045D76D008BF231 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNameFormatter.swift; sourceTree = "<group>"; };
@@ -981,6 +984,7 @@
 		E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackupTests.swift; sourceTree = "<group>"; };
 		16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateMigrationTests.swift; sourceTree = "<group>"; };
 		2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionMigrationTests.swift; sourceTree = "<group>"; };
+		CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanMigrationTests.swift; sourceTree = "<group>"; };
 		F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceRecoveryTests.swift; sourceTree = "<group>"; };
 		F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeExtractorTests.swift; sourceTree = "<group>"; };
 		F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIngredientMatchingTests.swift; sourceTree = "<group>"; };
@@ -1542,6 +1546,7 @@
 				AD34D0E247985BEB47EA62EB /* LegacyBlobMigration.swift */,
 				7450BAA6559F962B1042426D /* CookDateStore.swift */,
 				0FF0424B94EFE55BBA89C1BD /* CollectionStore.swift */,
+				3090189F2711AE1FA04B2956 /* MealPlanStore.swift */,
 				8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */,
 			);
 			path = Core;
@@ -1855,6 +1860,7 @@
 				E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */,
 				16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */,
 				2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */,
+				CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */,
 				F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */,
 				F3E9D2A53052A02E008BF231 /* RecipeSaveResultTests.swift */,
 				F3D4056330585ED10076834D /* RecipePersistenceRoundTripTests.swift */,
@@ -2405,6 +2411,7 @@
 				436B6ECE6549A3AF93D16465 /* LegacyBlobMigration.swift in Sources */,
 				FF454AC3E71B1FC112817BB4 /* CookDateStore.swift in Sources */,
 				65CEBB52A31864FD96940B68 /* CollectionStore.swift in Sources */,
+				5726CFE47960FF1B397B93B3 /* MealPlanStore.swift in Sources */,
 				678D5AA6B6A42AEF6B0AC868 /* MirroredSnapshot.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				C721558A8AB2C6ADFFEDE856 /* RemoteImageFetcher.swift in Sources */,
@@ -2712,6 +2719,7 @@
 				00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */,
 				2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */,
 				41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */,
+				B14BF369957DA93E91581116 /* MealPlanMigrationTests.swift in Sources */,
 				F3B7D9173079017B00991908 /* SeedCorpusParseQualityTests.swift in Sources */,
 				F3B7D8DC30684E5900991908 /* RecipeImageViewTests.swift in Sources */,
 				A1C0FFEE0000000000000A04 /* RecipePlaceholderArtTests.swift in Sources */,

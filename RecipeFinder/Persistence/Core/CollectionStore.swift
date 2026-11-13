@@ -116,9 +116,9 @@ final class CoreDataCollectionStore: CollectionStoring {
     }
 }
 
-private extension NSManagedObject {
-    /// Unchanged rows stay unchanged, so a save (and later sync) only sees the collections that were edited.
-    func setIfChanged(_ value: NSObject, forKey key: String) {
+extension NSManagedObject {
+    /// Unchanged rows stay unchanged, so a save (and later sync) only sees the rows that were edited. Nil clears.
+    func setIfChanged(_ value: NSObject?, forKey key: String) {
         guard (self.value(forKey: key) as? NSObject) != value else { return }
         setValue(value, forKey: key)
     }
