@@ -1,13 +1,25 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2, 3a–3f merged (3f badges = b48ec5a). Nothing on a branch.
+Data safety 1/4 (claimed): slices 1–2, 3a–3f merged (3f badges = b48ec5a). Slice 3g (profile) on
+`agent/data-safety-profile`: `ProfileStore.swift` + `ProfileMigrationTests.swift`, `ProfileManager` on `MirroredSnapshot`.
 
 ## Next action
 Slice 3g: profile → `ProfileEntity` (photo Binary, external storage) via `MirroredSnapshot` — last slice; then tick
 Data safety 1/4 (check *Done when*), run Screenshots once on main.
 
 ## Decisions (why)
+- **Data safety 1/4 slice 3g (profile)**: one `ProfileRecord` (uuid, names, chef type raw, created date, photo JPEG)
+  through `MirroredSnapshot` as a 0/1-element list; kept copy = the old six `profile*` keys (blob closures, like
+  badges). Kept copy is nil only when `profileUUID` is missing (every older build wrote it first) → store wins then.
+  No profile anywhere → a fresh uuid is made and saved (as before). Photo held in memory (was read from defaults
+  on demand; same bytes). Reset now calls `removeProfile()` (loadProfile alone would bring the store's profile back
+  after clearAll). Designated `init(storage:profileStore:)` only loads; welcome badge + stats stay in the shared init
+  (tests must not touch other singletons). Store: one row, matched by uuid, sync duplicates ignored/deleted.
+  **Pre-mortem:** (1) name/photo/chef type lost on update → `everyProfileKeyBecomesOneRow…`, `aFailedWrite…`,
+  `anUnreadableStore…`; (2) profile rewritten every launch / photo bytes differ → `anUnchangedProfileIsNotRewritten…`,
+  `coreDataStoreRoundTripsEveryField`; (3) Reset keeps the old name/photo → `resetAsSettingsRunsItClearsTheProfile`,
+  `aResetWhoseDeleteFailsIsFinishedNextLaunch`.
 - **Data safety 1/4 slice 3f (badges)**: the old kept copy is two keys (`unlockedBadges` dict + `shownBadgeCelebrations`
   ids), so `MirroredSnapshot` gained a designated init taking read/write/remove closures (old init now delegates,
   unchanged behaviour) — the old two-key shape stays current for downgrade, no new blob key. One `EarnedBadgeRecord`

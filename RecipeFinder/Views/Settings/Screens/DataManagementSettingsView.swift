@@ -296,7 +296,7 @@ struct DataManagementSettingsView: View {
         CollectionManager.shared.removeAllCollections()
         BadgeManager.shared.removeAllBadges()
         CookingStreakManager.shared.removeAllCookDates()
-        ProfileManager.shared.loadProfile()
+        ProfileManager.shared.removeProfile()
         ProfileManager.shared.updateStats()
 
         dataCleared = true
