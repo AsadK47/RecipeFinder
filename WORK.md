@@ -9,14 +9,15 @@ manager on CloudKit-import transactions, wired in `AppRootView`), iCloud/CloudKi
 Get the branch green, review fixes, ff-merge, then confirm `testflight.yml` on main still signs/uploads (first build
 with the iCloud entitlement). Then slice 3b = first-sync dedupe (recipes by id; seeded/bundled recipes have stable
 ids) — must ship BEFORE sync turns on. Slice 3c = Settings toggle + status (on by default when signed in; Reset copy
-warns it erases on every device; mirroring follows the launch-time value). Then photos (4), Privacy Policy §7 (5).
+warns it erases on every device; mirroring follows the launch-time value). Toggle slice also: push entitlement + background mode, CloudKit-error ≠ corrupt store in recovery,
+testable `reloadAll`, history purge (see docs/CHALLENGES.md slice 3a). Then photos (4), Privacy Policy §7 (5).
 
 ## Decisions (why)
 - **Data safety 2/4 slice 3a (container)**: reordered — dedupe before the switch turns on: a reinstall seeds the 332
   bundled recipes and iCloud returns the old 332 → duplicates on the owner's reinstall test. Reload is driven by
   persistent history, author `NSCloudKitMirroringDelegate.import` only (the remote-change notification fires for
   this device's own saves too → reload loop). Token starts at launch (launch already loaded everything), kept in
-  memory. History tracking always on (turning it off later opens the store read-only). Options set explicitly to
+  memory; reloader only starts while sync is on (challenge: wasted history read per save). History tracking always on (turning it off later opens the store read-only). Options set explicitly to
   nil when off (the entitlement would otherwise make the container mirror by default). Push (aps-environment) not
   added: imports still run on launch/foreground; avoids a new capability on the App ID — add with the toggle slice.
   Turn-on slice must: not let `attemptStoreRecovery` move the store aside on a CloudKit setup error.

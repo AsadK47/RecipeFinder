@@ -208,3 +208,8 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **New device names itself before iCloud's profile arrives** → that edit loses to the older named profile.
 - **Reset under sync** can be undone by an offline device pushing its old named row (named beats empty); slice 3's Reset copy must warn, and Reset should turn sync rules into "erase everywhere".
 - **Every write deletes other rows**: a concurrent edit on another device can be dropped by CloudKit's merge.
+- **Slice 3a — older builds open the store read-only** once a build with history tracking has opened it (a tester reinstalling an older TestFlight build): saves fail, kept copies hold the data. No fix for shipped builds; never remove `NSPersistentHistoryTrackingKey`.
+- **Slice 3a — history never purged**: every save adds history rows (sync on or off) → file grows. Follow-up: purge transactions older than ~7 days at launch.
+- **Slice 3a — any load error → `attemptStoreRecovery`** moves the store aside; with mirroring on, a CloudKit setup/model error would look like total loss. Turn-on slice must tell those apart (and add a CloudKit model check).
+- **Slice 3a — reloader wiring untested** (`AppRootView.startCloudSyncReloader` / manager list): composition-root glue over `.shared` singletons; the turn-on slice should extract `reloadAll` with fakes.
+- **Slice 3a — no push entitlement** (`aps-environment`, `remote-notification` background mode): imports arrive at launch/foreground only until the toggle slice adds them.

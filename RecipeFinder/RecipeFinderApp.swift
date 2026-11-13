@@ -138,8 +138,10 @@ struct AppRootView: View {
         .preferredColorScheme(preferredColorScheme)
     }
 
+    /// Only while the store mirrors to iCloud (same launch-time switch as `PersistenceController.shared`): with sync
+    /// off there are never imports, so the history read after every save would be wasted work.
     private func startCloudSyncReloader() {
-        guard cloudSyncReloader == nil else { return }
+        guard cloudSyncReloader == nil, SyncPreference.isOn(in: .shared) else { return }
         let reloader = CloudSyncReloader(container: persistenceController.container) {
             RecipeStore.shared.load()
             ShoppingListManager.shared.reload()
