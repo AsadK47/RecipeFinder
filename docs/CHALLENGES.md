@@ -208,3 +208,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **New device names itself before iCloud's profile arrives** → that edit loses to the older named profile.
 - **Reset under sync** can be undone by an offline device pushing its old named row (named beats empty); slice 3's Reset copy must warn, and Reset should turn sync rules into "erase everywhere".
 - **Every write deletes other rows**: a concurrent edit on another device can be dropped by CloudKit's merge.
+
+### 2026-11-13 · Data safety 2/4 slice 3a (CloudKit container, sync off) — fixed: history tracking can't be dropped without the store going read-only → root CLAUDE.md hard constraint; relationship rules of the model check now tested. Noted, not fixed:
+- **CI builds unsigned** (`CODE_SIGNING_ALLOWED=NO`): a bad iCloud profile only shows in the TestFlight run after merge — check it.
+- **No test drives `retryWithoutSync` or `.shared`'s launch flag**: a CloudKit load failure can't be produced reliably in an unsigned simulator; the fallback mirrors `attemptStoreRecovery`'s reload pattern.
+- **The model check is ours, not Apple's**: a rule it misses fails at load with sync on → falls back to local (no data moved).
+- **History never purged** while sync is off, and turning history on isn't a model change so no `StoreBackup` copy is taken — small (one transaction per save); purge in a later slice.
+- **After a fallback `SyncPreference` still says on** — slice 3b's status must show "off on this device".
