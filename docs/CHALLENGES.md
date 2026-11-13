@@ -195,3 +195,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **`copyIn` re-read during an import** can fail the check → session runs on the kept copy (then add-only next launch).
 - **Merged rows not shown until next `load()`**; `syncActive` is per-load — slice 2 reloads on remote change.
 - **Duplicate ids**: first wins, no log.
+
+### 2026-11-13 · Data safety 2/4 slice 2a (sync rules wired into managers) — fixed: the badge store lists rows by id, so adding the kept copy always failed its re-read check and badges stayed on the kept copy for good (now checked by id, any order; test). Noted, not fixed:
+- **Duplicates by meaning**: "Eggs" added to the kitchen/shopping list, or the same meal slot filled, on two devices gets two UUIDs → both kept; managers' name/slot dedupe only runs on add (slice 4 dedupe should cover these too).
+- **Store names as ids**: "Tesco" vs "tesco" from two devices both survive; a rename on one device leaves the other's item tags pointing at the old name.
+- **Category fix-up on load** (Kitchen/Shopping) saves straight away — two app versions normalising differently would flip values between devices.
+- **Tests** don't run a manager save under sync (`applyEdits` covered only in `SyncMergeTests`) and don't distinguish a wrong id closure.
