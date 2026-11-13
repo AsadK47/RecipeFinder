@@ -84,6 +84,32 @@ import Foundation
         #expect(CloudSyncStore.problems(in: model) == ["Thing.parent has no inverse"])
     }
 
+    @Test func aRequiredOrderedDenyRelationshipReportsEachProblem() {
+        let model = Self.model(entity: { entity in
+            let children = NSRelationshipDescription()
+            children.name = "children"
+            children.destinationEntity = entity
+            children.maxCount = 0
+            children.isOptional = false
+            children.isOrdered = true
+            children.deleteRule = .denyDeleteRule
+            let parent = NSRelationshipDescription()
+            parent.name = "parent"
+            parent.destinationEntity = entity
+            parent.maxCount = 1
+            parent.isOptional = true
+            children.inverseRelationship = parent
+            parent.inverseRelationship = children
+            entity.properties.append(contentsOf: [children, parent])
+        })
+
+        #expect(CloudSyncStore.problems(in: model) == [
+            "Thing.children is required",
+            "Thing.children is ordered",
+            "Thing.children uses the Deny delete rule",
+        ])
+    }
+
     private static func model(
         entity configureEntity: (NSEntityDescription) -> Void = { _ in },
         attribute configureAttribute: (NSAttributeDescription) -> Void = { _ in }
