@@ -111,7 +111,7 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
         writeOldKeys([future], shown: [])
         let store = InMemoryEarnedBadgeStore()
         let sut = manager(store)
-        #expect(store.records.map(\.badgeId) == ["future_badge"])
+        #expect(store.records.map { $0.badgeId } == ["future_badge"])
         #expect(sut.unlockedBadges["future_badge"]?.dateEarned == headChefDate)
         #expect(manager(store).isBadgeUnlocked("future_badge"))
     }
@@ -183,8 +183,8 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
         #expect(keptShown() == [headChef])
 
         sut.merge([firstRecipe: earned(.firstRecipe, on: firstRecipeDate)])
-        #expect(store.records.map(\.badgeId) == [firstRecipe, headChef])
-        #expect(store.records.allSatisfy(\.celebrationShown))
+        #expect(store.records.map { $0.badgeId } == [firstRecipe, headChef])
+        #expect(store.records.allSatisfy { $0.celebrationShown })
         #expect(keptBadgeIDs() == [headChef, firstRecipe])
     }
 
@@ -312,7 +312,7 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
             EarnedBadgeRecord(badgeId: $0.badgeId, isEarned: true, dateEarned: headChefDate, celebrationShown: true)
         }
         try sut.replaceBadges(with: updated)
-        #expect(Set(try context.fetch(request).map(\.objectID)) == idsBefore)
+        #expect(Set(try context.fetch(request).map { $0.objectID }) == idsBefore)
         #expect(try sut.fetchBadges() == updated)
 
         try sut.replaceBadges(with: [rows[0]])
@@ -332,7 +332,7 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
         duplicate.setValue(UUID(), forKey: "id")
         duplicate.setValue(headChef, forKey: "badgeId")
         try context.save()
-        #expect(try sut.fetchBadges().map(\.badgeId) == [headChef])
+        #expect(try sut.fetchBadges().map { $0.badgeId } == [headChef])
 
         try sut.replaceBadges(with: [rows[1]])
         let request = NSFetchRequest<NSManagedObject>(entityName: CoreDataEarnedBadgeStore.entityName)
