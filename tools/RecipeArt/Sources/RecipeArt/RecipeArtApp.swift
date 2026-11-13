@@ -148,64 +148,28 @@ final class Generator: ObservableObject {
         status = "Drawing \(recipe.name)…"
     }
 
-    /// Simplest-last: the full description, then the dish name alone, then the name without brackets/extra words.
+    static let descriptionsPath = "tools/RecipeArt/descriptions.json"
+
+    /// Hand-written plain-English pictures for dishes whose names the model rejects or misdraws (id → description).
+    static let descriptions: [String: String] = {
+        guard let data = FileManager.default.contents(atPath: descriptionsPath),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: String] else { return [:] }
+        return json.filter { $0.key != "_about" }
+    }()
+
+    /// A hand-written description wins (and is the only thing tried, so a miss fails instead of drawing a generic
+    /// stand-in); otherwise the full prompt, then the dish name alone, then the name without brackets. The old generic
+    /// "a bowl of curry" fallback was dropped: review rejected 32 of its pictures as the wrong dish.
     static func prompts(for recipe: SeedRecipe) -> [String] {
+        if let description = descriptions[recipe.id] {
+            return ["\(description), on a table, viewed from slightly above", description]
+        }
         let plainName = recipe.name
             .replacingOccurrences(of: #"\s*\([^)]*\)"#, with: "", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        // Image Playground rejects any non-English word ("achari", "gochujang", "ragu"…) and can read a dish name as
-        // a person ("Mei Fun"), so the last two describe the dish in plain English without its name.
-        let dish = dishPhrase(for: recipe)
-        let protein = mainProtein(in: recipe.name.lowercased())
-        var list = [prompt(for: recipe), "A plated dish of \(recipe.name)", "A plated dish of \(plainName)"]
-        if let protein { list.append("\(dish) with \(protein), on a table") }
-        list.append("\(dish), on a table")
         var seen = Set<String>()
-        list = list.filter { seen.insert($0).inserted }
-        return list
-    }
-
-
-    /// The kind of dish in plain English, from words in its name, else its category.
-    static func dishPhrase(for recipe: SeedRecipe) -> String {
-        // Match at word starts so "tea" doesn't hit "steak".
-        let name = " " + recipe.name.lowercased().replacingOccurrences(of: "-", with: " ") + " "
-        let kinds: [(words: [String], phrase: String)] = [
-            (["dal", "dhal", "daal"], "A bowl of lentil stew"),
-            (["curry", "masala", "korma", "gosht", "achari", "haleem", "kulambu", "sabzi", "bharta", "jalfrezi", "bhuna", "karahi", "rogan", "vindaloo", "saag"], "A bowl of curry"),
-            (["noodle", "mein", "ramen", "udon", "japchae", "biang", "mei fun", "pho", "pad thai", "spaghetti", "pasta", "ragu", "lasagne", "kottu"], "A bowl of noodles"),
-            (["congee", "porridge"], "A bowl of rice porridge"),
-            (["rice", "biryani", "jollof", "pulao", "pilau", "risotto", "paella"], "A plate of rice"),
-            (["soup", "dashi", "broth", "ramen"], "A bowl of soup"),
-            (["salad", "kachumber"], "A bowl of salad"),
-            (["pancake", "hotteok", "apam", "crepe", "dosa"], "A stack of pancakes"),
-            (["cake", "brownie", "gao", "kurtos", "kürtős", "muffin", "cupcake"], "A slice of cake"),
-            (["bread", "roti", "flatbread", "naan", "paratha", "bun", "tangzhong", "loaf"], "Freshly baked bread"),
-            (["chai", "tea", "frappe", "milkshake", "latte", "lassi", "smoothie", "coffee"], "A drink in a glass"),
-            (["kulfi", "ice cream", "sorbet", "gelato"], "A frozen dessert"),
-            (["mousse", "kunafa", "jalebi", "rugelach", "tangyuan", "pudding", "halwa", "kheer", "tart", "pie", "crumble"], "A dessert"),
-            (["sauce", "chutney", "dip", "salsa"], "A bowl of sauce"),
-            (["wing", "drumstick", "kebab", "tikki", "kofta", "pakora", "samosa", "goujon", "nugget"], "A plate of fried snacks"),
-            (["tofu"], "A plate of tofu"),
-            (["leg", "roast", "steak", "chop"], "A plated roast"),
-        ]
-        for kind in kinds where kind.words.contains(where: { name.contains(" " + $0) }) {
-            return kind.phrase
-        }
-        switch (recipe.category ?? "").lowercased() {
-        case let c where c.contains("dessert") || c.contains("baking") || c.contains("sweet"): return "A dessert"
-        case let c where c.contains("drink") || c.contains("beverage"): return "A drink in a glass"
-        case let c where c.contains("breakfast"): return "A plated breakfast"
-        case let c where c.contains("side") || c.contains("snack") || c.contains("starter"): return "A small plate of food"
-        default: return "A plated main dish"
-        }
-    }
-
-    /// An English protein named in the dish, if any.
-    static func mainProtein(in name: String) -> String? {
-        ["chicken", "lamb", "beef", "pork", "turkey", "salmon", "cod", "fish", "prawn", "shrimp", "egg", "potato", "aubergine", "eggplant", "chickpea", "lentil", "paneer", "tofu", "vegetables", "mushroom"]
-            .first { (" " + name).contains(" " + $0) }
-            .map { $0 == "paneer" ? "cheese" : $0 }
+        return [prompt(for: recipe), "A plated dish of \(recipe.name)", "A plated dish of \(plainName)"]
+            .filter { seen.insert($0).inserted }
     }
 
     /// Staples the model draws literally (a fried egg on shortbread): never named in the prompt.
