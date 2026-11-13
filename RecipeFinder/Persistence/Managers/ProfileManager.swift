@@ -79,7 +79,9 @@ final class ProfileManager: ProfileManaging {
             writeBlob: { Self.writeKeptCopy($0.first, to: storage) },
             removeBlob: { Self.writeKeptCopy(nil, to: storage) },
             fetch: { try profileStore.fetchProfile().map { [$0] } ?? [] },
-            replace: { try profileStore.replaceProfile(with: $0.first) }
+            replace: { try profileStore.replaceProfile(with: $0.first) },
+            // One profile per cook: every device's row is the same row, whatever its uuid.
+            sync: .iCloudRules(storage: storage) { _ in "profile" }
         )
         loadProfile()
     }
