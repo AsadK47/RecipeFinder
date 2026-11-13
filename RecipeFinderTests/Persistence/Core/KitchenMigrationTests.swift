@@ -87,6 +87,22 @@ final class InMemoryKitchenStore: KitchenStoring {
         KitchenInventoryManager(storage: storage, kitchenStore: store)
     }
 
+    // MARK: - iCloud sync (Data safety 2/4)
+
+    @Test func withSyncOnAnItemAndAnInventoryItemAnotherDeviceAddedAreKept() {
+        writeBlobs([flour], inventory: [milk])
+        let store = InMemoryKitchenStore()
+        _ = manager(store)
+        store.items.append(eggs)   // arrived from another device
+        store.inventory.append(rice)
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.items == [flour, eggs])
+        #expect(sut.inventoryItems == [milk, rice])
+        #expect(keptItems() == [flour, eggs])
+        #expect(keptInventory() == [milk, rice])
+    }
+
     // MARK: - Migration
 
     @Test func everyBlobItemAndInventoryItemBecomesARowInOrderAndBothKeysAreMarked() {

@@ -15,6 +15,13 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         SyncMerge.applyEdits(base: base, local: local, store: store, id: \.id)
     }
 
+    @Test func syncIsOffUntilTheCookTurnsItOn() {
+        let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+        #expect(!SyncPreference.isOn(in: storage))
+        storage.set(true, forKey: SyncPreference.key)
+        #expect(SyncPreference.isOn(in: storage))
+    }
+
     @Test func aRowAnotherDeviceAddedIsKept() {
         let merged = apply(base: [row(1)], local: [row(1), row(2)], store: [row(1), row(9)])
         #expect(merged == [row(1), row(2), row(9)])

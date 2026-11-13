@@ -71,6 +71,23 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
     private var headChef: String { BadgeType.headChef.rawValue }
     private var firstRecipe: String { BadgeType.firstRecipe.rawValue }
 
+    // MARK: - iCloud sync (Data safety 2/4)
+
+    @Test func withSyncOnABadgeEarnedOnAnotherDeviceIsKept() {
+        writeOldKeys([earned(.firstRecipe, on: firstRecipeDate)], shown: [firstRecipe])
+        let store = InMemoryEarnedBadgeStore()
+        _ = manager(store)
+        // Earned and celebrated on another device.
+        store.records.append(
+            EarnedBadgeRecord(badgeId: headChef, isEarned: true, dateEarned: headChefDate, celebrationShown: true))
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(Set(sut.unlockedBadges.keys) == [headChef, firstRecipe])
+        #expect(store.records.count == 2)
+        #expect(keptBadgeIDs() == [headChef, firstRecipe])
+        #expect(keptShown() == [headChef, firstRecipe])
+    }
+
     // MARK: - Migration
 
     @Test func everyEarnedBadgeAndShownCelebrationBecomesARowAndTheKeyIsMarked() {

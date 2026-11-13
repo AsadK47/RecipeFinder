@@ -55,7 +55,8 @@ final class CollectionManager: CollectionManaging {
         MirroredSnapshot(
             blobKey: Constants.UserDefaultsKeys.collections, storage: storage,
             fetch: { try store.fetchCollections() },
-            replace: { try store.replaceCollections(with: $0) }
+            replace: { try store.replaceCollections(with: $0) },
+            sync: .iCloudRules(storage: storage) { $0.id }
         )
     }
 

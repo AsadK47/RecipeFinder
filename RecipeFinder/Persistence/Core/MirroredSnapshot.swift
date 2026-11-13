@@ -1,5 +1,14 @@
 import Foundation
 
+/// The cook's iCloud sync switch (Data safety 2/4). Off until the CloudKit container and the Settings toggle ship.
+enum SyncPreference {
+    static let key = "iCloudSyncEnabled"
+
+    static func isOn(in storage: LocalStore) -> Bool {
+        storage.bool(forKey: key)
+    }
+}
+
 enum MirroredSnapshotError: LocalizedError {
     case verificationFailed
 
@@ -31,6 +40,11 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     struct SyncRules {
         let isOn: () -> Bool
         let id: (Value) -> AnyHashable
+
+        /// The rules every manager uses: on while the cook's iCloud sync switch (`SyncPreference`) is on.
+        static func iCloudRules<ID: Hashable>(storage: LocalStore, id: @escaping (Value) -> ID) -> SyncRules {
+            SyncRules(isOn: { SyncPreference.isOn(in: storage) }, id: { AnyHashable(id($0)) })
+        }
     }
 
     private let blobKey: String

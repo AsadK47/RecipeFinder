@@ -64,12 +64,14 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
         self.itemsMirror = MirroredSnapshot(
             blobKey: Self.itemsBlobKey, storage: storage,
             fetch: { try kitchenStore.fetchItems() },
-            replace: { try kitchenStore.replaceItems(with: $0) }
+            replace: { try kitchenStore.replaceItems(with: $0) },
+            sync: .iCloudRules(storage: storage) { $0.id }
         )
         self.inventoryMirror = MirroredSnapshot(
             blobKey: Self.inventoryBlobKey, storage: storage,
             fetch: { try kitchenStore.fetchInventory() },
-            replace: { try kitchenStore.replaceInventory(with: $0) }
+            replace: { try kitchenStore.replaceInventory(with: $0) },
+            sync: .iCloudRules(storage: storage) { $0.id }
         )
         loadItems()
         loadInventoryItems()

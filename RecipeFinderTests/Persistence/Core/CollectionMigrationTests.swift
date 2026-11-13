@@ -52,6 +52,20 @@ final class InMemoryCollectionStore: CollectionStoring {
         CollectionManager(storage: storage, collectionStore: store)
     }
 
+    // MARK: - iCloud sync (Data safety 2/4)
+
+    @Test func withSyncOnACollectionAnotherDeviceAddedIsKept() {
+        writeBlob([soups])
+        let store = InMemoryCollectionStore()
+        _ = manager(store)
+        store.collections.append(baking)   // arrived from another device
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.collections == both)
+        #expect(store.collections == both)
+        #expect(keptCopy() == both)
+    }
+
     // MARK: - Migration
 
     @Test func everyBlobCollectionBecomesARowInOrderAndTheKeyIsMarked() {
