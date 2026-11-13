@@ -494,6 +494,23 @@ struct RecipeModelDisplayTests {
         #expect(!imported.shouldAutoRefreshFromSource)
         #expect(!recipe(notes: "Just a personal note").shouldAutoRefreshFromSource)
     }
+
+    @Test("Removing or replacing the main photo makes the recipe differ, so the detail screen refreshes")
+    func mainPhotoChangeIsAChange() {
+        var withPhoto = recipe()
+        withPhoto.imageName = "photo-a.jpg"
+        var removed = withPhoto
+        removed.imageName = nil
+        var replaced = withPhoto
+        replaced.imageName = "photo-b.jpg"
+        #expect(withPhoto != removed)
+        #expect(withPhoto != replaced)
+        #expect(withPhoto.hashValue != removed.hashValue)
+        var same = withPhoto
+        same.imageName = "photo-a.jpg"
+        #expect(withPhoto == same)
+        #expect(withPhoto.hashValue == same.hashValue)
+    }
 }
 
 // MARK: - Quick-scale servings

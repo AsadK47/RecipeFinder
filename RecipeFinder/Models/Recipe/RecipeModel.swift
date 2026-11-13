@@ -123,6 +123,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         hasher.combine(rating)
         hasher.combine(cuisine)
         hasher.combine(photoNames)
+        hasher.combine(imageName)
     }
 
     static func == (lhs: RecipeModel, rhs: RecipeModel) -> Bool {
@@ -133,7 +134,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lhs.cookCount == rhs.cookCount &&
         lhs.rating == rhs.rating &&
         lhs.cuisine == rhs.cuisine &&
-        lhs.photoNames == rhs.photoNames
+        lhs.photoNames == rhs.photoNames &&
+        lhs.imageName == rhs.imageName
     }
     
     /// Image for lists/cards: main image if set, else the first post-cook photo, else the built-in illustration.
