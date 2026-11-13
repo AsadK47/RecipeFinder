@@ -166,3 +166,8 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   Reset on an older blob-only build then upgrading (unmarked key + no blob keeps rows) — `MirroredSnapshot` rule.
 - **Store rename = delete + insert** with a fresh UUID (stores match by name); sync (2/4) must dedupe by name.
 - **Shared `viewContext`** save/rollback and whole-list rewrite per edit (same as 3a–3c).
+
+### 2026-11-13 · Data safety 1/4 slice 3e (kitchen items + inventory → Core Data) — fixed: Reset only `reload()`ed (would have kept the whole kitchen once in Core Data; now `removeAllKitchenData()` + cancels expiry reminders); an old item blob without `dateAdded` decoded a new `Date()` each launch → rows rewritten every launch (now a fixed fallback, test added). Noted, not fixed:
+- **Reset wiring + expiry-reminder cancel untested** (same as 3c/3d): `DataManagementSettingsView` and `NotificationManager.shared` have no seam; a later `ResetService` item should own this.
+- **Duplicate-id cleanup** keeps the first row in sort order (a nameless sync duplicate may win and be overwritten) — no data lost, same as 3d.
+- **Shared `viewContext`** save/rollback and whole-list rewrite per edit (same as 3a–3d).

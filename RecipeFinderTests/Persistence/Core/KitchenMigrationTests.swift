@@ -204,6 +204,16 @@ final class InMemoryKitchenStore: KitchenStoring {
         #expect(store.writeCount == writes)
     }
 
+    @Test func anOldItemSavedWithoutADateIsNotRewrittenOnRelaunch() {
+        struct Old: Encodable { let id = UUID(); let name = "Salt"; let category = "Dried Spices & Seasonings" }
+        storage.setEncodable([Old()], forKey: itemsKey)
+        let store = InMemoryKitchenStore()
+        _ = manager(store)
+        let writes = store.writeCount
+        _ = manager(store)
+        #expect(store.writeCount == writes)
+    }
+
     @Test func removeAllKitchenDataEmptiesTheStore() {
         writeBlobs([flour, eggs], inventory: [milk, rice])
         let store = InMemoryKitchenStore()

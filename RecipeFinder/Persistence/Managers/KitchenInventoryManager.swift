@@ -375,6 +375,8 @@ struct KitchenItem: Identifiable, Codable, Equatable, Hashable {
 		category = try container.decode(String.self, forKey: .category)
 		quantity = try container.decodeIfPresent(Double.self, forKey: .quantity) ?? 1
 		unit = try container.decodeIfPresent(String.self, forKey: .unit) ?? "item"
-		dateAdded = try container.decodeIfPresent(Date.self, forKey: .dateAdded) ?? Date()
+		// Fixed, not Date(): a blob from a build that didn't save it must decode the same every launch, or the kept
+		// copy would never match the Core Data rows and they'd be rewritten on each launch.
+		dateAdded = try container.decodeIfPresent(Date.self, forKey: .dateAdded) ?? Date(timeIntervalSinceReferenceDate: 0)
 	}
 }
