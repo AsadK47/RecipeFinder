@@ -11,7 +11,7 @@ struct BadgeTriggerIntegrationTests {
 
     private func makeBadgeManager() -> BadgeManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        return BadgeManager(storage: LocalStore(userDefaults: defaults))
+        return BadgeManager(storage: LocalStore(userDefaults: defaults), badgeStore: InMemoryEarnedBadgeStore())
     }
 
     private func makeShoppingManager(badgeManager: BadgeManager) -> ShoppingListManager {

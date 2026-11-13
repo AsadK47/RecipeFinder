@@ -108,7 +108,7 @@ import Foundation
 
     @Test func badges_mergeUnionsAndExistingWins() {
         let storage = Self.makeStorage()
-        let sut = BadgeManager(storage: storage)
+        let sut = BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore())
         let mine = Date(timeIntervalSince1970: 1_000)
         sut.merge(["first": Badge(id: "first", title: "First", description: "", icon: "", color: "green", dateEarned: mine, isUnlocked: true, howToEarn: "")])
 
@@ -120,7 +120,7 @@ import Foundation
         #expect(Set(sut.unlockedBadges.keys) == ["first", "second"])
         #expect(sut.unlockedBadges["first"]?.dateEarned == mine)
 
-        let reloaded = BadgeManager(storage: storage)
+        let reloaded = BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore())
         #expect(Set(reloaded.unlockedBadges.keys) == ["first", "second"])
     }
 

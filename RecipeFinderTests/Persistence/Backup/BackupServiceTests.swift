@@ -35,7 +35,7 @@ import Foundation
         let shopping = ShoppingListManager(storage: storage, shoppingListStore: InMemoryShoppingListStore())
         let kitchen = KitchenInventoryManager(storage: storage, kitchenStore: InMemoryKitchenStore())
         let mealPlans = MealPlanningManager(storage: storage, mealPlanStore: InMemoryMealPlanStore())
-        let badges = BadgeManager(storage: storage)
+        let badges = BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore())
         let collections = CollectionManager(storage: storage, collectionStore: InMemoryCollectionStore())
         let streak = CookingStreakManager(
             storage: storage, cookDateStore: InMemoryCookDateStore(),

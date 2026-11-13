@@ -1,14 +1,25 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2, 3a–3e merged (3e kitchen = bf326cb). Nothing on a branch.
+Data safety 1/4 (claimed): slices 1–2, 3a–3e merged. Slice 3f (badges) on `agent/data-safety-badges`, waiting on CI.
 
 ## Next action
-Slice 3f: badges → `EarnedBadgeEntity` via `MirroredSnapshot` (copy KitchenStore.swift: `*Storing` protocol,
-CoreData store upserting by id with sortOrder + `setIfChanged`, in-memory fake, Reset → `removeAll…()` in
-DataManagementSettingsView instead of `reload()`; shown-celebration flag lives on the entity). Then profile.
+Check Build & Test for `agent/data-safety-badges`; fix; run challenge + deep-review; ff main. Then slice 3g: profile.
 
 ## Decisions (why)
+- **Data safety 1/4 slice 3f (badges)**: the old kept copy is two keys (`unlockedBadges` dict + `shownBadgeCelebrations`
+  ids), so `MirroredSnapshot` gained a designated init taking read/write/remove closures (old init now delegates,
+  unchanged behaviour) — the old two-key shape stays current for downgrade, no new blob key. One `EarnedBadgeRecord`
+  row per id in earned ∪ shown (a shown-but-revoked badge keeps its flag → never celebrates twice). Display fields
+  are rebuilt from `BadgeType` (old saved titles dropped — current titles show); an unknown id keeps a bare badge so it
+  survives. Entity has no sortOrder → records sorted by badgeId in Swift on both sides (store collation can't cause
+  "differs" every launch). Nil kept copy = badges dict missing/corrupt (shown ids alone never replace the store).
+  Reset → `removeAllBadges()` (also drops a queued/open celebration). Badge.isUnlocked=false in a crafted backup now
+  loads as unlocked (presence was already what counted). **Pre-mortem:** (1) badges lost on update →
+  `everyEarnedBadgeAndShownCelebrationBecomesARow…`, `aFailedWrite…`, `anUnreadableStore…`; (2) a celebration pops
+  again / dates rewritten each launch → `aShownCelebrationForARevokedBadge…`, `aCelebrationShownBeforeARelaunch…`,
+  `aBadgeEarnedNowIsNotRewrittenOnRelaunch`, `coreDataStoreSortsLikeTheKeptCopy`; (3) Reset leaves badges →
+  `resetAsSettingsRunsItClearsBadges`, `aResetWhoseDeleteFailsIsFinishedNextLaunch`.
 - **Data safety 1/4 slice 3e (kitchen)**: one `KitchenStoring` for both lists (same manager, two `MirroredSnapshot`s),
   generic upsert-by-id helper in the store (both models have UUID ids). Unknown category/location → `.other`/`.pantry`
   like the blob decoder. Reset previously only `reload()`ed — with entities that would have kept the whole kitchen

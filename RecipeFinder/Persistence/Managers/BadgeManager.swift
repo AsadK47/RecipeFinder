@@ -33,9 +33,10 @@ final class BadgeManager: BadgeManaging {
     /// Non-nil when a celebration sheet should show; `dismissCelebration()` clears it and drains the queue for back-to-back unlocks.
     private(set) var pendingCelebration: BadgeType?
 
-    @ObservationIgnored private let storage: LocalStore
-    @ObservationIgnored private let badgesKey = "unlockedBadges"
-    @ObservationIgnored private let shownCelebrationsKey = "shownBadgeCelebrations"
+    static let badgesBlobKey = "unlockedBadges"
+    static let shownCelebrationsBlobKey = "shownBadgeCelebrations"
+    /// Badges live in `EarnedBadgeEntity` rows; the two old `LocalStore` keys are kept current for one release.
+    @ObservationIgnored private let mirror: MirroredSnapshot<EarnedBadgeRecord>
 
     /// When true, unlocks persist but no celebration sheets fire; set by bulk-import to avoid a parade of sheets.
     @ObservationIgnored var isBulkImporting = false
@@ -45,21 +46,52 @@ final class BadgeManager: BadgeManaging {
     // Persisted so a celebration never fires twice for the same badge, even if killed mid-sheet.
     @ObservationIgnored private var shownCelebrationIds: Set<String> = []
 
-    private init() {
-        self.storage = .shared
-        loadBadges()
-        loadShownCelebrations()
+    private convenience init() {
+        self.init(storage: .shared, badgeStore: CoreDataEarnedBadgeStore(persistence: .shared))
     }
 
-    init(storage: LocalStore) {
-        self.storage = storage
-        loadBadges()
-        loadShownCelebrations()
+    init(storage: LocalStore, badgeStore: any EarnedBadgeStoring) {
+        self.mirror = MirroredSnapshot(
+            blobKey: Self.badgesBlobKey,
+            storage: storage,
+            readBlob: { Self.readKeptCopy(from: storage) },
+            writeBlob: { Self.writeKeptCopy($0, to: storage) },
+            removeBlob: {
+                storage.removeObject(forKey: Self.badgesBlobKey)
+                storage.removeObject(forKey: Self.shownCelebrationsBlobKey)
+            },
+            fetch: { try badgeStore.fetchBadges() },
+            replace: { try badgeStore.replaceBadges(with: $0) }
+        )
+        reload()
     }
 
     func reload() {
-        loadBadges()
-        loadShownCelebrations()
+        let records = mirror.load()
+        unlockedBadges = EarnedBadgeRecord.earnedBadges(from: records)
+        shownCelebrationIds = EarnedBadgeRecord.shownCelebrations(from: records)
+    }
+
+    /// Erase & Reset: removes every earned badge and celebration record. If the store can't delete now, the next
+    /// launch finishes it.
+    func removeAllBadges() {
+        mirror.removeAll()
+        celebrationQueue = []
+        pendingCelebration = nil
+        reload()
+    }
+
+    /// The old shape: earned badges as a dictionary, shown celebrations as a separate id list. Nil when the badges
+    /// dictionary is missing or unreadable — shown ids alone never stand in for the store.
+    private static func readKeptCopy(from storage: LocalStore) -> [EarnedBadgeRecord]? {
+        guard let earned = storage.decodable([String: Badge].self, forKey: badgesBlobKey) else { return nil }
+        let shown = storage.object(forKey: shownCelebrationsBlobKey) as? [String] ?? []
+        return EarnedBadgeRecord.records(earned: earned, shown: Set(shown))
+    }
+
+    private static func writeKeptCopy(_ records: [EarnedBadgeRecord], to storage: LocalStore) {
+        storage.setEncodable(EarnedBadgeRecord.earnedBadges(from: records), forKey: badgesBlobKey)
+        storage.set(EarnedBadgeRecord.shownCelebrations(from: records).sorted(), forKey: shownCelebrationsBlobKey)
     }
 
     /// Non-destructive restore: unions by id (held badge wins on collision, preserving `dateEarned`); restored badges never trigger celebration sheets.
@@ -68,8 +100,7 @@ final class BadgeManager: BadgeManaging {
         unlockedBadges = merged
         // Mark all newly-merged badges as already-shown so they don't pop a sheet.
         shownCelebrationIds.formUnion(addedIDs)
-        saveShownCelebrations()
-        saveBadges()
+        save()
     }
 
     /// Legacy library-size path (import/add trigger sites). Only unlocks collection badges — cooking/streak/
@@ -105,7 +136,7 @@ final class BadgeManager: BadgeManaging {
             shownCelebrationIds.insert(badgeType.rawValue)
         }
         if let celebrated { unlockBadge(celebrated) }
-        if earned.count > 1 { saveShownCelebrations() }
+        if earned.count > 1 { save() }
     }
 
     /// Removes collection badges the library no longer earns. Used once after repairing legacy sample recipes that
@@ -120,7 +151,7 @@ final class BadgeManager: BadgeManaging {
             unlockedBadges[badgeType.rawValue] = nil
             changed = true
         }
-        if changed { saveBadges() }
+        if changed { save() }
     }
 
     /// Unlock a badge; `silent: true` persists without a celebration sheet (used for welcome/seed badges at launch).
@@ -139,7 +170,7 @@ final class BadgeManager: BadgeManaging {
             howToEarn: badge.howToEarn
         )
         unlockedBadges[badge.id] = unlockedBadge
-        saveBadges()
+        save()
 
         guard !isBulkImporting, !silent, !shownCelebrationIds.contains(badge.id) else { return }
         celebrationQueue.append(badgeType)
@@ -175,28 +206,11 @@ final class BadgeManager: BadgeManaging {
         guard pendingCelebration == nil, let next = celebrationQueue.first else { return }
         celebrationQueue.removeFirst()
         shownCelebrationIds.insert(next.rawValue)
-        saveShownCelebrations()
+        save()
         pendingCelebration = next
     }
 
-    private func saveBadges() {
-        storage.setEncodable(unlockedBadges, forKey: badgesKey)
-    }
-
-    private func loadBadges() {
-        if let decoded = storage.decodable([String: Badge].self, forKey: badgesKey) {
-            unlockedBadges = decoded
-        } else {
-            unlockedBadges = [:]
-        }
-    }
-
-    private func saveShownCelebrations() {
-        storage.set(Array(shownCelebrationIds), forKey: shownCelebrationsKey)
-    }
-
-    private func loadShownCelebrations() {
-        let stored = storage.object(forKey: shownCelebrationsKey) as? [String] ?? []
-        shownCelebrationIds = Set(stored)
+    private func save() {
+        mirror.save(EarnedBadgeRecord.records(earned: unlockedBadges, shown: shownCelebrationIds))
     }
 }

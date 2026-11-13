@@ -79,7 +79,7 @@ final class InMemoryShoppingListStore: ShoppingListStoring {
     }
 
     private func manager(_ store: any ShoppingListStoring) -> ShoppingListManager {
-        ShoppingListManager(storage: storage, shoppingListStore: store, badgeManager: BadgeManager(storage: storage))
+        ShoppingListManager(storage: storage, shoppingListStore: store, badgeManager: BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore()))
     }
 
     // MARK: - Migration

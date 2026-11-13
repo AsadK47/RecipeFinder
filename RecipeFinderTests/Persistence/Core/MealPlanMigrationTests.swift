@@ -59,7 +59,7 @@ final class InMemoryMealPlanStore: MealPlanStoring {
     private func manager(
         _ store: any MealPlanStoring, reminders: FakeMealReminderScheduler = FakeMealReminderScheduler()
     ) -> MealPlanningManager {
-        MealPlanningManager(storage: storage, mealPlanStore: store, badgeManager: BadgeManager(storage: storage),
+        MealPlanningManager(storage: storage, mealPlanStore: store, badgeManager: BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore()),
                             reminders: reminders)
     }
 

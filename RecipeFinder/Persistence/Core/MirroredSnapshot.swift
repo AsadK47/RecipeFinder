@@ -26,6 +26,9 @@ enum MirroredSnapshotError: LocalizedError {
 final class MirroredSnapshot<Value: Codable & Equatable> {
     private let blobKey: String
     private let storage: LocalStore
+    private let readBlob: () -> [Value]?
+    private let writeBlob: ([Value]) -> Void
+    private let removeBlob: () -> Void
     private let fetch: () throws -> [Value]
     private let replace: ([Value]) throws -> Void
     private let logger = AppLogger.logger(category: "MirroredSnapshot")
@@ -35,14 +38,41 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     /// Store unreadable and no blob to stand in for it: edits stay in memory only this launch.
     private var savesDisabled = false
 
-    init(
+    /// The kept copy is a JSON `[Value]` under `blobKey`.
+    convenience init(
         blobKey: String,
         storage: LocalStore,
         fetch: @escaping () throws -> [Value],
         replace: @escaping ([Value]) throws -> Void
     ) {
+        self.init(
+            blobKey: blobKey,
+            storage: storage,
+            // `LocalStore` keeps an undecodable blob aside as `<key>.corrupt`, so nil means missing or corrupt.
+            readBlob: { storage.decodable([Value].self, forKey: blobKey) },
+            writeBlob: { storage.setEncodable($0, forKey: blobKey) },
+            removeBlob: { storage.removeObject(forKey: blobKey) },
+            fetch: fetch,
+            replace: replace
+        )
+    }
+
+    /// For a kept copy in an older shape (badges: a dictionary plus a list of shown ids). `readBlob` returns nil
+    /// when the copy is missing or unreadable; `blobKey` names the flags and logs.
+    init(
+        blobKey: String,
+        storage: LocalStore,
+        readBlob: @escaping () -> [Value]?,
+        writeBlob: @escaping ([Value]) -> Void,
+        removeBlob: @escaping () -> Void,
+        fetch: @escaping () throws -> [Value],
+        replace: @escaping ([Value]) throws -> Void
+    ) {
         self.blobKey = blobKey
         self.storage = storage
+        self.readBlob = readBlob
+        self.writeBlob = writeBlob
+        self.removeBlob = removeBlob
         self.fetch = fetch
         self.replace = replace
     }
@@ -53,9 +83,8 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     private var flagKey: String { Self.flagKey(for: blobKey) }
     private var wipePendingKey: String { "wipePending.\(blobKey)" }
 
-    /// `LocalStore` keeps an undecodable blob aside as `<key>.corrupt`, so nil means missing or corrupt.
     private func blob() -> [Value]? {
-        storage.decodable([Value].self, forKey: blobKey)
+        readBlob()
     }
 
     func load() -> [Value] {
@@ -90,7 +119,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             logger.error("❌ \(self.blobKey, privacy: .public): not saved, store and kept copy both unreadable")
             return
         }
-        storage.setEncodable(values, forKey: blobKey)
+        writeBlob(values)
         guard usesEntities else { return }
         do {
             try replace(values)
@@ -103,7 +132,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
 
     /// Erase & Reset. Call `load()` afterwards.
     func removeAll() {
-        storage.removeObject(forKey: blobKey)
+        removeBlob()
         storage.set(true, forKey: wipePendingKey)
     }
 
