@@ -171,7 +171,10 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         guard finishPendingWipe() else { return fallBackKeepingStore() }
         do {
             var values = try fetch()
+            // An empty store next to a non-empty kept copy is far more likely recovery or an unfinished first
+            // import than "everything deleted elsewhere": add the copy back rather than wipe the safety net.
             let keptCopyMayBeAhead = !storage.bool(forKey: flagKey) || storage.bool(forKey: keptCopyAheadKey)
+                || values.isEmpty
             if keptCopyMayBeAhead, let kept = blob() {
                 let merged = SyncMerge.addKeptCopy(kept, to: values, id: sync.id)
                 if merged != values {
@@ -209,8 +212,8 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         }
     }
 
-    /// The save reached only the kept copy: the next load adds it to the store (add-only, so a row deleted on
-    /// another device meanwhile can come back — never the other way round).
+    /// The save reached only the kept copy: the next load adds it to the store. Add-only, so rows deleted here or
+    /// elsewhere meanwhile can come back, and the copy's version wins on shared ids — accepted: nothing is lost.
     private func keepAhead(_ values: [Value]) {
         writeBlob(values)
         storage.set(true, forKey: keptCopyAheadKey)

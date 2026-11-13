@@ -7,7 +7,8 @@ enum SyncMerge {
     /// Applies this device's edits (`base` → `local`) to the current `store`, keeping everything else:
     /// - rows deleted here (in `base`, not in `local`) are deleted;
     /// - rows added or changed here win;
-    /// - rows left unchanged here take the store's version (another device may have edited them);
+    /// - rows left unchanged here take the store's version (another device may have edited them), or are dropped
+    ///   when the store no longer has them (deleted on another device or by Reset there);
     /// - rows only the store has (added elsewhere) are kept, after this device's rows, in store order.
     static func applyEdits<Value: Equatable, ID: Hashable>(
         base: [Value],
@@ -24,8 +25,8 @@ enum SyncMerge {
         var merged: [Value] = []
         for row in local where seen.insert(id(row)).inserted {
             let rowID = id(row)
-            if let before = baseByID[rowID], before == row, let current = storeByID[rowID] {
-                merged.append(current)
+            if let before = baseByID[rowID], before == row {
+                if let current = storeByID[rowID] { merged.append(current) }
             } else {
                 merged.append(row)
             }

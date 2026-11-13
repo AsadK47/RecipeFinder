@@ -40,10 +40,9 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         #expect(merged == [row(1, "mine")])
     }
 
-    @Test func aRowDeletedElsewhereAndUnchangedHereStaysDeletedInTheStoreButIsKeptLocally() {
-        // Unchanged here and gone from the store: the local copy is the only one left, so it is kept (never lose).
-        let merged = apply(base: [row(1)], local: [row(1)], store: [])
-        #expect(merged == [row(1)])
+    @Test func aRowDeletedElsewhereAndUnchangedHereStaysDeleted() {
+        let merged = apply(base: [row(1), row(2)], local: [row(1), row(2)], store: [row(2)])
+        #expect(merged == [row(2)])
     }
 
     @Test func thisDevicesOrderComesFirst() {
@@ -125,6 +124,26 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         sut.save([row(1), row(2)])
         #expect(store.rows == [row(1), row(2), row(9)])
         #expect(keptCopy() == store.rows)
+    }
+
+    @Test func aSaveHereDoesNotBringBackARowDeletedElsewhere() {
+        store.rows = [row(1), row(2)]
+        let sut = snapshot()
+        _ = sut.load()
+        store.rows = [row(2)]                  // deleted on another device mid-session
+        sut.save([row(1), row(2), row(3)])
+        #expect(store.rows == [row(2), row(3)])
+    }
+
+    @Test func anEmptyStoreGetsTheKeptCopyBackInsteadOfWipingIt() {
+        let first = snapshot()
+        _ = first.load()
+        first.save([row(1), row(2)])
+        store.rows = []                        // recovery opened a fresh store, or the first import hasn't landed
+        let loaded = snapshot().load()
+        #expect(loaded == [row(1), row(2)])
+        #expect(store.rows == loaded)
+        #expect(keptCopy() == loaded)
     }
 
     @Test func aDeleteHereRemovesOnlyThatRow() {
