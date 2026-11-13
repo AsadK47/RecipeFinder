@@ -7,6 +7,8 @@ enum BundledRecipeArt {
     /// `imageName`-style reference that `RecipeImageView` resolves to the bundled file.
     static let referencePrefix = "bundled-art:"
     static let folder = "RecipeArt"
+    /// Cache-key suffix so a later app version's redrawn art isn't served from an old cache.
+    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
 
     /// Recipe ids that have a bundled picture, read once from the app bundle.
     static let availableIDs: Set<String> = {

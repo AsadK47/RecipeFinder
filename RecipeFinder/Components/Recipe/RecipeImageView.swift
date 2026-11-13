@@ -35,7 +35,10 @@ struct RecipeImageView: View {
     static func resolvedSource(for imageName: String?) -> Source? {
         guard let imageName = imageName, !imageName.isEmpty else { return nil }
         if imageName.hasPrefix(BundledRecipeArt.referencePrefix) {
-            return BundledRecipeArt.fileURL(for: imageName).map { .provider(localProvider(for: $0)) }
+            // Stable key per app version: the bundle path changes with every install, which would re-cache all art.
+            return BundledRecipeArt.fileURL(for: imageName).map {
+                .provider(LocalFileImageDataProvider(fileURL: $0, cacheKey: imageName + "#" + BundledRecipeArt.version))
+            }
         }
         if imageName.hasPrefix("http"), let url = URL(string: imageName) {
             // Prefer the phone copy kept by RecipeStore+RemoteImages so the picture shows offline.

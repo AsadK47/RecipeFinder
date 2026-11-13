@@ -68,8 +68,9 @@ extension RecipeDetailView {
     static func galleryNames(for recipe: RecipeModel) -> [String] {
         let own = ([recipe.imageName].compactMap { $0 } + recipe.photoNames)
             .filter { RecipeImageView.hasDisplayableImage($0) }
-        // No photo of the cook's own yet: show the built-in illustration rather than an empty header.
-        if own.isEmpty, let art = BundledRecipeArt.reference(for: recipe.id) { return [art] }
+        // No picture of the cook's own at all: the built-in illustration — the same rule as `heroImageName`, so
+        // lists and detail agree (a stale own file shows the placeholder in both, not art in one).
+        if let hero = recipe.heroImageName, hero.hasPrefix(BundledRecipeArt.referencePrefix) { return [hero] }
         return own
     }
 

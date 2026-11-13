@@ -45,4 +45,42 @@ import Testing
         #expect(BundledRecipeArt.fileURL(for: reference) != nil)
         #expect(RecipeImageView.resolvedSource(for: reference) != nil)
     }
+
+    // MARK: - Through the app's own paths (would fail if heroImageName / galleryNames lost the fallback)
+
+    private func recipe(id: UUID, imageName: String? = nil, photoNames: [String] = []) -> RecipeModel {
+        RecipeModel(id: id, name: "Test", category: "Main", difficulty: "Basic", prepTime: "", cookingTime: "",
+                    baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: "",
+                    imageName: imageName, isSampleRecipe: true, photoNames: photoNames)
+    }
+
+    private func shippedID() throws -> UUID {
+        try #require(BundledRecipeArt.availableIDs.sorted().first.flatMap(UUID.init(uuidString:)))
+    }
+
+    @Test func builtInRecipeWithoutPhotoUsesItsIllustration() throws {
+        let id = try shippedID()
+        #expect(recipe(id: id).heroImageName == BundledRecipeArt.referencePrefix + id.uuidString)
+        #expect(RecipeDetailView.galleryNames(for: recipe(id: id)) == [BundledRecipeArt.referencePrefix + id.uuidString])
+    }
+
+    @Test func cooksOwnPhotoReplacesIllustrationInDetail() throws {
+        let id = try shippedID()
+        let docs = try #require(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
+        let relative = "RecipeImages/art-test-\(UUID().uuidString).jpg"
+        let file = docs.appendingPathComponent(relative)
+        try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data([0xFF, 0xD8, 0xFF, 0xD9]).write(to: file)
+        defer { try? FileManager.default.removeItem(at: file) }
+        let withPhoto = recipe(id: id, photoNames: [relative])
+        #expect(withPhoto.heroImageName == relative)
+        #expect(RecipeDetailView.galleryNames(for: withPhoto) == [relative])
+    }
+
+    @Test func missingOwnFileShowsPlaceholderEverywhereNotArtInOnePlace() throws {
+        let id = try shippedID()
+        let stale = recipe(id: id, imageName: "RecipeImages/gone-\(UUID().uuidString).jpg")
+        #expect(RecipeDetailView.galleryNames(for: stale).isEmpty)
+        #expect(RecipeImageView.resolvedSource(for: stale.heroImageName) == nil)
+    }
 }
