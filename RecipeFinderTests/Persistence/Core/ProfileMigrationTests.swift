@@ -155,17 +155,30 @@ final class InMemoryProfileStore: ProfileStoring {
         #expect(ProfileRecord.shared(from: [undated, dated]) == dated)
     }
 
-    @Test func aPhotoOrChefTypeOnlyTheOtherProfileHoldsIsKept() {
+    @Test func aPhotoTheChosenProfileDoesNotHaveIsNotTakenFromTheOther() {
         var bare = asad
-        bare.imageData = nil
-        bare.chefType = nil
+        bare.imageData = nil   // removed by the cook
         var other = newDevice
         other.imageData = Data([0x01])
-        other.chefType = ChefType.foodie.rawValue
-        var expected = bare
-        expected.imageData = Data([0x01])
-        expected.chefType = ChefType.foodie.rawValue
-        #expect(ProfileRecord.shared(from: [other, bare]) == expected)
+        #expect(ProfileRecord.shared(from: [other, bare]) == bare)
+    }
+
+    @Test func withSyncOnAnEditThatOnlyReachedTheKeptCopyIsAddedAndLaterEditsReachTheStore() {
+        var sam = newDevice
+        sam.firstName = "Sam"
+        writeOldKeys(sam)
+        let store = InMemoryProfileStore()
+        _ = manager(store)
+        store.record = asad
+        let aheadKey = "keptCopyAhead.\(ProfileManager.uuidKey)"
+        storage.set(true, forKey: aheadKey)   // this device's last save failed
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.firstName == "Sam")
+        #expect(store.record == sam)
+        #expect(!storage.bool(forKey: aheadKey))
+        sut.updateProfile(firstName: "Sam", lastName: "Lee", chefType: .baker)
+        #expect(store.record?.lastName == "Lee")
     }
 
     @Test func noProfilesPickNothing() {
@@ -421,9 +434,9 @@ final class InMemoryProfileStore: ProfileStoring {
         fromICloud.setValue(asad.createdDate, forKey: "createdDate")
         try context.save()
 
-        var expected = asad   // the older, named profile, with the photo only the phone's row held
+        var expected = asad   // the older, named profile, as iCloud brought it in
         expected.chefType = nil
-        expected.imageData = phone.imageData
+        expected.imageData = nil
         let shared = try #require(try sut.fetchProfile())
         #expect(shared == expected)
 

@@ -15,7 +15,7 @@ struct ProfileRecord: Codable, Equatable {
 
     /// Under iCloud sync each device starts its own profile, so the store can hold several. Every device must pick
     /// the same one: a named profile over an empty one (a new device's), then the oldest (the cook's first), then
-    /// by uuid. A chef type or photo only the others hold is kept rather than dropped.
+    /// by uuid. Fields aren't filled in from the others: a photo the cook removed must stay removed.
     static func shared(from records: [ProfileRecord]) -> ProfileRecord? {
         let ordered = records.sorted { lhs, rhs in
             if lhs.hasName != rhs.hasName { return lhs.hasName }
@@ -26,10 +26,7 @@ struct ProfileRecord: Codable, Equatable {
             default: return lhs.uuid < rhs.uuid
             }
         }
-        guard var chosen = ordered.first else { return nil }
-        chosen.chefType = chosen.chefType ?? ordered.lazy.compactMap(\.chefType).first
-        chosen.imageData = chosen.imageData ?? ordered.lazy.compactMap(\.imageData).first
-        return chosen
+        return ordered.first
     }
 }
 

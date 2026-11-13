@@ -201,3 +201,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **Store names as ids**: "Tesco" vs "tesco" from two devices both survive; a rename on one device leaves the other's item tags pointing at the old name.
 - **Category fix-up on load** (Kitchen/Shopping) saves straight away — two app versions normalising differently would flip values between devices.
 - **Tests** don't run a manager save under sync (`applyEdits` covered only in `SyncMergeTests`) and don't distinguish a wrong id closure.
+
+### 2026-11-13 · Data safety 2/4 slice 2b (one shared profile) — fixed: filling a missing photo from another device's row brought a removed photo back (fill dropped); added a test that fails if the constant sync id is replaced by the uuid
+- **Stale in-memory profile** until remote-change reload (slice 3): a device still holding its own profile overwrites the iCloud one on its next save — last writer wins.
+- **"Oldest" uses each device's clock** (`createdDate`): a wrong clock picks the wrong profile, but every device picks the same one.
+- **New device names itself before iCloud's profile arrives** → that edit loses to the older named profile.
+- **Reset under sync** can be undone by an offline device pushing its old named row (named beats empty); slice 3's Reset copy must warn, and Reset should turn sync rules into "erase everywhere".
+- **Every write deletes other rows**: a concurrent edit on another device can be dropped by CloudKit's merge.
