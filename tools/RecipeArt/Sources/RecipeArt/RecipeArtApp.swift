@@ -32,6 +32,8 @@ final class Generator: ObservableObject {
     @Published var failures: [String] = []
     @Published var finished = false
     @Published var lastImage: NSImage?
+    /// Shown so a "language not supported" failure can be matched against System Settings.
+    @Published var languages = ""
 
     static let seedPath = "RecipeFinder/RecipeSeed/recipes_seed.json"
     static let outputPath = "tools/RecipeArt/Output"
@@ -40,6 +42,10 @@ final class Generator: ObservableObject {
 
     func run() async {
         let fm = FileManager.default
+        // Launched as an .app by run.sh, which passes the repo root (an app starts in "/").
+        if CommandLine.arguments.count > 1 {
+            fm.changeCurrentDirectoryPath(CommandLine.arguments[1])
+        }
         guard fm.fileExists(atPath: Self.seedPath) else {
             status = "Run this from the RecipeFinder folder (couldn't find \(Self.seedPath))."
             finished = true
@@ -69,6 +75,7 @@ final class Generator: ObservableObject {
             finished = true
             return
         }
+        languages = Locale.preferredLanguages.prefix(3).joined(separator: ", ")
         let style: ImagePlaygroundStyle = creator.availableStyles.contains(.illustration)
             ? .illustration : (creator.availableStyles.first ?? .illustration)
 
@@ -196,6 +203,9 @@ struct ProgressScreen: View {
                     .font(.callout).foregroundStyle(.secondary)
             }
             Text(generator.status).fixedSize(horizontal: false, vertical: true)
+            if !generator.languages.isEmpty {
+                Text("Mac languages: \(generator.languages)").font(.caption).foregroundStyle(.secondary)
+            }
             if let image = generator.lastImage {
                 Image(nsImage: image).resizable().scaledToFit().frame(maxHeight: 160).clipShape(.rect(cornerRadius: 10))
             }

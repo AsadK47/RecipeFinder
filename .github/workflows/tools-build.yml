@@ -17,4 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build RecipeArt
-        run: swift build --package-path tools/RecipeArt
+        run: |
+          swift build --package-path tools/RecipeArt
+          bash -n tools/RecipeArt/run.sh
