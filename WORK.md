@@ -1,15 +1,29 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 2b merged (0529d44); item still claimed 🚧.
+`agent/cloudkit-container` (bc749e0) — Data safety 2/4 slice 3a: `NSPersistentCloudKitContainer` (mirroring only when
+`SyncPreference` on — still off), history + remote-change options always on, `CloudSyncReloader` (reload every
+manager on CloudKit-import transactions, wired in `AppRootView`), iCloud/CloudKit entitlement. Waiting on Build & Test.
 
 ## Next action
-Slice 3 = `NSPersistentCloudKitContainer` (history tracking + remote-change options) + entitlement
-(iCloud.com.asadkhan.recipefinder) + reload every manager on `NSPersistentStoreRemoteChange` + Settings toggle/status
-(sets `SyncPreference.key`; Reset copy warns it erases on every device). Slice 4 = recipe photos + first-sync dedupe.
-Slice 5 = Privacy Policy §7.
+Get the branch green, review fixes, ff-merge, then confirm `testflight.yml` on main still signs/uploads (first build
+with the iCloud entitlement). Then slice 3b = first-sync dedupe (recipes by id; seeded/bundled recipes have stable
+ids) — must ship BEFORE sync turns on. Slice 3c = Settings toggle + status (on by default when signed in; Reset copy
+warns it erases on every device; mirroring follows the launch-time value). Then photos (4), Privacy Policy §7 (5).
 
 ## Decisions (why)
+- **Data safety 2/4 slice 3a (container)**: reordered — dedupe before the switch turns on: a reinstall seeds the 332
+  bundled recipes and iCloud returns the old 332 → duplicates on the owner's reinstall test. Reload is driven by
+  persistent history, author `NSCloudKitMirroringDelegate.import` only (the remote-change notification fires for
+  this device's own saves too → reload loop). Token starts at launch (launch already loaded everything), kept in
+  memory. History tracking always on (turning it off later opens the store read-only). Options set explicitly to
+  nil when off (the entitlement would otherwise make the container mirror by default). Push (aps-environment) not
+  added: imports still run on launch/foreground; avoids a new capability on the App ID — add with the toggle slice.
+  Turn-on slice must: not let `attemptStoreRecovery` move the store aside on a CloudKit setup error.
+  **Pre-mortem:** (1) mirroring starts before dedupe → `iCloudMirroringIsOffWhileTheSyncSwitchIsOff`,
+  `storesForTestsNeverMirrorToICloud`; (2) reload loops on own saves → `thisDevicesOwnSaveDoesNotReload`,
+  `eachImportReloadsOnce`; (3) another device's change never shows → `aChangeImportedFromICloudReloadsTheLists`,
+  `theStoresRemoteChangeNotificationTriggersTheCheck`.
 - **Data safety 2/4 slice 2b (profile)**: sync id is a constant ("profile") — every device's profile row is the same
   row. No modified date on `ProfileEntity` (adding one = RecipeModel 17), so the store picks deterministically on
   every device via `ProfileRecord.shared(from:)`: named over empty, then oldest `createdDate`, then uuid; no field
