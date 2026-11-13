@@ -186,3 +186,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **Sync (2/4)**: the store keeps one row and deletes other-uuid rows, so two devices would delete each other's profile — 2/4 must merge/pick by date.
 - **Tests**: the external-storage path (>100 KB) isn't exercised by the in-memory store; `setIfChanged` and `unlockWelcomeBadge` (shared init only) are unpinned; Reset wiring in `DataManagementSettingsView` untested (same as 3c–3f, `ResetService` item).
 - **Reset kill window** between `clearAll()` and `removeProfile()` can bring the name back (same rule as 3d; running the `remove*()` calls before `clearAll()` would close it for every manager).
+
+### 2026-11-13 · Data safety 2/4 slice 1 (sync-safe `MirroredSnapshot`) — fixed: a save brought back rows deleted on another device (unchanged-here + gone-from-store now dropped); an empty shared store overwrote the kept copy (now refilled from it). Noted, not fixed:
+- **Kept-copy-ahead / first move is add-only and the copy wins on shared ids**: rows deleted meanwhile come back and other devices' newer edits to those ids roll back. Accepted (nothing lost); a persisted base would fix it.
+- **Empty-store refill** also undoes a real "everything deleted on another device" for this device's rows.
+- **Sync on→off** must stop CloudKit mirroring before the 1/4 rule replaces the store (slice 3).
+- **Reset while syncing** wipes every device; rows not yet imported come back (slice 3 UI must say so).
+- **`copyIn` re-read during an import** can fail the check → session runs on the kept copy (then add-only next launch).
+- **Merged rows not shown until next `load()`**; `syncActive` is per-load — slice 2 reloads on remote change.
+- **Duplicate ids**: first wins, no log.
