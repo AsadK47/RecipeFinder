@@ -105,7 +105,7 @@ drop a line while moving it.
   plain gradient in `Components/Recipe/RecipePlaceholderView.swift` with illustrated art per category/cuisine (SF
   Symbols composition or a small bundled SVG/PDF set) so recipes without a photo still look finished; screenshots of
   placeholders. *Done when:* placeholder tests (category/cuisine → art mapping), screenshots looked at, CI green.
-- [ ] **Data safety 1/4 — Everything in Core Data, upgrades that can't lose data** — 🚧 builder agent 2026-11-12 (owner OK 2026-11-12, incl. Core
+- [ ] **Data safety 1/4 — Everything in Core Data, upgrades that can't lose data** — 🚧 builder agent 2026-11-13 (owner OK 2026-11-12, incl. Core
   Data model change). Move meal plans, shopping list, kitchen items/inventory, collections, badges, cooking streak and
   profile out of UserDefaults (`LocalStore` JSON blobs) into Core Data entities in a new model version (+ point
   `.xccurrentversion` at it and update every "RecipeModel N" mention in CLAUDE.md files in the same commit). One-time
