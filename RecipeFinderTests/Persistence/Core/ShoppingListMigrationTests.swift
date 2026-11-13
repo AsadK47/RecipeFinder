@@ -82,6 +82,22 @@ final class InMemoryShoppingListStore: ShoppingListStoring {
         ShoppingListManager(storage: storage, shoppingListStore: store, badgeManager: BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore()))
     }
 
+    // MARK: - iCloud sync (Data safety 2/4)
+
+    @Test func withSyncOnAnItemAndAStoreAnotherDeviceAddedAreKept() {
+        writeBlobs([pasta], stores: ["Tesco"])
+        let store = InMemoryShoppingListStore()
+        _ = manager(store)
+        store.items.append(peas)   // arrived from another device
+        store.stores.append("Lidl")
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.items == both)
+        #expect(sut.stores == ["Tesco", "Lidl"])
+        #expect(store.items == both)
+        #expect(keptStores() == ["Tesco", "Lidl"])
+    }
+
     // MARK: - Migration
 
     @Test func everyBlobItemAndStoreBecomesARowInOrderAndBothKeysAreMarked() {

@@ -63,6 +63,20 @@ final class InMemoryMealPlanStore: MealPlanStoring {
                             reminders: reminders)
     }
 
+    // MARK: - iCloud sync (Data safety 2/4)
+
+    @Test func withSyncOnAPlanAnotherDeviceAddedIsKept() {
+        writeBlob([tonight])
+        let store = InMemoryMealPlanStore()
+        _ = manager(store)
+        store.plans.append(breakfast)   // arrived from another device
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.mealPlans == both)
+        #expect(store.plans == both)
+        #expect(keptCopy() == both)
+    }
+
     // MARK: - Migration
 
     @Test func everyBlobPlanBecomesARowInOrderAndTheKeyIsMarked() {

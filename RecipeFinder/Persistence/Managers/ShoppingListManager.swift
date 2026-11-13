@@ -69,12 +69,14 @@ final class ShoppingListManager: ShoppingListManaging {
         self.itemsMirror = MirroredSnapshot(
             blobKey: Self.itemsBlobKey, storage: storage,
             fetch: { try shoppingListStore.fetchItems() },
-            replace: { try shoppingListStore.replaceItems(with: $0) }
+            replace: { try shoppingListStore.replaceItems(with: $0) },
+            sync: .iCloudRules(storage: storage) { $0.id }
         )
         self.storesMirror = MirroredSnapshot(
             blobKey: Self.storesBlobKey, storage: storage,
             fetch: { try shoppingListStore.fetchStores() },
-            replace: { try shoppingListStore.replaceStores(with: $0) }
+            replace: { try shoppingListStore.replaceStores(with: $0) },
+            sync: .iCloudRules(storage: storage) { $0 }
         )
         loadItems()
     }

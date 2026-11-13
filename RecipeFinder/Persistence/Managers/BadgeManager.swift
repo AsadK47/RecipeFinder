@@ -63,7 +63,8 @@ final class BadgeManager: BadgeManaging {
                 storage.removeObject(forKey: Self.shownCelebrationsBlobKey)
             },
             fetch: { try badgeStore.fetchBadges() },
-            replace: { try badgeStore.replaceBadges(with: $0) }
+            replace: { try badgeStore.replaceBadges(with: $0) },
+            sync: .iCloudRules(storage: storage) { $0.badgeId }
         )
         reload()
     }
