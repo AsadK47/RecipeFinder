@@ -1,0 +1,20 @@
+name: Build tools
+
+# Compiles the owner-run Mac tools in tools/ (e.g. RecipeArt) so they're known to build before the owner runs them.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/RecipeArt/**'
+
+permissions:
+  contents: read
+
+jobs:
+  recipe-art:
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build RecipeArt
+        run: swift build --package-path tools/RecipeArt
