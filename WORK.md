@@ -1,7 +1,7 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 2b merged (0529d44); item still claimed 🚧.
+Nothing. Data safety 2/4 slice 2b merged (0529d44); item still claimed 🚧. 2026-11-13 evening: Inbox 🐞 (imageName in `RecipeModel` equality) merged 8f4a596.
 
 ## Next action
 Slice 3 = `NSPersistentCloudKitContainer` (history tracking + remote-change options) + entitlement
