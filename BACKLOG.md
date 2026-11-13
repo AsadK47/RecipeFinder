@@ -138,6 +138,8 @@ drop a line while moving it.
   reload (2b), CloudKit container + entitlement + Settings toggle/status (3), photos + dedupe
   (4), Privacy Policy §7 (5). *Done when:* container setup + conflict/dedupe logic
   tested, sync verified on two devices via TestFlight (owner), CI + TestFlight green.
+  Owner asked (2026-11-13): when the slice that turns sync on ships, tell the owner in the push notification that it's
+  ready to test on two devices (same iCloud account) and which build has it.
 - [ ] **Pictures 2/4 — "Make a picture"** for recipes without a photo: Image Playground (`ImageCreator`, on device,
   iOS 18.4+ with Apple Intelligence) generates an illustration from the recipe name + key ingredients; user picks one,
   saved like a photo. Hidden where unavailable (placeholder art stays). *Done when:* prompt building + availability
