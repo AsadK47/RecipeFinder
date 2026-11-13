@@ -1,12 +1,11 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Data safety 2/4 slice 3a on `agent/data-safety-2-cloudkit-container`: `NSPersistentCloudKitContainer` + history/
-remote-change options (`CloudSyncStore`), iCloud entitlement, CloudKit model check, load-with-sync failure falls back
-to a local store (never recovery). Sync still off (no toggle). Waiting on Build & Test.
+Nothing. Data safety 2/4 slice 3a merged (40bc462); item still claimed 🚧. Check the TestFlight run for
+40bc462 signed with the iCloud entitlement.
 
 ## Next action
-Merge 3a when green. Slice 3b = reload every manager on `NSPersistentStoreRemoteChange` (CollectionManager needs a
+If TestFlight for 40bc462 failed on signing/profile → fix that first. Slice 3b = reload every manager on `NSPersistentStoreRemoteChange` (CollectionManager needs a
 public `reload()`; only while sync on) + Settings "iCloud sync" toggle/status (sets `SyncPreference.key`, applies on
 next launch; Reset copy warns it erases on every device). Slice 4 = recipe photos + first-sync dedupe. Slice 5 = Privacy §7.
 

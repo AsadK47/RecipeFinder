@@ -135,8 +135,9 @@ drop a line while moving it.
   feature). Dedupe on first sync (same recipe on two devices). ✅ Slice 1 (38feeee): `SyncMerge` + `MirroredSnapshot.SyncRules`
   store-wins mode (3-way merge on save, add-only kept copy). ✅ Slice 2a (f44a58c): `SyncPreference` flag (off) +
   rules wired into every list manager except profile. ✅ Slice 2b (0529d44): profile shares one row across devices
-  (constant sync id; store picks named → oldest → uuid). Left: CloudKit container + entitlement + remote-change
-  reload + Settings toggle/status (3), photos + dedupe
+  (constant sync id; store picks named → oldest → uuid). ✅ Slice 3a (40bc462): `NSPersistentCloudKitContainer`
+  (history + remote-change on, CloudKit only while sync on), iCloud entitlement, CloudKit model check. Left: remote-change
+  reload + Settings toggle/status (3b), photos + dedupe
   (4), Privacy Policy §7 (5). *Done when:* container setup + conflict/dedupe logic
   tested, sync verified on two devices via TestFlight (owner), CI + TestFlight green.
   Owner asked (2026-11-13): when the slice that turns sync on ships, tell the owner in the push notification that it's
@@ -630,3 +631,5 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-13 · Data safety 2/4 slice 2b (one shared profile under sync, switch off) · 0529d44 · nothing visible; app should behave exactly as before (sync still off) · review: challenge 1 fixed (filling a missing photo from another device brought a removed photo back) + 1 test added (constant sync id), 5 noted in docs/CHALLENGES.md · looked at: n/a (no UI)
 - 2026-11-13 · 🐞 Main photo change refreshes recipe detail · 8f4a596 · `RecipeModel` `==`/`hash` include `imageName`; 2 tests. On phone: open a recipe → photos → remove the main photo — the gallery updates at once (built-in picture returns) without reopening · review: challenge 0 found · looked at: none (no layout change)
 - 2026-11-13 · 📷 Profile photo stored small · 222a9f7 · New profile photos are kept at most 512 px (was full camera size; falls back to full size if downscaling fails); photos already saved shrink next time they're changed. 2 tests. On phone: Me → change your photo — it looks as sharp as before · review: self-checked (no separate agent) · looked at: none (no layout change)
+- 2026-11-13 · 🐞 Today lunch pick flaky (main red, run 940) · e86daca · lunch suggests mains/soups/starters (breakfasts only when nothing else); 2 tests. On phone: Today at lunchtime leads with a main · review: none (one-line fix) · looked at: none (no layout change)
+- 2026-11-13 · Data safety 2/4 slice 3a (CloudKit container, sync off) · 40bc462 · nothing visible; app should open with every recipe as before — **check this TestFlight build uploads and installs** (first build with the iCloud entitlement) · review: challenge 1 fixed (history-tracking guardrail in CLAUDE.md) + relationship-rule tests added, 5 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New CloudSyncStore.swift, CloudSyncStoreTests.swift registered in pbxproj by hand.
