@@ -136,10 +136,9 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lhs.photoNames == rhs.photoNames
     }
     
-    /// Image for lists/cards: main image if set, else the first post-cook photo.
+    /// Image for lists/cards: main image if set, else the first post-cook photo, else the built-in illustration.
     var heroImageName: String? {
-        if let imageName, !imageName.isEmpty { return imageName }
-        return photoNames.first
+        BundledRecipeArt.heroName(imageName: imageName, photoNames: photoNames, id: id)
     }
 
     /// False when no time is known (imports without timings) — cards hide the clock rather than show "0 minutes".

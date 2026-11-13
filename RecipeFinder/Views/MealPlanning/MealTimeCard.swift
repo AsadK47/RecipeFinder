@@ -10,7 +10,7 @@ struct MealTimeCard: View {
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
             MealThumbnail(
-                imageName: recipe?.imageName ?? "",
+                imageName: recipe?.heroImageName ?? "",
                 recipeName: recipe?.name,
                 category: recipe?.category,
                 cuisine: recipe?.cuisine,

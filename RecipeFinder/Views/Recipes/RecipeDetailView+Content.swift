@@ -66,8 +66,11 @@ extension RecipeDetailView {
 
     // Ordered displayable images (main first, then post-cook photos); filtered so stale refs don't gap. Cached in galleryImageNames to avoid FileManager checks every body pass.
     static func galleryNames(for recipe: RecipeModel) -> [String] {
-        ([recipe.imageName].compactMap { $0 } + recipe.photoNames)
+        let own = ([recipe.imageName].compactMap { $0 } + recipe.photoNames)
             .filter { RecipeImageView.hasDisplayableImage($0) }
+        // No photo of the cook's own yet: show the built-in illustration rather than an empty header.
+        if own.isEmpty, let art = BundledRecipeArt.reference(for: recipe.id) { return [art] }
+        return own
     }
 
     // 220pt hero: single image renders directly, multiple become a paged gallery; tap opens full-screen at that index.

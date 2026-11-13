@@ -34,6 +34,9 @@ struct RecipeImageView: View {
     /// Resolves `imageName` to a Kingfisher source, or `nil` if undisplayable (empty or missing local file); shared with `hasDisplayableImage`.
     static func resolvedSource(for imageName: String?) -> Source? {
         guard let imageName = imageName, !imageName.isEmpty else { return nil }
+        if imageName.hasPrefix(BundledRecipeArt.referencePrefix) {
+            return BundledRecipeArt.fileURL(for: imageName).map { .provider(localProvider(for: $0)) }
+        }
         if imageName.hasPrefix("http"), let url = URL(string: imageName) {
             // Prefer the phone copy kept by RecipeStore+RemoteImages so the picture shows offline.
             if let stored = RemoteRecipeImage.storedPath(for: imageName),

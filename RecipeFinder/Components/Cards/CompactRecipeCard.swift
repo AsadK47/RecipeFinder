@@ -13,7 +13,7 @@ struct CompactRecipeCard: View {
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             ZStack(alignment: .topLeading) {
-                RecipeImageView(recipe: recipe, imageName: recipe.imageName, height: AppTheme.width100)
+                RecipeImageView(recipe: recipe, imageName: recipe.heroImageName, height: AppTheme.width100)
                     .frame(width: AppTheme.width100, height: AppTheme.width100, alignment: .center)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
 

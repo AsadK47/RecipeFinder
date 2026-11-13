@@ -67,7 +67,7 @@ private struct MealPickerRecipeCard: View {
 
     // Shared resolver: handles http/legacy-absolute/relative paths and versions the cache key so a replaced photo never serves stale.
     private var kfSource: Source? {
-        RecipeImageView.resolvedSource(for: recipe.imageName)
+        RecipeImageView.resolvedSource(for: recipe.heroImageName)
     }
 
     var body: some View {

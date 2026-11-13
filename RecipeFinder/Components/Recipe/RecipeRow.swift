@@ -8,7 +8,7 @@ struct RecipeRow: View {
         HStack(spacing: AppTheme.spacing12) {
             RecipeImageView(
                 recipe: recipe,
-                imageName: recipe.imageName,
+                imageName: recipe.heroImageName,
                 height: Constants.Sizes.recipeImageSize
             )
             .frame(width: Constants.Sizes.recipeImageSize, height: Constants.Sizes.recipeImageSize)
