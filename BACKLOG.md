@@ -124,7 +124,7 @@ drop a line while moving it.
   (six old keys kept current; Reset calls `removeProfile()`). *Done when:*
   migration tested per manager (incl. corrupt/missing blobs), store-backup tested, migration test from the shipped
   model, backup/restore round-trip still green, CI green.
-- [ ] **Data safety 2/4 — iCloud sync** (owner OK 2026-11-12: iCloud entitlement + CloudKit container + model
+- [ ] **Data safety 2/4 — iCloud sync** — 🚧 builder agent 2026-11-13 (owner OK 2026-11-12: iCloud entitlement + CloudKit container + model
   change). `NSPersistentCloudKitContainer` with the private database; recipes + everything moved in 1/4 sync across the
   user's devices; photos synced (Core Data binary attribute with "Allows External Storage", or CKAsset-backed records)
   without loading every photo into memory. Settings → "iCloud sync" on by default when signed in to iCloud, with
