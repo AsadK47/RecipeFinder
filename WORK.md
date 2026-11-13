@@ -1,15 +1,27 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 2b merged (0529d44); item still claimed 🚧. 2026-11-13 evening: Inbox 🐞 (imageName in `RecipeModel` equality) merged 8f4a596.
+Data safety 2/4 slice 3a on `agent/data-safety-2-cloudkit-container`: `NSPersistentCloudKitContainer` + history/
+remote-change options (`CloudSyncStore`), iCloud entitlement, CloudKit model check, load-with-sync failure falls back
+to a local store (never recovery). Sync still off (no toggle). Waiting on Build & Test.
 
 ## Next action
-Slice 3 = `NSPersistentCloudKitContainer` (history tracking + remote-change options) + entitlement
-(iCloud.com.asadkhan.recipefinder) + reload every manager on `NSPersistentStoreRemoteChange` + Settings toggle/status
-(sets `SyncPreference.key`; Reset copy warns it erases on every device). Slice 4 = recipe photos + first-sync dedupe.
-Slice 5 = Privacy Policy §7.
+Merge 3a when green. Slice 3b = reload every manager on `NSPersistentStoreRemoteChange` (CollectionManager needs a
+public `reload()`; only while sync on) + Settings "iCloud sync" toggle/status (sets `SyncPreference.key`, applies on
+next launch; Reset copy warns it erases on every device). Slice 4 = recipe photos + first-sync dedupe. Slice 5 = Privacy §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 3a (container)**: container is always `NSPersistentCloudKitContainer`; history tracking +
+  remote-change options always on (CloudKit needs history from the start; turning history off later would make the
+  store read-only). `cloudKitContainerOptions` only when `SyncPreference` is on at launch (read once — a live switch
+  would mean re-adding the store mid-session; slice 3b's toggle applies on next launch). No `aps-environment` /
+  remote-notification background mode: owner enabled iCloud+CloudKit only, push would need a new capability; without
+  it CloudKit still imports on launch/foreground, enough for the reinstall test. Revisit with owner if live sync wanted.
+  **Pre-mortem:** (1) CloudKit refuses the model → store fails with sync on → recovery would move every recipe aside →
+  `retryWithoutSync` reopens locally + `theShippedModelIsOneCloudKitAccepts` guards future model versions;
+  (2) sync switches on by accident / in tests → `theAppsStoreIsSetUpWithSyncOffByDefault`, inMemory never syncs;
+  (3) entitlement breaks TestFlight signing → automatic signing + -allowProvisioningUpdates, owner set up container
+  2026-11-12; check the TestFlight run after merge.
 - **Data safety 2/4 slice 2b (profile)**: sync id is a constant ("profile") — every device's profile row is the same
   row. No modified date on `ProfileEntity` (adding one = RecipeModel 17), so the store picks deterministically on
   every device via `ProfileRecord.shared(from:)`: named over empty, then oldest `createdDate`, then uuid; no field
