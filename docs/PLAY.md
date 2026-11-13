@@ -133,7 +133,9 @@ cheers. First win in under 2 minutes. Existing users: a one-time "Your cooking p
 
 ## 12. Guardrails
 
-Rewards only for real cooking and learning; deterministic (no random or loot-box rewards); no paid currency; no lives;
+Rewards only for real cooking and learning. **Chance is welcome when it's free** (owner 2026-11-13: "fun for the
+sake of being fun"): never a stake (no money, no Spoons spent to play), odds printed on the machine, every spin wins a
+dinner, prizes are Spoons multipliers and cosmetics; nothing is ever for sale. No paid currency; no lives;
 no guilt copy; holiday mode; Settings → "Quiet mode" hides streaks, Spoons and celebrations for people who prefer a
 plain recipe app. App is 4+ — no dark patterns (UK Children's Code spirit). No analytics: the owner judges feel on
 TestFlight, so every Play item ships with screenshots of new-user and active-cook states.
@@ -143,3 +145,16 @@ TestFlight, so every Play item ships with screenshots of new-user and active-coo
 Play 1/7 foundation → 2/7 daily streak + weekly ring → 3/7 Made-it moment → Badges 2/2 → 4/7 Kitchen Bites → 5/7
 Cooking Path + levels → 6/7 quests, events, notifications → 7/7 mascot, onboarding, shop. Wrapped ships by 24 Nov
 independently.
+
+## 14. Today feed + Dinner Jackpot (owner 2026-11-13)
+
+Prototype the owner saw: https://claude.ai/artifact/GSnMHTughHYQ1LM5neVgwd (rebuild in SwiftUI, don't port the HTML).
+- **Today = an endless cookbook.** Full-width Tonight hero (picture, bold name, a reason, Cook tonight · Another idea),
+  then chapters forever, each with a reason line and a rotating layout (2-column picture wall · swipe row · wide
+  feature): Because you loved X · Under 30 minutes · Uses what you have · Cook it again · New to you · Something sweet
+  · A trip to <cuisine>. Play cards (Kitchen Bite, passport, quests) slot in between chapters. Ranked from the cook's
+  library + all bundled recipes; no recipe repeats until the pool is spent, then it reshuffles. Double-tap saves.
+- **Dinner Jackpot.** A slot machine card under Tonight: 3 reels of dish pictures, chunky SPIN button, reels stop
+  one by one with haptic ticks. Outcome is chosen first, then animated: three of a kind (1 in 12) = JACKPOT, confetti,
+  that dish for tonight at ×3 Spoons; pair (1 in 3) = ×2; no match = "tap the one you fancy" (still picks dinner).
+  3 free spins a day, +1 per cook. Odds shown on the machine. Multipliers apply when the cook marks Made it that day.

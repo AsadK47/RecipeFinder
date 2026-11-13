@@ -84,7 +84,7 @@ drop a line while moving it.
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
    **Top priority (owner 2026-11-12: "move them to the top"):** finish the item in progress (Badges 1/2), then
-   Pictures 1/4 → Data safety 1/4 → 2/4 → **Play 1/7 → 3/7 → Badges 2/2 → Play 4/7 → 7/7** (owner 2026-11-13; Wrapped still ships before 1 Dec — slot it in by 24 Nov) → Pictures 2/4 → 3/4 → 4/4 → Data safety 3/4 → 4/4, then continue below.
+   Pictures 1/4 → Data safety 1/4 → 2/4 → **Today feed → Dinner Jackpot → Play 1/7 → 3/7 → Badges 2/2 → Play 4/7 → 7/7** (owner 2026-11-13; Wrapped still ships before 1 Dec — slot it in by 24 Nov) → Pictures 2/4 → 3/4 → 4/4 → Data safety 3/4 → 4/4, then continue below.
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Me 1/3 → 3/3 (3/3 = Settings tidy-up) → Showcase screenshots → Plan my week 1/3 → 2/3 → Groceries + Kitchen → Plan my week 3/3 →
    cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity. Then (owner OK 2026-11-10): taste profile →
    (skill tree = Play 5/7) → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
@@ -319,10 +319,21 @@ drop a line while moving it.
   it came from; undo on delete/clear. Merge duplicated row/section/header views between `Views/Kitchen` and
   `Views/Shopping` and delete the leftovers. *Done when:* put-away + expiry + merge logic tested, screenshots of both
   halves, net line count down, CI green.
+- [ ] **Today feed — an endless cookbook** (owner 2026-11-13: "infinite scroll is fun, addictive even"; see
+  `docs/PLAY.md` §14 + prototype link there). Tonight hero full width; endless chapters with reason lines and rotating
+  layouts; Play cards slot in later. Uses the bundled pictures large. Replaces today's This week / Your cooking boxes
+  (week ring moves to a compact row; zero-states like "0 week streak" become a "Start your streak" prompt).
+  *Done when:* chapter ranking + no-repeat paging tested, perf budget for 300+ recipes, screenshots (new user, active
+  cook, scrolled 3 screens), CI green.
+- [ ] **Dinner Jackpot** (owner 2026-11-13: "slot machine twist … fun for the sake of being fun"). §14: reels,
+  odds 1/12 jackpot · 1/3 pair, every spin picks dinner, 3 free spins/day +1 per cook, haptics + confetti, Reduce
+  Motion = instant result. Multipliers show as "×3 Spoons" once Play 1/7 lands (until then: "Tonight is set").
+  *Done when:* outcome odds (seeded RNG, 10k-spin distribution test), spin allowance + reset at 03:00, screenshots
+  (jackpot, pair, no match), CI green.
 ### Play series — cooking as a habit people love (owner 2026-11-13: "like Duolingo … better … really think")
 **Read `docs/PLAY.md` first** — mechanics, numbers, rules and architecture live there; items below are the slices.
 Merges Made-it celebration, Spoons 1/2 + 2/2, Streak freeze, Zero-waste wins, Cuisine passport and the skill tree.
-Every Play item: rewards only for real cooking/learning, deterministic (no random rewards), nothing to buy, nothing
+Every Play item: rewards only for real cooking/learning; free chance is fine (no stake, odds shown — §12), nothing to buy, nothing
 leaves the device, warm copy (never guilt), existing streaks/badges carry over, screenshots of new-user + active-cook.
 🙋 Blocked on owner answers in **Needs owner** (Play decisions) before 1/7 starts.
 - [ ] **Play 1/7 — Foundation.** `PlayEvent` log + pure `PlayEngine` (§11) + `CelebrationQueue` (§7) + Spoons earn
