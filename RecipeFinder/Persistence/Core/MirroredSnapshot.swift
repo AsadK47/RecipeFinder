@@ -1,6 +1,7 @@
 import Foundation
 
-/// The cook's iCloud sync switch (Data safety 2/4). Off until the CloudKit container and the Settings toggle ship.
+/// The cook's iCloud sync switch (Data safety 2/4), read once at launch by `PersistenceController.shared`. Off until
+/// first-sync dedupe and the Settings toggle ship.
 enum SyncPreference {
     static let key = "iCloudSyncEnabled"
 

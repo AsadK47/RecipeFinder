@@ -66,6 +66,11 @@ final class CollectionManager: CollectionManaging {
         loadCollections()
     }
 
+    /// Re-reads the store (another device's changes arrived through iCloud).
+    func reload() {
+        loadCollections()
+    }
+
     private func loadCollections() {
         collections = mirror.load()
     }

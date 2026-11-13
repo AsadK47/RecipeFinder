@@ -6,9 +6,11 @@ let persistenceLogger = AppLogger.logger(category: "PersistenceController")
 /// Core Data stack owner; store lifecycle here, reads/writes/maintenance in focused extensions.
 @MainActor
 final class PersistenceController {
-    static let shared = PersistenceController(backupDirectory: StoreBackup.defaultDirectory())
+    static let shared = PersistenceController(
+        backupDirectory: StoreBackup.defaultDirectory(), syncOn: SyncPreference.isOn(in: .shared)
+    )
 
-    let container: NSPersistentContainer
+    let container: NSPersistentCloudKitContainer
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
 
@@ -45,14 +47,15 @@ final class PersistenceController {
     /// `inMemory`: back store with `/dev/null` for tests (still SQLite so batch ops work).
     /// `backupDirectory`: where the store is copied before a model upgrade (`StoreBackup`); nil = no copy (tests),
     /// so only `.shared` writes to the real Application Support.
-    init(inMemory: Bool = false, storeURL: URL? = nil, backupDirectory: URL? = nil) {
-        container = NSPersistentContainer(name: "RecipeModel")
+    /// `syncOn`: mirror to iCloud (only the app's own store — tests and previews never reach iCloud).
+    init(inMemory: Bool = false, storeURL: URL? = nil, backupDirectory: URL? = nil, syncOn: Bool = false) {
+        container = NSPersistentCloudKitContainer(name: "RecipeModel")
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         } else if let storeURL {
             container.persistentStoreDescriptions.first?.url = storeURL
         }
-        configureStore()
+        configureStore(cloudKitOptions: Self.cloudKitOptions(syncOn: syncOn, isAppStore: !inMemory && storeURL == nil))
         if !inMemory, let backupDirectory { backUpBeforeMigration(into: backupDirectory) }
         loadStore()
     }
@@ -73,8 +76,21 @@ final class PersistenceController {
         }
     }
 
-    private func configureStore() {
+    /// iCloud container for sync, or nil (no mirroring). Set explicitly either way: with the iCloud entitlement,
+    /// `NSPersistentCloudKitContainer` would otherwise mirror by default.
+    static func cloudKitOptions(syncOn: Bool, isAppStore: Bool) -> NSPersistentCloudKitContainerOptions? {
+        guard syncOn, isAppStore else { return nil }
+        let options = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.com.asadkhan.recipefinder")
+        options.databaseScope = .private
+        return options
+    }
+
+    private func configureStore(cloudKitOptions: NSPersistentCloudKitContainerOptions?) {
         guard let description = container.persistentStoreDescriptions.first else { return }
+        description.cloudKitContainerOptions = cloudKitOptions
+        // Always on, sync or not: CloudKit needs both, and turning history off later would open the store read-only.
+        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
         // Lightweight migration; baseline is model v6+ (all-Binary `ingredients`). Pre-v6 Transformable can't migrate (see CoreDataMigrationTests) — app unreleased, and recovery preserves any store it can't open.
         description.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)

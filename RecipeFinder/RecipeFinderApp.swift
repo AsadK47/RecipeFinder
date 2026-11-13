@@ -103,6 +103,8 @@ struct RecipeFinderApp: App {
 struct AppRootView: View {
     let persistenceController = PersistenceController.shared
     @State private var showOnboarding = false
+    /// Kept for the app's lifetime: reloads every list when iCloud brings in another device's changes.
+    @State private var cloudSyncReloader: CloudSyncReloader?
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
 
     private var preferredColorScheme: ColorScheme? {
@@ -131,8 +133,25 @@ struct AppRootView: View {
             }
         }
         .onAppear(perform: evaluateOnboardingFlow)
+        .onAppear(perform: startCloudSyncReloader)
         .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: showOnboarding)
         .preferredColorScheme(preferredColorScheme)
+    }
+
+    private func startCloudSyncReloader() {
+        guard cloudSyncReloader == nil else { return }
+        let reloader = CloudSyncReloader(container: persistenceController.container) {
+            RecipeStore.shared.load()
+            ShoppingListManager.shared.reload()
+            KitchenInventoryManager.shared.reload()
+            MealPlanningManager.shared.reload()
+            CollectionManager.shared.reload()
+            BadgeManager.shared.reload()
+            CookingStreakManager.shared.reload()
+            ProfileManager.shared.loadProfile()
+        }
+        reloader.start()
+        cloudSyncReloader = reloader
     }
 
     /// First run shows onboarding once; UI tests skip it so the tab bar is reachable immediately.
