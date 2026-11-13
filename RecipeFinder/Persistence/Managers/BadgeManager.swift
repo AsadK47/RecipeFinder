@@ -37,6 +37,7 @@ final class BadgeManager: BadgeManaging {
     static let shownCelebrationsBlobKey = "shownBadgeCelebrations"
     /// Badges live in `EarnedBadgeEntity` rows; the two old `LocalStore` keys are kept current for one release.
     @ObservationIgnored private let mirror: MirroredSnapshot<EarnedBadgeRecord>
+    @ObservationIgnored private let storage: LocalStore
 
     /// When true, unlocks persist but no celebration sheets fire; set by bulk-import to avoid a parade of sheets.
     @ObservationIgnored var isBulkImporting = false
@@ -51,6 +52,7 @@ final class BadgeManager: BadgeManaging {
     }
 
     init(storage: LocalStore, badgeStore: any EarnedBadgeStoring) {
+        self.storage = storage
         self.mirror = MirroredSnapshot(
             blobKey: Self.badgesBlobKey,
             storage: storage,
@@ -69,7 +71,10 @@ final class BadgeManager: BadgeManaging {
     func reload() {
         let records = mirror.load()
         unlockedBadges = EarnedBadgeRecord.earnedBadges(from: records)
-        shownCelebrationIds = EarnedBadgeRecord.shownCelebrations(from: records)
+        // The old shown list is unioned in: with an unreadable badges dict the mirror ignores the kept copy, and a
+        // celebration the cook already saw must still never pop again. Reset clears this key too.
+        let keptShown = storage.object(forKey: Self.shownCelebrationsBlobKey) as? [String] ?? []
+        shownCelebrationIds = EarnedBadgeRecord.shownCelebrations(from: records).union(keptShown)
     }
 
     /// Erase & Reset: removes every earned badge and celebration record. If the store can't delete now, the next

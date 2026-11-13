@@ -135,6 +135,17 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
         #expect(sut.isBadgeUnlocked(headChef))
     }
 
+    @Test func aCorruptBadgesKeyStillKeepsShownCelebrationsFromPoppingAgain() {
+        storage.set(Data("not json".utf8), forKey: badgesKey)
+        storage.set([headChef], forKey: shownKey)
+        let store = InMemoryEarnedBadgeStore()
+        let sut = manager(store)
+        sut.unlockBadge(.headChef)
+        #expect(sut.isBadgeUnlocked(headChef))
+        #expect(sut.pendingCelebration == nil)
+        #expect(store.records.first { $0.badgeId == headChef }?.celebrationShown == true)
+    }
+
     @Test func anUnreadableStoreFallsBackToTheKeptCopy() {
         writeOldKeys([earned(.headChef, on: headChefDate)], shown: [headChef])
         let store = InMemoryEarnedBadgeStore()
