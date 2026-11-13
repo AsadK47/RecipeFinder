@@ -526,7 +526,6 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
-- 📷 Profile photo is stored full size (pre-existing; now held in memory + compared each launch since 3g) — downscale to ~512 px in `ProfileManager.saveProfileImage` (docs/CHALLENGES.md 3g).
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
@@ -619,3 +618,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-13 · Data safety 2/4 slice 2a (sync rules wired, switch off) · f44a58c · nothing visible; app should behave exactly as before (sync still off) · review: challenge 1 fixed (badge store's id order made the kept-copy re-read check always fail under sync), 4 noted in docs/CHALLENGES.md · looked at: n/a (no UI)
 - 2026-11-13 · Data safety 2/4 slice 2b (one shared profile under sync, switch off) · 0529d44 · nothing visible; app should behave exactly as before (sync still off) · review: challenge 1 fixed (filling a missing photo from another device brought a removed photo back) + 1 test added (constant sync id), 5 noted in docs/CHALLENGES.md · looked at: n/a (no UI)
 - 2026-11-13 · 🐞 Main photo change refreshes recipe detail · 8f4a596 · `RecipeModel` `==`/`hash` include `imageName`; 2 tests. On phone: open a recipe → photos → remove the main photo — the gallery updates at once (built-in picture returns) without reopening · review: challenge 0 found · looked at: none (no layout change)
+- 2026-11-13 · 📷 Profile photo stored small · 222a9f7 · New profile photos are kept at most 512 px (was full camera size; falls back to full size if downscaling fails); photos already saved shrink next time they're changed. 2 tests. On phone: Me → change your photo — it looks as sharp as before · review: self-checked (no separate agent) · looked at: none (no layout change)
