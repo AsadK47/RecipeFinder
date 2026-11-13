@@ -134,8 +134,9 @@ drop a line while moving it.
   release. Privacy Policy section 7: describe the sync (owner OK to update that legal text in line with this
   feature). Dedupe on first sync (same recipe on two devices). ✅ Slice 1 (38feeee): `SyncMerge` + `MirroredSnapshot.SyncRules`
   store-wins mode (3-way merge on save, add-only kept copy). ✅ Slice 2a (f44a58c): `SyncPreference` flag (off) +
-  rules wired into every list manager except profile. Left: profile rules + newest-row store + remote-change
-  reload (2b), CloudKit container + entitlement + Settings toggle/status (3), photos + dedupe
+  rules wired into every list manager except profile. ✅ Slice 2b (0529d44): profile shares one row across devices
+  (constant sync id; store picks named → oldest → uuid). Left: CloudKit container + entitlement + remote-change
+  reload + Settings toggle/status (3), photos + dedupe
   (4), Privacy Policy §7 (5). *Done when:* container setup + conflict/dedupe logic
   tested, sync verified on two devices via TestFlight (owner), CI + TestFlight green.
   Owner asked (2026-11-13): when the slice that turns sync on ships, tell the owner in the push notification that it's
@@ -595,3 +596,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-13 · Data safety 1/4 slice 3g (profile → Core Data) — item done · e27d106 · nothing visible; after updating, Me should show the same name, chef type and photo, and Settings → Erase & Reset should leave a blank profile · review: deep-review 0, challenge 1 fixed (Me re-saved its photo on every visit), 5 noted in docs/CHALLENGES.md (full-size photo → downscale item) · looked at: n/a (no UI). New ProfileStore.swift, ProfileMigrationTests.swift registered in pbxproj by hand.
 - 2026-11-13 · Data safety 2/4 slice 1 (sync-safe MirroredSnapshot) · 38feeee · nothing visible (rules not switched on yet) · review: challenge+deep-review 2 fixed (save undid other devices' deletes; empty store wiped kept copy), 7 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New SyncMerge.swift, SyncMergeTests.swift registered in pbxproj by hand.
 - 2026-11-13 · Data safety 2/4 slice 2a (sync rules wired, switch off) · f44a58c · nothing visible; app should behave exactly as before (sync still off) · review: challenge 1 fixed (badge store's id order made the kept-copy re-read check always fail under sync), 4 noted in docs/CHALLENGES.md · looked at: n/a (no UI)
+- 2026-11-13 · Data safety 2/4 slice 2b (one shared profile under sync, switch off) · 0529d44 · nothing visible; app should behave exactly as before (sync still off) · review: challenge 1 fixed (filling a missing photo from another device brought a removed photo back) + 1 test added (constant sync id), 5 noted in docs/CHALLENGES.md · looked at: n/a (no UI)

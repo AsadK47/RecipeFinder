@@ -1,13 +1,13 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Data safety 2/4 slice 2b (profile sync rules) on `agent/data-safety-2-profile-sync`, waiting on Build & Test.
+Nothing. Data safety 2/4 slice 2b merged (0529d44); item still claimed 🚧.
 
 ## Next action
-Slice 2b = ProfileManager sync rules (constant id) + profile store keeps the newest row instead
-of deleting other-uuid rows, and reload managers on `NSPersistentStoreRemoteChange`. Slice 3 =
-`NSPersistentCloudKitContainer` + entitlement (iCloud.com.asadkhan.recipefinder) + Settings toggle/status (sets
-`SyncPreference.key`). Slice 4 = recipe photos entity + first-sync dedupe. Slice 5 = Privacy Policy §7.
+Slice 3 = `NSPersistentCloudKitContainer` (history tracking + remote-change options) + entitlement
+(iCloud.com.asadkhan.recipefinder) + reload every manager on `NSPersistentStoreRemoteChange` + Settings toggle/status
+(sets `SyncPreference.key`; Reset copy warns it erases on every device). Slice 4 = recipe photos + first-sync dedupe.
+Slice 5 = Privacy Policy §7.
 
 ## Decisions (why)
 - **Data safety 2/4 slice 2b (profile)**: sync id is a constant ("profile") — every device's profile row is the same
