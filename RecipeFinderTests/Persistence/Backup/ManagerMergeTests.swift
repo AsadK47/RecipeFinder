@@ -43,7 +43,8 @@ import Foundation
 
     @Test func kitchen_mergeUnionsBothStoresAndPersists() {
         let storage = Self.makeStorage()
-        let sut = KitchenInventoryManager(storage: storage)
+        let kitchenStore = InMemoryKitchenStore()
+        let sut = KitchenInventoryManager(storage: storage, kitchenStore: kitchenStore)
         sut.addItem(name: "Flour")
         sut.addInventoryItem(KitchenInventoryModel(name: "Rice", category: .grains, quantity: 1, unit: "kg"))
 
@@ -57,13 +58,13 @@ import Foundation
         #expect(sut.inventoryItems.contains { $0.name == "Rice" })
         #expect(sut.inventoryItems.contains { $0.name == "Beans" })
 
-        let reloaded = KitchenInventoryManager(storage: storage)
+        let reloaded = KitchenInventoryManager(storage: storage, kitchenStore: kitchenStore)
         #expect(reloaded.items.count == 2)
         #expect(reloaded.inventoryItems.count == 2)
     }
 
     @Test func kitchen_mergeDedupesById() {
-        let sut = KitchenInventoryManager(storage: Self.makeStorage())
+        let sut = KitchenInventoryManager(storage: Self.makeStorage(), kitchenStore: InMemoryKitchenStore())
         let itemID = UUID()
         let invID = UUID()
         let item = KitchenItem(id: itemID, name: "Salt", category: "Baking")

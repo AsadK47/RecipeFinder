@@ -291,7 +291,7 @@ struct DataManagementSettingsView: View {
 
         // Refresh in-memory managers so the UI reflects the reset immediately.
         ShoppingListManager.shared.removeAllShoppingData()
-        KitchenInventoryManager.shared.reload()
+        KitchenInventoryManager.shared.removeAllKitchenData()
         MealPlanningManager.shared.removeAllMealPlans()
         CollectionManager.shared.removeAllCollections()
         BadgeManager.shared.reload()  // else cleared badges stay in memory and get re-persisted on the next write

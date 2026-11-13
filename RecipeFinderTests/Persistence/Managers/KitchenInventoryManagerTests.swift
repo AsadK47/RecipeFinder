@@ -5,16 +5,19 @@ import XCTest
 final class KitchenInventoryManagerTests: XCTestCase {
 
     private var storage: LocalStore!
+    private var kitchenStore: InMemoryKitchenStore!
     private var sut: KitchenInventoryManager!
 
     override func setUp() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         storage = LocalStore(userDefaults: defaults)
-        sut = KitchenInventoryManager(storage: storage)
+        kitchenStore = InMemoryKitchenStore()
+        sut = KitchenInventoryManager(storage: storage, kitchenStore: kitchenStore)
     }
 
     override func tearDown() async throws {
         sut = nil
+        kitchenStore = nil
         storage = nil
     }
 
@@ -25,12 +28,12 @@ final class KitchenInventoryManagerTests: XCTestCase {
         storage.setEncodable([Legacy(name: "Basil", category: "Herbs & Spices"), Legacy(name: "Bread", category: "Grains & Bread")],
                              forKey: Constants.UserDefaultsKeys.kitchenItems)
 
-        let reloaded = KitchenInventoryManager(storage: storage)
+        let reloaded = KitchenInventoryManager(storage: storage, kitchenStore: kitchenStore)
         let categories = Set(reloaded.items.map(\.category))
         XCTAssertTrue(categories.isSubset(of: CategoryClassifier.knownCategories), "\(categories)")
         XCTAssertFalse(categories.contains("Herbs & Spices"))
 
-        let again = KitchenInventoryManager(storage: storage)   // migration was saved, not just applied in memory
+        let again = KitchenInventoryManager(storage: storage, kitchenStore: kitchenStore)   // migration was saved, not just applied in memory
         XCTAssertEqual(Set(again.items.map(\.category)), categories)
     }
 
@@ -182,7 +185,7 @@ final class KitchenInventoryManagerTests: XCTestCase {
 
     func testPersistence_acrossReload() {
         sut.addInventoryItem(makeItem(name: "Carrot"))
-        let sut2 = KitchenInventoryManager(storage: storage)
+        let sut2 = KitchenInventoryManager(storage: storage, kitchenStore: kitchenStore)
         XCTAssertEqual(sut2.inventoryItems.count, 1)
         XCTAssertEqual(sut2.inventoryItems[0].name, "Carrot")
     }

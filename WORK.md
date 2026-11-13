@@ -1,14 +1,24 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2, 3a–3d merged (3d shopping = d29bbb9). Nothing on a branch.
+Data safety 1/4 slice 3e (kitchen items + inventory) on `agent/data-safety-1-kitchen`: `KitchenStore.swift`
+(`KitchenStoring`, `CoreDataKitchenStore`), `KitchenInventoryManager` on two `MirroredSnapshot`s,
+`removeAllKitchenData()` wired into Reset, `KitchenMigrationTests`. Waiting on Build & Test.
 
 ## Next action
-Slice 3e: kitchen items + inventory → `KitchenItemEntity`/`InventoryItemEntity` via `MirroredSnapshot` (copy
-ShoppingListStore.swift: `*Storing` protocol, CoreData store upserting by id with sortOrder + `setIfChanged`, in-memory
-fake, Reset → `removeAll…()` in DataManagementSettingsView). Then badges, profile.
+Check Build & Test for the branch head; fix; challenge pass; ff main; tick slice 3e. Then slice 3f badges, 3g profile.
 
 ## Decisions (why)
+- **Data safety 1/4 slice 3e (kitchen)**: one `KitchenStoring` for both lists (same manager, two `MirroredSnapshot`s),
+  generic upsert-by-id helper in the store (both models have UUID ids). Unknown category/location → `.other`/`.pantry`
+  like the blob decoder. Reset previously only `reload()`ed — with entities that would have kept the whole kitchen
+  (flags cleared, blob gone, store still full), so Reset now calls `removeAllKitchenData()`, which also cancels expiry
+  reminders. Legacy "non-food" filter (`migrateOldDataIfNeeded`) untouched, runs after load and saves via the mirror.
+  **Pre-mortem:** (1) kitchen lost on update → `everyBlobItemAndInventoryItemBecomesARow…`, `aFailedWrite…`;
+  (2) a field lost in Core Data (optional expiry/notes/min qty, sub-second dates, enum raw values) →
+  `coreDataStoreRoundTripsEvery*`, `…ClearsOptionalInventoryFields`, `…KeepsTodaysExactTimes`,
+  `anItemAddedNowIsNotRewrittenOnRelaunch`; (3) Reset leaves the kitchen → `resetAsSettingsRunsItClearsTheKitchen`,
+  `aResetWhoseDeleteFailsIsFinishedNextLaunch`.
 - **Data safety 1/4 slice 3d (shopping)**: one `ShoppingListStoring` for both items and grocery stores (same manager,
   two `MirroredSnapshot`s, each its own flag). Store names have no id → rows matched by name (unique per
   `GroceryStoreNames`), new rows get a fresh UUID, a rename = delete + insert (acceptable; sync dedupe later). "Seed

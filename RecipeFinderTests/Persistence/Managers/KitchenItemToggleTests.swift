@@ -11,7 +11,7 @@ import os
     private func makeSUT() -> KitchenInventoryManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = LocalStore(userDefaults: defaults)
-        return KitchenInventoryManager(storage: storage)
+        return KitchenInventoryManager(storage: storage, kitchenStore: InMemoryKitchenStore())
     }
 
     // MARK: - toggleItem: add path

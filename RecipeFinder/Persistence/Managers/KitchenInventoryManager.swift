@@ -37,10 +37,13 @@ extension EnvironmentValues {
 final class KitchenInventoryManager: KitchenInventoryManaging {
 	static let shared = KitchenInventoryManager()
     
-	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
-	private let inventorySaveKey = "kitchenInventoryItems"
+	static let itemsBlobKey = Constants.UserDefaultsKeys.kitchenItems
+	static let inventoryBlobKey = "kitchenInventoryItems"
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
     @ObservationIgnored private let storage: LocalStore
+    /// Items and inventory live in Core Data rows; the old `LocalStore` blobs are kept current for one release.
+    @ObservationIgnored private let itemsMirror: MirroredSnapshot<KitchenItem>
+    @ObservationIgnored private let inventoryMirror: MirroredSnapshot<KitchenInventoryModel>
 
     private(set) var items: [KitchenItem] = []
     private(set) var inventoryItems: [KitchenInventoryModel] = []
@@ -51,15 +54,23 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
     // Pre-grouped and sorted once per save/load; reading it in body is O(1).
     private(set) var groupedItemsCache: [(category: String, items: [KitchenItem])] = []
 
-	private init() {
-        self.storage = .shared
-        loadItems()
+	private convenience init() {
+        self.init(storage: .shared, kitchenStore: CoreDataKitchenStore(persistence: .shared))
 		migrateOldDataIfNeeded()
-        loadInventoryItems()
 	}
 
-    init(storage: LocalStore) {
+    init(storage: LocalStore, kitchenStore: any KitchenStoring) {
         self.storage = storage
+        self.itemsMirror = MirroredSnapshot(
+            blobKey: Self.itemsBlobKey, storage: storage,
+            fetch: { try kitchenStore.fetchItems() },
+            replace: { try kitchenStore.replaceItems(with: $0) }
+        )
+        self.inventoryMirror = MirroredSnapshot(
+            blobKey: Self.inventoryBlobKey, storage: storage,
+            fetch: { try kitchenStore.fetchInventory() },
+            replace: { try kitchenStore.replaceInventory(with: $0) }
+        )
         loadItems()
         loadInventoryItems()
     }
@@ -69,18 +80,24 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
         loadInventoryItems()
     }
 
+    /// Erase & Reset: removes every kitchen and inventory item. If the store can't delete now, the next launch
+    /// finishes it.
+    func removeAllKitchenData() {
+        // Cancelled first: an expiry reminder outliving its item would fire for something no longer in the kitchen.
+        for item in inventoryItems { NotificationManager.shared.cancelExpiryNotification(for: item.id) }
+        itemsMirror.removeAll()
+        inventoryMirror.removeAll()
+        reload()
+    }
+
     private func loadItems() {
-        if var decoded = storage.decodable([KitchenItem].self, forKey: saveKey) {
-            // One-time migration: items saved under catalog/legacy category names were split into parallel groups.
-            if migrateCategories(&decoded) { storage.setEncodable(decoded, forKey: saveKey) }
-            items = decoded
-            itemNameSet = Set(decoded.map { $0.name.nameKey })
-            groupedItemsCache = computeGroupedItems()
-        } else {
-            items = []
-            itemNameSet = []
-            groupedItemsCache = []
-        }
+        var loaded = itemsMirror.load()
+        // One-time migration: items saved under catalog/legacy category names were split into parallel groups.
+        let changed = migrateCategories(&loaded)
+        items = loaded
+        itemNameSet = Set(loaded.map { $0.name.nameKey })
+        groupedItemsCache = computeGroupedItems()
+        if changed { itemsMirror.save(loaded) }
     }
     
     /// Re-files items whose stored category isn't a current name; returns whether anything changed.
@@ -94,13 +111,9 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
     }
 
     private func loadInventoryItems() {
-        if let decoded = storage.decodable([KitchenInventoryModel].self, forKey: inventorySaveKey) {
-            inventoryItems = decoded
-            inventoryNameSet = Set(decoded.map { $0.name.nameKey })
-        } else {
-            inventoryItems = []
-            inventoryNameSet = []
-        }
+        let loaded = inventoryMirror.load()
+        inventoryItems = loaded
+        inventoryNameSet = Set(loaded.map { $0.name.nameKey })
     }
 	
 	func getItems() -> [KitchenItem] {
@@ -324,13 +337,13 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
         items = newItems
         itemNameSet = Set(newItems.map { $0.name.nameKey })
         groupedItemsCache = computeGroupedItems()
-        storage.setEncodable(newItems, forKey: saveKey)
+        itemsMirror.save(newItems)
     }
 
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
         inventoryItems = newInventoryItems
         inventoryNameSet = Set(newInventoryItems.map { $0.name.nameKey })
-        storage.setEncodable(newInventoryItems, forKey: inventorySaveKey)
+        inventoryMirror.save(newInventoryItems)
 	}
 }
 
