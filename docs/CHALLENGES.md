@@ -159,3 +159,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   Pre-existing; cap/purge later.
 - **Rows missing id/recipeId/date are skipped silently** — safe while the kept copy exists (it replaces them); log
   or count them before the blob is dropped.
+
+### 2026-11-13 · Data safety 1/4 slice 3d (shopping list + grocery stores → Core Data) — fixed: an unreadable stores blob left the store list empty (now rebuilt from item tags, test added); item rows get a name tie-breaker. Noted, not fixed:
+- **Reset wiring untested** (same as 3c): reverting the view to `.reload()` would bring rows back.
+- **Rows can come back** if the app is killed between `LocalStore.clearAll()` and `removeAllShoppingData()`, or after
+  Reset on an older blob-only build then upgrading (unmarked key + no blob keeps rows) — `MirroredSnapshot` rule.
+- **Store rename = delete + insert** with a fresh UUID (stores match by name); sync (2/4) must dedupe by name.
+- **Shared `viewContext`** save/rollback and whole-list rewrite per edit (same as 3a–3c).
