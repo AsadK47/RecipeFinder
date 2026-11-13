@@ -150,3 +150,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   crafted backup with repeated ids makes rows churn but stay consistent (pre-existing BackupMerge gap).
 - **Two migration helpers** (`LegacyBlobMigration` add-only for cook dates, `MirroredSnapshot` whole-list); flags now
   in separate namespaces. Port cook dates only if it shrinks code.
+
+### 2026-11-13 · Data safety 1/4 slice 3c (meal plans → MealPlanEntity) — fixed: Reset left weekly reminders firing (now cancelled); added sub-second relaunch test. Noted, not fixed:
+- **Reset wiring untested:** reverting the view to `.reload()` would bring plans back (rows outlive `clearAll`); a
+  `DataResetter` seam the view calls would make it testable — same gap for collections/cook dates.
+- **Shared `viewContext`** save/rollback (same as 3a/3b).
+- **Recurring copies grow forever** (`clearOldMealPlans` keeps every recurring copy); each save now diffs all rows.
+  Pre-existing; cap/purge later.
+- **Rows missing id/recipeId/date are skipped silently** — safe while the kept copy exists (it replaces them); log
+  or count them before the blob is dropped.

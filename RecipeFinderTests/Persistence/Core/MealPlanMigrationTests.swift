@@ -9,6 +9,7 @@ final class InMemoryMealPlanStore: MealPlanStoring {
     var plans: [MealPlanModel]
     var failWrites = false
     var failReads = false
+    private(set) var writeCount = 0
 
     init(_ plans: [MealPlanModel] = []) { self.plans = plans }
 
@@ -19,6 +20,7 @@ final class InMemoryMealPlanStore: MealPlanStoring {
 
     func replaceMealPlans(with replacement: [MealPlanModel]) throws {
         if failWrites { throw MealPlanStoreError.storeUnavailable }
+        writeCount += 1
         plans = replacement
     }
 }
@@ -54,9 +56,11 @@ final class InMemoryMealPlanStore: MealPlanStoring {
         storage.bool(forKey: MirroredSnapshot<MealPlanModel>.flagKey(for: blobKey))
     }
 
-    private func manager(_ store: any MealPlanStoring) -> MealPlanningManager {
+    private func manager(
+        _ store: any MealPlanStoring, reminders: FakeMealReminderScheduler = FakeMealReminderScheduler()
+    ) -> MealPlanningManager {
         MealPlanningManager(storage: storage, mealPlanStore: store, badgeManager: BadgeManager(storage: storage),
-                            reminders: FakeMealReminderScheduler())
+                            reminders: reminders)
     }
 
     // MARK: - Migration
@@ -121,6 +125,24 @@ final class InMemoryMealPlanStore: MealPlanStoring {
         #expect(sut.mealPlans.isEmpty)
         #expect(store.plans.isEmpty)
         #expect(manager(store).mealPlans.isEmpty)
+    }
+
+    @Test func aPlanMadeNowIsNotRewrittenOnRelaunch() {
+        // Sub-second dates must survive the kept copy's JSON, or every launch would see "differs" and rewrite rows.
+        let store = InMemoryMealPlanStore()
+        let sut = manager(store)
+        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Soup", date: Date(), mealTime: .lunch,
+                                      reminderTime: Date()))
+        let writes = store.writeCount
+        _ = manager(store)
+        #expect(store.writeCount == writes)
+    }
+
+    @Test func removeAllMealPlansCancelsTheirReminders() {
+        let reminders = FakeMealReminderScheduler()
+        let sut = manager(InMemoryMealPlanStore(both), reminders: reminders)
+        sut.removeAllMealPlans()
+        #expect(Set(reminders.cancelled).isSuperset(of: both.map { "meal-\($0.id.uuidString)" }))
     }
 
     @Test func resetAsSettingsRunsItClearsPlans() {

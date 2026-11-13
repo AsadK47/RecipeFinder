@@ -76,6 +76,8 @@ final class MealPlanningManager: MealPlanningManaging {
 
     /// Erase & Reset: removes every plan. If the store can't delete now, the next launch finishes it.
     func removeAllMealPlans() {
+        // Cancelled first: a weekly reminder outliving its plan would keep firing with nothing left to delete.
+        for plan in mealPlans { cancelReminder(for: plan) }
         mirror.removeAll()
         loadMealPlans()
     }
