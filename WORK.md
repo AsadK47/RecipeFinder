@@ -1,10 +1,11 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2, 3a–3e merged. Slice 3f (badges) on `agent/data-safety-badges`, waiting on CI.
+Data safety 1/4 (claimed): slices 1–2, 3a–3f merged (3f badges = b48ec5a). Nothing on a branch.
 
 ## Next action
-Check Build & Test for `agent/data-safety-badges`; fix; run challenge + deep-review; ff main. Then slice 3g: profile.
+Slice 3g: profile → `ProfileEntity` (photo Binary, external storage) via `MirroredSnapshot` — last slice; then tick
+Data safety 1/4 (check *Done when*), run Screenshots once on main.
 
 ## Decisions (why)
 - **Data safety 1/4 slice 3f (badges)**: the old kept copy is two keys (`unlockedBadges` dict + `shownBadgeCelebrations`

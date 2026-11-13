@@ -41,3 +41,4 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 - New Swift files via `XcodeWrite`; new tests via Swift Testing (no new XCTest).
 10. **Query once, act on the coordinate.** 2026-11-12: `dismissBadgeSheet` waited for the badge sheet, then `swipeDown()` re-queried it after it had closed → Screenshots red on an unrelated branch. In UI-test helpers for transient UI, drag a window coordinate instead of re-querying the element.
 11. **Anchored text edits hit the first match.** 2026-11-12: a scripted `replace(..., 1)` on `func replaceCollections(with` landed a helper inside the protocol (same signature prefix) → build red. Anchor on a line unique to the target (e.g. the `{`-ending implementation line) and assert `count == 1`.
+12. **No key paths inside `#expect`.** 2026-11-13: `#expect(rows.allSatisfy(\.flag))` failed to compile ("call can throw" in the macro expansion) → write `allSatisfy { $0.flag }`.
