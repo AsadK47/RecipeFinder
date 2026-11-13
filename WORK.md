@@ -1,13 +1,30 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Nothing. Data safety 1/4 done (slice 3g profile = e27d106, merged). Screenshots triggered on main (regression check only).
+Data safety 2/4 (iCloud sync), slice 1 on `agent/sync-safe-snapshot` (afdd987): `SyncMerge` (pure 3-way merge +
+add-only kept-copy merge) and `MirroredSnapshot.SyncRules` store-wins mode. Not wired into any manager yet (no
+behaviour change). Waiting on Build & Test; challenge review run.
 
 ## Next action
-Next per BACKLOG top priority: Data safety 2/4 (iCloud sync) — claim it, plan slices. Note CHALLENGES 3b/3g: sync
-breaks `MirroredSnapshot`'s blob-wins rule and the profile store's one-row delete.
+When slice 1 is green + merged: slice 2 = wire `SyncRules` into every manager (id closures; `isOn` reads a
+`SyncPreference` flag, still false), reload managers on `NSPersistentStoreRemoteChange`, profile store keeps
+newest row instead of deleting other-uuid rows. Slice 3 = `NSPersistentCloudKitContainer` + entitlement
+(iCloud.com.asadkhan.recipefinder) + Settings toggle/status. Slice 4 = recipe photos entity + first-sync dedupe.
+Slice 5 = Privacy Policy §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 1 (sync-safe snapshot)**: under sync the store can hold rows this device never saw, so the
+  1/4 "kept copy wins / replace store" rule would delete them everywhere. With `SyncRules.isOn()` true (read per
+  `load()`): store wins on load and the kept copy follows it; save = `SyncMerge.applyEdits(base: lastKnown, local,
+  store: fetch())` (deleted-here rows deleted, edited-here rows win, unchanged-here rows take the store's version,
+  store-only rows kept); store written before the kept copy; a failed save / unreadable store marks
+  `keptCopyAhead.<key>` and the next load *adds* the kept copy (never replaces). Accepted: a row deleted elsewhere
+  while this device's save failed can come back (resurrection over loss). Rejected: making `replace` add-only per
+  store (7 store edits) — the generic merge in one place is smaller. Reset under sync will erase on every device
+  (slice 3 must say so in the UI). **Pre-mortem:** (1) a save deletes another device's rows →
+  `aSaveKeepsRowsAnotherDeviceAddedWhileTheAppWasOpen`; (2) a second device's first move wipes the first device's
+  rows → `firstMoveOnASecondDeviceAddsItsRowsAndKeepsTheFirstDevices`; (3) an unchanged local copy overwrites a
+  remote edit → `aRowLeftUnchangedHereTakesTheOtherDevicesEdit`; sync off unchanged → `withSyncOffTheKeptCopyStillWins`.
 - **Data safety 1/4 slice 3g (profile)**: one `ProfileRecord` (uuid, names, chef type raw, created date, photo JPEG)
   through `MirroredSnapshot` as a 0/1-element list; kept copy = the old six `profile*` keys (blob closures, like
   badges). Kept copy is nil only when `profileUUID` is missing (every older build wrote it first) → store wins then.
