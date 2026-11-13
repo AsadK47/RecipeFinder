@@ -208,13 +208,20 @@ final class Generator: ObservableObject {
             .map { $0 == "paneer" ? "cheese" : $0 }
     }
 
-    /// The dish itself, plated, from its name and first few ingredients — no people or text.
+    /// Staples the model draws literally (a fried egg on shortbread): never named in the prompt.
+    static let staples: Set<String> = ["egg", "eggs", "flour", "sugar", "butter", "oil", "salt", "pepper", "water",
+        "milk", "baking powder", "baking soda", "bicarbonate", "vanilla", "yeast", "cream", "cornflour", "cornstarch",
+        "caster sugar", "icing sugar", "brown sugar", "plain flour", "self-raising flour", "olive oil", "vegetable oil"]
+
+    /// The finished dish, plated — no people or text. Key ingredients only for savoury dishes, minus staples.
     static func prompt(for recipe: SeedRecipe) -> String {
-        let key = recipe.ingredients.prefix(4).map(\.name)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-        let with = key.isEmpty ? "" : ", made with \(key.joined(separator: ", "))"
-        return "A beautifully plated dish of \(recipe.name)\(with), on a table, viewed from slightly above"
+        let category = (recipe.category ?? "").lowercased()
+        let sweet = ["dessert", "baking", "sweet", "drink", "beverage"].contains { category.contains($0) }
+        let key = sweet ? [] : recipe.ingredients.map { $0.name.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { name in !name.isEmpty && !staples.contains(where: { name.lowercased() == $0 || name.lowercased().hasSuffix(" " + $0) }) }
+            .prefix(3)
+        let with = key.isEmpty ? "" : ", with \(key.joined(separator: ", "))"
+        return "The finished dish \(recipe.name)\(with), beautifully plated on a table, viewed from slightly above"
     }
 
     enum ArtError: LocalizedError {
