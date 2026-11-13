@@ -1,12 +1,11 @@
-# WORK.md — handoff (2026-11-12, builder agent)
+# WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slices 1–2, 3a–3f merged (3f badges = b48ec5a). Slice 3g (profile) on
-`agent/data-safety-profile`: `ProfileStore.swift` + `ProfileMigrationTests.swift`, `ProfileManager` on `MirroredSnapshot`.
+Nothing. Data safety 1/4 done (slice 3g profile = e27d106, merged). Screenshots triggered on main (regression check only).
 
 ## Next action
-Slice 3g: profile → `ProfileEntity` (photo Binary, external storage) via `MirroredSnapshot` — last slice; then tick
-Data safety 1/4 (check *Done when*), run Screenshots once on main.
+Next per BACKLOG top priority: Data safety 2/4 (iCloud sync) — claim it, plan slices. Note CHALLENGES 3b/3g: sync
+breaks `MirroredSnapshot`'s blob-wins rule and the profile store's one-row delete.
 
 ## Decisions (why)
 - **Data safety 1/4 slice 3g (profile)**: one `ProfileRecord` (uuid, names, chef type raw, created date, photo JPEG)

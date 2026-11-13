@@ -105,7 +105,7 @@ drop a line while moving it.
   plain gradient in `Components/Recipe/RecipePlaceholderView.swift` with illustrated art per category/cuisine (SF
   Symbols composition or a small bundled SVG/PDF set) so recipes without a photo still look finished; screenshots of
   placeholders. *Done when:* placeholder tests (category/cuisine → art mapping), screenshots looked at, CI green.
-- [ ] **Data safety 1/4 — Everything in Core Data, upgrades that can't lose data** — 🚧 builder agent 2026-11-13 (owner OK 2026-11-12, incl. Core
+- [x] **Data safety 1/4 — Everything in Core Data, upgrades that can't lose data** (owner OK 2026-11-12, incl. Core
   Data model change). Move meal plans, shopping list, kitchen items/inventory, collections, badges, cooking streak and
   profile out of UserDefaults (`LocalStore` JSON blobs) into Core Data entities in a new model version (+ point
   `.xccurrentversion` at it and update every "RecipeModel N" mention in CLAUDE.md files in the same commit). One-time
@@ -120,7 +120,8 @@ drop a line while moving it.
   meal plans → `MealPlanEntity` (Reset also cancels their reminders). ✅ Slice 3d (d29bbb9): shopping list + grocery
   stores → `ShoppingItemEntity`/`ShoppingStoreEntity`. ✅ Slice 3e (bf326cb): kitchen items + inventory →
   `KitchenItemEntity`/`InventoryItemEntity` (Reset now really empties them + cancels expiry reminders). ✅ Slice 3f (b48ec5a): badges → `EarnedBadgeEntity`
-  (old two-key shape kept current via `MirroredSnapshot` blob closures). Left: profile. *Done when:*
+  (old two-key shape kept current via `MirroredSnapshot` blob closures). ✅ Slice 3g (e27d106): profile → `ProfileEntity`
+  (six old keys kept current; Reset calls `removeProfile()`). *Done when:*
   migration tested per manager (incl. corrupt/missing blobs), store-backup tested, migration test from the shipped
   model, backup/restore round-trip still green, CI green.
 - [ ] **Data safety 2/4 — iCloud sync** (owner OK 2026-11-12: iCloud entitlement + CloudKit container + model
@@ -498,6 +499,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
+- 📷 Profile photo is stored full size (pre-existing; now held in memory + compared each launch since 3g) — downscale to ~512 px in `ProfileManager.saveProfileImage` (docs/CHALLENGES.md 3g).
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
@@ -582,3 +584,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-13 · Data safety 1/4 slice 3d (shopping list + grocery stores → Core Data) · d29bbb9 · nothing visible; after updating, every Groceries item (amount, unit, ticked, staple, store tags) and your store list should be unchanged, and Settings → Erase & Reset should leave none · review: challenge+deep-review 1 fixed (unreadable stores blob left the store list empty), 4 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New ShoppingListStore.swift, ShoppingListMigrationTests.swift registered in pbxproj by hand.
 - 2026-11-13 · Data safety 1/4 slice 3e (kitchen items + inventory → Core Data) · bf326cb · nothing visible; after updating, everything in Kitchen (items, amounts, categories; inventory expiry/location/notes) should be unchanged, and Settings → Erase & Reset should leave an empty kitchen · review: challenge+deep-review 1 fixed (old items without a date rewritten every launch), 3 noted in docs/CHALLENGES.md; Reset previously only reloaded (would have kept the kitchen) — fixed in the slice · looked at: n/a (no UI). New KitchenStore.swift, KitchenMigrationTests.swift registered in pbxproj by hand.
 - 2026-11-13 · Data safety 1/4 slice 3f (badges → Core Data) · b48ec5a · nothing visible; after updating, every earned badge (and its date) on Me should be unchanged, no badge celebration should pop again, and Settings → Erase & Reset should leave no badges · review: deep-review 1 fixed (corrupt badges blob dropped shown list), challenge 2 fixed (quiet single unlock never saved its shown flag; relaunch tests shared no store) + 1 test added (Reset drops queued celebrations), 6 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New EarnedBadgeStore.swift, EarnedBadgeMigrationTests.swift registered in pbxproj by hand. 1 CI cycle lost (key path in `#expect`).
+- 2026-11-13 · Data safety 1/4 slice 3g (profile → Core Data) — item done · e27d106 · nothing visible; after updating, Me should show the same name, chef type and photo, and Settings → Erase & Reset should leave a blank profile · review: deep-review 0, challenge 1 fixed (Me re-saved its photo on every visit), 5 noted in docs/CHALLENGES.md (full-size photo → downscale item) · looked at: n/a (no UI). New ProfileStore.swift, ProfileMigrationTests.swift registered in pbxproj by hand.
