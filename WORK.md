@@ -1,13 +1,12 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 (claimed): slice 3d shopping list + grocery stores → `ShoppingItemEntity`/`ShoppingStoreEntity` on
-branch `agent/shopping-core-data` (new `Persistence/Core/ShoppingListStore.swift`, two `MirroredSnapshot`s in
-`ShoppingListManager`, Reset → `removeAllShoppingData()`, tests `ShoppingListMigrationTests`). Waiting on CI.
+Data safety 1/4 (claimed): slices 1–2, 3a–3d merged (3d shopping = d29bbb9). Nothing on a branch.
 
 ## Next action
-Check Build & Test on `agent/shopping-core-data`; fix; challenge pass; merge. Then slice 3e kitchen items/inventory,
-then badges, profile.
+Slice 3e: kitchen items + inventory → `KitchenItemEntity`/`InventoryItemEntity` via `MirroredSnapshot` (copy
+ShoppingListStore.swift: `*Storing` protocol, CoreData store upserting by id with sortOrder + `setIfChanged`, in-memory
+fake, Reset → `removeAll…()` in DataManagementSettingsView). Then badges, profile.
 
 ## Decisions (why)
 - **Data safety 1/4 slice 3d (shopping)**: one `ShoppingListStoring` for both items and grocery stores (same manager,
