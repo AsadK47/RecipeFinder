@@ -1,6 +1,8 @@
 import SwiftUI
 import UIKit
 
+private let profileLogger = AppLogger.logger(category: "ProfileManager")
+
 /// Behavioural seam so views depend on this protocol, not the `ProfileManager` singleton, and tests can inject a fake.
 @MainActor
 protocol ProfileManaging: AnyObject, Observable {
@@ -142,8 +144,24 @@ final class ProfileManager: ProfileManaging {
     func saveProfileImage(_ image: UIImage?) {
         guard image == nil || image !== loadedImage else { return }
         loadedImage = image
-        record.imageData = image?.jpegData(compressionQuality: AppTheme.jpegCompressionQuality)
+        record.imageData = image.flatMap(Self.storedPhotoData)
         mirror.save([record])
+    }
+
+    /// Longest side of the stored photo, in pixels: plenty for the avatar circle, and keeps a camera-size photo
+    /// (several MB) out of memory, the store and every iCloud sync.
+    static let maxPhotoPixelSize = 512
+
+    /// The photo as stored: a JPEG no larger than `maxPhotoPixelSize` (never upscaled). Falls back to the full-size
+    /// JPEG if downscaling fails, so the cook's photo is always kept.
+    static func storedPhotoData(for image: UIImage) -> Data? {
+        guard let full = image.jpegData(compressionQuality: AppTheme.jpegCompressionQuality) else { return nil }
+        do {
+            return try RemoteRecipeImage.normalisedJPEG(from: full, maxPixelSize: maxPhotoPixelSize)
+        } catch {
+            profileLogger.error("❌ Profile photo downscale failed, keeping full size: \(error.localizedDescription)")
+            return full
+        }
     }
 
     func loadProfileImage() -> UIImage? {

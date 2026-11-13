@@ -298,6 +298,30 @@ final class InMemoryProfileStore: ProfileStoring {
         #expect(sut.loadProfileImage() == nil)
     }
 
+    @Test func aCameraSizePhotoIsStoredSmall() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let big = UIGraphicsImageRenderer(size: CGSize(width: 3000, height: 2000), format: format).image { context in
+            UIColor.orange.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 3000, height: 2000))
+        }
+        let store = InMemoryProfileStore()
+        manager(store).saveProfileImage(big)
+        let data = try #require(store.record?.imageData)
+        let stored = try #require(UIImage(data: data)?.cgImage)
+        #expect(max(stored.width, stored.height) == ProfileManager.maxPhotoPixelSize)
+        #expect(stored.width > stored.height)
+    }
+
+    @Test func aSmallPhotoIsNotUpscaled() throws {
+        let small = testImage()
+        let original = try #require(small.cgImage)
+        let data = try #require(ProfileManager.storedPhotoData(for: small))
+        let stored = try #require(UIImage(data: data)?.cgImage)
+        #expect(stored.width == original.width)
+        #expect(stored.height == original.height)
+    }
+
     @Test func savingBackThePhotoMeJustLoadedWritesNothing() throws {
         // ProfileView's onChange saves whatever loadProfileImage() returned when Me appears.
         let jpeg = try #require(testImage().jpegData(compressionQuality: 0.8))
