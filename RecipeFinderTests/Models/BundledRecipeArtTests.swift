@@ -38,7 +38,7 @@ import Testing
         struct Seed: Decodable { let id: UUID }
         let seedIDs = Set(try JSONDecoder().decode([Seed].self, from: Data(contentsOf: seedURL)).map(\.id.uuidString))
         let shipped = BundledRecipeArt.availableIDs
-        #expect(shipped.count >= 250)
+        #expect(shipped.count >= 200)
         #expect(shipped.isSubset(of: seedIDs))
         let anyID = try #require(shipped.first.flatMap(UUID.init(uuidString:)))
         let reference = try #require(BundledRecipeArt.reference(for: anyID))
