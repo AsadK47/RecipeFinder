@@ -46,7 +46,11 @@ final class CoreDataShoppingListStore: ShoppingListStoring {
 
     private func fetchRows(_ entityName: String, in context: NSManagedObjectContext) throws -> [NSManagedObject] {
         let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
-        request.sortDescriptors = [NSSortDescriptor(key: "sortOrder", ascending: true)]
+        // Name breaks ties between rows sharing a position (sync duplicates), so the order is stable.
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "sortOrder", ascending: true),
+            NSSortDescriptor(key: "name", ascending: true),
+        ]
         return try context.fetch(request)
     }
 

@@ -138,6 +138,14 @@ final class InMemoryShoppingListStore: ShoppingListStoring {
         #expect(store.stores == ["Tesco", "Lidl"])
     }
 
+    @Test func anUnreadableStoreListIsRebuiltFromItemTags() {
+        writeBlobs(both, stores: nil)
+        storage.set(Data("not json".utf8), forKey: storesKey)
+        let store = InMemoryShoppingListStore()
+        #expect(manager(store).stores == ["Tesco", "Lidl"])
+        #expect(store.stores == ["Tesco", "Lidl"])
+    }
+
     @Test func anEmptyStoreListTheCookSavedIsNotReseeded() {
         writeBlobs(both, stores: [])
         let store = InMemoryShoppingListStore()

@@ -105,8 +105,8 @@ final class ShoppingListManager: ShoppingListManaging {
 
     /// First run after stores became user-defined: seed the list from tags items already carry, so nothing disappears.
     private func loadStores() {
-        // Checked before loading: an empty list the user saved is kept, only a never-saved one is seeded.
-        let neverSaved = storage.object(forKey: Self.storesBlobKey) == nil
+        // Checked before loading: an empty list the user saved is kept; a missing or unreadable one is seeded.
+        let neverSaved = storage.decodable([String].self, forKey: Self.storesBlobKey) == nil
         let saved = storesMirror.load()
         guard saved.isEmpty, neverSaved else {
             stores = saved
