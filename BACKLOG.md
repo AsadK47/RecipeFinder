@@ -141,7 +141,7 @@ drop a line while moving it.
   iOS 18.4+ with Apple Intelligence) generates an illustration from the recipe name + key ingredients; user picks one,
   saved like a photo. Hidden where unavailable (placeholder art stays). *Done when:* prompt building + availability
   logic tested, screenshot, CI green.
-- [ ] **Pictures 3/4 — Built-in recipes get pictures.** One consistent illustrated set for the 332 bundled recipes.
+- [ ] **Pictures 3/4 — Built-in recipes get pictures.** — 🚧 interactive session 2026-11-13 (owner: "add the pictures as a priority"; 279/332 generated, rest to follow) One consistent illustrated set for the 332 bundled recipes.
   Agents can't run Image Playground in CI, so: a small macOS tool in `tools/` (Swift, `ImageCreator`) the owner runs
   once on their Mac to generate one image per bundled recipe into a folder (🙋 owner step), then agents compress
   (WebP/HEIC, ~40–80 KB each), bundle them, and map them in the seed (sampleRefreshVersion bump; never replace a user's
