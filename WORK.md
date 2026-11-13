@@ -1,12 +1,10 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Data safety 2/4 (iCloud sync), slice 1 on `agent/sync-safe-snapshot` (afdd987): `SyncMerge` (pure 3-way merge +
-add-only kept-copy merge) and `MirroredSnapshot.SyncRules` store-wins mode. Not wired into any manager yet (no
-behaviour change). Waiting on Build & Test; challenge review run.
+Nothing. Data safety 2/4 slice 1 merged (38feeee); item still claimed 🚧.
 
 ## Next action
-When slice 1 is green + merged: slice 2 = wire `SyncRules` into every manager (id closures; `isOn` reads a
+Data safety 2/4 slice 2 = wire `SyncRules` into every manager (id closures; `isOn` reads a
 `SyncPreference` flag, still false), reload managers on `NSPersistentStoreRemoteChange`, profile store keeps
 newest row instead of deleting other-uuid rows. Slice 3 = `NSPersistentCloudKitContainer` + entitlement
 (iCloud.com.asadkhan.recipefinder) + Settings toggle/status. Slice 4 = recipe photos entity + first-sync dedupe.
