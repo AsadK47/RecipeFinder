@@ -154,12 +154,13 @@ struct BadgeManagerTests {
     @Test func shownCelebrationIds_persistAcrossReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = LocalStore(userDefaults: defaults)
-        let sut1 = BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore())
+        let store = InMemoryEarnedBadgeStore()
+        let sut1 = BadgeManager(storage: storage, badgeStore: store)
         sut1.unlockBadge(.firstRecipe)
         sut1.dismissCelebration()
 
         // Fresh instance same storage — celebration must NOT re-queue.
-        let sut2 = BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore())
+        let sut2 = BadgeManager(storage: storage, badgeStore: store)
         sut2.unlockBadge(.firstRecipe)
         #expect(sut2.pendingCelebration == nil)
     }
@@ -229,9 +230,10 @@ struct BadgeManagerTests {
     @Test func persistence_badgesAcrossReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = LocalStore(userDefaults: defaults)
-        let sut1 = BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore())
+        let store = InMemoryEarnedBadgeStore()
+        let sut1 = BadgeManager(storage: storage, badgeStore: store)
         sut1.unlockBadge(.firstRecipe)
-        let sut2 = BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore())
+        let sut2 = BadgeManager(storage: storage, badgeStore: store)
         #expect(sut2.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
     }
 

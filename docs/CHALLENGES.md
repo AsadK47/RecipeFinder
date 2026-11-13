@@ -171,3 +171,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **Reset wiring + expiry-reminder cancel untested** (same as 3c/3d): `DataManagementSettingsView` and `NotificationManager.shared` have no seam; a later `ResetService` item should own this.
 - **Duplicate-id cleanup** keeps the first row in sort order (a nameless sync duplicate may win and be overwritten) — no data lost, same as 3d.
 - **Shared `viewContext`** save/rollback and whole-list rewrite per edit (same as 3a–3d).
+
+### 2026-11-13 · Data safety 1/4 slice 3f (badges → EarnedBadgeEntity) — fixed: a corrupt badges blob dropped the old shown list (celebration could pop again; now unioned in on load); a single quiet unlock never saved its shown flag (pre-existing; now marked before the unlock's save); relaunch tests now share one store; Reset drops queued celebrations (test). Noted, not fixed:
+- **Downgrade + Reset on an older build, then re-upgrade** brings old badge rows back (no kept copy, flag unset) — `MirroredSnapshot` rule, same as 3d.
+- **Unreadable store on a fresh install**: badges earned that launch stay in memory only (same as siblings).
+- **Shared `viewContext`** save/rollback; rollback path untested (same as 3a–3e).
+- **Backups don't carry shown-celebration ids** (pre-existing); **unknown badge ids** keep only id + date (title/icon rebuilt bare; UI lists `BadgeType.allCases` only).
+- **Backup badge with `isUnlocked: false`** now loads as earned (presence already decided unlock checks).
+- **A non-silent unlock writes the store twice** (unlock, then shown) — fine at ~30 rows.

@@ -216,6 +216,29 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
         #expect(manager(store).unlockedBadges.isEmpty)
     }
 
+    @Test func resetDropsQueuedCelebrationsToo() {
+        let store = InMemoryEarnedBadgeStore()
+        let sut = manager(store)
+        sut.unlockBadge(.headChef)
+        sut.unlockBadge(.firstRecipe)   // queued behind the open sheet
+        sut.removeAllBadges()
+        sut.dismissCelebration()
+        #expect(sut.pendingCelebration == nil)
+    }
+
+    @Test func aQuietUnlockSavesItsShownFlagWithTheBadge() {
+        // A single quiet unlock used to save "shown" only in memory: revoked and re-earned later, it popped a sheet.
+        let store = InMemoryEarnedBadgeStore()
+        let first = manager(store)
+        first.unlockBadge(.welcomeAboard, silent: true)
+        first.checkAndUnlockBadges(recipeCount: 1, silent: true)   // exactly one badge crosses
+        let nextLaunch = manager(store)
+        nextLaunch.revokeUnearnedCollectionBadges(collectedCount: 0)
+        #expect(!nextLaunch.isBadgeUnlocked(firstRecipe))
+        nextLaunch.checkAndUnlockBadges(recipeCount: 1)
+        #expect(nextLaunch.pendingCelebration == nil)
+    }
+
     @Test func resetAsSettingsRunsItClearsBadges() {
         // DataManagementSettingsView: LocalStore.clearAll() (drops keys + flags), then removeAllBadges().
         writeOldKeys([earned(.headChef, on: headChefDate)], shown: [headChef])
@@ -316,8 +339,8 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
         #expect(try context.count(for: request) == 1)
     }
 
-    @Test func coreDataStoreSortsLikeTheKeptCopy() throws {
-        // Mixed case: the store's collation must not decide the order, or every launch would see "differs".
+    @Test func coreDataStoreReturnsMixedCaseIDsInTheKeptCopysOrder() throws {
+        // Guard: the order must match `EarnedBadgeRecord.records`, or every launch would see "differs".
         let mixed = EarnedBadgeRecord.records(
             earned: [:], shown: ["b", "B", "a_b", "aB", "A"]
         )

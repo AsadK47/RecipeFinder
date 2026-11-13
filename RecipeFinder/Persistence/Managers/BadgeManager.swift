@@ -137,11 +137,11 @@ final class BadgeManager: BadgeManaging {
             .filter { $0 != .welcomeAboard }
             .max { $0.criterion.threshold < $1.criterion.threshold }
         for badgeType in earned where badgeType != celebrated {
-            unlockBadge(badgeType, silent: true)
+            // Marked before the unlock so its save carries the flag (a kill right after can't lose it).
             shownCelebrationIds.insert(badgeType.rawValue)
+            unlockBadge(badgeType, silent: true)
         }
         if let celebrated { unlockBadge(celebrated) }
-        if earned.count > 1 { save() }
     }
 
     /// Removes collection badges the library no longer earns. Used once after repairing legacy sample recipes that
