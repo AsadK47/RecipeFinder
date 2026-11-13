@@ -197,7 +197,7 @@ struct TodayFeed: Equatable {
         var categories: Set<String> {
             switch self {
             case .breakfast: ["breakfast"]
-            case .lunch: ["main", "soup", "starter", "breakfast"]
+            case .lunch: ["main", "soup", "starter"]
             case .dinner: ["main", "soup"]
             }
         }
