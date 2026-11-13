@@ -392,6 +392,7 @@
 		A43B04246599889B7D5E3766 /* EarnedBadgeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614CAE613C4AD525B066F7A7 /* EarnedBadgeStore.swift */; };
 		833EEF6BE9ED4B23CF87648D /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0542D54480012A7A985F69 /* ProfileStore.swift */; };
 		678D5AA6B6A42AEF6B0AC868 /* MirroredSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */; };
+		7A492F6EDF4D4E028F0B475B /* SyncMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F26716475678BA731910690 /* SyncMerge.swift */; };
 		F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C33045D76D008BF231 /* Ingredient.swift */; };
 		F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */; };
 		F3E9D1CA3045D78D008BF231 /* RecipeFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */; };
@@ -464,6 +465,7 @@
 		00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */; };
 		2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */; };
 		41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */; };
+		90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */; };
 		B14BF369957DA93E91581116 /* MealPlanMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */; };
 		DF5EDFECF3A6EF540A9C155B /* ShoppingListMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD4EA6D6A93681FD2D805CE /* ShoppingListMigrationTests.swift */; };
 		62026632EB8C0509949AD5A1 /* KitchenMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0D10894819B01C69B44D48 /* KitchenMigrationTests.swift */; };
@@ -926,6 +928,7 @@
 		614CAE613C4AD525B066F7A7 /* EarnedBadgeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarnedBadgeStore.swift; sourceTree = "<group>"; };
 		1C0542D54480012A7A985F69 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirroredSnapshot.swift; sourceTree = "<group>"; };
+		3F26716475678BA731910690 /* SyncMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMerge.swift; sourceTree = "<group>"; };
 		F3E9D1C33045D76D008BF231 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNameFormatter.swift; sourceTree = "<group>"; };
 		F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFormatters.swift; sourceTree = "<group>"; };
@@ -996,6 +999,7 @@
 		E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackupTests.swift; sourceTree = "<group>"; };
 		16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateMigrationTests.swift; sourceTree = "<group>"; };
 		2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionMigrationTests.swift; sourceTree = "<group>"; };
+		95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMergeTests.swift; sourceTree = "<group>"; };
 		CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanMigrationTests.swift; sourceTree = "<group>"; };
 		0DD4EA6D6A93681FD2D805CE /* ShoppingListMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListMigrationTests.swift; sourceTree = "<group>"; };
 		2D0D10894819B01C69B44D48 /* KitchenMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenMigrationTests.swift; sourceTree = "<group>"; };
@@ -1568,6 +1572,7 @@
 				614CAE613C4AD525B066F7A7 /* EarnedBadgeStore.swift */,
 				1C0542D54480012A7A985F69 /* ProfileStore.swift */,
 				8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */,
+				3F26716475678BA731910690 /* SyncMerge.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1880,6 +1885,7 @@
 				E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */,
 				16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */,
 				2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */,
+				95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */,
 				CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */,
 				0DD4EA6D6A93681FD2D805CE /* ShoppingListMigrationTests.swift */,
 				2D0D10894819B01C69B44D48 /* KitchenMigrationTests.swift */,
@@ -2441,6 +2447,7 @@
 				A43B04246599889B7D5E3766 /* EarnedBadgeStore.swift in Sources */,
 				833EEF6BE9ED4B23CF87648D /* ProfileStore.swift in Sources */,
 				678D5AA6B6A42AEF6B0AC868 /* MirroredSnapshot.swift in Sources */,
+				7A492F6EDF4D4E028F0B475B /* SyncMerge.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				C721558A8AB2C6ADFFEDE856 /* RemoteImageFetcher.swift in Sources */,
 				F3B7D91530766CA400991908 /* StreakReminderScheduling.swift in Sources */,
@@ -2747,6 +2754,7 @@
 				00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */,
 				2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */,
 				41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */,
+				90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */,
 				B14BF369957DA93E91581116 /* MealPlanMigrationTests.swift in Sources */,
 				DF5EDFECF3A6EF540A9C155B /* ShoppingListMigrationTests.swift in Sources */,
 				62026632EB8C0509949AD5A1 /* KitchenMigrationTests.swift in Sources */,

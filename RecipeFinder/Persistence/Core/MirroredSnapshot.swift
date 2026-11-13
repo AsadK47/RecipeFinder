@@ -18,12 +18,21 @@ enum MirroredSnapshotError: LocalizedError {
 ///   whenever the key is unmarked: any launch where the store can't be read or written runs on the blob and unmarks,
 ///   so the next launch replaces the store with the blob (edits, renames and deletes all carry over, no duplicates).
 /// - A store that differs from the blob (save cut short, a blob-only build ran in between, recovery emptied the store)
-///   is replaced by the blob. Sync (Data safety 2/4) will need its own rule here, since then the store can be newer.
+///   is replaced by the blob.
+/// - With `SyncRules` on (iCloud, Data safety 2/4) the store can hold other devices' rows, so it wins instead: the
+///   kept copy follows the store, saves apply this device's edits on top of what the store holds now
+///   (`SyncMerge.applyEdits`), and a kept copy is only ever added to the store, never replaces it.
 /// - Reset records a pending wipe, retried each launch, so a failed delete never brings erased data back.
 /// - If the store can't be read and there's no readable blob either, nothing is written this launch: replacing the
 ///   store from a blob that doesn't hold its contents would erase them.
 @MainActor
 final class MirroredSnapshot<Value: Codable & Equatable> {
+    /// When the store is shared through iCloud. `isOn` is read on each `load()`; `id` matches rows across devices.
+    struct SyncRules {
+        let isOn: () -> Bool
+        let id: (Value) -> AnyHashable
+    }
+
     private let blobKey: String
     private let storage: LocalStore
     private let readBlob: () -> [Value]?
@@ -31,19 +40,25 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     private let removeBlob: () -> Void
     private let fetch: () throws -> [Value]
     private let replace: ([Value]) throws -> Void
+    private let sync: SyncRules?
     private let logger = AppLogger.logger(category: "MirroredSnapshot")
 
     /// False when the store can't be used this launch: the blob is read and written instead.
     private var usesEntities = false
     /// Store unreadable and no blob to stand in for it: edits stay in memory only this launch.
     private var savesDisabled = false
+    /// Sync rules apply until the next `load()`.
+    private var syncActive = false
+    /// The list as this device last loaded or saved it: the base `SyncMerge.applyEdits` diffs edits against.
+    private var lastKnown: [Value] = []
 
     /// The kept copy is a JSON `[Value]` under `blobKey`.
     convenience init(
         blobKey: String,
         storage: LocalStore,
         fetch: @escaping () throws -> [Value],
-        replace: @escaping ([Value]) throws -> Void
+        replace: @escaping ([Value]) throws -> Void,
+        sync: SyncRules? = nil
     ) {
         self.init(
             blobKey: blobKey,
@@ -53,7 +68,8 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             writeBlob: { storage.setEncodable($0, forKey: blobKey) },
             removeBlob: { storage.removeObject(forKey: blobKey) },
             fetch: fetch,
-            replace: replace
+            replace: replace,
+            sync: sync
         )
     }
 
@@ -66,7 +82,8 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         writeBlob: @escaping ([Value]) -> Void,
         removeBlob: @escaping () -> Void,
         fetch: @escaping () throws -> [Value],
-        replace: @escaping ([Value]) throws -> Void
+        replace: @escaping ([Value]) throws -> Void,
+        sync: SyncRules? = nil
     ) {
         self.blobKey = blobKey
         self.storage = storage
@@ -75,6 +92,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         self.removeBlob = removeBlob
         self.fetch = fetch
         self.replace = replace
+        self.sync = sync
     }
 
     /// Own namespace: `LegacyBlobMigration`'s flag means "added what was missing", this one "store mirrors the blob".
@@ -82,6 +100,8 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
 
     private var flagKey: String { Self.flagKey(for: blobKey) }
     private var wipePendingKey: String { "wipePending.\(blobKey)" }
+    /// Set while syncing when a save reached only the kept copy; the next load adds the copy to the store.
+    private var keptCopyAheadKey: String { "keptCopyAhead.\(blobKey)" }
 
     private func blob() -> [Value]? {
         readBlob()
@@ -89,6 +109,11 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
 
     func load() -> [Value] {
         savesDisabled = false
+        if let sync, sync.isOn() {
+            syncActive = true
+            return loadSharedStore(sync)
+        }
+        syncActive = false
         guard finishPendingWipe() else { return fallBackToBlob() }
         do {
             if !storage.bool(forKey: flagKey) {
@@ -119,6 +144,10 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             logger.error("❌ \(self.blobKey, privacy: .public): not saved, store and kept copy both unreadable")
             return
         }
+        if syncActive, let sync {
+            saveToSharedStore(values, sync)
+            return
+        }
         writeBlob(values)
         guard usesEntities else { return }
         do {
@@ -134,6 +163,68 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     func removeAll() {
         removeBlob()
         storage.set(true, forKey: wipePendingKey)
+    }
+
+    // MARK: - Sync rules
+
+    private func loadSharedStore(_ sync: SyncRules) -> [Value] {
+        guard finishPendingWipe() else { return fallBackKeepingStore() }
+        do {
+            var values = try fetch()
+            let keptCopyMayBeAhead = !storage.bool(forKey: flagKey) || storage.bool(forKey: keptCopyAheadKey)
+            if keptCopyMayBeAhead, let kept = blob() {
+                let merged = SyncMerge.addKeptCopy(kept, to: values, id: sync.id)
+                if merged != values {
+                    try copyIn(merged)
+                    logger.info("✅ \(self.blobKey, privacy: .public): added the kept copy to the shared store")
+                    values = merged
+                }
+            }
+            storage.set(true, forKey: flagKey)
+            storage.removeObject(forKey: keptCopyAheadKey)
+            if blob() != values { writeBlob(values) }
+            usesEntities = true
+            lastKnown = values
+            return values
+        } catch {
+            logger.error("❌ \(self.blobKey, privacy: .public): shared store unusable, using the kept copy: \(error.localizedDescription)")
+            return fallBackKeepingStore()
+        }
+    }
+
+    private func saveToSharedStore(_ values: [Value], _ sync: SyncRules) {
+        guard usesEntities else {
+            keepAhead(values)
+            return
+        }
+        do {
+            let merged = SyncMerge.applyEdits(base: lastKnown, local: values, store: try fetch(), id: sync.id)
+            try replace(merged)
+            lastKnown = values
+            writeBlob(merged)
+        } catch {
+            logger.error("❌ \(self.blobKey, privacy: .public): failed to save to the shared store, kept in the old copy: \(error.localizedDescription)")
+            usesEntities = false
+            keepAhead(values)
+        }
+    }
+
+    /// The save reached only the kept copy: the next load adds it to the store (add-only, so a row deleted on
+    /// another device meanwhile can come back — never the other way round).
+    private func keepAhead(_ values: [Value]) {
+        writeBlob(values)
+        storage.set(true, forKey: keptCopyAheadKey)
+    }
+
+    /// Like `fallBackToBlob`, but leaves the key marked: the next load adds the kept copy rather than replacing.
+    private func fallBackKeepingStore() -> [Value] {
+        usesEntities = false
+        let kept = blob()
+        guard kept != nil || storage.bool(forKey: wipePendingKey) else {
+            savesDisabled = true
+            return []
+        }
+        return kept ?? []
     }
 
     private func copyIn(_ values: [Value]) throws {
