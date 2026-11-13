@@ -84,13 +84,13 @@ drop a line while moving it.
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
    photos, Video 1/3 → 3/3.
    **Top priority (owner 2026-11-12: "move them to the top"):** finish the item in progress (Badges 1/2), then
-   Pictures 1/4 → Data safety 1/4 → 2/4 → Pictures 2/4 → 3/4 → 4/4 → Data safety 3/4 → 4/4, then continue below.
+   Pictures 1/4 → Data safety 1/4 → 2/4 → **Play 1/7 → 3/7 → Badges 2/2 → Play 4/7 → 7/7** (owner 2026-11-13; Wrapped still ships before 1 Dec — slot it in by 24 Nov) → Pictures 2/4 → 3/4 → 4/4 → Data safety 3/4 → 4/4, then continue below.
    **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Me 1/3 → 3/3 (3/3 = Settings tidy-up) → Showcase screenshots → Plan my week 1/3 → 2/3 → Groceries + Kitchen → Plan my week 3/3 →
-   Made-it celebration + Spoons 1/2 → 2/2 → cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity. Then (owner OK 2026-11-10): taste profile →
-   skill tree → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
+   cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity. Then (owner OK 2026-11-10): taste profile →
+   (skill tree = Play 5/7) → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
    Shared family cookbooks: still undecided — revisit after.
-2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row + Streak freeze + Cuisine passport +
-   Zero-waste wins (one Cooking-sheet/home branch), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
+2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row (streak freeze, passport, zero-waste
+   wins now live in the Play series), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
    planning nudge.
 3. **Polish & QA:** Polish batch + Scroll fade elsewhere (one branch), CI screenshots of key screens.
 4. **Onboarding:** Guide 1/2 → 2/2.
@@ -319,18 +319,36 @@ drop a line while moving it.
   it came from; undo on delete/clear. Merge duplicated row/section/header views between `Views/Kitchen` and
   `Views/Shopping` and delete the leftovers. *Done when:* put-away + expiry + merge logic tested, screenshots of both
   halves, net line count down, CI green.
-- [ ] **Made-it celebration.** Motion + count-up (cook #N, streak), a variable "fun fact" line, distinct haptic
-  vocabulary (today 94/181 haptics are `.light()`), confetti moved here from groceries; groundwork for Spoons
-  earn animation. *Done when:* fun-fact selection tested, screenshot, CI green.
-- [ ] **Spoons 1/2 — earn** (owner OK 2026-11-10). On-device reward currency for real cooking: Made it +10, first cook
-  of a recipe +15, weekly streak kept +25, Kitchen item used before expiry +10, week planned +5, badge +20–50;
-  "Cook for someone" toggle on Made it (+bonus, badge). Balance + recent earnings in Me/Profile; earn animation on
-  Made it, and on Today (from Tabs 2/3). No purchase, no cash-out, nothing leaves the device. *Done when:* earning rules tested (no double
-  counting, undo-safe), screenshot, CI green.
-- [ ] **Spoons 2/2 — spend + impact.** Spend on cosmetics only (themes, app icons, badge frames, share-card styles,
-  celebration effects, one streak freeze). Impact stats card: meals cooked at home, ~kg food saved (Kitchen items used
-  before expiry), techniques learned, meals cooked for others. *Done when:* unlock + stats logic tested,
+### Play series — cooking as a habit people love (owner 2026-11-13: "like Duolingo … better … really think")
+**Read `docs/PLAY.md` first** — mechanics, numbers, rules and architecture live there; items below are the slices.
+Merges Made-it celebration, Spoons 1/2 + 2/2, Streak freeze, Zero-waste wins, Cuisine passport and the skill tree.
+Every Play item: rewards only for real cooking/learning, deterministic (no random rewards), nothing to buy, nothing
+leaves the device, warm copy (never guilt), existing streaks/badges carry over, screenshots of new-user + active-cook.
+🙋 Blocked on owner answers in **Needs owner** (Play decisions) before 1/7 starts.
+- [ ] **Play 1/7 — Foundation.** `PlayEvent` log + pure `PlayEngine` (§11) + `CelebrationQueue` (§7) + Spoons earn
+  table (§5); cook choke point (`RecipeDetailView.recordCook`) records events; Spoons balance in Me. *Done when:*
+  engine tested (earn table, undo, anti-farming, union merge), perf budget with 10k events, CI green.
+- [ ] **Play 2/7 — Daily streak + weekly goal ring.** §6 rules (03:00 roll, freezes, repair, holiday mode,
+  milestones), Tonight check-in on Today's Tonight card, streak calendar in Me, weekly goal picker + ring on Today;
+  today's weekly streak becomes Cook weeks unchanged. *Done when:* streak maths (DST, time zones, migration) tested,
   screenshots, CI green.
+- [ ] **Play 3/7 — Made-it moment.** §7 summary screen, 4 haptic patterns, optional sounds, impact line (takeaway
+  price setting), zero-waste line, "Add your photo" prompt. *Done when:* summary content + queue priority tested,
+  screenshots (first cook, milestone, level-up), CI green.
+- [ ] **Play 4/7 — Kitchen Bites.** §3 question types, Leitner scheduling, units 1–3 content (food-safety facts
+  sourced + checked by a separate agent), Today card. *Done when:* scheduler + content validation tested, every
+  question reviewed, screenshots, CI green.
+- [ ] **Play 5/7 — Cooking Path + chef levels.** §4 map (units 1–4 first), technique tags for bundled recipes
+  (curated JSON + drift test), cook-from-memory finale, mastery crowns, collection book, cuisine passport, §5 levels
+  with sub-ranks + level-up moment. *Done when:* node completion, tagging coverage, mastery + level rules tested,
+  screenshots, CI green.
+- [ ] **Play 6/7 — Quests, events, reminders.** Weekly 3 quests from the cook's own library (always achievable, no
+  repeats), monthly calendar events with frames, "you vs last month", §8 notifications (learned time, streak saver,
+  back-off) replacing `cooking-streak-lapse`. *Done when:* quest generation, event calendar, scheduling + back-off
+  tested, screenshots, CI green.
+- [ ] **Play 7/7 — Mascot, onboarding, shop.** Original mascot (3 candidates on screenshots, owner picks 🙋) with moods;
+  §10 onboarding (first win < 2 min); Spoons shop (freezes, repair, icons, themes, frames, outfits) + impact stats
+  card; Settings → Quiet mode. *Done when:* purchase/unlock + mood logic tested, screenshots, CI green.
 - [ ] **Cooking mode upgrade.** Several named timers ("Rice 12:00") with time-sensitive notifications; swipe between
   steps; each step shows its own ingredients/amounts; Done mid-recipe confirms + resume later; timer presets
   (+1/5/10 min); voice-command hint; VoiceOver labels for timer + progress. *Done when:* multi-timer + step-ingredient
@@ -394,13 +412,8 @@ drop a line while moving it.
   selection, CI green.
 - [ ] **Profile → Cooking diary.** No accounts, so a name-and-photo Profile reads like a sign-in. Replace with a photo
   timeline of cooks + stats + badges; drop last-name field. 🙋 Owner to confirm before starting.
-- [ ] **Streak freeze.** One missed week forgiven per calendar month; shown in the Cooking sheet. *Done when:*
-  `CookingStreak` tests cover freeze use + monthly reset, CI green.
-- [ ] **Zero-waste wins.** When a recipe using a soon-to-expire pantry item is marked cooked, celebrate it; monthly
-  "used up N items before they expired" in the Cooking sheet. *Done when:* counting tested, CI green.
 - [ ] **Sunday planning nudge.** Opt-in weekly notification → planner with 3 suggested meals → add week to groceries.
   Uses existing `NotificationKind`. *Done when:* scheduling tested, opt-in in Notification settings, CI green.
-- [ ] **Cuisine passport.** Stamp grid of cuisines cooked (from `cuisinesCooked` metric) in the Cooking sheet.
 - [ ] **Polish batch** (from WORK.md 2026-11-06): forced `.toolbarColorScheme(.dark)` on MealPlanningView /
   ProfileView / SmartCollectionDetailView (white title in Light); "1 active filters" plural; "Don't ask again"
   checkbox a11y state; ingredient delete only via long-press (add swipe).
@@ -492,6 +505,11 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
 ## Needs owner
+- 🙋 **Play decisions** (see `docs/PLAY.md`; agents start Play 1/7 once answered): (1) daily streak from a
+  1-minute action (Tonight check-in, Kitchen Bite or a cook) replaces the weekly flame, weekly cooks become the goal
+  ring — OK? (2) RecipeModel 17 with a synced `PlayEventEntity` — OK? (3) agents write Kitchen Bites quiz content
+  (own words, food-safety facts checked against FSA/NHS) — OK? (4) Game Center weekly leagues (opt-in; score + alias
+  go to Apple): yes / later / no?
 - 🙋 Planner: read your iOS calendar (on-device, permission prompt) to mark busy evenings automatically in Fill my week? Default: manual busy nights only.
 - 🙋 Today "New imports" shelf needs a recipe add-date = new Core Data field (model 16, guardrail). Add it, or drop the shelf?
 - 🙋 Starter photos (optional, nice-to-have): pick ~6 photos you own or free-licensed ones (e.g. Unsplash, licence

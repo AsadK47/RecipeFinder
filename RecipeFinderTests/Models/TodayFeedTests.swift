@@ -164,6 +164,18 @@ import Foundation
         #expect(options.allSatisfy { !["Dessert", "Drink", "Side"].contains($0.recipe.category) })
     }
 
+    /// Lunch once also took breakfasts, so 1pm led with Pancakes or Stir fry depending on random recipe ids.
+    @Test func lunchLeadsWithAMainWhateverTheRecipeIDs() {
+        for _ in 0..<20 {
+            let library = [recipe("Pancakes", category: "Breakfast"), recipe("Stir fry", category: "Main")]
+            #expect(feed(library, at: at(13)).hero?.recipe.category == "Main")
+        }
+    }
+
+    @Test func aLunchWithOnlyBreakfastRecipesStillGetsASuggestion() {
+        #expect(feed([recipe("Pancakes", category: "Breakfast")], at: at(13)).hero?.recipe.category == "Breakfast")
+    }
+
     @Test func aMorningWithoutBreakfastRecipesStillSuggestsAMain() {
         let library = [recipe("Stir fry", category: "Main"), recipe("Brownie", category: "Dessert")]
         #expect(feed(library, at: at(8)).hero?.recipe.category == "Main")
