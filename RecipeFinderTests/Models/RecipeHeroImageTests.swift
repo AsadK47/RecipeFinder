@@ -49,4 +49,24 @@ struct RecipeHeroImageTests {
         let r = recipe(imageName: nil, photoNames: [])
         #expect(r.heroImageName == nil)
     }
+
+    @Test("Changing or removing the main image makes the recipe unequal, so views refresh")
+    func mainImageChangeIsAChange() {
+        let a = recipe(imageName: "main.jpg", photoNames: [])
+        var b = a
+        b.imageName = nil
+        #expect(a != b)
+        b.imageName = "other.jpg"
+        #expect(a != b)
+    }
+
+    @Test("Equal recipes with the same main image hash the same")
+    func sameMainImageHashesEqual() {
+        let a = recipe(imageName: "main.jpg", photoNames: [])
+        var b = a
+        #expect(a == b)
+        #expect(a.hashValue == b.hashValue)
+        b.imageName = nil
+        #expect(Set([a, b]).count == 2)
+    }
 }
