@@ -82,11 +82,7 @@ final class Generator: ObservableObject {
             }
             status = "Drawing \(recipe.name)…"
             do {
-                var cgImage: CGImage?
-                for try await created in creator.images(for: [.text(Self.prompt(for: recipe))], style: style, limit: 1) {
-                    cgImage = created.cgImage
-                }
-                guard let cgImage else { throw ArtError.noImage }
+                let cgImage = try await draw(recipe, with: creator, style: style)
                 try Self.saveJPEG(cgImage, to: url)
                 lastImage = NSImage(cgImage: cgImage, size: .zero)
             } catch {
@@ -98,6 +94,57 @@ final class Generator: ObservableObject {
             ? "All done. Commit and push tools/RecipeArt/Output."
             : "Done with \(failures.count) failures — run again to retry them, then commit and push tools/RecipeArt/Output."
         finished = true
+    }
+
+
+    /// Tries each prompt in turn (full → name only → plain description). Image Playground only draws for the app in
+    /// front: if the window isn't active, or creation is refused for being in the background, wait until it is and
+    /// retry the same prompt instead of failing the recipe.
+    private func draw(_ recipe: SeedRecipe, with creator: ImageCreator, style: ImagePlaygroundStyle) async throws -> CGImage {
+        var lastError: Error = ArtError.noImage
+        for prompt in Self.prompts(for: recipe) {
+            var backgroundRetries = 0
+            while true {
+                await waitUntilFrontmost(recipe)
+                do {
+                    for try await created in creator.images(for: [.text(prompt)], style: style, limit: 1) {
+                        return created.cgImage
+                    }
+                    throw ArtError.noImage
+                } catch let error as ImageCreator.Error {
+                    lastError = error
+                    if case .backgroundCreationForbidden = error, backgroundRetries < 20 {
+                        backgroundRetries += 1
+                        continue
+                    }
+                    break   // try the next, simpler prompt
+                } catch {
+                    lastError = error
+                    break
+                }
+            }
+        }
+        throw lastError
+    }
+
+    private func waitUntilFrontmost(_ recipe: SeedRecipe) async {
+        guard !NSApp.isActive else { return }
+        status = "Paused — click this window to carry on (Image Playground only draws for the app in front)."
+        while !NSApp.isActive {
+            try? await Task.sleep(for: .milliseconds(500))
+        }
+        status = "Drawing \(recipe.name)…"
+    }
+
+    /// Simplest-last: the full description, then the dish name alone, then the name without brackets/extra words.
+    static func prompts(for recipe: SeedRecipe) -> [String] {
+        let plainName = recipe.name
+            .replacingOccurrences(of: #"\s*\([^)]*\)"#, with: "", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        var list = [prompt(for: recipe), "A plated dish of \(recipe.name)", "A plated dish of \(plainName)"]
+        var seen = Set<String>()
+        list = list.filter { seen.insert($0).inserted }
+        return list
     }
 
     /// The dish itself, plated, from its name and first few ingredients — no people or text.
