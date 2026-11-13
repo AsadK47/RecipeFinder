@@ -1,12 +1,10 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-`agent/data-safety-2-wire-sync` (1f4cb8c): Data safety 2/4 slice 2a — `SyncPreference` flag (key
-`iCloudSyncEnabled`, off) + `SyncRules.iCloudRules(storage:id:)` wired into collections, meal plans, shopping
-items/stores, kitchen items/inventory, badges. Waiting on Build & Test; challenge pass running.
+Nothing. Data safety 2/4 slice 2a merged (f44a58c); item still claimed 🚧.
 
 ## Next action
-Merge 2a when green. Slice 2b = ProfileManager sync rules (constant id) + profile store keeps the newest row instead
+Slice 2b = ProfileManager sync rules (constant id) + profile store keeps the newest row instead
 of deleting other-uuid rows, and reload managers on `NSPersistentStoreRemoteChange`. Slice 3 =
 `NSPersistentCloudKitContainer` + entitlement (iCloud.com.asadkhan.recipefinder) + Settings toggle/status (sets
 `SyncPreference.key`). Slice 4 = recipe photos entity + first-sync dedupe. Slice 5 = Privacy Policy §7.
