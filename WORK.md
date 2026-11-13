@@ -1,12 +1,12 @@
 # WORK.md — handoff (2026-11-12, builder agent)
 
 ## In progress
-Data safety 1/4 slice 3c (meal plans → MealPlanEntity) on `agent/data-safety-1-meal-plans`: MealPlanStore.swift
-(protocol + CoreDataMealPlanStore), MealPlanningManager on `MirroredSnapshot`, Reset → `removeAllMealPlans()`,
-MealPlanMigrationTests. Waiting on Build & Test.
+Data safety 1/4 (claimed): slices 1–2, 3a cook dates, 3b collections, 3c meal plans (c32a754) merged. Nothing on a branch.
 
 ## Next action
-Get the branch green, run deep-review + challenge agents, merge. Then slice 3d: shopping list (same pattern).
+Slice 3d: shopping list → ShoppingListItemEntity via `MirroredSnapshot` (copy MealPlanStore.swift: `*Storing`
+protocol + CoreData store upserting by id with sortOrder + `setIfChanged`, `stores` JSON-encoded, in-memory fake,
+Reset → `removeAll…()` in DataManagementSettingsView). Then kitchen, badges, profile.
 
 ## Decisions (why)
 - **Data safety 1/4 slice 3c (meal plans)**: reuses `MirroredSnapshot` unchanged; `setIfChanged` made internal and
