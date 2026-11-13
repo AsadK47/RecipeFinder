@@ -192,9 +192,8 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             if keptCopyMayBeAhead, let kept = blob() {
                 let merged = SyncMerge.addKeptCopy(kept, to: values, id: sync.id)
                 if merged != values {
-                    try copyIn(merged)
+                    values = try copyInShared(merged, sync)
                     logger.info("✅ \(self.blobKey, privacy: .public): added the kept copy to the shared store")
-                    values = merged
                 }
             }
             storage.set(true, forKey: flagKey)
@@ -247,6 +246,19 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     private func copyIn(_ values: [Value]) throws {
         try replace(values)
         guard try fetch() == values else { throw MirroredSnapshotError.verificationFailed }
+    }
+
+    /// Like `copyIn`, but the store may list rows in its own order (badges by id): checks every row arrived and
+    /// returns them as the store lists them, so the kept copy and the merge base match what later loads see.
+    private func copyInShared(_ values: [Value], _ sync: SyncRules) throws -> [Value] {
+        try replace(values)
+        let stored = try fetch()
+        var storedByID: [AnyHashable: Value] = [:]
+        for row in stored where storedByID[sync.id(row)] == nil { storedByID[sync.id(row)] = row }
+        guard stored.count == values.count, values.allSatisfy({ storedByID[sync.id($0)] == $0 }) else {
+            throw MirroredSnapshotError.verificationFailed
+        }
+        return stored
     }
 
     /// Unmarks so the next launch replaces the store with the blob — only safe when there is a blob to replace it

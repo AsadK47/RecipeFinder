@@ -9,6 +9,8 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
     var records: [EarnedBadgeRecord]
     var failWrites = false
     var failReads = false
+    /// Lists rows by badge id like the Core Data store, whatever order they were written in.
+    var sortsLikeCoreData = false
     private(set) var writeCount = 0
 
     init(_ records: [EarnedBadgeRecord] = []) {
@@ -17,7 +19,7 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
 
     func fetchBadges() throws -> [EarnedBadgeRecord] {
         if failReads { throw EarnedBadgeStoreError.storeUnavailable }
-        return records
+        return sortsLikeCoreData ? records.sorted { $0.badgeId < $1.badgeId } : records
     }
 
     func replaceBadges(with replacement: [EarnedBadgeRecord]) throws {
@@ -86,6 +88,20 @@ final class InMemoryEarnedBadgeStore: EarnedBadgeStoring {
         #expect(store.records.count == 2)
         #expect(keptBadgeIDs() == [headChef, firstRecipe])
         #expect(keptShown() == [headChef, firstRecipe])
+    }
+
+    @Test func withSyncOnAKeptCopyAddedToASortingStoreStillSavesToTheStore() {
+        // First load on this device with sync on: its kept copy joins the other device's badges, which the store
+        // lists in id order rather than kept-copy-first.
+        writeOldKeys([earned(.headChef, on: headChefDate)], shown: [headChef])
+        let store = InMemoryEarnedBadgeStore(
+            [EarnedBadgeRecord(badgeId: firstRecipe, isEarned: true, dateEarned: firstRecipeDate, celebrationShown: true)])
+        store.sortsLikeCoreData = true
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(Set(sut.unlockedBadges.keys) == [headChef, firstRecipe])
+        sut.unlockBadge(.welcomeAboard, silent: true)
+        #expect(store.records.contains { $0.badgeId == BadgeType.welcomeAboard.rawValue })
     }
 
     // MARK: - Migration
