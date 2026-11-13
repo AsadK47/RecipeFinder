@@ -168,7 +168,8 @@ final class Generator: ObservableObject {
 
     /// The kind of dish in plain English, from words in its name, else its category.
     static func dishPhrase(for recipe: SeedRecipe) -> String {
-        let name = recipe.name.lowercased()
+        // Match at word starts so "tea" doesn't hit "steak".
+        let name = " " + recipe.name.lowercased().replacingOccurrences(of: "-", with: " ") + " "
         let kinds: [(words: [String], phrase: String)] = [
             (["dal", "dhal", "daal"], "A bowl of lentil stew"),
             (["curry", "masala", "korma", "gosht", "achari", "haleem", "kulambu", "sabzi", "bharta", "jalfrezi", "bhuna", "karahi", "rogan", "vindaloo", "saag"], "A bowl of curry"),
@@ -188,7 +189,7 @@ final class Generator: ObservableObject {
             (["tofu"], "A plate of tofu"),
             (["leg", "roast", "steak", "chop"], "A plated roast"),
         ]
-        for kind in kinds where kind.words.contains(where: { name.contains($0) }) {
+        for kind in kinds where kind.words.contains(where: { name.contains(" " + $0) }) {
             return kind.phrase
         }
         switch (recipe.category ?? "").lowercased() {
@@ -203,7 +204,7 @@ final class Generator: ObservableObject {
     /// An English protein named in the dish, if any.
     static func mainProtein(in name: String) -> String? {
         ["chicken", "lamb", "beef", "pork", "turkey", "salmon", "cod", "fish", "prawn", "shrimp", "egg", "potato", "aubergine", "eggplant", "chickpea", "lentil", "paneer", "tofu", "vegetables", "mushroom"]
-            .first { name.contains($0) }
+            .first { (" " + name).contains(" " + $0) }
             .map { $0 == "paneer" ? "cheese" : $0 }
     }
 
