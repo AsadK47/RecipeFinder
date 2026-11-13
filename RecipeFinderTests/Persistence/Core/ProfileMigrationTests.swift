@@ -182,6 +182,22 @@ final class InMemoryProfileStore: ProfileStoring {
         #expect(sut.loadProfileImage() == nil)
     }
 
+    @Test func savingBackThePhotoMeJustLoadedWritesNothing() throws {
+        // ProfileView's onChange saves whatever loadProfileImage() returned when Me appears.
+        let jpeg = try #require(testImage().jpegData(compressionQuality: 0.8))
+        var withPhoto = asad
+        withPhoto.imageData = jpeg
+        let store = InMemoryProfileStore(withPhoto)
+        let sut = manager(store)
+        let writes = store.writeCount
+        sut.saveProfileImage(sut.loadProfileImage())
+        #expect(store.writeCount == writes)
+        #expect(store.record?.imageData == jpeg)
+
+        sut.saveProfileImage(testImage())
+        #expect(store.writeCount == writes + 1)
+    }
+
     @Test func anUnchangedProfileIsNotRewrittenOnRelaunch() {
         writeOldKeys(asad)
         let store = InMemoryProfileStore()

@@ -179,3 +179,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **Backups don't carry shown-celebration ids** (pre-existing); **unknown badge ids** keep only id + date (title/icon rebuilt bare; UI lists `BadgeType.allCases` only).
 - **Backup badge with `isUnlocked: false`** now loads as earned (presence already decided unlock checks).
 - **A non-silent unlock writes the store twice** (unlock, then shown) — fine at ~30 rows.
+
+### 2026-11-13 · Data safety 1/4 slice 3g (profile → ProfileEntity) — fixed: Me's `onChange(of: profileImage)` saved back the photo it had just loaded on every visit (pre-existing re-encode; would now rewrite the external Core Data file + kept copy each time) — the manager now keeps the decoded image and ignores saving that same image (test). Noted, not fixed:
+- **Photo stored full size** (pre-existing: 12–48 MP camera JPEG, now held in memory and compared at launch) — downscale to ~512 px on save; a polish item, changes what's stored.
+- **Unreadable store on a fresh install / after Reset**: profile edits stay in memory that launch, success haptic still plays (same as siblings; `MirroredSnapshot.save` doesn't report).
+- **Sync (2/4)**: the store keeps one row and deletes other-uuid rows, so two devices would delete each other's profile — 2/4 must merge/pick by date.
+- **Tests**: the external-storage path (>100 KB) isn't exercised by the in-memory store; `setIfChanged` and `unlockWelcomeBadge` (shared init only) are unpinned; Reset wiring in `DataManagementSettingsView` untested (same as 3c–3f, `ResetService` item).
+- **Reset kill window** between `clearAll()` and `removeProfile()` can bring the name back (same rule as 3d; running the `remove*()` calls before `clearAll()` would close it for every manager).

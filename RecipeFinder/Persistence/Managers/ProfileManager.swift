@@ -53,6 +53,9 @@ final class ProfileManager: ProfileManaging {
     /// The profile lives in a `ProfileEntity` row; the old `LocalStore` keys are kept current for one release.
     @ObservationIgnored private let mirror: MirroredSnapshot<ProfileRecord>
     @ObservationIgnored private var record = ProfileRecord(uuid: "")
+    /// The photo as last handed out, so Me saving back the image it just loaded (its `onChange`) writes nothing —
+    /// a re-encode would rewrite the photo, and lose quality, on every visit.
+    @ObservationIgnored private var loadedImage: UIImage?
 
     var fullName: String {
         ProfileNameFormatter.displayName(firstName: firstName, lastName: lastName)
@@ -93,6 +96,7 @@ final class ProfileManager: ProfileManaging {
     }
 
     func loadProfile() {
+        loadedImage = nil
         if let saved = mirror.load().first {
             record = saved
         } else {
@@ -134,12 +138,17 @@ final class ProfileManager: ProfileManaging {
     }
 
     func saveProfileImage(_ image: UIImage?) {
+        guard image == nil || image !== loadedImage else { return }
+        loadedImage = image
         record.imageData = image?.jpegData(compressionQuality: AppTheme.jpegCompressionQuality)
         mirror.save([record])
     }
 
     func loadProfileImage() -> UIImage? {
-        record.imageData.flatMap(UIImage.init(data:))
+        if loadedImage == nil {
+            loadedImage = record.imageData.flatMap(UIImage.init(data:))
+        }
+        return loadedImage
     }
 
     func clearProfileImage() {
