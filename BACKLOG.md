@@ -79,6 +79,7 @@ drop a line while moving it.
 - Skip, disable or weaken a test to get green.
 - New Swift files: no `XcodeWrite` in the cloud — register them in `project.pbxproj` by mirroring a sibling file's
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
+- 2026-11-14 · Data safety 2/4 slice 3b-2a (merge recipe copies under sync, sync off) · 5f9eafa · nothing visible; edits/deletes now write every row with a recipe's id — check editing, favouriting and deleting a recipe still works · review: challenge 2 fixed (one-copy writes, main-thread fetch), 5 noted in CHALLENGES · looked at: — (no UI). Reordered before the toggle: built-in recipes share ids across devices, so sync would have shown every one twice.
 
 ## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
 1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
@@ -137,7 +138,7 @@ drop a line while moving it.
   rules wired into every list manager except profile. ✅ Slice 2b (0529d44): profile shares one row across devices
   (constant sync id; store picks named → oldest → uuid). ✅ Slice 3a (40bc462): `NSPersistentCloudKitContainer`
   (history + remote-change on, CloudKit only while sync on), iCloud entitlement, CloudKit model check. ✅ Slice 3b-1 (0e9b206): lists reload when another device's edits arrive
-  (store history, imports only). Left: Settings toggle/status (3b-2), photos + dedupe
+  (store history, imports only). ✅ Slice 3b-2a (5f9eafa): same-id recipe copies from two devices merge into one (lowest record name kept, cook marks merged; edits/deletes reach every copy). Left: Settings toggle/status, opt-in + Privacy §7 (3b-2b), photos + dedupe
   (4), Privacy Policy §7 (5). *Done when:* container setup + conflict/dedupe logic
   tested, sync verified on two devices via TestFlight (owner), CI + TestFlight green.
   Owner asked (2026-11-13): when the slice that turns sync on ships, tell the owner in the push notification that it's

@@ -1,10 +1,10 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 3b-2a (merge same-id recipe copies under sync) on `agent/sync-recipe-copies`, waiting on CI.
+Nothing. Data safety 2/4 slice 3b-2a merged (5f9eafa); item still claimed 🚧.
 
 ## Next action
-When 3b-2a is green + merged: slice 3b-2b = Settings "iCloud sync" toggle/status, **opt-in (off by default)** +
+Slice 3b-2b = Settings "iCloud sync" toggle/status, **opt-in (off by default)** +
 Privacy Policy §7 in the same slice (the in-app policy promises opt-in and a policy update *before* any sync ships).
 Toggle writes a "wanted" key; `SyncPreference.key` (what the rules read) only changes at launch, before
 `PersistenceController.shared` — a live switch-off would put the rules in "kept copy wins" against a syncing store
