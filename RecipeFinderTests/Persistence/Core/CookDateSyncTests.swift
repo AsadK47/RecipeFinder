@@ -99,4 +99,39 @@ import Foundation
         #expect(keptCopy == [tonight])
         #expect(manager(store).recordedCookDates == [tonight])
     }
+
+    @Test func aResetElsewhereIsFollowedOnReloadEvenWhenTheStoreFileIsUnknown() {
+        storage.setEncodable(cooks, forKey: blobKey)
+        let store = InMemoryCookDateStore(cooks)   // storeFileID nil: only this launch's own load proves it's shared
+        let sut = manager(store)
+
+        store.dates = []
+        sut.reload()
+
+        #expect(sut.recordedCookDates.isEmpty)
+        #expect(keptCopy == nil)
+    }
+
+    @Test func theKeptCopyFollowsAStorePartlyErasedElsewhere() {
+        storage.setEncodable(cooks, forKey: blobKey)
+        let store = InMemoryCookDateStore(cooks)
+        store.storeFileID = "file-1"
+        let sut = manager(store)
+
+        let tonight = Date(timeIntervalSinceReferenceDate: 801_000_000)
+        store.dates = [tonight]   // Reset elsewhere, then a new cook there
+        sut.reload()
+        #expect(keptCopy == [tonight])
+
+        store.dates = []          // recovery: a fresh, empty file
+        store.storeFileID = "file-2"
+        #expect(manager(store).recordedCookDates == [tonight])
+    }
+
+    @Test func otherDevicesCooksReachTheKeptCopy() {
+        let store = InMemoryCookDateStore(cooks)
+        store.storeFileID = "file-1"
+        _ = manager(store)
+        #expect(keptCopy == cooks)
+    }
 }

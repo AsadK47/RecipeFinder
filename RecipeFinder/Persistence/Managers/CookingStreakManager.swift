@@ -131,7 +131,14 @@ final class CookingStreakManager: CookingStreakTracking {
                     usesEntities = migrateBlob() != .failed
                     cookDates = try cookDateStore.fetchCookDates()
                 }
-                if syncing, usesEntities { markSharedStoreLoaded() }
+                if syncing, usesEntities {
+                    markSharedStoreLoaded()
+                    // The store holds other devices' cooks and deletes: the kept copy follows it, so a later recovery
+                    // or unreadable store can't bring back cooks a Reset elsewhere erased.
+                    if storage.decodable([Date].self, forKey: saveKey) != cookDates {
+                        storage.setEncodable(cookDates, forKey: saveKey)
+                    }
+                }
             } catch {
                 streakLogger.error("❌ Failed to read cook dates, using the old copy: \(error.localizedDescription)")
                 usesEntities = false
