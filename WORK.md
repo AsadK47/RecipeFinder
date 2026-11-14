@@ -9,7 +9,8 @@ slice 5 = website privacy.html §7.
 
 ## Decisions (why)
 - **Data safety 2/4 slice 4b-2b (fold same item)**: generic `SyncMerge.foldSameThing` + `SyncRules.sameThing`, run on
-  every shared-store load. Kept row = lowest id (uuidString) of the group — same on every device, so the global
+  every shared-store load. Two-phase (challenge: devices folding at once lost one device's copies, last write wins):
+  another row is deleted only once the *stored* kept row already holds what it adds, else kept row updated, other waits. Kept row = lowest id (uuidString) of the group — same on every device, so the global
   lowest is never deleted (recipe-copy rule). Folds must be order-free/idempotent: shopping = same name + canonical
   unit (`addItem`'s rule), max quantity (sum would double-count on a device with a partial view), to-buy unless all
   ticked, union of stores, recurring if any; kitchen = same name, kept row as-is (units may differ). Left out:

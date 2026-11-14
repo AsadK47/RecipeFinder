@@ -207,10 +207,10 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             }
             if let same = sync.sameThing {
                 let folded = SyncMerge.foldSameThing(values, key: same.key, rank: same.rank, fold: same.fold)
-                let foldedAway = values.count - folded.count
-                if foldedAway > 0 {
+                if folded != values {
+                    let foldedAway = values.count - folded.count
                     values = try copyInShared(folded, sync)
-                    logger.info("✅ \(self.blobKey, privacy: .public): folded \(foldedAway) rows added for the same thing on another device")
+                    logger.info("✅ \(self.blobKey, privacy: .public): folded rows added for the same thing on another device (\(foldedAway) removed)")
                 }
             }
             storage.set(true, forKey: flagKey)

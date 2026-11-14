@@ -106,9 +106,9 @@ final class InMemoryShoppingListStore: ShoppingListStoring {
         let store = InMemoryShoppingListStore([mine, peas, theirs])
         storage.set(true, forKey: SyncPreference.key)
         let sut = manager(store)
-        #expect(sut.items.map(\.id) == [low, peas.id])
-        #expect(sut.items.first?.quantity == 12)
-        #expect(store.items.map(\.id) == [low, peas.id])
+        #expect(sut.items.map(\.id) == [peas.id, low])
+        #expect(sut.items.last?.quantity == 12)
+        #expect(store.items.map(\.id) == [peas.id, low])
     }
 
     @Test func withSyncOffTwoItemsWithTheSameNameAreLeftAlone() {

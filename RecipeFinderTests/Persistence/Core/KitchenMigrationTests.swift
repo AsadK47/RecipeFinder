@@ -111,8 +111,8 @@ final class InMemoryKitchenStore: KitchenStoring {
         let store = InMemoryKitchenStore([mine, flour, theirs])
         storage.set(true, forKey: SyncPreference.key)
         let sut = manager(store)
-        #expect(sut.items.map(\.id) == [low, flour.id])
-        #expect(store.items.map(\.id) == [low, flour.id])
+        #expect(sut.items.map(\.id) == [flour.id, low])
+        #expect(store.items.map(\.id) == [flour.id, low])
     }
 
     // MARK: - Migration

@@ -75,7 +75,7 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
 
     @Test func rowsForTheSameThingBecomeOneKeepingTheLowestRank() {
         let folded = fold([row(2, "eggs"), row(5, "milk"), row(1, "eggs")])
-        #expect(folded == [row(1, "eggs"), row(5, "milk")])
+        #expect(folded == [row(5, "milk"), row(1, "eggs")])
     }
 
     @Test func everyDeviceKeepsTheSameRowWhateverOrderItHoldsThem() {
@@ -95,19 +95,38 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         #expect(fold(rows) == rows)
     }
 
-    @Test func theKeptRowIsFoldedWithEveryOtherRowForThatThing() {
-        var othersSeen: [Row] = []
-        let folded = SyncMerge.foldSameThing(
-            [row(3, "b"), row(1, "a"), row(2, "c")],
-            key: { _ in AnyHashable(0) },
-            rank: { String($0.id) },
-            fold: { kept, others in
-                othersSeen = others
-                return Row(id: kept.id, text: ([kept] + others).map(\.text).sorted().joined())
-            }
-        )
-        #expect(folded == [Row(id: 1, text: "abc")])
-        #expect(Set(othersSeen.map(\.id)) == [2, 3])
+    /// Key = first letter; the rest are marks the fold unions (like a shopping item's stores).
+    private func foldMarks(_ rows: [Row]) -> [Row] {
+        SyncMerge.foldSameThing(rows, key: { AnyHashable(String($0.text.prefix(1))) }, rank: { String($0.id) }) { kept, others in
+            let marks = Set(([kept] + others).flatMap { $0.text.dropFirst() })
+            return Row(id: kept.id, text: String(kept.text.prefix(1)) + String(marks.sorted()))
+        }
+    }
+
+    @Test func anotherRowIsOnlyDroppedOnceTheKeptRowAlreadyHoldsWhatItAdds() {
+        let first = foldMarks([row(2, "eb"), row(1, "ea")])
+        #expect(first == [row(2, "eb"), row(1, "eab")])
+        #expect(foldMarks(first) == [row(1, "eab")])
+    }
+
+    @Test func aRowTheKeptRowAlreadyHoldsIsDroppedStraightAway() {
+        #expect(foldMarks([row(1, "eab"), row(2, "eb")]) == [row(1, "eab")])
+    }
+
+    @Test func twoDevicesFoldingAtOnceLoseNothing() {
+        // Device A saw rows 1+2 and wrote 1 = "eab"; device B saw 1+3 and wrote 1 = "eac", landing last. Neither
+        // deleted its other row, because the stored kept row didn't hold it yet.
+        #expect(foldMarks([row(1, "ea"), row(2, "eb")]) == [row(1, "eab"), row(2, "eb")])
+        #expect(foldMarks([row(1, "ea"), row(3, "ec")]) == [row(1, "eac"), row(3, "ec")])
+        let afterBoth = [row(1, "eac"), row(2, "eb"), row(3, "ec")]
+        let next = foldMarks(afterBoth)
+        #expect(next == [row(1, "eabc"), row(2, "eb")])
+        #expect(foldMarks(next) == [row(1, "eabc")])
+    }
+
+    @Test func aFoldThatChangesNothingLeavesTheRowsAsTheyAre() {
+        let rows = [row(1, "eab"), row(4, "m")]
+        #expect(foldMarks(rows) == rows)
     }
 }
 
@@ -250,7 +269,7 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
     @Test func withSyncOnTheSameThingFromTwoDevicesIsOneRowInTheStore() {
         store.rows = [row(2, "eggs"), row(3, "milk"), row(1, "eggs")]
         let loaded = snapshot(foldsSameText: true).load()
-        #expect(loaded == [row(1, "eggs"), row(3, "milk")])
+        #expect(loaded == [row(3, "milk"), row(1, "eggs")])
         #expect(store.rows == loaded)
         #expect(keptCopy() == loaded)
     }

@@ -49,27 +49,27 @@ enum SyncMerge {
     /// Every device must keep the *same* row, or two devices could each delete the other's and leave none: the kept
     /// row is the lowest `rank` (fixed and identical on every device), so the one kept everywhere is never deleted,
     /// even by a device that hasn't received every row yet. `fold` gives the kept row what it takes from the others;
-    /// it must not depend on their order. The kept row takes the place of the first row for that thing.
-    static func foldSameThing<Value>(
+    /// it must not depend on their order. The kept row stays where it is.
+    ///
+    /// Two-phase, so nothing is lost when devices fold at once: another row is deleted only once the kept row *as
+    /// stored* already holds what it adds; otherwise the kept row is updated now and the other row waits for a later
+    /// load. (Two devices each writing their own fold of the kept row would otherwise lose one device's copies.)
+    static func foldSameThing<Value: Equatable>(
         _ rows: [Value],
         key: (Value) -> AnyHashable,
         rank: (Value) -> String,
         fold: (_ kept: Value, _ others: [Value]) -> Value
     ) -> [Value] {
-        let groups = Dictionary(grouping: rows.indices, by: { key(rows[$0]) }).filter { $0.value.count > 1 }
-        guard !groups.isEmpty else { return rows }
         var replacement: [Int: Value] = [:]
         var dropped = Set<Int>()
-        for indices in groups.values {
-            guard let keptIndex = indices.min(by: { rank(rows[$0]) < rank(rows[$1]) }),
-                  let firstIndex = indices.min() else { continue }
-            let others = indices.filter { $0 != keptIndex }.map { rows[$0] }
-            replacement[firstIndex] = fold(rows[keptIndex], others)
-            dropped.formUnion(indices.filter { $0 != firstIndex })
+        for indices in Dictionary(grouping: rows.indices, by: { key(rows[$0]) }).values where indices.count > 1 {
+            guard let keptIndex = indices.min(by: { rank(rows[$0]) < rank(rows[$1]) }) else { continue }
+            let kept = rows[keptIndex]
+            let others = indices.filter { $0 != keptIndex }
+            replacement[keptIndex] = fold(kept, others.map { rows[$0] })
+            dropped.formUnion(others.filter { fold(kept, [rows[$0]]) == kept })
         }
-        return rows.indices.compactMap { index in
-            dropped.contains(index) ? nil : replacement[index] ?? rows[index]
-        }
+        return rows.indices.filter { !dropped.contains($0) }.map { replacement[$0] ?? rows[$0] }
     }
 
     private static func firstByID<Value, ID: Hashable>(_ rows: [Value], id: (Value) -> ID) -> [ID: Value] {
