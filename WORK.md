@@ -1,14 +1,11 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 3b-2b on `agent/data-safety-2-sync-toggle` (d3ef75e): opt-in "Sync with iCloud" switch in
-Settings → Data Management (`ICloudSyncSection`), `SyncPreference` moved to its own file (wantedKey + applyAtLaunch +
-keepingChoice), `SyncStatus`, Reset warns/keeps the choice, Privacy §7 rewritten (Last Updated 14 Nov 2026).
-Waiting on Build & Test; challenge pass running.
+Nothing. Data safety 2/4 slice 3b-2b merged (a4ee07f); item still claimed 🚧.
 
 ## Next action
-Check Build & Test for the branch → fix → Screenshots (Data Management) → merge. Then slice 4 = recipe photos +
-dedupe of other lists (+ "erased elsewhere while closed" marker). Slice 5 = website privacy.html to match §7.
+Slice 4 = recipe photos sync + dedupe of other lists (+ "erased elsewhere while closed" marker) + store-history purge.
+Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5 = website privacy.html to match §7.
 
 ## Decisions (why)
 - **Data safety 2/4 slice 3b-2b (switch)**: opt-in (off by default), against the item's "on by default": the shipped

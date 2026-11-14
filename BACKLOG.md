@@ -137,8 +137,7 @@ drop a line while moving it.
   rules wired into every list manager except profile. ✅ Slice 2b (0529d44): profile shares one row across devices
   (constant sync id; store picks named → oldest → uuid). ✅ Slice 3a (40bc462): `NSPersistentCloudKitContainer`
   (history + remote-change on, CloudKit only while sync on), iCloud entitlement, CloudKit model check. ✅ Slice 3b-1 (0e9b206): lists reload when another device's edits arrive
-  (store history, imports only). ✅ Slice 3b-2a (5f9eafa): same-id recipe copies from two devices merge into one (lowest record name kept, cook marks merged; edits/deletes reach every copy). Left: Settings toggle/status, opt-in + Privacy §7 (3b-2b), photos + dedupe
-  (4), Privacy Policy §7 (5). *Done when:* container setup + conflict/dedupe logic
+  (store history, imports only). ✅ Slice 3b-2a (5f9eafa): same-id recipe copies from two devices merge into one (lowest record name kept, cook marks merged; edits/deletes reach every copy). ✅ Slice 3b-2b (a4ee07f): opt-in "Sync with iCloud" switch in Data Management (applies next launch; kept through Reset; Reset warns every device), Privacy §7 (14 Nov). Left: photos + dedupe of other lists + history purge (4), live sync status / iCloud full (eventChangedNotification), website privacy.html §7 (5). *Done when:* container setup + conflict/dedupe logic
   tested, sync verified on two devices via TestFlight (owner), CI + TestFlight green.
   Owner asked (2026-11-13): when the slice that turns sync on ships, tell the owner in the push notification that it's
   ready to test and which build has it. Owner has one iPhone: test = add recipes + a photo, wait a minute, delete and
@@ -538,6 +537,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
+- 🐞 2026-11-14: Screenshots `testCaptureTodayTimes` red since 3a0c0f8 — still expects "quick ideas" in the evening Tonight line; update the assertion to the new "ready by" copy.
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
@@ -635,3 +635,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-13 · Data safety 2/4 slice 3a (CloudKit container, sync off) · 40bc462 · nothing visible; app should open with every recipe as before — **check this TestFlight build uploads and installs** (first build with the iCloud entitlement) · review: challenge 1 fixed (history-tracking guardrail in CLAUDE.md) + relationship-rule tests added, 5 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New CloudSyncStore.swift, CloudSyncStoreTests.swift registered in pbxproj by hand.
 - 2026-11-14 · Data safety 2/4 slice 3b-1 (reload on iCloud changes, sync off) · 0e9b206 · nothing visible; app should behave exactly as before (reloader only starts when the store opens with iCloud) · review: challenge+review 3 fixed (list cleared on another device re-added on reload, recipe reload skipped dedupe, test closure compile risk), 5 noted in docs/CHALLENGES.md · looked at: n/a (no UI). New RemoteChangeReloader.swift, PersistenceController+RemoteChanges.swift, RemoteChangeReloaderTests.swift registered in pbxproj by hand.
 - 2026-11-14 · Data safety 2/4 slice 3b-2a (merge recipe copies under sync, sync off) · 5f9eafa · nothing visible; edits/deletes now write every row with a recipe's id — check editing, favouriting and deleting a recipe still works · review: challenge 2 fixed (one-copy writes, main-thread fetch), 5 noted in CHALLENGES · looked at: — (no UI). Reordered before the toggle: built-in recipes share ids across devices, so sync would have shown every one twice.
+- 2026-11-14 · Data safety 2/4 slice 3b-2b (opt-in iCloud sync switch + Privacy §7) · a4ee07f · **sync can now be tested**: Me → Settings → Data Management → turn on "Sync with iCloud", close the app from the switcher and reopen (status shows "On"); then the reinstall test; Privacy Policy dated 14 Nov, §7 · review: challenge 3 fixed (reset after sync-off warned this-device-only, policy claimed photos sync, reset could lose the choice), 3 noted in CHALLENGES · looked at: 37-data-management-sync. Screenshots red on unrelated testCaptureTodayTimes (expects old evening copy since 3a0c0f8) + flaky testCaptureBadgeReveal. New SyncPreference.swift, SyncPreferenceTests.swift, ICloudSyncSection.swift registered in pbxproj by hand.
