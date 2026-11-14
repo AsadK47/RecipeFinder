@@ -239,3 +239,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - After ≥7 idle days with sync on, the first launch reloads every list once (expired checkpoint).
 - Sync on but history not uploaded within 7 days (offline, iCloud full, off→on, clock jump) relies on CloudKit's expired-history recovery (full re-sync) — Apple's sample does the same; untestable in CI.
 - Launch wiring (`purgeOldStoreHistory` call, order vs tracking) untested; purge also runs in the unit-test host.
+
+### 2026-11-14 · Data safety 2/4 slice 4b-1 (recipe photo sync) — fixed: `recipes = recipes` self-assignment (compile error); every stored photo was written to disk, so a removed photo came back on every pass (now only photos a recipe here shows); a hero saved mid-pass could be overwritten by the older iCloud copy (re-checked just before writing); Reset deleted recipes before photo rows (now photos first); 20 MB cap untested (test). Noted, not fixed:
+- Newer-wins compares this device's file dates with other devices' clocks: a row dated in the future (clock set ahead) beats later local edits of that photo. Rejected for now: content hash + per-device "last synced" record (bigger); revisit if seen.
+- Removed photos/recipes keep their rows in iCloud (storage, privacy) and duplicate rows for one path aren't merged → 4b-2 pruning. Reset racing an in-flight pass can re-add rows (unreferenced, never written to disk; 4b-2 prunes them). Reset leaves `RecipeImages/` files (pre-existing).
+- A received photo shows once its view redraws (library re-published; SwiftUI may skip an unchanged `RecipeImageView` until it reappears).
+- Wiring (`syncPhotosWithICloud` after load/save, sync-on `mirrorRecipePhotos`) untested — CloudKit can't run in unit tests. Test photos are tiny, so external (CKAsset) storage isn't exercised.
+- TestFlight uses the Production CloudKit environment: `CD_RecipePhotoEntity` (and the v16 record types) need the schema deployed there before testers' sync works — owner step.

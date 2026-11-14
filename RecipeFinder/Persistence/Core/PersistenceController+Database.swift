@@ -11,7 +11,8 @@ extension PersistenceController {
 
         let context = container.viewContext
         do {
-            for entityName in [Entity.recipe, RecipePhotoSync.entityName] {
+            // Photos first: if that fails, the recipes (and the cook's library) are left whole.
+            for entityName in [RecipePhotoSync.entityName, Entity.recipe] {
                 let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
                 deleteRequest.resultType = .resultTypeObjectIDs

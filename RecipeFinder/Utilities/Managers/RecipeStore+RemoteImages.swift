@@ -45,7 +45,10 @@ extension RecipeStore {
                   outcome != RecipePhotoSync.Outcome() else { return }
             Self.logger.info("iCloud photos: \(outcome.uploaded) sent, \(outcome.downloaded) received")
             // Pictures resolve their file when drawn; re-publishing the library redraws the ones that just arrived.
-            if outcome.downloaded > 0 { recipes = recipes }
+            if outcome.downloaded > 0 {
+                let library = recipes
+                recipes = library
+            }
         }
     }
 }

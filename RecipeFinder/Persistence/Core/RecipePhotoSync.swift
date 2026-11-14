@@ -67,9 +67,11 @@ enum RecipePhotoSync {
             if let storedDate = stored[path], modified <= storedDate.addingTimeInterval(clockTolerance) { continue }
             toSend.append(path)
         }
+        // Only photos a recipe here shows: a removed photo's row stays in iCloud until pruning (4b-2) and must not
+        // come back as a file. A photo that arrives before its recipe is fetched on the reload the recipe brings.
         var toReceive: [String] = []
-        for (path, storedDate) in stored.sorted(by: { $0.key < $1.key }) where syncablePath(path) != nil {
-            if let modified = files.modified(path), storedDate <= modified.addingTimeInterval(clockTolerance) { continue }
+        for path in referencedPaths.sorted() where syncablePath(path) != nil {
+            guard let storedDate = stored[path], needsReceiving(storedDate, files.modified(path)) else { continue }
             toReceive.append(path)
         }
         return Outcome(
@@ -80,6 +82,12 @@ enum RecipePhotoSync {
 
     /// File dates and the stored dates round differently; closer than this counts as the same photo.
     static let clockTolerance: TimeInterval = 1
+
+    /// A stored photo is written here when there's no file yet or the stored one is newer.
+    private static func needsReceiving(_ storedDate: Date, _ modified: Date?) -> Bool {
+        guard let modified else { return true }
+        return storedDate > modified.addingTimeInterval(clockTolerance)
+    }
 
     private struct Files {
         let documents: URL
@@ -172,7 +180,10 @@ enum RecipePhotoSync {
             defer { context.reset() }
             let newest = found.max { ($0.value(forKey: "updatedAt") as? Date ?? .distantPast)
                 < ($1.value(forKey: "updatedAt") as? Date ?? .distantPast) }
-            guard let row = newest, let data = row.value(forKey: "data") as? Data, isPhoto(data) else { continue }
+            guard let row = newest, let data = row.value(forKey: "data") as? Data, isPhoto(data),
+                  // Re-checked just before writing: the cook may have saved a new photo here since the pass began.
+                  needsReceiving(row.value(forKey: "updatedAt") as? Date ?? .distantPast, files.modified(path))
+            else { continue }
             let url = files.url(path)
             do {
                 try files.fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)

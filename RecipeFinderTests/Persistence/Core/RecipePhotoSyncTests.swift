@@ -102,10 +102,20 @@ import Foundation
     @Test func aPhotoFromAnotherDeviceIsWrittenToDisk() throws {
         try insertRow(path: "RecipeImages/b.jpg", data: Self.jpeg)
 
-        let outcome = mirror([])
+        let outcome = mirror(["RecipeImages/b.jpg"])
 
         #expect(outcome == RecipePhotoSync.Outcome(uploaded: 0, downloaded: 1))
         #expect(try readFile("RecipeImages/b.jpg") == Self.jpeg)
+    }
+
+    @Test func aPhotoNoRecipeHereShowsIsNotWritten() throws {
+        // A photo the cook removed (or one whose recipe hasn't arrived yet) stays off disk.
+        try insertRow(path: "RecipeImages/removed.jpg", data: Self.jpeg, updatedAt: Self.monday)
+
+        let outcome = mirror([])
+
+        #expect(outcome.downloaded == 0)
+        #expect(!FileManager.default.fileExists(atPath: documents.appendingPathComponent("RecipeImages/removed.jpg").path))
     }
 
     @Test func aPhotoThatMatchesTheStoreIsLeftAlone() throws {
@@ -151,7 +161,7 @@ import Foundation
 
     @Test func aReceivedPhotoIsNotSentStraightBack() throws {
         try insertRow(path: "RecipeImages/b.jpg", data: Self.jpeg, updatedAt: Self.monday)
-        mirror([])
+        mirror(["RecipeImages/b.jpg"])
 
         let second = mirror(["RecipeImages/b.jpg"])
 
@@ -162,7 +172,7 @@ import Foundation
         try insertRow(path: "RecipeImages/b.jpg", data: Self.jpeg, updatedAt: Self.monday)
         try insertRow(path: "RecipeImages/b.jpg", data: Self.otherJpeg, updatedAt: Self.tuesday)
 
-        #expect(mirror([]).downloaded == 1)
+        #expect(mirror(["RecipeImages/b.jpg"]).downloaded == 1)
         #expect(try readFile("RecipeImages/b.jpg") == Self.otherJpeg)
 
         let replaced = Self.jpeg + Data([0x02])
@@ -177,7 +187,7 @@ import Foundation
     func aStoredPhotoWithAPathOutsideThePhotoFolderIsNotWritten(path: String) throws {
         try insertRow(path: path, data: Self.jpeg)
 
-        let outcome = mirror([])
+        let outcome = mirror([path])
 
         #expect(outcome.downloaded == 0)
         #expect(!FileManager.default.fileExists(atPath: documents.appendingPathComponent("escaped.jpg").path))
@@ -185,11 +195,14 @@ import Foundation
             .appendingPathComponent("escaped.jpg").path))
     }
 
-    @Test(arguments: [Data("not a photo".utf8), Data()])
+    @Test(arguments: [
+        Data("not a photo".utf8), Data(),
+        Data([0xFF, 0xD8, 0xFF]) + Data(count: RecipePhotoSync.maxBytes)
+    ])
     func aStoredRowThatIsNotAJPEGIsNotWritten(data: Data) throws {
         try insertRow(path: "RecipeImages/bad.jpg", data: data)
 
-        let outcome = mirror([])
+        let outcome = mirror(["RecipeImages/bad.jpg"])
 
         #expect(outcome.downloaded == 0)
         #expect(!FileManager.default.fileExists(atPath: documents.appendingPathComponent("RecipeImages/bad.jpg").path))
@@ -198,14 +211,14 @@ import Foundation
     @Test func aStoredRowWithNoPhotoYetIsSkipped() throws {
         try insertRow(path: "RecipeImages/later.jpg", data: nil)
 
-        #expect(mirror([]).downloaded == 0)
+        #expect(mirror(["RecipeImages/later.jpg"]).downloaded == 0)
     }
 
     @Test func bothDirectionsRunInOnePass() throws {
         try writeFile("RecipeImages/mine.jpg", Self.jpeg)
         try insertRow(path: "RecipeImages/theirs.jpg", data: Self.jpeg)
 
-        let outcome = mirror(["RecipeImages/mine.jpg"])
+        let outcome = mirror(["RecipeImages/mine.jpg", "RecipeImages/theirs.jpg"])
 
         #expect(outcome == RecipePhotoSync.Outcome(uploaded: 1, downloaded: 1))
         #expect(try readFile("RecipeImages/theirs.jpg") == Self.jpeg)
