@@ -1,13 +1,23 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 3b-2b merged (a4ee07f); item still claimed 🚧.
+Nothing. Data safety 2/4 slice 4a (history purge) merged (dcee46e); item still claimed 🚧.
 
 ## Next action
-Slice 4 = recipe photos sync + dedupe of other lists (+ "erased elsewhere while closed" marker) + store-history purge.
-Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5 = website privacy.html to match §7.
+Slice 4b = recipe photos sync (model 17 photo entity) + dedupe of other lists (+ "erased elsewhere while closed"
+marker). Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5 = website privacy.html §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 4a (history purge)**: history tracking is always on, so history grew forever even with sync
+  off. Purge at launch, background context, everything older than 7 days (Apple's CloudKit sample uses a week;
+  CloudKit's first export doesn't need history). Checkpoint = latest transaction, so after ≥7 idle days the launch
+  purge expires it → one extra reload of every list (accepted; rejected awaiting the purge before tracking — could
+  miss launch-time imports); expired → reload once and read on from now, never "no change" forever. Accepted,
+  unverifiable in CI: sync on but not uploaded for >7 days (offline / iCloud full / off→on) relies on CloudKit's
+  expired-history recovery (full re-sync), as in Apple's sample. **Pre-mortem:** (1) purge deletes recipes, not just history →
+  `purgingHistoryKeepsTheRecipes`; (2) another device's edits stop reloading after a purge →
+  `anImportAfterAPurgeThatKeptTheCheckpointIsSeen`, `aPurgedCheckpointReloadsOnceThenReadsOn`; (3) purge removes too much/too little → `historyIsKeptForAWeek`,
+  `historyBeforeTheCutoffIsRemoved`, `historyAfterTheCutoffIsKept`. No UI → no screenshots.
 - **Data safety 2/4 slice 3b-2b (switch)**: opt-in (off by default), against the item's "on by default": the shipped
   policy promised opt-in. Switch writes `wantedKey`; `key` copied at launch first thing in `App.init`, so the CloudKit
   mirror and every list's merge rules agree for the whole launch. Old installs with `key` on and no `wantedKey` stay on.

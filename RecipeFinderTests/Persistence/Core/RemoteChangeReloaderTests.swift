@@ -170,3 +170,96 @@ import Foundation
         #expect(!PersistenceController(inMemory: true).isSyncing)
     }
 }
+
+/// Old store history is purged at launch so it can't grow forever (Data safety 2/4 slice 4a).
+@MainActor
+@Suite struct StoreHistoryPurgeTests {
+    private static let importer = "NSCloudKitMirroringDelegate.import"
+
+    private static func addRecipe(named name: String, to persistence: PersistenceController, author: String?) throws {
+        let context = persistence.container.viewContext
+        context.transactionAuthor = author
+        defer { context.transactionAuthor = nil }
+        let recipe = NSEntityDescription.insertNewObject(forEntityName: "Recipe", into: context)
+        recipe.setValue(name, forKey: "name")
+        recipe.setValue(UUID(), forKey: "id")
+        try context.save()
+    }
+
+    private static func historyCount(in persistence: PersistenceController) throws -> Int {
+        let request = NSPersistentHistoryChangeRequest.fetchHistory(after: Date.distantPast)
+        let result = try persistence.container.viewContext.execute(request) as? NSPersistentHistoryResult
+        return (result?.result as? [NSPersistentHistoryTransaction])?.count ?? 0
+    }
+
+    private static func recipeCount(in persistence: PersistenceController) throws -> Int {
+        try persistence.container.viewContext.count(for: NSFetchRequest<NSManagedObject>(entityName: "Recipe"))
+    }
+
+    @Test func historyIsKeptForAWeek() {
+        let now = Date(timeIntervalSinceReferenceDate: 800_000_000)
+
+        #expect(PersistenceController.historyPurgeCutoff(now: now) == now.addingTimeInterval(-7 * 24 * 60 * 60))
+    }
+
+    @Test func historyBeforeTheCutoffIsRemoved() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        try Self.addRecipe(named: "Old soup", to: persistence, author: nil)
+        #expect(try Self.historyCount(in: persistence) > 0)
+
+        let purged = await persistence.purgeHistory(before: Date().addingTimeInterval(60))
+
+        #expect(purged)
+        #expect(try Self.historyCount(in: persistence) == 0)
+    }
+
+    @Test func historyAfterTheCutoffIsKept() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        try Self.addRecipe(named: "Fresh soup", to: persistence, author: nil)
+        let before = try Self.historyCount(in: persistence)
+
+        await persistence.purgeHistory(before: Date().addingTimeInterval(-60))
+
+        #expect(before > 0)
+        #expect(try Self.historyCount(in: persistence) == before)
+    }
+
+    @Test func purgingHistoryKeepsTheRecipes() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        try Self.addRecipe(named: "Soup", to: persistence, author: nil)
+        try Self.addRecipe(named: "Stew", to: persistence, author: nil)
+
+        await persistence.purgeHistory(before: Date().addingTimeInterval(60))
+
+        #expect(try Self.recipeCount(in: persistence) == 2)
+    }
+
+    @Test func anImportAfterAPurgeThatKeptTheCheckpointIsSeen() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        try Self.addRecipe(named: "Old soup", to: persistence, author: nil)
+        try await Task.sleep(for: .milliseconds(50))
+        let cutoff = Date()
+        try await Task.sleep(for: .milliseconds(50))
+        try Self.addRecipe(named: "Soup from here", to: persistence, author: nil)
+        persistence.startTrackingOutsideChanges()
+
+        await persistence.purgeHistory(before: cutoff)
+        try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
+
+        #expect(persistence.takeOutsideChanges())
+        #expect(!persistence.takeOutsideChanges())
+    }
+
+    @Test func aPurgedCheckpointReloadsOnceThenReadsOn() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        persistence.startTrackingOutsideChanges()
+        try Self.addRecipe(named: "Soup from here", to: persistence, author: nil)
+        #expect(!persistence.takeOutsideChanges())
+
+        await persistence.purgeHistory(before: Date().addingTimeInterval(60))
+        try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
+
+        #expect(persistence.takeOutsideChanges())
+        #expect(!persistence.takeOutsideChanges())
+    }
+}

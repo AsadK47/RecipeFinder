@@ -27,8 +27,44 @@ extension PersistenceController {
                 }
             }
         } catch {
+            // The checkpoint was purged (`purgeHistory`): what fell in between can't be read, so reload once and
+            // read on from now.
+            if (error as NSError).code == NSPersistentHistoryTokenExpiredError {
+                startTrackingOutsideChanges()
+                return true
+            }
             persistenceLogger.error("❌ Couldn't read store history: \(error.localizedDescription)")
             return false
+        }
+    }
+}
+
+/// Store history grows with every save, sync on or off; nothing needs more than a few days of it. A week matches
+/// Apple's CloudKit sample. After a week with no writes the launch purge can remove `takeOutsideChanges()`'s
+/// checkpoint (the latest transaction), costing one extra reload of every list — accepted.
+extension PersistenceController {
+    static let historyKeptFor: TimeInterval = 7 * 24 * 60 * 60
+
+    static func historyPurgeCutoff(now: Date) -> Date {
+        now.addingTimeInterval(-historyKeptFor)
+    }
+
+    /// Deletes store history written before `cutoff`, off the main thread; the data itself is untouched.
+    /// Returns whether the purge ran. A failure is logged and left for the next launch.
+    @discardableResult
+    func purgeHistory(before cutoff: Date) async -> Bool {
+        guard ensureStoreIsReady() else { return false }
+        let container = self.container
+        return await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                do {
+                    _ = try context.execute(NSPersistentHistoryChangeRequest.deleteHistory(before: cutoff))
+                    continuation.resume(returning: true)
+                } catch {
+                    persistenceLogger.error("❌ Couldn't purge store history: \(error.localizedDescription)")
+                    continuation.resume(returning: false)
+                }
+            }
         }
     }
 }

@@ -234,3 +234,8 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **Launch wiring untested**: nothing fails if `applyAtLaunch` moves after the database opens or the switch writes `key` instead of `wantedKey`; both are one-liners in `App.init` / `ICloudSyncSection`.
 - **Changes made while sync was off** (incl. "kept copy wins" deletes) will be sent to iCloud when it's turned back on; the off→on copy doesn't say so.
 - **No live sync status** (syncing / iCloud full) — needs `eventChangedNotification`; later slice. History purge also still pending (slice 4).
+
+### 2026-11-14 · Data safety 2/4 slice 4a (store-history purge) — fixed: comment claimed the tracking checkpoint is never purged (it can be after ≥7 idle days), purge test passed via the expired-token branch whatever the author filter did (split into a kept-checkpoint test + an expired-checkpoint test). Noted, not fixed:
+- After ≥7 idle days with sync on, the first launch reloads every list once (expired checkpoint).
+- Sync on but history not uploaded within 7 days (offline, iCloud full, off→on, clock jump) relies on CloudKit's expired-history recovery (full re-sync) — Apple's sample does the same; untestable in CI.
+- Launch wiring (`purgeOldStoreHistory` call, order vs tracking) untested; purge also runs in the unit-test host.
