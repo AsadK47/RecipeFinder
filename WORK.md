@@ -1,7 +1,7 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 3b-2b merged (a4ee07f); item still claimed 🚧.
+`agent/fix-today-evening-shot` (Inbox 🐞 testCaptureTodayTimes): assertion now expects "Start now to eat by"/"Takes "; Screenshots run dispatched on the branch — when green, look at 27-today-evening, ff main. Data safety 2/4 still claimed 🚧 (slice 4 next).
 
 ## Next action
 Slice 4 = recipe photos sync + dedupe of other lists (+ "erased elsewhere while closed" marker) + store-history purge.
