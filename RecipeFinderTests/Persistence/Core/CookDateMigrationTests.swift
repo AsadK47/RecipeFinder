@@ -11,6 +11,8 @@ final class InMemoryCookDateStore: CookDateStoring {
     var failReads = false
     /// Accepts writes but silently keeps nothing, so the migration's re-read check is what catches it.
     var dropWrites = false
+    /// The store file's name (`StoreFileIdentifying`); nil = unknown, like before sync existed.
+    var storeFileID: String?
 
     init(_ dates: [Date] = []) { self.dates = dates }
 

@@ -476,6 +476,7 @@
 		3D14005DBE2D0095F37B715E /* RemoteChangeReloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05009CA7E39EE0457470F7A5 /* RemoteChangeReloaderTests.swift */; };
 		B85BFCB992B66E91E51CCDF3 /* RecipePhotoSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D452E057407B2A915F52879 /* RecipePhotoSyncTests.swift */; };
 		2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */; };
+		9416F47E525C1721D1D6809B /* CookDateSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB79B4AF8656A039D6A83CAB /* CookDateSyncTests.swift */; };
 		41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */; };
 		90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */; };
 		713433A3F8B7577DAFCB4559 /* SyncPreferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D8FB13DF51D8CB01F36B5 /* SyncPreferenceTests.swift */; };
@@ -1024,6 +1025,7 @@
 		05009CA7E39EE0457470F7A5 /* RemoteChangeReloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteChangeReloaderTests.swift; sourceTree = "<group>"; };
 		6D452E057407B2A915F52879 /* RecipePhotoSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipePhotoSyncTests.swift; sourceTree = "<group>"; };
 		16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateMigrationTests.swift; sourceTree = "<group>"; };
+		BB79B4AF8656A039D6A83CAB /* CookDateSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateSyncTests.swift; sourceTree = "<group>"; };
 		2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionMigrationTests.swift; sourceTree = "<group>"; };
 		95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMergeTests.swift; sourceTree = "<group>"; };
 		A18D8FB13DF51D8CB01F36B5 /* SyncPreferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPreferenceTests.swift; sourceTree = "<group>"; };
@@ -1921,6 +1923,7 @@
 				05009CA7E39EE0457470F7A5 /* RemoteChangeReloaderTests.swift */,
 				6D452E057407B2A915F52879 /* RecipePhotoSyncTests.swift */,
 				16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */,
+				BB79B4AF8656A039D6A83CAB /* CookDateSyncTests.swift */,
 				2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */,
 				95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */,
 				A18D8FB13DF51D8CB01F36B5 /* SyncPreferenceTests.swift */,
@@ -2804,6 +2807,7 @@
 				3D14005DBE2D0095F37B715E /* RemoteChangeReloaderTests.swift in Sources */,
 				B85BFCB992B66E91E51CCDF3 /* RecipePhotoSyncTests.swift in Sources */,
 				2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */,
+				9416F47E525C1721D1D6809B /* CookDateSyncTests.swift in Sources */,
 				41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */,
 				90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */,
 				713433A3F8B7577DAFCB4559 /* SyncPreferenceTests.swift in Sources */,

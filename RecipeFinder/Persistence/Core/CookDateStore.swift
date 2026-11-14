@@ -3,7 +3,7 @@ import Foundation
 
 /// Where cook dates live once moved out of the `LocalStore` blob: Core Data in the app, a fake in tests.
 @MainActor
-protocol CookDateStoring: AnyObject {
+protocol CookDateStoring: StoreFileIdentifying {
     /// Every stored cook date, oldest first.
     func fetchCookDates() throws -> [Date]
     func addCookDates(_ dates: [Date]) throws
@@ -27,6 +27,8 @@ final class CoreDataCookDateStore: CookDateStoring {
     static let entityName = "CookDateEntity"
 
     private let persistence: PersistenceController
+
+    var storeFileID: String? { persistence.storeFileID }
 
     init(persistence: PersistenceController) {
         self.persistence = persistence

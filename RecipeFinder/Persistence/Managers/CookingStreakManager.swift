@@ -49,6 +49,11 @@ final class CookingStreakManager: CookingStreakTracking {
     /// False when the store can't be used this launch (move, read, write or a Reset wipe failed): read/write the blob
     /// instead and unmark it, so the next launch moves whatever the store is missing.
     @ObservationIgnored private var usesEntities = false
+    /// The store file of this device's last load with iCloud sync on (`StoreFileIdentifying`).
+    @ObservationIgnored private let loadedStoreFileKey = "syncedStoreFile.cookDatesLog"
+    /// Set once a load with sync on succeeds. After that an empty store was emptied on another device (a Reset), so
+    /// a reload follows it instead of moving the kept copy back in.
+    @ObservationIgnored private var hasLoadedSharedStore = false
 
     private init() {
         self.storage = .shared
@@ -113,7 +118,12 @@ final class CookingStreakManager: CookingStreakTracking {
         if usesEntities {
             do {
                 cookDates = try cookDateStore.fetchCookDates()
-                if cookDates.isEmpty, storage.decodable([Date].self, forKey: saveKey)?.isEmpty == false {
+                let syncing = SyncPreference.isOn(in: storage)
+                if cookDates.isEmpty, syncing, emptiedElsewhere() {
+                    // A Reset on another device erased every cook: follow it, and drop the kept copy so it can't
+                    // bring them back to every device.
+                    storage.removeObject(forKey: saveKey)
+                } else if cookDates.isEmpty, storage.decodable([Date].self, forKey: saveKey)?.isEmpty == false {
                     // The store came back empty (e.g. recovery replaced an unreadable one) but the kept copy has
                     // cooks: move them in again rather than show an empty streak.
                     streakLogger.error("⚠️ Cook-date store is empty but the old copy isn't; moving it again")
@@ -121,6 +131,7 @@ final class CookingStreakManager: CookingStreakTracking {
                     usesEntities = migrateBlob() != .failed
                     cookDates = try cookDateStore.fetchCookDates()
                 }
+                if syncing, usesEntities { markSharedStoreLoaded() }
             } catch {
                 streakLogger.error("❌ Failed to read cook dates, using the old copy: \(error.localizedDescription)")
                 usesEntities = false
@@ -130,6 +141,18 @@ final class CookingStreakManager: CookingStreakTracking {
             cookDates = storage.decodable([Date].self, forKey: saveKey) ?? []
         }
         recompute()
+    }
+
+    /// An empty store is recovery (a fresh file) unless it's the very file this device last loaded with sync on.
+    private func emptiedElsewhere() -> Bool {
+        guard !hasLoadedSharedStore else { return true }
+        guard let file = cookDateStore.storeFileID else { return false }
+        return file == storage.string(forKey: loadedStoreFileKey)
+    }
+
+    private func markSharedStoreLoaded() {
+        hasLoadedSharedStore = true
+        if let file = cookDateStore.storeFileID { storage.set(file, forKey: loadedStoreFileKey) }
     }
 
     private func migrateBlob() -> BlobMigrationResult {
