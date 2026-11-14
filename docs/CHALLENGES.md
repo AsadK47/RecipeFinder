@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-14 (item pass: Data safety 2/4 slice 4b-2a — fixed: pruning inferred deletes from a library diff, so a failed fetch then one save, or a stale load overwriting a newer one, would delete every synced photo in iCloud; now removed only where an edit/delete happens on this device)
+- ⚔️ [Break] Copy merge keeps one hero — `RecipeCopyMerge.merging` (SyncMerge.swift:110) unions `photoNames` but keeps only the kept copy's `imageName`, so a custom hero on the losing copy leaves the recipe (pre-existing) — alternative: move the losing hero into `photoNames` — cost if we're wrong: a photo only one device had disappears from that recipe.
+  → Owner:
+- ⚔️ [Break] Orphan photo rows are never collected — a delete whose pass never ran (app killed, sync off at the time) leaves its row in iCloud forever (bytes only; never shown, download needs a referencing recipe) — alternative: a sweep of rows no recipe references, run only after a full import is known complete — cost if we're wrong: iCloud quota slowly used by dead photos.
+  → Owner:
+
 ## 2026-11-11 (item pass: Today+ 1/3 slice 1 — fixed: ambiguous `quickMinutes`, shuffled pick repeated on shelves, shuffle index drifting on refresh, night-time copy, unused eat-time storage)
 - ⚔️ [Time] The Tonight line is computed when Today re-renders — TodayView.swift `content(_:)` reads `Self.now()` in body; left open, "Start by 5:40" still shows at 5:55 — `TimelineView(.everyMinute)` around the line — cost if wrong: stale advice until the next state change.
   → Owner:

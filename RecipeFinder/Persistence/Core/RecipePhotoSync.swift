@@ -23,17 +23,15 @@ enum RecipePhotoSync {
         var removed = 0
     }
 
-    /// Photos this device saw the library stop showing since its last pass, and the paths to compare the next pass
-    /// against. Only a photo this device itself saw shown can be removed: a row that arrives before its recipe (a
-    /// new device, a fresh install) was never shown here, so it stays. Nothing on the first pass of a launch, and
-    /// nothing while the library is empty — a failed load must never delete every photo in iCloud; the old paths
-    /// are kept so the next real load still sees what went.
-    static func removedPaths(
-        since previous: Set<String>?, now current: Set<String>, libraryIsEmpty: Bool
-    ) -> (removed: Set<String>, baseline: Set<String>?) {
-        guard !libraryIsEmpty else { return ([], previous) }
-        guard let previous else { return ([], current) }
-        return (previous.subtracting(current), current)
+    /// The cook's own photos an edit or delete stopped showing, whose iCloud rows should go too. Worked out where
+    /// the change happens (the device that made it), never inferred from what a list holds at some moment — a
+    /// failed fetch or a recipe that hasn't arrived yet must never read as a delete. A photo another recipe in
+    /// `library` (the library after the change) still shows stays.
+    static func removedPaths(before: RecipeModel?, after: RecipeModel?, library: [RecipeModel]) -> Set<String> {
+        guard let before else { return [] }
+        return referencedPaths(in: [before])
+            .subtracting(referencedPaths(in: [after].compactMap { $0 }))
+            .subtracting(referencedPaths(in: library))
     }
 
     /// `reference` when it's one of the cook's own photo files (`RecipeImages/<name>.jpg`); nil for web URLs, kept
@@ -84,8 +82,8 @@ enum RecipePhotoSync {
             if let storedDate = stored[path], modified <= storedDate.addingTimeInterval(clockTolerance) { continue }
             toSend.append(path)
         }
-        // Only photos a recipe here shows: a removed photo's row stays in iCloud until pruning (4b-2) and must not
-        // come back as a file. A photo that arrives before its recipe is fetched on the reload the recipe brings.
+        // Only photos a recipe here shows: a removed photo's row may still be in iCloud (its removal hasn't run or
+        // arrived yet) and must not come back as a file. A photo that arrives before its recipe is fetched on the reload the recipe brings.
         var toReceive: [String] = []
         for path in referencedPaths.sorted() where syncablePath(path) != nil {
             guard let storedDate = stored[path], needsReceiving(storedDate, files.modified(path)) else { continue }

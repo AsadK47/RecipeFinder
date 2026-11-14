@@ -1,24 +1,25 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 4b-2a (photo pruning) on `agent/photo-prune` (ca142d5): waiting on Build & Test + review agent.
+Data safety 2/4 slice 4b-2a (photo pruning) on `agent/photo-prune` (redesigned after review): waiting on Build & Test.
 
 ## Next action
 Merge 4b-2a when green. Then 4b-2b: dedupe of other lists (+ "erased elsewhere while closed" marker), live status
 (`eventChangedNotification`), slice 5 = website privacy.html §7.
 
 ## Decisions (why)
-- **Data safety 2/4 slice 4b-2a (photo pruning)**: a device deletes a photo's iCloud row only when it saw the
-  library show that path on its previous pass this launch and the current pass doesn't (`removedPaths`). Rejected:
-  a time-based safety delay on orphan rows (row `updatedAt` = photo's age, not arrival time; an app closed for days
-  then reopened before CloudKit delivers the recipe would prune). Cost accepted: a delete whose pass never ran
-  (app killed mid-pass) leaves an orphan row (bytes only, never shown — download needs a referencing recipe).
-  Baseline is in memory (first pass of a launch prunes nothing); empty library = skip + keep baseline. Files untouched.
-  **Pre-mortem:** (1) fresh device deletes everyone's photos before recipes arrive →
-  `aPhotoThatArrivedBeforeItsRecipeIsKept`, `theFirstPassOfALaunchRemovesNothing`; (2) failed/empty load wipes iCloud
-  photos → `anEmptyLibraryRemovesNothing…`, `aPhotoStillShownAfterAnEmptyLoad…`; (3) deleted photo lingers / comes
-  back → `aPhotoTheLibraryStoppedShowingIsRemoved…`, `everyCopyOfARemovedPhotosRowIsRemoved`. Store glue untested
-  (`isSyncing` false in unit tests). No UI → no screenshots.
+- **Data safety 2/4 slice 4b-2a (photo pruning)**: a photo's iCloud row is deleted only by the device that made
+  the change, where it happens: `RecipeStore.save` (photos the old copy showed and the new one doesn't) and
+  `delete(id:)`, minus anything another recipe still shows (`RecipePhotoSync.removedPaths(before:after:library:)`).
+  Other devices never infer deletes. Rejected (review caught it): diffing the library between passes — a failed fetch
+  (`fetchRecipesAsync` returns [] on error) then one save, or a stale load overwriting a newer one, read as "every
+  photo deleted" and wiped iCloud. Rejected: a time delay on orphan rows (row date = photo age, not arrival). Cost
+  accepted: a delete whose pass never ran leaves an orphan row (bytes only; CHALLENGES 14 Nov). Files untouched.
+  **Pre-mortem:** (1) a device deletes photos still in use → `aPhotoAnotherRecipeStillShows…`,
+  `aHeroKeptAtTheSamePath…`, `aPhotoThatArrivedBeforeItsRecipeIsKept`, `aRemovedPathThatIsShownAgainIsKept`;
+  (2) deleted photo lingers → `deletingARecipeRemovesItsOwnPhotos`, `aPhotoTakenOutOfARecipeIsRemoved`,
+  `everyCopyOfARemovedPhotosRowIsRemoved`; (3) unsafe path deletes web copies → `webPictureCopiesAreNeverRemoved`,
+  `aRemovedPathOutsideThePhotoFolderDeletesNothing`. Store glue thin (`isSyncing` false in unit tests). No UI.
 - **Data safety 2/4 slice 4b-1 (photo sync)**: photos stay files (`RecipeImages/`, recipes keep relative paths);
   while sync is on each own photo is mirrored into `RecipePhotoEntity` (path, JPEG Binary external storage →
   CKAsset, updatedAt) and rows from other devices are written to the same path. Newer wins per path (file mtime vs

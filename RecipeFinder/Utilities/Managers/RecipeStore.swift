@@ -48,8 +48,6 @@ final class RecipeStore: RecipeStoring {
     @ObservationIgnored var attemptedPictures: Set<String> = []
     /// Latest queued iCloud photo pass (`syncPhotosWithICloud`); each waits for the one before.
     @ObservationIgnored var photoSync: Task<Void, Never>?
-    /// Photo paths the last queued pass saw shown; nil until the first pass of this launch (`RecipePhotoSync.removedPaths`).
-    @ObservationIgnored var syncedPhotoPaths: Set<String>?
     /// Bumped on each load so a slow earlier fetch can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
 
@@ -290,13 +288,14 @@ final class RecipeStore: RecipeStoring {
     @discardableResult
     func save(_ recipe: RecipeModel) -> Bool {
         guard persistence.saveRecipeModel(recipe) else { return false }
+        let before = recipes.first { $0.id == recipe.id }
         if let index = recipes.firstIndex(where: { $0.id == recipe.id }) {
             recipes[index] = recipe
         } else {
             recipes.append(recipe)
         }
         keepWebPictures(of: [recipe])
-        syncPhotosWithICloud()
+        syncPhotosWithICloud(removing: RecipePhotoSync.removedPaths(before: before, after: recipe, library: recipes))
         return true
     }
 
@@ -308,13 +307,15 @@ final class RecipeStore: RecipeStoring {
 
     func delete(id: UUID) {
         // Clean up owned image files so deleting a recipe doesn't leak orphaned hero/gallery photos on disk.
-        if let recipe = recipes.first(where: { $0.id == id }) {
+        let deleted = recipes.first { $0.id == id }
+        if let recipe = deleted {
             if let hero = recipe.imageName { imageStore.deleteIfLocal(hero) }
             recipe.photoNames.forEach { imageStore.deleteIfLocal($0) }
             removeKeptPicture(of: recipe)
         }
         recipes.removeAll { $0.id == id }
         persistence.deleteRecipe(withId: id)
+        syncPhotosWithICloud(removing: RecipePhotoSync.removedPaths(before: deleted, after: nil, library: recipes))
     }
 
     /// Upserts an already-persisted recipe into the in-memory library without re-writing — for ops (recordCook/updateRating) that persist via their own path but still need the observable array synced.

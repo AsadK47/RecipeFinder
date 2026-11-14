@@ -311,37 +311,62 @@ import Foundation
         #expect(try rowCount() == 1)
     }
 
-    @Test func aPhotoDroppedSinceTheLastPassIsRemoved() {
-        let step = RecipePhotoSync.removedPaths(
-            since: ["RecipeImages/a.jpg", "RecipeImages/b.jpg"], now: ["RecipeImages/b.jpg", "RecipeImages/c.jpg"],
-            libraryIsEmpty: false
-        )
+    @Test func deletingARecipeRemovesItsOwnPhotos() {
+        let pie = Self.recipe("Pie", image: "RecipeImages/pie.jpg", photos: ["RecipeImages/pie-2.jpg"])
 
-        #expect(step.removed == ["RecipeImages/a.jpg"])
-        #expect(step.baseline == ["RecipeImages/b.jpg", "RecipeImages/c.jpg"])
+        let removed = RecipePhotoSync.removedPaths(before: pie, after: nil, library: [Self.recipe("Soup")])
+
+        #expect(removed == ["RecipeImages/pie.jpg", "RecipeImages/pie-2.jpg"])
     }
 
-    @Test func theFirstPassOfALaunchRemovesNothing() {
-        let step = RecipePhotoSync.removedPaths(since: nil, now: ["RecipeImages/b.jpg"], libraryIsEmpty: false)
+    @Test func aPhotoTakenOutOfARecipeIsRemoved() {
+        let before = Self.recipe("Pie", image: "RecipeImages/pie.jpg", photos: ["RecipeImages/a.jpg", "RecipeImages/b.jpg"])
+        var after = before
+        after.photoNames = ["RecipeImages/b.jpg"]
 
-        #expect(step.removed.isEmpty)
-        #expect(step.baseline == ["RecipeImages/b.jpg"])
+        let removed = RecipePhotoSync.removedPaths(before: before, after: after, library: [after])
+
+        #expect(removed == ["RecipeImages/a.jpg"])
     }
 
-    @Test func anEmptyLibraryRemovesNothingAndKeepsTheLastPaths() {
-        let step = RecipePhotoSync.removedPaths(since: ["RecipeImages/a.jpg"], now: [], libraryIsEmpty: true)
+    @Test func aHeroKeptAtTheSamePathIsNotRemoved() {
+        let before = Self.recipe("Pie", image: "RecipeImages/pie.jpg")
+        var after = before
+        after.photoNames = ["RecipeImages/pie-2.jpg"]
 
-        #expect(step.removed.isEmpty)
-        #expect(step.baseline == ["RecipeImages/a.jpg"])
+        #expect(RecipePhotoSync.removedPaths(before: before, after: after, library: [after]).isEmpty)
     }
 
-    @Test func aPhotoStillShownAfterAnEmptyLoadIsNotRemoved() {
-        let afterEmpty = RecipePhotoSync.removedPaths(since: ["RecipeImages/a.jpg"], now: [], libraryIsEmpty: true)
-        let next = RecipePhotoSync.removedPaths(
-            since: afterEmpty.baseline, now: ["RecipeImages/a.jpg"], libraryIsEmpty: false
-        )
+    @Test func aPhotoAnotherRecipeStillShowsIsNotRemoved() {
+        let pie = Self.recipe("Pie", image: "RecipeImages/shared.jpg")
+        let tart = Self.recipe("Tart", image: "RecipeImages/shared.jpg")
 
-        #expect(next.removed.isEmpty)
+        #expect(RecipePhotoSync.removedPaths(before: pie, after: nil, library: [tart]).isEmpty)
+    }
+
+    @Test func aNewRecipeOrOneThisDeviceDidntHoldRemovesNothing() {
+        let pie = Self.recipe("Pie", image: "RecipeImages/pie.jpg")
+
+        #expect(RecipePhotoSync.removedPaths(before: nil, after: pie, library: [pie]).isEmpty)
+        #expect(RecipePhotoSync.removedPaths(before: nil, after: nil, library: []).isEmpty)
+    }
+
+    @Test func webPictureCopiesAreNeverRemoved() {
+        let pie = Self.recipe("Pie", image: "https://example.com/pie.jpg", photos: ["RecipeImages/web-abc.jpg"])
+
+        #expect(RecipePhotoSync.removedPaths(before: pie, after: nil, library: []).isEmpty)
+    }
+
+    @Test func deletingARecipeFromTheStoreKeepsOtherDevicesPhotosWhenSyncIsOff() throws {
+        // Sync off (unit tests): the store queues no pass, so no row is touched.
+        try insertRow(path: "RecipeImages/pie.jpg", data: Self.jpeg)
+        let store = RecipeStore(persistence: controller)
+        let pie = Self.recipe("Pie", image: "RecipeImages/pie.jpg")
+        #expect(store.save(pie))
+
+        store.delete(id: pie.id)
+
+        #expect(try rowCount() == 1)
     }
 
     @Test func resetAlsoErasesTheSyncedPhotos() throws {
