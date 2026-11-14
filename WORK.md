@@ -1,8 +1,7 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 4b-1 (recipe photos sync, RecipeModel 17 `RecipePhotoEntity`) on `agent/photo-sync` —
-`RecipePhotoSync.swift`, wired in `RecipeStore.syncPhotosWithICloud()`; waiting on Build & Test.
+Nothing. Data safety 2/4 slice 4b-1 (photo sync) merged (3c995f9); item still claimed 🚧.
 
 ## Next action
 Get `agent/photo-sync` green → merge. Then 4b-2: photo deletes reach iCloud (drop rows no recipe references, with
