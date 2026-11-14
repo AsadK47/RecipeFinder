@@ -103,6 +103,18 @@ final class InMemoryKitchenStore: KitchenStoring {
         #expect(keptInventory() == [milk, rice])
     }
 
+    @Test func withSyncOnTheSameKitchenItemAddedOnTwoDevicesShowsOnce() {
+        let low = UUID(uuidString: "00000000-0000-0000-0000-000000000002") ?? UUID()
+        let high = UUID(uuidString: "FFFFFFFF-0000-0000-0000-000000000002") ?? UUID()
+        let mine = KitchenItem(id: high, name: "Eggs", category: "Dairy & Eggs")
+        let theirs = KitchenItem(id: low, name: "eggs", category: "Dairy & Eggs")
+        let store = InMemoryKitchenStore([mine, flour, theirs])
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.items.map(\.id) == [low, flour.id])
+        #expect(store.items.map(\.id) == [low, flour.id])
+    }
+
     // MARK: - Migration
 
     @Test func everyBlobItemAndInventoryItemBecomesARowInOrderAndBothKeysAreMarked() {

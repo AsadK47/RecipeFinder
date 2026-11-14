@@ -45,6 +45,33 @@ enum SyncMerge {
         return (kept + store).filter { seen.insert(id($0)).inserted }
     }
 
+    /// Folds rows that mean the same thing (`key`) but have different ids — "Eggs" added on two devices — into one.
+    /// Every device must keep the *same* row, or two devices could each delete the other's and leave none: the kept
+    /// row is the lowest `rank` (fixed and identical on every device), so the one kept everywhere is never deleted,
+    /// even by a device that hasn't received every row yet. `fold` gives the kept row what it takes from the others;
+    /// it must not depend on their order. The kept row takes the place of the first row for that thing.
+    static func foldSameThing<Value>(
+        _ rows: [Value],
+        key: (Value) -> AnyHashable,
+        rank: (Value) -> String,
+        fold: (_ kept: Value, _ others: [Value]) -> Value
+    ) -> [Value] {
+        let groups = Dictionary(grouping: rows.indices, by: { key(rows[$0]) }).filter { $0.value.count > 1 }
+        guard !groups.isEmpty else { return rows }
+        var replacement: [Int: Value] = [:]
+        var dropped = Set<Int>()
+        for indices in groups.values {
+            guard let keptIndex = indices.min(by: { rank(rows[$0]) < rank(rows[$1]) }),
+                  let firstIndex = indices.min() else { continue }
+            let others = indices.filter { $0 != keptIndex }.map { rows[$0] }
+            replacement[firstIndex] = fold(rows[keptIndex], others)
+            dropped.formUnion(indices.filter { $0 != firstIndex })
+        }
+        return rows.indices.compactMap { index in
+            dropped.contains(index) ? nil : replacement[index] ?? rows[index]
+        }
+    }
+
     private static func firstByID<Value, ID: Hashable>(_ rows: [Value], id: (Value) -> ID) -> [ID: Value] {
         var byID: [ID: Value] = [:]
         for row in rows where byID[id(row)] == nil { byID[id(row)] = row }

@@ -1,13 +1,26 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 4b-2a (photo pruning) merged (481cd33); item still claimed 🚧.
+Data safety 2/4 slice 4b-2b (fold same item added on two devices) on `agent/sync-dedupe-lists`, waiting on CI.
 
 ## Next action
-4b-2b: dedupe of other lists (+ "erased elsewhere while closed" marker). Then live status
-(`eventChangedNotification`), slice 5 = website privacy.html §7.
+Land 4b-2b. Then 4b-2c "erased elsewhere while closed" marker, live status (`eventChangedNotification`),
+slice 5 = website privacy.html §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 4b-2b (fold same item)**: generic `SyncMerge.foldSameThing` + `SyncRules.sameThing`, run on
+  every shared-store load. Kept row = lowest id (uuidString) of the group — same on every device, so the global
+  lowest is never deleted (recipe-copy rule). Folds must be order-free/idempotent: shopping = same name + canonical
+  unit (`addItem`'s rule), max quantity (sum would double-count on a device with a partial view), to-buy unless all
+  ticked, union of stores, recurring if any; kitchen = same name, kept row as-is (units may differ). Left out:
+  inventory (expiry reminders keyed by the dropped id would keep firing — needs reminder cleanup on reload), meal
+  plans (slot = calendar day, differs across time zones; restore keeps same-slot plans on purpose), collections
+  (same names allowed locally), grocery stores (id is the name already). Accepted: a tick made on a copy another
+  device just folded away is lost; two same-name lines made by editing a name are folded too (max, not sum).
+  **Pre-mortem:** (1) two devices delete each other's row → `everyDeviceKeepsTheSameRow…`,
+  `aDeviceThatHasSeenFewerRows…`; (2) a still-to-buy item or store tag lost → `aFoldedShoppingItemStaysToBuy…`,
+  `…KeepsEveryStore…`, `foldingGivesTheSameItemWhateverOrder…`; (3) sync off changes / save resurrects the folded row →
+  `withSyncOffTheSameThingTwiceIsLeftAlone`, `withSyncOffTwoItemsWithTheSameName…`, `aSaveAfterTheFold…`. No UI.
 - **Data safety 2/4 slice 4b-2a (photo pruning)**: a photo's iCloud row is deleted only by the device that made
   the change, where it happens: `RecipeStore.save` (photos the old copy showed and the new one doesn't) and
   `delete(id:)`, minus anything another recipe still shows (`RecipePhotoSync.removedPaths(before:after:library:)`).

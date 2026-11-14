@@ -65,7 +65,12 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
             blobKey: Self.itemsBlobKey, storage: storage,
             fetch: { try kitchenStore.fetchItems() },
             replace: { try kitchenStore.replaceItems(with: $0) },
-            sync: .iCloudRules(storage: storage) { $0.id }
+            // The kept copy's quantity and unit stay: units may differ between copies, so neither max nor sum is safe.
+            sync: .iCloudRules(
+                storage: storage,
+                id: { $0.id },
+                sameThing: .init(key: { AnyHashable($0.sameItemKey) }, rank: { $0.id.uuidString }, fold: { kept, _ in kept })
+            )
         )
         self.inventoryMirror = MirroredSnapshot(
             blobKey: Self.inventoryBlobKey, storage: storage,
@@ -360,6 +365,9 @@ struct KitchenItem: Identifiable, Codable, Equatable, Hashable {
 	enum CodingKeys: String, CodingKey {
 		case id, name, category, quantity, unit, dateAdded
 	}
+
+	/// Same name is one item — the rule `addItem` refuses duplicates by, so two devices adding "Eggs" agree with it.
+	var sameItemKey: String { name.nameKey }
 
 	init(id: UUID = UUID(), name: String, category: String, quantity: Double = 1, unit: String = "item", dateAdded: Date = Date()) {
 		self.id = id

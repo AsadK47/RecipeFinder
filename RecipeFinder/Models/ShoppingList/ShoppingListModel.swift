@@ -57,6 +57,26 @@ struct ShoppingListModel: Identifiable, Codable, Hashable {
 }
 
 extension ShoppingListModel {
+    /// Same name and unit is one item — the rule `addItem` merges by, so two devices adding "Eggs" agree with it.
+    var sameItemKey: String {
+        "\(name.nameKey)|\(UnitConversion.canonicalUnit(unit))"
+    }
+
+    /// This item with what copies of it from other devices add. Order-free, so every device folds the same:
+    /// the largest quantity (never a sum — a device that has seen fewer copies would count differently), still to
+    /// buy unless every copy was ticked, every store, recurring if any copy was.
+    func folding(_ others: [ShoppingListModel]) -> ShoppingListModel {
+        var folded = self
+        for other in others {
+            folded.quantity = max(folded.quantity, other.quantity)
+            folded.isChecked = folded.isChecked && other.isChecked
+            folded.isCompleted = folded.isCompleted && other.isCompleted
+            folded.isRecurring = folded.isRecurring || other.isRecurring
+            folded.stores += other.stores.filter { !folded.stores.contains($0) }
+        }
+        return folded
+    }
+
     /// Whether the item belongs on the list while shopping at `store`; `nil` means every store ("All").
     /// Untagged items can be bought anywhere, so they show under every store.
     func isAvailable(at store: String?) -> Bool {

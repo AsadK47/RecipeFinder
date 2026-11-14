@@ -66,6 +66,49 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         let merged = SyncMerge.addKeptCopy([row(1, "mine"), row(2)], to: [row(1, "theirs"), row(9)], id: \.id)
         #expect(merged == [row(1, "mine"), row(2), row(9)])
     }
+
+    // MARK: - Same thing added on two devices (rows with different ids that mean one thing)
+
+    private func fold(_ rows: [Row]) -> [Row] {
+        SyncMerge.foldSameThing(rows, key: { AnyHashable($0.text) }, rank: { String($0.id) }, fold: { kept, _ in kept })
+    }
+
+    @Test func rowsForTheSameThingBecomeOneKeepingTheLowestRank() {
+        let folded = fold([row(2, "eggs"), row(5, "milk"), row(1, "eggs")])
+        #expect(folded == [row(1, "eggs"), row(5, "milk")])
+    }
+
+    @Test func everyDeviceKeepsTheSameRowWhateverOrderItHoldsThem() {
+        #expect(fold([row(1, "eggs"), row(2, "eggs")]) == [row(1, "eggs")])
+        #expect(fold([row(2, "eggs"), row(1, "eggs")]) == [row(1, "eggs")])
+    }
+
+    @Test func aDeviceThatHasSeenFewerRowsNeverDeletesTheOneKeptEverywhere() {
+        // Device B hasn't received row 1 yet: it may drop row 3, never row 1 (the lowest overall).
+        let partial = fold([row(3, "eggs"), row(2, "eggs")])
+        #expect(partial == [row(2, "eggs")])
+        #expect(fold(partial + [row(1, "eggs")]) == [row(1, "eggs")])
+    }
+
+    @Test func differentThingsAreLeftAlone() {
+        let rows = [row(1, "eggs"), row(2, "milk"), row(3, "flour")]
+        #expect(fold(rows) == rows)
+    }
+
+    @Test func theKeptRowIsFoldedWithEveryOtherRowForThatThing() {
+        var othersSeen: [Row] = []
+        let folded = SyncMerge.foldSameThing(
+            [row(3, "b"), row(1, "a"), row(2, "c")],
+            key: { _ in AnyHashable(0) },
+            rank: { String($0.id) },
+            fold: { kept, others in
+                othersSeen = others
+                return Row(id: kept.id, text: ([kept] + others).map(\.text).sorted().joined())
+            }
+        )
+        #expect(folded == [Row(id: 1, text: "abc")])
+        #expect(Set(othersSeen.map(\.id)) == [2, 3])
+    }
 }
 
 /// `MirroredSnapshot` with sync rules on: the store wins and is never replaced wholesale.
@@ -83,7 +126,7 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
 
     private let store = Store()
 
-    private func snapshot(syncOn: Bool = true) -> MirroredSnapshot<Row> {
+    private func snapshot(syncOn: Bool = true, foldsSameText: Bool = false) -> MirroredSnapshot<Row> {
         let store = store
         return MirroredSnapshot(
             blobKey: blobKey,
@@ -96,7 +139,13 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
                 if store.failWrites { throw MirroredSnapshotError.verificationFailed }
                 store.rows = $0
             },
-            sync: .init(isOn: { syncOn }, id: { AnyHashable($0.id) })
+            sync: .init(
+                isOn: { syncOn },
+                id: { AnyHashable($0.id) },
+                sameThing: foldsSameText
+                    ? MirroredSnapshot<Row>.SyncRules.SameThing(key: { AnyHashable($0.text) }, rank: { String($0.id) }, fold: { kept, _ in kept })
+                    : nil
+            )
         )
     }
 
@@ -196,6 +245,28 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         store.failReads = false
         #expect(snapshot().load() == [row(1), row(9)])
         #expect(store.rows == [row(1), row(9)])
+    }
+
+    @Test func withSyncOnTheSameThingFromTwoDevicesIsOneRowInTheStore() {
+        store.rows = [row(2, "eggs"), row(3, "milk"), row(1, "eggs")]
+        let loaded = snapshot(foldsSameText: true).load()
+        #expect(loaded == [row(1, "eggs"), row(3, "milk")])
+        #expect(store.rows == loaded)
+        #expect(keptCopy() == loaded)
+    }
+
+    @Test func aSaveAfterTheFoldDoesNotBringTheOtherRowBack() {
+        store.rows = [row(1, "eggs"), row(2, "eggs")]
+        let sut = snapshot(foldsSameText: true)
+        let loaded = sut.load()
+        sut.save(loaded + [row(4, "milk")])
+        #expect(store.rows == [row(1, "eggs"), row(4, "milk")])
+    }
+
+    @Test func withSyncOffTheSameThingTwiceIsLeftAlone() {
+        writeKeptCopy([row(1, "eggs"), row(2, "eggs")])
+        let loaded = snapshot(syncOn: false, foldsSameText: true).load()
+        #expect(loaded == [row(1, "eggs"), row(2, "eggs")])
     }
 
     @Test func withSyncOffTheKeptCopyStillWins() {
@@ -344,5 +415,62 @@ private func recipe(
         let persistence = await storeWithTwoCopies()
         #expect(!persistence.mergeSyncedRecipeCopies(of: [fishPie]))
         #expect(persistence.fetchRecipes().count == 2)
+    }
+}
+
+/// What counts as "the same item" on two devices, and what the kept row takes from the others (Data safety 2/4).
+@Suite struct SameItemRuleTests {
+    private func item(
+        _ name: String, unit: String = "", quantity: Int = 1, checked: Bool = false,
+        stores: [String] = [], recurring: Bool = false
+    ) -> ShoppingListModel {
+        ShoppingListModel(name: name, isChecked: checked, quantity: quantity, unit: unit, stores: stores, isRecurring: recurring)
+    }
+
+    @Test(arguments: [("Eggs", "", " eggs", ""), ("Flour", "Tablespoons", "flour", "tbsp")])
+    func shoppingItemsWithTheSameNameAndUnitAreOneItem(a: String, aUnit: String, b: String, bUnit: String) {
+        #expect(item(a, unit: aUnit).sameItemKey == item(b, unit: bUnit).sameItemKey)
+    }
+
+    @Test func shoppingItemsInDifferentUnitsStayApart() {
+        #expect(item("Flour", unit: "g").sameItemKey != item("Flour", unit: "cups").sameItemKey)
+    }
+
+    @Test func theFoldedShoppingItemKeepsItsOwnNameAndTakesTheLargestQuantity() {
+        let kept = item("Eggs", quantity: 6)
+        let folded = kept.folding([item("eggs", quantity: 12), item("EGGS", quantity: 2)])
+        #expect(folded.id == kept.id)
+        #expect(folded.name == "Eggs")
+        #expect(folded.quantity == 12)
+    }
+
+    @Test func aFoldedShoppingItemStaysToBuyUnlessEveryCopyWasTicked() {
+        #expect(!item("Eggs", checked: true).folding([item("Eggs")]).isChecked)
+        #expect(!item("Eggs", checked: true).folding([item("Eggs")]).isCompleted)
+        #expect(item("Eggs", checked: true).folding([item("Eggs", checked: true)]).isChecked)
+    }
+
+    @Test func aFoldedShoppingItemKeepsEveryStoreAndStaysRecurringIfAnyCopyWas() {
+        let folded = item("Eggs", stores: ["Tesco"]).folding([item("Eggs", stores: ["Lidl", "Tesco"], recurring: true)])
+        #expect(folded.stores == ["Tesco", "Lidl"])
+        #expect(folded.isRecurring)
+    }
+
+    @Test func foldingGivesTheSameItemWhateverOrderTheOthersArriveIn() {
+        let kept = item("Eggs", quantity: 2)
+        let a = item("Eggs", quantity: 6, stores: ["Lidl"])
+        let b = item("Eggs", quantity: 3, stores: ["Aldi"], recurring: true)
+        let ab = kept.folding([a, b])
+        let ba = kept.folding([b, a])
+        #expect(ab.quantity == ba.quantity)
+        #expect(Set(ab.stores) == Set(ba.stores))
+        #expect(ab.isRecurring == ba.isRecurring)
+    }
+
+    @Test func kitchenItemsWithTheSameNameAreOneItem() {
+        let a = KitchenItem(name: "Olive oil", category: "Oils", unit: "bottle")
+        let b = KitchenItem(name: " olive OIL", category: "Other", unit: "item")
+        #expect(a.sameItemKey == b.sameItemKey)
+        #expect(a.sameItemKey != KitchenItem(name: "Olive", category: "Oils").sameItemKey)
     }
 }

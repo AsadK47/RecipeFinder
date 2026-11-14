@@ -31,10 +31,25 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     struct SyncRules {
         let isOn: () -> Bool
         let id: (Value) -> AnyHashable
+        /// Rows with different ids that mean one thing (the same item added on two devices) are folded into one on
+        /// load (`SyncMerge.foldSameThing`). Nil: rows are only matched by id.
+        var sameThing: SameThing? = nil
+
+        struct SameThing {
+            let key: (Value) -> AnyHashable
+            /// Fixed and identical on every device (the id as text): the lowest is the row every device keeps.
+            let rank: (Value) -> String
+            /// What the kept row takes from the others; must not depend on their order.
+            let fold: (_ kept: Value, _ others: [Value]) -> Value
+        }
 
         /// The rules every manager uses: on while the cook's iCloud sync switch (`SyncPreference`) is on.
-        static func iCloudRules<ID: Hashable>(storage: LocalStore, id: @escaping (Value) -> ID) -> SyncRules {
-            SyncRules(isOn: { SyncPreference.isOn(in: storage) }, id: { AnyHashable(id($0)) })
+        static func iCloudRules<ID: Hashable>(
+            storage: LocalStore,
+            id: @escaping (Value) -> ID,
+            sameThing: SameThing? = nil
+        ) -> SyncRules {
+            SyncRules(isOn: { SyncPreference.isOn(in: storage) }, id: { AnyHashable(id($0)) }, sameThing: sameThing)
         }
     }
 
@@ -188,6 +203,14 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
                 if merged != values {
                     values = try copyInShared(merged, sync)
                     logger.info("✅ \(self.blobKey, privacy: .public): added the kept copy to the shared store")
+                }
+            }
+            if let same = sync.sameThing {
+                let folded = SyncMerge.foldSameThing(values, key: same.key, rank: same.rank, fold: same.fold)
+                let foldedAway = values.count - folded.count
+                if foldedAway > 0 {
+                    values = try copyInShared(folded, sync)
+                    logger.info("✅ \(self.blobKey, privacy: .public): folded \(foldedAway) rows added for the same thing on another device")
                 }
             }
             storage.set(true, forKey: flagKey)

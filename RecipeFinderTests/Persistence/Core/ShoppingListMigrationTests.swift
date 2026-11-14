@@ -98,6 +98,27 @@ final class InMemoryShoppingListStore: ShoppingListStoring {
         #expect(keptStores() == ["Tesco", "Lidl"])
     }
 
+    @Test func withSyncOnTheSameItemAddedOnTwoDevicesShowsOnce() {
+        let low = UUID(uuidString: "00000000-0000-0000-0000-000000000001") ?? UUID()
+        let high = UUID(uuidString: "FFFFFFFF-0000-0000-0000-000000000001") ?? UUID()
+        let mine = ShoppingListModel(id: high, name: "Eggs", quantity: 6, category: "Dairy & Eggs")
+        let theirs = ShoppingListModel(id: low, name: "eggs", quantity: 12, category: "Dairy & Eggs")
+        let store = InMemoryShoppingListStore([mine, peas, theirs])
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = manager(store)
+        #expect(sut.items.map(\.id) == [low, peas.id])
+        #expect(sut.items.first?.quantity == 12)
+        #expect(store.items.map(\.id) == [low, peas.id])
+    }
+
+    @Test func withSyncOffTwoItemsWithTheSameNameAreLeftAlone() {
+        let eggs = ShoppingListModel(name: "Eggs", category: "Dairy & Eggs")
+        let moreEggs = ShoppingListModel(name: "Eggs", category: "Dairy & Eggs")
+        writeBlobs([eggs, moreEggs])
+        let sut = manager(InMemoryShoppingListStore())
+        #expect(sut.items.count == 2)
+    }
+
     // MARK: - Migration
 
     @Test func everyBlobItemAndStoreBecomesARowInOrderAndBothKeysAreMarked() {
