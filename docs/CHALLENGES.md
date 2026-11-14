@@ -222,3 +222,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **No test for CloudKit bookkeeping transactions** (author set, only NSCK* entities): can't be produced in a unit test; the app-entity filter is the guard.
 - **Reload list in `RecipeFinderApp.reloadOnICloudChanges` untested** (thin glue): a manager left out won't refresh until relaunch.
 - **History read on the main thread, never purged** — fine at current sizes; purge with the sync toggle slice.
+
+### 2026-11-14 · Data safety 2/4 slice 3b-2a (merge same-id recipe copies) — fixed: edits/deletes hit one arbitrary copy before the merge (now every row with the id); merge faulted the whole library on main every load (now only ids the fetch held twice, batch `recordIDs(for:)`). Noted, not fixed:
+- **Unuploaded copies wait** for the next import or launch (an export finishing changes only CloudKit bookkeeping, so no reload). Could listen to `eventChangedNotification` — later slice.
+- **3+ devices with partial views** can both merge into the same kept copy at once; CloudKit keeps the last write, so one device's cook marks can be lost.
+- **`populate` round-trip** turns a nil `imageName` into "" and writes back `mapToRecipeModel`'s defaults for missing fields on the kept copy.
+- **`mergeSyncedRecipeCopies` untested** beyond its sync-off guard: CloudKit record ids can't be produced in a unit test; the pure plan is tested.
+- **Record names assumed stable** across a zone reset / account change — not checked.
