@@ -40,8 +40,12 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
       item touched: `curl -sSLO https://github.com/AsadK47/RecipeFinder/releases/download/screenshots-preview/<name>-web.jpg`
       (list: `gh api repos/AsadK47/RecipeFinder/releases/tags/screenshots-preview --jq '.assets[].name'`), Read each
       image, fix what looks wrong (clipping, empty states, contrast, layout). A passing screenshot test is not a look.
-   c. **Independent review** on the item's last slice: run the `deep-review` skill at `high` on `origin/main..HEAD`
-      in a *separate* agent (not the one that wrote the code); fix confirmed findings, log the count.
+   c. **Independent review — never trust one reviewer** (owner rule 2026-11-14: "check with multiple reviewers
+      rather than trust one"): on the item's last slice run **at least two independent reviewers** (separate agents
+      that didn't write the code, different prompts — e.g. `deep-review` at `high` + a challenge pass; a different
+      model where available) on `origin/main..HEAD`. Act only on findings **two reviewers agree on, or that you've
+      verified yourself against the code/source**; a finding only one reviewer raises is checked before it's fixed;
+      disagreements on anything risky go to **Needs owner**. Log: reviewers used, findings confirmed / dismissed.
    d. **Challenge pass** (every item, owner 2026-11-11: "challenge aggressively"): a separate agent, told to assume
       the change is wrong, runs the **Playbook in `docs/CHALLENGES.md`** on the diff (key assumptions, premortem,
       threat model/MASVS/LLM Top 10 where input crosses a trust boundary, SFDIPOT break-it, simplify/delete with

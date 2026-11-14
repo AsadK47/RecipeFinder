@@ -35,6 +35,12 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 9. **Argue with yourself, on a schedule.** The daily challenger (`docs/CHALLENGES.md`) and the per-item challenge pass exists because the agent that
    builds also tests and reviews — it can be consistently wrong. Treat a challenge as a real question, not noise.
 
+14. **One agent's confident report is not evidence** (owner, 2026-11-14 — earlier agents' confident nonsense nearly
+   boxed the owner into risky positions). Audits, reviews and "facts" about legal, privacy, money, names, accounts or
+   deleting anything are verified against the primary source (code, Apple/legal docs, the live site) and agreed by at
+   least two independent reviewers before acting; when they disagree, the owner decides. State uncertainty plainly;
+   never present a guess as a fact.
+
 ## Repo gotchas (see also memory)
 - StoreKit scheme `identifier` = `../../RecipeFinder.storekit` (anchored at the
   `xcshareddata` dir, NOT SRCROOT). Cost several wrong guesses — see memory.
