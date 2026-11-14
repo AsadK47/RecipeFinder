@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-14 (item pass: Data safety 2/4 slice 4b-2b — fixed: two devices folding the same item at once each wrote their own fold of the kept row and deleted their other copy, so the last write lost the other device's quantity/stores; now a copy is deleted only once the stored kept row already holds it)
+- ⚔️ [Data] A rename (or tick) on a copy another device is folding away at that moment is lost — the kept row is re-checked by key next load, but a concurrent rename races the delete — cost if wrong: one list line vanishes.
+- ⚔️ [Data] Inventory, meal plans, collections not folded (expiry reminders keyed by id; slot day differs by time zone; same names allowed) — later slice if duplicates show up.
+- ⚔️ [Data] Same-name copies made by backup restore or renaming show until the next load; with sync off they're never folded.
+- ⚔️ [Time] A fold arriving from a remote change shifts list indices under index-based APIs (`toggleItem(at:)`), as remote deletes already do.
+- ⚔️ [Platform] Changing the `canonicalUnit` synonym table between versions makes two builds group copies differently.
+- ⚔️ [Tests] `aSaveAfterTheFoldDoesNotBringTheOtherRowBack` would pass with a pre-fold `lastKnown`; kept-copy add + fold in one load is unpinned.
+
 ## 2026-11-14 (item pass: Data safety 2/4 slice 4b-2a — fixed: pruning inferred deletes from a library diff, so a failed fetch then one save, or a stale load overwriting a newer one, would delete every synced photo in iCloud; now removed only where an edit/delete happens on this device)
 - ⚔️ [Break] Copy merge keeps one hero — `RecipeCopyMerge.merging` (SyncMerge.swift:110) unions `photoNames` but keeps only the kept copy's `imageName`, so a custom hero on the losing copy leaves the recipe (pre-existing) — alternative: move the losing hero into `photoNames` — cost if we're wrong: a photo only one device had disappears from that recipe.
   → Owner:
