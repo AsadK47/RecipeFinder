@@ -237,6 +237,113 @@ import Foundation
 
     // MARK: - Wiring
 
+    // MARK: - Removed photos leave iCloud (slice 4b-2)
+
+    @Test func aPhotoTheLibraryStoppedShowingIsRemovedFromTheStore() throws {
+        try insertRow(path: "RecipeImages/gone.jpg", data: Self.jpeg, updatedAt: Self.monday)
+        try insertRow(path: "RecipeImages/kept.jpg", data: Self.jpeg, updatedAt: Self.monday)
+
+        let outcome = RecipePhotoSync.mirror(
+            referencedPaths: ["RecipeImages/kept.jpg"], removedPaths: ["RecipeImages/gone.jpg"],
+            in: context, documentsDirectory: documents
+        )
+
+        let remaining = try storedRows()
+        #expect(outcome.removed == 1)
+        #expect(Set(remaining.keys) == ["RecipeImages/kept.jpg"])
+    }
+
+    @Test func everyCopyOfARemovedPhotosRowIsRemoved() throws {
+        try insertRow(path: "RecipeImages/gone.jpg", data: Self.jpeg)
+        try insertRow(path: "RecipeImages/gone.jpg", data: Self.otherJpeg)
+
+        let outcome = RecipePhotoSync.mirror(
+            referencedPaths: [], removedPaths: ["RecipeImages/gone.jpg"], in: context, documentsDirectory: documents
+        )
+
+        #expect(outcome.removed == 2)
+        #expect(try rowCount() == 0)
+    }
+
+    @Test func aPhotoThatArrivedBeforeItsRecipeIsKept() throws {
+        try insertRow(path: "RecipeImages/early.jpg", data: Self.jpeg, updatedAt: Self.monday)
+
+        let outcome = mirror([])
+
+        #expect(outcome.removed == 0)
+        #expect(try rowCount() == 1)
+    }
+
+    @Test func aRemovedPathThatIsShownAgainIsKept() throws {
+        try writeFile("RecipeImages/back.jpg", Self.jpeg, modified: Self.monday)
+        try insertRow(path: "RecipeImages/back.jpg", data: Self.jpeg, updatedAt: Self.monday)
+
+        let outcome = RecipePhotoSync.mirror(
+            referencedPaths: ["RecipeImages/back.jpg"], removedPaths: ["RecipeImages/back.jpg"],
+            in: context, documentsDirectory: documents
+        )
+
+        #expect(outcome.removed == 0)
+        #expect(try rowCount() == 1)
+    }
+
+    @Test func removingAPhotosRowLeavesFilesAndRecipesAlone() throws {
+        try writeFile("RecipeImages/gone.jpg", Self.jpeg)
+        try insertRow(path: "RecipeImages/gone.jpg", data: Self.jpeg)
+        #expect(controller.saveRecipeModel(Self.recipe("Pie")))
+
+        _ = RecipePhotoSync.mirror(
+            referencedPaths: [], removedPaths: ["RecipeImages/gone.jpg"], in: context, documentsDirectory: documents
+        )
+
+        #expect(try readFile("RecipeImages/gone.jpg") == Self.jpeg)
+        #expect(controller.fetchRecipes().count == 1)
+    }
+
+    @Test func aRemovedPathOutsideThePhotoFolderDeletesNothing() throws {
+        try insertRow(path: "RecipeImages/web-x.jpg", data: Self.jpeg)
+
+        let outcome = RecipePhotoSync.mirror(
+            referencedPaths: [], removedPaths: ["RecipeImages/web-x.jpg"], in: context, documentsDirectory: documents
+        )
+
+        #expect(outcome.removed == 0)
+        #expect(try rowCount() == 1)
+    }
+
+    @Test func aPhotoDroppedSinceTheLastPassIsRemoved() {
+        let step = RecipePhotoSync.removedPaths(
+            since: ["RecipeImages/a.jpg", "RecipeImages/b.jpg"], now: ["RecipeImages/b.jpg", "RecipeImages/c.jpg"],
+            libraryIsEmpty: false
+        )
+
+        #expect(step.removed == ["RecipeImages/a.jpg"])
+        #expect(step.baseline == ["RecipeImages/b.jpg", "RecipeImages/c.jpg"])
+    }
+
+    @Test func theFirstPassOfALaunchRemovesNothing() {
+        let step = RecipePhotoSync.removedPaths(since: nil, now: ["RecipeImages/b.jpg"], libraryIsEmpty: false)
+
+        #expect(step.removed.isEmpty)
+        #expect(step.baseline == ["RecipeImages/b.jpg"])
+    }
+
+    @Test func anEmptyLibraryRemovesNothingAndKeepsTheLastPaths() {
+        let step = RecipePhotoSync.removedPaths(since: ["RecipeImages/a.jpg"], now: [], libraryIsEmpty: true)
+
+        #expect(step.removed.isEmpty)
+        #expect(step.baseline == ["RecipeImages/a.jpg"])
+    }
+
+    @Test func aPhotoStillShownAfterAnEmptyLoadIsNotRemoved() {
+        let afterEmpty = RecipePhotoSync.removedPaths(since: ["RecipeImages/a.jpg"], now: [], libraryIsEmpty: true)
+        let next = RecipePhotoSync.removedPaths(
+            since: afterEmpty.baseline, now: ["RecipeImages/a.jpg"], libraryIsEmpty: false
+        )
+
+        #expect(next.removed.isEmpty)
+    }
+
     @Test func resetAlsoErasesTheSyncedPhotos() throws {
         try insertRow(path: "RecipeImages/b.jpg", data: Self.jpeg)
         #expect(controller.saveRecipeModel(Self.recipe("Pie")))

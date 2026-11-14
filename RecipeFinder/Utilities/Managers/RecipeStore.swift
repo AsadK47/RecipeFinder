@@ -48,6 +48,8 @@ final class RecipeStore: RecipeStoring {
     @ObservationIgnored var attemptedPictures: Set<String> = []
     /// Latest queued iCloud photo pass (`syncPhotosWithICloud`); each waits for the one before.
     @ObservationIgnored var photoSync: Task<Void, Never>?
+    /// Photo paths the last queued pass saw shown; nil until the first pass of this launch (`RecipePhotoSync.removedPaths`).
+    @ObservationIgnored var syncedPhotoPaths: Set<String>?
     /// Bumped on each load so a slow earlier fetch can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
 

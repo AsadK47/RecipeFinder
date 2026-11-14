@@ -32,18 +32,26 @@ extension RecipeStore {
     }
 
     /// With iCloud sync on, copies new photos into the store and writes other devices' photos to disk
-    /// (`RecipePhotoSync`) after every load (launch, iCloud change) and save. Passes run one at a time.
+    /// (`RecipePhotoSync`) after every load (launch, iCloud change) and save, and removes the iCloud copy of a photo
+    /// the library stopped showing since the last pass. Passes run one at a time, in the order they were queued.
     func syncPhotosWithICloud() {
         guard persistence.isSyncing else { return }
         let paths = RecipePhotoSync.referencedPaths(in: recipes)
+        let step = RecipePhotoSync.removedPaths(since: syncedPhotoPaths, now: paths, libraryIsEmpty: recipes.isEmpty)
+        syncedPhotoPaths = step.baseline
+        let removed = step.removed
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         let previous = photoSync
         let persistence = self.persistence
         photoSync = Task {
             await previous?.value
-            guard let outcome = await persistence.mirrorRecipePhotos(referencedPaths: paths, documentsDirectory: documents),
-                  outcome != RecipePhotoSync.Outcome() else { return }
-            Self.logger.info("iCloud photos: \(outcome.uploaded) sent, \(outcome.downloaded) received")
+            let outcome = await persistence.mirrorRecipePhotos(
+                referencedPaths: paths, removedPaths: removed, documentsDirectory: documents
+            )
+            guard let outcome, outcome != RecipePhotoSync.Outcome() else { return }
+            Self.logger.info(
+                "iCloud photos: \(outcome.uploaded) sent, \(outcome.downloaded) received, \(outcome.removed) removed"
+            )
             // Pictures resolve their file when drawn; re-publishing the library redraws the ones that just arrived.
             if outcome.downloaded > 0 {
                 let library = recipes

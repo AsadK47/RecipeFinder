@@ -7,7 +7,8 @@ private let logger = AppLogger.logger(category: "RecipePhotoSync")
 /// `Documents/RecipeImages/` and recipes point at them by relative path, so CloudKit — which only syncs the store —
 /// never saw them. Each photo file is copied into a `RecipePhotoEntity` row (path + JPEG, external storage, so
 /// CloudKit sends it as an asset), and rows that arrive from another device are written back to the same path.
-/// Newer wins per photo path; nothing here deletes a file or a recipe.
+/// Newer wins per photo path. A photo the library stops showing has its row deleted (so the delete reaches iCloud);
+/// nothing here deletes a file or a recipe.
 enum RecipePhotoSync {
     static let entityName = "RecipePhotoEntity"
     static let folder = "RecipeImages/"
@@ -19,6 +20,20 @@ enum RecipePhotoSync {
     struct Outcome: Equatable, Sendable {
         var uploaded = 0
         var downloaded = 0
+        var removed = 0
+    }
+
+    /// Photos this device saw the library stop showing since its last pass, and the paths to compare the next pass
+    /// against. Only a photo this device itself saw shown can be removed: a row that arrives before its recipe (a
+    /// new device, a fresh install) was never shown here, so it stays. Nothing on the first pass of a launch, and
+    /// nothing while the library is empty — a failed load must never delete every photo in iCloud; the old paths
+    /// are kept so the next real load still sees what went.
+    static func removedPaths(
+        since previous: Set<String>?, now current: Set<String>, libraryIsEmpty: Bool
+    ) -> (removed: Set<String>, baseline: Set<String>?) {
+        guard !libraryIsEmpty else { return ([], previous) }
+        guard let previous else { return ([], current) }
+        return (previous.subtracting(current), current)
     }
 
     /// `reference` when it's one of the cook's own photo files (`RecipeImages/<name>.jpg`); nil for web URLs, kept
@@ -49,16 +64,18 @@ enum RecipePhotoSync {
     /// and the rest carry on; the next pass (next launch, iCloud change or save) retries what was missed.
     static func mirror(
         referencedPaths: Set<String>,
+        removedPaths: Set<String> = [],
         in context: NSManagedObjectContext,
         documentsDirectory: URL,
         fileManager: FileManager = .default
     ) -> Outcome {
+        let removed = remove(removedPaths.subtracting(referencedPaths), from: context)
         let stored: [String: Date]
         do {
             stored = try storedDates(in: context)
         } catch {
             logger.error("❌ Couldn't read synced photos: \(error.localizedDescription)")
-            return Outcome()
+            return Outcome(removed: removed)
         }
         let files = Files(documents: documentsDirectory, fileManager: fileManager)
         var toSend: [String] = []
@@ -76,7 +93,8 @@ enum RecipePhotoSync {
         }
         return Outcome(
             uploaded: upload(toSend, into: context, from: files),
-            downloaded: download(toReceive, from: context, to: files)
+            downloaded: download(toReceive, from: context, to: files),
+            removed: removed
         )
     }
 
@@ -119,6 +137,27 @@ enum RecipePhotoSync {
         let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
         request.predicate = NSPredicate(format: "path == %@", path)
         return try context.fetch(request)
+    }
+
+    /// Deletes every row at `paths`; the files stay (the recipe's own delete already handled those).
+    private static func remove(_ paths: Set<String>, from context: NSManagedObjectContext) -> Int {
+        let safe = paths.compactMap(syncablePath)
+        guard !safe.isEmpty else { return 0 }
+        defer { context.reset() }
+        let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
+        request.predicate = NSPredicate(format: "path IN %@", safe)
+        request.includesPropertyValues = false
+        do {
+            let rows = try context.fetch(request)
+            guard !rows.isEmpty else { return 0 }
+            for row in rows { context.delete(row) }
+            try context.save()
+            return rows.count
+        } catch {
+            logger.error("❌ Couldn't remove \(safe.count) photos from iCloud: \(error.localizedDescription)")
+            context.rollback()
+            return 0
+        }
     }
 
     private static func upload(_ paths: [String], into context: NSManagedObjectContext, from files: Files) -> Int {
@@ -208,13 +247,16 @@ enum RecipePhotoSync {
 extension PersistenceController {
     /// Mirrors the library's photos to and from iCloud on a background context while the store syncs; nil when it
     /// doesn't (photos stay files only, no second copy on disk).
-    func mirrorRecipePhotos(referencedPaths: Set<String>, documentsDirectory: URL?) async -> RecipePhotoSync.Outcome? {
+    func mirrorRecipePhotos(
+        referencedPaths: Set<String>, removedPaths: Set<String> = [], documentsDirectory: URL?
+    ) async -> RecipePhotoSync.Outcome? {
         guard isSyncing, let documentsDirectory else { return nil }
         let container = self.container
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 let outcome = RecipePhotoSync.mirror(
-                    referencedPaths: referencedPaths, in: context, documentsDirectory: documentsDirectory
+                    referencedPaths: referencedPaths, removedPaths: removedPaths, in: context,
+                    documentsDirectory: documentsDirectory
                 )
                 continuation.resume(returning: outcome)
             }
