@@ -206,3 +206,98 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         #expect(store.rows == [row(1)])
     }
 }
+
+private func recipe(
+    _ id: UUID, cooks: Int = 0, lastCooked: Date? = nil, favourite: Bool = false, rating: Int = 0,
+    photos: [String] = [], notes: String = ""
+) -> RecipeModel {
+    RecipeModel(
+        id: id, name: "Fish Pie", category: "Main", difficulty: "Basic", prepTime: "10 minutes",
+        cookingTime: "30 minutes", baseServings: 4, ingredients: [], prePrepInstructions: [],
+        instructions: ["Bake."], notes: notes, isFavorite: favourite, isSampleRecipe: true,
+        cookCount: cooks, lastCookedAt: lastCooked, rating: rating, photoNames: photos
+    )
+}
+
+/// Two devices that each added the built-in recipes (same ids) meet in iCloud: each recipe must end up once,
+/// with nothing the cook did on either device lost (Data safety 2/4).
+@Suite struct RecipeCopyMergeTests {
+    private let fishPie = UUID()
+
+    private func copy(_ record: String?, _ model: RecipeModel) -> RecipeCopyMerge.Copy {
+        RecipeCopyMerge.Copy(recordName: record, recipe: model)
+    }
+
+    @Test func aRecipeHeldOnceIsLeftAlone() {
+        let plan = RecipeCopyMerge.plan([copy("a", recipe(fishPie)), copy("b", recipe(UUID()))])
+        #expect(plan.isEmpty)
+    }
+
+    @Test func twoCopiesBecomeOneKeepingTheLowestRecord() {
+        let plan = RecipeCopyMerge.plan([copy("b", recipe(fishPie)), copy("a", recipe(fishPie))])
+        #expect(plan.delete == ["b"])
+        #expect(plan.update.isEmpty)
+    }
+
+    /// Both devices pick the same copy to keep whatever order they see them in, so they never delete each
+    /// other's copy and leave none.
+    @Test func everyDeviceKeepsTheSameCopy() {
+        let seenHere = RecipeCopyMerge.plan([copy("x", recipe(fishPie)), copy("m", recipe(fishPie, cooks: 3))])
+        let seenThere = RecipeCopyMerge.plan([copy("m", recipe(fishPie)), copy("x", recipe(fishPie, cooks: 5))])
+        #expect(seenHere.delete == ["x"])
+        #expect(seenThere.delete == ["x"])
+    }
+
+    /// A device that hasn't seen every copy yet still never deletes the copy every device keeps.
+    @Test func aDeviceThatHasSeenFewerCopiesNeverDeletesTheOneKeptEverywhere() {
+        let all = RecipeCopyMerge.plan([copy("a", recipe(fishPie)), copy("b", recipe(fishPie)), copy("c", recipe(fishPie))])
+        let partial = RecipeCopyMerge.plan([copy("b", recipe(fishPie)), copy("c", recipe(fishPie))])
+        #expect(all.delete == ["b", "c"])
+        #expect(!partial.delete.contains("a"))
+    }
+
+    @Test func cooksFavouriteRatingAndPhotosFromEveryCopyAreKept() {
+        let early = Date(timeIntervalSince1970: 1_000)
+        let late = Date(timeIntervalSince1970: 2_000)
+        let plan = RecipeCopyMerge.plan([
+            copy("a", recipe(fishPie, cooks: 1, lastCooked: early, photos: ["one.jpg"])),
+            copy("b", recipe(fishPie, cooks: 4, lastCooked: late, favourite: true, rating: 5, photos: ["two.jpg", "one.jpg"]))
+        ])
+        let kept = plan.update["a"]
+        #expect(kept?.cookCount == 4)
+        #expect(kept?.lastCookedAt == late)
+        #expect(kept?.isFavorite == true)
+        #expect(kept?.rating == 5)
+        #expect(kept?.photoNames == ["one.jpg", "two.jpg"])
+        #expect(plan.delete == ["b"])
+    }
+
+    @Test func theKeptCopysOwnRatingWins() {
+        let plan = RecipeCopyMerge.plan([copy("a", recipe(fishPie, rating: 2)), copy("b", recipe(fishPie, rating: 5))])
+        #expect(plan.update["a"] == nil)
+    }
+
+    @Test func anUnratedKeptCopyTakesTheOthersRating() {
+        let plan = RecipeCopyMerge.plan([copy("a", recipe(fishPie)), copy("b", recipe(fishPie, rating: 3))])
+        #expect(plan.update["a"]?.rating == 3)
+    }
+
+    @Test func theKeptCopysTextIsWhatStays() {
+        let plan = RecipeCopyMerge.plan([copy("a", recipe(fishPie, notes: "mine")), copy("b", recipe(fishPie, notes: "theirs"))])
+        #expect(plan.update["a"] == nil)
+        #expect(plan.delete == ["b"])
+    }
+
+    /// A copy iCloud hasn't uploaded yet has no record name, so devices can't agree on it: wait for the upload.
+    @Test func copiesNotYetInICloudAreLeftForLater() {
+        let plan = RecipeCopyMerge.plan([copy(nil, recipe(fishPie)), copy("b", recipe(fishPie, cooks: 2))])
+        #expect(plan.isEmpty)
+    }
+
+    @Test func theListShowsEachRecipeOnceUntilTheCopiesMerge() {
+        let other = UUID()
+        let shown = RecipeCopyMerge.oneCopyEach([recipe(fishPie, cooks: 1), recipe(other), recipe(fishPie, cooks: 2)])
+        #expect(shown.map(\.id) == [fishPie, other])
+        #expect(shown.first?.cookCount == 1)
+    }
+}

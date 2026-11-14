@@ -102,7 +102,7 @@ extension PersistenceController {
         }
     }
     
-    nonisolated private static func mapToRecipeModel(_ object: NSManagedObject) -> RecipeModel? {
+    nonisolated static func mapToRecipeModel(_ object: NSManagedObject) -> RecipeModel? {
         guard 
             let id = object.value(forKey: RecipeKey.id) as? UUID,
             let name = object.value(forKey: RecipeKey.name) as? String,

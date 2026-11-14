@@ -51,3 +51,60 @@ enum SyncMerge {
         return byID
     }
 }
+
+/// Built-in recipes are added on every device with the same ids, so once iCloud sync brings two devices together
+/// the store holds two rows per recipe (Data safety 2/4). This folds them into one, keeping what the cook did to
+/// either copy (cooks, favourite, rating, photos).
+///
+/// Every device must delete the *same* copies, or two devices could each delete the other's and leave none. So the
+/// kept copy is the one with the lowest iCloud record name — fixed once uploaded and identical on every device.
+/// The copy every device keeps is never deleted, even by a device that hasn't received every copy yet. A copy not
+/// uploaded yet has no record name, so its recipe waits for a later pass.
+enum RecipeCopyMerge {
+    struct Copy {
+        let recordName: String?
+        let recipe: RecipeModel
+    }
+
+    struct Plan: Equatable {
+        /// Record name of a kept copy → its merged content, only where that differs from what it holds.
+        var update: [String: RecipeModel] = [:]
+        /// Record names of the copies to delete.
+        var delete: Set<String> = []
+
+        var isEmpty: Bool { update.isEmpty && delete.isEmpty }
+    }
+
+    static func plan(_ copies: [Copy]) -> Plan {
+        var plan = Plan()
+        for group in Dictionary(grouping: copies, by: \.recipe.id).values where group.count > 1 {
+            let named = group.compactMap { copy in copy.recordName.map { (name: $0, recipe: copy.recipe) } }
+            guard named.count == group.count,
+                  let keep = named.min(by: { $0.name < $1.name }) else { continue }
+            let others = named.filter { $0.name != keep.name }
+            let merged = merging(others.map(\.recipe), into: keep.recipe)
+            if merged != keep.recipe { plan.update[keep.name] = merged }
+            plan.delete.formUnion(others.map(\.name))
+        }
+        return plan
+    }
+
+    /// The list shows each recipe once while copies wait to be merged; the first copy of each id stays.
+    static func oneCopyEach(_ recipes: [RecipeModel]) -> [RecipeModel] {
+        var seen = Set<UUID>()
+        return recipes.filter { seen.insert($0.id).inserted }
+    }
+
+    /// The kept copy's text stays; the cook's own marks from every copy are added to it.
+    private static func merging(_ others: [RecipeModel], into kept: RecipeModel) -> RecipeModel {
+        var merged = kept
+        for other in others {
+            merged.cookCount = max(merged.cookCount, other.cookCount)
+            merged.lastCookedAt = [merged.lastCookedAt, other.lastCookedAt].compactMap { $0 }.max()
+            merged.isFavorite = merged.isFavorite || other.isFavorite
+            if kept.rating == 0 { merged.rating = max(merged.rating, other.rating) }
+            merged.photoNames += other.photoNames.filter { !merged.photoNames.contains($0) }
+        }
+        return merged
+    }
+}

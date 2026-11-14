@@ -133,7 +133,7 @@ extension PersistenceController {
     }
 
     /// Maps `RecipeSaveParameters` onto a fresh managed object; shared by `saveRecipe` and `seedRecipes` so the field list has one home. Returns false only if ingredients can't be encoded.
-    nonisolated private static func populate(
+    nonisolated static func populate(
         _ recipe: NSManagedObject,
         from parameters: RecipeSaveParameters
     ) -> Bool {

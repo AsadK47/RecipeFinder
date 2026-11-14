@@ -1,15 +1,33 @@
-# WORK.md — handoff (2026-11-13, builder agent)
+# WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 3b-1 merged (0e9b206); item still claimed 🚧.
+Data safety 2/4 slice 3b-2a (merge same-id recipe copies under sync) on `agent/sync-recipe-copies`, waiting on CI.
 
 ## Next action
-Slice 3b-2 = Settings "iCloud sync" toggle/status (sets `SyncPreference.key`, applies on next launch; status shows
-"off on this device" after a `retryWithoutSync` fallback; Reset copy warns it erases on every device) — the first
-slice that turns sync on: tell the owner which build. Consider purging history there. Slice 4 = recipe photos +
-first-sync dedupe (+ "erased elsewhere while closed" marker, see CHALLENGES 2026-11-14). Slice 5 = Privacy §7.
+When 3b-2a is green + merged: slice 3b-2b = Settings "iCloud sync" toggle/status, **opt-in (off by default)** +
+Privacy Policy §7 in the same slice (the in-app policy promises opt-in and a policy update *before* any sync ships).
+Toggle writes a "wanted" key; `SyncPreference.key` (what the rules read) only changes at launch, before
+`PersistenceController.shared` — a live switch-off would put the rules in "kept copy wins" against a syncing store
+and delete other devices' rows. Reset must keep both keys (clearAll wipes `rf.*`) and warn it erases on every device.
+Status shows "off on this device" after a `retryWithoutSync` fallback. Tell the owner which build turns sync on.
+Then slice 4 = recipe photos + dedupe of other lists (+ "erased elsewhere while closed" marker). Slice 5 = website
+privacy.html to match §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 3b-2a (recipe copies)**: done *before* the toggle (reordered from WORK.md): bundled recipes
+  have fixed ids and are seeded on every device, so the first time sync meets a second device (or the reinstall test)
+  the library would show every built-in recipe twice and edits would hit an arbitrary copy. Keep = lowest CloudKit
+  record name (immutable, same on every device) so two devices never delete each other's copy and leave none; the
+  global-minimum copy is never deleted even by a device that hasn't seen all copies; copies not yet uploaded (no
+  record name) wait. Kept copy's text stays; cooks = max, last cooked = latest, favourite = any, rating = kept's
+  unless unrated, photos = union. Rejected: "most invested wins" (devices with stale views could pick different
+  keepers → both deleted); the one-time `removeDuplicateCopies` (content-keyed, samples only, once per install).
+  List also shows one copy per id meanwhile (`oneCopyEach`). Runs in `RecipeStore.load`, so every iCloud reload.
+  **Pre-mortem:** (1) both copies deleted → `everyDeviceKeepsTheSameCopy`, `aDeviceThatHasSeenFewerCopies…`;
+  (2) a cook's favourite/rating/cooks/photo lost in the merge → `cooksFavouriteRatingAndPhotos…`,
+  `anUnratedKeptCopyTakesTheOthersRating`; (3) list shows doubles before the merge can run →
+  `theListShowsEachRecipeOnceUntilTheCopiesMerge`; sync-off unchanged → `aRecipeHeldOnceIsLeftAlone` + guard on
+  `isSyncing` (CloudKit record ids can't be produced in a unit test — glue untested, noted).
 - **Data safety 2/4 slice 3b-1 (reload)**: split from the toggle so the reload exists before sync can be switched
   on. The remote-change notification fires for this app's own saves too, so reload only when store history since
   the last check has a transaction *with an author* touching an app entity (this app never sets
