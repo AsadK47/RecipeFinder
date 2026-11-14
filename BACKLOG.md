@@ -537,9 +537,9 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
-- 🐞 2026-11-14: Screenshots `testCaptureTodayTimes` red since 3a0c0f8 — still expects "quick ideas" in the evening Tonight line; update the assertion to the new "ready by" copy. — 🚧 builder agent 2026-11-14
 
 ## Log
+- 2026-11-14 · 🐞 Inbox: Screenshots testCaptureTodayTimes red · 4b8f8ea · UI test now expects the evening "Start now to eat by"/"Takes …" line (test-only, no app change). review: test-only · looked at: 27-today-evening. On phone: nothing new.
 _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-13 · 🐞 Today always suggests the same thing (owner: "jarring … should offer a dinner option … timing based") · c58ae51 · Without a plan, Today's suggestion fits the clock — breakfast 5–11am, lunch (mains/soups/starters) 11am–4pm, dinner (mains/soups) after — never a dessert/side/drink unless that's all there is; quick picks rotate daily (stable FNV hash of day + meal + recipe) instead of favourites/most-cooked/A–Z, own recipes still before samples; same pick all evening, Shuffle unchanged; planned meals still lead. New TodayFeedTests for slot, fallback, daily variety, stability. On phone: Today in the morning vs evening, and tomorrow.
 - 2026-11-13 · 🐞 Tonight evening line (owner: "132 under 30 min … seems like gibberish") · 3a0c0f8 · Evening line under Today's Tonight card now speaks about that recipe: "Start now to eat by 8:12" (≤45 min) or "Takes 1 hr 10 min · Shuffle for something quicker"; the library-wide "Quick tonight? N under 30 min" count is gone. TonightTimingTests updated (+boundary, duration cases). review: small copy/logic change, unit-tested · looked at: owner screenshot. On phone: Today after 6pm.
