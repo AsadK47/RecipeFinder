@@ -7,7 +7,8 @@ private let logger = AppLogger.logger(category: "RecipePhotoSync")
 /// `Documents/RecipeImages/` and recipes point at them by relative path, so CloudKit — which only syncs the store —
 /// never saw them. Each photo file is copied into a `RecipePhotoEntity` row (path + JPEG, external storage, so
 /// CloudKit sends it as an asset), and rows that arrive from another device are written back to the same path.
-/// Newer wins per photo path. A photo the library stops showing has its row deleted (so the delete reaches iCloud);
+/// Newer wins per photo path. A photo the library stops showing has its row deleted (so the delete reaches iCloud,
+/// straight away or, if sync is off, when it's turned back on);
 /// nothing here deletes a file or a recipe.
 enum RecipePhotoSync {
     static let entityName = "RecipePhotoEntity"
@@ -67,7 +68,7 @@ enum RecipePhotoSync {
         documentsDirectory: URL,
         fileManager: FileManager = .default
     ) -> Outcome {
-        let removed = remove(removedPaths.subtracting(referencedPaths), from: context)
+        let removed = removeRows(removedPaths, keeping: referencedPaths, in: context)
         let stored: [String: Date]
         do {
             stored = try storedDates(in: context)
@@ -94,6 +95,13 @@ enum RecipePhotoSync {
             downloaded: download(toReceive, from: context, to: files),
             removed: removed
         )
+    }
+
+    /// Deletes the rows of photos in `removed` that `referenced` (the library now) no longer shows. Also runs with
+    /// sync off: the store keeps history, so CloudKit sends these deletes when sync is turned back on. Call on
+    /// `context`'s queue.
+    static func removeRows(_ removed: Set<String>, keeping referenced: Set<String>, in context: NSManagedObjectContext) -> Int {
+        remove(removed.subtracting(referenced), from: context)
     }
 
     /// File dates and the stored dates round differently; closer than this counts as the same photo.
@@ -257,6 +265,18 @@ extension PersistenceController {
                     documentsDirectory: documentsDirectory
                 )
                 continuation.resume(returning: outcome)
+            }
+        }
+    }
+
+    /// With sync off, deletes the rows of photos an edit or delete on this device removed, so the removal reaches
+    /// iCloud when sync resumes (`RecipePhotoSync.removeRows`). Nothing is uploaded or written to disk.
+    func removeRecipePhotoRows(_ removed: Set<String>, keeping referenced: Set<String>) async -> Int {
+        guard isStoreLoaded, !removed.isEmpty else { return 0 }
+        let container = self.container
+        return await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                continuation.resume(returning: RecipePhotoSync.removeRows(removed, keeping: referenced, in: context))
             }
         }
     }

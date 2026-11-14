@@ -34,9 +34,13 @@ extension RecipeStore {
     /// With iCloud sync on, copies new photos into the store and writes other devices' photos to disk
     /// (`RecipePhotoSync`) after every load (launch, iCloud change) and save, and removes the iCloud copy of each photo
     /// in `removed` (`RecipePhotoSync.removedPaths`, from an edit or delete on this device). Passes run one at a time.
+    /// With sync off, only the removals run (rows deleted in the store, sent to iCloud when sync resumes).
     func syncPhotosWithICloud(removing removed: Set<String> = []) {
-        guard persistence.isSyncing else { return }
         let paths = RecipePhotoSync.referencedPaths(in: recipes)
+        guard persistence.isSyncing else {
+            removePhotoRowsWhileSyncIsOff(removed, keeping: paths)
+            return
+        }
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         let previous = photoSync
         let persistence = self.persistence
@@ -53,6 +57,19 @@ extension RecipeStore {
             if outcome.downloaded > 0 {
                 let library = recipes
                 recipes = library
+            }
+        }
+    }
+
+    private func removePhotoRowsWhileSyncIsOff(_ removed: Set<String>, keeping paths: Set<String>) {
+        guard !removed.isEmpty else { return }
+        let previous = photoSync
+        let persistence = self.persistence
+        photoSync = Task {
+            await previous?.value
+            let count = await persistence.removeRecipePhotoRows(removed, keeping: paths)
+            if count > 0 {
+                Self.logger.info("iCloud photos: \(count) removed with sync off; sent when sync is back on")
             }
         }
     }

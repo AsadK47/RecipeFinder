@@ -1,13 +1,23 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Cook-history Reset fix merged (29addf7). Data safety 2/4 still claimed 🚧.
+`agent/photo-removal-sync-off` — Inbox 🔴 photo removals while sync is off. `syncPhotosWithICloud` now deletes removed
+photos' rows with sync off (`PersistenceController.removeRecipePhotoRows`); waiting on CI, then reviews, then land.
 
 ## Next action
-Next Inbox 🔴: "Photo removals made while sync is off never reach iCloud" — or the other-devices-keep-photo-files 🔴
-if it has a safe rule; then store-history purge while off, then live sync status / iCloud full.
+Check Build & Test for the branch head; when green run two reviewers + challenge, then fast-forward main.
 
 ## Decisions (why)
+- **Photo removals with sync off**: delete the row in the local store at once (same store file, history tracking always
+  on), so CloudKit exports the delete on re-attach — the same path every other off-period change takes. Rejected: a
+  pending-removals list in UserDefaults (second source of truth, needs its own clear/retry rules) and reconciling rows
+  vs files on re-attach (inferring deletes from missing files was rejected in 4b-2a). No upload/download with sync off
+  (no second photo copy on disk). Depends on history surviving the off period → the 7-day purge 🔴 is still open.
+  Replaced test `deletingARecipeFromTheStoreKeepsOtherDevicesPhotosWhenSyncIsOff` (it pinned the bug).
+  **Pre-mortem:** (1) removal still lost → `deletingARecipeWithSyncOffRemovesItsPhotosRow`,
+  `aPhotoTakenOutWithSyncOffRemovesOnlyThatRow`; (2) a photo still shown elsewhere deleted →
+  `withSyncOffAPhotoAnotherRecipeStillShowsKeepsItsRow`, `removingRowsWithSyncOffSkipsShownAndUnsafePaths`;
+  (3) sync-off device starts copying photos → `withSyncOffANewPhotoIsNotCopiedIntoTheStore`, `withSyncOffNothingIsMirrored`.
 - **Cook history after a Reset elsewhere** (`CookingStreakManager.load`): same rule as `MirroredSnapshot` — with sync
   on, an empty store in the file this device last loaded (`syncedStoreFile.cookDatesLog`) or after a synced load this
   session = erased elsewhere → followed, not refilled; fresh/unknown file = recovery → refilled. Both reviewers: the

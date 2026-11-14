@@ -357,16 +357,71 @@ import Foundation
         #expect(RecipePhotoSync.removedPaths(before: pie, after: nil, library: []).isEmpty)
     }
 
-    @Test func deletingARecipeFromTheStoreKeepsOtherDevicesPhotosWhenSyncIsOff() throws {
-        // Sync off (unit tests): the store queues no pass, so no row is touched.
+    // MARK: - Removals made while sync is off (deleted from the store now, so iCloud gets them when sync resumes)
+
+    @Test func deletingARecipeWithSyncOffRemovesItsPhotosRow() async throws {
+        // Sync off (unit tests): the row is deleted in the store, and CloudKit sends that delete once sync is back on.
         try insertRow(path: "RecipeImages/pie.jpg", data: Self.jpeg)
         let store = RecipeStore(persistence: controller)
         let pie = Self.recipe("Pie", image: "RecipeImages/pie.jpg")
         #expect(store.save(pie))
 
         store.delete(id: pie.id)
+        await store.photoSync?.value
+
+        #expect(try rowCount() == 0)
+    }
+
+    @Test func aPhotoTakenOutWithSyncOffRemovesOnlyThatRow() async throws {
+        try insertRow(path: "RecipeImages/a.jpg", data: Self.jpeg)
+        try insertRow(path: "RecipeImages/b.jpg", data: Self.jpeg)
+        let store = RecipeStore(persistence: controller)
+        let pie = Self.recipe("Pie", photos: ["RecipeImages/a.jpg", "RecipeImages/b.jpg"])
+        #expect(store.save(pie))
+        var edited = pie
+        edited.photoNames = ["RecipeImages/b.jpg"]
+
+        #expect(store.save(edited))
+        await store.photoSync?.value
+
+        #expect(Set(try storedRows().keys) == ["RecipeImages/b.jpg"])
+    }
+
+    @Test func withSyncOffAPhotoAnotherRecipeStillShowsKeepsItsRow() async throws {
+        try insertRow(path: "RecipeImages/shared.jpg", data: Self.jpeg)
+        let store = RecipeStore(persistence: controller)
+        let pie = Self.recipe("Pie", image: "RecipeImages/shared.jpg")
+        #expect(store.save(pie))
+        #expect(store.save(Self.recipe("Tart", image: "RecipeImages/shared.jpg")))
+
+        store.delete(id: pie.id)
+        await store.photoSync?.value
 
         #expect(try rowCount() == 1)
+    }
+
+    @Test func withSyncOffANewPhotoIsNotCopiedIntoTheStore() async throws {
+        try writeFile("RecipeImages/new.jpg", Self.jpeg)
+        let store = RecipeStore(persistence: controller)
+
+        #expect(store.save(Self.recipe("Pie", image: "RecipeImages/new.jpg")))
+        await store.photoSync?.value
+
+        #expect(try rowCount() == 0)
+    }
+
+    @Test func removingRowsWithSyncOffSkipsShownAndUnsafePaths() async throws {
+        try insertRow(path: "RecipeImages/gone.jpg", data: Self.jpeg)
+        try insertRow(path: "RecipeImages/back.jpg", data: Self.jpeg)
+        try insertRow(path: "RecipeImages/web-x.jpg", data: Self.jpeg)
+
+        let removed = await controller.removeRecipePhotoRows(
+            ["RecipeImages/gone.jpg", "RecipeImages/back.jpg", "RecipeImages/web-x.jpg"],
+            keeping: ["RecipeImages/back.jpg"]
+        )
+
+        #expect(removed == 1)
+        #expect(Set(try storedRows().keys) == ["RecipeImages/back.jpg", "RecipeImages/web-x.jpg"])
     }
 
     @Test func resetAlsoErasesTheSyncedPhotos() throws {
