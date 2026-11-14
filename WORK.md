@@ -1,13 +1,22 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-🚧 builder agent 2026-11-14: Inbox 🔴 "Cook history comes back after Reset with sync on" on `agent/cook-dates-reset-sync`.
+Nothing. Cook-history Reset fix merged (29addf7). Data safety 2/4 still claimed 🚧.
 
 ## Next action
-Next Inbox 🔴: "Cook history comes back after Reset with sync on" (`CookingStreakManager.swift:116-122`). Then the
-remaining Inbox 🔴s, then live sync status / iCloud full.
+Next Inbox 🔴: "Photo removals made while sync is off never reach iCloud" — or the other-devices-keep-photo-files 🔴
+if it has a safe rule; then store-history purge while off, then live sync status / iCloud full.
 
 ## Decisions (why)
+- **Cook history after a Reset elsewhere** (`CookingStreakManager.load`): same rule as `MirroredSnapshot` — with sync
+  on, an empty store in the file this device last loaded (`syncedStoreFile.cookDatesLog`) or after a synced load this
+  session = erased elsewhere → followed, not refilled; fresh/unknown file = recovery → refilled. Both reviewers: the
+  kept copy must also *follow* the store on every synced load, else a Reset-then-cook elsewhere leaves old history in
+  it for a later recovery to resurrect — fixed. Accepted (as lists): a kept copy ahead after a failed save is
+  add-only (migrateBlob runs before the check); an iCloud account purge in the same file is followed.
+  **Pre-mortem:** (1) history returns on reload → `aResetOnAnotherDeviceStaysGoneWhenThisDeviceReloads`,
+  `…EvenWhenTheStoreFileIsUnknown`; (2) recovery loses cooks → `aFreshStoreFileGetsTheKeptCopyBackAtLaunch`,
+  `anUnknownStoreFile…`; (3) old history resurrected later → `theKeptCopyFollowsAStorePartlyErasedElsewhere`.
 - **Reset clears photos + searches (this device)**: delete the whole `RecipeImages/` folder, not per-recipe paths
   (kept web copies and orphans live there too; recipes are all gone anyway), and only if `deleteAllRecipes()` worked
   (both reviewers: otherwise recipes survive without photos). Recent searches keep their global key (renaming lost
