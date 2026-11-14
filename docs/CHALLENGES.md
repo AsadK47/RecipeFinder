@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-14 (item pass: 🔴 photo removals while sync is off — rows now deleted locally so CloudKit sends the delete on re-attach)
+- ⚔️ [Time] A removal made with sync off reaches iCloud only if store history survives until sync is back on — `RecipeFinderApp.swift:37-42` purges history older than 7 days at every launch, sync on or off — fix lands with the Inbox 🔴 "store history purged while off" — cost if wrong: after > 7 days off the photo row stays in iCloud forever (as before this fix). Both reviewers raised it.
+  → Owner:
+- ⚔️ [Tests] Nothing checks CloudKit actually exports a delete made while the store was opened without the mirror (unit CI has no iCloud) — device check: sync off, remove a photo, sync on, confirm it's gone on the other device — cost if wrong: the fix is a no-op.
+  → Owner:
+
 ## 2026-11-14 (item pass: Data safety 2/4 slice 4b-2b — fixed: two devices folding the same item at once each wrote their own fold of the kept row and deleted their other copy, so the last write lost the other device's quantity/stores; now a copy is deleted only once the stored kept row already holds it)
 - ⚔️ [Data] A rename (or tick) on a copy another device is folding away at that moment is lost — the kept row is re-checked by key next load, but a concurrent rename races the delete — cost if wrong: one list line vanishes.
 - ⚔️ [Data] Inventory, meal plans, collections not folded (expiry reminders keyed by id; slot day differs by time zone; same names allowed) — later slice if duplicates show up.

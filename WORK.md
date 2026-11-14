@@ -1,11 +1,11 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-`agent/photo-removal-sync-off` — Inbox 🔴 photo removals while sync is off. `syncPhotosWithICloud` now deletes removed
-photos' rows with sync off (`PersistenceController.removeRecipePhotoRows`); waiting on CI, then reviews, then land.
+Nothing. Photo removals with sync off merged (4b28065). Data safety 2/4 still claimed 🚧.
 
 ## Next action
-Check Build & Test for the branch head; when green run two reviewers + challenge, then fast-forward main.
+Next Inbox 🔴: "Store history purged after 7 days even while sync is off" (`RecipeFinderApp.swift:37-42`) — the
+sync-off photo removal fix depends on it; then other-devices-keep-photo-files 🔴.
 
 ## Decisions (why)
 - **Photo removals with sync off**: delete the row in the local store at once (same store file, history tracking always
