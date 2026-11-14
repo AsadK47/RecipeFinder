@@ -4,7 +4,7 @@
 Nothing. Data safety 2/4 slice 4b-2c merged (cf12e72); item still claimed 🚧.
 
 ## Next action
-Live sync status / iCloud full (`eventChangedNotification`), then slice 5 = website privacy.html §7.
+Live sync status / iCloud full (`eventChangedNotification`). Slice 5 (privacy text: in-app §4/§7, sync switch copy, website privacy.html) is being done by the interactive session 2026-11-14 on `agent/privacy-photo-sync` + website `fix/privacy-icloud-sync` — don't redo it.
 
 ## Decisions (why)
 - **Data safety 2/4 slice 4b-2c (erased elsewhere while closed)**: marker = the store *file's* identity

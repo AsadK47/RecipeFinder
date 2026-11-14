@@ -84,9 +84,9 @@ enum SyncStatus: Equatable, Sendable {
     var detail: String {
         switch self {
         case .off:
-            "Turn on to keep your recipes, plans and lists in your own iCloud and on every device signed in to it. Recipe photos stay on this device for now."
+            "Turn on to keep your recipes, photos, plans and lists in your own iCloud and on every device signed in to it."
         case .on:
-            "Your recipes, plans and lists are kept in your iCloud and appear on every device signed in to it. Recipe photos stay on this device for now. Everything keeps working offline."
+            "Your recipes, photos, plans and lists are kept in your iCloud and appear on every device signed in to it. Everything keeps working offline."
         case .startsAfterRestart:
             "Close RecipeFinder from the app switcher and open it again to start syncing."
         case .stopsAfterRestart:

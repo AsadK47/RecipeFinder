@@ -35,10 +35,10 @@ struct PrivacyPolicyView: View {
                 SectionTitle("4. Information Stored on Your Device")
 
                 BodyText("4.1 The following is created and held on your Device (and in your own iCloud account only where you enable a feature that uses it — see Section 7):")
-                LegalBulletPoint("Recipes you create or import, including ingredients, instructions, notes, tags, cuisine and dietary information")
-                LegalBulletPoint("Meal plans, shopping lists and kitchen inventory")
+                LegalBulletPoint("Recipes you create or import, including ingredients, instructions, notes, tags, cuisine, dietary information, favourites and the original text a recipe was imported from")
+                LegalBulletPoint("Meal plans, shopping lists (including shop names) and kitchen inventory")
                 LegalBulletPoint("Collections, cooking history, ratings and achievements")
-                LegalBulletPoint("Photos you add to recipes, together with your profile name and any profile photo")
+                LegalBulletPoint("Photos you add to recipes, together with your profile name, chef type and any profile photo")
                 LegalBulletPoint("Your app preferences and settings")
             }
 
@@ -65,9 +65,9 @@ struct PrivacyPolicyView: View {
 
                 SectionTitle("7. Optional Sync and Sharing")
 
-                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. While it is on, the information described in Section 4, other than photos you add to recipes and your app preferences, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. The Developer cannot access your iCloud account or the data in it.")
+                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. While it is on, the information described in Section 4, including photos you add to recipes and other than your app preferences, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. Recipe pictures loaded from websites are fetched again on each device rather than synced. The Developer cannot access your iCloud account or the data in it.")
 
-                BodyText("7.2 You can turn iCloud sync off at any time in the same place; your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, deletes it on every device signed in to your iCloud account.")
+                BodyText("7.2 You can turn iCloud sync off at any time in the same place; your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, deletes it on every device signed in to your iCloud account. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, those changes are then applied on every device signed in to your iCloud account.")
 
                 BodyText("7.3 Future versions may offer sharing recipes and collections with people you choose. Content you choose to share will be visible to the people you share it with. Any such feature will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
             }
