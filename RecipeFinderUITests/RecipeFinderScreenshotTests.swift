@@ -275,24 +275,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.alerts["Import Finished"].waitForExistence(timeout: 10),
                       "The import summary should appear on Data Management.")
         snap(app, "15-other-app-import")
-    }
 
-    /// Data safety 2/4: Settings → Data Management opens on the iCloud sync switch (off on a fresh install).
-    @MainActor
-    func testCaptureDataManagementSync() {
-        let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing"]
-        app.launch()
-        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        app.tabBars.buttons["Me"].tap()
-        app.buttons["me.settings"].tap()
-        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
-        settle()
-        let data = app.staticTexts["Data Management"].firstMatch
-        for _ in 0..<4 where !data.isHittable { app.swipeUp() }
-        data.tap()
-        // Matched by label: a Toggle folds its text into the switch, so neither a static text nor the row's
-        // identifier is guaranteed to surface as its own element.
+        // Data safety 2/4: the same screen opens on the iCloud sync switch (off on a fresh install). Matched by
+        // label: a Toggle folds its text into the switch, so neither a static text nor the row's identifier is
+        // guaranteed to surface as its own element.
+        app.alerts["Import Finished"].buttons["OK"].tap()
         let sync = app.descendants(matching: .any)
             .matching(NSPredicate(format: "label CONTAINS[c] %@", "Sync with iCloud")).firstMatch
         XCTAssertTrue(sync.waitForExistence(timeout: 10), "Data Management should show the iCloud sync switch.")
