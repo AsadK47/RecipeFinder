@@ -58,6 +58,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         }
 
         /// The rules every manager uses: on while the cook's iCloud sync switch (`SyncPreference`) is on.
+        @MainActor
         static func iCloudRules<ID: Hashable>(
             storage: LocalStore,
             store: any StoreFileIdentifying,

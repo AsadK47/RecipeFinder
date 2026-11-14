@@ -284,6 +284,19 @@ final class InMemoryShoppingListStore: ShoppingListStoring {
         #expect(InMemoryShoppingListStore().storeFileID == nil)
     }
 
+    @Test func reopeningTheSameStoreFileGivesTheSameName() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("StoreFile-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let storeURL = folder.appendingPathComponent("RecipeModel.sqlite")
+        let first = CoreDataShoppingListStore(persistence: PersistenceController(storeURL: storeURL))
+        _ = try first.fetchItems()
+        let name = try #require(first.storeFileID)
+        let relaunch = CoreDataShoppingListStore(persistence: PersistenceController(storeURL: storeURL))
+        _ = try relaunch.fetchItems()
+        #expect(relaunch.storeFileID == name)
+    }
+
     @Test func coreDataStoreRoundTripsEveryFieldInOrder() throws {
         let sut = CoreDataShoppingListStore(persistence: PersistenceController(inMemory: true))
         try sut.replaceItems(with: [peas, pasta])

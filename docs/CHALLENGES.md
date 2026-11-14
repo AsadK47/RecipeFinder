@@ -260,3 +260,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - A received photo shows once its view redraws (library re-published; SwiftUI may skip an unchanged `RecipeImageView` until it reappears).
 - Wiring (`syncPhotosWithICloud` after load/save, sync-on `mirrorRecipePhotos`) untested — CloudKit can't run in unit tests. Test photos are tiny, so external (CKAsset) storage isn't exercised.
 - TestFlight uses the Production CloudKit environment: `CD_RecipePhotoEntity` (and the v16 record types) need the schema deployed there before testers' sync works — owner step.
+
+### 2026-11-14 · Data safety 2/4 slice 4b-2c (erased elsewhere while closed) — fixed: `iCloudRules` read a main-actor property from a nonisolated closure (now `@MainActor`); added a test that reopening the same file keeps its name (the premise). Noted, not fixed:
+- **Same-file purges are followed at launch**: iCloud sign-out/account change, deleting the app's iCloud data, or a CloudKit zone reset empty the same file; if that lands before `load()`, the kept copy becomes `[]` and offline edits that never uploaded are lost (mid-session purges were already followed). Could keep the old copy one extra launch.
+- **Device restore / new phone** copies the store file and UserDefaults together; a CloudKit reset purging the restored store before first load is followed instead of refilled. Speculative.
