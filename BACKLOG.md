@@ -518,7 +518,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 ## Needs owner
 - 🙋 **Play decisions** (see `docs/PLAY.md`; agents start Play 1/7 once answered): (1) daily streak from a
   1-minute action (Tonight check-in, Kitchen Bite or a cook) replaces the weekly flame, weekly cooks become the goal
-  ring — OK? (2) RecipeModel 17 with a synced `PlayEventEntity` — OK? (3) agents write Kitchen Bites quiz content
+  ring — OK? (2) RecipeModel 18 with a synced `PlayEventEntity` — OK? (3) agents write Kitchen Bites quiz content
   (own words, food-safety facts checked against FSA/NHS) — OK? (4) Game Center weekly leagues (opt-in; score + alias
   go to Apple): yes / later / no?
 - 🙋 Planner: read your iOS calendar (on-device, permission prompt) to mark busy evenings automatically in Fill my week? Default: manual busy nights only.

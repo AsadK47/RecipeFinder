@@ -1,13 +1,31 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 4a (history purge) merged (dcee46e); item still claimed 🚧.
+Data safety 2/4 slice 4b-1 (recipe photos sync, RecipeModel 17 `RecipePhotoEntity`) on `agent/photo-sync` —
+`RecipePhotoSync.swift`, wired in `RecipeStore.syncPhotosWithICloud()`; waiting on Build & Test.
 
 ## Next action
-Slice 4b = recipe photos sync (model 17 photo entity) + dedupe of other lists (+ "erased elsewhere while closed"
-marker). Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5 = website privacy.html §7.
+Get `agent/photo-sync` green → merge. Then 4b-2: photo deletes reach iCloud (drop rows no recipe references, with
+a safety delay so a photo arriving before its recipe isn't pruned) + dedupe of other lists (+ "erased elsewhere
+while closed" marker). Then live status (`eventChangedNotification`), slice 5 = website privacy.html §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 4b-1 (photo sync)**: photos stay files (`RecipeImages/`, recipes keep relative paths);
+  while sync is on each own photo is mirrored into `RecipePhotoEntity` (path, JPEG Binary external storage →
+  CKAsset, updatedAt) and rows from other devices are written to the same path. Newer wins per path (file mtime vs
+  row `updatedAt`, 1 s tolerance) because heroes are replaced in place at `<id>.jpg`; a received file is stamped with
+  the row's date so it isn't sent back. Runs after every RecipeStore load (launch + iCloud change reload) and save,
+  one pass at a time, background context, batches of 8 + reset (memory). Not synced: kept web-picture copies
+  (`web-`, re-downloadable), legacy absolute paths, non-JPEG/>20 MB rows; incoming paths validated (no `..`, `/`,
+  must be `RecipeImages/*.jpg`). Reset also batch-deletes photo rows. Rejected: moving photo storage into Core Data
+  (touches every image path; big) — cost accepted: a second on-disk copy of photos while sync is on. No pruning
+  yet (a row can arrive before its recipe; pruning naively would delete it everywhere) → 4b-2. Model 17 bumped
+  Play's PlayEventEntity to 18 (BACKLOG Needs owner + docs/PLAY.md). **Pre-mortem:** (1) a new hero never reaches
+  the other phone → `aPhotoReplacedOnThisDeviceIsSentAgain`, `aNewerPhotoFromAnotherDeviceReplacesTheOlderFile`;
+  (2) an older iCloud copy overwrites the cook's newer photo / ping-pong → `aNewerPhotoOnThisDevice…`,
+  `aReceivedPhotoIsNotSentStraightBack`; (3) a crafted row writes outside the folder or garbage →
+  `aStoredPhotoWithAPathOutsideThePhotoFolderIsNotWritten`, `aStoredRowThatIsNotAJPEG…`; (4) upgrade loses data →
+  `v16StoreMigratesAndGainsThePhotoEntity`. No UI → no screenshots.
 - **Data safety 2/4 slice 4a (history purge)**: history tracking is always on, so history grew forever even with sync
   off. Purge at launch, background context, everything older than 7 days (Apple's CloudKit sample uses a week;
   CloudKit's first export doesn't need history). Checkpoint = latest transaction, so after ≥7 idle days the launch

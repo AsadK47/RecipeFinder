@@ -249,6 +249,60 @@ import Foundation
         #expect(source.entitiesByName["Recipe"]?.versionHash == current.entitiesByName["Recipe"]?.versionHash)
     }
 
+    /// Pins the v16→v17 upgrade (v17 adds `RecipePhotoEntity` for photo sync): recipes and app data survive untouched
+    /// and photo rows can be written straight away.
+    @Test func v16StoreMigratesAndGainsThePhotoEntity() throws {
+        let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
+        let source = try #require(NSManagedObjectModel(contentsOf: momd.appendingPathComponent("RecipeModel 16.mom")))
+        let current = try #require(NSManagedObjectModel(contentsOf: momd))
+
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString).appendingPathExtension("sqlite")
+        defer { for s in ["", "-wal", "-shm"] { try? FileManager.default.removeItem(at: URL(fileURLWithPath: url.path + s)) } }
+
+        let recipeId = UUID()
+        let sourceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: source)
+        try sourceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+        let writeContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        writeContext.persistentStoreCoordinator = sourceCoordinator
+        let obj = NSManagedObject(
+            entity: try #require(NSEntityDescription.entity(forEntityName: "Recipe", in: writeContext)),
+            insertInto: writeContext
+        )
+        obj.setValue(recipeId, forKey: "id")
+        obj.setValue("RecipeImages/hero.jpg", forKey: "imageName")
+        let date = NSManagedObject(
+            entity: try #require(NSEntityDescription.entity(forEntityName: "CookDateEntity", in: writeContext)),
+            insertInto: writeContext
+        )
+        date.setValue(UUID(), forKey: "id")
+        try writeContext.save()
+        try sourceCoordinator.remove(try #require(sourceCoordinator.persistentStores.first))
+
+        let currentCoordinator = NSPersistentStoreCoordinator(managedObjectModel: current)
+        try currentCoordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType, configurationName: nil, at: url,
+            options: [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+        )
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = currentCoordinator
+        let row = try #require(try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "Recipe")).first)
+        #expect(row.value(forKey: "imageName") as? String == "RecipeImages/hero.jpg")
+        #expect(try context.count(for: NSFetchRequest<NSManagedObject>(entityName: "CookDateEntity")) == 1)
+
+        let photo = NSManagedObject(
+            entity: try #require(NSEntityDescription.entity(forEntityName: "RecipePhotoEntity", in: context)),
+            insertInto: context
+        )
+        photo.setValue("RecipeImages/hero.jpg", forKey: "path")
+        photo.setValue(Data([0xFF, 0xD8, 0xFF]), forKey: "data")
+        try context.save()
+        #expect(try context.count(for: NSFetchRequest<NSManagedObject>(entityName: "RecipePhotoEntity")) == 1)
+        for (name, entity) in source.entitiesByName {
+            #expect(entity.versionHash == current.entitiesByName[name]?.versionHash, "\(name) changed in v17")
+        }
+    }
+
     /// Every field of every UserDefaults blob has a typed home (Data safety 1/4); a dropped or mistyped attribute
     /// fails here, not as silently lost data in the migration slice. Array fields are JSON-encoded `Binary`.
     @Test(arguments: [

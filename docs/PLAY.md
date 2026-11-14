@@ -125,7 +125,7 @@ cheers. First win in under 2 minutes. Existing users: a one-time "Your cooking p
   undo, anti-farming).
 - **Why an event log:** no double counting, undo is just another event, state can be recomputed after a rule change,
   and iCloud merge is a union by id — no conflicts (fits Data safety 2/4's `SyncMerge`).
-- **Persistence:** `PlayEventEntity` (id, date, kind, payload JSON) in RecipeModel 17 — **needs owner OK** (Core Data
+- **Persistence:** `PlayEventEntity` (id, date, kind, payload JSON) in RecipeModel 18 (17 = recipe photos) — **needs owner OK** (Core Data
   guardrail). Weekly checkpoints keep derivation fast; `PerformanceBudgetTests` with 5 years (~10k events).
 - **Content:** bundled `PlayContent/` JSON (bites, path, quests, notification copy) with validation tests (one right
   answer, an explanation, a unit, every path recipe id exists).

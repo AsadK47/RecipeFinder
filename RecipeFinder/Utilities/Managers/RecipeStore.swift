@@ -37,7 +37,8 @@ final class RecipeStore: RecipeStoring {
     var recipes: [RecipeModel] = []
     private(set) var isLoading = true
 
-    @ObservationIgnored private let persistence: PersistenceController
+    // Internal so RecipeStore+RemoteImages.swift can sync photos through it.
+    @ObservationIgnored let persistence: PersistenceController
     @ObservationIgnored private let imageStore: RecipeImageStore
     // Internal so RecipeStore+RemoteImages.swift can use them.
     @ObservationIgnored let imageLocalizer: RecipeImageLocalizer
@@ -45,6 +46,8 @@ final class RecipeStore: RecipeStoring {
     @ObservationIgnored var imageLocalization: Task<Void, Never>?
     /// Web pictures already tried this launch.
     @ObservationIgnored var attemptedPictures: Set<String> = []
+    /// Latest queued iCloud photo pass (`syncPhotosWithICloud`); each waits for the one before.
+    @ObservationIgnored var photoSync: Task<Void, Never>?
     /// Bumped on each load so a slow earlier fetch can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
 
@@ -101,6 +104,7 @@ final class RecipeStore: RecipeStoring {
             recipes = await refreshStaleSamples(in: deduped)
             isLoading = false
             keepWebPictures(of: recipes)
+            syncPhotosWithICloud()
         }
     }
 
@@ -171,7 +175,7 @@ final class RecipeStore: RecipeStoring {
         return library.filter { !duplicates.contains($0.id) }
     }
 
-    private static let logger = AppLogger.logger(category: "RecipeStore")
+    static let logger = AppLogger.logger(category: "RecipeStore")
 
     #if DEBUG
     /// UI-test hook (`-seed-reimport-recipe`): one recipe that kept its original text, named to sort first, so the
@@ -290,6 +294,7 @@ final class RecipeStore: RecipeStoring {
             recipes.append(recipe)
         }
         keepWebPictures(of: [recipe])
+        syncPhotosWithICloud()
         return true
     }
 
