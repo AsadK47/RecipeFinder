@@ -14,6 +14,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 - **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 17`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 17.xcdatamodel`. **MUST NOT** remove `NSPersistentHistoryTrackingKey` (`CloudSyncStore`): a store opened without it after having it goes read-only. *(update this number whenever the Core Data model version increments)*
 
 ## Topic docs (loaded automatically by directory)
+- `docs/PRODUCT.md` — **product north star**: the loop, each tab's one job, roadmap phases, parked list. Read before choosing or shaping any feature; new ideas go to BACKLOG Parking lot.
 - `RecipeFinder/CLAUDE.md` — Swift/SwiftUI rules, design principles, security, DI, UX checklist. Read when editing any app source file.
 - `RecipeFinderTests/CLAUDE.md` — Testing framework, conventions, coverage. Read when editing tests.
 

@@ -16,12 +16,13 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
 
 ## How an agent works this file (read fully before starting)
 1. Read root `CLAUDE.md`, `RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`, `RecipeFinder/DesignSystem.md`.
-2. Work by **batch** (see *Batches* below): take the first unfinished batch, then its first unticked item that isn't
-   🙋. Break big items into slices that each fit one CI cycle; put small related items (same screen/area) in ONE
-   branch and ship them together. While a branch waits on CI, start the next item on its own branch (owner OK
-   2026-11-10); independent batches may run in parallel sessions. Owner OK 2026-11-10 to edit `build.yml` for speed.
-   If the item is too big for one run, do a coherent first slice, tick nothing, and rewrite the item to say what's
-   left. If it's unclear or would break a guardrail, move it to **Needs owner** with a one-line question and stop.
+2. Work in **Roadmap** order (below; strategy in `docs/PRODUCT.md` — read it first): finish the current phase before
+   starting the next, take its first unticked `[ ]` item that isn't 🙋. Never start `[~]` (merged/parked) items; new
+   ideas go to **Parking lot** with their loop step, not the Queue. Break big items into slices that each fit one CI
+   cycle. While a branch waits on CI, the next item may start on its own branch (owner OK 2026-11-10). Owner OK
+   2026-11-10 to edit `build.yml` for speed. If an item is too big for one run, do a coherent first slice, tick
+   nothing, and rewrite the item to say what's left. If it's unclear or would break a guardrail, move it to
+   **Needs owner** with a one-line question and stop.
 3. **Claim it first:** append `— 🚧 <who> <YYYY-MM-DD>` to the item's title line and push that to `main` before
    writing code ("who" = builder agent / interactive session). Skip items claimed by someone else; a claim older than
    1 day with no open `agent/*` branch is stale and may be taken over (say so in the Log). Remove the 🚧 when ticking.
@@ -80,24 +81,52 @@ drop a line while moving it.
 - New Swift files: no `XcodeWrite` in the cloud — register them in `project.pbxproj` by mirroring a sibling file's
   four entries (PBXBuildFile, PBXFileReference, group child, Sources phase). Say so in the Log.
 
-## Batches (work order — groups Queue + Smells by area; ship each batch in as few CI cycles as possible)
-1. **Import & capture:** Import 4/5 → 5/5, Estimate missing amounts, Import from other apps, PDFs & multi-page
-   photos, Video 1/3 → 3/3.
-   **Top priority (owner 2026-11-12: "move them to the top"):** finish the item in progress (Badges 1/2), then
-   Pictures 1/4 → Data safety 1/4 → 2/4 → **Today feed → Dinner Jackpot → Play 1/7 → 3/7 → Badges 2/2 → Play 4/7 → 7/7** (owner 2026-11-13; Wrapped still ships before 1 Dec — slot it in by 24 Nov) → Pictures 2/4 → 3/4 → 4/4 → Data safety 3/4 → 4/4, then continue below.
-   **Next (owner order 2026-11-10):** Bug sweep → Tabs 1/3 → Tabs 2/3 Today → Add flow 1/3 → 3/3 → Today+ 1/3 → 3/3 → Badges 1/2 → 2/2 → Me 1/3 → 3/3 (3/3 = Settings tidy-up) → Showcase screenshots → Plan my week 1/3 → 2/3 → Groceries + Kitchen → Plan my week 3/3 →
-   cooking mode → small sticky features (audit §2 S) → polish → Widget + Live Activity. Then (owner OK 2026-11-10): taste profile →
-   (skill tree = Play 5/7) → heirloom mode → cook-along Q&A (only if it works well on device — else Needs owner). Fridge photo +
-   Shared family cookbooks: still undecided — revisit after.
-2. **Cooking loop & home** (Wrapped ships before 1 Dec): Recently cooked row (streak freeze, passport, zero-waste
-   wins now live in the Play series), Your Cooking Year, Cooking diary, What's for dinner?, Sunday
-   planning nudge.
-3. **Polish & QA:** Polish batch + Scroll fade elsewhere (one branch), CI screenshots of key screens.
-4. **Onboarding:** Guide 1/2 → 2/2.
-5. **Refactors:** Smells Batch A → F, Large wizard. Interleave one after each batch above.
-6. **Website** (repo AsadK47/RecipeFinderWebsite; runs in its own parallel session, owner OK 2026-11-10): Site 1/6 → 6/6.
+## Roadmap (owner OK 2026-11-14 — strategy in `docs/PRODUCT.md`; read it first)
+One phase at a time; within a phase, top to bottom. 🐞 / TestFlight / Inbox items still go first. Items marked `[~]`
+are merged into a newer item or parked — never start them; their text stays as reference spec.
+   **Next (owner order 2026-11-14, docs/PRODUCT.md):**
+   **Now:** Data safety 2/4 (iCloud sync) → 3/4 → 4/4.
+   **Phase 1 — Cook it well:** Cooking flow → Made-it moment → My Cookbook.
+   **Phase 2 — Decide & get:** Plan — swipe to match → Groceries writes itself.
+   **Phase 3 — Discover:** Recipes — endless discovery → Today — decide tonight.
+   **Fixed date:** Your Cooking Year (Wrapped) by 1 Dec (start by 24 Nov whatever phase we're in).
+   **Between phases (one each):** Me 3/3 Settings tidy-up · CI screenshots of key screens · Showcase screenshots ·
+   Polish batch + Scroll fade · Add flow 3/3 follow-up · Smells A → F + Large wizard · Pictures 3/4 leftovers (owner-paced).
+   **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Cooking flow** (Phase 1 · Cook · owner 2026-11-14). Merges *Cooking mode upgrade* (below, kept as spec) with the
+  ticking redesign. Ingredients: an empty circle on every row; tap anywhere on the row to tick (haptic), ticked rows dim
+  and slide into "Got it" at the bottom; amount editing moves to the edit pencil / long-press; all ticked → "All set —
+  start cooking?". Cooking mode: one step per screen, a big visible **Next** (tap-right / swipe / "next" are bonuses),
+  progress bar, each step shows the ingredients it uses with amounts, timers from step text that stay visible on later
+  steps (several named timers per the upgrade item), resume at the same step after leaving, last step → Made it.
+  One-time pulse on the first circle; no hint text. *Measure:* cooks started that reach Made it. *Done when:*
+  step↔ingredient matching, resume state and timers tested; UI test ticks a row and steps through; screenshots; CI green.
+- [ ] **Made-it moment** (Phase 1 · Cook→Remember). The simple core of Play 3/7 (`docs/PLAY.md` §7) without Spoons,
+  levels or quests: a short celebration (cook #N, streak, stars, "add your photo"), distinct haptic, confetti, Reduce
+  Motion respected; nudges a photo for My Cookbook. *Measure:* share of cooks with a rating/photo. *Done when:* summary
+  content logic tested, screenshot, CI green.
+- [ ] **Plan — swipe to match** (Phase 2 · Decide). Merges *Swipe to match dinners*, *Plan my week 1/3 + 2/3*,
+  *"What's for dinner?" decider* and *Sunday planning nudge* (all below, kept as spec). Plan's home is the week as seven
+  photos (tap = cook, hold = move); "Plan my week" opens full-screen cards, one per empty dinner — right/♥ plans it,
+  left/✕ next card, up = tonight — drawn by the Fill-my-week rules (quick weeknights, variety, expiring items, busy
+  nights); matches also feed Today. Opt-in Sunday nudge when next week is empty. *Measure:* weeks with ≥3 planned
+  dinners. *Done when:* deck/fill/no-repeat rules tested (seeded), swipe + button paths UI-tested, screenshots, CI green.
+- [ ] **Groceries writes itself** (Phase 2 · Get). Merges *Groceries + Kitchen* and *Plan my week 3/3* (below, kept as
+  spec). Planning a week builds the list — merged and scaled, minus what's at home, in the order you usually tick
+  (learned). "I'm in the shop" mode: huge rows, one-thumb ticks, screen awake; ticked = at home automatically (no
+  Put-away step); asks only when it matters ("Still got the coriander?"). Delete the duplicated Kitchen/Shopping views.
+  *Measure:* planned weeks that produce a used list. *Done when:* list building/merging/scaling/aisle-learning tested,
+  screenshots, net line count down, CI green.
+- [ ] **Recipes — endless discovery** (Phase 3 · Discover). The *Today feed* chapters (below, kept as spec; `docs/PLAY.md`
+  §14) move here as how you browse below your library: "Because you loved…", "Under 30 minutes", "Uses what you have",
+  "Cook it again", "New to you", "A trip to <cuisine>"; rotating layouts, no repeats until the pool is spent; absorbs
+  *Recently cooked row*. *Measure:* recipes opened from discovery that get cooked. *Done when:* chapter ranking +
+  paging tested, perf budget for 300+ recipes, screenshots (scrolled 3 screens), CI green.
+- [ ] **Today — decide tonight** (Phase 3 · Decide). Trim Today to tonight's pick (big picture, reason, Cook this,
+  Shuffle), the time line, and what to do now (prep-ahead, use-it-up); move browsing to Recipes; absorbs *Pictures 4/4*.
+  *Measure:* Today → Cook this taps. *Done when:* screenshots (morning/evening, new user), CI green, net lines down.
 - [x] **Pictures 1/4 — Keep imported photos + nicer placeholders** (owner OK 2026-11-12:
   pictures are "a major thing that's lacking"). ✅ Slice 1 (6a77647): imported web pictures get a phone copy
   (`RecipeImages/web-<sha256(url)>.jpg`, recipe keeps the URL so refresh/export/backup still work), on save + launch,
@@ -143,7 +172,7 @@ drop a line while moving it.
   ready to test and which build has it. Owner has one iPhone: test = add recipes + a photo, wait a minute, delete and
   reinstall from TestFlight, everything returns; optional second device = their Apple silicon Mac via TestFlight for Mac
   (App Store Connect → Pricing and Availability → "iPhone and iPad Apps on Apple Silicon Macs" on).
-- [ ] **Pictures 2/4 — "Make a picture"** for recipes without a photo: Image Playground (`ImageCreator`, on device,
+- [~] **Pictures 2/4 — "Make a picture"** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) for recipes without a photo: Image Playground (`ImageCreator`, on device,
   iOS 18.4+ with Apple Intelligence) generates an illustration from the recipe name + key ingredients; user picks one,
   saved like a photo. Hidden where unavailable (placeholder art stays). *Done when:* prompt building + availability
   logic tested, screenshot, CI green.
@@ -153,7 +182,7 @@ drop a line while moving it.
   (WebP/HEIC, ~40–80 KB each), bundle them, and map them in the seed (sampleRefreshVersion bump; never replace a user's
   photo). Owner chose Image Playground 2026-11-12 (Unsplash rejected: API requires hotlinking + attribution, poor dish matches, mixed look). Give the owner ≤5 short steps when the tool is ready. *Done when:* every bundled recipe shows a picture, app size
   increase noted in Log, screenshots, CI green.
-- [ ] **Pictures 4/4 — Photos everywhere they help:** Today hero, shelves, Plan, Made it and Me use the recipe picture
+- [~] **Pictures 4/4 — Photos everywhere they help:** ⟶ merged into **Today — decide tonight** (2026-11-14) Today hero, shelves, Plan, Made it and Me use the recipe picture
   consistently (large, rounded, same aspect); Made it nudges "Add a photo of yours" when only illustrated art exists.
   *Done when:* screenshots of each surface, CI green.
 - [ ] **Data safety 3/4 — Backups that include everything.** Backup file becomes a zip-style archive with photos
@@ -276,19 +305,19 @@ drop a line while moving it.
 - [x] **Badges 1/2 — Earning feels big, browsing feels alive** (owner OK 2026-11-11). ✅ slice 1 (1471585): pager,
   locked silhouette + ring + earn-here button, trophy shelf. ✅ slice 2 (b0b7a56, 089ac88): full-screen earn reveal
   (flip-in, shine sweep, badge-colour confetti, own haptic, settles on close) + tilt-to-shine on pager cards; shot 36.
-- [ ] **Badges 2/2 — Tiers, stories, sharing, next up.** Bronze → Silver → Gold → Platinum tiers on count badges
+- [~] **Badges 2/2 — Tiers, stories, sharing, next up.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) Bronze → Silver → Gold → Platinum tiers on count badges
   (e.g. cook 10/25/50/100; existing unlocks map to their tier, no data loss — new stored fields only with owner OK if
   Core Data is needed, else `LocalStore`) with a tier-up animation; "Earned 3 Nov — cooking Thai green curry" story
   line (recipe that unlocked it); share card image via `ShareLink` (rendered on device); "2 more cooks to Head Chef"
   on the Made it sheet and Today. *Done when:* tier mapping/migration, story capture and next-badge logic tested,
   screenshots, CI green.
-- [ ] **My Cookbook — made by cooking** (owner 2026-11-14: "add cookbook"). A beautiful book of every dish the cook
+- [ ] **My Cookbook — made by cooking** (Phase 1 · Remember · owner 2026-11-14: "add cookbook"; absorbs *Me 1/3* + *Cooking diary*). A beautiful book of every dish the cook
   has made: their Made-it photo (else the recipe picture), date, rating, a line of notes ("for Mum's birthday"), who it
   was for. Builds itself from Made it — no entry. Page-turn / full-bleed layout; tap a page → cook it again. Lives at
   the top of Me (Me's character = your cookbook + one line "Spice Explorer · 34 dinners this year"; stats/badges one
   tap deeper). Shareable page image. *Done when:* page building from cook history tested, screenshots (empty →
   "Cook something and it lands here", 1 page, many), CI green.
-- [ ] **Me 1/3 — Your cooking life: chef card, this month, goals** (owner OK 2026-11-11: Me "lacks character"; wants
+- [~] **Me 1/3 — Your cooking life: chef card, this month, goals** ⟶ merged into **My Cookbook** (2026-11-14) (owner OK 2026-11-11: Me "lacks character"; wants
   better than a stats page). Order top→bottom: chef card → this month → taste fingerprint → skills → goals + wins →
   trophy shelf (Badges 1/2) → your story. This slice: chef card (cover = best Made-it photo, kitchen name e.g.
   "Asad's Kitchen", earned title from real behaviour refreshed monthly — "Midweek Hero", "Spice Explorer", "Sunday
@@ -296,49 +325,49 @@ drop a line while moving it.
   personal goals ("3 new recipes this month", "cook 4 nights a week") with progress rings + celebration; kitchen
   wins (meals cooked at home, items used before expiry, recipes saved). *Done when:* title rules, monthly recap and
   goal progress tested, screenshots (new user, active cook), CI green.
-- [ ] **Me 2/3 — Taste fingerprint, skills, your story.** Taste fingerprint: radial shape (spicy, comforting, quick,
+- [~] **Me 2/3 — Taste fingerprint, skills, your story.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) Taste fingerprint: radial shape (spicy, comforting, quick,
   baking, fresh + cuisines) from cooked recipes, tap a segment → its recipes (feeds taste profile later). Skills row
   (Knife work Lv 3 …, "cook this next to level up") — shows once skill tree ships, hidden before. "Your cooking
   story": scrollable scrapbook timeline (first save, first cook, streak milestones, badges, photos, first cuisine,
   heirloom notes later), tap to open the moment. *Done when:* fingerprint scoring + timeline building tested,
   screenshots, CI green.
-- [ ] **Swipe to match dinners** (owner 2026-11-14: "tinder swipe … match against food you want"). Full-screen recipe
+- [~] **Swipe to match dinners** ⟶ merged into **Plan — swipe to match** (2026-11-14) (owner 2026-11-14: "tinder swipe … match against food you want"). Full-screen recipe
   cards (big picture, name, time); swipe right = "I fancy it", left = not now, up = cook tonight; visible ♥ / ✕ buttons
   too (every gesture has a visible control). Matches go to a "Fancy it" list and feed suggestions (Today, Fill my
   week, "Because you liked…"). Home TBD by owner — recommended: Plan ("plan the week in 60 seconds": one card per
   empty dinner, right = it's planned) + a "Find something" entry on Recipes. Deck draws from library + bundled
   recipes, never repeats a left-swipe for 30 days. *Done when:* deck ranking/no-repeat/match logic tested, swipe +
   button paths UI-tested, screenshots, CI green.
-- [ ] **Plan my week 1/3 — Week agenda** (owner: "make the meal planner a proper feature"; series OK 2026-11-12).
+- [~] **Plan my week 1/3 — Week agenda** ⟶ merged into **Plan — swipe to match** (2026-11-14) (owner: "make the meal planner a proper feature"; series OK 2026-11-12).
   7-day agenda by default with recipe photos and per-meal colours; tap empty slot → inline suggestions (picker as
   fallback); long-press to move/swap; per-meal servings; tap planned meal → open/cook; cooking it marks it done; copy
   last week / repeat a week. Delete code made redundant by the agenda (single-day empty states etc.).
   *Done when:* agenda/move/swap/servings logic tested, screenshots (empty week, full week), CI green.
-- [ ] **Plan my week 2/3 — Fill my week.** One tap plans every empty dinner by visible rules: quick on weeknights,
+- [~] **Plan my week 2/3 — Fill my week.** ⟶ merged into **Plan — swipe to match** (2026-11-14) One tap plans every empty dinner by visible rules: quick on weeknights,
   longer at weekends, no cuisine/main ingredient twice in a row, uses Kitchen items expiring soon, prefers shared
   ingredients ("uses the rest of Tuesday's coriander"). Lock slots, re-roll one or all. Mark busy evenings (quick
   only). Leftovers: cooking extra servings fills the next lunch with "Leftovers: <recipe>". Week summary line
   ("5 dinners · 2 quick nights · uses 4 expiring items"). *Done when:* fill/variety/lock/leftover rules tested
   (pure, seeded), screenshot of a filled week, CI green.
-- [ ] **Plan my week 3/3 — Shop & prep for the week** (after Groceries + Kitchen, which it builds on). Pinned
+- [~] **Plan my week 3/3 — Shop & prep for the week** ⟶ merged into **Groceries writes itself** (2026-11-14) (after Groceries + Kitchen, which it builds on). Pinned
   "Shop for this week (N items)": scaled by planned servings (fixes audit bug 4), minus what's At home, grouped by
   aisle. Sunday prep list merging the week's make-ahead steps (reuse Today's prep-ahead detection); evening-before
   reminders ("Defrost the chicken for tomorrow"); Sunday planning nudge when next week is empty. *Done when:*
   shop-list/prep-list logic tested, screenshots, CI green.
-- [ ] **Groceries + Kitchen, one feature** (owner: "lost cohesiveness … delete redundant code"). One Groceries tab
+- [~] **Groceries + Kitchen, one feature** ⟶ merged into **Groceries writes itself** (2026-11-14) (owner: "lost cohesiveness … delete redundant code"). One Groceries tab
   with a To buy | At home switch (Kitchen no longer an overflow-menu sheet); add/edit expiry + quantity (audit
   bug 1); ticked items → "Put away" moves them into At home with an expiry suggestion (instead of
   `clearCheckedItems` deleting); empty-state buttons (Add this week's plan / Re-add staples); item shows which recipe
   it came from; undo on delete/clear. Merge duplicated row/section/header views between `Views/Kitchen` and
   `Views/Shopping` and delete the leftovers. *Done when:* put-away + expiry + merge logic tested, screenshots of both
   halves, net line count down, CI green.
-- [ ] **Today feed — an endless cookbook** (owner 2026-11-13: "infinite scroll is fun, addictive even"; see
+- [~] **Today feed — an endless cookbook** ⟶ moved to **Recipes — endless discovery** (2026-11-14) (owner 2026-11-13: "infinite scroll is fun, addictive even"; see
   `docs/PLAY.md` §14 + prototype link there). Tonight hero full width; endless chapters with reason lines and rotating
   layouts; Play cards slot in later. Uses the bundled pictures large. Replaces today's This week / Your cooking boxes
   (week ring moves to a compact row; zero-states like "0 week streak" become a "Start your streak" prompt).
   *Done when:* chapter ranking + no-repeat paging tested, perf budget for 300+ recipes, screenshots (new user, active
   cook, scrolled 3 screens), CI green.
-- [ ] **Dinner Jackpot** (owner 2026-11-13: "slot machine twist … fun for the sake of being fun"). §14: reels,
+- [~] **Dinner Jackpot** ⟶ ❌ dropped 2026-11-14 (gambling mechanics; pulls against calm and useful) (owner 2026-11-13: "slot machine twist … fun for the sake of being fun"). §14: reels,
   odds 1/12 jackpot · 1/3 pair, every spin picks dinner, 3 free spins/day +1 per cook, haptics + confetti, Reduce
   Motion = instant result. Multipliers show as "×3 Spoons" once Play 1/7 lands (until then: "Tonight is set").
   *Done when:* outcome odds (seeded RNG, 10k-spin distribution test), spin allowance + reset at 03:00, screenshots
@@ -349,42 +378,42 @@ Merges Made-it celebration, Spoons 1/2 + 2/2, Streak freeze, Zero-waste wins, Cu
 Every Play item: rewards only for real cooking/learning; free chance is fine (no stake, odds shown — §12), nothing to buy, nothing
 leaves the device, warm copy (never guilt), existing streaks/badges carry over, screenshots of new-user + active-cook.
 🙋 Blocked on owner answers in **Needs owner** (Play decisions) before 1/7 starts.
-- [ ] **Play 1/7 — Foundation.** `PlayEvent` log + pure `PlayEngine` (§11) + `CelebrationQueue` (§7) + Spoons earn
+- [~] **Play 1/7 — Foundation.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) `PlayEvent` log + pure `PlayEngine` (§11) + `CelebrationQueue` (§7) + Spoons earn
   table (§5); cook choke point (`RecipeDetailView.recordCook`) records events; Spoons balance in Me. *Done when:*
   engine tested (earn table, undo, anti-farming, union merge), perf budget with 10k events, CI green.
-- [ ] **Play 2/7 — Daily streak + weekly goal ring.** §6 rules (03:00 roll, freezes, repair, holiday mode,
+- [~] **Play 2/7 — Daily streak + weekly goal ring.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) §6 rules (03:00 roll, freezes, repair, holiday mode,
   milestones), Tonight check-in on Today's Tonight card, streak calendar in Me, weekly goal picker + ring on Today;
   today's weekly streak becomes Cook weeks unchanged. *Done when:* streak maths (DST, time zones, migration) tested,
   screenshots, CI green.
-- [ ] **Play 3/7 — Made-it moment.** §7 summary screen, 4 haptic patterns, optional sounds, impact line (takeaway
+- [~] **Play 3/7 — Made-it moment.** ⟶ core taken into **Made-it moment** (2026-11-14); rest 🅿️ parked §7 summary screen, 4 haptic patterns, optional sounds, impact line (takeaway
   price setting), zero-waste line, "Add your photo" prompt. *Done when:* summary content + queue priority tested,
   screenshots (first cook, milestone, level-up), CI green.
-- [ ] **Play 4/7 — Kitchen Bites.** §3 question types, Leitner scheduling, units 1–3 content (food-safety facts
+- [~] **Play 4/7 — Kitchen Bites.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) §3 question types, Leitner scheduling, units 1–3 content (food-safety facts
   sourced + checked by a separate agent), Today card. *Done when:* scheduler + content validation tested, every
   question reviewed, screenshots, CI green.
-- [ ] **Play 5/7 — Cooking Path + chef levels.** §4 map (units 1–4 first), technique tags for bundled recipes
+- [~] **Play 5/7 — Cooking Path + chef levels.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) §4 map (units 1–4 first), technique tags for bundled recipes
   (curated JSON + drift test), cook-from-memory finale, mastery crowns, collection book, cuisine passport, §5 levels
   with sub-ranks + level-up moment. *Done when:* node completion, tagging coverage, mastery + level rules tested,
   screenshots, CI green.
-- [ ] **Play 6/7 — Quests, events, reminders.** Weekly 3 quests from the cook's own library (always achievable, no
+- [~] **Play 6/7 — Quests, events, reminders.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) Weekly 3 quests from the cook's own library (always achievable, no
   repeats), monthly calendar events with frames, "you vs last month", §8 notifications (learned time, streak saver,
   back-off) replacing `cooking-streak-lapse`. *Done when:* quest generation, event calendar, scheduling + back-off
   tested, screenshots, CI green.
-- [ ] **Play 7/7 — Mascot, onboarding, shop.** Original mascot (3 candidates on screenshots, owner picks 🙋) with moods;
+- [~] **Play 7/7 — Mascot, onboarding, shop.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) Original mascot (3 candidates on screenshots, owner picks 🙋) with moods;
   §10 onboarding (first win < 2 min); Spoons shop (freezes, repair, icons, themes, frames, outfits) + impact stats
   card; Settings → Quiet mode. *Done when:* purchase/unlock + mood logic tested, screenshots, CI green.
-- [ ] **Cooking mode upgrade.** Several named timers ("Rice 12:00") with time-sensitive notifications; swipe between
+- [~] **Cooking mode upgrade.** ⟶ merged into **Cooking flow** (2026-11-14) Several named timers ("Rice 12:00") with time-sensitive notifications; swipe between
   steps; each step shows its own ingredients/amounts; Done mid-recipe confirms + resume later; timer presets
   (+1/5/10 min); voice-command hint; VoiceOver labels for timer + progress. *Done when:* multi-timer + step-ingredient
   matching + resume logic tested, screenshots, CI green.
-- [ ] **Guide 1/2 — "Get to know RecipeFinder" checklist + contextual tips** (owner OK 2026-11-09). A dismissible
+- [~] **Guide 1/2 — "Get to know RecipeFinder" checklist + contextual tips** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) (owner OK 2026-11-09). A dismissible
   checklist card on the Recipes home: import a recipe · cook one ("Made it") · build a grocery list · plan a meal · add
   a store · try Siri ("What's for dinner?"). Each step deep-links to the feature and shows a TipKit popover on the
   exact control; steps tick themselves from real events (first import saved, first cook, …), not taps on the card.
   Card hides when all done or dismissed. Add moment-of-use tips (first recipe open → Cook; groceries ≥ 10 items →
   Stores). Pure `FeatureGuideProgress` (which steps are done, from store state) is unit-tested. *Done when:* tests,
   Screenshots of card + one tip, CI green.
-- [ ] **Guide 2/2 — Tutorial mode.** Settings toggle "Show tips & guide": on → reset TipKit datastore + guide
+- [~] **Guide 2/2 — Tutorial mode.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) Settings toggle "Show tips & guide": on → reset TipKit datastore + guide
   progress so everything replays; off → hide all tips. *Done when:* toggle tested (resets state), CI green.
 - [x] **Import from other apps** (owner OK 2026-11-09). Settings → Data → "Import from another app": Paprika
   (`.paprikarecipes` = zip of gzipped JSON), Mela (`.melarecipes`/`.melarecipe` JSON), and CSV (name, ingredients,
@@ -395,7 +424,7 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
 - [x] **Import PDFs and multi-page photos.** Accept PDFs (share sheet + Files) and up to 5 photos at once: PDF text
   via PDFKit (`PDFDocument.string`), image-only pages via the existing Vision OCR; pages joined in order, then the
   normal text-import router. *Done when:* page-joining + PDF text extraction tested on fixtures, CI green.
-- [ ] **Video 1/3 — Import a recipe from a video (speech)** (owner OK 2026-11-09; big feature, all on-device).
+- [~] **Video 1/3 — Import a recipe from a video (speech)** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) (owner OK 2026-11-09; big feature, all on-device).
   Share a saved video (Photos / Files / TikTok "Save video" / screen recording) into the app: the share extension
   only hands the file to the app group (memory limits), the main app extracts the audio (`AVAsset`) and transcribes
   it on-device (iOS 26 `SpeechAnalyzer`/`SpeechTranscriber`; fallback `SFSpeechRecognizer` with
@@ -403,10 +432,10 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
   review wizard with `sourceText` = transcript. Speech permission asked only at first video import, with a clear
   "never leaves your phone" explanation (Info.plist usage string). Cap 10 min of video. *Done when:* audio-extract +
   transcript→prefill path tested with a fixture transcript and a fake transcriber, CI green.
-- [ ] **Video 2/3 — Read on-screen text from the video.** Sample frames (~1 per second, de-duplicated) and run
+- [~] **Video 2/3 — Read on-screen text from the video.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) Sample frames (~1 per second, de-duplicated) and run
   Vision text recognition; merge overlay text (where TikTok recipes usually put amounts) with the transcript before
   interpreting. *Done when:* frame-sampling + text de-dup tested, CI green.
-- [ ] **Video 3/3 — Progress, cancel and limits.** Stage progress ("Listening… Reading on-screen text… Building
+- [~] **Video 3/3 — Progress, cancel and limits.** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) Stage progress ("Listening… Reading on-screen text… Building
   recipe"), Cancel at any stage, clear errors (too long, no speech found → "Start from this text" with whatever was
   found), temp files deleted afterwards. Update in-app Privacy Policy: video/audio processed on-device only (owner OK
   for this legal-text sentence). *Done when:* Screenshots of progress + error, CI green.
@@ -429,14 +458,14 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
 - [ ] **Your Cooking Year (Wrapped).** Ship before 1 Dec. Shareable card: dishes cooked, top cuisine, signature dish
   (most cooked), longest streak, best photo. Pure stats function tested; share via `ShareLink` image render.
   Entry: Recipes header streak chip sheet in December. *Done when:* stats tested on empty + full data, CI green.
-- [ ] **"What's for dinner?" decider.** Swipeable cards from the user's library, ranked by can-make-now %, favourites,
+- [~] **"What's for dinner?" decider.** ⟶ merged into **Plan — swipe to match** (2026-11-14) Swipeable cards from the user's library, ranked by can-make-now %, favourites,
   not-cooked-recently (reuse `RecipeRediscovery` scoring ideas). Entry on the Recipes home. *Done when:* ranking is a
   tested pure function, swipe right opens the recipe, CI green.
-- [ ] **Recently cooked row** on the Recipes home (last 3–5 by `lastCookedAt`), hidden when none. *Done when:* tested
+- [~] **Recently cooked row** ⟶ merged into **Recipes — endless discovery** (2026-11-14) on the Recipes home (last 3–5 by `lastCookedAt`), hidden when none. *Done when:* tested
   selection, CI green.
-- [ ] **Profile → Cooking diary.** No accounts, so a name-and-photo Profile reads like a sign-in. Replace with a photo
+- [~] **Profile → Cooking diary.** ⟶ merged into **My Cookbook** (2026-11-14) No accounts, so a name-and-photo Profile reads like a sign-in. Replace with a photo
   timeline of cooks + stats + badges; drop last-name field. 🙋 Owner to confirm before starting.
-- [ ] **Sunday planning nudge.** Opt-in weekly notification → planner with 3 suggested meals → add week to groceries.
+- [~] **Sunday planning nudge.** ⟶ merged into **Plan — swipe to match** (2026-11-14) Opt-in weekly notification → planner with 3 suggested meals → add week to groceries.
   Uses existing `NotificationKind`. *Done when:* scheduling tested, opt-in in Notification settings, CI green.
 - [ ] **Polish batch** (from WORK.md 2026-11-06): forced `.toolbarColorScheme(.dark)` on MealPlanningView /
   ProfileView / SmartCollectionDetailView (white title in Light); "1 active filters" plural; "Don't ask again"
@@ -444,7 +473,7 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
 - [ ] **Scroll fade elsewhere.** Check other screens with a nav bar + scrolling content for text showing through the
   toolbar; apply `NavigationBarScrollFade` (see DesignSystem.md lesson 2026-11-08) where it does.
 
-- [ ] **Widget + Live Activity** (owner OK 2026-11-10 for the new Widget Extension target, its App Group entitlement
+- [~] **Widget + Live Activity** ⟶ 🅿️ parked (docs/PRODUCT.md, 2026-11-14) (owner OK 2026-11-10 for the new Widget Extension target, its App Group entitlement
   and signing). Home-screen widget "Tonight" (planned meal, else a pantry match) + streak; Live Activity for cooking
   mode (current step + running timer on Lock Screen / Dynamic Island). Data via the existing App Group, read-only, no
   network. Creating the target by hand in `project.pbxproj` from the cloud is risky — if CI can't sign/build it after
@@ -527,6 +556,18 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   (CLAUDE.md error rule). Data-only/optional reads may stay. Group by folder.
 - [ ] **Large wizard: ~1,444 lines across `RecipeWizardView*` + `Wizard/` (target ≤1,000)** — ✅ `SuggestionChip` + hint loop in `NotesStepView` (6b7560c). Remaining: review `RecipeNameStepView` (~210), `BasicInfoStepView`, `WizardIntroSheet`.
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
+
+## Parking lot (owner 2026-11-14 — ideas wait here; reviewed monthly with the owner)
+Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — why it might matter`. No loop step → it stays.
+- Play extras (Kitchen Bites, Cooking Path, quests, mascot, Spoons + shop, daily-streak rework) — loop step: Cook
+  (habit) — revisit after Phase 1 shows whether Made-it alone builds the habit. Items: Play 1/7, 2/7, 4/7–7/7.
+- Badge tiers, stories, sharing (Badges 2/2) — Remember — after My Cookbook.
+- Taste fingerprint, skills, story timeline (Me 2/3) — Discover/Remember — after My Cookbook.
+- Video import (Video 1/3–3/3) — Discover — after Phase 3.
+- "Make a picture" (Pictures 2/4) — Remember — after My Cookbook (own photos first).
+- Guided tour (Guide 1/2–2/2) — none until the flows settle; then onboarding.
+- Widget + Live Activity — Cook (timers on Lock Screen) / Decide (tonight widget) — after Cooking flow.
+- Fridge photo, family cookbooks (iCloud sharing), cook-along Q&A, heirloom mode — earlier owner ideas, undecided.
 
 ## Needs owner
 - 🙋 **Play decisions** (see `docs/PLAY.md`; agents start Play 1/7 once answered): (1) daily streak from a
