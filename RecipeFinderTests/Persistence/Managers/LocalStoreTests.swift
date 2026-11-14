@@ -143,4 +143,16 @@ import Foundation
         #expect(store.bool(forKey: "b") == false)
         #expect(defaults.string(forKey: "appTheme") == "Teal")
     }
+
+    @Test func clearAll_removesRecentWebSearches_includingTheOldUnprefixedKey() throws {
+        let defaults = try freshDefaults()
+        let store = LocalStore(userDefaults: defaults)
+        defaults.set("pasta", forKey: RecentWebSearches.storageKey)   // what the search screen's @AppStorage writes
+        defaults.set("curry", forKey: "recentWebSearches")            // written by builds before the namespace
+
+        store.clearAll()
+
+        #expect(defaults.object(forKey: RecentWebSearches.storageKey) == nil)
+        #expect(defaults.object(forKey: "recentWebSearches") == nil)
+    }
 }

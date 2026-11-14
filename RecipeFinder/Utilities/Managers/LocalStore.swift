@@ -111,8 +111,8 @@ final class LocalStore: @unchecked Sendable {
         userDefaults.removeObject(forKey: storedKey(key))
     }
 
-    /// Removes every key this store owns (the `rf.` namespace) and nothing else, except `keeping` (never removed,
-    /// so a crash mid-Reset can't lose them).
+    /// Removes every key this store owns (the `rf.` namespace, plus `retiredUnprefixedKeys`) and nothing else, except
+    /// `keeping` (never removed, so a crash mid-Reset can't lose them).
     func clearAll(keeping: Set<String> = []) {
         let kept = Set(keeping.map(storedKey))
         let ownedKeys = userDefaults.dictionaryRepresentation().keys.filter {
@@ -121,5 +121,11 @@ final class LocalStore: @unchecked Sendable {
         for key in ownedKeys {
             userDefaults.removeObject(forKey: key)
         }
+        for key in Self.retiredUnprefixedKeys {
+            userDefaults.removeObject(forKey: key)
+        }
     }
+
+    /// Cook data older builds kept outside the namespace; Reset still clears it so nothing is left behind.
+    static let retiredUnprefixedKeys: Set<String> = [RecentWebSearches.retiredStorageKey]
 }

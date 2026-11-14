@@ -6,7 +6,7 @@ import WebKit
 struct RecipeWebSearchView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("webSearchEngine") private var engineRaw = WebRecipeSearchEngine.default.rawValue
-    @AppStorage("recentWebSearches") private var recentRaw = ""
+    @AppStorage(RecentWebSearches.storageKey) private var recentRaw = ""
 
     @State private var query = ""
     @State private var isEditing = true

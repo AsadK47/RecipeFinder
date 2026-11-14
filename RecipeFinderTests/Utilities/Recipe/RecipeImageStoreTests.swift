@@ -145,4 +145,37 @@ struct RecipeImageStoreTests {
         #expect(store.isLocalReference("https://example.com/a.jpg") == false)
         #expect(store.isLocalReference("") == false)
     }
+
+    @Test("Deleting all photos removes every file in RecipeImages, the cook's own and kept web copies")
+    func deleteAllPhotosRemovesThePhotoFolder() throws {
+        let directory = makeTempDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = RecipeImageStore(documentsDirectory: directory)
+        let own = try #require(store.persist(makeImage(), recipeId: UUID()))
+        let gallery = store.persistGallery([makeImage()], recipeId: UUID())
+        let webCopy = directory.appendingPathComponent("RecipeImages/web-abc.jpg")
+        try Data([0xFF, 0xD8]).write(to: webCopy)
+        let elsewhere = directory.appendingPathComponent("RecipeFinderBackup.json")
+        try Data("{}".utf8).write(to: elsewhere)
+
+        try store.deleteAllPhotos()
+
+        for path in [own] + gallery {
+            let absolute = try #require(store.absolutePath(for: path))
+            #expect(!FileManager.default.fileExists(atPath: absolute))
+        }
+        #expect(!FileManager.default.fileExists(atPath: webCopy.path))
+        #expect(FileManager.default.fileExists(atPath: elsewhere.path))
+    }
+
+    @Test("Deleting all photos when there are none succeeds and a new photo can be saved after")
+    func deleteAllPhotosWithNoFolderSucceeds() throws {
+        let directory = makeTempDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = RecipeImageStore(documentsDirectory: directory)
+
+        try store.deleteAllPhotos()
+
+        #expect(store.persist(makeImage(), recipeId: UUID()) != nil)
+    }
 }

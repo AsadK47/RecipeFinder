@@ -91,6 +91,15 @@ struct RecipeImageStore {
         try? fileManager.removeItem(atPath: path)
     }
 
+    /// Reset: removes the whole photo folder (the cook's photos and kept web-picture copies). A missing folder is
+    /// already the wanted state; any other failure throws so the caller can report it.
+    func deleteAllPhotos() throws {
+        guard let documentsDirectory else { return }
+        let folder = documentsDirectory.appendingPathComponent("RecipeImages", isDirectory: true)
+        guard fileManager.fileExists(atPath: folder.path) else { return }
+        try fileManager.removeItem(at: folder)
+    }
+
     /// Whether `reference` is an owned on-disk file (not a URL); accepts legacy absolute and current relative formats.
     func isLocalReference(_ reference: String) -> Bool {
         guard !reference.isEmpty, !reference.hasPrefix("http") else { return false }

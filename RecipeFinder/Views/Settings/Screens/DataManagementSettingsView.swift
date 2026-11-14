@@ -1,5 +1,7 @@
 import SwiftUI
 
+private let resetLogger = AppLogger.logger(category: "Reset")
+
 /// Factory reset and destructive-action confirmation preferences.
 struct DataManagementSettingsView: View {
     @Environment(\.recipeStore) private var recipeStore
@@ -295,6 +297,12 @@ struct DataManagementSettingsView: View {
     private func resetToDefault() {
         PersistenceController.shared.deleteAllRecipes()
         LocalStore.shared.clearAll(keeping: SyncPreference.keptThroughReset)
+        // Photo rows went with the recipes above; the files they mirrored (and kept web copies) go too.
+        do {
+            try RecipeImageStore().deleteAllPhotos()
+        } catch {
+            resetLogger.error("❌ Reset couldn't delete recipe photos: \(error.localizedDescription)")
+        }
 
         // Appearance settings are app-wide (global @AppStorage) — restore defaults.
         let defaults = UserDefaults.standard

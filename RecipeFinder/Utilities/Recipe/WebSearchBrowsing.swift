@@ -51,6 +51,9 @@ enum WebSearchBrowsing {
 /// The last few searches, newest first, stored as one newline-separated string in `@AppStorage`.
 enum RecentWebSearches {
     static let limit = 6
+    /// In LocalStore's `rf.` namespace so Reset clears it; `retiredStorageKey` is where builds before 14 Nov 2026 kept it.
+    static let storageKey = LocalStore.keyPrefix + "recentWebSearches"
+    static let retiredStorageKey = "recentWebSearches"
 
     static func adding(_ query: String, to recent: [String]) -> [String] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
