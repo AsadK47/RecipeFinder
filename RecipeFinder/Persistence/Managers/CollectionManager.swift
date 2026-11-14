@@ -66,6 +66,11 @@ final class CollectionManager: CollectionManaging {
         loadCollections()
     }
 
+    /// Re-reads the store, e.g. after another device's edits arrive through iCloud.
+    func reload() {
+        loadCollections()
+    }
+
     private func loadCollections() {
         collections = mirror.load()
     }

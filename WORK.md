@@ -1,15 +1,27 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 3a merged (40bc462); item still claimed 🚧. Check the TestFlight run for
-40bc462 signed with the iCloud entitlement.
+Data safety 2/4 slice 3b-1 (reload on iCloud changes) on `agent/sync-remote-reload`: `RemoteChangeReloader`,
+`PersistenceController+RemoteChanges` (`takeOutsideChanges`, `isSyncing`), `CollectionManager.reload()`, wiring in
+`RecipeFinderApp.reloadOnICloudChanges()`; tests in `RemoteChangeReloaderTests.swift`. Waiting on Build & Test.
 
 ## Next action
-If TestFlight for 40bc462 failed on signing/profile → fix that first. Slice 3b = reload every manager on `NSPersistentStoreRemoteChange` (CollectionManager needs a
-public `reload()`; only while sync on) + Settings "iCloud sync" toggle/status (sets `SyncPreference.key`, applies on
-next launch; Reset copy warns it erases on every device). Slice 4 = recipe photos + first-sync dedupe. Slice 5 = Privacy §7.
+Green → merge, log. Then slice 3b-2 = Settings "iCloud sync" toggle/status (sets `SyncPreference.key`, applies on next
+launch; Reset copy warns it erases on every device) — the first slice that turns sync on: tell the owner which build.
+Slice 4 = recipe photos + first-sync dedupe. Slice 5 = Privacy §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 3b-1 (reload)**: split from the toggle so the reload exists before sync can be switched
+  on. The remote-change notification fires for this app's own saves too, so reload only when store history since
+  the last check has a transaction *with an author* touching an app entity (this app never sets
+  `transactionAuthor`; CloudKit's importer does) — avoids a reload→save→notify loop. Unreadable history = no reload
+  (next launch catches up) rather than "changed" (could loop). Bursts coalesce: one pending reload, 1 s delay,
+  history checked after the delay. Only started when the store actually opened with CloudKit (`isSyncing`), not
+  from `SyncPreference`, since the container is set at launch. Rejected: filtering on the importer's author string
+  (undocumented). **Pre-mortem:** (1) own saves trigger endless reloads → `thisAppsOwnSaveIsNotAnOutsideChange`,
+  `thisDevicesOwnSaveReloadsNothing`; (2) an import is missed → `anICloudImportIsAnOutsideChange`,
+  `anImportAfterThisAppsOwnSaveIsStillSeen`, `theStoresRemoteChangeNotificationSchedulesAReload`; (3) an import
+  burst reloads N times / runs with sync off → `aBurstOfStoreChangesReloadsOnce`, `syncIsOffForAStoreOpenedWithoutICloud`.
 - **Data safety 2/4 slice 3a (container)**: container is always `NSPersistentCloudKitContainer`; history tracking +
   remote-change options always on (CloudKit needs history from the start; turning history off later would make the
   store read-only). `cloudKitContainerOptions` only when `SyncPreference` is on at launch (read once — a live switch

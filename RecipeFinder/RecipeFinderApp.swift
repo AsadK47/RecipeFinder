@@ -24,6 +24,34 @@ struct RecipeFinderApp: App {
         try? Tips.configure([.displayFrequency(.daily)])
         configureAppearance()
         initializeDatabase()
+        // App.init runs on the main thread.
+        MainActor.assumeIsolated { Self.reloadOnICloudChanges() }
+    }
+
+    /// Holds the app's reloader for its lifetime; nil while sync is off.
+    @MainActor private static var iCloudReloader: RemoteChangeReloader?
+
+    /// With iCloud sync on, every list re-reads the store when another device's edits arrive.
+    @MainActor private static func reloadOnICloudChanges() {
+        let persistence = PersistenceController.shared
+        guard persistence.isSyncing, iCloudReloader == nil else { return }
+        persistence.startTrackingOutsideChanges()
+        let reloader = RemoteChangeReloader(
+            hasOutsideChanges: { persistence.takeOutsideChanges() },
+            reloads: [
+                { await RecipeStore.shared.refresh() },
+                { CollectionManager.shared.reload() },
+                { MealPlanningManager.shared.reload() },
+                { ShoppingListManager.shared.reload() },
+                { KitchenInventoryManager.shared.reload() },
+                { BadgeManager.shared.reload() },
+                { CookingStreakManager.shared.reload() },
+                { ProfileManager.shared.loadProfile() }
+            ]
+        )
+        reloader.observe(persistence.container.persistentStoreCoordinator)
+        iCloudReloader = reloader
+        logger.info("iCloud sync on: lists reload when other devices' edits arrive")
     }
     
     var body: some Scene {

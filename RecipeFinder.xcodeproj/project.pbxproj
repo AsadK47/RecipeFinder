@@ -387,6 +387,8 @@
 		F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */; };
 		0941BE84B024D313914B4BB7 /* StoreBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E52FE5FD03F62A0470F865 /* StoreBackup.swift */; };
 		192C09692D9ACC566FEAED3E /* CloudSyncStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB3693EBFC412C294B0298B /* CloudSyncStore.swift */; };
+		E4A636D6D7600E6CA1B7AE89 /* PersistenceController+RemoteChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4216A36D080A3BFBBCB578B /* PersistenceController+RemoteChanges.swift */; };
+		A78C5027B3B731086DDA03D7 /* RemoteChangeReloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5031E4C538629DEED5B87E66 /* RemoteChangeReloader.swift */; };
 		436B6ECE6549A3AF93D16465 /* LegacyBlobMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD34D0E247985BEB47EA62EB /* LegacyBlobMigration.swift */; };
 		FF454AC3E71B1FC112817BB4 /* CookDateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7450BAA6559F962B1042426D /* CookDateStore.swift */; };
 		65CEBB52A31864FD96940B68 /* CollectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF0424B94EFE55BBA89C1BD /* CollectionStore.swift */; };
@@ -468,6 +470,7 @@
 		F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */; };
 		00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */; };
 		A5FAC7557551592D18618F08 /* CloudSyncStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E091D0920BF64D58EED04B1 /* CloudSyncStoreTests.swift */; };
+		3D14005DBE2D0095F37B715E /* RemoteChangeReloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05009CA7E39EE0457470F7A5 /* RemoteChangeReloaderTests.swift */; };
 		2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */; };
 		41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */; };
 		90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */; };
@@ -928,6 +931,8 @@
 		F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+Database.swift"; sourceTree = "<group>"; };
 		06E52FE5FD03F62A0470F865 /* StoreBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackup.swift; sourceTree = "<group>"; };
 		3DB3693EBFC412C294B0298B /* CloudSyncStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncStore.swift; sourceTree = "<group>"; };
+		E4216A36D080A3BFBBCB578B /* PersistenceController+RemoteChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RemoteChanges.swift"; sourceTree = "<group>"; };
+		5031E4C538629DEED5B87E66 /* RemoteChangeReloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteChangeReloader.swift; sourceTree = "<group>"; };
 		AD34D0E247985BEB47EA62EB /* LegacyBlobMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyBlobMigration.swift; sourceTree = "<group>"; };
 		7450BAA6559F962B1042426D /* CookDateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateStore.swift; sourceTree = "<group>"; };
 		0FF0424B94EFE55BBA89C1BD /* CollectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionStore.swift; sourceTree = "<group>"; };
@@ -1007,6 +1012,7 @@
 		F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationTests.swift; sourceTree = "<group>"; };
 		E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackupTests.swift; sourceTree = "<group>"; };
 		4E091D0920BF64D58EED04B1 /* CloudSyncStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncStoreTests.swift; sourceTree = "<group>"; };
+		05009CA7E39EE0457470F7A5 /* RemoteChangeReloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteChangeReloaderTests.swift; sourceTree = "<group>"; };
 		16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateMigrationTests.swift; sourceTree = "<group>"; };
 		2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionMigrationTests.swift; sourceTree = "<group>"; };
 		95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMergeTests.swift; sourceTree = "<group>"; };
@@ -1575,6 +1581,8 @@
 				F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */,
 				06E52FE5FD03F62A0470F865 /* StoreBackup.swift */,
 				3DB3693EBFC412C294B0298B /* CloudSyncStore.swift */,
+				E4216A36D080A3BFBBCB578B /* PersistenceController+RemoteChanges.swift */,
+				5031E4C538629DEED5B87E66 /* RemoteChangeReloader.swift */,
 				AD34D0E247985BEB47EA62EB /* LegacyBlobMigration.swift */,
 				7450BAA6559F962B1042426D /* CookDateStore.swift */,
 				0FF0424B94EFE55BBA89C1BD /* CollectionStore.swift */,
@@ -1896,6 +1904,7 @@
 				F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */,
 				E2854C60CFF3BEE74D14349B /* StoreBackupTests.swift */,
 				4E091D0920BF64D58EED04B1 /* CloudSyncStoreTests.swift */,
+				05009CA7E39EE0457470F7A5 /* RemoteChangeReloaderTests.swift */,
 				16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */,
 				2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */,
 				95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */,
@@ -2455,6 +2464,8 @@
 				F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */,
 				0941BE84B024D313914B4BB7 /* StoreBackup.swift in Sources */,
 				192C09692D9ACC566FEAED3E /* CloudSyncStore.swift in Sources */,
+				E4A636D6D7600E6CA1B7AE89 /* PersistenceController+RemoteChanges.swift in Sources */,
+				A78C5027B3B731086DDA03D7 /* RemoteChangeReloader.swift in Sources */,
 				436B6ECE6549A3AF93D16465 /* LegacyBlobMigration.swift in Sources */,
 				FF454AC3E71B1FC112817BB4 /* CookDateStore.swift in Sources */,
 				65CEBB52A31864FD96940B68 /* CollectionStore.swift in Sources */,
@@ -2771,6 +2782,7 @@
 				F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */,
 				00298F784892F37D9CB72121 /* StoreBackupTests.swift in Sources */,
 				A5FAC7557551592D18618F08 /* CloudSyncStoreTests.swift in Sources */,
+				3D14005DBE2D0095F37B715E /* RemoteChangeReloaderTests.swift in Sources */,
 				2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */,
 				41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */,
 				90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */,

@@ -14,6 +14,13 @@ final class PersistenceController {
     let container: NSPersistentContainer
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
+    /// Where `takeOutsideChanges()` last stopped reading the store's history (`PersistenceController+RemoteChanges`).
+    var lastHistoryToken: NSPersistentHistoryToken?
+
+    /// True when the open store is mirrored to iCloud (sync was on at launch and the store opened with it).
+    var isSyncing: Bool {
+        isStoreLoaded && container.persistentStoreDescriptions.first?.cloudKitContainerOptions != nil
+    }
 
     enum Entity {
         static let recipe = "Recipe"
