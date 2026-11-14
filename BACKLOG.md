@@ -78,6 +78,11 @@ Keep **Log** to the last 7 days. Move older lines, unchanged, to the top of `CHA
 drop a line while moving it.
 
 ### Guardrails — never do these without the owner saying yes in this file
+- **Privacy text moves with the data** (owner 2026-11-14): any change to what is stored, synced or sent (entity or
+  attribute, sync scope, network call, photo handling) updates `PrivacyPolicyView.swift`, the website `privacy.html`
+  and in-app explanatory copy **in the same item**, checked by two independent reviewers (text vs app, claims vs
+  code). Missing → the item can't land. (Recipe photos began syncing on 14 Nov while the policy and the sync switch
+  still said photos stay on the device.)
 - Change the Core Data model / `.xccurrentversion`, signing, entitlements, bundle IDs, CI/TestFlight workflows.
 - Change legal text (Terms, Privacy, LICENSE), pricing, or anything that sends data off the device.
 - Add a third-party dependency, a new Xcode target, or delete user data paths.
