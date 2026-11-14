@@ -537,7 +537,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
-- 🐞 2026-11-14: Screenshots `testCaptureTodayTimes` red since 3a0c0f8 — still expects "quick ideas" in the evening Tonight line; update the assertion to the new "ready by" copy.
+- 🐞 2026-11-14: Screenshots `testCaptureTodayTimes` red since 3a0c0f8 — still expects "quick ideas" in the evening Tonight line; update the assertion to the new "ready by" copy. — 🚧 builder agent 2026-11-14
 
 ## Log
 _Last 7 days; older entries are in `CHANGELOG.md`._
