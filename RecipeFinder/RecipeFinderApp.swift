@@ -28,7 +28,17 @@ struct RecipeFinderApp: App {
         configureAppearance()
         initializeDatabase()
         // App.init runs on the main thread.
-        MainActor.assumeIsolated { Self.reloadOnICloudChanges() }
+        MainActor.assumeIsolated {
+            Self.reloadOnICloudChanges()
+            Self.purgeOldStoreHistory()
+        }
+    }
+
+    /// Keeps the store's history to the last week (`PersistenceController.purgeHistory`).
+    @MainActor private static func purgeOldStoreHistory() {
+        let persistence = PersistenceController.shared
+        let cutoff = PersistenceController.historyPurgeCutoff(now: .now)
+        Task { await persistence.purgeHistory(before: cutoff) }
     }
 
     /// Holds the app's reloader for its lifetime; nil while sync is off.

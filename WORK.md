@@ -1,13 +1,24 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 3b-2b merged (a4ee07f); item still claimed 🚧.
+Data safety 2/4 slice 4a (store-history purge) on `agent/history-purge`: `PersistenceController+RemoteChanges`
+`purgeHistory(before:)` + expired-checkpoint recovery in `takeOutsideChanges`; launch call in `RecipeFinderApp`;
+tests `StoreHistoryPurgeTests` (RemoteChangeReloaderTests.swift). Waiting on CI.
 
 ## Next action
-Slice 4 = recipe photos sync + dedupe of other lists (+ "erased elsewhere while closed" marker) + store-history purge.
+Merge 4a when green. Then slice 4b = recipe photos sync (model 17 photo entity) + dedupe of other lists
+(+ "erased elsewhere while closed" marker).
 Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5 = website privacy.html to match §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 4a (history purge)**: history tracking is always on, so history grew forever even with sync
+  off. Purge at launch, background context, everything older than 7 days (Apple's CloudKit sample uses a week;
+  CloudKit's first export doesn't need history, so purging with sync off is safe). Tracking checkpoint is set to "now"
+  at launch, so a week-old purge never reaches it; if it ever does (token expired), reload once and read on from now
+  rather than return "no change" forever. **Pre-mortem:** (1) purge deletes recipes, not just history →
+  `purgingHistoryKeepsTheRecipes`; (2) another device's edits stop reloading after a purge →
+  `anImportAfterThePurgeIsStillSeenOnce`; (3) purge removes too much/too little → `historyIsKeptForAWeek`,
+  `historyBeforeTheCutoffIsRemoved`, `historyAfterTheCutoffIsKept`. No UI → no screenshots.
 - **Data safety 2/4 slice 3b-2b (switch)**: opt-in (off by default), against the item's "on by default": the shipped
   policy promised opt-in. Switch writes `wantedKey`; `key` copied at launch first thing in `App.init`, so the CloudKit
   mirror and every list's merge rules agree for the whole launch. Old installs with `key` on and no `wantedKey` stay on.
