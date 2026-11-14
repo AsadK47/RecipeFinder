@@ -117,8 +117,9 @@ import Foundation
         controller.saveRecipeModel(makeRecipe(name: "One"))
         controller.saveRecipeModel(makeRecipe(name: "Two"))
 
-        controller.deleteAllRecipes()
+        let erased = controller.deleteAllRecipes()
 
+        #expect(erased)
         #expect(controller.fetchRecipes().isEmpty)
         #expect(controller.fetchRecipeCount() == 0)
     }

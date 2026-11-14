@@ -5,9 +5,11 @@ import Foundation
 extension PersistenceController {
 
     /// Settings → Reset: every recipe, and the iCloud copies of their photos (`RecipePhotoSync`), so an erased
-    /// library's photos don't come back from iCloud as files on this or another device.
-    func deleteAllRecipes() {
-        guard ensureStoreIsReady() else { return }
+    /// library's photos don't come back from iCloud as files on this or another device. Returns whether it worked, so
+    /// Reset keeps the photo files of a library it couldn't erase.
+    @discardableResult
+    func deleteAllRecipes() -> Bool {
+        guard ensureStoreIsReady() else { return false }
 
         let context = container.viewContext
         do {
@@ -24,8 +26,10 @@ extension PersistenceController {
             }
             try context.save()
             persistenceLogger.debug("✅ All recipes deleted")
+            return true
         } catch {
             persistenceLogger.error("❌ Failed to delete all recipes: \(error.localizedDescription)")
+            return false
         }
     }
 }

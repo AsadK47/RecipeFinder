@@ -295,13 +295,16 @@ struct DataManagementSettingsView: View {
     }
 
     private func resetToDefault() {
-        PersistenceController.shared.deleteAllRecipes()
+        let recipesErased = PersistenceController.shared.deleteAllRecipes()
         LocalStore.shared.clearAll(keeping: SyncPreference.keptThroughReset)
-        // Photo rows went with the recipes above; the files they mirrored (and kept web copies) go too.
-        do {
-            try RecipeImageStore().deleteAllPhotos()
-        } catch {
-            resetLogger.error("❌ Reset couldn't delete recipe photos: \(error.localizedDescription)")
+        // Photo rows went with the recipes above; the files they mirrored (and kept web copies) go too — but only if
+        // the recipes really went, or the cook would keep recipes whose photos are gone.
+        if recipesErased {
+            do {
+                try RecipeImageStore().deleteAllPhotos()
+            } catch {
+                resetLogger.error("❌ Reset couldn't delete recipe photos: \(error.localizedDescription)")
+            }
         }
 
         // Appearance settings are app-wide (global @AppStorage) — restore defaults.
