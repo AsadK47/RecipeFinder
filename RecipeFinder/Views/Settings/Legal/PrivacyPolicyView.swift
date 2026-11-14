@@ -2,6 +2,7 @@ import SwiftUI
 
 // NOTE: Updated 2026-11-10 (owner request): describes today's data flows without promising they can never change,
 // so opt-in features (iCloud sync/sharing, accounts) can be added by updating this policy first.
+// Updated 2026-11-14 (owner OK in BACKLOG, Data safety 2/4): Section 7 describes the opt-in iCloud sync.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -21,7 +22,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("2. Our Approach to Privacy")
 
-                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device and is not collected by, or accessible to, the Developer, except where you direct the Application to retrieve content from the internet (see Section 5).")
+                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device (and, if you turn on iCloud sync, in your own iCloud account) and is not collected by, or accessible to, the Developer, except where you direct the Application to retrieve content from the internet (see Section 5).")
 
                 BodyText("2.2 We will only collect or share Personal Information in the ways described in this Privacy Policy. If we introduce a feature that would handle your information differently, we will update this Privacy Policy before that feature is made available, and any such feature will be optional.")
 
@@ -64,9 +65,11 @@ struct PrivacyPolicyView: View {
 
                 SectionTitle("7. Optional Sync and Sharing")
 
-                BodyText("7.1 The current version does not synchronise your data to any cloud service. Future versions may offer optional features such as iCloud synchronisation, or sharing recipes and collections with people you choose. Where such a feature uses Apple's iCloud, your data is stored in your own iCloud account under Apple's terms, and content you choose to share is visible to the people you share it with.")
+                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. While it is on, the information described in Section 4 (other than your app preferences) is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. The Developer cannot access your iCloud account or the data in it.")
 
-                BodyText("7.2 Any such feature will be off until you turn it on, and Sections 4 and 5 will be updated to describe what it does before it is released.")
+                BodyText("7.2 You can turn iCloud sync off at any time in the same place; your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, deletes it on every device signed in to your iCloud account.")
+
+                BodyText("7.3 Future versions may offer sharing recipes and collections with people you choose. Content you choose to share will be visible to the people you share it with. Any such feature will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
             }
 
             Group {

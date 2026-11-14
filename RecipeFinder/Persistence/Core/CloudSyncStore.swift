@@ -1,3 +1,4 @@
+import CloudKit
 import CoreData
 import Foundation
 
@@ -13,6 +14,22 @@ enum CloudSyncStore {
         description.cloudKitContainerOptions = syncOn
             ? NSPersistentCloudKitContainerOptions(containerIdentifier: containerIdentifier)
             : nil
+    }
+
+    /// Whether this device is signed in to iCloud; nil when CloudKit can't say. Only ask while the store is
+    /// mirrored (`PersistenceController.isSyncing`): that proves the app is signed with the CloudKit container.
+    static func hasICloudAccount() async -> Bool? {
+        do {
+            let status = try await CKContainer(identifier: containerIdentifier).accountStatus()
+            switch status {
+            case .available: return true
+            case .noAccount, .restricted: return false
+            default: return nil
+            }
+        } catch {
+            AppLogger.logger(category: "CloudSyncStore").error("❌ iCloud account check failed: \(error.localizedDescription)")
+            return nil
+        }
     }
 
     /// Reasons CloudKit would refuse this model. CloudKit can't enforce unique constraints or required values

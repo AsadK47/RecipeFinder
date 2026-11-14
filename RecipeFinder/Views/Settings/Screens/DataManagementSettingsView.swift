@@ -19,6 +19,8 @@ struct DataManagementSettingsView: View {
 
     var body: some View {
         SettingsScreen("Data Management") {
+            ICloudSyncSection()
+
             backupSection
 
             OtherAppImportSection()
@@ -134,7 +136,7 @@ struct DataManagementSettingsView: View {
                 resetToDefault()
             }
         } message: {
-            Text("This will reset the app to factory defaults, clearing all your data and restoring sample recipes. Use this if you encounter any issues. This action cannot be undone!")
+            Text(resetWarning)
         }
     }
 
@@ -276,9 +278,24 @@ struct DataManagementSettingsView: View {
         backupMessage = message
     }
 
+    /// With iCloud sync in play the store is shared, so Reset erases the library on every device too.
+    private var resetWarning: String {
+        let status = SyncStatus(
+            wanted: SyncPreference.isWanted(in: .shared),
+            launchedOn: SyncPreference.isOn(in: .shared),
+            isSyncing: PersistenceController.shared.isSyncing,
+            hasICloudAccount: nil
+        )
+        let base = "This will reset the app to factory defaults, clearing all your data and restoring sample recipes."
+        return status.resetErasesEveryDevice
+            ? base + " With iCloud sync, this also clears your data on every device signed in to your iCloud. This action cannot be undone!"
+            : base + " Use this if you encounter any issues. This action cannot be undone!"
+    }
+
     private func resetToDefault() {
         PersistenceController.shared.deleteAllRecipes()
-        LocalStore.shared.clearAll()
+        // The sync choice survives Reset: forgetting it mid-launch would switch the rules against a syncing store.
+        SyncPreference.keepingChoice(in: .shared) { LocalStore.shared.clearAll() }
 
         // Appearance settings are app-wide (global @AppStorage) — restore defaults.
         let defaults = UserDefaults.standard

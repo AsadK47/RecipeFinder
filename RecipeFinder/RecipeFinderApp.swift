@@ -8,6 +8,9 @@ private let logger = AppLogger.logger(category: "RecipeFinderApp")
 struct RecipeFinderApp: App {
 
     init() {
+        // First, before anything opens the database: the Settings sync switch only takes effect at launch.
+        SyncPreference.applyAtLaunch(in: .shared)
+
         #if DEBUG
         // UI-test launch hook; DEBUG-gated, and App.init is main-thread so assumeIsolated is safe.
         MainActor.assumeIsolated {

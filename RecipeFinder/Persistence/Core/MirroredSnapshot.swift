@@ -1,14 +1,5 @@
 import Foundation
 
-/// The cook's iCloud sync switch (Data safety 2/4). Off until the CloudKit container and the Settings toggle ship.
-enum SyncPreference {
-    static let key = "iCloudSyncEnabled"
-
-    static func isOn(in storage: LocalStore) -> Bool {
-        storage.bool(forKey: key)
-    }
-}
-
 enum MirroredSnapshotError: LocalizedError {
     case verificationFailed
 

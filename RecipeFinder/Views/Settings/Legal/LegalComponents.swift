@@ -116,7 +116,7 @@ struct ComplianceBadge: View {
 /// When the Privacy Policy / Terms copy last changed — bump this when you edit either document.
 /// (Was `Date()` at render time, so the pages always claimed they were updated today.)
 enum LegalDocument {
-    static let lastUpdated = "10 November 2026"
+    static let lastUpdated = "14 November 2026"
 }
 
 /// Shared frame for legal documents: themed background, title + subtitle header, scrolling body, Done button.

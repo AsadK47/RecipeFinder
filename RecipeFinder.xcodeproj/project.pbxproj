@@ -123,6 +123,7 @@
 		9E97EEA4300795F100D35FAB /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */; };
 		9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */; };
 		392D9B18ACD217D29B5A5E51 /* OtherAppImportSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733DDB51933A585D3F0D3952 /* OtherAppImportSection.swift */; };
+		B16A96697B2A3E5E9ED49B0F /* ICloudSyncSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934085D7DB9D6FF5667BE652 /* ICloudSyncSection.swift */; };
 		9E97EEA83007962900D35FAB /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA73007962900D35FAB /* HelpView.swift */; };
 		9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA93007963C00D35FAB /* AboutView.swift */; };
 		9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEAB3007965300D35FAB /* PartyTimeView.swift */; };
@@ -398,6 +399,7 @@
 		A43B04246599889B7D5E3766 /* EarnedBadgeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614CAE613C4AD525B066F7A7 /* EarnedBadgeStore.swift */; };
 		833EEF6BE9ED4B23CF87648D /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0542D54480012A7A985F69 /* ProfileStore.swift */; };
 		678D5AA6B6A42AEF6B0AC868 /* MirroredSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */; };
+		C00915D18E94CB284A6B563E /* SyncPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8187B3DD25F6285C3D935A /* SyncPreference.swift */; };
 		7A492F6EDF4D4E028F0B475B /* SyncMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F26716475678BA731910690 /* SyncMerge.swift */; };
 		F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C33045D76D008BF231 /* Ingredient.swift */; };
 		F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */; };
@@ -474,6 +476,7 @@
 		2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */; };
 		41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */; };
 		90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */; };
+		713433A3F8B7577DAFCB4559 /* SyncPreferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D8FB13DF51D8CB01F36B5 /* SyncPreferenceTests.swift */; };
 		B14BF369957DA93E91581116 /* MealPlanMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */; };
 		DF5EDFECF3A6EF540A9C155B /* ShoppingListMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD4EA6D6A93681FD2D805CE /* ShoppingListMigrationTests.swift */; };
 		62026632EB8C0509949AD5A1 /* KitchenMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0D10894819B01C69B44D48 /* KitchenMigrationTests.swift */; };
@@ -669,6 +672,7 @@
 		9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementSettingsView.swift; sourceTree = "<group>"; };
 		733DDB51933A585D3F0D3952 /* OtherAppImportSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherAppImportSection.swift; sourceTree = "<group>"; };
+		934085D7DB9D6FF5667BE652 /* ICloudSyncSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncSection.swift; sourceTree = "<group>"; };
 		9E97EEA73007962900D35FAB /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		9E97EEA93007963C00D35FAB /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		9E97EEAB3007965300D35FAB /* PartyTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyTimeView.swift; sourceTree = "<group>"; };
@@ -942,6 +946,7 @@
 		614CAE613C4AD525B066F7A7 /* EarnedBadgeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarnedBadgeStore.swift; sourceTree = "<group>"; };
 		1C0542D54480012A7A985F69 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirroredSnapshot.swift; sourceTree = "<group>"; };
+		EA8187B3DD25F6285C3D935A /* SyncPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPreference.swift; sourceTree = "<group>"; };
 		3F26716475678BA731910690 /* SyncMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMerge.swift; sourceTree = "<group>"; };
 		F3E9D1C33045D76D008BF231 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNameFormatter.swift; sourceTree = "<group>"; };
@@ -1016,6 +1021,7 @@
 		16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookDateMigrationTests.swift; sourceTree = "<group>"; };
 		2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionMigrationTests.swift; sourceTree = "<group>"; };
 		95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMergeTests.swift; sourceTree = "<group>"; };
+		A18D8FB13DF51D8CB01F36B5 /* SyncPreferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPreferenceTests.swift; sourceTree = "<group>"; };
 		CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanMigrationTests.swift; sourceTree = "<group>"; };
 		0DD4EA6D6A93681FD2D805CE /* ShoppingListMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListMigrationTests.swift; sourceTree = "<group>"; };
 		2D0D10894819B01C69B44D48 /* KitchenMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenMigrationTests.swift; sourceTree = "<group>"; };
@@ -1592,6 +1598,7 @@
 				614CAE613C4AD525B066F7A7 /* EarnedBadgeStore.swift */,
 				1C0542D54480012A7A985F69 /* ProfileStore.swift */,
 				8359A7C6585F08ECB8524CE3 /* MirroredSnapshot.swift */,
+				EA8187B3DD25F6285C3D935A /* SyncPreference.swift */,
 				3F26716475678BA731910690 /* SyncMerge.swift */,
 			);
 			path = Core;
@@ -1881,6 +1888,7 @@
 				9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */,
 				9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */,
 				733DDB51933A585D3F0D3952 /* OtherAppImportSection.swift */,
+				934085D7DB9D6FF5667BE652 /* ICloudSyncSection.swift */,
 				9E97EEA73007962900D35FAB /* HelpView.swift */,
 				9E97EEA93007963C00D35FAB /* AboutView.swift */,
 				9E97EEAB3007965300D35FAB /* PartyTimeView.swift */,
@@ -1908,6 +1916,7 @@
 				16EFD40444BEC0EB6F7A2D2F /* CookDateMigrationTests.swift */,
 				2E6CFC2E1768AC73B6761A3A /* CollectionMigrationTests.swift */,
 				95FA4F361096B5AA4DD7D6FF /* SyncMergeTests.swift */,
+				A18D8FB13DF51D8CB01F36B5 /* SyncPreferenceTests.swift */,
 				CE21DCF051D08F30557F4244 /* MealPlanMigrationTests.swift */,
 				0DD4EA6D6A93681FD2D805CE /* ShoppingListMigrationTests.swift */,
 				2D0D10894819B01C69B44D48 /* KitchenMigrationTests.swift */,
@@ -2475,6 +2484,7 @@
 				A43B04246599889B7D5E3766 /* EarnedBadgeStore.swift in Sources */,
 				833EEF6BE9ED4B23CF87648D /* ProfileStore.swift in Sources */,
 				678D5AA6B6A42AEF6B0AC868 /* MirroredSnapshot.swift in Sources */,
+				C00915D18E94CB284A6B563E /* SyncPreference.swift in Sources */,
 				7A492F6EDF4D4E028F0B475B /* SyncMerge.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				C721558A8AB2C6ADFFEDE856 /* RemoteImageFetcher.swift in Sources */,
@@ -2614,6 +2624,7 @@
 				F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */,
 				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
 				392D9B18ACD217D29B5A5E51 /* OtherAppImportSection.swift in Sources */,
+				B16A96697B2A3E5E9ED49B0F /* ICloudSyncSection.swift in Sources */,
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
 				F3E9D1AA3045197F008BF231 /* AppTheme+Metrics.swift in Sources */,
 				F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */,
@@ -2786,6 +2797,7 @@
 				2B7CCCC1ADAD2FC33D5E0FA6 /* CookDateMigrationTests.swift in Sources */,
 				41CB5FAF048C7A95E5EBFC51 /* CollectionMigrationTests.swift in Sources */,
 				90C582F8922173F88283148C /* SyncMergeTests.swift in Sources */,
+				713433A3F8B7577DAFCB4559 /* SyncPreferenceTests.swift in Sources */,
 				B14BF369957DA93E91581116 /* MealPlanMigrationTests.swift in Sources */,
 				DF5EDFECF3A6EF540A9C155B /* ShoppingListMigrationTests.swift in Sources */,
 				62026632EB8C0509949AD5A1 /* KitchenMigrationTests.swift in Sources */,
