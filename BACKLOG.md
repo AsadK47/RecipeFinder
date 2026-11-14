@@ -41,7 +41,9 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
       (list: `gh api repos/AsadK47/RecipeFinder/releases/tags/screenshots-preview --jq '.assets[].name'`), Read each
       image, fix what looks wrong (clipping, empty states, contrast, layout). A passing screenshot test is not a look.
    c. **Independent review — never trust one reviewer** (owner rule 2026-11-14: "check with multiple reviewers
-      rather than trust one"): on the item's last slice run **at least two independent reviewers** (separate agents
+      rather than trust one"; scaled by risk per `docs/PRODUCT.md` → *Review effort scales with risk* — data, legal,
+      money, security and user-facing claims always get two; ordinary UI/tests/docs get one + the challenger): on the
+      item's last slice run **at least two independent reviewers** (separate agents
       that didn't write the code, different prompts — e.g. `deep-review` at `high` + a challenge pass; a different
       model where available) on `origin/main..HEAD`. Act only on findings **two reviewers agree on, or that you've
       verified yourself against the code/source**; a finding only one reviewer raises is checked before it's fixed;
@@ -104,6 +106,20 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Docs refresh** (quality, next between-phases item — owner 2026-11-14 wants developer docs + website dev
+  updates; audit + plan in this session). (1) Retire ROADMAP.md into `docs/PRODUCT.md` + BACKLOG Roadmap
+  (move to `docs/archive/`), point root CLAUDE.md "Session start" at PRODUCT/BACKLOG instead of ROADMAP. (2) HANDBOOK.md
+  = front door linking PRODUCT, BACKLOG, ARCHITECTURE, CHANGELOG, CHALLENGES, DesignSystem. (3) New
+  `docs/ARCHITECTURE.md`: layers + DI seams, Core Data model and migrations, iCloud sync (SyncRules, kept copies,
+  RecipePhotoSync, reset/erase rules), import pipeline, share-extension handoff, Today feed, bundled art, CI/TestFlight.
+  (4) README: Today, iCloud sync, pictures, "+" add flow, current screenshots (copy rule). (5) CHANGELOG.md becomes
+  human-readable — one short entry per TestFlight build ("what changed for you"), written at landing; website
+  "Behind the build" page generated from it like whats-new (tools/), weekly. (6) Archive CORE_LOOP_AUDIT.md and
+  docs/AUDIT-2026-11-10.md; move WORK.md's long Decisions into `docs/DECISIONS.md` (WORK.md back to a short handoff);
+  sort CHALLENGES.md newest-first; mark docs/PLAY.md parked at the top; fix RecipeFinder/CLAUDE.md sheet rule
+  (`.sheetScaffold`) and RecipeFinderTests/CLAUDE.md "in-memory Core Data only". (7) Landing checklist step 8 gains
+  "docs touched by this change updated in the same commit". *Done when:* one reviewer + challenger find no stale
+  statement in the touched docs; website page live.
 - [ ] **Cooking flow** (Phase 1 · Cook · owner 2026-11-14). Merges *Cooking mode upgrade* (below, kept as spec) with the
   ticking redesign. Ingredients: an empty circle on every row; tap anywhere on the row to tick (haptic), ticked rows dim
   and slide into "Got it" at the bottom; amount editing moves to the edit pencil / long-press; all ticked → "All set —

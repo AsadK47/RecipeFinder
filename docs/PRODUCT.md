@@ -43,7 +43,31 @@ fingerprint, video import, "Make a picture", guided tour, Widget + Live Activity
 
 ## Discipline
 1. **One phase at a time.** Nothing from a later phase starts early (bug fixes excepted).
-2. **New ideas go to BACKLOG.md → Parking lot** with one line: *which loop step does it serve?* None → it stays parked.
-3. **Each item states its loop step and how we'll know it worked.**
-4. **Monthly 10-minute Parking-lot review with the owner.**
-5. **The daily challenger also asks: does this change serve the loop, or is it creep?**
+2. **New ideas go to BACKLOG.md → Parking lot** with one line: *which loop step does it serve?* The test to leave the
+   Parking lot: **"Would this make someone cook one more dinner this week — and how would we notice?"** No answer to
+   the second half → it stays parked.
+3. **How we notice** (the app sends nothing to us): App Store Connect App Analytics (Apple's opt-in sessions and
+   retention), TestFlight feedback (filed automatically as GitHub issues), the owner's own week of use, and on-device
+   numbers the cook sees themselves ("4 dinners this week").
+4. **Dogfood gate:** a phase isn't done until the owner has used it on their phone for a week and said it feels right.
+5. **Subtract as you go:** each phase removes something — a screen, a setting, a duplicated view — so the app stays calm.
+6. **The daily challenger also asks: does this change serve the loop, or is it creep?**
+
+## Decision rights (owner = CEO; owner 2026-11-14: "I want to be the CEO making strategic decisions")
+**The owner decides** — and only these: changes to this document (north star, loop, phase order, parking-lot
+promotions); money (pricing, paid services, spending); legal sign-off on Privacy/Terms before public launch; launch
+timing and App Store listing; brand and names; repo visibility; anything irreversible or outward-facing (deleting user
+data paths, public posts, accounts, entitlements/capabilities). Plus device-only steps (TestFlight on their phone,
+Mac-only tools).
+**Agents decide everything else** within this document and BACKLOG guardrails — UX details, code, tests, CI, docs,
+process improvements, wording that matches agreed behaviour — and record why in WORK.md Decisions. Don't ask the owner
+about these; do them well and report.
+**Batch, don't interrupt:** owner questions go to BACKLOG → Needs owner as a multiple-choice line with a recommended
+default. The weekly CEO digest (Monday) collects them. **Reversible decisions proceed on the recommended default after
+72 hours without an answer** (say so in the Log); irreversible / money / legal ones wait.
+
+## Review effort scales with risk
+- **Two independent reviewers + a check against the code/source:** anything touching data (storage, sync, deletion,
+  migration), privacy/legal text, money, security trust boundaries (imports, shared files, web view), or user-facing
+  claims.
+- **One reviewer + the daily challenger:** ordinary UI, copy matching agreed behaviour, tests, docs, tooling.
