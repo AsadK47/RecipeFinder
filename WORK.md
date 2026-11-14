@@ -1,14 +1,11 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Inbox 🔴 "Reset leaves recipe photo files and recent web searches behind" on `agent/reset-clears-photos-searches`:
-Reset deletes `Documents/RecipeImages/` (`RecipeImageStore.deleteAllPhotos`) after recipes erase OK, and
-`LocalStore.clearAll` clears `recentWebSearches`. Two reviewers done, findings applied; waiting on Build & Test.
+Nothing. Reset photo/search fix merged (3d042a4). Data safety 2/4 still claimed 🚧.
 
 ## Next action
-Land the reset branch once CI green + reviews handled; rewrite the Inbox line to leave only the other-devices half
-(delete photo files whose rows a Reset elsewhere removed). Then next Inbox 🔴 (cook history after Reset with sync on).
-Data safety 2/4 still claimed 🚧; live sync status / iCloud full after the Inbox.
+Next Inbox 🔴: "Cook history comes back after Reset with sync on" (`CookingStreakManager.swift:116-122`). Then the
+remaining Inbox 🔴s, then live sync status / iCloud full.
 
 ## Decisions (why)
 - **Reset clears photos + searches (this device)**: delete the whole `RecipeImages/` folder, not per-recipe paths
