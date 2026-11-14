@@ -1,14 +1,13 @@
 # WORK.md — handoff (2026-11-13, builder agent)
 
 ## In progress
-Data safety 2/4 slice 3b-1 (reload on iCloud changes) on `agent/sync-remote-reload`: `RemoteChangeReloader`,
-`PersistenceController+RemoteChanges` (`takeOutsideChanges`, `isSyncing`), `CollectionManager.reload()`, wiring in
-`RecipeFinderApp.reloadOnICloudChanges()`; tests in `RemoteChangeReloaderTests.swift`. Waiting on Build & Test.
+Nothing. Data safety 2/4 slice 3b-1 merged (0e9b206); item still claimed 🚧.
 
 ## Next action
-Green → merge, log. Then slice 3b-2 = Settings "iCloud sync" toggle/status (sets `SyncPreference.key`, applies on next
-launch; Reset copy warns it erases on every device) — the first slice that turns sync on: tell the owner which build.
-Slice 4 = recipe photos + first-sync dedupe. Slice 5 = Privacy §7.
+Slice 3b-2 = Settings "iCloud sync" toggle/status (sets `SyncPreference.key`, applies on next launch; status shows
+"off on this device" after a `retryWithoutSync` fallback; Reset copy warns it erases on every device) — the first
+slice that turns sync on: tell the owner which build. Consider purging history there. Slice 4 = recipe photos +
+first-sync dedupe (+ "erased elsewhere while closed" marker, see CHALLENGES 2026-11-14). Slice 5 = Privacy §7.
 
 ## Decisions (why)
 - **Data safety 2/4 slice 3b-1 (reload)**: split from the toggle so the reload exists before sync can be switched
