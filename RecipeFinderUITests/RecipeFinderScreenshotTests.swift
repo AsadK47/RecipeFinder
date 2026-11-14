@@ -291,8 +291,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let data = app.staticTexts["Data Management"].firstMatch
         for _ in 0..<4 where !data.isHittable { app.swipeUp() }
         data.tap()
-        XCTAssertTrue(app.descendants(matching: .any)["settings.iCloudSync"].firstMatch.waitForExistence(timeout: 10),
-                      "Data Management should show the iCloud sync switch.")
+        // Matched by label: a Toggle folds its text into the switch, so neither a static text nor the row's
+        // identifier is guaranteed to surface as its own element.
+        let sync = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label CONTAINS[c] %@", "Sync with iCloud")).firstMatch
+        XCTAssertTrue(sync.waitForExistence(timeout: 10), "Data Management should show the iCloud sync switch.")
         settle()
         snap(app, "37-data-management-sync")
     }
