@@ -119,11 +119,10 @@ final class CookingStreakManager: CookingStreakTracking {
             do {
                 cookDates = try cookDateStore.fetchCookDates()
                 let syncing = SyncPreference.isOn(in: storage)
-                if cookDates.isEmpty, syncing, emptiedElsewhere() {
-                    // A Reset on another device erased every cook: follow it, and drop the kept copy so it can't
-                    // bring them back to every device.
-                    storage.removeObject(forKey: saveKey)
-                } else if cookDates.isEmpty, storage.decodable([Date].self, forKey: saveKey)?.isEmpty == false {
+                // An empty store emptied elsewhere (a Reset on another device) is followed: the kept copy is
+                // emptied below rather than moved back in, which would bring the cooks back to every device.
+                if cookDates.isEmpty, !(syncing && emptiedElsewhere()),
+                   storage.decodable([Date].self, forKey: saveKey)?.isEmpty == false {
                     // The store came back empty (e.g. recovery replaced an unreadable one) but the kept copy has
                     // cooks: move them in again rather than show an empty streak.
                     streakLogger.error("⚠️ Cook-date store is empty but the old copy isn't; moving it again")

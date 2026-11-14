@@ -31,7 +31,7 @@ import Foundation
 
         #expect(sut.recordedCookDates.isEmpty)
         #expect(store.dates.isEmpty)
-        #expect(keptCopy == nil)
+        #expect(keptCopy?.isEmpty ?? true)
     }
 
     @Test func aResetOnAnotherDeviceWhileThisAppWasClosedStaysGone() {
@@ -109,7 +109,7 @@ import Foundation
         sut.reload()
 
         #expect(sut.recordedCookDates.isEmpty)
-        #expect(keptCopy == nil)
+        #expect(keptCopy?.isEmpty ?? true)
     }
 
     @Test func theKeptCopyFollowsAStorePartlyErasedElsewhere() {
