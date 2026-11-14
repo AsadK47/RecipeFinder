@@ -1,10 +1,10 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 4b-2a (photo pruning) on `agent/photo-prune` (redesigned after review): waiting on Build & Test.
+Nothing. Data safety 2/4 slice 4b-2a (photo pruning) merged (481cd33); item still claimed 🚧.
 
 ## Next action
-Merge 4b-2a when green. Then 4b-2b: dedupe of other lists (+ "erased elsewhere while closed" marker), live status
+4b-2b: dedupe of other lists (+ "erased elsewhere while closed" marker). Then live status
 (`eventChangedNotification`), slice 5 = website privacy.html §7.
 
 ## Decisions (why)
