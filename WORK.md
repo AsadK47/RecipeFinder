@@ -1,7 +1,7 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Reset photo/search fix merged (3d042a4). Data safety 2/4 still claimed 🚧.
+🚧 builder agent 2026-11-14: Inbox 🔴 "Cook history comes back after Reset with sync on" on `agent/cook-dates-reset-sync`.
 
 ## Next action
 Next Inbox 🔴: "Cook history comes back after Reset with sync on" (`CookingStreakManager.swift:116-122`). Then the
