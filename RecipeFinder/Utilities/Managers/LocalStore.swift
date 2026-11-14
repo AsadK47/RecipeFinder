@@ -111,9 +111,13 @@ final class LocalStore: @unchecked Sendable {
         userDefaults.removeObject(forKey: storedKey(key))
     }
 
-    /// Removes every key this store owns (the `rf.` namespace) and nothing else.
-    func clearAll() {
-        let ownedKeys = userDefaults.dictionaryRepresentation().keys.filter { $0.hasPrefix(Self.keyPrefix) }
+    /// Removes every key this store owns (the `rf.` namespace) and nothing else, except `keeping` (never removed,
+    /// so a crash mid-Reset can't lose them).
+    func clearAll(keeping: Set<String> = []) {
+        let kept = Set(keeping.map(storedKey))
+        let ownedKeys = userDefaults.dictionaryRepresentation().keys.filter {
+            $0.hasPrefix(Self.keyPrefix) && !kept.contains($0)
+        }
         for key in ownedKeys {
             userDefaults.removeObject(forKey: key)
         }

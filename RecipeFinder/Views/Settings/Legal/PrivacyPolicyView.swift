@@ -28,7 +28,7 @@ struct PrivacyPolicyView: View {
 
                 SectionTitle("3. Accounts")
 
-                BodyText("3.1 The current version of the Application does not require an account or sign-in. You can use its features without providing any Personal Information. Any name or photo you add to your profile is stored on your Device.")
+                BodyText("3.1 The current version of the Application does not require an account or sign-in. You can use its features without providing any Personal Information. Any name or photo you add to your profile is stored on your Device (and in your own iCloud account if you turn on iCloud sync — see Section 7).")
             }
 
             Group {
@@ -65,7 +65,7 @@ struct PrivacyPolicyView: View {
 
                 SectionTitle("7. Optional Sync and Sharing")
 
-                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. While it is on, the information described in Section 4 (other than your app preferences) is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. The Developer cannot access your iCloud account or the data in it.")
+                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. While it is on, the information described in Section 4, other than photos you add to recipes and your app preferences, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. The Developer cannot access your iCloud account or the data in it.")
 
                 BodyText("7.2 You can turn iCloud sync off at any time in the same place; your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, deletes it on every device signed in to your iCloud account.")
 
@@ -84,7 +84,7 @@ struct PrivacyPolicyView: View {
                 BodyText("9.1 You retain complete control over your data. You may at any time:")
                 LegalBulletPoint("Export your data via Settings > Data Management")
                 LegalBulletPoint("Delete your data via Settings > Data Management")
-                LegalBulletPoint("Remove all data by uninstalling the Application from your Device")
+                LegalBulletPoint("Remove all data from your Device by uninstalling the Application (data in your iCloud account is removed as described in Section 7.2)")
             }
 
             Group {

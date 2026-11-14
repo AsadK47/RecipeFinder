@@ -229,3 +229,8 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **`populate` round-trip** turns a nil `imageName` into "" and writes back `mapToRecipeModel`'s defaults for missing fields on the kept copy.
 - **`mergeSyncedRecipeCopies` untested** beyond its sync-off guard: CloudKit record ids can't be produced in a unit test; the pure plan is tested.
 - **Record names assumed stable** across a zone reset / account change — not checked.
+
+### 2026-11-14 · Data safety 2/4 slice 3b-2b (opt-in sync switch) — fixed: Reset after sync was turned off warned "this device only" though CloudKit would send its deletes once sync is back on (now an "ever synced" flag, kept through Reset); policy claimed recipe photos sync (they don't yet) and §3.1/§9.1 ignored iCloud copies; Reset could lose the sync choice if killed mid-way (now `clearAll(keeping:)`). Noted, not fixed:
+- **Launch wiring untested**: nothing fails if `applyAtLaunch` moves after the database opens or the switch writes `key` instead of `wantedKey`; both are one-liners in `App.init` / `ICloudSyncSection`.
+- **Changes made while sync was off** (incl. "kept copy wins" deletes) will be sent to iCloud when it's turned back on; the off→on copy doesn't say so.
+- **No live sync status** (syncing / iCloud full) — needs `eventChangedNotification`; later slice. History purge also still pending (slice 4).

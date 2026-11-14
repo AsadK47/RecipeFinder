@@ -49,18 +49,29 @@ import Foundation
         SyncPreference.applyAtLaunch(in: storage)
         storage.set("x", forKey: "someList")
 
-        SyncPreference.keepingChoice(in: storage) { storage.clearAll() }
+        storage.clearAll(keeping: SyncPreference.keptThroughReset)
 
         #expect(storage.string(forKey: "someList") == nil)
         #expect(SyncPreference.isOn(in: storage) == on)
         #expect(SyncPreference.isWanted(in: storage) == on)
+        #expect(SyncPreference.hasEverSynced(in: storage) == on)
     }
 
-    @Test func resetOnAFreshInstallLeavesSyncUnset() {
+    @Test func aDeviceThatSyncedOnceRemembersItAfterTurningSyncOff() {
         let storage = makeStorage()
-        SyncPreference.keepingChoice(in: storage) { storage.clearAll() }
-        #expect(storage.object(forKey: SyncPreference.key) == nil)
-        #expect(storage.object(forKey: SyncPreference.wantedKey) == nil)
+        SyncPreference.setWanted(true, in: storage)
+        SyncPreference.applyAtLaunch(in: storage)
+        SyncPreference.setWanted(false, in: storage)
+        SyncPreference.applyAtLaunch(in: storage)
+
+        #expect(!SyncPreference.isOn(in: storage))
+        #expect(SyncPreference.hasEverSynced(in: storage))
+    }
+
+    @Test func aDeviceThatNeverSyncedSaysSo() {
+        let storage = makeStorage()
+        SyncPreference.applyAtLaunch(in: storage)
+        #expect(!SyncPreference.hasEverSynced(in: storage))
     }
 
     // MARK: - Status line
@@ -98,10 +109,14 @@ import Foundation
 
     @Test(arguments: [SyncStatus.on, .startsAfterRestart, .stopsAfterRestart, .unavailableHere, .signInNeeded])
     func resetWarnsItErasesEveryDeviceOnceSyncIsInPlay(status: SyncStatus) {
-        #expect(status.resetErasesEveryDevice)
+        #expect(status.resetErasesEveryDevice(everSynced: false))
     }
 
     @Test func resetWithSyncNeverOnErasesThisDeviceOnly() {
-        #expect(!SyncStatus.off.resetErasesEveryDevice)
+        #expect(!SyncStatus.off.resetErasesEveryDevice(everSynced: false))
+    }
+
+    @Test func resetAfterSyncWasTurnedOffStillWarnsAboutEveryDevice() {
+        #expect(SyncStatus.off.resetErasesEveryDevice(everSynced: true))
     }
 }

@@ -287,15 +287,14 @@ struct DataManagementSettingsView: View {
             hasICloudAccount: nil
         )
         let base = "This will reset the app to factory defaults, clearing all your data and restoring sample recipes."
-        return status.resetErasesEveryDevice
+        return status.resetErasesEveryDevice(everSynced: SyncPreference.hasEverSynced(in: .shared))
             ? base + " With iCloud sync, this also clears your data on every device signed in to your iCloud. This action cannot be undone!"
             : base + " Use this if you encounter any issues. This action cannot be undone!"
     }
 
     private func resetToDefault() {
         PersistenceController.shared.deleteAllRecipes()
-        // The sync choice survives Reset: forgetting it mid-launch would switch the rules against a syncing store.
-        SyncPreference.keepingChoice(in: .shared) { LocalStore.shared.clearAll() }
+        LocalStore.shared.clearAll(keeping: SyncPreference.keptThroughReset)
 
         // Appearance settings are app-wide (global @AppStorage) — restore defaults.
         let defaults = UserDefaults.standard

@@ -9,6 +9,11 @@ import Foundation
 enum SyncPreference {
     static let key = "iCloudSyncEnabled"
     static let wantedKey = "iCloudSyncWanted"
+    /// Set the first launch that runs with sync on; never cleared. Once a store has been mirrored, CloudKit sends
+    /// its history (deletes included) whenever the mirror is attached again, so "off" no longer means "this device only".
+    static let everSyncedKey = "iCloudSyncEverOn"
+    /// Kept through Reset: forgetting the choice mid-launch would switch the rules against a syncing store.
+    static let keptThroughReset: Set<String> = [key, wantedKey, everSyncedKey]
 
     /// What this launch runs with.
     static func isOn(in storage: LocalStore) -> Bool {
@@ -29,17 +34,12 @@ enum SyncPreference {
     static func applyAtLaunch(in storage: LocalStore) -> Bool {
         let wanted = isWanted(in: storage)
         storage.set(wanted, forKey: key)
+        if wanted { storage.set(true, forKey: everSyncedKey) }
         return wanted
     }
 
-    /// Runs Reset (which wipes every `LocalStore` key) without touching the sync choice: forgetting it mid-launch
-    /// would put the rules in "this device's copy wins" against a store that is still syncing.
-    static func keepingChoice(in storage: LocalStore, during reset: () -> Void) {
-        let saved = [key, wantedKey].map { ($0, storage.object(forKey: $0)) }
-        reset()
-        for (savedKey, value) in saved {
-            storage.set(value, forKey: savedKey)
-        }
+    static func hasEverSynced(in storage: LocalStore) -> Bool {
+        storage.bool(forKey: everSyncedKey) || isOn(in: storage)
     }
 }
 
@@ -84,9 +84,9 @@ enum SyncStatus: Equatable, Sendable {
     var detail: String {
         switch self {
         case .off:
-            "Turn on to keep your recipes, plans and lists in your own iCloud and on every device signed in to it."
+            "Turn on to keep your recipes, plans and lists in your own iCloud and on every device signed in to it. Recipe photos stay on this device for now."
         case .on:
-            "Your recipes, plans and lists are kept in your iCloud and appear on every device signed in to it. Everything keeps working offline."
+            "Your recipes, plans and lists are kept in your iCloud and appear on every device signed in to it. Recipe photos stay on this device for now. Everything keeps working offline."
         case .startsAfterRestart:
             "Close RecipeFinder from the app switcher and open it again to start syncing."
         case .stopsAfterRestart:
@@ -99,8 +99,9 @@ enum SyncStatus: Equatable, Sendable {
     }
 
     /// Erasing a store that is, was or is about to be mirrored can erase the same data on every device: CloudKit
-    /// exports the store's history, deletes included, once the mirror is attached. Only "never on" is safe to say.
-    var resetErasesEveryDevice: Bool {
-        self != .off
+    /// exports the store's history, deletes included, once the mirror is attached. `.off` is only safe when sync
+    /// has never been on here (`SyncPreference.hasEverSynced`).
+    func resetErasesEveryDevice(everSynced: Bool) -> Bool {
+        self != .off || everSynced
     }
 }
