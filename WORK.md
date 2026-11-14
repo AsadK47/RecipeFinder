@@ -1,9 +1,9 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Inbox 🔴 "Reset leaves recipe photo files and recent web searches behind" on `agent/reset-clears-photos-searches`
-(f568cba): Reset deletes `Documents/RecipeImages/` (`RecipeImageStore.deleteAllPhotos`) and recent searches move to
-`rf.recentWebSearches` (old unprefixed key cleared by `LocalStore.clearAll`). Waiting on Build & Test + 2 reviewers.
+Inbox 🔴 "Reset leaves recipe photo files and recent web searches behind" on `agent/reset-clears-photos-searches`:
+Reset deletes `Documents/RecipeImages/` (`RecipeImageStore.deleteAllPhotos`) after recipes erase OK, and
+`LocalStore.clearAll` clears `recentWebSearches`. Two reviewers done, findings applied; waiting on Build & Test.
 
 ## Next action
 Land the reset branch once CI green + reviews handled; rewrite the Inbox line to leave only the other-devices half
@@ -12,13 +12,13 @@ Data safety 2/4 still claimed 🚧; live sync status / iCloud full after the Inb
 
 ## Decisions (why)
 - **Reset clears photos + searches (this device)**: delete the whole `RecipeImages/` folder, not per-recipe paths
-  (kept web copies and orphans live there too; recipes are all gone anyway). Recent searches moved into the `rf.`
-  namespace rather than allow-listing a global key; the pre-namespace key is cleared via `retiredUnprefixedKeys`
-  (cost accepted: ≤6 old search terms forgotten once on update). Other devices' files left for a follow-up — inferring
+  (kept web copies and orphans live there too; recipes are all gone anyway), and only if `deleteAllRecipes()` worked
+  (both reviewers: otherwise recipes survive without photos). Recent searches keep their global key (renaming lost
+  them; both reviewers) and `LocalStore.clearAll` also clears `unprefixedUserDataKeys`. Other devices' files left for a follow-up — inferring
   deletes from missing rows was rejected before (4b-2a). **Pre-mortem:** (1) photos remain after Reset →
   `deleteAllPhotosRemovesThePhotoFolder`; (2) new photos fail to save after Reset (folder gone) →
   `deleteAllPhotosWithNoFolderSucceeds`; (3) old searches survive Reset →
-  `clearAll_removesRecentWebSearches_includingTheOldUnprefixedKey`.
+  `clearAll_removesRecentWebSearches`; (4) failed erase loses photos → `deleteAllRecipes_removesEveryRecipe` checks the result.
 - **Data safety 2/4 slice 4b-2c (erased elsewhere while closed)**: marker = the store *file's* identity
   (`NSPersistentStore.identifier`, local metadata UUID; recovery/reinstall make a new one), recorded per list
   (`syncedStoreFile.<key>`) after each successful shared load. At launch an empty store in the same file this device

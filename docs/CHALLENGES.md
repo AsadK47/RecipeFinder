@@ -264,3 +264,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 ### 2026-11-14 · Data safety 2/4 slice 4b-2c (erased elsewhere while closed) — fixed: `iCloudRules` read a main-actor property from a nonisolated closure (now `@MainActor`); added a test that reopening the same file keeps its name (the premise). Noted, not fixed:
 - **Same-file purges are followed at launch**: iCloud sign-out/account change, deleting the app's iCloud data, or a CloudKit zone reset empty the same file; if that lands before `load()`, the kept copy becomes `[]` and offline edits that never uploaded are lost (mid-session purges were already followed). Could keep the old copy one extra launch.
 - **Device restore / new phone** copies the store file and UserDefaults together; a CloudKit reset purging the restored store before first load is followed instead of refilled. Speculative.
+
+### 2026-11-14 · 🐞 Reset leaves photo files + recent searches — fixed: photo folder was deleted even when erasing recipes failed (now only after `deleteAllRecipes()` returns true); renaming the searches key would have dropped every cook's recent searches (kept the global key, Reset clears it). Noted, not fixed:
+- **In-flight writers**: a web-picture download (`imageLocalization`) or photo-sync pass running at Reset can recreate `RecipeImages/` and write an orphan file (or, narrowly, re-save one photo row) after the delete. Fix: cancel/await both tasks before deleting.
+- **No test drives `resetToDefault`** (private view code): removing the photo-delete call fails no test. Fix with a testable Reset use case when Reset is next touched.
+- **Failed photo delete is only logged**; Reset still shows success. Main-thread delete may stall on a huge library.
+- **Other devices keep their files** after a Reset that erased every device (photo sync never deletes files) — still in Inbox.
+- `attemptedPictures` isn't cleared: a re-import of the same recipe in the same launch gets no offline picture copy until relaunch.
