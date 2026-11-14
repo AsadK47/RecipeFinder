@@ -1,10 +1,11 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 4b-2b (fold same item added on two devices) on `agent/sync-dedupe-lists`, waiting on CI.
+Nothing. Data safety 2/4 slice 4b-2b (fold same item) merged (ab755c3); item still claimed 🚧.
 
 ## Next action
-Land 4b-2b. Then 4b-2c "erased elsewhere while closed" marker, live status (`eventChangedNotification`),
+4b-2c: "erased elsewhere while closed" marker (CHALLENGES 3b-1: a list cleared on another device comes back at
+launch from the kept copy). Then, live status (`eventChangedNotification`),
 slice 5 = website privacy.html §7.
 
 ## Decisions (why)
