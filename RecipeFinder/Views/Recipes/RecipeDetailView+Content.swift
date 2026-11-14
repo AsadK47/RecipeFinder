@@ -270,15 +270,20 @@ extension RecipeDetailView {
     }
 
     /// Prep, cook, difficulty, category (and cuisine) in one slim card. These used to be two tall cards
-    /// that, with servings, pushed the ingredients most of a screen down.
+    /// that, with servings, pushed the ingredients most of a screen down. One row when every value fits at full size;
+    /// otherwise two rows — squeezing long values ("Intermediate", "Main course") into a row made them overlap.
     var factsCard: some View {
-        HStack(alignment: .top, spacing: 0) {
-            fact(icon: "clock", tint: .orange, value: shortTime(recipe.prepTimeDisplay), label: "Prep")
-            fact(icon: "flame", tint: .red, value: shortTime(recipe.cookTimeDisplay), label: "Cook")
-            fact(icon: "chart.bar", tint: .blue, value: recipe.difficulty, label: "Difficulty")
-            fact(icon: "fork.knife", tint: .green, value: recipe.category, label: "Category")
-            if let cuisine = recipe.cuisine, !cuisine.isEmpty {
-                fact(icon: "globe", tint: .teal, value: cuisine, label: "Cuisine")
+        let facts = recipeFacts
+        return ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top, spacing: 0) {
+                ForEach(facts) { fact($0) }
+            }
+            Grid(horizontalSpacing: 0, verticalSpacing: AppTheme.spacing12) {
+                ForEach(Self.factRows(count: facts.count), id: \.self) { row in
+                    GridRow {
+                        ForEach(row, id: \.self) { fact(facts[$0]) }
+                    }
+                }
             }
         }
         .padding(.vertical, AppTheme.spacing12)
@@ -288,22 +293,49 @@ extension RecipeDetailView {
         .accessibilityIdentifier("recipe.card.time")
     }
 
-    private func fact(icon: String, tint: Color, value: String, label: String) -> some View {
+    struct RecipeFact: Identifiable {
+        let icon: String, tint: Color, value: String, label: String
+        var id: String { label }
+    }
+
+    private var recipeFacts: [RecipeFact] {
+        var facts = [
+            RecipeFact(icon: "clock", tint: .orange, value: shortTime(recipe.prepTimeDisplay), label: "Prep"),
+            RecipeFact(icon: "flame", tint: .red, value: shortTime(recipe.cookTimeDisplay), label: "Cook"),
+            RecipeFact(icon: "chart.bar", tint: .blue, value: recipe.difficulty, label: "Difficulty"),
+            RecipeFact(icon: "fork.knife", tint: .green, value: recipe.category, label: "Category"),
+        ]
+        if let cuisine = recipe.cuisine, !cuisine.isEmpty {
+            facts.append(RecipeFact(icon: "globe", tint: .teal, value: cuisine, label: "Cuisine"))
+        }
+        return facts
+    }
+
+    /// Indices for the two-row layout: 4 facts → 2 + 2, 5 → 3 + 2 (times stay together on the first row).
+    static func factRows(count: Int) -> [[Int]] {
+        guard count > 0 else { return [] }
+        let firstRow = (count + 1) / 2
+        return [Array(0..<firstRow), Array(firstRow..<count)].filter { !$0.isEmpty }
+    }
+
+    private func fact(_ fact: RecipeFact) -> some View {
         VStack(spacing: AppTheme.spacing4) {
-            Image(systemName: icon)
+            Image(systemName: fact.icon)
                 .font(.subheadline)
-                .foregroundStyle(tint)
+                .foregroundStyle(fact.tint)
                 .accessibilityHidden(true)
-            Text(value)
+            Text(fact.value)
                 .font(.subheadline.weight(.semibold))
                 .adaptiveForegroundColor()
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(label)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+            Text(fact.label)
                 .font(.caption2)
                 .adaptiveSecondaryForeground()
                 .lineLimit(1)
         }
+        .padding(.horizontal, AppTheme.spacing4)
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
     }

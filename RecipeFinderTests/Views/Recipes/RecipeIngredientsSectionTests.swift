@@ -39,3 +39,16 @@ import ViewInspector
         _ = try view.find(text: "Butter")
     }
 }
+
+/// Recipe detail facts card: when values are too long for one row, they split into two balanced rows.
+@MainActor @Suite struct RecipeFactRowsTests {
+    @Test(arguments: [
+        (4, [[0, 1], [2, 3]]),
+        (5, [[0, 1, 2], [3, 4]]),
+        (1, [[0]]),
+        (0, []),
+    ])
+    func factsSplitIntoTwoBalancedRows(count: Int, expected: [[Int]]) {
+        #expect(RecipeDetailView.factRows(count: count) == expected)
+    }
+}
