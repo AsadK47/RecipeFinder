@@ -282,6 +282,12 @@ drop a line while moving it.
   line (recipe that unlocked it); share card image via `ShareLink` (rendered on device); "2 more cooks to Head Chef"
   on the Made it sheet and Today. *Done when:* tier mapping/migration, story capture and next-badge logic tested,
   screenshots, CI green.
+- [ ] **My Cookbook — made by cooking** (owner 2026-11-14: "add cookbook"). A beautiful book of every dish the cook
+  has made: their Made-it photo (else the recipe picture), date, rating, a line of notes ("for Mum's birthday"), who it
+  was for. Builds itself from Made it — no entry. Page-turn / full-bleed layout; tap a page → cook it again. Lives at
+  the top of Me (Me's character = your cookbook + one line "Spice Explorer · 34 dinners this year"; stats/badges one
+  tap deeper). Shareable page image. *Done when:* page building from cook history tested, screenshots (empty →
+  "Cook something and it lands here", 1 page, many), CI green.
 - [ ] **Me 1/3 — Your cooking life: chef card, this month, goals** (owner OK 2026-11-11: Me "lacks character"; wants
   better than a stats page). Order top→bottom: chef card → this month → taste fingerprint → skills → goals + wins →
   trophy shelf (Badges 1/2) → your story. This slice: chef card (cover = best Made-it photo, kitchen name e.g.
@@ -296,6 +302,13 @@ drop a line while moving it.
   story": scrollable scrapbook timeline (first save, first cook, streak milestones, badges, photos, first cuisine,
   heirloom notes later), tap to open the moment. *Done when:* fingerprint scoring + timeline building tested,
   screenshots, CI green.
+- [ ] **Swipe to match dinners** (owner 2026-11-14: "tinder swipe … match against food you want"). Full-screen recipe
+  cards (big picture, name, time); swipe right = "I fancy it", left = not now, up = cook tonight; visible ♥ / ✕ buttons
+  too (every gesture has a visible control). Matches go to a "Fancy it" list and feed suggestions (Today, Fill my
+  week, "Because you liked…"). Home TBD by owner — recommended: Plan ("plan the week in 60 seconds": one card per
+  empty dinner, right = it's planned) + a "Find something" entry on Recipes. Deck draws from library + bundled
+  recipes, never repeats a left-swipe for 30 days. *Done when:* deck ranking/no-repeat/match logic tested, swipe +
+  button paths UI-tested, screenshots, CI green.
 - [ ] **Plan my week 1/3 — Week agenda** (owner: "make the meal planner a proper feature"; series OK 2026-11-12).
   7-day agenda by default with recipe photos and per-meal colours; tap empty slot → inline suggestions (picker as
   fallback); long-press to move/swap; per-meal servings; tap planned meal → open/cook; cooking it marks it done; copy
