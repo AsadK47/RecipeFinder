@@ -333,8 +333,13 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             snap(app, shot)
 
             if time == "21:00" {
-                // Past 7pm with tonight's dinner not cooked yet, Today offers quick ideas instead.
-                XCTAssertTrue(hero.label.contains("Quick tonight?"), "Evening should offer quick ideas: \(hero.label)")
+                // Past 7pm with tonight's dinner not cooked yet, the line says when this recipe would be ready
+                // (or, for a long one, how long it takes).
+                let label = hero.label
+                XCTAssertTrue(
+                    label.contains("Start now to eat by") || label.contains("Takes "),
+                    "Evening should say when tonight's pick would be ready: \(label)"
+                )
             }
             if time == "15:00" {
                 // Slice 2: the "Dinner at" pill picks when dinner is; the start time follows.
