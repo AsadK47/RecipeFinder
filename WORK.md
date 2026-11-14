@@ -13,11 +13,13 @@ Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5
 ## Decisions (why)
 - **Data safety 2/4 slice 4a (history purge)**: history tracking is always on, so history grew forever even with sync
   off. Purge at launch, background context, everything older than 7 days (Apple's CloudKit sample uses a week;
-  CloudKit's first export doesn't need history, so purging with sync off is safe). Tracking checkpoint is set to "now"
-  at launch, so a week-old purge never reaches it; if it ever does (token expired), reload once and read on from now
-  rather than return "no change" forever. **Pre-mortem:** (1) purge deletes recipes, not just history →
+  CloudKit's first export doesn't need history). Checkpoint = latest transaction, so after ≥7 idle days the launch
+  purge expires it → one extra reload of every list (accepted; rejected awaiting the purge before tracking — could
+  miss launch-time imports); expired → reload once and read on from now, never "no change" forever. Accepted,
+  unverifiable in CI: sync on but not uploaded for >7 days (offline / iCloud full / off→on) relies on CloudKit's
+  expired-history recovery (full re-sync), as in Apple's sample. **Pre-mortem:** (1) purge deletes recipes, not just history →
   `purgingHistoryKeepsTheRecipes`; (2) another device's edits stop reloading after a purge →
-  `anImportAfterThePurgeIsStillSeenOnce`; (3) purge removes too much/too little → `historyIsKeptForAWeek`,
+  `anImportAfterAPurgeThatKeptTheCheckpointIsSeen`, `aPurgedCheckpointReloadsOnceThenReadsOn`; (3) purge removes too much/too little → `historyIsKeptForAWeek`,
   `historyBeforeTheCutoffIsRemoved`, `historyAfterTheCutoffIsKept`. No UI → no screenshots.
 - **Data safety 2/4 slice 3b-2b (switch)**: opt-in (off by default), against the item's "on by default": the shipped
   policy promised opt-in. Switch writes `wantedKey`; `key` copied at launch first thing in `App.init`, so the CloudKit

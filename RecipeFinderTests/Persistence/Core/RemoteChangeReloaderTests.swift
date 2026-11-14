@@ -234,7 +234,23 @@ import Foundation
         #expect(try Self.recipeCount(in: persistence) == 2)
     }
 
-    @Test func anImportAfterThePurgeIsStillSeenOnce() async throws {
+    @Test func anImportAfterAPurgeThatKeptTheCheckpointIsSeen() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        try Self.addRecipe(named: "Old soup", to: persistence, author: nil)
+        try await Task.sleep(for: .milliseconds(50))
+        let cutoff = Date()
+        try await Task.sleep(for: .milliseconds(50))
+        try Self.addRecipe(named: "Soup from here", to: persistence, author: nil)
+        persistence.startTrackingOutsideChanges()
+
+        await persistence.purgeHistory(before: cutoff)
+        try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
+
+        #expect(persistence.takeOutsideChanges())
+        #expect(!persistence.takeOutsideChanges())
+    }
+
+    @Test func aPurgedCheckpointReloadsOnceThenReadsOn() async throws {
         let persistence = PersistenceController(inMemory: true)
         persistence.startTrackingOutsideChanges()
         try Self.addRecipe(named: "Soup from here", to: persistence, author: nil)

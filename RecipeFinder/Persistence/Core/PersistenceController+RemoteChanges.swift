@@ -40,7 +40,8 @@ extension PersistenceController {
 }
 
 /// Store history grows with every save, sync on or off; nothing needs more than a few days of it. A week matches
-/// Apple's CloudKit guidance and outlasts any session, so `takeOutsideChanges()`'s checkpoint is never purged.
+/// Apple's CloudKit sample. After a week with no writes the launch purge can remove `takeOutsideChanges()`'s
+/// checkpoint (the latest transaction), costing one extra reload of every list — accepted.
 extension PersistenceController {
     static let historyKeptFor: TimeInterval = 7 * 24 * 60 * 60
 
