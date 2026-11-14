@@ -10,6 +10,7 @@ import Foundation
     @MainActor final class Lists {
         var recipes = 0
         var plans = 0
+        var checks = 0
 
         var reloads: [@MainActor () async -> Void] {
             [{ self.recipes += 1 }, { self.plans += 1 }]
@@ -40,10 +41,9 @@ import Foundation
 
     @Test func aBurstOfStoreChangesReloadsOnce() async {
         let lists = Lists()
-        var checks = 0
         let reloader = RemoteChangeReloader(
             delay: .milliseconds(50),
-            hasOutsideChanges: { checks += 1; return true },
+            hasOutsideChanges: { lists.checks += 1; return true },
             reloads: lists.reloads
         )
 
@@ -52,7 +52,7 @@ import Foundation
         reloader.storeChanged()
         await reloader.waitUntilIdle()
 
-        #expect(checks == 1)
+        #expect(lists.checks == 1)
         #expect(lists.recipes == 1)
     }
 

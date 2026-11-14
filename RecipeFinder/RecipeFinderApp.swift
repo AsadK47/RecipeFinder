@@ -39,7 +39,7 @@ struct RecipeFinderApp: App {
         let reloader = RemoteChangeReloader(
             hasOutsideChanges: { persistence.takeOutsideChanges() },
             reloads: [
-                { await RecipeStore.shared.refresh() },
+                { RecipeStore.shared.load() },
                 { CollectionManager.shared.reload() },
                 { MealPlanningManager.shared.reload() },
                 { ShoppingListManager.shared.reload() },

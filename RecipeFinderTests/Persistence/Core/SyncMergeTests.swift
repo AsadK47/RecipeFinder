@@ -153,6 +153,17 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         #expect(keptCopy() == loaded)
     }
 
+    @Test func aListClearedOnAnotherDeviceStaysClearedWhenReloaded() {
+        let sut = snapshot()
+        _ = sut.load()
+        sut.save([row(1), row(2)])
+        store.rows = []                        // cleared on another device, arrives mid-session
+        let reloaded = sut.load()
+        #expect(reloaded.isEmpty)
+        #expect(store.rows.isEmpty)
+        #expect(keptCopy() == [])
+    }
+
     @Test func aDeleteHereRemovesOnlyThatRow() {
         store.rows = [row(1), row(2)]
         let sut = snapshot()

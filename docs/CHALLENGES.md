@@ -215,3 +215,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - **The model check is ours, not Apple's**: a rule it misses fails at load with sync on → falls back to local (no data moved).
 - **History never purged** while sync is off, and turning history on isn't a model change so no `StoreBackup` copy is taken — small (one transaction per save); purge in a later slice.
 - **After a fallback `SyncPreference` still says on** — slice 3b's status must show "off on this device".
+
+### 2026-11-14 · Data safety 2/4 slice 3b-1 (reload on iCloud changes) — fixed: a list cleared on another device was re-added from the kept copy on reload (empty-store refill now only on the first load of a session); recipes reloaded via `refresh()` skipped dedupe (now `load()`); captured-var mutation in a test closure. Noted, not fixed:
+- **Cleared elsewhere while this app was closed** still comes back at launch (empty store at launch = recovery/unfinished import is the safer guess). Needs a store-level "erased" marker — slice 4 (dedupe) or Data safety 4/4.
+- **`ProfileManager.loadProfile` on an emptied store** saves a fresh profile and syncs it back; clears the cached photo on each reload (re-read lazily).
+- **No test for CloudKit bookkeeping transactions** (author set, only NSCK* entities): can't be produced in a unit test; the app-entity filter is the guard.
+- **Reload list in `RecipeFinderApp.reloadOnICloudChanges` untested** (thin glue): a manager left out won't refresh until relaunch.
+- **History read on the main thread, never purged** — fine at current sizes; purge with the sync toggle slice.

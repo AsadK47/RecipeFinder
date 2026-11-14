@@ -65,6 +65,9 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     private var syncActive = false
     /// The list as this device last loaded or saved it: the base `SyncMerge.applyEdits` diffs edits against.
     private var lastKnown: [Value] = []
+    /// Set once a shared-store load succeeds. After that an empty store was emptied on another device (recovery and
+    /// a first import only happen at launch), so a reload follows it instead of adding the kept copy back.
+    private var hasLoadedSharedStore = false
 
     /// The kept copy is a JSON `[Value]` under `blobKey`.
     convenience init(
@@ -188,7 +191,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             // An empty store next to a non-empty kept copy is far more likely recovery or an unfinished first
             // import than "everything deleted elsewhere": add the copy back rather than wipe the safety net.
             let keptCopyMayBeAhead = !storage.bool(forKey: flagKey) || storage.bool(forKey: keptCopyAheadKey)
-                || values.isEmpty
+                || (values.isEmpty && !hasLoadedSharedStore)
             if keptCopyMayBeAhead, let kept = blob() {
                 let merged = SyncMerge.addKeptCopy(kept, to: values, id: sync.id)
                 if merged != values {
@@ -201,6 +204,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             if blob() != values { writeBlob(values) }
             usesEntities = true
             lastKnown = values
+            hasLoadedSharedStore = true
             return values
         } catch {
             logger.error("❌ \(self.blobKey, privacy: .public): shared store unusable, using the kept copy: \(error.localizedDescription)")
