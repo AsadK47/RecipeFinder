@@ -35,23 +35,21 @@ extension PersistenceController {
 
 extension PersistenceController {
     /// Folds copies of the same recipe that iCloud brought together into one (`RecipeCopyMerge`). Only while the
-    /// store syncs: without iCloud there are no record names to agree on. Returns whether the store changed.
-    func mergeSyncedRecipeCopies() -> Bool {
-        guard isSyncing, let cloudContainer = container as? NSPersistentCloudKitContainer else { return false }
+    /// store syncs: without iCloud there are no record names to agree on. `ids` are the recipes the last fetch held
+    /// more than once, so a library without copies costs nothing. Returns whether the store changed.
+    func mergeSyncedRecipeCopies(of ids: Set<UUID>) -> Bool {
+        guard !ids.isEmpty, isSyncing, let cloudContainer = container as? NSPersistentCloudKitContainer else { return false }
         let context = container.viewContext
         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        request.predicate = NSPredicate(format: "%K IN %@", RecipeKey.id, Array(ids) as NSArray)
         do {
             let objects = try context.fetch(request)
-            let ids = objects.compactMap { $0.value(forKey: RecipeKey.id) as? UUID }
-            let repeated = Set(Dictionary(grouping: ids, by: { $0 }).filter { $0.value.count > 1 }.keys)
-            guard !repeated.isEmpty else { return false }
-
+            let recordIDs = cloudContainer.recordIDs(for: objects.map { $0.objectID })
             var byRecordName: [String: NSManagedObject] = [:]
             var copies: [RecipeCopyMerge.Copy] = []
             for object in objects {
-                guard let id = object.value(forKey: RecipeKey.id) as? UUID, repeated.contains(id),
-                      let model = Self.mapToRecipeModel(object) else { continue }
-                let recordName = cloudContainer.recordID(for: object.objectID)?.recordName
+                guard let model = Self.mapToRecipeModel(object) else { continue }
+                let recordName = recordIDs[object.objectID]?.recordName
                 if let recordName { byRecordName[recordName] = object }
                 copies.append(RecipeCopyMerge.Copy(recordName: recordName, recipe: model))
             }

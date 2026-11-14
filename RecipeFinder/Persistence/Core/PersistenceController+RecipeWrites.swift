@@ -282,15 +282,16 @@ extension PersistenceController {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         fetchRequest.predicate = Self.recipeIdPredicate(id)
-        fetchRequest.fetchLimit = 1
-        
+
         do {
-            guard let recipe = try context.fetch(fetchRequest).first else {
+            // Every row with the id: with iCloud sync on, another device's copy may not be merged yet.
+            let rows = try context.fetch(fetchRequest)
+            guard !rows.isEmpty else {
                 persistenceLogger.debug("⚠️ Recipe with id \(id) not found")
                 return
             }
-            
-            context.delete(recipe)
+
+            for row in rows { context.delete(row) }
             try context.save()
             persistenceLogger.debug("✅ Recipe deleted successfully")
         } catch {
@@ -305,10 +306,11 @@ extension PersistenceController {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         fetchRequest.predicate = Self.recipeIdPredicate(recipe.id)
-        fetchRequest.fetchLimit = 1
 
         do {
-            guard let managedRecipe = try context.fetch(fetchRequest).first else {
+            // Every row with the id: with iCloud sync on, another device's copy may not be merged yet.
+            let rows = try context.fetch(fetchRequest)
+            guard !rows.isEmpty else {
                 persistenceLogger.debug("⚠️ Recipe with id \(recipe.id) not found")
                 return false
             }
@@ -318,33 +320,35 @@ extension PersistenceController {
                 return false
             }
 
-            managedRecipe.setValue(recipe.name, forKey: RecipeKey.name)
-            managedRecipe.setValue(recipe.category, forKey: RecipeKey.category)
-            managedRecipe.setValue(recipe.difficulty, forKey: RecipeKey.difficulty)
-            managedRecipe.setValue(recipe.prepTime, forKey: RecipeKey.prepTime)
-            managedRecipe.setValue(recipe.cookingTime, forKey: RecipeKey.cookingTime)
-            managedRecipe.setValue(recipe.baseServings, forKey: RecipeKey.baseServings)
-            managedRecipe.setValue(recipe.currentServings, forKey: RecipeKey.currentServings)
-            managedRecipe.setValue(ingredientData, forKey: RecipeKey.ingredients)
-            managedRecipe.setValue(recipe.prePrepInstructions, forKey: RecipeKey.prePrepInstructions)
-            managedRecipe.setValue(recipe.instructions, forKey: RecipeKey.instructions)
-            managedRecipe.setValue(recipe.notes, forKey: RecipeKey.notes)
-            managedRecipe.setValue(recipe.imageName, forKey: RecipeKey.imageName)
-            managedRecipe.setValue(recipe.isFavorite, forKey: RecipeKey.isFavorite)
-            managedRecipe.setValue(recipe.isSampleRecipe, forKey: RecipeKey.isSampleRecipe)
-            managedRecipe.setValue(recipe.tags as NSArray, forKey: RecipeKey.tags)
-            managedRecipe.setValue(recipe.rating, forKey: RecipeKey.rating)
-            managedRecipe.setValue(recipe.cuisine, forKey: RecipeKey.cuisine)
-            managedRecipe.setValue(recipe.photoNames as NSArray, forKey: RecipeKey.photoNames)
-            managedRecipe.setValue(recipe.sourceText, forKey: RecipeKey.sourceText)
-            if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
-                managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
-            }
-            // cookCount/lastCookedAt normally untouched — recordCook(_:) owns them, preserving cook history across edits.
-            // Restore is the exception: it writes the merged history from a backup.
-            if includingCookHistory {
-                managedRecipe.setValue(recipe.cookCount, forKey: RecipeKey.cookCount)
-                managedRecipe.setValue(recipe.lastCookedAt, forKey: RecipeKey.lastCookedAt)
+            for managedRecipe in rows {
+                managedRecipe.setValue(recipe.name, forKey: RecipeKey.name)
+                managedRecipe.setValue(recipe.category, forKey: RecipeKey.category)
+                managedRecipe.setValue(recipe.difficulty, forKey: RecipeKey.difficulty)
+                managedRecipe.setValue(recipe.prepTime, forKey: RecipeKey.prepTime)
+                managedRecipe.setValue(recipe.cookingTime, forKey: RecipeKey.cookingTime)
+                managedRecipe.setValue(recipe.baseServings, forKey: RecipeKey.baseServings)
+                managedRecipe.setValue(recipe.currentServings, forKey: RecipeKey.currentServings)
+                managedRecipe.setValue(ingredientData, forKey: RecipeKey.ingredients)
+                managedRecipe.setValue(recipe.prePrepInstructions, forKey: RecipeKey.prePrepInstructions)
+                managedRecipe.setValue(recipe.instructions, forKey: RecipeKey.instructions)
+                managedRecipe.setValue(recipe.notes, forKey: RecipeKey.notes)
+                managedRecipe.setValue(recipe.imageName, forKey: RecipeKey.imageName)
+                managedRecipe.setValue(recipe.isFavorite, forKey: RecipeKey.isFavorite)
+                managedRecipe.setValue(recipe.isSampleRecipe, forKey: RecipeKey.isSampleRecipe)
+                managedRecipe.setValue(recipe.tags as NSArray, forKey: RecipeKey.tags)
+                managedRecipe.setValue(recipe.rating, forKey: RecipeKey.rating)
+                managedRecipe.setValue(recipe.cuisine, forKey: RecipeKey.cuisine)
+                managedRecipe.setValue(recipe.photoNames as NSArray, forKey: RecipeKey.photoNames)
+                managedRecipe.setValue(recipe.sourceText, forKey: RecipeKey.sourceText)
+                if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
+                    managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
+                }
+                // cookCount/lastCookedAt normally untouched — recordCook(_:) owns them, preserving cook history across edits.
+                // Restore is the exception: it writes the merged history from a backup.
+                if includingCookHistory {
+                    managedRecipe.setValue(recipe.cookCount, forKey: RecipeKey.cookCount)
+                    managedRecipe.setValue(recipe.lastCookedAt, forKey: RecipeKey.lastCookedAt)
+                }
             }
 
             try context.save()

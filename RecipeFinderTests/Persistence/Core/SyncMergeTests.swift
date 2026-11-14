@@ -294,10 +294,55 @@ private func recipe(
         #expect(plan.isEmpty)
     }
 
+    @Test func onlyRecipesHeldMoreThanOnceAreAskedAbout() {
+        let other = UUID()
+        #expect(RecipeCopyMerge.repeatedIDs(in: [recipe(fishPie), recipe(other), recipe(fishPie)]) == [fishPie])
+        #expect(RecipeCopyMerge.repeatedIDs(in: [recipe(fishPie), recipe(other)]).isEmpty)
+    }
+
     @Test func theListShowsEachRecipeOnceUntilTheCopiesMerge() {
         let other = UUID()
         let shown = RecipeCopyMerge.oneCopyEach([recipe(fishPie, cooks: 1), recipe(other), recipe(fishPie, cooks: 2)])
         #expect(shown.map(\.id) == [fishPie, other])
         #expect(shown.first?.cookCount == 1)
+    }
+}
+
+/// Until iCloud copies are merged, the store holds two rows per recipe: an edit or delete must reach both, or the
+/// untouched copy brings the old version back on the next load.
+@MainActor
+@Suite struct RecipeCopyWriteTests {
+    private let fishPie = UUID()
+
+    private func storeWithTwoCopies() async -> PersistenceController {
+        let persistence = PersistenceController(inMemory: true)
+        _ = await persistence.seedRecipes([recipe(fishPie)])
+        _ = await persistence.seedRecipes([recipe(fishPie)])
+        return persistence
+    }
+
+    @Test func aStoreCanHoldTwoCopiesOfOneRecipe() async {
+        let persistence = await storeWithTwoCopies()
+        #expect(persistence.fetchRecipes().filter { $0.id == fishPie }.count == 2)
+    }
+
+    @Test func anEditReachesEveryCopy() async {
+        let persistence = await storeWithTwoCopies()
+        #expect(persistence.updateRecipe(recipe(fishPie, favourite: true, rating: 4)))
+        let copies = persistence.fetchRecipes().filter { $0.id == fishPie }
+        #expect(copies.count == 2)
+        #expect(copies.allSatisfy { $0.isFavorite && $0.rating == 4 })
+    }
+
+    @Test func aDeleteRemovesEveryCopy() async {
+        let persistence = await storeWithTwoCopies()
+        persistence.deleteRecipe(withId: fishPie)
+        #expect(persistence.fetchRecipes().isEmpty)
+    }
+
+    @Test func withSyncOffCopiesAreNotMerged() async {
+        let persistence = await storeWithTwoCopies()
+        #expect(!persistence.mergeSyncedRecipeCopies(of: [fishPie]))
+        #expect(persistence.fetchRecipes().count == 2)
     }
 }

@@ -77,16 +77,27 @@ enum RecipeCopyMerge {
 
     static func plan(_ copies: [Copy]) -> Plan {
         var plan = Plan()
-        for group in Dictionary(grouping: copies, by: \.recipe.id).values where group.count > 1 {
-            let named = group.compactMap { copy in copy.recordName.map { (name: $0, recipe: copy.recipe) } }
+        for group in Dictionary(grouping: copies, by: { $0.recipe.id }).values where group.count > 1 {
+            let named = group.compactMap { copy in copy.recordName.map { NamedCopy(name: $0, recipe: copy.recipe) } }
             guard named.count == group.count,
                   let keep = named.min(by: { $0.name < $1.name }) else { continue }
             let others = named.filter { $0.name != keep.name }
-            let merged = merging(others.map(\.recipe), into: keep.recipe)
+            let merged = merging(others.map { $0.recipe }, into: keep.recipe)
             if merged != keep.recipe { plan.update[keep.name] = merged }
-            plan.delete.formUnion(others.map(\.name))
+            plan.delete.formUnion(others.map { $0.name })
         }
         return plan
+    }
+
+    private struct NamedCopy {
+        let name: String
+        let recipe: RecipeModel
+    }
+
+    /// Ids held more than once: the only recipes worth asking iCloud about.
+    static func repeatedIDs(in recipes: [RecipeModel]) -> Set<UUID> {
+        var seen = Set<UUID>()
+        return Set(recipes.filter { !seen.insert($0.id).inserted }.map { $0.id })
     }
 
     /// The list shows each recipe once while copies wait to be merged; the first copy of each id stays.

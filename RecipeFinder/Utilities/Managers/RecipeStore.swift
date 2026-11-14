@@ -90,7 +90,7 @@ final class RecipeStore: RecipeStoring {
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
             // With iCloud sync on, another device's built-in recipes arrive with the same ids as this one's.
-            if persistence.mergeSyncedRecipeCopies() {
+            if persistence.mergeSyncedRecipeCopies(of: RecipeCopyMerge.repeatedIDs(in: fetched)) {
                 fetched = await persistence.fetchRecipesAsync()
                 guard generation == loadGeneration else { return }
             }
