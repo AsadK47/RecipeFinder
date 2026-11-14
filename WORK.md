@@ -1,11 +1,10 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 4b-2c (erased elsewhere while closed) on `agent/sync-erased-elsewhere`, waiting on Build & Test.
+Nothing. Data safety 2/4 slice 4b-2c merged (cf12e72); item still claimed 🚧.
 
 ## Next action
-Check Build & Test for `agent/sync-erased-elsewhere`; fix; challenge pass; ff-merge main; log. Then live status
-(`eventChangedNotification`), slice 5 = website privacy.html §7.
+Live sync status / iCloud full (`eventChangedNotification`), then slice 5 = website privacy.html §7.
 
 ## Decisions (why)
 - **Data safety 2/4 slice 4b-2c (erased elsewhere while closed)**: marker = the store *file's* identity
