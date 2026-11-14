@@ -68,6 +68,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
             // The kept copy's quantity and unit stay: units may differ between copies, so neither max nor sum is safe.
             sync: .iCloudRules(
                 storage: storage,
+                store: kitchenStore,
                 id: { $0.id },
                 sameThing: .init(key: { AnyHashable($0.sameItemKey) }, rank: { $0.id.uuidString }, fold: { kept, _ in kept })
             )
@@ -76,7 +77,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
             blobKey: Self.inventoryBlobKey, storage: storage,
             fetch: { try kitchenStore.fetchInventory() },
             replace: { try kitchenStore.replaceInventory(with: $0) },
-            sync: .iCloudRules(storage: storage) { $0.id }
+            sync: .iCloudRules(storage: storage, store: kitchenStore, id: { $0.id })
         )
         loadItems()
         loadInventoryItems()

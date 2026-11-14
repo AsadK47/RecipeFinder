@@ -1,14 +1,25 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 4b-2b (fold same item) merged (ab755c3); item still claimed 🚧.
+Data safety 2/4 slice 4b-2c (erased elsewhere while closed) on `agent/sync-erased-elsewhere`, waiting on Build & Test.
 
 ## Next action
-4b-2c: "erased elsewhere while closed" marker (CHALLENGES 3b-1: a list cleared on another device comes back at
-launch from the kept copy). Then, live status (`eventChangedNotification`),
-slice 5 = website privacy.html §7.
+Check Build & Test for `agent/sync-erased-elsewhere`; fix; challenge pass; ff-merge main; log. Then live status
+(`eventChangedNotification`), slice 5 = website privacy.html §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 4b-2c (erased elsewhere while closed)**: marker = the store *file's* identity
+  (`NSPersistentStore.identifier`, local metadata UUID; recovery/reinstall make a new one), recorded per list
+  (`syncedStoreFile.<key>`) after each successful shared load. At launch an empty store in the same file this device
+  last loaded = deletes arrived from iCloud → followed; a new/unknown file = recovery → kept copy added as before.
+  Rejected: a synced "erased" row (model change, model 18 is promised to Play), store history (purged after 7 days).
+  Unchanged: unmarked key and a save that only reached the kept copy still add it. Accepted: an iCloud account
+  change/sign-out purge (same file) is now followed too — consistent with recipes, and stops one account's lists being
+  re-uploaded into another. Fakes return nil (protocol default) → old behaviour in manager tests.
+  **Pre-mortem:** (1) recovery loses lists → `aFreshStoreFileGetsTheKeptCopyBackAtLaunch`, existing nil-file test;
+  (2) clear elsewhere still comes back → `aListClearedOnAnotherDeviceWhileTheAppWasClosed…`; (3) offline edit lost /
+  file recorded on a failed load → `aSaveThatOnlyReachedTheKeptCopy…`, `anEmptiedStoreFileIsFollowedOnlyAfter…`,
+  `aStoreFileSeenOnlyWithSyncOff…`, `eachStoreFileHasItsOwnNameAndKeepsIt`. No UI.
 - **Data safety 2/4 slice 4b-2b (fold same item)**: generic `SyncMerge.foldSameThing` + `SyncRules.sameThing`, run on
   every shared-store load. Two-phase (challenge: devices folding at once lost one device's copies, last write wins):
   another row is deleted only once the *stored* kept row already holds what it adds, else kept row updated, other waits. Kept row = lowest id (uuidString) of the group — same on every device, so the global

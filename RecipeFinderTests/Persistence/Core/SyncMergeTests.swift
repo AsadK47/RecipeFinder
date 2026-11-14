@@ -141,6 +141,8 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         var rows: [Row] = []
         var failReads = false
         var failWrites = false
+        /// The store file's name (`StoreFileIdentifying`); nil = unknown.
+        var file: String?
     }
 
     private let store = Store()
@@ -161,6 +163,7 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
             sync: .init(
                 isOn: { syncOn },
                 id: { AnyHashable($0.id) },
+                storeFile: { store.file },
                 sameThing: foldsSameText
                     ? MirroredSnapshot<Row>.SyncRules.SameThing(key: { AnyHashable($0.text) }, rank: { String($0.id) }, fold: { kept, _ in kept })
                     : nil
@@ -230,6 +233,62 @@ private func row(_ id: Int, _ text: String = "") -> Row { Row(id: id, text: text
         #expect(reloaded.isEmpty)
         #expect(store.rows.isEmpty)
         #expect(keptCopy() == [])
+    }
+
+    @Test func aListClearedOnAnotherDeviceWhileTheAppWasClosedStaysClearedAtLaunch() {
+        store.file = "store-A"
+        let first = snapshot()
+        _ = first.load()
+        first.save([row(1), row(2)])
+        store.rows = []                        // the other device's clear arrived; same store file
+        let loaded = snapshot().load()
+        #expect(loaded.isEmpty)
+        #expect(store.rows.isEmpty)
+        #expect(keptCopy() == [])
+    }
+
+    @Test func aFreshStoreFileGetsTheKeptCopyBackAtLaunch() {
+        store.file = "store-A"
+        let first = snapshot()
+        _ = first.load()
+        first.save([row(1), row(2)])
+        store.rows = []
+        store.file = "store-B"                 // recovery set the unreadable file aside and opened a new one
+        let loaded = snapshot().load()
+        #expect(loaded == [row(1), row(2)])
+        #expect(store.rows == loaded)
+    }
+
+    @Test func aSaveThatOnlyReachedTheKeptCopyIsAddedToAnEmptiedStoreAtLaunch() {
+        store.file = "store-A"
+        store.rows = [row(1)]
+        let sut = snapshot()
+        _ = sut.load()
+        store.failWrites = true
+        sut.save([row(1), row(2)])
+        store.failWrites = false
+        store.rows = []                        // cleared elsewhere meanwhile; this device's new row still counts
+        let loaded = snapshot().load()
+        #expect(loaded == [row(1), row(2)])
+    }
+
+    @Test func aStoreFileSeenOnlyWithSyncOffStillGetsTheKeptCopyBack() {
+        store.file = "store-A"
+        let off = snapshot(syncOn: false)
+        _ = off.load()
+        off.save([row(1)])
+        store.rows = []
+        #expect(snapshot().load() == [row(1)])
+    }
+
+    @Test func anEmptiedStoreFileIsFollowedOnlyAfterALoadOfThatFileSucceeded() {
+        store.file = "store-A"
+        writeKeptCopy([row(1)])
+        storage.set(true, forKey: MirroredSnapshot<Row>.flagKey(for: blobKey))
+        store.failReads = true
+        _ = snapshot().load()                  // unreadable: the file is not recorded as loaded
+        store.failReads = false
+        #expect(snapshot().load() == [row(1)])
     }
 
     @Test func aDeleteHereRemovesOnlyThatRow() {

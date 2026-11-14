@@ -10,6 +10,17 @@ enum MirroredSnapshotError: LocalizedError {
     }
 }
 
+/// A store that can name the database file it reads (`NSPersistentStore.identifier`, new for every fresh file).
+@MainActor
+protocol StoreFileIdentifying: AnyObject {
+    var storeFileID: String? { get }
+}
+
+extension StoreFileIdentifying {
+    /// Unknown: an empty store at launch is treated as recovery and gets the kept copy back.
+    var storeFileID: String? { nil }
+}
+
 /// Keeps a whole-list `LocalStore` blob (collections, meal plans, shopping list…) in Core Data entities (Data safety
 /// 1/4), with the blob kept current for one release as a fallback.
 ///
@@ -31,6 +42,9 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     struct SyncRules {
         let isOn: () -> Bool
         let id: (Value) -> AnyHashable
+        /// Names the store file (`StoreFileIdentifying`); nil when unknown. An empty store in the same file this
+        /// device last loaded was emptied on another device, so launch follows it instead of adding the kept copy.
+        var storeFile: () -> String? = { nil }
         /// Rows with different ids that mean one thing (the same item added on two devices) are folded into one on
         /// load (`SyncMerge.foldSameThing`). Nil: rows are only matched by id.
         var sameThing: SameThing? = nil
@@ -46,10 +60,16 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         /// The rules every manager uses: on while the cook's iCloud sync switch (`SyncPreference`) is on.
         static func iCloudRules<ID: Hashable>(
             storage: LocalStore,
+            store: any StoreFileIdentifying,
             id: @escaping (Value) -> ID,
             sameThing: SameThing? = nil
         ) -> SyncRules {
-            SyncRules(isOn: { SyncPreference.isOn(in: storage) }, id: { AnyHashable(id($0)) }, sameThing: sameThing)
+            SyncRules(
+                isOn: { SyncPreference.isOn(in: storage) },
+                id: { AnyHashable(id($0)) },
+                storeFile: { [weak store] in store?.storeFileID },
+                sameThing: sameThing
+            )
         }
     }
 
@@ -125,6 +145,8 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
     private var wipePendingKey: String { "wipePending.\(blobKey)" }
     /// Set while syncing when a save reached only the kept copy; the next load adds the copy to the store.
     private var keptCopyAheadKey: String { "keptCopyAhead.\(blobKey)" }
+    /// The store file of this device's last shared-store load.
+    private var loadedStoreFileKey: String { "syncedStoreFile.\(blobKey)" }
 
     private func blob() -> [Value]? {
         readBlob()
@@ -194,10 +216,13 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
         guard finishPendingWipe() else { return fallBackKeepingStore() }
         do {
             var values = try fetch()
-            // An empty store next to a non-empty kept copy is far more likely recovery or an unfinished first
-            // import than "everything deleted elsewhere": add the copy back rather than wipe the safety net.
+            let storeFile = sync.storeFile()
+            // An empty store next to a non-empty kept copy is recovery (a fresh store file) or an unfinished first
+            // import, unless it's the very file this device last loaded: then the rows were deleted elsewhere.
+            let emptiedElsewhere = hasLoadedSharedStore
+                || (storeFile != nil && storeFile == storage.string(forKey: loadedStoreFileKey))
             let keptCopyMayBeAhead = !storage.bool(forKey: flagKey) || storage.bool(forKey: keptCopyAheadKey)
-                || (values.isEmpty && !hasLoadedSharedStore)
+                || (values.isEmpty && !emptiedElsewhere)
             if keptCopyMayBeAhead, let kept = blob() {
                 let merged = SyncMerge.addKeptCopy(kept, to: values, id: sync.id)
                 if merged != values {
@@ -215,6 +240,7 @@ final class MirroredSnapshot<Value: Codable & Equatable> {
             }
             storage.set(true, forKey: flagKey)
             storage.removeObject(forKey: keptCopyAheadKey)
+            if let storeFile { storage.set(storeFile, forKey: loadedStoreFileKey) }
             if blob() != values { writeBlob(values) }
             usesEntities = true
             lastKnown = values

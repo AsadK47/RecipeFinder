@@ -4,7 +4,7 @@ import Foundation
 /// Where the kitchen ("in my kitchen" items and the dated inventory) lives once moved out of its `LocalStore` blobs:
 /// Core Data in the app, a fake in tests.
 @MainActor
-protocol KitchenStoring: AnyObject {
+protocol KitchenStoring: StoreFileIdentifying {
     /// Every stored kitchen item, in list order.
     func fetchItems() throws -> [KitchenItem]
     /// Makes the store hold exactly these kitchen items, in this order.
@@ -33,6 +33,8 @@ final class CoreDataKitchenStore: KitchenStoring {
     static let inventoryEntityName = "InventoryItemEntity"
 
     private let persistence: PersistenceController
+
+    var storeFileID: String? { persistence.storeFileID }
 
     init(persistence: PersistenceController) {
         self.persistence = persistence

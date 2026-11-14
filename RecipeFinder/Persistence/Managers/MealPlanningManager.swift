@@ -71,7 +71,7 @@ final class MealPlanningManager: MealPlanningManaging {
             blobKey: blobKey, storage: storage,
             fetch: { try store.fetchMealPlans() },
             replace: { try store.replaceMealPlans(with: $0) },
-            sync: .iCloudRules(storage: storage) { $0.id }
+            sync: .iCloudRules(storage: storage, store: store, id: { $0.id })
         )
     }
 

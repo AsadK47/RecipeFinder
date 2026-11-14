@@ -72,6 +72,7 @@ final class ShoppingListManager: ShoppingListManaging {
             replace: { try shoppingListStore.replaceItems(with: $0) },
             sync: .iCloudRules(
                 storage: storage,
+                store: shoppingListStore,
                 id: { $0.id },
                 sameThing: .init(key: { AnyHashable($0.sameItemKey) }, rank: { $0.id.uuidString }, fold: { $0.folding($1) })
             )
@@ -80,7 +81,7 @@ final class ShoppingListManager: ShoppingListManaging {
             blobKey: Self.storesBlobKey, storage: storage,
             fetch: { try shoppingListStore.fetchStores() },
             replace: { try shoppingListStore.replaceStores(with: $0) },
-            sync: .iCloudRules(storage: storage) { $0 }
+            sync: .iCloudRules(storage: storage, store: shoppingListStore, id: { $0 })
         )
         loadItems()
     }

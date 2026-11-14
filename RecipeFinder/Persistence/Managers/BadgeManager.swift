@@ -64,7 +64,7 @@ final class BadgeManager: BadgeManaging {
             },
             fetch: { try badgeStore.fetchBadges() },
             replace: { try badgeStore.replaceBadges(with: $0) },
-            sync: .iCloudRules(storage: storage) { $0.badgeId }
+            sync: .iCloudRules(storage: storage, store: badgeStore, id: { $0.badgeId })
         )
         reload()
     }

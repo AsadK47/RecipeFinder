@@ -83,7 +83,7 @@ final class ProfileManager: ProfileManaging {
             fetch: { try profileStore.fetchProfile().map { [$0] } ?? [] },
             replace: { try profileStore.replaceProfile(with: $0.first) },
             // One profile per cook: every device's row is the same row, whatever its uuid.
-            sync: .iCloudRules(storage: storage) { _ in "profile" }
+            sync: .iCloudRules(storage: storage, store: profileStore, id: { _ in "profile" })
         )
         loadProfile()
     }

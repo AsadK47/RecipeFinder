@@ -5,7 +5,7 @@ private let collectionStoreLogger = AppLogger.logger(category: "CollectionStore"
 
 /// Where collections live once moved out of the `LocalStore` blob: Core Data in the app, a fake in tests.
 @MainActor
-protocol CollectionStoring: AnyObject {
+protocol CollectionStoring: StoreFileIdentifying {
     /// Every stored collection, in list order.
     func fetchCollections() throws -> [RecipeCollection]
     /// Makes the store hold exactly these collections, in this order.
@@ -30,6 +30,8 @@ final class CoreDataCollectionStore: CollectionStoring {
     static let entityName = "CollectionEntity"
 
     private let persistence: PersistenceController
+
+    var storeFileID: String? { persistence.storeFileID }
 
     init(persistence: PersistenceController) {
         self.persistence = persistence

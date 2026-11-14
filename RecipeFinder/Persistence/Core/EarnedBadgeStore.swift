@@ -50,7 +50,7 @@ struct EarnedBadgeRecord: Codable, Equatable {
 
 /// Where earned badges live once moved out of their `LocalStore` blobs: Core Data in the app, a fake in tests.
 @MainActor
-protocol EarnedBadgeStoring: AnyObject {
+protocol EarnedBadgeStoring: StoreFileIdentifying {
     /// Every stored badge row, sorted by badge id.
     func fetchBadges() throws -> [EarnedBadgeRecord]
     /// Makes the store hold exactly these rows.
@@ -74,6 +74,8 @@ final class CoreDataEarnedBadgeStore: EarnedBadgeStoring {
     static let entityName = "EarnedBadgeEntity"
 
     private let persistence: PersistenceController
+
+    var storeFileID: String? { persistence.storeFileID }
 
     init(persistence: PersistenceController) {
         self.persistence = persistence

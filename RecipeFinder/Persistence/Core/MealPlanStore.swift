@@ -3,7 +3,7 @@ import Foundation
 
 /// Where meal plans live once moved out of the `LocalStore` blob: Core Data in the app, a fake in tests.
 @MainActor
-protocol MealPlanStoring: AnyObject {
+protocol MealPlanStoring: StoreFileIdentifying {
     /// Every stored plan, in list order.
     func fetchMealPlans() throws -> [MealPlanModel]
     /// Makes the store hold exactly these plans, in this order.
@@ -27,6 +27,8 @@ final class CoreDataMealPlanStore: MealPlanStoring {
     static let entityName = "MealPlanEntity"
 
     private let persistence: PersistenceController
+
+    var storeFileID: String? { persistence.storeFileID }
 
     init(persistence: PersistenceController) {
         self.persistence = persistence

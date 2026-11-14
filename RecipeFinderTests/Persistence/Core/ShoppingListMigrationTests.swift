@@ -272,6 +272,18 @@ final class InMemoryShoppingListStore: ShoppingListStoring {
 
     // MARK: - Core Data store (framework exemption: in-memory SQLite, like CoreDataStorePersistenceTests)
 
+    @Test func eachStoreFileHasItsOwnNameAndKeepsIt() throws {
+        let persistence = PersistenceController(inMemory: true)
+        let sut = CoreDataShoppingListStore(persistence: persistence)
+        _ = try sut.fetchItems()
+        let name = try #require(sut.storeFileID)
+        #expect(sut.storeFileID == name)
+        let other = CoreDataShoppingListStore(persistence: PersistenceController(inMemory: true))
+        _ = try other.fetchItems()
+        #expect(other.storeFileID != name)
+        #expect(InMemoryShoppingListStore().storeFileID == nil)
+    }
+
     @Test func coreDataStoreRoundTripsEveryFieldInOrder() throws {
         let sut = CoreDataShoppingListStore(persistence: PersistenceController(inMemory: true))
         try sut.replaceItems(with: [peas, pasta])

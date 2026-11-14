@@ -32,7 +32,7 @@ struct ProfileRecord: Codable, Equatable {
 
 /// Where the profile lives once moved out of its `LocalStore` keys: Core Data in the app, a fake in tests.
 @MainActor
-protocol ProfileStoring: AnyObject {
+protocol ProfileStoring: StoreFileIdentifying {
     /// The stored profile, or nil when there is none.
     func fetchProfile() throws -> ProfileRecord?
     /// Makes the store hold exactly this profile (nil removes it).
@@ -57,6 +57,8 @@ final class CoreDataProfileStore: ProfileStoring {
     static let entityName = "ProfileEntity"
 
     private let persistence: PersistenceController
+
+    var storeFileID: String? { persistence.storeFileID }
 
     init(persistence: PersistenceController) {
         self.persistence = persistence

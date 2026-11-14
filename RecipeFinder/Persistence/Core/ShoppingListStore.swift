@@ -4,7 +4,7 @@ import Foundation
 /// Where the shopping list and the user's grocery stores live once moved out of their `LocalStore` blobs: Core Data
 /// in the app, a fake in tests.
 @MainActor
-protocol ShoppingListStoring: AnyObject {
+protocol ShoppingListStoring: StoreFileIdentifying {
     /// Every stored item, in list order.
     func fetchItems() throws -> [ShoppingListModel]
     /// Makes the store hold exactly these items, in this order.
@@ -34,6 +34,8 @@ final class CoreDataShoppingListStore: ShoppingListStoring {
     static let storeEntityName = "ShoppingStoreEntity"
 
     private let persistence: PersistenceController
+
+    var storeFileID: String? { persistence.storeFileID }
 
     init(persistence: PersistenceController) {
         self.persistence = persistence

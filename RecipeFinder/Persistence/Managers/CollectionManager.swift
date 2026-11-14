@@ -56,7 +56,7 @@ final class CollectionManager: CollectionManaging {
             blobKey: Constants.UserDefaultsKeys.collections, storage: storage,
             fetch: { try store.fetchCollections() },
             replace: { try store.replaceCollections(with: $0) },
-            sync: .iCloudRules(storage: storage) { $0.id }
+            sync: .iCloudRules(storage: storage, store: store, id: { $0.id })
         )
     }
 

@@ -17,6 +17,11 @@ final class PersistenceController {
     /// Where `takeOutsideChanges()` last stopped reading the store's history (`PersistenceController+RemoteChanges`).
     var lastHistoryToken: NSPersistentHistoryToken?
 
+    /// The open store file's identifier; a fresh file (recovery, reinstall) gets a new one.
+    var storeFileID: String? {
+        isStoreLoaded ? container.persistentStoreCoordinator.persistentStores.first?.identifier : nil
+    }
+
     /// True when the open store is mirrored to iCloud (sync was on at launch and the store opened with it).
     var isSyncing: Bool {
         isStoreLoaded && container.persistentStoreDescriptions.first?.cloudKitContainerOptions != nil
