@@ -34,7 +34,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("4. Information Stored on Your Device")
 
-                BodyText("4.1 The following is created and held on your Device (and in your own iCloud account only where you enable a feature that uses it — see Section 7):")
+                BodyText("4.1 The following is created and held on your Device (and, if you turn on iCloud sync, in your own iCloud account, except your app preferences — see Section 7):")
                 LegalBulletPoint("Recipes you create or import, including ingredients, instructions, notes, tags, cuisine, dietary information, favourites and the original text a recipe was imported from")
                 LegalBulletPoint("Meal plans, shopping lists (including shop names) and kitchen inventory")
                 LegalBulletPoint("Collections, cooking history, ratings and achievements")
@@ -65,9 +65,9 @@ struct PrivacyPolicyView: View {
 
                 SectionTitle("7. Optional Sync and Sharing")
 
-                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. While it is on, the information described in Section 4, including photos you add to recipes and other than your app preferences, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. Recipe pictures loaded from websites are fetched again on each device rather than synced. The Developer cannot access your iCloud account or the data in it.")
+                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. Turning it on or off takes effect the next time you open the Application. While it is on, everything described in Section 4 except your app preferences, including photos you add to recipes, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. Recipe pictures loaded from websites are fetched again on each device rather than synced. The Developer cannot access your iCloud account or the data in it.")
 
-                BodyText("7.2 You can turn iCloud sync off at any time in the same place; your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, deletes it on every device signed in to your iCloud account. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, those changes are then applied on every device signed in to your iCloud account.")
+                BodyText("7.2 You can turn iCloud sync off at any time in the same place; sync stops the next time you open the Application, and your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, removes it from your iCloud account and from every device signed in to it. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, the Application then sends those changes to your iCloud account and to every device signed in to it.")
 
                 BodyText("7.3 Future versions may offer sharing recipes and collections with people you choose. Content you choose to share will be visible to the people you share it with. Any such feature will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
             }
@@ -81,8 +81,8 @@ struct PrivacyPolicyView: View {
 
                 SectionTitle("9. Your Rights and Control")
 
-                BodyText("9.1 You retain complete control over your data. You may at any time:")
-                LegalBulletPoint("Export your data via Settings > Data Management")
+                BodyText("9.1 You stay in control of your data. You may at any time:")
+                LegalBulletPoint("Export your recipes and other data via Settings > Data Management (photos are not included in the export)")
                 LegalBulletPoint("Delete your data via Settings > Data Management")
                 LegalBulletPoint("Remove all data from your Device by uninstalling the Application (data in your iCloud account is removed as described in Section 7.2)")
             }
@@ -90,7 +90,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("10. Data Protection Laws")
 
-                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. While the information you enter is not collected or received by the Developer, the Developer does not act as a data controller of that information for most purposes. If that changes for any feature, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
+                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the Developer does not collect or receive the information you enter, the Developer does not act as a data controller of that information for most purposes. If that changes for any feature, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
 
                 SectionTitle("11. Children's Privacy")
 
