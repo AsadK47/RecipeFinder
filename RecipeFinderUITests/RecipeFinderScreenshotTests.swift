@@ -277,6 +277,26 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "15-other-app-import")
     }
 
+    /// Data safety 2/4: Settings → Data Management opens on the iCloud sync switch (off on a fresh install).
+    @MainActor
+    func testCaptureDataManagementSync() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Me"].tap()
+        app.buttons["me.settings"].tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
+        settle()
+        let data = app.staticTexts["Data Management"].firstMatch
+        for _ in 0..<4 where !data.isHittable { app.swipeUp() }
+        data.tap()
+        XCTAssertTrue(app.switches["settings.iCloudSync"].waitForExistence(timeout: 10),
+                      "Data Management should show the iCloud sync switch.")
+        settle()
+        snap(app, "37-data-management-sync")
+    }
+
     /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded
     /// via the DEBUG `-seed-tonight-plan` flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
     @MainActor
