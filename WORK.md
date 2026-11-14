@@ -4,7 +4,7 @@
 Nothing. Data safety 2/4 slice 4b-1 (photo sync) merged (3c995f9); item still claimed 🚧.
 
 ## Next action
-Get `agent/photo-sync` green → merge. Then 4b-2: photo deletes reach iCloud (drop rows no recipe references, with
+4b-2: photo deletes reach iCloud (drop rows no recipe references, with
 a safety delay so a photo arriving before its recipe isn't pruned) + dedupe of other lists (+ "erased elsewhere
 while closed" marker). Then live status (`eventChangedNotification`), slice 5 = website privacy.html §7.
 
