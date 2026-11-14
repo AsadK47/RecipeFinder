@@ -291,7 +291,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let data = app.staticTexts["Data Management"].firstMatch
         for _ in 0..<4 where !data.isHittable { app.swipeUp() }
         data.tap()
-        XCTAssertTrue(app.switches["settings.iCloudSync"].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.descendants(matching: .any)["settings.iCloudSync"].firstMatch.waitForExistence(timeout: 10),
                       "Data Management should show the iCloud sync switch.")
         settle()
         snap(app, "37-data-management-sync")
