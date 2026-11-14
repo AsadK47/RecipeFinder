@@ -1,14 +1,11 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Data safety 2/4 slice 4a (store-history purge) on `agent/history-purge`: `PersistenceController+RemoteChanges`
-`purgeHistory(before:)` + expired-checkpoint recovery in `takeOutsideChanges`; launch call in `RecipeFinderApp`;
-tests `StoreHistoryPurgeTests` (RemoteChangeReloaderTests.swift). Waiting on CI.
+Nothing. Data safety 2/4 slice 4a (history purge) merged (dcee46e); item still claimed 🚧.
 
 ## Next action
-Merge 4a when green. Then slice 4b = recipe photos sync (model 17 photo entity) + dedupe of other lists
-(+ "erased elsewhere while closed" marker).
-Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5 = website privacy.html to match §7.
+Slice 4b = recipe photos sync (model 17 photo entity) + dedupe of other lists (+ "erased elsewhere while closed"
+marker). Then live status (syncing / iCloud full via `eventChangedNotification`), slice 5 = website privacy.html §7.
 
 ## Decisions (why)
 - **Data safety 2/4 slice 4a (history purge)**: history tracking is always on, so history grew forever even with sync
