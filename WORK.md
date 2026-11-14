@@ -1,19 +1,26 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Data safety 2/4 slice 3b-2a merged (5f9eafa); item still claimed 🚧.
+Data safety 2/4 slice 3b-2b on `agent/data-safety-2-sync-toggle` (d3ef75e): opt-in "Sync with iCloud" switch in
+Settings → Data Management (`ICloudSyncSection`), `SyncPreference` moved to its own file (wantedKey + applyAtLaunch +
+keepingChoice), `SyncStatus`, Reset warns/keeps the choice, Privacy §7 rewritten (Last Updated 14 Nov 2026).
+Waiting on Build & Test; challenge pass running.
 
 ## Next action
-Slice 3b-2b = Settings "iCloud sync" toggle/status, **opt-in (off by default)** +
-Privacy Policy §7 in the same slice (the in-app policy promises opt-in and a policy update *before* any sync ships).
-Toggle writes a "wanted" key; `SyncPreference.key` (what the rules read) only changes at launch, before
-`PersistenceController.shared` — a live switch-off would put the rules in "kept copy wins" against a syncing store
-and delete other devices' rows. Reset must keep both keys (clearAll wipes `rf.*`) and warn it erases on every device.
-Status shows "off on this device" after a `retryWithoutSync` fallback. Tell the owner which build turns sync on.
-Then slice 4 = recipe photos + dedupe of other lists (+ "erased elsewhere while closed" marker). Slice 5 = website
-privacy.html to match §7.
+Check Build & Test for the branch → fix → Screenshots (Data Management) → merge. Then slice 4 = recipe photos +
+dedupe of other lists (+ "erased elsewhere while closed" marker). Slice 5 = website privacy.html to match §7.
 
 ## Decisions (why)
+- **Data safety 2/4 slice 3b-2b (switch)**: opt-in (off by default), against the item's "on by default": the shipped
+  policy promised opt-in. Switch writes `wantedKey`; `key` copied at launch first thing in `App.init`, so the CloudKit
+  mirror and every list's merge rules agree for the whole launch. Old installs with `key` on and no `wantedKey` stay on.
+  Status: off / on / turns on|off next launch / paused here (fell back to local) / sign in. Account check only when the
+  store opened with CloudKit (CKContainer without the entitlement crashes CI simulator builds). Reset warns "every
+  device" for any status but `.off` (CloudKit exports history incl. deletes once mirrored). "iCloud full"/syncing
+  events (`eventChangedNotification`) left for later. **Pre-mortem:** (1) switch flips rules mid-launch → deletes other
+  devices' rows → `flippingTheSwitchLeavesThisLaunchsRulesAlone`; (2) Reset forgets sync → next launch rules
+  "kept copy wins" → `resetKeepsTheSyncChoice`; (3) sync on by accident → `syncIsOffOnAFreshInstall` + screenshot of
+  Data Management shows Off.
 - **Data safety 2/4 slice 3b-2a (recipe copies)**: done *before* the toggle (reordered from WORK.md): bundled recipes
   have fixed ids and are seeded on every device, so the first time sync meets a second device (or the reinstall test)
   the library would show every built-in recipe twice and edits would hit an arbitrary copy. Keep = lowest CloudKit
