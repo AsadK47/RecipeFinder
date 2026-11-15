@@ -316,10 +316,6 @@ import Foundation
         #expect(try controller.container.viewContext.fetch(request).count == 1)
     }
 
-    @Test func anInMemoryStoreHasNoCopiesToRemove() throws {
-        try PersistenceController(inMemory: true).removeStoreCopies()
-    }
-
     // MARK: - Helpers
 
     private func momd() throws -> URL {

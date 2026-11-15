@@ -81,18 +81,22 @@ enum StoreBackup {
     /// every copy, then throws the first failure.
     static func removeAllCopies(storeURL: URL, backupDirectory: URL?, fileManager: FileManager = .default) throws {
         var firstError: Error?
-        func remove(names prefix: String, in folder: URL) throws {
+        func remove(names prefix: String, in folder: URL) {
             guard fileManager.fileExists(atPath: folder.path) else { return }
-            for name in try fileManager.contentsOfDirectory(atPath: folder.path) where name.hasPrefix(prefix) {
-                do {
-                    try fileManager.removeItem(at: folder.appendingPathComponent(name))
-                } catch {
-                    if firstError == nil { firstError = error }
+            do {
+                for name in try fileManager.contentsOfDirectory(atPath: folder.path) where name.hasPrefix(prefix) {
+                    do {
+                        try fileManager.removeItem(at: folder.appendingPathComponent(name))
+                    } catch {
+                        if firstError == nil { firstError = error }
+                    }
                 }
+            } catch {
+                if firstError == nil { firstError = error }
             }
         }
-        if let backupDirectory { try remove(names: folderPrefix, in: backupDirectory) }
-        try remove(names: storeURL.lastPathComponent + setAsideMarker, in: storeURL.deletingLastPathComponent())
+        if let backupDirectory { remove(names: folderPrefix, in: backupDirectory) }
+        remove(names: storeURL.lastPathComponent + setAsideMarker, in: storeURL.deletingLastPathComponent())
         if let firstError { throw firstError }
     }
 
