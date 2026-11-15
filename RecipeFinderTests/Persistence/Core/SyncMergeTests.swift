@@ -1,4 +1,5 @@
 import Testing
+import CoreData
 import Foundation
 @testable import RecipeFinder
 
