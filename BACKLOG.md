@@ -102,6 +102,7 @@ drop a line while moving it.
 One phase at a time; within a phase, top to bottom. 🐞 / TestFlight / Inbox items still go first. Items marked `[~]`
 are merged into a newer item or parked — never start them; their text stays as reference spec.
    **Next (owner order 2026-11-14, docs/PRODUCT.md):**
+   **TOP (owner 2026-11-15, before every lane): CI ≤ 10 minutes** — see Queue item *CI under 10 minutes*.
    **Now (owner 2026-11-15, parallel lanes, batch landing):** *Data lane:* ~~Inbox 🔴 photo files after a Reset~~ (e67da6f) →
    Data safety 4/4 Recently deleted, lean (recipes + photos, 30 days; **RecipeModel 18 approved** for
    one optional deleted-at date) · *Cook lane:* Cooking flow · *Privacy lane:* 🟡 §5.1 recent-searches wording, then
@@ -117,6 +118,14 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **CI under 10 minutes** — 🚧 CI lane session 2026-11-15 — (owner 2026-11-15: "30 minutes is unacceptable, 10 or
+  nothing"). Every Build & Test run — push (build + unit) and dispatch/nightly (+ UI tests) — finishes in ≤10 min wall
+  time on free runners. Today: push ~13 min (cache restore ~3, build ~5.5, test ~5.5); UI runs >30 min and get cut
+  off. Measure each step first, then e.g. shrink the cached DerivedData, shard UI tests across parallel jobs
+  (`-only-testing` per class, test-without-building from one build), drop needless coverage/diagnostics, run UI
+  tests only for UI-touching changes. Never skip or weaken tests to hit the number. If ≤10 min is impossible on
+  free runners, put the measured numbers and the paid-runner cost in Needs owner. *Done when:* three consecutive
+  push runs and one full UI run each ≤10 min, timings logged.
 - [ ] **Docs refresh** (quality, next between-phases item — owner 2026-11-14 wants developer docs + website dev
   updates; audit + plan in this session). (1) Retire ROADMAP.md into `docs/PRODUCT.md` + BACKLOG Roadmap
   (move to `docs/archive/`), point root CLAUDE.md "Session start" at PRODUCT/BACKLOG instead of ROADMAP. (2) HANDBOOK.md
@@ -630,9 +639,6 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🐞 CI: dispatched UI-test runs now exceed the 30-min job timeout (2026-11-15: both badge runs cancelled mid
-  `testCaptureTodayWeek`, coverage step then fails on the incomplete xcresult). Split UI tests into their own job or
-  raise the timeout; check the nightly run too. — 🚧 builder agent 2026-11-15
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
