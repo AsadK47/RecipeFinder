@@ -30,6 +30,44 @@ enum ErasedPhotoCleanup {
         return .clear
     }
 
+    /// One check after a load: remembers the store file, or clears the photo files of a library erased elsewhere
+    /// (only files iCloud has had, see `deleteBefore`). The file is forgotten after a clear so it runs once; a folder
+    /// that couldn't be read throws and keeps it for the next load. Returns how many files went.
+    @discardableResult
+    static func follow(
+        store: StoreView?, storeFile: String?, checkedAt: Date, storage: LocalStore, documents: URL,
+        fileManager: FileManager = .default
+    ) throws -> Int {
+        switch step(store: store, storeFile: storeFile, remembered: storage.string(forKey: rememberedFileKey)) {
+        case .remember(let storeFile):
+            storage.set(storeFile, forKey: rememberedFileKey)
+            return 0
+        case .nothing:
+            return 0
+        case .clear:
+            let lastExport = HistoryPurgeRule.lastExportStart(in: storage)
+            var removed = 0
+            if let before = deleteBefore(checkedAt: checkedAt, lastExportStart: lastExport) {
+                removed = try removeFiles(in: documents, keeping: [], modifiedBefore: before, fileManager: fileManager)
+            }
+            storage.removeObject(forKey: rememberedFileKey)
+            return removed
+        }
+    }
+
+    /// A photo's row is saved by the photo pass a little after its file; an export that started in between didn't
+    /// carry it.
+    static let exportMargin: TimeInterval = 10 * 60
+
+    /// Files written before this date may go; nil keeps them all. Only photos iCloud has had (written well before
+    /// the last finished export) are deleted: an iCloud sign-out purges the store file just like a Reset elsewhere,
+    /// and a photo that never reached iCloud (iCloud full, offline) would then be gone for good when the recipes
+    /// come back. `checkedAt` keeps a photo saved while the check ran.
+    static func deleteBefore(checkedAt: Date, lastExportStart: Date?) -> Date? {
+        guard let lastExportStart else { return nil }
+        return min(checkedAt, lastExportStart.addingTimeInterval(-exportMargin))
+    }
+
     /// Photo rows and every own photo a recipe in the store shows (`photoFilePath`). Throws rather
     /// than reading a failed fetch as "no photos". Call on `context`'s queue.
     static func storeView(in context: NSManagedObjectContext) throws -> StoreView {

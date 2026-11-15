@@ -72,26 +72,16 @@ extension RecipeStore {
             await previous?.value
             let cutoff = Date()
             let store = await persistence.photoUseInSyncedStore()
-            let step = ErasedPhotoCleanup.step(
-                store: store, storeFile: persistence.storeFileID,
-                remembered: storage.string(forKey: ErasedPhotoCleanup.rememberedFileKey)
-            )
-            switch step {
-            case .remember(let storeFile):
-                storage.set(storeFile, forKey: ErasedPhotoCleanup.rememberedFileKey)
-            case .clear:
-                do {
-                    let removed = try ErasedPhotoCleanup.removeFiles(
-                        in: documents, keeping: store?.referencedPaths ?? [], modifiedBefore: cutoff
-                    )
-                    // Forgotten only once the folder was read, so a failed pass is retried on the next load.
-                    storage.removeObject(forKey: ErasedPhotoCleanup.rememberedFileKey)
+            do {
+                let removed = try ErasedPhotoCleanup.follow(
+                    store: store, storeFile: persistence.storeFileID, checkedAt: cutoff, storage: storage,
+                    documents: documents
+                )
+                if removed > 0 {
                     Self.logger.info("iCloud photos: library erased on another device, \(removed) photo files removed")
-                } catch {
-                    Self.logger.error("❌ Couldn't remove photos erased on another device: \(error.localizedDescription)")
                 }
-            case .nothing:
-                break
+            } catch {
+                Self.logger.error("❌ Couldn't remove photos erased on another device: \(error.localizedDescription)")
             }
         }
     }

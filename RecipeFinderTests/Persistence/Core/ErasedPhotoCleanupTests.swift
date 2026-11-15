@@ -65,6 +65,89 @@ import Foundation
         #expect(ErasedPhotoCleanup.step(store: store, storeFile: nil, remembered: "file-A") == .nothing)
     }
 
+    // MARK: - Which files may go
+
+    @Test func noFinishedExportKeepsEveryFile() {
+        // Signed out / iCloud full before anything was sent: the files may be the only copy.
+        #expect(ErasedPhotoCleanup.deleteBefore(checkedAt: Self.tuesday, lastExportStart: nil) == nil)
+    }
+
+    @Test func onlyFilesWrittenWellBeforeTheLastExportMayGo() {
+        let before = ErasedPhotoCleanup.deleteBefore(checkedAt: Self.tuesday, lastExportStart: Self.monday)
+
+        #expect(before == Self.monday.addingTimeInterval(-ErasedPhotoCleanup.exportMargin))
+    }
+
+    @Test func aPhotoSavedDuringTheCheckStaysEvenAfterANewerExport() {
+        let later = Self.tuesday.addingTimeInterval(60 * 60)
+
+        #expect(ErasedPhotoCleanup.deleteBefore(checkedAt: Self.monday, lastExportStart: later) == Self.monday)
+    }
+
+    @Test func aPhotoNotYetSentWhenAnErasedLibraryIsSeenIsKept() throws {
+        // Taken just before the last export began: its row may not have gone with it.
+        let export = Self.tuesday
+        try writeFile("RecipeImages/late.jpg", modified: export.addingTimeInterval(-60))
+        try writeFile("RecipeImages/sent.jpg", modified: Self.monday)
+        let before = try #require(ErasedPhotoCleanup.deleteBefore(
+            checkedAt: export.addingTimeInterval(60 * 60), lastExportStart: export
+        ))
+
+        let removed = try ErasedPhotoCleanup.removeFiles(in: documents, keeping: [], modifiedBefore: before)
+
+        #expect(removed == 1)
+        #expect(exists("RecipeImages/late.jpg"))
+        #expect(!exists("RecipeImages/sent.jpg"))
+    }
+
+    // MARK: - Following a check (remembered file + files)
+
+    @Test func aStoreWithPhotosIsRememberedForTheNextCheck() throws {
+        let storage = try Self.storage()
+
+        try follow(ErasedPhotoCleanup.StoreView(photoRows: 1, referencedPaths: ["RecipeImages/a.jpg"]), storage)
+
+        #expect(storage.string(forKey: ErasedPhotoCleanup.rememberedFileKey) == "file-A")
+    }
+
+    @Test func anErasedLibraryLosesItsSentPhotosOnceAndIsForgotten() throws {
+        let storage = try Self.storage()
+        storage.set("file-A", forKey: ErasedPhotoCleanup.rememberedFileKey)
+        HistoryPurgeRule.recordExport(startedAt: Self.tuesday, in: storage)
+        try writeFile("RecipeImages/a.jpg", modified: Self.monday)
+
+        let removed = try follow(ErasedPhotoCleanup.StoreView(photoRows: 0, referencedPaths: []), storage)
+
+        #expect(removed == 1)
+        #expect(!exists("RecipeImages/a.jpg"))
+        #expect(storage.string(forKey: ErasedPhotoCleanup.rememberedFileKey) == nil)
+    }
+
+    @Test func anErasedLibraryOnADeviceThatNeverFinishedAnExportKeepsItsPhotos() throws {
+        // A sign-out purge before anything was sent looks the same as a Reset elsewhere.
+        let storage = try Self.storage()
+        storage.set("file-A", forKey: ErasedPhotoCleanup.rememberedFileKey)
+        try writeFile("RecipeImages/a.jpg", modified: Self.monday)
+
+        let removed = try follow(ErasedPhotoCleanup.StoreView(photoRows: 0, referencedPaths: []), storage)
+
+        #expect(removed == 0)
+        #expect(exists("RecipeImages/a.jpg"))
+    }
+
+    @Test func aStoreThatStillShowsPhotosChangesNothing() throws {
+        let storage = try Self.storage()
+        storage.set("file-A", forKey: ErasedPhotoCleanup.rememberedFileKey)
+        HistoryPurgeRule.recordExport(startedAt: Self.tuesday, in: storage)
+        try writeFile("RecipeImages/a.jpg", modified: Self.monday)
+
+        let removed = try follow(ErasedPhotoCleanup.StoreView(photoRows: 0, referencedPaths: ["RecipeImages/a.jpg"]), storage)
+
+        #expect(removed == 0)
+        #expect(exists("RecipeImages/a.jpg"))
+        #expect(storage.string(forKey: ErasedPhotoCleanup.rememberedFileKey) == "file-A")
+    }
+
     // MARK: - Reading the store
 
     @Test func theStoreViewCountsPhotoRowsAndTheCooksPhotosRecipesShow() throws {
@@ -163,6 +246,18 @@ import Foundation
     }
 
     // MARK: - Helpers
+
+    private static func storage() throws -> LocalStore {
+        LocalStore(userDefaults: try #require(UserDefaults(suiteName: "ErasedPhotoCleanupTests.\(UUID().uuidString)")))
+    }
+
+    @discardableResult
+    private func follow(_ store: ErasedPhotoCleanup.StoreView, _ storage: LocalStore) throws -> Int {
+        try ErasedPhotoCleanup.follow(
+            store: store, storeFile: "file-A", checkedAt: Self.tuesday.addingTimeInterval(60 * 60),
+            storage: storage, documents: documents
+        )
+    }
 
     private static func recipe(_ name: String, image: String? = nil, photos: [String] = []) -> RecipeModel {
         RecipeModel(

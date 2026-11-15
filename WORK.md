@@ -12,9 +12,11 @@ Check the branch's Build & Test; fix; reviewers + challenger; ff main; tick Inbo
 - **Photo files after a Reset elsewhere** (`ErasedPhotoCleanup`): with sync on, after each load: remember the store
   file once it holds photo rows (`syncedStoreFile.recipePhotos`); when that same file holds **zero photo rows and no
   recipe shows an own photo** (throwing fetch, never the swallowing `fetchRecipesAsync`), delete own photo files
-  (`syncablePath` names) written before the check, then forget the file. Rejected: "store has no recipes" — Reset
+  (`syncablePath` names, legacy absolute refs count as shown) written before min(check, last finished export − 10 min), then
+  forget the file. Export guard from the challenger: a sign-out purge looks like a Reset, and an unsent photo file
+  may be the only copy; no finished export → keep all. Rejected: "store has no recipes" — Reset
   re-seeds samples at once, so other devices may never see it empty; "file without a row" (4b-2a). Kept: web copies
-  (re-downloadable caches). Accepted: an iCloud sign-out purge of the same file also clears (as for lists); deleting
+  (re-downloadable caches). Accepted: a sign-out purge clears only photos iCloud already had; deleting
   every own-photo recipe elsewhere one by one clears too (correct: they're orphans). Queued on the `photoSync` chain so
   an in-flight pass can't write a file back after (CHALLENGES 14 Nov). **Pre-mortem:** (1) recovery/first import
   wipes photos → `anEmptyStoreInANewFileKeepsThePhotos`, `anUnknownStoreFileKeepsThePhotos`; (2) a photo still in use
