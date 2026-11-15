@@ -1,6 +1,7 @@
 import Testing
 import CoreData
 import Foundation
+import os
 @testable import RecipeFinder
 
 /// Data safety 2/4 slice 3b: lists re-read the store when another device's edits arrive through iCloud.
@@ -12,8 +13,12 @@ import Foundation
         var plans = 0
         var checks = 0
 
-        var reloads: [@MainActor () async -> Void] {
-            [{ self.recipes += 1 }, { self.plans += 1 }]
+        var reloads: [RemoteChangeReloader.Reload] {
+            [.init(name: "recipes") { self.recipes += 1 }, .init(name: "plans") { self.plans += 1 }]
+        }
+
+        @MainActor final class Reports {
+            var names: [String] = []
         }
     }
 
@@ -83,9 +88,9 @@ import Foundation
         #expect(lists.recipes == 2)
     }
 
-    /// Issue #16: reading the store's history after an iCloud import burst held the main thread, freezing the
-    /// screen (a badge reveal stuck mid-flip). The check is awaited, so the main actor keeps running meanwhile.
-    @Test func theMainActorStaysFreeWhileTheCheckRuns() async throws {
+    /// A test (or anything else) waiting after a pass has started — its check still running — waits for that pass's
+    /// reloads too, not just for the pass to have begun.
+    @Test func waitingAfterAPassStartedWaitsForItsReloads() async throws {
         let lists = Lists()
         let gate = Gate()
         let reloader = RemoteChangeReloader(
@@ -94,12 +99,53 @@ import Foundation
 
         reloader.storeChanged()
         try await Self.waitFor { gate.isWaiting }
-        let reloadedDuringTheCheck = lists.recipes
+        let waiter = Task { @MainActor in
+            await reloader.waitUntilIdle()
+            return lists.recipes
+        }
+        await Task.yield()
         gate.open(with: true)
-        try await Self.waitFor { lists.recipes == 1 }
 
-        #expect(reloadedDuringTheCheck == 0)
-        #expect(lists.recipes == 1)
+        #expect(await waiter.value == 1)
+    }
+
+    @Test func aChangeDuringAPassGetsAPassAfterIt() async throws {
+        let lists = Lists()
+        let gate = Gate()
+        let reloader = RemoteChangeReloader(
+            delay: .zero, hasOutsideChanges: { lists.checks += 1; return await gate.answer() }, reloads: lists.reloads
+        )
+
+        reloader.storeChanged()
+        try await Self.waitFor { gate.isWaiting }
+        reloader.storeChanged()
+        gate.open(with: true)
+        try await Self.waitFor { gate.isWaiting }
+        gate.open(with: true)
+        await reloader.waitUntilIdle()
+
+        #expect(lists.checks == 2)
+        #expect(lists.recipes == 2)
+    }
+
+    /// Issue #16 follow-up: a step that holds the main thread is reported by its list's name, so the next freeze
+    /// says which reload it was. Fast steps say nothing.
+    @Test func aSlowReloadIsReportedByName() async {
+        let reported = Lists.Reports()
+        let reloader = RemoteChangeReloader(
+            delay: .zero,
+            hasOutsideChanges: { true },
+            reloads: [
+                .init(name: "kitchen") { try? await Task.sleep(for: .milliseconds(250)) },
+                .init(name: "badges") {}
+            ],
+            reportSlowStep: { name, _ in reported.names.append(name) }
+        )
+
+        reloader.storeChanged()
+        await reloader.waitUntilIdle()
+
+        #expect(reported.names == ["kitchen"])
     }
 
     @Test func theStoresRemoteChangeNotificationSchedulesAReload() async throws {
@@ -213,6 +259,23 @@ import Foundation
 
         #expect(results.filter { $0 }.count == 1)
         #expect(await !persistence.takeOutsideChanges())
+    }
+
+    /// Issue #16: the history read runs on a background context, never the main thread (a first iCloud import is
+    /// thousands of transactions). Fails if the read moves back onto the main thread's context.
+    @Test func theHistoryIsReadOffTheMainThread() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        persistence.startTrackingOutsideChanges()
+        try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
+        let readOnMain = OSAllocatedUnfairLock<[Bool]>(initialState: [])
+
+        let changed = await persistence.takeOutsideChanges { checkpoint, entities, context in
+            readOnMain.withLock { $0.append(Thread.isMainThread) }
+            return PersistenceController.readHistory(after: checkpoint, appEntities: entities, in: context)
+        }
+
+        #expect(changed)
+        #expect(readOnMain.withLock { $0 } == [false])
     }
 
     @Test func syncIsOffForAStoreOpenedWithoutICloud() {

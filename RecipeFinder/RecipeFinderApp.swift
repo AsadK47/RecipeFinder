@@ -76,14 +76,15 @@ struct RecipeFinderApp: App {
         let reloader = RemoteChangeReloader(
             hasOutsideChanges: { await persistence.takeOutsideChanges() },
             reloads: [
-                { RecipeStore.shared.load() },
-                { CollectionManager.shared.reload() },
-                { MealPlanningManager.shared.reload() },
-                { ShoppingListManager.shared.reload() },
-                { KitchenInventoryManager.shared.reload() },
-                { BadgeManager.shared.reload() },
-                { CookingStreakManager.shared.reload() },
-                { ProfileManager.shared.loadProfile() }
+                // Starts the recipe fetch and returns; the fetch itself runs off the main thread.
+                .init(name: "recipes") { RecipeStore.shared.load() },
+                .init(name: "collections") { CollectionManager.shared.reload() },
+                .init(name: "meal plans") { MealPlanningManager.shared.reload() },
+                .init(name: "shopping list") { ShoppingListManager.shared.reload() },
+                .init(name: "kitchen") { KitchenInventoryManager.shared.reload() },
+                .init(name: "badges") { BadgeManager.shared.reload() },
+                .init(name: "cooking streak") { CookingStreakManager.shared.reload() },
+                .init(name: "profile") { ProfileManager.shared.loadProfile() }
             ]
         )
         reloader.observe(persistence.container.persistentStoreCoordinator)

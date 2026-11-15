@@ -17,23 +17,29 @@ extension PersistenceController {
     /// overlapping checks never both report the same change or move the checkpoint back.
     /// An unreadable history counts as no change: the next launch shows the other device's edits anyway, and
     /// guessing "changed" could reload over and over.
-    func takeOutsideChanges() async -> Bool {
+    /// `reader` is the history read; tests wrap it to see where it runs.
+    func takeOutsideChanges(
+        reader: @escaping @Sendable (HistoryCheckpoint, Set<String>, NSManagedObjectContext) -> HistoryReading
+            = PersistenceController.readHistory
+    ) async -> Bool {
         let previous = outsideChangeCheck
         let check = Task { () -> Bool in
             _ = await previous?.value
-            return await readOutsideChanges()
+            return await readOutsideChanges(with: reader)
         }
         outsideChangeCheck = check
         return await check.value
     }
 
-    private func readOutsideChanges() async -> Bool {
+    private func readOutsideChanges(
+        with reader: @escaping @Sendable (HistoryCheckpoint, Set<String>, NSManagedObjectContext) -> HistoryReading
+    ) async -> Bool {
         let container = self.container
         let after = HistoryCheckpoint(token: lastHistoryToken)
         let appEntities = Set(container.managedObjectModel.entitiesByName.keys)
         let reading = await withCheckedContinuation { (continuation: CheckedContinuation<HistoryReading, Never>) in
             container.performBackgroundTask { context in
-                continuation.resume(returning: Self.readHistory(after: after, appEntities: appEntities, in: context))
+                continuation.resume(returning: reader(after, appEntities, context))
             }
         }
         switch reading {
@@ -52,7 +58,7 @@ extension PersistenceController {
     }
 
     /// Call on `context`'s queue.
-    nonisolated private static func readHistory(
+    nonisolated static func readHistory(
         after checkpoint: HistoryCheckpoint, appEntities: Set<String>, in context: NSManagedObjectContext
     ) -> HistoryReading {
         let request = NSPersistentHistoryChangeRequest.fetchHistory(after: checkpoint.token)
@@ -175,8 +181,6 @@ extension PersistenceController {
     ) async -> Bool {
         await withCheckedContinuation { continuation in
             cloudContainer.performBackgroundTask { context in
-                // The importer may write the same rows meanwhile: the viewContext's policy, so the save doesn't fail.
-                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
                 let merged = Self.mergeRecipeCopies(of: ids, in: context) { objectIDs in
                     cloudContainer.recordIDs(for: objectIDs).mapValues(\.recordName)
                 }
@@ -185,13 +189,19 @@ extension PersistenceController {
         }
     }
 
-    /// The merge itself, given each row's iCloud record name (`recordNames`; a row without one waits for a later
-    /// pass). Call on `context`'s queue.
+    /// The merge itself, given each row's iCloud record name (`recordNames`, asked after the rows are read; a row
+    /// without one waits for a later pass). Call on `context`'s queue.
+    ///
+    /// Saved with optimistic locking (`NSMergePolicy.error`): if the cook edits, rates or cooks one of these recipes,
+    /// or iCloud updates it, between this pass reading the rows and saving, the save fails and is rolled back — the
+    /// edit stands and the next load merges again. A merge-wins policy would write the kept row back over the edit,
+    /// and the copy it deletes may hold the edit too.
     nonisolated static func mergeRecipeCopies(
         of ids: Set<UUID>,
         in context: NSManagedObjectContext,
         recordNames: ([NSManagedObjectID]) -> [NSManagedObjectID: String]
     ) -> Bool {
+        context.mergePolicy = NSMergePolicy.error
         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         request.predicate = NSPredicate(format: "%K IN %@", RecipeKey.id, Array(ids) as NSArray)
         do {
@@ -223,8 +233,19 @@ extension PersistenceController {
             return true
         } catch {
             context.rollback()
-            persistenceLogger.error("❌ Couldn't merge recipe copies from iCloud: \(error.localizedDescription)")
+            if Self.isSaveConflict(error) {
+                persistenceLogger.info("Recipe copies changed while merging; merging again on the next load")
+            } else {
+                persistenceLogger.error("❌ Couldn't merge recipe copies from iCloud: \(error.localizedDescription)")
+            }
             return false
         }
+    }
+
+    /// Optimistic-locking failures: another save changed or deleted a row this context had read.
+    nonisolated static func isSaveConflict(_ error: Error) -> Bool {
+        let error = error as NSError
+        return error.domain == NSCocoaErrorDomain
+            && [NSManagedObjectMergeError, NSPersistentStoreSaveConflictsError].contains(error.code)
     }
 }

@@ -70,6 +70,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Cost] `DiscoveryPool.make` runs on the main thread per Recipes appear / library change; `kitchenMatches` re-normalises the pantry per recipe (older code). Budget in `PerformanceBudgetTests.discoveryFeedBudget`.
   → Accepted; move off-main if the budget or a device trace says so.
 
+## 2026-11-15 (bug pass: 🐞 #16 froze on the badge reveal after a web import with sync just on — history read + recipe-copy merge moved off the main thread)
+- ⚔️ [Assumption] The freeze was main-thread Core Data work after each iCloud import burst; not proven (no device log). Fix may be incomplete, follow-up = MirroredSnapshot loads off main, or skip reloads until the CloudKit import Event ends, if timing/MetricKit shows them (the other 7 list reloads and viewContext's automatic merges still run on main; slow steps now log under "Diagnostics").
+- ⚔️ [Would the tests notice] `mergeSyncedRecipeCopies`' own wrapper (sync guard, one pass at a time, background context) is untested: it needs a store mirrored to iCloud. Tests drive `mergeRecipeCopies` on a background context instead, including an edit saved mid-merge.
+- ⚔️ [Time] `RecipeStore.load` now awaits the merge, so a recipe saved while a load runs can drop out of the list until the next load (the store keeps it). Not fixed: needs a "saved since this load's fetch" merge.
+
 ## 2026-11-15 (item pass: 🔴 photo files kept on other devices after a Reset elsewhere — fixed: legacy full-path photos read as unused; a sign-out purge looked like a Reset and could delete never-sent photos → now only files written before the last finished export − 10 min go)
 - ⚔️ [Assumption] An iCloud sign-out purges the store file like a Reset; photos iCloud already had are cleared and come back as rows on sign-in — cost if wrong: they don't come back. Unverified on device.
   → Owner: device check (sync on, photo, wait a minute, sign out/in of iCloud, photo returns).
