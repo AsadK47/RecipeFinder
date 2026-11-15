@@ -62,7 +62,9 @@ jobs:
     name: Build & Test
     needs: gate
     runs-on: macos-26
-    timeout-minutes: 30
+    # Pushes run unit tests only (~12 min with build); nightly / "Run workflow" add every UI test (~25 min more), which
+    # overran 30 min and was cancelled mid-run 13–15 Nov, leaving no coverage.
+    timeout-minutes: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 75 || 30 }}
 
     steps:
       - uses: actions/checkout@v4
