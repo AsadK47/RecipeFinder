@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: 🔴 photo files kept on other devices after a Reset elsewhere — fixed: legacy full-path photos read as unused; a sign-out purge looked like a Reset and could delete never-sent photos → now only files written before the last finished export − 10 min go)
+- ⚔️ [Assumption] An iCloud sign-out purges the store file like a Reset; photos iCloud already had are cleared and come back as rows on sign-in — cost if wrong: they don't come back. Unverified on device.
+  → Owner: device check (sync on, photo, wait a minute, sign out/in of iCloud, photo returns).
+- ⚔️ [Gap] Photo rows that never exported survive a Reset elsewhere (row count > 0), so those files stay and may resurrect rows in iCloud later; a downloaded file stamped with a clock-ahead device's date can outlive the clear. Leftovers, not losses.
+  → Accepted.
+- ⚔️ [Cost] Each synced load does one extra whole-recipe fetch for references (the shared fetch swallows errors).
+  → Accepted; revisit if PerformanceBudgetTests or 300+ libraries show it.
+
 ## 2026-11-15 (item pass: 🔴 history purged while sync is off — fixed: first cut counted a week of syncing launches, but an attached mirror may not export (signed out, iCloud full, offline); now purges only before the start of the last finished, successful CloudKit export)
 - ⚔️ [Assumption] Purging history before the last export's start may also remove CloudKit's own checkpoint transaction; if the mirror treats that as an expired token it resets and re-sends survivors, so deletes made since could come back — same risk as Apple's 7-day sample purge while idle; unverifiable in unit CI — cost if wrong: off-period deletes undone.
   → Owner: device check (sync off, delete a recipe, wait >7 days or fake clock, sync on, confirm it stays deleted elsewhere).

@@ -1,12 +1,10 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-`agent/erased-photo-files` — Inbox 🔴 photo files left on other devices after a Reset elsewhere. New
-`Persistence/Core/ErasedPhotoCleanup.swift` (+ tests), hooked from `RecipeStore.loadRecipes` →
-`clearPhotosErasedElsewhere()` (RecipeStore+RemoteImages). Waiting on Build & Test.
+Nothing. Inbox 🔴 photo files after a Reset elsewhere merged (be81a0e..e67da6f). Data safety 2/4 still claimed 🚧.
 
 ## Next action
-Check the branch's Build & Test; fix; reviewers + challenger; ff main; tick Inbox line; Log.
+Next Inbox: 🟡 Policy §5.1 recent-searches wording (privacy text — two reviewers, publish with `agent/privacy-photo-sync`).
 
 ## Decisions (why)
 - **Photo files after a Reset elsewhere** (`ErasedPhotoCleanup`): with sync on, after each load: remember the store
