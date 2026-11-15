@@ -216,7 +216,7 @@ import Foundation
         #expect(Set(dealt).count >= 29)
     }
 
-    @Test func cookAgainDoesNotRepeatTheRecentlyCookedRow() {
+    @MainActor @Test func cookAgainDoesNotRepeatTheRecentlyCookedRow() {
         var recipes = library(30)
         for i in 0..<5 {
             recipes[i].cookCount = 1
