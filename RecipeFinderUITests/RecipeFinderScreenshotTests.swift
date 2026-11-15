@@ -601,6 +601,21 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
     }
 
+    /// Endless discovery below the library preview: Recipes scrolled one, two and three screens down.
+    @MainActor
+    func testCaptureRecipesDiscovery() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        tab(app, "Recipes", shot: nil)
+        for screen in 1...3 {
+            app.swipeUp(velocity: .slow)
+            settle()
+            snap(app, "40-recipes-discovery-\(screen)")
+        }
+    }
+
     @MainActor
     private func tab(_ app: XCUIApplication, _ name: String, shot: String?) {
         let button = app.tabBars.buttons[name]
