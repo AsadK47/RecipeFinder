@@ -61,11 +61,11 @@ struct AboutView: View {
                 SettingsCard {
                     VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                            Text("© 2025 RecipeFinder")
+                            Text("© 2024–2026 Asad Khan")
                                 .font(.subheadline)
                                 .adaptiveSecondaryForeground()
 
-                            Text("All rights reserved")
+                            Text("Open source under the GNU AGPL v3")
                                 .font(.caption)
                                 .adaptiveSecondaryForeground()
                         }
