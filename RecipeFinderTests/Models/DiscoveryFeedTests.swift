@@ -33,12 +33,20 @@ import Foundation
         )
     }
 
-    /// `count` plain recipes across a few categories, each with its own ingredients.
+    /// A letters-only word unique to `n` (`keyWords` splits on non-letters, so "thing1" would collapse to "thing").
+    private func word(_ n: Int) -> String {
+        let letters = Array("abcdefghijklmnopqrstuvwxyz")
+        var n = n, result = "zz"
+        repeat { result.append(letters[n % 26]); n /= 26 } while n > 0
+        return result + "qq"
+    }
+
+    /// `count` plain recipes across a few categories, each with its own ingredients (nothing similar to anything).
     private func library(_ count: Int) -> [RecipeModel] {
         let categories = ["Main", "Dessert", "Side", "Soup"]
         return (0..<count).map { i in
             recipe(String(format: "Recipe %03d", i),
-                   ingredients: ["thing\(i) alpha", "thing\(i) beta"],
+                   ingredients: [word(i * 2), word(i * 2 + 1)],
                    category: categories[i % categories.count])
         }
     }
@@ -128,7 +136,7 @@ import Foundation
 
     @Test func aCookWithFavouritesOpensOnBecauseYouLoved() {
         var recipes = library(20)
-        recipes.append(recipe("Loved", ingredients: ["thing1 alpha", "thing1 beta"], isFavorite: true))
+        recipes.append(recipe("Loved", ingredients: [word(2), word(3)], isFavorite: true))
         #expect(pool(recipes).sources.first?.kind == .becauseYouLoved("Loved"))
     }
 
@@ -184,13 +192,41 @@ import Foundation
 
     @Test func aReshuffleChangesTheChapterOrder() {
         var pager = DiscoveryPager(pool: pool(library(40)), seed: 11)
-        var byCycle: [Int: [String]] = [:]
+        var byCycle: [Int: [DiscoveryChapter.Kind]] = [:]
         for _ in 0..<120 {
             guard let chapter = pager.next(1).first else { break }
-            byCycle[pager.cycle, default: []].append(chapter.recipes.map(\.name).joined())
+            byCycle[pager.cycle, default: []].append(chapter.kind)
         }
-        #expect(byCycle[0] != byCycle[1])
-        #expect(byCycle[1] != byCycle[2])
+        // Compare kinds, not recipes: recipe order reshuffles every cycle anyway, so only kinds prove the chapter
+        // order itself changed.
+        let orders = (0..<4).compactMap { byCycle[$0] }
+        #expect(orders.count == 4)
+        #expect(Set(orders.map { $0.map(\.hashValue) }).count > 1)
+    }
+
+    @Test func recipesAlreadyOnScreenWaitForTheNextCycle() {
+        let recipes = library(40)
+        let shown = Set(recipes.prefix(10).map(\.id))
+        var pager = DiscoveryPager(pool: pool(recipes), seed: 4, alreadyShown: shown)
+        var dealt: [UUID] = []
+        while pager.cycle == 0, let chapter = pager.next(1).first, pager.cycle == 0 {
+            dealt += chapter.recipes.map(\.id)
+        }
+        #expect(Set(dealt).isDisjoint(with: shown))
+        #expect(Set(dealt).count >= 29)
+    }
+
+    @Test func cookAgainDoesNotRepeatTheRecentlyCookedRow() {
+        var recipes = library(30)
+        for i in 0..<5 {
+            recipes[i].cookCount = 1
+            recipes[i].lastCookedAt = daysAgo(i + 1)
+        }
+        let row = DiscoveryPool.recentlyCooked(recipes)
+        let feed = DiscoveryFeedModel(seed: 8, now: { now })
+        feed.update(recipes: recipes, kitchenItemNames: [], alreadyShown: Set(row.map(\.id)))
+        let firstPage = feed.chapters.flatMap(\.recipes).map(\.id)
+        #expect(Set(firstPage).isDisjoint(with: row.map(\.id)))
     }
 
     @Test func theSameSeedDealsTheSameFeed() {
@@ -200,6 +236,38 @@ import Foundation
         let first = a.next(10)
         #expect(first == b.next(10))
         #expect(first.map(\.recipes) != c.next(10).map(\.recipes))
+    }
+
+    @Test func unrelatedRecipesAreNotSimilar() {
+        var recipes = library(20)
+        recipes.append(recipe("Loved", ingredients: [word(900), word(901)], isFavorite: true))
+        #expect(source(.becauseYouLoved("Loved"), in: pool(recipes)) == nil)
+    }
+
+    @Test(arguments: [2, 3, 7])
+    func aLibraryOneChapterCanHoldStillNeverEnds(count: Int) {
+        var pager = DiscoveryPager(pool: pool(library(count)), seed: 1)
+        #expect(pager.next(20).count == 20)
+    }
+
+    @Test func aTwoRecipeChapterIsASwipeRow() {
+        var pager = DiscoveryPager(pool: pool(library(2)), seed: 1)
+        #expect(pager.next(1).first?.layout == .row)
+    }
+
+    @Test func anEditedRecipeIsDealtWithItsNewName() {
+        var recipes = library(40)
+        var pager = DiscoveryPager(pool: pool(recipes), seed: 6)
+        let target = recipes[39]
+        recipes[39] = RecipeModel(
+            id: target.id, name: "Renamed", category: target.category, difficulty: "Basic", prepTime: "20 min",
+            cookingTime: "40 min", baseServings: 2, ingredients: target.ingredients, prePrepInstructions: [],
+            instructions: ["Cook"], notes: ""
+        )
+        pager.replacePool(pool(recipes))
+        let names = pager.next(60).flatMap(\.recipes).filter { $0.id == target.id }.map(\.name)
+        #expect(!names.isEmpty)
+        #expect(names.allSatisfy { $0 == "Renamed" })
     }
 
     @Test(arguments: [0, 1])
@@ -228,6 +296,35 @@ import Foundation
         #expect(chapter.refreshed(with: [:]) == nil)
     }
 
+    // MARK: Browsing the Recipes home
+
+    @Test func browsingIsNothingTypedFilteredOrResorted() {
+        #expect(RecipeBrowse.isBrowsing(RecipeFilterCriteria()))
+        var typed = RecipeFilterCriteria(); typed.searchText = "soup"
+        var spaces = RecipeFilterCriteria(); spaces.searchText = "  "
+        var filtered = RecipeFilterCriteria(); filtered.showFavoritesOnly = true
+        var sorted = RecipeFilterCriteria(); sorted.sortOrder = .mostCooked
+        #expect(!RecipeBrowse.isBrowsing(typed))
+        #expect(RecipeBrowse.isBrowsing(spaces))
+        #expect(!RecipeBrowse.isBrowsing(filtered))
+        #expect(!RecipeBrowse.isBrowsing(sorted))
+    }
+
+    @Test func thePreviewLeadsWithTheCooksOwnRecipesAndFavourites() {
+        var samples = library(10).map { r -> RecipeModel in var r = r; r.isSampleRecipe = true; return r }
+        samples[7].isFavorite = true
+        let own = recipe("Zebra cake")
+        let preview = RecipeBrowse.preview(samples + [own])
+        #expect(preview.count == RecipeBrowse.previewLimit)
+        #expect(preview.prefix(2).map(\.name) == [samples[7].name, "Zebra cake"])
+        #expect(preview.dropFirst(2).map(\.name) == samples.prefix(4).map(\.name))
+    }
+
+    @Test func aSmallLibraryShowsNoChapters() {
+        #expect(!RecipeBrowse.showsDiscovery(libraryCount: RecipeBrowse.previewLimit))
+        #expect(RecipeBrowse.showsDiscovery(libraryCount: RecipeBrowse.previewLimit + 1))
+    }
+
     // MARK: Feed model
 
     @MainActor @Test func theFeedDealsAFirstPageThenMoreNearTheEnd() {
@@ -250,26 +347,5 @@ import Foundation
         feed.update(recipes: recipes, kitchenItemNames: [])
         #expect(feed.chapters.map(\.id) == before)
         #expect(!feed.chapters.flatMap(\.recipes).contains { $0.id == shown.id })
-    }
-
-    // MARK: Performance
-
-    /// Loose budget (catches order-of-magnitude regressions): a 350-recipe library builds its pool and deals the
-    /// first screens well inside a frame budget's worth of headroom on CI.
-    @Test func a350RecipeLibraryStaysFast() {
-        let recipes = (0..<350).map { i in
-            recipe("Recipe \(i)",
-                   ingredients: (0..<12).map { "ingredient\((i + $0) % 90) leaves" },
-                   category: ["Main", "Dessert", "Side"][i % 3],
-                   cookCount: i % 5 == 0 ? 2 : 0, lastCookedAt: i % 5 == 0 ? daysAgo(i % 40) : nil,
-                   isFavorite: i % 17 == 0, cuisine: ["Italian", "Indian", nil][i % 3])
-        }
-        let kitchen = (0..<25).map { "ingredient\($0)" }
-        let clock = ContinuousClock()
-        let elapsed = clock.measure {
-            var pager = DiscoveryPager(pool: pool(recipes, kitchen: kitchen), seed: 1)
-            _ = pager.next(60)
-        }
-        #expect(elapsed < .milliseconds(500))
     }
 }

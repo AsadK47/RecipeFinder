@@ -73,9 +73,13 @@ struct DiscoveryChapter: Identifiable, Equatable {
         case .usesWhatYouHave: "kitchen"
         case .cookAgain: "again"
         case .newToYou: "new"
-        case .cuisine: "cuisine"
-        case .category(let category): "category.\(category.lowercased())"
+        case .cuisine(let cuisine): "cuisine.\(Self.slugKey(cuisine))"
+        case .category(let category): "category.\(Self.slugKey(category))"
         }
+    }
+
+    private static func slugKey(_ text: String) -> String {
+        text.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber }).joined(separator: "-")
     }
 
     private static let places: [String: String] = [
@@ -235,7 +239,9 @@ struct DiscoveryPool: Equatable {
     private static let staples: Set<String> = [
         "salt", "pepper", "black", "ground", "water", "sugar", "butter", "olive", "vegetable", "fresh", "large",
         "small", "medium", "chopped", "finely", "sliced", "diced", "minced", "plain", "flour", "taste", "optional",
-        "white", "extra", "virgin", "unsalted", "pinch", "handful", "cups", "tbsp", "tsp"
+        "white", "extra", "virgin", "unsalted", "pinch", "handful", "cups", "tbsp", "tsp", "into", "plus",
+        "peeled", "powder", "dried", "leaves", "green", "garlic", "onion", "onions", "cloves", "sauce", "pieces",
+        "roughly", "thinly", "grated", "about", "cold", "warm", "room", "temperature"
     ]
 
     /// Cooked before: recent cooks newest first, then older ones most worth resurfacing (`RecipeRediscovery`).

@@ -21,9 +21,12 @@ struct DiscoveryPager {
     /// A chapter needs at least this many fresh recipes; fewer wait for the next cycle.
     static let minimumChapterSize = 2
 
-    init(pool: DiscoveryPool, seed: UInt64) {
+    /// `alreadyShown`: recipes on screen above the feed (Recently cooked, the library preview), kept out of the first
+    /// cycle so the opening chapters don't repeat them.
+    init(pool: DiscoveryPool, seed: UInt64, alreadyShown: Set<UUID> = []) {
         self.pool = pool
         self.seed = seed
+        seen = alreadyShown
         order = chapterOrder(cycle: 0)
         decks = makeDecks()
     }
@@ -38,8 +41,9 @@ struct DiscoveryPager {
     }
 
     /// Swaps in a pool rebuilt after a library change, keeping what's been seen so the feed carries on, not restarts.
+    /// Always swaps (no equality short-cut): `RecipeModel ==` ignores names and times, so an "equal" pool can still
+    /// hold stale copies. Same seed and cycle → same deck order, so the swap is invisible otherwise.
     mutating func replacePool(_ newPool: DiscoveryPool) {
-        guard newPool != pool else { return }
         pool = newPool
         order = chapterOrder(cycle: cycle)
         decks = makeDecks()
@@ -48,7 +52,7 @@ struct DiscoveryPager {
 
     private mutating func nextChapter() -> DiscoveryChapter? {
         guard !order.isEmpty else { return nil }
-        for attempt in 0..<2 {
+        for attempt in 0..<3 {
             for _ in 0..<order.count {
                 let index = order[cursor]
                 cursor = (cursor + 1) % order.count
@@ -65,8 +69,9 @@ struct DiscoveryPager {
                 nextID += 1
                 return DiscoveryChapter(id: id, kind: pool.sources[index].kind, layout: layout, recipes: picks)
             }
-            // A whole pass with nothing fresh: the pool is spent, so reshuffle and go round again.
-            if attempt == 0 { startCycle() }
+            // A whole pass with nothing fresh: the pool is spent, so reshuffle and go round again. If even that finds
+            // nothing, one chapter holds the whole library — let it follow itself rather than end the feed.
+            if attempt == 0 { startCycle() } else { lastDealt = [] }
         }
         return nil
     }
@@ -84,7 +89,8 @@ struct DiscoveryPager {
         let all = DiscoveryChapter.Layout.allCases
         let preferred = all[(nextID + cycle) % all.count]
         if preferred.size <= count { return preferred }
-        return count >= DiscoveryChapter.Layout.wall.size ? .wall : .feature
+        if count >= DiscoveryChapter.Layout.wall.size { return .wall }
+        return count >= DiscoveryChapter.Layout.feature.size ? .feature : .row
     }
 
     /// The pool's own interleaved order first; a seeded shuffle for every reshuffle after.

@@ -13,7 +13,7 @@ final class DiscoveryFeedModel {
     static let firstPage = 4
     static let pageSize = 3
 
-    /// A fresh seed per feed, so each visit to Recipes deals something new.
+    /// A fresh seed per feed (once per launch), so each launch deals something new.
     init(seed: UInt64 = UInt64.random(in: .min ... .max), now: @escaping () -> Date = Date.init) {
         self.seed = seed
         self.now = now
@@ -21,10 +21,11 @@ final class DiscoveryFeedModel {
 
     /// Rebuilds the pool after a library or kitchen change. The first call deals the first page; later ones keep the
     /// chapters already on screen (with fresh recipe copies, deleted ones gone) and carry on without repeats.
-    func update(recipes: [RecipeModel], kitchenItemNames: [String]) {
+    /// `alreadyShown` only applies to the first deal (see `DiscoveryPager.init`).
+    func update(recipes: [RecipeModel], kitchenItemNames: [String], alreadyShown: Set<UUID> = []) {
         let pool = DiscoveryPool.make(recipes: recipes, kitchenItemNames: kitchenItemNames, now: now())
         guard var pager else {
-            var fresh = DiscoveryPager(pool: pool, seed: seed)
+            var fresh = DiscoveryPager(pool: pool, seed: seed, alreadyShown: alreadyShown)
             chapters = fresh.next(Self.firstPage)
             self.pager = fresh
             return

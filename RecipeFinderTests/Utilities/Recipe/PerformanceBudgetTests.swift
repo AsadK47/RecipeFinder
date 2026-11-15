@@ -43,4 +43,35 @@ struct PerformanceBudgetTests {
         }
         #expect(elapsed < .milliseconds(300))
     }
+
+    /// Endless discovery: a 350-recipe library with a 30-item kitchen rebuilds its feed (pool + first page) — what
+    /// runs on the main thread on each Recipes appear and library change — then pages 60 chapters.
+    @MainActor @Test("DiscoveryFeedModel.update stays within budget for a 350-recipe library")
+    func discoveryFeedBudget() {
+        let letters = Array("abcdefghijklmnopqrstuvwxyz")
+        let words = (0..<120).map { n in "\(letters[n % 26])\(letters[(n / 26) % 26])root" }
+        let recipes = (0..<350).map { i in
+            RecipeModel(
+                name: "Recipe \(i)", category: ["Main", "Dessert", "Side"][i % 3], difficulty: "Basic",
+                prepTime: "10 min", cookingTime: "\(i % 50) min", baseServings: 2,
+                ingredients: (0..<12).map { Ingredient(baseQuantity: 1, unit: "", name: "\(words[(i * 7 + $0) % 120])") },
+                prePrepInstructions: [], instructions: ["Cook"], notes: "",
+                isFavorite: i % 17 == 0, cookCount: i % 5 == 0 ? 2 : 0,
+                lastCookedAt: i % 5 == 0 ? Date(timeIntervalSinceNow: -Double(i) * 86_400) : nil,
+                cuisine: ["Italian", "Indian", nil][i % 3]
+            )
+        }
+        let kitchen = Array(words.prefix(30))
+        let feed = DiscoveryFeedModel(seed: 1)
+        let clock = ContinuousClock()
+        let elapsed = clock.measure {
+            feed.update(recipes: recipes, kitchenItemNames: kitchen)
+            feed.update(recipes: recipes, kitchenItemNames: kitchen)
+            for _ in 0..<20 {
+                if let last = feed.chapters.last { feed.chapterAppeared(last) }
+            }
+        }
+        #expect(feed.chapters.count >= 60)
+        #expect(elapsed < .milliseconds(500))
+    }
 }

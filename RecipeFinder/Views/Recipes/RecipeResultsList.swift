@@ -1,11 +1,13 @@
 import SwiftUI
 
 /// Scrollable search results as a flat list — no section labels or sample/user distinctions. While browsing (nothing
-/// typed or filtered) it opens with Recently cooked and a short library preview, then endless discovery chapters.
+/// typed, filtered or re-sorted) it opens with Recently cooked and a short library preview, then endless discovery chapters.
 struct RecipeResultsList: View {
     /// What browsing adds around the library; nil while searching or filtering (results only).
     struct Browsing {
         let recentlyCooked: [RecipeModel]
+        /// `RecipeBrowse.preview` of the list — shown until "See all".
+        let preview: [RecipeModel]
         let feed: DiscoveryFeedModel
     }
 
@@ -14,13 +16,11 @@ struct RecipeResultsList: View {
     let onRequestDelete: (RecipeModel) -> Void
     let onRefresh: () async -> Void
 
-    /// A full library of 300+ cards would bury the chapters, so browsing shows the first few and "See all".
-    static let libraryPreviewLimit = 6
     @State private var showsWholeLibrary = false
 
-    private var visibleRecipes: ArraySlice<RecipeModel> {
-        guard browsing != nil, !showsWholeLibrary else { return filteredRecipes[...] }
-        return filteredRecipes.prefix(Self.libraryPreviewLimit)
+    private var visibleRecipes: [RecipeModel] {
+        guard let browsing, !showsWholeLibrary else { return filteredRecipes }
+        return browsing.preview
     }
 
     var body: some View {
@@ -34,10 +34,10 @@ struct RecipeResultsList: View {
                 ForEach(visibleRecipes) { recipe in
                     navigationLink(for: recipe)
                 }
-                if browsing != nil, !showsWholeLibrary, filteredRecipes.count > Self.libraryPreviewLimit {
+                if let browsing, !showsWholeLibrary, filteredRecipes.count > browsing.preview.count {
                     seeAllButton
                 }
-                if let feed = browsing?.feed {
+                if let feed = browsing?.feed, RecipeBrowse.showsDiscovery(libraryCount: filteredRecipes.count) {
                     ForEach(feed.chapters) { chapter in
                         DiscoveryChapterView(chapter: chapter)
                             .padding(.top, AppTheme.spacing12)
