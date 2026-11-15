@@ -62,7 +62,7 @@ struct HTMLFetcherTests {
         #expect((configuration.urlCache?.diskCapacity ?? 0) == 0)
     }
 
-    @Test("Reset clears pages a recipe site left in the shared cache")
+    @Test("Reset clears cookies and pages recipe sites left, this run and from older builds")
     func clearingSharedSessionDataEmptiesTheCache() throws {
         let cache = URLCache(memoryCapacity: 1_000_000, diskCapacity: 0, directory: nil)
         let url = try #require(URL(string: "https://example.com/recipe"))
@@ -72,10 +72,22 @@ struct HTMLFetcherTests {
         ))
         cache.storeCachedResponse(CachedURLResponse(response: response, data: Data("page".utf8)), for: request)
         #expect(cache.cachedResponse(for: request) != nil)
+        let jar = try #require(URLSessionConfiguration.ephemeral.httpCookieStorage)
+        let cookie = try #require(HTTPCookie(properties: [
+            .name: "consent", .value: "yes", .domain: "example.com", .path: "/"
+        ]))
+        jar.setCookie(cookie)
+        #expect(jar.cookies?.isEmpty == false)
+        let session = URLSession(configuration: .ephemeral)
+        let sessionJar = try #require(session.configuration.httpCookieStorage)
+        sessionJar.setCookie(cookie)
+        #expect(sessionJar.cookies?.isEmpty == false)
 
-        URLSessionHTMLFetcher.clearSharedSessionData(cookies: .shared, cache: cache)
+        URLSessionHTMLFetcher.clearSharedSessionData(cookies: jar, cache: cache, session: session)
 
         #expect(cache.cachedResponse(for: request) == nil)
+        #expect(jar.cookies?.isEmpty != false)
+        #expect(sessionJar.cookies?.isEmpty != false)
     }
 
     @Test("200 response returns body data and an HTTPURLResponse")

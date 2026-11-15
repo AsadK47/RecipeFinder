@@ -18,14 +18,19 @@ struct URLSessionHTMLFetcher: HTMLFetching {
         self.session = session
     }
 
-    /// Reset: builds before the import went ephemeral kept recipe sites' cookies and cached pages in the app's
-    /// shared jar and on-disk cache; nothing else in the app uses them.
+    /// Reset: clears what recipe sites left this run (the ephemeral session's in-memory jar and cache) and what
+    /// builds before the import went ephemeral kept in the app's shared jar and on-disk cache. The shared cache
+    /// also holds Unsplash API responses (`UnsplashClient`); they are re-fetched on demand.
     static func clearSharedSessionData(
         cookies: HTTPCookieStorage = .shared,
-        cache: URLCache = .shared
+        cache: URLCache = .shared,
+        session: URLSession = URLSessionHTMLFetcher.ephemeralSession
     ) {
-        cookies.removeCookies(since: .distantPast)
+        for jar in [cookies, session.configuration.httpCookieStorage].compactMap({ $0 }) {
+            jar.removeCookies(since: .distantPast)
+        }
         cache.removeAllCachedResponses()
+        session.configuration.urlCache?.removeAllCachedResponses()
     }
 
     func fetch(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
