@@ -76,7 +76,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "checkmark.circle",
                             title: "Check off ingredients",
-                            description: "While cooking, tap an ingredient's name to cross it off. Tap its amount to jump straight into the editor for that ingredient."
+                            description: "Tap an ingredient to tick it off — it moves into Got it. Hold it to edit its amount."
                         )
 
                         HelpItem(

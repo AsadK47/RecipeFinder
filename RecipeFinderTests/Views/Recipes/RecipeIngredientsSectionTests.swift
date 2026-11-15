@@ -69,14 +69,15 @@ import ViewInspector
         #expect(started)
     }
 
-    @Test("Tapping a row ticks that ingredient")
+    @Test("Tapping a displayed row ticks that ingredient, not the one at that position in the recipe")
     func tappingRowTicks() throws {
         var toggled: [Int] = []
         let section = RecipeIngredientsSection(
             recipe: RecipeModel(name: "Scones", category: "Baking", difficulty: "Easy", prepTime: "10 minutes",
                                 cookingTime: "20 minutes", baseServings: 4, ingredients: scones,
                                 prePrepInstructions: [], instructions: ["Bake."], notes: ""),
-            ingredientsState: [false, false], measurementSystem: .metric, isExpanded: true,
+            // Butter (index 1) is still to get, so it shows first; flour (index 0) sits in Got it below it.
+            ingredientsState: [true, false], measurementSystem: .metric, isExpanded: true,
             onToggleSection: {}, onToggleMeasurement: {}, onToggleIngredient: { toggled.append($0) },
             onAddToShopping: { _ in }, onAddAllToShopping: {}, isInShoppingList: { _ in false },
             onEditIngredient: { _ in }, onSubstitute: nil, onEditIngredients: {}
@@ -86,7 +87,7 @@ import ViewInspector
         })
         #expect(rows.count == 2)
         try #require(rows.count == 2)
-        try rows[1].tap()
+        try rows[0].tap()
         #expect(toggled == [1])
     }
 }
@@ -101,5 +102,21 @@ import ViewInspector
     ])
     func factsSplitIntoTwoBalancedRows(count: Int, expected: [[Int]]) {
         #expect(RecipeDetailView.factRows(count: count) == expected)
+    }
+}
+
+/// Confetti + the success haptic fire once everything on the recipe is ticked — never for a recipe with no steps,
+/// where ticking the ingredients alone would celebrate beside "start cooking?".
+@Suite struct RecipeCompletionTests {
+    @Test(arguments: [
+        ([true, true], [Bool](), [true], true),
+        ([true, false], [Bool](), [true], false),
+        ([true], [false], [true], false),
+        ([true], [Bool](), [false, true], false),
+        ([true, true], [Bool](), [Bool](), false),   // no method steps: not "complete"
+    ])
+    func recipeComplete(ingredients: [Bool], prePrep: [Bool], instructions: [Bool], expected: Bool) {
+        #expect(RecipeDetailView.isRecipeComplete(ingredients: ingredients, prePrep: prePrep,
+                                                  instructions: instructions) == expected)
     }
 }

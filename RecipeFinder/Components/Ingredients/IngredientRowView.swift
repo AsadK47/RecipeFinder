@@ -13,14 +13,14 @@ struct IngredientRowView: View {
 
     /// Pulses the circle once on appear, to show the row can be ticked (instead of hint text).
     var pulses: Bool = false
-    var onPulsed: () -> Void = {}
+    /// Lets the list move VoiceOver focus to this row (by `rowIndex`) after another row is ticked.
+    var accessibilityFocus: AccessibilityFocusState<Int?>.Binding?
+    var rowIndex: Int = 0
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var pulseTrigger = 0
 
     private enum Timing {
-        static let springResponse: Double = 0.3
-        static let springDamping: Double = 0.6
         static let pulseDelay: Duration = .milliseconds(700)
     }
 
@@ -29,11 +29,9 @@ struct IngredientRowView: View {
         HStack(alignment: .center, spacing: AppTheme.spacing12) {
             // The whole row (circle, amount, name) is one tick target; amounts are edited from the pencil or by
             // long-pressing the row.
-            Button(action: {
-                withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
-                    toggle()
-                }
-            }) {
+            // Ticks in place (the circle fills, the row dims) with no move; the list moves it into "Got it" once
+            // tapping pauses, so the next row never slides under a finger mid-tap.
+            Button(action: { withAnimation(.easeOut(duration: 0.15)) { toggle() } }) {
                 HStack(alignment: .center, spacing: AppTheme.spacing12) {
                     tickCircle
                     rowText(amount: amount)
@@ -43,10 +41,16 @@ struct IngredientRowView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityValue(isChecked ? "Got it" : "")
+            .accessibilityValue(isChecked ? "Got it" : "Not yet")
             .accessibilityAddTraits(isChecked ? .isSelected : [])
-            .accessibilityHint(isChecked ? "Double tap to put it back" : "Double tap to tick it off")
+            .accessibilityHint(isChecked ? "Puts it back on the list" : "Ticks it off")
             .accessibilityIdentifier("recipe.ingredient.row")
+            .accessibilityActions {
+                if let onTapQuantity {
+                    Button("Edit amount", action: onTapQuantity)
+                }
+            }
+            .modifier(RowAccessibilityFocus(binding: accessibilityFocus, rowIndex: rowIndex))
 
             trailingButtons(amount: amount)
                 .opacity(isChecked ? 0.5 : 1)
@@ -67,7 +71,6 @@ struct IngredientRowView: View {
                 return  // left the screen before the pulse; it plays next time
             }
             pulseTrigger += 1
-            onPulsed()
         }
     }
 
@@ -208,5 +211,19 @@ struct IngredientRowView: View {
         if lower == "l" { return "L" }
         if lower == "cup", quantity > 1 { return "cups" }
         return lower
+    }
+}
+
+/// Applies `accessibilityFocused` only when the list provides a focus binding.
+private struct RowAccessibilityFocus: ViewModifier {
+    let binding: AccessibilityFocusState<Int?>.Binding?
+    let rowIndex: Int
+
+    func body(content: Content) -> some View {
+        if let binding {
+            content.accessibilityFocused(binding, equals: rowIndex)
+        } else {
+            content
+        }
     }
 }

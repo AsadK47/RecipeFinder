@@ -98,8 +98,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
     }
 
-    /// Cooking flow: tapping ingredient rows ticks them into "Got it"; ticking them all offers cooking mode.
-    /// Asserts the flow (it's the cook's first step), then captures both states.
+    /// Cooking flow: tapping ingredient rows ticks them in place, they move into "Got it" once tapping pauses, and
+    /// ticking them all offers cooking mode. Asserts the flow (it's the cook's first step), then captures both states.
     @MainActor
     func testCaptureRecipeTicks() {
         let app = XCUIApplication()
@@ -108,7 +108,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         tab(app, "Recipes", shot: nil)
         let recipe = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
-        guard recipe.waitForExistence(timeout: 10) else { return }
+        guard recipe.waitForExistence(timeout: 10) else {
+            XCTFail("The Recipes home should list a recipe to tick ingredients on.")
+            return
+        }
         recipe.tap()
         settle()
 
@@ -119,24 +122,36 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         settle(1)
         let total = rows.count
         XCTAssertGreaterThan(total, 1, "Need two or more ingredients to show both groups.")
+        // The first row still to get, by its VoiceOver value — rows stay put until tapping pauses, then move.
+        let nextToGet = app.buttons.matching(
+            NSPredicate(format: "identifier == 'recipe.ingredient.row' AND value == 'Not yet'")
+        ).firstMatch
 
-        // Unticked rows stay first, so the first row is always the next thing to get.
+        // Matched by label so the check holds whether or not the row has moved yet.
+        let firstLabel = rows.element(boundBy: 0).label
         rows.element(boundBy: 0).tap()
+        let tapped = app.buttons.matching(
+            NSPredicate(format: "identifier == 'recipe.ingredient.row' AND label == %@", firstLabel)
+        ).firstMatch
+        XCTAssertEqual(tapped.value as? String, "Got it", "A tap should tick that row.")
         let gotIt = app.descendants(matching: .any).matching(identifier: "recipe.ingredients.gotIt").firstMatch
-        XCTAssertTrue(gotIt.waitForExistence(timeout: 3), "A ticked row should move into Got it.")
-        rows.element(boundBy: 0).tap()
-        settle(1)
+        XCTAssertTrue(gotIt.waitForExistence(timeout: 4), "Once tapping pauses, the ticked row should move into Got it.")
+        nextToGet.tap()
+        settle(2)
         snap(app, "38-recipe-got-it")
 
-        for _ in 2..<max(total, 2) { rows.element(boundBy: 0).tap() }
+        // Pause between taps so each tick settles and the next row to get is back at the top, on screen.
+        for _ in 0..<total where nextToGet.exists {
+            nextToGet.tap()
+            settle(1.5)
+        }
         let startCooking = app.buttons["recipe.ingredients.startCooking"]
-        XCTAssertTrue(startCooking.waitForExistence(timeout: 3), "All ticked should offer to start cooking.")
+        XCTAssertTrue(startCooking.waitForExistence(timeout: 4), "All ticked should offer to start cooking.")
         settle(1)
         snap(app, "39-recipe-all-set")
-        if startCooking.isHittable {
-            startCooking.tap()
-            XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 5), "Start cooking should open cooking mode.")
-        }
+        XCTAssertTrue(startCooking.isHittable, "Start cooking should appear on screen, where the last rows were.")
+        startCooking.tap()
+        XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 5), "Start cooking should open cooking mode.")
     }
 
     /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,

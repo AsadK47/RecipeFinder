@@ -7,7 +7,7 @@ struct RecipeDetailView: View {
     @State var recipe: RecipeModel
     // Cached displayable gallery images; recomputed only when the recipe changes.
     @State var galleryImageNames: [String]
-    @State var ingredientsState: [Bool]
+    @State var ingredientTicks: IngredientTicks
     @State var instructionsState: [Bool]
     @State var prePrepState: [Bool]
     @State var expandedSections: Set<String> = ["Ingredients", "Pre-Prep", "Instructions", "Notes", "Nutrition"]
@@ -43,6 +43,9 @@ struct RecipeDetailView: View {
     // Once the cook has ticked an ingredient, the first circle stops pulsing (it replaces the old hint text).
     @AppStorage("hasTickedIngredient") var hasTickedIngredient = false
     @AppStorage("ingredientPulseCount") var ingredientPulseCount = 0
+    // Decided once per screen visit, so collapsing/expanding the section can't use up the pulse cap.
+    @State var pulsesFirstIngredient = false
+    @State private var didCountPulseVisit = false
     @Environment(\.requestReview) private var requestReview
     @Environment(\.dismiss) private var dismiss
 
@@ -61,7 +64,7 @@ struct RecipeDetailView: View {
         self.startsCooking = startsCooking
         _galleryImageNames = State(initialValue: RecipeDetailView.galleryNames(for: recipe))
 
-        _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
+        _ingredientTicks = State(initialValue: IngredientTicks(count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
         _prePrepState = State(initialValue: Array(repeating: false, count: recipe.prePrepInstructions.count))
     }
@@ -164,11 +167,7 @@ struct RecipeDetailView: View {
         .onChange(of: recipe) { oldRecipe, newRecipe in
             galleryImageNames = RecipeDetailView.galleryNames(for: newRecipe)
             // Ticks follow their item, not their row: after an edit removes "Chicken", "Butter" stays ticked.
-            ingredientsState = ChecklistState.remap(
-                ingredientsState,
-                from: oldRecipe.ingredients.map(ChecklistState.key),
-                to: newRecipe.ingredients.map(ChecklistState.key)
-            )
+            ingredientTicks.remap(from: oldRecipe.ingredients, to: newRecipe.ingredients)
             instructionsState = ChecklistState.remap(
                 instructionsState, from: oldRecipe.instructions, to: newRecipe.instructions
             )
@@ -184,7 +183,11 @@ struct RecipeDetailView: View {
                 recipe = fresh
             }
         }
+        .task(id: ingredientTicks.settleDeadline) {
+            await settleIngredientTicks()
+        }
         .onAppear {
+            countPulseVisit()
             guard startsCooking, !didAutoStartCooking else { return }
             didAutoStartCooking = true
             showCookingMode = true
@@ -215,15 +218,59 @@ struct RecipeDetailView: View {
         }
     }
 
-    private func checkForCompletion(_ instructionsState: [Bool]) {
-        let allIngredientsChecked = ingredientsState.allSatisfy({ $0 })
-        let allPrePrepChecked = hasPrePrep ? prePrepState.allSatisfy({ $0 }) : true
-        let allInstructionsChecked = instructionsState.allSatisfy({ $0 })
+    /// Every ingredient, prep step and method step ticked. A recipe with no method steps never counts as
+    /// complete here — otherwise ticking its ingredients would throw confetti beside "start cooking?".
+    nonisolated static func isRecipeComplete(ingredients: [Bool], prePrep: [Bool], instructions: [Bool]) -> Bool {
+        !instructions.isEmpty && ingredients.allSatisfy { $0 } && prePrep.allSatisfy { $0 }
+            && instructions.allSatisfy { $0 }
+    }
 
-        if allIngredientsChecked && allPrePrepChecked && allInstructionsChecked {
+    private func checkForCompletion(_ instructionsState: [Bool]) {
+        let complete = Self.isRecipeComplete(ingredients: ingredientTicks.ticked,
+                                             prePrep: hasPrePrep ? prePrepState : [], instructions: instructionsState)
+        if complete {
             HapticManager.shared.success()
             confettiCounter += 1
         }
+    }
+
+    /// Ticks an ingredient in place with one haptic; the row moves into "Got it" once tapping pauses.
+    func toggleIngredient(_ index: Int) {
+        guard ingredientTicks.ticked.indices.contains(index) else { return }
+        ingredientTicks.toggle(index, at: .now)
+        hasTickedIngredient = true
+        let complete = Self.isRecipeComplete(ingredients: ingredientTicks.ticked,
+                                             prePrep: hasPrePrep ? prePrepState : [], instructions: instructionsState)
+        if complete {
+            checkForCompletion()  // its success haptic + confetti stand in for the tick's
+        } else if ingredientTicks.isAllSet {
+            HapticManager.shared.success()
+        } else {
+            HapticManager.shared.light()
+        }
+    }
+
+    private func settleIngredientTicks() async {
+        guard let deadline = ingredientTicks.settleDeadline else { return }
+        do {
+            try await Task.sleep(until: deadline, clock: .continuous)
+        } catch {
+            return  // another tap moved the deadline; that task settles instead
+        }
+        withAnimation(.appSpring) { ingredientTicks.settleIfDue(at: .now) }
+        if ingredientTicks.isAllSet {
+            AccessibilityNotification.Announcement("All set — start cooking?").post()
+        }
+    }
+
+    private func countPulseVisit() {
+        guard !didCountPulseVisit else { return }
+        didCountPulseVisit = true
+        let index = IngredientChecklist.pulseIndex(count: recipe.ingredients.count,
+                                                   hasTickedBefore: hasTickedIngredient,
+                                                   timesPulsed: ingredientPulseCount)
+        pulsesFirstIngredient = index != nil
+        if pulsesFirstIngredient { ingredientPulseCount += 1 }
     }
 
     func checkForCompletion() {

@@ -3,7 +3,10 @@ import SwiftUI
 /// Collapsible ingredients section extracted from `RecipeDetailView`; all state mutation is delegated through closures.
 struct RecipeIngredientsSection: View {
     let recipe: RecipeModel
+    /// What each row's circle shows.
     let ingredientsState: [Bool]
+    /// Which rows sit in "Got it" — lags `ingredientsState` while a fresh tick settles; nil = same as the ticks.
+    var gotItState: [Bool]? = nil
     let measurementSystem: MeasurementSystem
     let isExpanded: Bool
     let onToggleSection: () -> Void
@@ -21,10 +24,11 @@ struct RecipeIngredientsSection: View {
 
     /// Offers cooking mode once every ingredient is ticked; nil hides the prompt.
     var onStartCooking: (() -> Void)? = nil
-    /// Pulses the first circle (shows rows can be ticked) until the cook has ticked a row once.
-    var hasTickedBefore: Bool = true
-    var timesPulsed: Int = IngredientChecklist.maxPulses
-    var onPulsed: () -> Void = {}
+    /// Pulses the first circle to show rows can be ticked (in place of hint text).
+    var pulsesFirstRow: Bool = false
+
+    // VoiceOver: after a tick, focus moves on to the next row still to get.
+    @AccessibilityFocusState private var focusedRow: Int?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -219,18 +223,18 @@ struct RecipeIngredientsSection: View {
                 missingAmountsCard
             }
             let ingredients = recipe.ingredients
-            if let onStartCooking, IngredientChecklist.isAllSet(count: ingredients.count, ticked: ingredientsState) {
-                allSetPrompt(onStartCooking)
-            }
             // Stable entry ids let SwiftUI slide a ticked row down into "Got it" instead of rebuilding the list.
             let substituteIDs = ingredientsWithSubstitutes
-            let pulseIndex = IngredientChecklist.pulseIndex(
-                count: ingredients.count, hasTickedBefore: hasTickedBefore, timesPulsed: timesPulsed
-            )
-            ForEach(IngredientChecklist.entries(sections: ingredients.map(\.section), ticked: ingredientsState)) { entry in
+            let entries = IngredientChecklist.entries(sections: ingredients.map(\.section), ticked: ingredientsState,
+                                                      inGotIt: gotItState ?? ingredientsState)
+            ForEach(entries) { entry in
                 switch entry {
                 case .groupTitle(let title, _):
                     IngredientGroupHeader(title: title)
+                case .allSetPrompt:
+                    if let onStartCooking {
+                        allSetPrompt(onStartCooking)
+                    }
                 case .gotItTitle(let count):
                     gotItHeader(count: count)
                 case .row(let index, let isTicked):
@@ -238,7 +242,11 @@ struct RecipeIngredientsSection: View {
                         IngredientRowView(
                             ingredient: ingredient,
                             isChecked: isTicked,
-                            toggle: { onToggleIngredient(index) },
+                            toggle: {
+                                let wasTicked = isTicked
+                                onToggleIngredient(index)
+                                if !wasTicked { focusedRow = IngredientChecklist.nextRowToGet(after: index, in: entries) }
+                            },
                             scaleFactor: recipe.scaleFactor,
                             measurementSystem: measurementSystem,
                             onAddToShopping: { onAddToShopping(index) },
@@ -246,8 +254,9 @@ struct RecipeIngredientsSection: View {
                             onTapQuantity: { onEditIngredient(index) },
                             onSubstitute: (substituteIDs.contains(ingredient.id) && onSubstitute != nil)
                                 ? { onSubstitute?(index) } : nil,
-                            pulses: pulseIndex == index,
-                            onPulsed: onPulsed
+                            pulses: pulsesFirstRow && index == 0,
+                            accessibilityFocus: $focusedRow,
+                            rowIndex: index
                         )
                     }
                 }
