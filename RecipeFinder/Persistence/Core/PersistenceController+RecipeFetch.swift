@@ -4,12 +4,18 @@ import Foundation
 /// Recipe fetch/count queries and managed-object → model mapping.
 extension PersistenceController {
 
+    /// Recipes in the library: every list, search, count and lookup reads through this, so a recipe in Recently
+    /// Deleted shows nowhere else (`PersistenceController+RecentlyDeleted`).
+    nonisolated static var inLibraryPredicate: NSPredicate {
+        NSPredicate(format: "%K == nil", RecipeKey.deletedAt)
+    }
+
     func fetchRecipes() -> [RecipeModel] {
         guard ensureStoreIsReady() else { return [] }
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        
+        fetchRequest.predicate = Self.inLibraryPredicate
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(
                 key: RecipeKey.name,
@@ -35,6 +41,7 @@ extension PersistenceController {
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+                request.predicate = Self.inLibraryPredicate
                 request.sortDescriptors = [
                     NSSortDescriptor(
                         key: RecipeKey.name,
@@ -59,7 +66,9 @@ extension PersistenceController {
 
         let context = container.viewContext
         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        request.predicate = Self.recipeIdPredicate(id)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            Self.recipeIdPredicate(id), Self.inLibraryPredicate,
+        ])
         request.fetchLimit = 1
 
         do {
@@ -75,6 +84,7 @@ extension PersistenceController {
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        fetchRequest.predicate = Self.inLibraryPredicate
 
         do {
             return try context.count(for: fetchRequest)
@@ -93,7 +103,9 @@ extension PersistenceController {
     func fetchCollectedRecipeCount() -> Int {
         guard ensureStoreIsReady() else { return 0 }
         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        request.predicate = NSPredicate(format: "\(RecipeKey.isSampleRecipe) != YES")
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "\(RecipeKey.isSampleRecipe) != YES"), Self.inLibraryPredicate,
+        ])
         do {
             return try container.viewContext.count(for: request)
         } catch {

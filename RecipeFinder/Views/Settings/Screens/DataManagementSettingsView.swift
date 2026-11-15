@@ -29,6 +29,8 @@ struct DataManagementSettingsView: View {
 
             onDeviceImportSection
 
+            recentlyDeletedSection
+
             VStack(spacing: AppTheme.spacing8) {
                 SettingsSectionHeader(title: "Reset")
 
@@ -139,6 +141,27 @@ struct DataManagementSettingsView: View {
             }
         } message: {
             Text(resetWarning)
+        }
+    }
+
+    private var recentlyDeletedSection: some View {
+        VStack(spacing: AppTheme.spacing8) {
+            SettingsSectionHeader(title: "Recently Deleted")
+
+            SettingsCard {
+                NavigationLink(destination: RecentlyDeletedView()) {
+                    SettingsRow(
+                        icon: "trash.fill",
+                        iconColor: .gray,
+                        title: "Recently Deleted",
+                        subtitle: "Restore recipes deleted in the last 30 days",
+                        value: recipeStore.recentlyDeleted.isEmpty ? nil : "\(recipeStore.recentlyDeleted.count)"
+                    )
+                    .padding(AppTheme.spacing20)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .accessibilityIdentifier("settings.recentlyDeleted")
+            }
         }
     }
 

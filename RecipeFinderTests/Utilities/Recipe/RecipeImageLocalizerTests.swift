@@ -220,9 +220,13 @@ struct RecipeStoreWebPictureTests {
         await store.imageLocalization?.value
         let file = try keptFile(directory)
 
-        store.delete(id: first.id)
+        #expect(store.delete(id: first.id))
+        #expect(store.deleteForever(id: first.id))
         #expect(FileManager.default.fileExists(atPath: file.path))
-        store.delete(id: second.id)
+        #expect(store.delete(id: second.id))
+        // Recently Deleted keeps the picture until the recipe goes for good.
+        #expect(FileManager.default.fileExists(atPath: file.path))
+        #expect(store.deleteForever(id: second.id))
         #expect(!FileManager.default.fileExists(atPath: file.path))
     }
 }

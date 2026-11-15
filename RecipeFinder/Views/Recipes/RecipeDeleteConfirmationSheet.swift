@@ -39,7 +39,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: contentMaxWidth)
                             
-                            Text("This can't be undone, but you can always import it again! 📖")
+                            Text("You can restore it from Recently Deleted in Settings for 30 days.")
                                 .font(.subheadline)
                                 .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                 .multilineTextAlignment(.center)
@@ -126,6 +126,7 @@ private struct RecipeDeleteFlowModifier: ViewModifier {
     @State private var confirming: RecipeModel?
     @State private var confirmed: RecipeModel?
     @State private var dontAskAgain = false
+    @State private var failure: String?
 
     func body(content: Content) -> some View {
         content
@@ -151,6 +152,7 @@ private struct RecipeDeleteFlowModifier: ViewModifier {
                     onCancel: { confirming = nil }
                 )
             }
+            .errorAlert("Couldn't Remove Recipe", message: $failure)
     }
 
     private func finishConfirmedDelete() {
@@ -161,8 +163,13 @@ private struct RecipeDeleteFlowModifier: ViewModifier {
     }
 
     private func delete(_ recipe: RecipeModel) {
-        withAnimation {
+        let moved = withAnimation {
             recipeStore.delete(id: recipe.id)
+        }
+        guard moved else {
+            HapticManager.shared.error()
+            failure = "\(recipe.name) is still in your collection. Please try again."
+            return
         }
         HapticManager.shared.success()
         onDeleted(recipe)

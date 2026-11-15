@@ -4,12 +4,19 @@ import SwiftUI
 @MainActor
 protocol RecipeStoring: AnyObject, Observable {
     var recipes: [RecipeModel] { get set }
+    /// Deleted recipes kept for `RecentlyDeleted.keptFor`, newest first.
+    var recentlyDeleted: [DeletedRecipe] { get }
     var isLoading: Bool { get }
     func load()
     func refresh() async
     @discardableResult func save(_ recipe: RecipeModel) -> Bool
     @discardableResult func add(_ recipe: RecipeModel) -> Bool
-    func delete(id: UUID)
+    /// Moves the recipe to Recently Deleted (photos kept). Returns false if it couldn't be saved.
+    @discardableResult func delete(id: UUID) -> Bool
+    /// Puts a recently deleted recipe back in the library.
+    @discardableResult func restore(id: UUID) -> Bool
+    /// Removes a recently deleted recipe and its photos for good.
+    @discardableResult func deleteForever(id: UUID) -> Bool
     func sync(_ recipe: RecipeModel)
 }
 
@@ -35,11 +42,14 @@ final class RecipeStore: RecipeStoring {
 
     /// Settable for ephemeral in-memory adds (e.g. quick snacks) that shouldn't touch Core Data.
     var recipes: [RecipeModel] = []
+    /// Written only here and in `RecipeStore+RecentlyDeleted.swift` (internal setter so that file can).
+    var recentlyDeleted: [DeletedRecipe] = []
     private(set) var isLoading = true
 
     // Internal so RecipeStore+RemoteImages.swift can sync photos through it.
     @ObservationIgnored let persistence: PersistenceController
-    @ObservationIgnored private let imageStore: RecipeImageStore
+    // Internal so RecipeStore+RecentlyDeleted.swift can remove photos of recipes deleted for good.
+    @ObservationIgnored let imageStore: RecipeImageStore
     // Internal so RecipeStore+RemoteImages.swift can use them.
     @ObservationIgnored let imageLocalizer: RecipeImageLocalizer
     /// Latest queued picture download; each waits for the one before.
@@ -102,10 +112,15 @@ final class RecipeStore: RecipeStoring {
             let repaired = await repairLegacySampleFlags(in: fetched)
             let deduped = removeDuplicateCopies(from: repaired)
             recipes = await refreshStaleSamples(in: deduped)
+            recentlyDeleted = persistence.fetchRecentlyDeletedRecipes()
+            #if DEBUG
+            seedUITestRecentlyDeletedIfRequested()
+            #endif
+            let purged = purgeExpired()
             isLoading = false
             keepWebPictures(of: recipes)
             clearPhotosErasedElsewhere()
-            syncPhotosWithICloud()
+            syncPhotosWithICloud(removing: purged)
         }
     }
 
@@ -268,7 +283,8 @@ final class RecipeStore: RecipeStoring {
         if seedBundled {
             // Decode the bundled JSON off the main actor — it's a few hundred recipes.
             let bundled = await Task.detached(priority: .userInitiated) { BundledRecipeCatalog.load() }.value
-            let existingIDs = Set(existing.map(\.id))
+            // A recently deleted bundled recipe counts as present, so seeding never brings it back.
+            let existingIDs = Set(existing.map(\.id)).union(persistence.fetchRecentlyDeletedRecipes().map(\.id))
             toSeed += bundled.filter { !existingIDs.contains($0.id) }
         }
         guard !toSeed.isEmpty else { return nil }
@@ -283,6 +299,7 @@ final class RecipeStore: RecipeStoring {
     /// Awaitable reload from the store (used by pull-to-refresh and post-write syncs).
     func refresh() async {
         recipes = await persistence.fetchRecipesAsync()
+        recentlyDeleted = persistence.fetchRecentlyDeletedRecipes()
     }
 
     /// Persists an edit and upserts it into the in-memory library so observers update; returns false (state untouched) on failure.
@@ -295,8 +312,12 @@ final class RecipeStore: RecipeStoring {
         } else {
             recipes.append(recipe)
         }
+        // A save brings a recently deleted copy back (`updateRecipe`), so it's in the library now.
+        recentlyDeleted.removeAll { $0.id == recipe.id }
         keepWebPictures(of: [recipe])
-        syncPhotosWithICloud(removing: RecipePhotoSync.removedPaths(before: before, after: recipe, library: recipes))
+        syncPhotosWithICloud(
+            removing: RecipePhotoSync.removedPaths(before: before, after: recipe, library: libraryWithRecentlyDeleted)
+        )
         return true
     }
 
@@ -304,19 +325,6 @@ final class RecipeStore: RecipeStoring {
     @discardableResult
     func add(_ recipe: RecipeModel) -> Bool {
         save(recipe)
-    }
-
-    func delete(id: UUID) {
-        // Clean up owned image files so deleting a recipe doesn't leak orphaned hero/gallery photos on disk.
-        let deleted = recipes.first { $0.id == id }
-        if let recipe = deleted {
-            if let hero = recipe.imageName { imageStore.deleteIfLocal(hero) }
-            recipe.photoNames.forEach { imageStore.deleteIfLocal($0) }
-            removeKeptPicture(of: recipe)
-        }
-        recipes.removeAll { $0.id == id }
-        persistence.deleteRecipe(withId: id)
-        syncPhotosWithICloud(removing: RecipePhotoSync.removedPaths(before: deleted, after: nil, library: recipes))
     }
 
     /// Upserts an already-persisted recipe into the in-memory library without re-writing — for ops (recordCook/updateRating) that persist via their own path but still need the observable array synced.

@@ -58,11 +58,12 @@ struct RecipeStoreTests {
         let recipe = makeRecipe()
         _ = store.add(recipe)
 
-        store.delete(id: recipe.id)
+        #expect(store.delete(id: recipe.id))
         #expect(store.recipes.isEmpty)
+        #expect(store.recentlyDeleted.map(\.id) == [recipe.id])
     }
 
-    @Test("delete removes owned hero and gallery image files (no orphaned files)")
+    @Test("deleting keeps the photos for Recently Deleted; deleting forever removes owned hero and gallery files")
     func deleteCleansUpImages() throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
@@ -85,7 +86,11 @@ struct RecipeStoreTests {
 
         #expect(FileManager.default.fileExists(atPath: tmp.appendingPathComponent(hero).path))
 
-        store.delete(id: id)
+        #expect(store.delete(id: id))
+        #expect(FileManager.default.fileExists(atPath: tmp.appendingPathComponent(hero).path))
+        #expect(FileManager.default.fileExists(atPath: tmp.appendingPathComponent(gallery[0]).path))
+
+        #expect(store.deleteForever(id: id))
 
         #expect(!FileManager.default.fileExists(atPath: tmp.appendingPathComponent(hero).path))
         #expect(!FileManager.default.fileExists(atPath: tmp.appendingPathComponent(gallery[0]).path))

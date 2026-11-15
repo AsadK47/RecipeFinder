@@ -340,6 +340,11 @@ extension PersistenceController {
                 managedRecipe.setValue(recipe.cuisine, forKey: RecipeKey.cuisine)
                 managedRecipe.setValue(recipe.photoNames as NSArray, forKey: RecipeKey.photoNames)
                 managedRecipe.setValue(recipe.sourceText, forKey: RecipeKey.sourceText)
+                // A save puts the recipe in the library (a restored backup brings a recently deleted one back). Only
+                // written when set, so an edit never sends a needless change over iCloud.
+                if managedRecipe.value(forKey: RecipeKey.deletedAt) != nil {
+                    managedRecipe.setValue(nil, forKey: RecipeKey.deletedAt)
+                }
                 if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
                     managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
                 }

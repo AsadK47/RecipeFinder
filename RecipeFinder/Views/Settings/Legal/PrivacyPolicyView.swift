@@ -96,6 +96,7 @@ struct PrivacyPolicyView: View {
                 BodyText("9.1 You stay in control of your data. You may at any time:")
                 LegalBulletPoint("Export your recipes and other data via Settings > Data Management (photos are not included in the export)")
                 LegalBulletPoint("Delete your data via Settings > Data Management")
+                LegalBulletPoint("Restore a recipe you deleted from Settings > Data Management > Recently Deleted, where it and its photos are kept for 30 days and then removed (with iCloud sync on, from your iCloud account and every device signed in to it); you can also delete it there straight away")
                 LegalBulletPoint("Remove all data from your Device by uninstalling the Application (data in your iCloud account is removed as described in Section 7.2)")
             }
 

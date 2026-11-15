@@ -55,6 +55,8 @@ final class PersistenceController {
         static let cuisine = "cuisine"
         static let sourceText = "sourceText"
         static let photoNames = "photoNames"
+        /// Set while the recipe sits in Recently Deleted (RecipeModel 18); nil = in the library.
+        static let deletedAt = "deletedAt"
     }
 
     /// `inMemory`: back store with `/dev/null` for tests (still SQLite so batch ops work).

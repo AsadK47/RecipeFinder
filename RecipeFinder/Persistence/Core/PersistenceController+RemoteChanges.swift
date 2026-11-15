@@ -116,7 +116,10 @@ extension PersistenceController {
         guard !ids.isEmpty, isSyncing, let cloudContainer = container as? NSPersistentCloudKitContainer else { return false }
         let context = container.viewContext
         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        request.predicate = NSPredicate(format: "%K IN %@", RecipeKey.id, Array(ids) as NSArray)
+        // Library rows only: a copy in Recently Deleted is never folded into (or chosen over) one the cook still has.
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "%K IN %@", RecipeKey.id, Array(ids) as NSArray), Self.inLibraryPredicate,
+        ])
         do {
             let objects = try context.fetch(request)
             let recordIDs = cloudContainer.recordIDs(for: objects.map { $0.objectID })

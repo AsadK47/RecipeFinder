@@ -62,7 +62,7 @@ import Foundation
             RecipeKey.isFavorite, RecipeKey.isSampleRecipe, RecipeKey.dietaryInfo,
             RecipeKey.tags, RecipeKey.cookCount,
             RecipeKey.lastCookedAt, RecipeKey.rating, RecipeKey.cuisine,
-            RecipeKey.photoNames, RecipeKey.sourceText,
+            RecipeKey.photoNames, RecipeKey.sourceText, RecipeKey.deletedAt,
         ]
 
         for key in expectedKeys {
@@ -298,8 +298,63 @@ import Foundation
         photo.setValue(Data([0xFF, 0xD8, 0xFF]), forKey: "data")
         try context.save()
         #expect(try context.count(for: NSFetchRequest<NSManagedObject>(entityName: "RecipePhotoEntity")) == 1)
+        let v17 = try #require(NSManagedObjectModel(contentsOf: momd.appendingPathComponent("RecipeModel 17.mom")))
         for (name, entity) in source.entitiesByName {
-            #expect(entity.versionHash == current.entitiesByName[name]?.versionHash, "\(name) changed in v17")
+            #expect(entity.versionHash == v17.entitiesByName[name]?.versionHash, "\(name) changed in v17")
+        }
+    }
+
+    /// Pins the v17→v18 upgrade (v18 adds the optional `Recipe.deletedAt` for Recently Deleted): every recipe arrives
+    /// in the library (no date), with its photo and photo rows, and only the Recipe entity changed.
+    @Test func v17StoreMigratesWithEveryRecipeInTheLibrary() throws {
+        let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
+        let source = try #require(NSManagedObjectModel(contentsOf: momd.appendingPathComponent("RecipeModel 17.mom")))
+        let current = try #require(NSManagedObjectModel(contentsOf: momd))
+
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString).appendingPathExtension("sqlite")
+        defer { for s in ["", "-wal", "-shm"] { try? FileManager.default.removeItem(at: URL(fileURLWithPath: url.path + s)) } }
+
+        let recipeId = UUID()
+        let sourceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: source)
+        try sourceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+        let writeContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        writeContext.persistentStoreCoordinator = sourceCoordinator
+        let obj = NSManagedObject(
+            entity: try #require(NSEntityDescription.entity(forEntityName: "Recipe", in: writeContext)),
+            insertInto: writeContext
+        )
+        obj.setValue(recipeId, forKey: "id")
+        obj.setValue("Pie", forKey: "name")
+        obj.setValue("RecipeImages/pie.jpg", forKey: "imageName")
+        let photo = NSManagedObject(
+            entity: try #require(NSEntityDescription.entity(forEntityName: "RecipePhotoEntity", in: writeContext)),
+            insertInto: writeContext
+        )
+        photo.setValue("RecipeImages/pie.jpg", forKey: "path")
+        try writeContext.save()
+        try sourceCoordinator.remove(try #require(sourceCoordinator.persistentStores.first))
+
+        let currentCoordinator = NSPersistentStoreCoordinator(managedObjectModel: current)
+        try currentCoordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType, configurationName: nil, at: url,
+            options: [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+        )
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = currentCoordinator
+        let inLibrary = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+        inLibrary.predicate = PersistenceController.inLibraryPredicate
+        let row = try #require(try context.fetch(inLibrary).first)
+        #expect(row.value(forKey: "id") as? UUID == recipeId)
+        #expect(row.value(forKey: "imageName") as? String == "RecipeImages/pie.jpg")
+        #expect(row.value(forKey: "deletedAt") == nil)
+        #expect(try context.count(for: NSFetchRequest<NSManagedObject>(entityName: "RecipePhotoEntity")) == 1)
+
+        let attribute = try #require(current.entitiesByName["Recipe"]?.attributesByName["deletedAt"])
+        #expect(attribute.attributeType == .dateAttributeType)
+        #expect(attribute.isOptional)
+        for (name, entity) in source.entitiesByName where name != "Recipe" {
+            #expect(entity.versionHash == current.entitiesByName[name]?.versionHash, "\(name) changed in v18")
         }
     }
 

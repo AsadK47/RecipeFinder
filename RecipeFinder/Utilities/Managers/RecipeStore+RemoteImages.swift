@@ -24,10 +24,12 @@ extension RecipeStore {
         }
     }
 
-    /// Drops the phone copy of a deleted recipe's web picture unless another recipe still shows it.
+    /// Drops the phone copy of a deleted recipe's web picture unless another recipe (in the library or Recently
+    /// Deleted) still shows it.
     func removeKeptPicture(of deleted: RecipeModel) {
         guard let reference = deleted.imageName, RemoteRecipeImage.storedPath(for: reference) != nil,
-              !recipes.contains(where: { $0.id != deleted.id && $0.imageName == reference }) else { return }
+              !libraryWithRecentlyDeleted.contains(where: { $0.id != deleted.id && $0.imageName == reference })
+        else { return }
         imageLocalizer.removeCopy(of: reference)
     }
 
@@ -36,7 +38,8 @@ extension RecipeStore {
     /// in `removed` (`RecipePhotoSync.removedPaths`, from an edit or delete on this device). Passes run one at a time.
     /// With sync off, only the removals run (rows deleted in the store, sent to iCloud when sync resumes).
     func syncPhotosWithICloud(removing removed: Set<String> = []) {
-        let paths = RecipePhotoSync.referencedPaths(in: recipes)
+        // Recently deleted recipes keep their photos (in iCloud too) until they're removed for good.
+        let paths = RecipePhotoSync.referencedPaths(in: libraryWithRecentlyDeleted)
         guard persistence.isSyncing else {
             removePhotoRowsWhileSyncIsOff(removed, keeping: paths)
             return

@@ -173,6 +173,11 @@ struct HelpView: View {
                         )
 
                         FAQItem(
+                            question: "Can I get a deleted recipe back?",
+                            answer: "Yes. Deleted recipes and their photos wait in Settings > Data Management > Recently Deleted for 30 days, where you can restore them or delete them straight away. With iCloud sync on, this works across your devices."
+                        )
+
+                        FAQItem(
                             question: "Can I share recipes with friends?",
                             answer: "Yes! Use the share button on any recipe to export as text or PDF that you can send via any app."
                         )

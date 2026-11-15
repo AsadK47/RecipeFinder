@@ -287,6 +287,31 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "37-data-management-sync")
     }
 
+    /// Data safety 4/4: Recently Deleted with two recipes in it (DEBUG `-seed-recently-deleted` moves the first two by
+    /// name there, one just now and one 26 days ago).
+    @MainActor
+    func testCaptureRecentlyDeleted() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-recently-deleted"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Me"].tap()
+        app.buttons["me.settings"].tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
+        settle()
+        let data = app.staticTexts["Data Management"].firstMatch
+        for _ in 0..<4 where !data.isHittable { app.swipeUp() }
+        data.tap()
+        let row = app.buttons["settings.recentlyDeleted"].firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Data Management should list Recently Deleted.")
+        for _ in 0..<6 where !row.isHittable { app.swipeUp() }
+        row.tap()
+        XCTAssertTrue(app.buttons["recentlyDeleted.restore"].firstMatch.waitForExistence(timeout: 10),
+                      "Recently Deleted should show the seeded recipes with a Restore button.")
+        settle()
+        snap(app, "41-recently-deleted")
+    }
+
     /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded
     /// via the DEBUG `-seed-tonight-plan` flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
     @MainActor

@@ -366,7 +366,8 @@ import Foundation
         let pie = Self.recipe("Pie", image: "RecipeImages/pie.jpg")
         #expect(store.save(pie))
 
-        store.delete(id: pie.id)
+        #expect(store.delete(id: pie.id))
+        #expect(store.deleteForever(id: pie.id))
         await store.photoSync?.value
 
         #expect(try rowCount() == 0)
@@ -394,7 +395,8 @@ import Foundation
         #expect(store.save(pie))
         #expect(store.save(Self.recipe("Tart", image: "RecipeImages/shared.jpg")))
 
-        store.delete(id: pie.id)
+        #expect(store.delete(id: pie.id))
+        #expect(store.deleteForever(id: pie.id))
         await store.photoSync?.value
 
         #expect(try rowCount() == 1)
