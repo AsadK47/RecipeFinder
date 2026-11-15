@@ -7,7 +7,9 @@ import Foundation
 @Suite struct CookingStreakTests {
 
     private let cal = Calendar.current
-    private let now = Date()
+    /// A fixed Wednesday noon: a real `Date()` near a week boundary (e.g. Sunday 00:30 with a Sunday week start)
+    /// put `now - 3h` in the previous week and failed `multipleCooksSameWeek_countThisWeek`.
+    private let now = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 14, hour: 12)) ?? Date()
 
     private func weeksAgo(_ n: Int) -> Date {
         cal.date(byAdding: .weekOfYear, value: -n, to: now)!
