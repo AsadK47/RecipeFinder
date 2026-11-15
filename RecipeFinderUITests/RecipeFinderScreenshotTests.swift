@@ -584,6 +584,25 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         waitForExpectations(timeout: 8)
     }
 
+    /// TestFlight 2026-11-15: "View all badges" left the reveal stuck on screen. It must close and land on Me.
+    @MainActor
+    func testBadgeRevealViewAllClosesAndOpensMe() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-show-badge-reveal"]
+        app.launch()
+        let viewAll = app.buttons["badge.reveal.viewAll"]
+        XCTAssertTrue(viewAll.waitForExistence(timeout: 15), "The reveal should open full screen on launch.")
+        settle(1.5)
+        viewAll.tap()
+
+        let title = app.staticTexts["badge.reveal.title"]
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: title)
+        waitForExpectations(timeout: 5)
+        let me = app.tabBars.buttons["Me"]
+        expectation(for: NSPredicate(format: "isSelected == true"), evaluatedWith: me)
+        waitForExpectations(timeout: 5)
+    }
+
     // MARK: - Helpers
 
     /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded

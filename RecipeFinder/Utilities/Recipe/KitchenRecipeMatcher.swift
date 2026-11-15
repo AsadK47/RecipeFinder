@@ -11,6 +11,15 @@ enum KitchenRecipeMatcher {
         normCache.value(for: raw) { IngredientNameFormatter.matchKey($0) }
     }
 
+    private static let termCache = MemoCache<String, MatchTerm>(maxSize: 4000)
+
+    /// The prepared match term for a raw ingredient name, nil when it normalises to nothing. Cached: discovery and
+    /// Today check every recipe's ingredients on each rebuild, and names repeat across rebuilds.
+    static func matchTerm(_ raw: String) -> MatchTerm? {
+        let prepared = termCache.value(for: raw) { MatchTerm(normalizedTerm($0)) }
+        return prepared.term.isEmpty ? nil : prepared
+    }
+
     /// Two normalised terms match on exact equality or a shared whole word (≥3 chars), never on substrings ("gin" ≠ "ginger").
     static func ingredientMatches(_ recipeIngredient: String, _ kitchenIngredient: String) -> Bool {
         if recipeIngredient == kitchenIngredient {

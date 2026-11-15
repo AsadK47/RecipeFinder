@@ -45,8 +45,12 @@ enum TimeExtractor {
     /// Sums hours and minutes in a free-form duration ("1 hr 30 min" → 90, "1.5 hours" → 90); bare number = minutes; unparseable = 0.
     static func extractMinutes(from timeString: String) -> Int {
         // Collapse a numeric range to its upper bound ("20-30 min" → "30 min") so the hyphen isn't scanned as a negative sign.
-        let normalized = timeString.lowercased()
-            .replacing(/([0-9.]+)\s*[-–—]\s*([0-9.]+)/) { String($0.output.2) }
+        // The Regex is slow and cards, Today and discovery parse hundreds of times per rebuild, so only run it when
+        // there's a dash to collapse. (No MemoCache: this file is also built into the share extension.)
+        let lowered = timeString.lowercased()
+        let normalized = lowered.contains(where: { "-–—".contains($0) })
+            ? lowered.replacing(/([0-9.]+)\s*[-–—]\s*([0-9.]+)/) { String($0.output.2) }
+            : lowered
 
         let scanner = Scanner(string: normalized)
         scanner.charactersToBeSkipped = .whitespaces
