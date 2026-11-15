@@ -102,8 +102,8 @@ drop a line while moving it.
 One phase at a time; within a phase, top to bottom. 🐞 / TestFlight / Inbox items still go first. Items marked `[~]`
 are merged into a newer item or parked — never start them; their text stays as reference spec.
    **Next (owner order 2026-11-14, docs/PRODUCT.md):**
-   **Now (owner 2026-11-15, parallel lanes, batch landing):** *Data lane:* Inbox 🔴 other devices keep photo files
-   after a Reset → Data safety 4/4 Recently deleted, lean (recipes + photos, 30 days; **RecipeModel 18 approved** for
+   **Now (owner 2026-11-15, parallel lanes, batch landing):** *Data lane:* ~~Inbox 🔴 photo files after a Reset~~ (e67da6f) →
+   Data safety 4/4 Recently deleted, lean (recipes + photos, 30 days; **RecipeModel 18 approved** for
    one optional deleted-at date) · *Cook lane:* Cooking flow · *Privacy lane:* 🟡 §5.1 recent-searches wording, then
    tick 2/4 (website `privacy.html` is the website session's). Deferred to between phases: 3/4 backups with photos,
    2/4 live sync status / iCloud full.
@@ -130,7 +130,7 @@ are merged into a newer item or parked — never start them; their text stays as
   (`.sheetScaffold`) and RecipeFinderTests/CLAUDE.md "in-memory Core Data only". (7) Landing checklist step 8 gains
   "docs touched by this change updated in the same commit". *Done when:* one reviewer + challenger find no stale
   statement in the touched docs; website page live.
-- [ ] **Cooking flow** (Phase 1 · Cook · owner 2026-11-14). Merges *Cooking mode upgrade* (below, kept as spec) with the
+- [ ] **Cooking flow** — 🚧 interactive session 2026-11-15 — (Phase 1 · Cook · owner 2026-11-14). Merges *Cooking mode upgrade* (below, kept as spec) with the
   ticking redesign. Ingredients: an empty circle on every row; tap anywhere on the row to tick (haptic), ticked rows dim
   and slide into "Got it" at the bottom; amount editing moves to the edit pencil / long-press; all ticked → "All set —
   start cooking?". Cooking mode: one step per screen, a big visible **Next** (tap-right / swipe / "next" are bonuses),
@@ -225,7 +225,7 @@ are merged into a newer item or parked — never start them; their text stays as
   Optional automatic backup (weekly, keep last 4) to iCloud Drive / Files via `BGTaskScheduler`, on by default when
   iCloud is available; Settings shows the last backup time. *Done when:* archive round-trip with photos tested, old
   format still restores, screenshot, CI green.
-- [ ] **Data safety 4/4 — Recently deleted.** Deleted recipes go to "Recently deleted" for 30 days (restore or delete
+- [ ] **Data safety 4/4 — Recently deleted.** — 🚧 interactive session 2026-11-15 — Deleted recipes go to "Recently deleted" for 30 days (restore or delete
   now), photos kept until then; synced. *Done when:* soft-delete/restore/purge tested, screenshot, CI green.
 - [x] 🔴 **Release blockers first** (readiness audit 2026-11-09 vs SHIP_BAR.md): work every Inbox line marked 🔴 before
   anything else. Audit result: 3 🔴 — all fixed 2026-11-10 (photo UUIDs, samples-only dedupe, restore merges state + streak), 14 🟡, 28 🟢; CI green.
