@@ -56,8 +56,9 @@ struct DiscoveryPager {
             for _ in 0..<order.count {
                 let index = order[cursor]
                 cursor = (cursor + 1) % order.count
+                let excluded = seen, previous = lastDealt
                 let fresh = Array(decks[index].lazy
-                    .filter { !seen.contains($0.id) && !lastDealt.contains($0.id) }
+                    .filter { !excluded.contains($0.id) && !previous.contains($0.id) }
                     .prefix(DiscoveryChapter.Layout.row.size))
                 guard fresh.count >= Self.minimumChapterSize else { continue }
                 let layout = layout(fitting: fresh.count)
