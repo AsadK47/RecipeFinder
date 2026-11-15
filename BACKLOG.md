@@ -623,6 +623,11 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
+- 🙋 **Reset vs store safety copies** (builder 2026-11-15, Inbox 🟡): `agent/reset-store-copies` makes Reset delete
+  `StoreBackups/` + `.corrupt-*` copies (policy §4.3/Help updated), but two reviewers agree it can destroy the only copy of
+  a library recovery set aside — Reset's copy says "use this if you encounter any issues". Ship as is / keep `.corrupt-*`
+  (delete safety copies only) / warn in the Reset dialog when a set-aside copy exists? Also unverified: set-aside
+  libraries' large photos in `_EXTERNAL_DATA` aren't moved aside or removed.
 - 🙋 **CI 10 minutes vs runner slots** (CI lane 2026-11-15): jobs themselves now run 7:40–8:30 (push) and 8–10 (UI
   shards), but the free plan allows 5 macOS jobs at once for the whole account; with 4 lanes pushing, runs wait 2–9 min
   for a runner, which counts in wall time. Options: (a) fewer parallel lanes during the day (free); (b) GitHub larger
@@ -653,7 +658,6 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
-- 🟡 Reset leaves `StoreBackups/` safety copies and `.corrupt-*` store copies — 🚧 builder agent 2026-11-15 — (`PersistenceController.swift:150-172`, unbounded, not excluded from device backup) — policy §4.3 now says so; better: Reset removes them, cap/exclude corrupt copies, then update §4.2/4.3 + Help.
 - 🟡 Privacy policy §2.2/§6.2 "only" wording breaks the copy rule (Privacy lane; legal text).
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
@@ -780,3 +784,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-15 · Discovery perf budget (main red at 0.565 s) · 19250ff · nothing visible; Recipes opens/updates faster with big libraries · fix, not a budget bump: time-range Regex skipped without a dash, pantry prepared once per kitchen match, match terms cached; budget test best of 3 · review: main session OK'd · looked at: no UI
 - 2026-11-15 · Inbox 🟡 ephemeral link import · 7041540 · nothing visible; import a recipe link (incl. a consent-page site) → still imports; Settings → Reset still works · link fetches use one ephemeral URLSession, Reset also clears this run's and older builds' site cookies/cache · review: reviewer + challenger, 3 fixed (shared-jar test → isolated jar + cookie assert, wrong comment, this-run cookies survived Reset), 1 accepted (share-extension legacy data, CHALLENGES) · CI: nested `#require` compile error + branch missing main's perf fix (merged main) · looked at: no UI change
 - 2026-11-15 · Inbox 🟡 recipe-copy merge overwrites a mid-merge edit · 70dbaaf · nothing to check on device (test only) · finding didn't hold: the old test saved the edit before the merge fired its faults, so locking never had to fire; new test edits after every value is read — optimistic locking fires and the edit stands (green, run 1121) · review: 1 challenger (agreed, 0 fixed) · looked at: none (no UI)
+- 2026-11-15 · 🟡 Inbox: Reset leaves store copies · not merged (agent/reset-store-copies, 87f5737) · moved to Needs owner: deleting `.corrupt-*` on Reset can lose the only copy of a library that wouldn't open · review: deep-review + challenger, 2 fixed (listing error skipped the rest, assertion-less test), 1 data-loss risk agreed → owner · looked at: n/a (no UI)
