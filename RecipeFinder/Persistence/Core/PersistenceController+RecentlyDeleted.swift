@@ -4,8 +4,15 @@ import Foundation
 /// Recently Deleted (Data safety 4/4): deleting a recipe stamps `deletedAt` on its row instead of removing it, so with
 /// iCloud sync on the delete reaches other devices as an ordinary change and a restore (clearing it) does too. Every
 /// library read skips stamped rows (`inLibraryPredicate`). The row really goes when the cook deletes it from Recently
-/// Deleted or `RecentlyDeleted.keptFor` has passed; its photos go with it (`RecipeStore.deleteForever`).
+/// Deleted or the purge allows it (`RecentlyDeleted.mayPurge`); its photos go with it (`RecipeStore+RecentlyDeleted`).
 extension PersistenceController {
+
+    /// What a load of Recently Deleted found: what's left in it, and the recipes it removed for good whose id no
+    /// row holds any more (their photos can go).
+    struct RecentlyDeletedLoad: Sendable {
+        var trash: [DeletedRecipe] = []
+        var purged: [RecipeModel] = []
+    }
 
     /// Moves every row with `id` that's in the library to Recently Deleted. Returns false when nothing was moved.
     @discardableResult
@@ -23,33 +30,37 @@ extension PersistenceController {
     /// ever removed on the strength of an empty list.
     func fetchRecentlyDeletedRecipes() -> [DeletedRecipe] {
         guard ensureStoreIsReady() else { return [] }
-        let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        request.predicate = Self.recentlyDeletedPredicate
         do {
-            let items = try container.viewContext.fetch(request).compactMap { object -> DeletedRecipe? in
-                guard let deletedAt = object.value(forKey: RecipeKey.deletedAt) as? Date,
-                      let recipe = Self.mapToRecipeModel(object) else { return nil }
-                return DeletedRecipe(recipe: recipe, deletedAt: deletedAt)
-            }
-            return RecentlyDeleted.oneEach(items)
+            return RecentlyDeleted.oneEach(try Self.deletedItems(in: container.viewContext))
         } catch {
             persistenceLogger.error("❌ Failed to fetch recently deleted recipes: \(error.localizedDescription)")
             return []
         }
     }
 
-    /// Removes for good the rows with `id` that are in Recently Deleted (deleted before `cutoff`, when given). A copy
-    /// of the same recipe still in the library is left alone. Returns whether a row went.
+    /// Reads Recently Deleted off the main thread and, when `sync` is given, first removes for good every recipe
+    /// `RecentlyDeleted.mayPurge` allows — all its stamped rows together, judged by the latest stamp, so a duplicate
+    /// row can't outlive the photos removed with the others.
+    func loadRecentlyDeleted(now: Date = Date(), purgingWith sync: RecentlyDeleted.SyncState?) async -> RecentlyDeletedLoad {
+        guard ensureStoreIsReady() else { return RecentlyDeletedLoad() }
+        let container = self.container
+        return await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                continuation.resume(returning: Self.loadRecentlyDeleted(in: context, now: now, purgingWith: sync))
+            }
+        }
+    }
+
+    /// Removes for good every stamped row with `id` (a copy of the same recipe still in the library is left alone).
+    /// Returns whether a row went.
     @discardableResult
-    func deleteRecentlyDeletedRecipe(withId id: UUID, deletedBefore cutoff: Date? = nil) -> Bool {
+    func deleteRecentlyDeletedRecipe(withId id: UUID) -> Bool {
         guard ensureStoreIsReady() else { return false }
         let context = container.viewContext
-        var conditions = [Self.recipeIdPredicate(id), Self.recentlyDeletedPredicate]
-        if let cutoff {
-            conditions.append(NSPredicate(format: "%K < %@", RecipeKey.deletedAt, cutoff as NSDate))
-        }
         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: conditions)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            Self.recipeIdPredicate(id), Self.recentlyDeletedPredicate,
+        ])
         do {
             let rows = try context.fetch(request)
             guard !rows.isEmpty else { return false }
@@ -63,8 +74,71 @@ extension PersistenceController {
         }
     }
 
+    /// How many rows (library or Recently Deleted) hold `id`; nil when the store can't say. Photos go only at 0.
+    func recipeRowCount(withId id: UUID) -> Int? {
+        guard ensureStoreIsReady() else { return nil }
+        let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        request.predicate = Self.recipeIdPredicate(id)
+        do {
+            return try container.viewContext.count(for: request)
+        } catch {
+            persistenceLogger.error("❌ Failed to count recipe rows: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
     nonisolated static var recentlyDeletedPredicate: NSPredicate {
         NSPredicate(format: "%K != nil", RecipeKey.deletedAt)
+    }
+
+    /// Every stamped row as an item (duplicates included). Call on `context`'s queue.
+    nonisolated private static func deletedItems(in context: NSManagedObjectContext) throws -> [DeletedRecipe] {
+        let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        request.predicate = recentlyDeletedPredicate
+        return try context.fetch(request).compactMap { object -> DeletedRecipe? in
+            guard let deletedAt = object.value(forKey: RecipeKey.deletedAt) as? Date,
+                  let recipe = mapToRecipeModel(object) else { return nil }
+            return DeletedRecipe(recipe: recipe, deletedAt: deletedAt)
+        }
+    }
+
+    /// Call on `context`'s queue. A failed read or save purges nothing.
+    nonisolated private static func loadRecentlyDeleted(
+        in context: NSManagedObjectContext, now: Date, purgingWith sync: RecentlyDeleted.SyncState?
+    ) -> RecentlyDeletedLoad {
+        let items: [DeletedRecipe]
+        do {
+            items = try deletedItems(in: context)
+        } catch {
+            persistenceLogger.error("❌ Failed to read recently deleted recipes: \(error.localizedDescription)")
+            return RecentlyDeletedLoad()
+        }
+        let latest = RecentlyDeleted.oneEach(items)
+        guard let sync else { return RecentlyDeletedLoad(trash: latest) }
+        let due = latest.filter { RecentlyDeleted.mayPurge(deletedAt: $0.deletedAt, now: now, sync: sync) }
+        guard !due.isEmpty else { return RecentlyDeletedLoad(trash: latest) }
+        let dueIDs = Set(due.map(\.id))
+        do {
+            let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                NSPredicate(format: "%K IN %@", RecipeKey.id, Array(dueIDs) as NSArray), recentlyDeletedPredicate,
+            ])
+            for row in try context.fetch(request) { context.delete(row) }
+            try context.save()
+            // Photos go only for ids no row holds any more (a library copy of the same recipe keeps them).
+            var gone: [RecipeModel] = []
+            for item in due {
+                let left = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+                left.predicate = recipeIdPredicate(item.id)
+                if try context.count(for: left) == 0 { gone.append(item.recipe) }
+            }
+            persistenceLogger.info("Removed \(due.count) recipes from Recently Deleted after 30 days")
+            return RecentlyDeletedLoad(trash: latest.filter { !dueIDs.contains($0.id) }, purged: gone)
+        } catch {
+            context.rollback()
+            persistenceLogger.error("❌ Failed to remove old recently deleted recipes: \(error.localizedDescription)")
+            return RecentlyDeletedLoad(trash: latest)
+        }
     }
 
     private func updateRows(withId id: UUID, matching filter: NSPredicate, deletedAt: Date?, action: String) -> Bool {

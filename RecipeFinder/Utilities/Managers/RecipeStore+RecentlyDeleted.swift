@@ -1,15 +1,21 @@
 import Foundation
 
 /// Recently Deleted (Data safety 4/4): a deleted recipe is hidden everywhere but kept, with its photos, for
-/// `RecentlyDeleted.keptFor`; then it (or one the cook deletes from Recently Deleted) goes for good with its photos —
-/// files here, and their iCloud copies through the usual photo pass (`RecipePhotoSync.removedPaths`).
+/// `RecentlyDeleted.keptFor`; then (when `RecentlyDeleted.mayPurge` allows) it, or one the cook deletes from Recently
+/// Deleted, goes for good with its photos — files here, and their iCloud copies through the usual photo pass
+/// (`RecipePhotoSync.removedPaths`).
 extension RecipeStore {
     /// Moves the recipe to Recently Deleted: hidden everywhere, photos and kept web pictures untouched (with sync on,
-    /// other devices hide it too when the change arrives).
+    /// other devices hide it too when the change arrives). A recipe held only in memory (a quick snack) has nothing to
+    /// keep and just leaves the list.
     @discardableResult
     func delete(id: UUID) -> Bool {
         let deletedAt = Date()
-        guard persistence.moveRecipeToRecentlyDeleted(withId: id, at: deletedAt) else { return false }
+        guard persistence.moveRecipeToRecentlyDeleted(withId: id, at: deletedAt) else {
+            guard persistence.recipeRowCount(withId: id) == 0 else { return false }
+            recipes.removeAll { $0.id == id }
+            return true
+        }
         if let recipe = recipes.first(where: { $0.id == id }) {
             recentlyDeleted.removeAll { $0.id == id }
             recentlyDeleted.insert(DeletedRecipe(recipe: recipe, deletedAt: deletedAt), at: 0)
@@ -21,14 +27,18 @@ extension RecipeStore {
         return true
     }
 
+    /// Puts the recipe back in the library, re-read from the store and in name order.
     @discardableResult
     func restore(id: UUID) -> Bool {
         guard let item = recentlyDeleted.first(where: { $0.id == id }),
               persistence.restoreRecentlyDeletedRecipe(withId: id) else { return false }
         recentlyDeleted.removeAll { $0.id == id }
-        if !recipes.contains(where: { $0.id == id }) {
-            recipes.append(item.recipe)
-        }
+        let restored = persistence.fetchRecipe(withId: id) ?? item.recipe
+        recipes.removeAll { $0.id == id }
+        let index = recipes.firstIndex {
+            $0.name.localizedCaseInsensitiveCompare(restored.name) == .orderedDescending
+        } ?? recipes.endIndex
+        recipes.insert(restored, at: index)
         return true
     }
 
@@ -37,22 +47,29 @@ extension RecipeStore {
         guard let item = recentlyDeleted.first(where: { $0.id == id }),
               persistence.deleteRecentlyDeletedRecipe(withId: id) else { return false }
         recentlyDeleted.removeAll { $0.id == id }
-        syncPhotosWithICloud(removing: removePhotos(of: [item.recipe]))
+        // A copy of the same recipe still in the library keeps the photos.
+        if persistence.recipeRowCount(withId: id) == 0 {
+            syncPhotosWithICloud(removing: removePhotos(of: [item.recipe]))
+        }
         return true
     }
 
-    /// Removes for good every recipe that has been in Recently Deleted longer than `RecentlyDeleted.keptFor`, with its
-    /// photos. Returns the photo paths whose iCloud copies should go (passed to the next photo pass).
-    func purgeExpired(now: Date = Date()) -> Set<String> {
-        let cutoff = RecentlyDeleted.purgeCutoff(now: now)
-        let gone = recentlyDeleted
-            .filter { RecentlyDeleted.isExpired($0, now: now) }
-            .filter { persistence.deleteRecentlyDeletedRecipe(withId: $0.id, deletedBefore: cutoff) }
-        guard !gone.isEmpty else { return [] }
-        let goneIDs = Set(gone.map(\.id))
-        recentlyDeleted.removeAll { goneIDs.contains($0.id) }
-        Self.logger.info("Removed \(gone.count) recipes deleted over 30 days ago")
-        return removePhotos(of: gone.map(\.recipe))
+    /// Re-reads Recently Deleted (off the main thread), first removing for good what `RecentlyDeleted.mayPurge`
+    /// allows, with its photos. Returns the photo paths whose iCloud copies should go (for the next photo pass).
+    func purgeExpired(now: Date = Date()) async -> Set<String> {
+        let load = await persistence.loadRecentlyDeleted(now: now, purgingWith: purgeSyncState)
+        recentlyDeleted = load.trash
+        guard !load.purged.isEmpty else { return [] }
+        return removePhotos(of: load.purged)
+    }
+
+    /// This device's iCloud state for the purge.
+    var purgeSyncState: RecentlyDeleted.SyncState {
+        RecentlyDeleted.SyncState(
+            everSynced: SyncPreference.hasEverSynced(in: syncStorage),
+            lastExportStart: HistoryPurgeRule.lastExportStart(in: syncStorage),
+            importSeenThisLaunch: persistence.finishedICloudImportThisLaunch
+        )
     }
 
     /// Every recipe whose photos must stay: the library and Recently Deleted.
@@ -78,17 +95,16 @@ extension RecipeStore {
 
     #if DEBUG
     /// UI-test hook (`-seed-recently-deleted`): moves the first two library recipes by name to Recently Deleted (one
-    /// just now, one 26 days ago) so Screenshots can capture the screen. Runs once per library (skipped when it holds
-    /// some already).
+    /// just now, one 26 days ago) so Screenshots can capture the screen. Skipped when Recently Deleted holds some.
     func seedUITestRecentlyDeletedIfRequested() {
-        guard ProcessInfo.processInfo.arguments.contains("-seed-recently-deleted"), recentlyDeleted.isEmpty else { return }
+        guard ProcessInfo.processInfo.arguments.contains("-seed-recently-deleted"),
+              persistence.fetchRecentlyDeletedRecipes().isEmpty else { return }
         let sorted = recipes.sorted { $0.name < $1.name }
         for (recipe, daysAgo) in zip(sorted.prefix(2), [0.0, 26.0]) {
             _ = persistence.moveRecipeToRecentlyDeleted(withId: recipe.id, at: Date().addingTimeInterval(-daysAgo * 86_400))
         }
         let moved = Set(sorted.prefix(2).map(\.id))
         recipes.removeAll { moved.contains($0.id) }
-        recentlyDeleted = persistence.fetchRecentlyDeletedRecipes()
     }
     #endif
 }

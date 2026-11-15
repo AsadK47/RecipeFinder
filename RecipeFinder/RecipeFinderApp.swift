@@ -45,15 +45,19 @@ struct RecipeFinderApp: App {
     /// Holds the export-event observer for the app's lifetime; nil while sync is off.
     @MainActor private static var exportObserver: NSObjectProtocol?
 
-    /// Records each export CloudKit finishes, so the launch purge keeps what it hasn't sent (`HistoryPurgeRule`).
+    /// Records each export CloudKit finishes, so the launch purge keeps what it hasn't sent (`HistoryPurgeRule`), and
+    /// the first finished import, so Recently Deleted purges only after other devices' restores are in.
     @MainActor private static func recordICloudExports() {
         guard exportObserver == nil else { return }
         exportObserver = NotificationCenter.default.addObserver(
             forName: NSPersistentCloudKitContainer.eventChangedNotification, object: nil, queue: .main
         ) { notification in
             guard let event = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
-                    as? NSPersistentCloudKitContainer.Event,
-                  let sent = HistoryPurgeRule.sentUpTo(
+                    as? NSPersistentCloudKitContainer.Event else { return }
+            if event.type == .import, event.succeeded, event.endDate != nil {
+                MainActor.assumeIsolated { PersistenceController.shared.finishedICloudImportThisLaunch = true }
+            }
+            guard let sent = HistoryPurgeRule.sentUpTo(
                     isExport: event.type == .export, succeeded: event.succeeded,
                     startDate: event.startDate, endDate: event.endDate
                   )

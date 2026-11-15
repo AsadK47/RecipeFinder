@@ -52,6 +52,8 @@ final class RecipeStore: RecipeStoring {
     @ObservationIgnored let imageStore: RecipeImageStore
     // Internal so RecipeStore+RemoteImages.swift can use them.
     @ObservationIgnored let imageLocalizer: RecipeImageLocalizer
+    /// Where sync state (ever synced, last export) is read for the Recently Deleted purge; injectable for tests.
+    @ObservationIgnored let syncStorage: LocalStore
     /// Latest queued picture download; each waits for the one before.
     @ObservationIgnored var imageLocalization: Task<Void, Never>?
     /// Web pictures already tried this launch.
@@ -64,11 +66,13 @@ final class RecipeStore: RecipeStoring {
     init(
         persistence: PersistenceController = .shared,
         imageStore: RecipeImageStore = RecipeImageStore(),
-        imageLocalizer: RecipeImageLocalizer = RecipeImageLocalizer()
+        imageLocalizer: RecipeImageLocalizer = RecipeImageLocalizer(),
+        syncStorage: LocalStore = .shared
     ) {
         self.persistence = persistence
         self.imageStore = imageStore
         self.imageLocalizer = imageLocalizer
+        self.syncStorage = syncStorage
     }
 
     /// Loads the library, seeding starter + bundled recipes on first run.
@@ -112,11 +116,10 @@ final class RecipeStore: RecipeStoring {
             let repaired = await repairLegacySampleFlags(in: fetched)
             let deduped = removeDuplicateCopies(from: repaired)
             recipes = await refreshStaleSamples(in: deduped)
-            recentlyDeleted = persistence.fetchRecentlyDeletedRecipes()
             #if DEBUG
             seedUITestRecentlyDeletedIfRequested()
             #endif
-            let purged = purgeExpired()
+            let purged = await purgeExpired()
             isLoading = false
             keepWebPictures(of: recipes)
             clearPhotosErasedElsewhere()
@@ -283,9 +286,8 @@ final class RecipeStore: RecipeStoring {
         if seedBundled {
             // Decode the bundled JSON off the main actor — it's a few hundred recipes.
             let bundled = await Task.detached(priority: .userInitiated) { BundledRecipeCatalog.load() }.value
-            // A recently deleted bundled recipe counts as present, so seeding never brings it back.
-            let existingIDs = Set(existing.map(\.id)).union(persistence.fetchRecentlyDeletedRecipes().map(\.id))
-            toSeed += bundled.filter { !existingIDs.contains($0.id) }
+            let trashed = await persistence.loadRecentlyDeleted(purgingWith: nil).trash.map(\.id)
+            toSeed += RecentlyDeleted.recipesToSeed(bundled: bundled, existing: existing, trashed: trashed)
         }
         guard !toSeed.isEmpty else { return nil }
         guard await persistence.seedRecipes(toSeed) else {
@@ -299,7 +301,7 @@ final class RecipeStore: RecipeStoring {
     /// Awaitable reload from the store (used by pull-to-refresh and post-write syncs).
     func refresh() async {
         recipes = await persistence.fetchRecipesAsync()
-        recentlyDeleted = persistence.fetchRecentlyDeletedRecipes()
+        recentlyDeleted = await persistence.loadRecentlyDeleted(purgingWith: nil).trash
     }
 
     /// Persists an edit and upserts it into the in-memory library so observers update; returns false (state untouched) on failure.

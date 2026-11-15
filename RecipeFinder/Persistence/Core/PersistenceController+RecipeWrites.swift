@@ -212,7 +212,7 @@ extension PersistenceController {
                 do {
                     for model in models {
                         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-                        request.predicate = Self.recipeIdPredicate(model.id)
+                        request.predicate = Self.libraryRecipePredicate(model.id)
                         request.fetchLimit = 1
                         guard let object = try context.fetch(request).first else { continue }
                         let cookCount = object.value(forKey: RecipeKey.cookCount)
@@ -241,7 +241,8 @@ extension PersistenceController {
         do {
             let existingRecipes = try context.fetch(fetchRequest)
             if !existingRecipes.isEmpty {
-                return updateRecipe(recipe)
+                // Saving puts the recipe in the library, so a recently deleted copy comes back (a restored backup).
+                return updateRecipe(recipe, bringingBackRecentlyDeleted: true)
             } else {
                 return saveRecipe(parameters: RecipeSaveParameters(from: recipe))
             }
@@ -300,12 +301,18 @@ extension PersistenceController {
     }
     
     @discardableResult
-    func updateRecipe(_ recipe: RecipeModel, includingCookHistory: Bool = false) -> Bool {
+    /// `bringingBackRecentlyDeleted`: also rewrite (and restore) copies in Recently Deleted — only a save of the recipe
+    /// itself (`saveRecipeModel`) does; background touch-ups leave Recently Deleted alone.
+    func updateRecipe(
+        _ recipe: RecipeModel, includingCookHistory: Bool = false, bringingBackRecentlyDeleted: Bool = false
+    ) -> Bool {
         guard ensureStoreIsReady() else { return false }
 
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = Self.recipeIdPredicate(recipe.id)
+        fetchRequest.predicate = bringingBackRecentlyDeleted
+            ? Self.recipeIdPredicate(recipe.id)
+            : Self.libraryRecipePredicate(recipe.id)
 
         do {
             // Every row with the id: with iCloud sync on, another device's copy may not be merged yet.
@@ -340,9 +347,8 @@ extension PersistenceController {
                 managedRecipe.setValue(recipe.cuisine, forKey: RecipeKey.cuisine)
                 managedRecipe.setValue(recipe.photoNames as NSArray, forKey: RecipeKey.photoNames)
                 managedRecipe.setValue(recipe.sourceText, forKey: RecipeKey.sourceText)
-                // A save puts the recipe in the library (a restored backup brings a recently deleted one back). Only
-                // written when set, so an edit never sends a needless change over iCloud.
-                if managedRecipe.value(forKey: RecipeKey.deletedAt) != nil {
+                // Only written when set, so an edit never sends a needless change over iCloud.
+                if bringingBackRecentlyDeleted, managedRecipe.value(forKey: RecipeKey.deletedAt) != nil {
                     managedRecipe.setValue(nil, forKey: RecipeKey.deletedAt)
                 }
                 if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
@@ -371,6 +377,11 @@ extension PersistenceController {
         NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
     }
 
+    /// The library's rows with `id` (not the ones in Recently Deleted).
+    nonisolated static func libraryRecipePredicate(_ id: UUID) -> NSPredicate {
+        NSCompoundPredicate(andPredicateWithSubpredicates: [recipeIdPredicate(id), inLibraryPredicate])
+    }
+
     /// Increments `cookCount` and stamps `lastCookedAt` on a background context so the post-cook flow never blocks
     /// the main thread; `await`s the save so callers/tests observe a completed write. Bypasses `updateRecipe` since
     /// cook history is separate from content edits.
@@ -380,7 +391,7 @@ extension PersistenceController {
         await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-                fetchRequest.predicate = Self.recipeIdPredicate(id)
+                fetchRequest.predicate = Self.libraryRecipePredicate(id)
                 fetchRequest.fetchLimit = 1
                 do {
                     guard let recipe = try context.fetch(fetchRequest).first else {
@@ -408,7 +419,7 @@ extension PersistenceController {
         await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-                fetchRequest.predicate = Self.recipeIdPredicate(id)
+                fetchRequest.predicate = Self.libraryRecipePredicate(id)
                 fetchRequest.fetchLimit = 1
                 do {
                     guard let recipe = try context.fetch(fetchRequest).first else {
@@ -432,7 +443,7 @@ extension PersistenceController {
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = Self.recipeIdPredicate(id)
+        fetchRequest.predicate = Self.libraryRecipePredicate(id)
         fetchRequest.fetchLimit = 1
         
         do {

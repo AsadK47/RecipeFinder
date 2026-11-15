@@ -16,6 +16,9 @@ final class PersistenceController {
     private(set) var isStoreLoaded = false
     /// Where `takeOutsideChanges()` last stopped reading the store's history (`PersistenceController+RemoteChanges`).
     var lastHistoryToken: NSPersistentHistoryToken?
+    /// A CloudKit import finished successfully this launch (set from `eventChangedNotification`); until then the
+    /// Recently Deleted purge waits, since another device's restore may not have arrived (`RecentlyDeleted.mayPurge`).
+    var finishedICloudImportThisLaunch = false
 
     /// The open store file's identifier; a fresh file (recovery, reinstall) gets a new one.
     var storeFileID: String? {
