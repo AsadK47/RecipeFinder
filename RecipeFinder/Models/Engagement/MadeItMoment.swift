@@ -89,10 +89,11 @@ enum MadeItMoment {
     /// One sentence per reward, so VoiceOver hears everything the screen celebrates.
     static func announcement(cookNumber: Int, recipeName: String, timesCooked: Int, streakWeeks: Int,
                              cooksThisWeek: Int) -> String {
+        let dish = subtitle(recipeName: recipeName, timesCooked: timesCooked)
         let parts = [
             "Made it!",
             "Cook number \(cookNumber).",
-            subtitle(recipeName: recipeName, timesCooked: timesCooked),
+            dish.hasSuffix("!") ? dish : dish + ".",
             streakLine(weeks: streakWeeks).map { "\($0)." },
             weekLine(cooksThisWeek: cooksThisWeek).map { "\($0)." },
         ]
