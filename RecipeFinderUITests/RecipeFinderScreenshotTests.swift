@@ -592,7 +592,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         waitForExpectations(timeout: 8)
     }
 
-    /// TestFlight 2026-11-15: "View all badges" left the reveal stuck on screen. It must close and land on Me.
+    /// TestFlight 2026-11-15: "View all badges" left the reveal stuck on screen. It must close and land on Me's
+    /// trophy shelf (one tap deeper, in Profile).
     @MainActor
     func testBadgeRevealViewAllClosesAndOpensMe() {
         let app = XCUIApplication()
@@ -611,6 +612,9 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let me = app.tabBars.buttons["Me"]
         expectation(for: NSPredicate(format: "isSelected == true"), evaluatedWith: me)
         waitForExpectations(timeout: 5)
+        // Me opens Profile, where the badges are.
+        XCTAssertTrue(app.staticTexts["Trophy shelf"].waitForExistence(timeout: 5),
+                      "View all badges should land on the trophy shelf.")
     }
 
     // MARK: - Helpers
@@ -699,7 +703,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         // Me's one line sits under the cookbook: chef type (+ cooks this year once there are some).
         let profile = app.buttons["me.profile"]
         XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the one line about you.")
-        XCTAssertFalse((profile.value as? String ?? "").isEmpty, "The profile row should read its line.")
+        // The seeded cooks are 3–15 days old, so in the first fortnight of January some fall in last year.
+        if Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0 > 15 {
+            let line = profile.value as? String ?? ""
+            XCTAssertTrue(line.contains("cooks this year"), "Me's line should count this year's cooks: \(line)")
+        }
         // A page opens its recipe, to cook it again.
         app.descendants(matching: .any).matching(identifier: "cookbook.page").firstMatch.tap()
         XCTAssertTrue(app.buttons["Start Cooking Mode"].waitForExistence(timeout: 10),

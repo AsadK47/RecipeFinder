@@ -3,6 +3,9 @@ import SwiftUI
 /// Me tab: your cookbook and one line about you. Profile, badges and chef type are one tap deeper; Settings is behind
 /// the gear.
 struct MeView: View {
+    /// Set by "View all badges": Me opens Profile (the trophy shelf) and clears it.
+    var openProfile: Binding<Bool> = .constant(false)
+
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
@@ -16,6 +19,8 @@ struct MeView: View {
     @State private var profileImage: UIImage?
     /// "5 / 24" badges earned, refreshed with the cookbook rather than in `body`.
     @State private var badgeCount = ""
+    /// "5 of 24 badges earned" for VoiceOver, which reads "/" as "slash".
+    @State private var spokenBadgeCount = ""
 
     var body: some View {
         NavigationStack {
@@ -40,7 +45,8 @@ struct MeView: View {
                                 name: profileManager.fullName,
                                 line: MyCookbook.meLine(chefType: profileManager.chefType,
                                                         cooksThisYear: cookingStreak.streak.cooksThisYear),
-                                badgeCount: badgeCount
+                                badgeCount: badgeCount,
+                                spokenBadgeCount: spokenBadgeCount
                             ) {
                                 showProfile = true
                             }
@@ -66,7 +72,9 @@ struct MeView: View {
                 cookingStreak.reload()
                 refreshCookbook()
                 profileImage = profileManager.loadProfileImage()
+                openProfileIfAsked()
             }
+            .onChange(of: openProfile.wrappedValue) { _, _ in openProfileIfAsked() }
             // Coming back from Profile: the photo may have changed.
             .onChange(of: showProfile) { _, showing in
                 guard !showing else { return }
@@ -76,16 +84,26 @@ struct MeView: View {
             .onChange(of: recipeStore.recipes) { _, _ in refreshCookbook() }
             // "today" / "yesterday" on the pages move on overnight.
             .onChange(of: scenePhase) { _, phase in
-                if phase == .active { refreshCookbook() }
+                guard phase == .active else { return }
+                // "this year" and the pages' "today" move on overnight.
+                cookingStreak.reload()
+                refreshCookbook()
             }
         }
     }
 
     private func refreshCookbook() {
         cookbookPages = MyCookbook.pages(from: recipeStore.recipes)
-        badgeCount = BadgeShelf.countText(
-            BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
-        )
+        let shelf = BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
+        badgeCount = BadgeShelf.countText(shelf)
+        spokenBadgeCount = BadgeShelf.spokenCount(shelf)
+    }
+
+    private func openProfileIfAsked() {
+        guard openProfile.wrappedValue else { return }
+        openProfile.wrappedValue = false
+        showSettings = false
+        showProfile = true
     }
 }
 
@@ -97,9 +115,11 @@ private struct MeProfileRow: View {
     let name: String
     let line: String
     let badgeCount: String
+    let spokenBadgeCount: String
     let onTap: () -> Void
 
     @ScaledMetric(relativeTo: .headline) private var avatarSize: CGFloat = 48
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         Button {
@@ -115,12 +135,11 @@ private struct MeProfileRow: View {
                     Text(line)
                         .font(.subheadline)
                         .adaptiveSecondaryForeground()
-                        .accessibilityIdentifier("me.line")
+                    // At accessibility sizes the count drops under the line so neither is squeezed.
+                    if dynamicTypeSize.isAccessibilitySize { trophies }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                Label(badgeCount, systemImage: "trophy.fill")
-                    .font(.subheadline.weight(.semibold))
-                    .adaptiveSecondaryForeground()
+                if !dynamicTypeSize.isAccessibilitySize { trophies }
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
                     .adaptiveSecondaryForeground()
@@ -133,10 +152,16 @@ private struct MeProfileRow: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(name)
-        .accessibilityValue("\(line), \(badgeCount) badges")
+        .accessibilityValue("\(line), \(spokenBadgeCount)")
         .accessibilityHint("Opens your profile, badges and chef type")
         .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("me.profile")
+    }
+
+    private var trophies: some View {
+        Label(badgeCount, systemImage: "trophy.fill")
+            .font(.subheadline.weight(.semibold))
+            .adaptiveSecondaryForeground()
     }
 
     @ViewBuilder private var avatar: some View {
@@ -147,10 +172,14 @@ private struct MeProfileRow: View {
                 .frame(width: avatarSize, height: avatarSize)
                 .clipShape(Circle())
                 .accessibilityHidden(true)
+        } else if initials.isEmpty {
+            IconBadge(systemName: "person.fill", tint: AppTheme.accentColor, diameter: avatarSize)
+                .accessibilityHidden(true)
         } else {
-            Text(initials.isEmpty ? "?" : initials)
+            // Same treatment as Profile's big avatar.
+            Text(initials)
                 .font(.headline.weight(.bold))
-                .foregroundStyle(.white)
+                .adaptiveForegroundColor()
                 .frame(width: avatarSize, height: avatarSize)
                 .background(Circle().fill(AppTheme.accentColor))
                 .accessibilityHidden(true)

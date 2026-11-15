@@ -259,14 +259,21 @@ final class RecipeStore: RecipeStoring {
         // Not yet merged: synced copies can share an id, so keep the first rather than trap.
         let picks = Dictionary(library.sorted { $0.name < $1.name }.prefix(5).enumerated().map { ($1.id, $0 + 1) },
                                uniquingKeysWith: { first, _ in first })
-        return library.map { recipe in
-            guard recipe.lastCookedAt == nil, let rank = picks[recipe.id] else { return recipe }
+        var seededCooks: [Date] = []
+        let seeded = library.map { recipe in
+            guard recipe.lastCookedAt == nil, let rank = picks[recipe.id],
+                  let cookedAt = Calendar.current.date(byAdding: .day, value: -rank * 3, to: Date()) else { return recipe }
             var cooked = recipe
             cooked.cookCount = rank
-            cooked.lastCookedAt = Calendar.current.date(byAdding: .day, value: -rank * 3, to: Date())
+            cooked.lastCookedAt = cookedAt
             cooked.rating = 6 - rank
-            return persistence.saveRecipeModel(cooked) ? cooked : recipe
+            guard persistence.saveRecipeModel(cooked) else { return recipe }
+            seededCooks.append(cookedAt)
+            return cooked
         }
+        // The cook log too, so Me's "N cooks this year" line agrees with the pages.
+        CookingStreakManager.shared.merge(cookDates: seededCooks)
+        return seeded
     }
     #endif
 

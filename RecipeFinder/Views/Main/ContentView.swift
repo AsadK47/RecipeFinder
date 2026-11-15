@@ -14,6 +14,8 @@ struct ContentView: View {
     @Environment(\.madeItPresenter) private var madeItPresenter
     /// Set by "View all badges"; the Me tab opens once the badge reveal has fully closed.
     @State private var openMeAfterBadge = false
+    /// Asks Me to open Profile, where the trophy shelf lives; Me clears it once it has.
+    @State private var showTrophyShelf = false
     @State private var showAddRecipe = false
     /// True from opening the "+" sheet until it has fully dismissed: a badge earned by the import waits for it, since a
     /// second sheet presented over (or mid-dismissal of) another is silently dropped.
@@ -78,6 +80,7 @@ struct ContentView: View {
             if openMeAfterBadge {
                 openMeAfterBadge = false
                 select(.me)
+                showTrophyShelf = true
             }
         }) { badge in
             BadgeRevealView(badge: badge, onDismiss: {
@@ -203,7 +206,7 @@ struct ContentView: View {
         case .recipes: RecipeSearchView(isLoading: store.isLoading, onAddRecipe: openAddRecipe)
         case .plan: MealPlanningView()
         case .groceries: KitchenShoppingView()
-        case .me: MeView()
+        case .me: MeView(openProfile: $showTrophyShelf)
         }
     }
 
