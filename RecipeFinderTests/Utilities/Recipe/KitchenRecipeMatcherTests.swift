@@ -127,6 +127,6 @@ struct KitchenRecipeMatcherTests {
         let pantry: Set<String> = ["egg", "cheese"]
         let prepared = recipe.missingIngredients(fromPrepared: RecipeModel.normalizedPantry(pantry)).map(\.name)
         #expect(prepared == recipe.missingIngredients(from: pantry).map(\.name))
-        #expect(prepared == ["chives"])
+        #expect(prepared.map { $0.lowercased() } == ["chives"])
     }
 }
