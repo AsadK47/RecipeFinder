@@ -50,3 +50,4 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 12. **No key paths inside `#expect`.** 2026-11-13: `#expect(rows.allSatisfy(\.flag))` failed to compile ("call can throw" in the macro expansion) → write `allSatisfy { $0.flag }`.
 13. **Extend a passing UI flow before adding a new test.** 2026-11-14: a new standalone screenshot test (`testCaptureDataManagementSync`, sorts early) never reached Settings ("Me gear should open Settings") → 2 Screenshots cycles. Capturing after the passing import-summary test on the same screen worked first time.
 14. **Re-check old expectations after a review fix.** 2026-11-14: tests expected the kept copy deleted (`== nil`); a later write-back made it `[]` → 1 CI cycle. Assert the outcome (`?.isEmpty ?? true`), not the storage shape.
+15. **Pin test clocks mid-week.** 2026-11-15: `CookingStreakTests` used `Date()`; CI ran Sunday 01:00 so "3h ago" fell in last week → 1 CI cycle.
