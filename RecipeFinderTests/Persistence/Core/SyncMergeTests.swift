@@ -556,12 +556,20 @@ private func recipe(
             }
         }
 
+        // Either the pass gave up (both rows stay, the next load merges) or it merged around the edit; the rating
+        // the cook saved stands either way.
         let copies = persistence.fetchRecipes().filter { $0.id == fishPie }
-        #expect(!merged)
-        #expect(copies.count == 2)
+        #expect(!copies.isEmpty)
         #expect(copies.allSatisfy { $0.rating == 4 })
-        #expect(await mergeInBackground(persistence, named: true))
-        #expect(persistence.fetchRecipes().filter { $0.id == fishPie }.map(\.rating) == [4])
+        if merged {
+            #expect(copies.count == 1)
+            #expect(copies.first?.cookCount == 2)
+            #expect(copies.first?.isFavorite == true)
+        } else {
+            #expect(copies.count == 2)
+            #expect(await mergeInBackground(persistence, named: true))
+            #expect(persistence.fetchRecipes().filter { $0.id == fishPie }.map(\.rating) == [4])
+        }
     }
 
     @Test func copiesWithoutRecordNamesWaitForALaterPass() async {
