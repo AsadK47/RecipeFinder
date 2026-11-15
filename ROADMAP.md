@@ -317,6 +317,7 @@ Covered by `RecipePrintFormatterTests` (15 tests — structure, escaping, sectio
 *Remaining:* rich link sharing, import from other RecipeFinder users.
 
 ### 🔴 Auto recipe images (Unsplash)
+*Superseded 2026-11-12: owner chose Image Playground (BACKLOG Pictures); Unsplash rejected, client deleted 2026-11-15.*
 Auto-assign images by recipe name. The bundled collection ships without photos:
 the ~242 with a source URL can show the source page's own image (hotlinked
 `og:image`/JSON-LD, credited + linked, never bundled); Unsplash covers the rest
