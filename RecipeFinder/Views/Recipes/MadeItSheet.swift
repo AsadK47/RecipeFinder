@@ -53,7 +53,8 @@ struct MadeItSheet: View {
                     .padding(.vertical, AppTheme.spacing12)
             }
         }
-        .presentationDetents([.medium, .large])
+        // Large: at medium the bigger header pushed the photo prompt below the fold, and the nudge is the point.
+        .presentationDetents([.large])
         .presentationDragIndicator(.visible)
         .photosPicker(isPresented: $showPhotoPicker, selection: $selectedItem, matching: .images)
         .fullScreenCover(isPresented: $showCamera) {
@@ -87,10 +88,13 @@ struct MadeItSheet: View {
 
     private var motion: MadeItMoment.Motion { MadeItMoment.motion(reduceMotion: reduceMotion) }
 
-    /// Lands the moment once the sheet is up: the picture pops in, then haptic and confetti together.
+    /// Lands the moment once the sheet is up: the picture pops in, then haptic and confetti together. Waits out the
+    /// slide-up first — `.task` starts as the sheet starts moving, and the pop was lost in the slide.
     private func play() async {
         guard !landed else { return }
         let motion = self.motion
+        try? await Task.sleep(for: .milliseconds(350))
+        guard !Task.isCancelled else { return }
         if motion.popsIn {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { landed = true }
             try? await Task.sleep(for: .milliseconds(250))
@@ -98,9 +102,12 @@ struct MadeItSheet: View {
             landed = true
         }
         guard !Task.isCancelled else { return }
-        if motion.playsHaptic { HapticManager.shared.madeIt() }
+        HapticManager.shared.madeIt()
         if motion.firesConfetti { confettiCounter += 1 }
         if voiceOverEnabled {
+            // After VoiceOver has read the newly opened sheet, so neither cuts the other off.
+            try? await Task.sleep(for: .seconds(1.5))
+            guard !Task.isCancelled else { return }
             AccessibilityNotification.Announcement(MadeItMoment.announcement(
                 cookNumber: summary.cookNumber, recipeName: summary.recipeName, timesCooked: summary.timesCooked,
                 streakWeeks: summary.streakWeeks, cooksThisWeek: summary.cooksThisWeek

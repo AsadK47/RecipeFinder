@@ -62,20 +62,18 @@ struct MadeItMomentTests {
 
     // MARK: - Motion
 
-    @Test("Reduce Motion keeps the haptic but drops the confetti and the pop")
+    @Test("Reduce Motion drops the confetti and the pop")
     func reduceMotion() {
         let motion = MadeItMoment.motion(reduceMotion: true)
         #expect(!motion.firesConfetti)
         #expect(!motion.popsIn)
-        #expect(motion.playsHaptic)
     }
 
-    @Test("full motion fires confetti, pops the picture in and plays the haptic")
+    @Test("full motion fires confetti and pops the picture in")
     func fullMotion() {
         let motion = MadeItMoment.motion(reduceMotion: false)
         #expect(motion.firesConfetti)
         #expect(motion.popsIn)
-        #expect(motion.playsHaptic)
     }
 
     // MARK: - VoiceOver
@@ -116,18 +114,25 @@ struct MadeItMomentTests {
         var recipe = RecipeModel(
             name: "Dal", category: "Main", difficulty: "Easy", prepTime: "10 min", cookingTime: "30 min",
             baseServings: 4, ingredients: [], prePrepInstructions: [], instructions: ["Simmer"], notes: "",
-            cookCount: 1, photoNames: []
+            cookCount: 1, rating: 4, cuisine: "Indian", photoNames: []
         )
         let first = MadeItSummary(recipe: recipe, cookNumber: 9, streakWeeks: 2, cooksThisWeek: 3, milestone: nil)
         #expect(first.timesCooked == 1)
         #expect(first.recipeName == "Dal")
         #expect(!first.hasCookPhoto)
         #expect(first.cooksThisWeek == 3)
+        #expect(first.cookNumber == 9)
+        #expect(first.streakWeeks == 2)
+        #expect(first.rating == 4)
+        #expect(first.category == "Main")
+        #expect(first.cuisine == "Indian")
+        #expect(first.imageName == recipe.heroImageName)
 
         recipe.cookCount = 5
         recipe.photoNames = ["RecipeImages/dal.jpg"]
         let again = MadeItSummary(recipe: recipe, cookNumber: 10, streakWeeks: 2, cooksThisWeek: 4, milestone: nil)
         #expect(again.timesCooked == 5)
         #expect(again.hasCookPhoto)
+        #expect(again.imageName == "RecipeImages/dal.jpg")
     }
 }

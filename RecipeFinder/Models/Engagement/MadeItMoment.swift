@@ -36,7 +36,7 @@ struct MadeItSummary: Identifiable, Equatable {
     }
 }
 
-/// What the Made it moment says and how it moves (`docs/PLAY.md` §7, without Spoons or levels). Pure so tests pin it.
+/// What the Made it moment says and how it moves (`docs/PLAY.md` §7, Spoons and levels left out). Pure so tests pin it.
 enum MadeItMoment {
     /// "First time making Dal!" or "Dal · made 4 times" — the dish, not just a count.
     static func subtitle(recipeName: String, timesCooked: Int) -> String {
@@ -80,11 +80,10 @@ enum MadeItMoment {
     struct Motion: Equatable {
         let firesConfetti: Bool
         let popsIn: Bool
-        let playsHaptic: Bool
     }
 
     static func motion(reduceMotion: Bool) -> Motion {
-        Motion(firesConfetti: !reduceMotion, popsIn: !reduceMotion, playsHaptic: true)
+        Motion(firesConfetti: !reduceMotion, popsIn: !reduceMotion)
     }
 
     /// One sentence per reward, so VoiceOver hears everything the screen celebrates.

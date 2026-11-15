@@ -642,8 +642,9 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
     /// Made-it moment: the sheet after Mark as Cooked — dish picture, "First time making …", week count, photo nudge.
     /// Skipped (not failed) when an earlier run already cooked this recipe today, which disables the button.
+    /// Named to sort last: the cook it records would otherwise show up in later shots (streak, Today, badges).
     @MainActor
-    func testCaptureMadeIt() {
+    func testZCaptureMadeIt() {
         let app = XCUIApplication()
         app.launchArguments += ["-ui-testing"]
         app.launch()
@@ -660,7 +661,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         guard markCooked.isHittable else { return }
         markCooked.tap()
         XCTAssertTrue(app.buttons["madeIt.done"].waitForExistence(timeout: 5), "Mark as Cooked should open Made it.")
-        settle(2.5)
+        settle(4)   // let the confetti fall away
         snap(app, "41-made-it")
     }
 
