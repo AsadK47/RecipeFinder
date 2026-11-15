@@ -9,6 +9,10 @@ rules → `CLAUDE.md`, rationale → `WORK.md` Decisions. Push docs-only to `mai
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` — Data safety 4/4 lean (model 18 OK). (Photo files after Reset landed by another session, e67da6f.)
 - Cook: `agent/cooking-flow-ticks` — Cooking flow slice 1 (ingredient ticking).
+- Discover: `agent/endless-discovery` (36c4c42) — **paused after 4 red CI runs** (BACKLOG step 5). Next: add
+  `@MainActor` to `cookAgainDoesNotRepeatTheRecentlyCookedRow` (`RecipeFinderTests/Models/DiscoveryFeedTests.swift:218`,
+  the only remaining error), push, then Screenshots on the branch (Recipes scrolled 3 screens), then `ready to batch`.
+  Reviewer + challenger already done and acted on (CHALLENGES 15 Nov).
 - Bug (first): `agent/freeze-badge-reveal` — issue #16, iPhone froze on the Link Master badge reveal right after a web import with sync on; + MetricKit hang reports.
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
@@ -16,6 +20,20 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
+- **Endless discovery** (`DiscoveryPool` ranks, `DiscoveryPager` deals, `DiscoveryFeedModel` pages, `RecipeBrowse`
+  decides browse vs results): browsing = nothing typed, filtered or re-sorted → Recently cooked row, a 6-card library
+  preview (own recipes + favourites first, then A–Z) + "See all N recipes", then chapters forever. Why the preview: all
+  332 bundled recipes are in the library, so chapters under the full list would never be reached. Loop rule (owner
+  2026-11-15, relayed by another session): pool spent → reshuffle (chapter order, layouts, recipe order), never a recipe
+  from the chapter just before; a library one chapter can hold lets that chapter follow itself rather than end. The row
+  and preview are kept out of the first deal. Seed has no cuisine/tags → "Because you loved" = ≥2 shared ingredient words
+  (staples/descriptors dropped, no regex). Kitchen read on appear, not observed in `body` (pantry toggles in a pushed
+  detail re-rendered this view before). `replacePool` always swaps: `RecipeModel ==` ignores names. Libraries ≤6 show no
+  chapters. Not in this slice: plan/cook action or double-tap on tiles, Play cards, a discovery→cooked counter.
+  **Pre-mortem:** (1) repeats/dead end → `noRecipeRepeatsUntilThePoolIsSpent`, `theScrollNeverEnds`,
+  `noRecipeShowsInTwoChaptersInARow`, `aLibraryOneChapterCanHoldStillNeverEnds`; (2) slow with 300+ →
+  `PerformanceBudgetTests.discoveryFeedBudget`; (3) stale/deleted recipes or search capped at 6 →
+  `aLibraryChangeKeepsTheChaptersOnScreen`, `anEditedRecipeIsDealtWithItsNewName`, `browsingIsNothingTypedFilteredOrResorted`.
 - **Photo files after a Reset elsewhere** (`ErasedPhotoCleanup`): with sync on, after each load: remember the store
   file once it holds photo rows (`syncedStoreFile.recipePhotos`); when that same file holds **zero photo rows and no
   recipe shows an own photo** (throwing fetch, never the swallowing `fetchRecipesAsync`), delete own photo files

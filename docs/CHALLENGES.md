@@ -56,6 +56,20 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: Recipes — endless discovery — fixed: preview of six A–Z air-fryer samples (now own + favourites first), a chosen sort still counted as browsing, Cook it again re-dealt the Recently cooked row and preview, untested browse/search switch (now `RecipeBrowse`), reshuffle test passed without the shuffle, 2–7 recipe libraries ended the "endless" feed, a renamed recipe dealt stale (pool `==` ignores names), loose similarity words, fixtures that made everything similar)
+- ⚔️ [Loop] Tiles only open the recipe; PRODUCT "Feel" wants one tap to plan or cook from the scroll. Serves the loop via the detail page.
+  → Later (next slice: double-tap/plan action on tiles).
+- ⚔️ [Measure] Nothing records that a cook came from a discovery tile, so "recipes opened from discovery that get cooked" can't be counted on device yet.
+  → Later; owner's week of use until then.
+- ⚔️ [Data] Fresh install: "New to you" is the whole library, so the deal is effectively random and the end of a ~70-chapter cycle alternates "Dinner ideas" / "New to you".
+  → Accepted.
+- ⚔️ [Structure] A new favourite inserts a source at the front, shifting the round robin; two chapters of one kind can then sit together once.
+  → Accepted (cosmetic).
+- ⚔️ [Operations] `chapters` grows for the session (lazy stacks keep views).
+  → Accepted until a long-scroll memory check shows a problem.
+- ⚔️ [Cost] `DiscoveryPool.make` runs on the main thread per Recipes appear / library change; `kitchenMatches` re-normalises the pantry per recipe (older code). Budget in `PerformanceBudgetTests.discoveryFeedBudget`.
+  → Accepted; move off-main if the budget or a device trace says so.
+
 ## 2026-11-15 (item pass: 🔴 photo files kept on other devices after a Reset elsewhere — fixed: legacy full-path photos read as unused; a sign-out purge looked like a Reset and could delete never-sent photos → now only files written before the last finished export − 10 min go)
 - ⚔️ [Assumption] An iCloud sign-out purges the store file like a Reset; photos iCloud already had are cleared and come back as rows on sign-in — cost if wrong: they don't come back. Unverified on device.
   → Owner: device check (sync on, photo, wait a minute, sign out/in of iCloud, photo returns).
