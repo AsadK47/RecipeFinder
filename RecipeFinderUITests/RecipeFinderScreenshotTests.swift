@@ -687,6 +687,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         dismissBadgeSheet(app)
         tab(app, "Me", shot: nil)
+        dismissBadgeSheet(app)   // the seeded cooks can unlock a badge once the library loads
         XCTAssertTrue(pages.waitForExistence(timeout: 10), "Cooked recipes should fill My Cookbook.")
         settle()
         snap(app, "43-cookbook-many")

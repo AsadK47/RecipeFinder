@@ -77,6 +77,16 @@ struct MyCookbookTests {
         #expect(pages.map(\.name) == ["Dated", "Apple", "Zest"])
     }
 
+    @Test("dishes cooked at the same moment are in A to Z order")
+    func sameDateByName() {
+        let when = Self.date(2026, 11, 10)
+        let pages = MyCookbook.pages(from: [
+            recipe("Soup", cookCount: 1, lastCookedAt: when),
+            recipe("Bread", cookCount: 1, lastCookedAt: when),
+        ])
+        #expect(pages.map(\.name) == ["Bread", "Soup"])
+    }
+
     @Test("a page keeps the dish's rating and cook count and points at the recipe")
     func pageCarriesDish() throws {
         let dal = recipe("Dal", cookCount: 4, lastCookedAt: Self.date(2026, 11, 10), rating: 5)
@@ -129,16 +139,17 @@ struct MyCookbookTests {
         (1, MyCookbookTests.date(2025, 12, 25), "Made once · 25 Dec 2025"),
     ])
     func pageLine(times: Int, cooked: Date, expected: String) throws {
-        let page = try #require(MyCookbook.pages(from: [recipe("Dal", cookCount: times, lastCookedAt: cooked)]).first)
-        let line = MyCookbook.pageLine(for: page, now: Self.date(2026, 11, 15, hour: 20),
-                                       calendar: Self.calendar, locale: Self.locale)
-        #expect(line == expected)
+        let page = try #require(MyCookbook.pages(
+            from: [recipe("Dal", cookCount: times, lastCookedAt: cooked)],
+            now: Self.date(2026, 11, 15, hour: 20), calendar: Self.calendar, locale: Self.locale
+        ).first)
+        #expect(page.line == expected)
     }
 
     @Test("a page with no cook date says only how often")
     func pageLineWithoutDate() throws {
-        let page = try #require(MyCookbook.pages(from: [recipe("Dal", cookCount: 2)]).first)
-        #expect(MyCookbook.pageLine(for: page, now: Self.date(2026, 11, 15),
-                                    calendar: Self.calendar, locale: Self.locale) == "Made 2 times")
+        let page = try #require(MyCookbook.pages(from: [recipe("Dal", cookCount: 2)], now: Self.date(2026, 11, 15),
+                                                 calendar: Self.calendar, locale: Self.locale).first)
+        #expect(page.line == "Made 2 times")
     }
 }

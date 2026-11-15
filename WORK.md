@@ -17,7 +17,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Inbox 🟡 Reset store copies: ⏸ parked in Needs owner (data-loss risk on `.corrupt-*`, 2 reviewers agree); branch `agent/reset-store-copies` (87f5737) unmerged, Decisions on that branch's WORK.md — rework per owner's answer.
 - Remember: 🚧 **My Cookbook slice 1** on `agent/my-cookbook` (builder 2026-11-15) — `MyCookbook` (pure pages/lines) +
   `MyCookbookSection` at the top of Me, page → recipe; screenshots 17-me (empty), 42-cookbook-one, 43-cookbook-many.
-  Left for later slices: per-cook notes / "who it was for" (needs a model change → owner), shareable page image.
+  Next slice (challenger): subtract — profile form, badges and chef type one tap deeper so Me has one primary action
+  ("Me = your cookbook + one line"). Later: per-cook notes / "who it was for" (model change → owner), share image.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
@@ -31,7 +32,9 @@ When lanes report green + reviewed: batch them into `agent/batch`, one green run
   a form. Empty page's button reuses `BadgeEarnAction.cook` (→ Today, which picks tonight). **Pre-mortem:** (1) wrong
   dishes/order/picture → `MyCookbookTests` (only cooked, newest first, own photo wins); (2) page doesn't open the
   recipe (Me's stack had no UUID route) → `testZZCaptureCookbook` taps a page and expects Start Cooking Mode;
-  (3) empty Me dead-ends or layout clips → 17-me + 42/43 screenshots looked at.
+  (3) empty Me dead-ends or layout clips → 17-me + 42/43 screenshots (Screenshots run on the branch). Review fixes:
+  shade under all page text, page height scales with Dynamic Type, page lines built once (+ refresh on foreground),
+  next page peeks, headline under the title, own `showsCookbook` flag (not the gear's flag).
 - **Made-it moment** (`MadeItMoment` pure copy/motion rules; `MadeItSummary` moved beside it): the existing Made it
   sheet already had cook #N, streak, stars and photo buttons, so this adds what was missing rather than a new screen:
   the dish picture (hero/art) popping in with a tick, "First time making X!" / "X · made N times", "N cooks this week"

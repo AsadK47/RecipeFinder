@@ -256,8 +256,9 @@ final class RecipeStore: RecipeStoring {
     private func seedUITestCookbookIfRequested(into library: [RecipeModel]) -> [RecipeModel] {
         guard ProcessInfo.processInfo.arguments.contains("-seed-cookbook") else { return library }
         // The same five (first by name) every launch, so repeated loads never add more pages.
-        let picks = Dictionary(uniqueKeysWithValues: library.sorted { $0.name < $1.name }.prefix(5).enumerated()
-            .map { ($1.id, $0 + 1) })
+        // Not yet merged: synced copies can share an id, so keep the first rather than trap.
+        let picks = Dictionary(library.sorted { $0.name < $1.name }.prefix(5).enumerated().map { ($1.id, $0 + 1) },
+                               uniquingKeysWith: { first, _ in first })
         return library.map { recipe in
             guard recipe.lastCookedAt == nil, let rank = picks[recipe.id] else { return recipe }
             var cooked = recipe

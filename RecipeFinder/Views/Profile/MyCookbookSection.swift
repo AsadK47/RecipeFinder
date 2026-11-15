@@ -5,18 +5,17 @@ import SwiftUI
 struct MyCookbookSection: View {
     let pages: [CookbookPage]
 
-    private enum Layout {
-        static let pageHeight: CGFloat = 260
-    }
+    /// Grows with Dynamic Type so the text over the picture is never clipped.
+    @ScaledMetric(relativeTo: .title3) private var pageHeight: CGFloat = 260
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            HStack(alignment: .firstTextBaseline) {
+            // Headline under the title, so both stay whole at large text sizes.
+            VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                 Label("My Cookbook", systemImage: "book.closed.fill")
                     .font(.headline)
                     .adaptiveForegroundColor()
                     .accessibilityAddTraits(.isHeader)
-                Spacer()
                 if let headline = MyCookbook.headline(for: pages) {
                     Text(headline)
                         .font(.subheadline.weight(.semibold))
@@ -32,7 +31,7 @@ struct MyCookbookSection: View {
                     LazyHStack(spacing: AppTheme.spacing12) {
                         ForEach(pages) { page in
                             NavigationLink(value: page.id) {
-                                CookbookPageView(page: page, height: Layout.pageHeight)
+                                CookbookPageView(page: page, height: pageHeight)
                             }
                             .buttonStyle(.plain)
                             .accessibilityElement(children: .ignore)
@@ -41,20 +40,21 @@ struct MyCookbookSection: View {
                             .accessibilityHint("Opens the recipe to cook it again")
                             .accessibilityAddTraits(.isButton)
                             .accessibilityIdentifier("cookbook.page")
-                            .containerRelativeFrame(.horizontal)
+                            // The next page peeks in, so it's clear there are more to swipe through.
+                            .containerRelativeFrame(.horizontal, count: 10, span: 9, spacing: AppTheme.spacing12)
                         }
                     }
                     .scrollTargetLayout()
                 }
                 .scrollTargetBehavior(.viewAligned)
-                .frame(height: Layout.pageHeight)
+                .frame(height: pageHeight)
                 .accessibilityIdentifier("cookbook.pages")
             }
         }
     }
 
     private static func spokenDetails(_ page: CookbookPage) -> String {
-        let line = MyCookbook.pageLine(for: page)
+        let line = page.line
         return page.rating > 0 ? "\(line), \(page.rating) of 5 stars" : line
     }
 
@@ -96,8 +96,11 @@ private struct CookbookPageView: View {
                     Text(page.name)
                         .font(.title3.weight(.bold))
                         .lineLimit(2)
-                    Text(MyCookbook.pageLine(for: page))
+                        .minimumScaleFactor(0.8)
+                    Text(page.line)
                         .font(.subheadline.weight(.medium))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     if page.rating > 0 {
                         HStack(spacing: AppTheme.spacing2) {
                             ForEach(1...5, id: \.self) { star in
@@ -110,8 +113,10 @@ private struct CookbookPageView: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(AppTheme.spacing16)
+                // Dark under every line of text, so a pale dish or light art never washes the name out.
                 .background(
-                    LinearGradient(colors: [.clear, .black.opacity(0.7)], startPoint: .top, endPoint: .bottom)
+                    LinearGradient(colors: [.black.opacity(0.35), .black.opacity(0.75)], startPoint: .top,
+                                   endPoint: .bottom)
                 )
             }
             .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16, style: .continuous))

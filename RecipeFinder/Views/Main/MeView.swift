@@ -6,7 +6,7 @@ struct MeView: View {
 
     var body: some View {
         NavigationStack {
-            ProfileView(title: "Me", showsSettingsLink: true)
+            ProfileView(title: "Me", showsSettingsLink: true, showsCookbook: true)
                 // A cookbook page opens its recipe, to cook it again.
                 .navigationDestination(for: UUID.self) { id in
                     if let recipe = recipeStore.recipes.first(where: { $0.id == id }) {

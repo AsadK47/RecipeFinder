@@ -11,25 +11,31 @@ struct CookbookPage: Identifiable, Equatable {
     let lastCookedAt: Date?
     let timesCooked: Int
     let rating: Int
+    /// "Made 3 times · 2 Nov", worked out when the pages are built rather than on every render.
+    let line: String
 }
 
 /// My Cookbook builds itself from cook history — no entry. Pure so the page rules are pinned by tests.
 enum MyCookbook {
     /// Every cooked dish, most recently cooked first; dishes with a count but no date (older data) follow A–Z.
-    static func pages(from recipes: [RecipeModel]) -> [CookbookPage] {
+    static func pages(from recipes: [RecipeModel], now: Date = Date(), calendar: Calendar = .current,
+                      locale: Locale = .current) -> [CookbookPage] {
         recipes
             .filter { $0.cookCount > 0 || $0.lastCookedAt != nil }
             .map { recipe in
-                CookbookPage(
+                let timesCooked = max(recipe.cookCount, 1)
+                return CookbookPage(
                     id: recipe.id,
                     name: recipe.name,
-                    // The cook's latest photo is the memory; the web picture or built-in art stands in until then.
+                    // The cook's last-added photo is the memory; the web picture or built-in art stands in until then.
                     imageName: recipe.photoNames.last ?? recipe.heroImageName,
                     category: recipe.category,
                     cuisine: recipe.cuisine,
                     lastCookedAt: recipe.lastCookedAt,
-                    timesCooked: max(recipe.cookCount, 1),
-                    rating: recipe.rating
+                    timesCooked: timesCooked,
+                    rating: recipe.rating,
+                    line: pageLine(timesCooked: timesCooked, lastCookedAt: recipe.lastCookedAt, now: now,
+                                   calendar: calendar, locale: locale)
                 )
             }
             .sorted(by: isBefore)
@@ -43,10 +49,10 @@ enum MyCookbook {
     }
 
     /// "Made 3 times · 2 Nov" on a page.
-    static func pageLine(for page: CookbookPage, now: Date = Date(), calendar: Calendar = .current,
-                         locale: Locale = .current) -> String {
-        let made = "Made \(timesText(page.timesCooked))"
-        guard let cooked = page.lastCookedAt else { return made }
+    static func pageLine(timesCooked: Int, lastCookedAt: Date?, now: Date, calendar: Calendar,
+                         locale: Locale) -> String {
+        let made = "Made \(timesText(timesCooked))"
+        guard let cooked = lastCookedAt else { return made }
         return "\(made) · \(dayText(cooked, now: now, calendar: calendar, locale: locale))"
     }
 

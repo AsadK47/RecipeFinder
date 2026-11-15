@@ -4,11 +4,14 @@ struct ProfileView: View {
     var title = "Profile"
     /// The Me tab root shows a gear into Settings; pushed copies (from Settings, badge sheet) don't.
     var showsSettingsLink = false
+    /// Me's root opens on My Cookbook; pushed copies (Settings → Profile) stay a profile form.
+    var showsCookbook = false
 
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.cookingStreak) private var cookingStreak
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var activeSheet: ProfileSheet?
     @State private var showSettings = false
@@ -44,8 +47,7 @@ struct ProfileView: View {
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
-                        // Me's character is the cook's cookbook; pushed copies (Settings → Profile) stay a profile form.
-                        if showsSettingsLink {
+                        if showsCookbook {
                             MyCookbookSection(pages: cookbookPages)
                         }
 
@@ -144,6 +146,10 @@ struct ProfileView: View {
             refreshBadgeMetrics()
             refreshCookbook()
         }
+        // "today" / "yesterday" on the pages move on overnight.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { refreshCookbook() }
+        }
         .onChange(of: profileImage) { _, newImage in
             profileManager.saveProfileImage(newImage)
         }
@@ -158,7 +164,7 @@ struct ProfileView: View {
     }
 
     private func refreshCookbook() {
-        guard showsSettingsLink else { return }
+        guard showsCookbook else { return }
         cookbookPages = MyCookbook.pages(from: recipeStore.recipes)
     }
 
