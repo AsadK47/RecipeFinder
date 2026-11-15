@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: ephemeral link import — fixed: test wiped the real shared cookie jar and never checked cookies, comment said nothing else used the shared cache, this run's site cookies survived Reset)
+- ⚔️ [Break] Reset clears older builds' recipe-site cookies/cache — the share extension ran imports in its own process (`ShareViewController.swift:130`), so its container's legacy jar/cache isn't cleared by the app — alternative: clear them on next extension launch — cost if wrong: stale cookies stay on disk in the extension container until reinstall (no new ones are written).
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Reset clears "copies of website pictures" (policy §4.3) — Kingfisher's own disk cache of network pictures is not cleared by Reset (predates this change) — alternative: clear `ImageCache.default` in Reset — cost if wrong: policy overstates Reset.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] No test fails if the Reset call to `clearSharedSessionData()` is removed (`DataManagementSettingsView.swift:310`, view code) — accepted: needs a Reset use case extracted from the view first (Smells batch).
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-15 (bug pass: 🐞 nightly UI tests cancelled at 30 min — fixed: 75 min for nightly/dispatch; nightly in its own concurrency group so it never queues main pushes)
 - ⚔️ [Break] "Publish coverage" runs on a cancelled run's incomplete xcresult and fails in `xccov` — noise on a run that already failed.
   → Later (guard with an `xccov view` probe if it recurs once runs finish).
