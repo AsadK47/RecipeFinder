@@ -17,6 +17,7 @@ struct BadgeRevealView: View {
     @State private var shine = CGSize(width: -1.8, height: -1.8)
     @State private var settled = false
     @State private var closing = false
+    @State private var finished = false
     @State private var confettiCounter = 0
 
     private var badgeColor: Color { Badge.color(for: badge.badge.color) }
@@ -158,8 +159,20 @@ struct BadgeRevealView: View {
         withAnimation(.easeIn(duration: 0.35)) {
             settled = true
         } completion: {
-            action()
+            finish(action)
         }
+        // SwiftUI can drop an animation's completion (e.g. the view is rebuilt mid-animation); with `closing` already
+        // set nothing else could close the cover, so it froze on screen (TestFlight feedback 2026-11-15).
+        Task {
+            try? await Task.sleep(for: .milliseconds(600))
+            finish(action)
+        }
+    }
+
+    private func finish(_ action: () -> Void) {
+        guard !finished else { return }
+        finished = true
+        action()
     }
 }
 
