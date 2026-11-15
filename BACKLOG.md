@@ -618,7 +618,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 - 🔴 After a Reset that erased every device (sync on), the *other* devices keep their recipe photo files (this device
-  is fixed, 3d042a4) — photo sync never deletes files; needs a safe rule (rows removed by a Reset elsewhere), not
+  is fixed, 3d042a4) — 🚧 builder agent 2026-11-15 — photo sync never deletes files; needs a safe rule (rows removed by a Reset elsewhere), not
   "file without a row" (rejected in 4b-2a). Also see CHALLENGES 14 Nov (in-flight downloads can re-write a file).
 - 🟡 Policy §5.1 / website say web browsing data "is not kept", but recent search terms are kept on device (`RecipeWebSearchView.swift:5,230`) — once Reset clears them, reword to "Your recent searches are kept on your device so you can repeat them; Reset clears them." Privacy text for all of these lives on `agent/privacy-photo-sync` + website `fix/privacy-icloud-sync` — publish together only after these land and two reviewers re-check code vs text.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
