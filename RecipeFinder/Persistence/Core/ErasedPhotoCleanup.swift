@@ -69,10 +69,15 @@ enum ErasedPhotoCleanup {
             let path = RecipePhotoSync.folder + name
             guard RecipePhotoSync.syncablePath(path) != nil, !keeping.contains(path) else { continue }
             let url = folder.appendingPathComponent(name)
-            guard let modified = try fileManager.attributesOfItem(atPath: url.path)[.modificationDate] as? Date,
-                  modified < cutoff else { continue }
-            try fileManager.removeItem(at: url)
-            removed += 1
+            // One file that can't be read or removed (e.g. deleted by its recipe at the same moment) doesn't stop the rest.
+            do {
+                guard let modified = try fileManager.attributesOfItem(atPath: url.path)[.modificationDate] as? Date,
+                      modified < cutoff else { continue }
+                try fileManager.removeItem(at: url)
+                removed += 1
+            } catch {
+                logger.error("❌ Couldn't remove an erased photo: \(error.localizedDescription)")
+            }
         }
         return removed
     }
