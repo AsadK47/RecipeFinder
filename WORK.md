@@ -7,12 +7,14 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - Bug: ✅ #16 freeze fix landed (aed7309). Recently deleted waits for the owner to deploy the CloudKit Production schema.
 - CI: `agent/nightly-timeout` (362fcf0) — nightly/dispatch job timeout 30→75 min; dispatched full run on the branch to prove UI tests + coverage finish. Lands alone (no app code) once green.
+- Inbox 🟡 (builder agent): `agent/ephemeral-link-import` — link import fetches in an ephemeral URLSession (test `defaultSessionKeepsNoCookiesOrCacheOnDisk`); waiting on Build & Test + 2 reviewers, then lands alone.
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
+- **Ephemeral link import**: mirror `URLSessionRemoteImageFetcher` (one ephemeral session per fetcher; cookies live in memory for one importer, so consent/redirect cookies within one import still work). Rejected: clearing `HTTPCookieStorage.shared`/`URLCache.shared` on Reset (keeps data between resets). Policy §5.1 makes no cookie claim → no text change. **Pre-mortem:** (1) still persisted → new config test; (2) sites needing a cookie across redirects break → same session within a fetch, existing import fixtures; (3) compile/Sendable → CI.
 - **Nightly timeout** (Inbox 🐞): timeout is an expression — 75 min for schedule/dispatch, 30 for pushes (pushes skip UI tests, so a hang still fails fast). Rejected: splitting UI tests into a second job (second build or artifact hand-off ≈ +7 min and more YAML for the same result). **Pre-mortem:** (1) 75 still too short → the dispatched branch run must finish; (2) push runs lose their fast-fail → push run still shows 30; (3) coverage still fails → dispatched run publishes coverage.txt.
 - **Endless discovery** (`DiscoveryPool` ranks, `DiscoveryPager` deals, `DiscoveryFeedModel` pages, `RecipeBrowse`
   decides browse vs results): browsing = nothing typed, filtered or re-sorted → Recently cooked row, a 6-card library
