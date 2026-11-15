@@ -32,6 +32,7 @@ final class RecipeFinderImportUITests: XCTestCase {
         )
 
         app.buttons["import.wizard"].tap()
+        checkpoint(app, "after Create manually")
 
         XCTAssertTrue(
             app.buttons["draft.name"].waitForExistence(timeout: 5),
@@ -51,7 +52,9 @@ final class RecipeFinderImportUITests: XCTestCase {
         let app = launchApp()
 
         app.buttons["recipes.add"].tap()
+        checkpoint(app, "Add a Recipe before other apps")
         app.buttons["import.otherApp"].tap()
+        checkpoint(app, "after other apps")
 
         XCTAssertTrue(
             app.buttons["settings.importOtherApp"].waitForExistence(timeout: 5),
@@ -71,6 +74,7 @@ final class RecipeFinderImportUITests: XCTestCase {
         let photo = app.buttons["draft.photo"]
         XCTAssertTrue(photo.waitForExistence(timeout: 5), "Start blank should open the new-recipe screen.")
         photo.tap()
+        checkpoint(app, "after tapping the draft photo")
 
         XCTAssertTrue(app.staticTexts["Add Photo"].waitForExistence(timeout: 5),
                       "The photo should offer Take Photo / Choose from Library straight away.")
@@ -96,6 +100,7 @@ final class RecipeFinderImportUITests: XCTestCase {
         XCTAssertTrue(box.waitForExistence(timeout: 5), "The Add a Recipe sheet should lead with the paste box.")
         box.tap()
         box.typeText("Pancakes\nIngredients\n200 g flour\n2 eggs\nMethod\nWhisk and fry.")
+        checkpoint(app, "pasted text before Continue")
         app.buttons["add.continue"].tap()
 
         // The text is read straight away: either the recipe screen or (if nothing was found) the paste sheet's fallback.

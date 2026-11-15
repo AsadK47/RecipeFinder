@@ -57,6 +57,7 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
         let timeCard = element(app, id: "recipe.card.time")
         XCTAssertTrue(timeCard.waitForExistence(timeout: 10), "Recipe detail should show the editable time card.")
         timeCard.tap()
+        checkpoint(app, "after tapping cook time")
 
         XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5),
                       "First tap of cook time should open the editor focused on Details.")
@@ -77,6 +78,7 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
 
         tapWhenReady(element(app, id: "recipe.row"), "Recipes home should list at least one recipe.")
         tapWhenReady(app.buttons["More actions"], "Recipe detail should show the overflow menu.")
+        checkpoint(app, "after More actions")
 
         XCTAssertTrue(app.buttons["Delete Recipe"].waitForExistence(timeout: 5),
                       "Detail overflow menu should offer Delete Recipe.")

@@ -322,12 +322,15 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         app.tabBars.buttons["Me"].tap()
+        checkpoint(app, "Me before the Settings gear")
         app.buttons["me.settings"].tap()
+        checkpoint(app, "after the Settings gear")
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
         settle()
         let data = app.staticTexts["Data Management"].firstMatch
         for _ in 0..<4 where !data.isHittable { app.swipeUp() }
         data.tap()
+        checkpoint(app, "after Data Management")
         XCTAssertTrue(app.alerts["Import Finished"].waitForExistence(timeout: 10),
                       "The import summary should appear on Data Management.")
         snap(app, "15-other-app-import")
@@ -593,7 +596,9 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let viewAll = app.buttons["badge.reveal.viewAll"]
         XCTAssertTrue(viewAll.waitForExistence(timeout: 15), "The reveal should open full screen on launch.")
         settle(1.5)
+        checkpoint(app, "badge reveal before View all")
         viewAll.tap()
+        checkpoint(app, "after View all")
 
         let title = app.staticTexts["badge.reveal.title"]
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: title)

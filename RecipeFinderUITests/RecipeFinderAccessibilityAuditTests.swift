@@ -21,6 +21,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         )
 
         // Skip contrast: import tiles use frosted `.appCard()` material, which the audit always flags over translucency.
+        checkpoint(app, "screen before audit")
         try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)
     }
 
@@ -65,6 +66,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         }
 
         // Skip contrast: rows sit on frosted `.appCard()` material, which the audit always flags.
+        checkpoint(app, "screen before audit")
         try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)
     }
 

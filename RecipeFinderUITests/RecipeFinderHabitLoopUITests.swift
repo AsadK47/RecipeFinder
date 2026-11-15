@@ -81,6 +81,7 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
             // into view ourselves before tapping.
             scrollIntoView(markCooked, in: app)
             XCTAssertTrue(markCooked.isHittable, "Mark as Cooked should be on screen after scrolling.")
+            checkpoint(app, "recipe detail before Mark as Cooked")
             markCooked.tap()
 
             // The Made it sheet presents straight away — close it.
@@ -90,6 +91,7 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
                 // CI logs are the only window into a cloud-run failure: dump what is on screen instead.
                 print("MADEIT-DEBUG hierarchy after Mark as Cooked:\n\(app.debugDescription)")
             }
+            checkpoint(app, "after Mark as Cooked")
             XCTAssertTrue(sheetShown, "Marking as cooked should open the Made it sheet.")
             XCTAssertTrue(done.isHittable, "Done must be on screen without scrolling the Made it sheet.")
             done.tap()
@@ -105,10 +107,12 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
         // Back to the Recipes home. The first nav-bar button isn't always Back while the detail settles after the
         // Made it sheet (flaked 2/5 runs 2026-11-10), so confirm we're home and retry Back once before asserting.
         let home = element(app, id: "recipe.row")
+        checkpoint(app, "rated recipe before Back")
         app.navigationBars.buttons.element(boundBy: 0).tap()
         if !home.waitForExistence(timeout: 5) {
             app.navigationBars.buttons.element(boundBy: 0).tap()
         }
+        checkpoint(app, "after Back")
         XCTAssertTrue(home.waitForExistence(timeout: 5), "Back should return to the Recipes home.")
         let chip = element(app, id: "streak.chip")
         let chipShown = chip.waitForExistence(timeout: 10)
@@ -129,6 +133,7 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
         let app = launchApp()
 
         app.buttons["recipes.add"].tap()
+        checkpoint(app, "after Recipes +")
         XCTAssertTrue(app.staticTexts["Add a Recipe"].waitForExistence(timeout: 5),
                       "Add a Recipe sheet should be visible.")
         XCTAssertFalse(app.staticTexts["Try these examples:"].exists,
