@@ -98,4 +98,24 @@ import Foundation
         #expect(s.cooksThisWeek == 2)
         #expect(s.currentWeeks == 1)
     }
+
+    // MARK: Cooks this year (Me's one line)
+
+    @Test func cooksThisYear_countsOnlyThisCalendarYear() {
+        let lastYear = cal.date(from: DateComponents(year: 2025, month: 12, day: 30, hour: 19)) ?? now
+        let s = compute([now, weeksAgo(1), lastYear])
+        #expect(s.cooksThisYear == 2)
+    }
+
+    @Test func cooksThisYear_countedWithoutALiveStreak() {
+        // 2 Jan is two weeks before `now`: no live streak, but still a cook this year.
+        let earlyJanuary = cal.date(from: DateComponents(year: 2026, month: 1, day: 2, hour: 19)) ?? now
+        let s = compute([earlyJanuary])
+        #expect(s.currentWeeks == 0)
+        #expect(s.cooksThisYear == 1)
+    }
+
+    @Test func cooksThisYear_emptyIsZero() {
+        #expect(compute([]).cooksThisYear == 0)
+    }
 }

@@ -13,6 +13,8 @@ struct CookingStreak: Equatable {
     let cooksThisWeek: Int
     /// Whether the user has cooked at least once this week.
     var cookedThisWeek: Bool { cooksThisWeek > 0 }
+    /// Cooks recorded in the current calendar year — Me's "34 cooks this year".
+    var cooksThisYear = 0
 
     /// Live streak but no cook yet this week — the grace window where the streak is about to lapse.
     /// Drives the loss-aversion "cook this week to keep it" nudge (amber flame).
@@ -45,6 +47,7 @@ struct CookingStreak: Equatable {
         let cookedWeeks = Set(cookDates.map(weekStart))
         let thisWeek = weekStart(now)
         let cooksThisWeek = cookDates.filter { weekStart($0) == thisWeek }.count
+        let cooksThisYear = cookDates.filter { calendar.isDate($0, equalTo: now, toGranularity: .year) }.count
 
         // Anchor the count at this week if cooked, else last week (grace), else there's no live streak.
         let lastWeek = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeek) ?? thisWeek
@@ -54,7 +57,7 @@ struct CookingStreak: Equatable {
         } else if cookedWeeks.contains(lastWeek) {
             cursor = lastWeek
         } else {
-            return CookingStreak(currentWeeks: 0, cooksThisWeek: cooksThisWeek)
+            return CookingStreak(currentWeeks: 0, cooksThisWeek: cooksThisWeek, cooksThisYear: cooksThisYear)
         }
 
         var weeks = 0
@@ -63,6 +66,6 @@ struct CookingStreak: Equatable {
             guard let previous = calendar.date(byAdding: .weekOfYear, value: -1, to: cursor) else { break }
             cursor = previous
         }
-        return CookingStreak(currentWeeks: weeks, cooksThisWeek: cooksThisWeek)
+        return CookingStreak(currentWeeks: weeks, cooksThisWeek: cooksThisWeek, cooksThisYear: cooksThisYear)
     }
 }

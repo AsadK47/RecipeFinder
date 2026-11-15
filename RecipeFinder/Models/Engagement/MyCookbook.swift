@@ -48,6 +48,13 @@ enum MyCookbook {
         return "\(dishes) · cooked \(timesText(pages.reduce(0) { $0 + $1.timesCooked }))"
     }
 
+    /// Me's one line under the cookbook: "Home Cook · 34 cooks this year"; the chef type alone before a cook this year.
+    static func meLine(chefType: ChefType, cooksThisYear: Int) -> String {
+        guard cooksThisYear > 0 else { return chefType.rawValue }
+        let cooks = cooksThisYear == 1 ? "1 cook" : "\(cooksThisYear) cooks"
+        return "\(chefType.rawValue) · \(cooks) this year"
+    }
+
     /// "Made 3 times · 2 Nov" on a page.
     static func pageLine(timesCooked: Int, lastCookedAt: Date?, now: Date, calendar: Calendar,
                          locale: Locale) -> String {

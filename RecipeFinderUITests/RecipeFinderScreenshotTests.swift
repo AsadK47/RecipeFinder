@@ -525,6 +525,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         dismissBadgeSheet(app)
         tab(app, "Me", shot: nil)
+        // The shelf lives one tap deeper than Me, in Profile.
+        let profile = app.buttons["me.profile"]
+        for _ in 0..<4 where !(profile.exists && profile.isHittable) { app.swipeUp() }
+        XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the profile row under the cookbook.")
+        profile.tap()
 
         // Third in the Streaks row, so it's on screen without a sideways scroll; nobody has a 12-week streak in CI.
         let locked = app.buttons["me.badge.streak_twelve_weeks"]
@@ -665,7 +670,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "41-made-it")
     }
 
-    /// My Cookbook at the top of Me: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
+    /// My Cookbook at the top of Me with the one line about you under it: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
     /// The empty cookbook is 17-me on a fresh simulator. Named to sort after testZCaptureMadeIt for the same reason.
     @MainActor
     func testZZCaptureCookbook() {
@@ -691,6 +696,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(pages.waitForExistence(timeout: 10), "Cooked recipes should fill My Cookbook.")
         settle()
         snap(app, "43-cookbook-many")
+        // Me's one line sits under the cookbook: chef type (+ cooks this year once there are some).
+        let profile = app.buttons["me.profile"]
+        XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the one line about you.")
+        XCTAssertFalse((profile.value as? String ?? "").isEmpty, "The profile row should read its line.")
         // A page opens its recipe, to cook it again.
         app.descendants(matching: .any).matching(identifier: "cookbook.page").firstMatch.tap()
         XCTAssertTrue(app.buttons["Start Cooking Mode"].waitForExistence(timeout: 10),

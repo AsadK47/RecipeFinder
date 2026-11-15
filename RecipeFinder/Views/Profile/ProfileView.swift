@@ -2,19 +2,13 @@ import SwiftUI
 
 struct ProfileView: View {
     var title = "Profile"
-    /// The Me tab root shows a gear into Settings; pushed copies (from Settings, badge sheet) don't.
-    var showsSettingsLink = false
-    /// Me's root opens on My Cookbook; pushed copies (Settings → Profile) stay a profile form.
-    var showsCookbook = false
 
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.cookingStreak) private var cookingStreak
-    @Environment(\.scenePhase) private var scenePhase
 
     @State private var activeSheet: ProfileSheet?
-    @State private var showSettings = false
     @State private var profileImage: UIImage?
     @State private var editingName = false
     @State private var tempName = ""
@@ -23,8 +17,6 @@ struct ProfileView: View {
     @State private var pagerStart: BadgePagerStart?
     /// Set by a locked badge's "earn it here" button; acted on once the pager has fully closed.
     @State private var pendingEarn: BadgeEarnAction?
-    /// My Cookbook's pages, rebuilt when recipes change rather than in `body`.
-    @State private var cookbookPages: [CookbookPage] = []
 
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -35,22 +27,10 @@ struct ProfileView: View {
             AppBackground()
 
             VStack(spacing: 0) {
-                ScreenTitleHeader(title) {
-                    if showsSettingsLink {
-                        // A plain button + navigationDestination: a NavigationLink wrapping CircleButton's own
-                        // Button never pushed in UI tests.
-                        CircleButton(icon: "gearshape.fill") { showSettings = true }
-                            .accessibilityLabel("Settings")
-                            .accessibilityIdentifier("me.settings")
-                    }
-                }
+                ScreenTitleHeader(title) {}
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
-                        if showsCookbook {
-                            MyCookbookSection(pages: cookbookPages)
-                        }
-
                         ProfileAvatar(
                             image: profileImage,
                             initials: getInitials(),
@@ -114,9 +94,6 @@ struct ProfileView: View {
             }
         }
         .appNavigationTitle("")
-        // Me's root draws its own title header; an empty bar above it would only waste space.
-        .toolbar(showsSettingsLink ? .hidden : .automatic, for: .navigationBar)
-        .navigationDestination(isPresented: $showSettings) { SettingsTabView() }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
             case .privacyPolicy:
@@ -139,16 +116,10 @@ struct ProfileView: View {
             loadCurrentProfile()
             cookingStreak.reload()
             refreshBadgeMetrics()
-            refreshCookbook()
         }
         // Recipes can load after Me appears, or change under a sheet; keep the rings in step with the shelf.
         .onChange(of: recipeStore.recipes) { _, _ in
             refreshBadgeMetrics()
-            refreshCookbook()
-        }
-        // "today" / "yesterday" on the pages move on overnight.
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { refreshCookbook() }
         }
         .onChange(of: profileImage) { _, newImage in
             profileManager.saveProfileImage(newImage)
@@ -161,11 +132,6 @@ struct ProfileView: View {
 
     private func refreshBadgeMetrics() {
         badgeMetrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
-    }
-
-    private func refreshCookbook() {
-        guard showsCookbook else { return }
-        cookbookPages = MyCookbook.pages(from: recipeStore.recipes)
     }
 
     private func openPendingEarn() {

@@ -152,4 +152,13 @@ struct MyCookbookTests {
                                                  calendar: Self.calendar, locale: Self.locale).first)
         #expect(page.line == "Made 2 times")
     }
+
+    @Test("Me's one line: chef type and cooks this year", arguments: [
+        (0, "Home Cook"),
+        (1, "Home Cook · 1 cook this year"),
+        (34, "Home Cook · 34 cooks this year"),
+    ])
+    func meLine(cooks: Int, expected: String) {
+        #expect(MyCookbook.meLine(chefType: .homeCook, cooksThisYear: cooks) == expected)
+    }
 }

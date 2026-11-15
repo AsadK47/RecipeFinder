@@ -1,18 +1,159 @@
 import SwiftUI
 
-/// Me tab: My Cookbook, profile, badges and chef type, with Settings behind the gear.
+/// Me tab: your cookbook and one line about you. Profile, badges and chef type are one tap deeper; Settings is behind
+/// the gear.
 struct MeView: View {
     @Environment(\.recipeStore) private var recipeStore
+    @Environment(\.profile) private var profileManager
+    @Environment(\.badges) private var badgeManager
+    @Environment(\.cookingStreak) private var cookingStreak
+    @Environment(\.scenePhase) private var scenePhase
+
+    @State private var showSettings = false
+    @State private var showProfile = false
+    /// My Cookbook's pages, rebuilt when recipes change rather than in `body`.
+    @State private var cookbookPages: [CookbookPage] = []
+    @State private var profileImage: UIImage?
+    /// "5 / 24" badges earned, refreshed with the cookbook rather than in `body`.
+    @State private var badgeCount = ""
 
     var body: some View {
         NavigationStack {
-            ProfileView(title: "Me", showsSettingsLink: true, showsCookbook: true)
-                // A cookbook page opens its recipe, to cook it again.
-                .navigationDestination(for: UUID.self) { id in
-                    if let recipe = recipeStore.recipes.first(where: { $0.id == id }) {
-                        RecipeDetailView(recipe: recipe)
+            ZStack {
+                AppBackground()
+
+                VStack(spacing: 0) {
+                    ScreenTitleHeader("Me") {
+                        // A plain button + navigationDestination: a NavigationLink wrapping CircleButton's own
+                        // Button never pushed in UI tests.
+                        CircleButton(icon: "gearshape.fill") { showSettings = true }
+                            .accessibilityLabel("Settings")
+                            .accessibilityIdentifier("me.settings")
+                    }
+
+                    ScrollView {
+                        VStack(spacing: AppTheme.spacing24) {
+                            MyCookbookSection(pages: cookbookPages)
+                            MeProfileRow(
+                                image: profileImage,
+                                initials: profileManager.initials,
+                                name: profileManager.fullName,
+                                line: MyCookbook.meLine(chefType: profileManager.chefType,
+                                                        cooksThisYear: cookingStreak.streak.cooksThisYear),
+                                badgeCount: badgeCount
+                            ) {
+                                showProfile = true
+                            }
+                        }
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                        .padding(.bottom, AppTheme.spacing100)
                     }
                 }
+            }
+            .appNavigationTitle("")
+            // Me draws its own title header; an empty bar above it would only waste space.
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(isPresented: $showSettings) { SettingsTabView() }
+            .navigationDestination(isPresented: $showProfile) { ProfileView() }
+            // A cookbook page opens its recipe, to cook it again.
+            .navigationDestination(for: UUID.self) { id in
+                if let recipe = recipeStore.recipes.first(where: { $0.id == id }) {
+                    RecipeDetailView(recipe: recipe)
+                }
+            }
+            .onAppear {
+                cookingStreak.reload()
+                refreshCookbook()
+                profileImage = profileManager.loadProfileImage()
+            }
+            // Coming back from Profile: the photo may have changed.
+            .onChange(of: showProfile) { _, showing in
+                guard !showing else { return }
+                profileImage = profileManager.loadProfileImage()
+                refreshCookbook()
+            }
+            .onChange(of: recipeStore.recipes) { _, _ in refreshCookbook() }
+            // "today" / "yesterday" on the pages move on overnight.
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { refreshCookbook() }
+            }
+        }
+    }
+
+    private func refreshCookbook() {
+        cookbookPages = MyCookbook.pages(from: recipeStore.recipes)
+        badgeCount = BadgeShelf.countText(
+            BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
+        )
+    }
+}
+
+/// The one line about you under the cookbook — avatar, name, chef type and cooks this year — opening Profile, where
+/// the trophy shelf and chef type live.
+private struct MeProfileRow: View {
+    let image: UIImage?
+    let initials: String
+    let name: String
+    let line: String
+    let badgeCount: String
+    let onTap: () -> Void
+
+    @ScaledMetric(relativeTo: .headline) private var avatarSize: CGFloat = 48
+
+    var body: some View {
+        Button {
+            HapticManager.shared.light()
+            onTap()
+        } label: {
+            HStack(spacing: AppTheme.spacing12) {
+                avatar
+                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                    Text(name)
+                        .font(.headline)
+                        .adaptiveForegroundColor()
+                    Text(line)
+                        .font(.subheadline)
+                        .adaptiveSecondaryForeground()
+                        .accessibilityIdentifier("me.line")
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                Label(badgeCount, systemImage: "trophy.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .adaptiveSecondaryForeground()
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .adaptiveSecondaryForeground()
+                    .accessibilityHidden(true)
+            }
+            .padding(AppTheme.spacing16)
+            .appCard(cornerRadius: AppTheme.cornerRadius16)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(name)
+        .accessibilityValue("\(line), \(badgeCount) badges")
+        .accessibilityHint("Opens your profile, badges and chef type")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier("me.profile")
+    }
+
+    @ViewBuilder private var avatar: some View {
+        if let image {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: avatarSize, height: avatarSize)
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+        } else {
+            Text(initials.isEmpty ? "?" : initials)
+                .font(.headline.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: avatarSize, height: avatarSize)
+                .background(Circle().fill(AppTheme.accentColor))
+                .accessibilityHidden(true)
         }
     }
 }
