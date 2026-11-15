@@ -705,8 +705,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         // Me's one line sits under the cookbook: chef type (+ cooks this year once there are some).
         let profile = app.buttons["me.profile"]
         XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the one line about you.")
-        // The seeded cooks are 3–15 days old, so in the first fortnight of January some fall in last year.
-        if Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0 > 15 {
+        // The seeded cooks go back up to 43 days, so early in the year some fall in last year.
+        if Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0 > 45 {
             let line = profile.value as? String ?? ""
             XCTAssertTrue(line.contains("cooks this year"), "Me's line should count this year's cooks: \(line)")
         }
