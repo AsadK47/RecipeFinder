@@ -153,7 +153,7 @@ are merged into a newer item or parked — never start them; their text stays as
   steps (several named timers per the upgrade item), resume at the same step after leaving, last step → Made it.
   One-time pulse on the first circle; no hint text. *Measure:* cooks started that reach Made it. *Done when:*
   step↔ingredient matching, resume state and timers tested; UI test ticks a row and steps through; screenshots; CI green.
-- [ ] **Made-it moment** (Phase 1 · Cook→Remember). The simple core of Play 3/7 (`docs/PLAY.md` §7) without Spoons,
+- [ ] **Made-it moment** — 🚧 builder agent 2026-11-15 — (Phase 1 · Cook→Remember). The simple core of Play 3/7 (`docs/PLAY.md` §7) without Spoons,
   levels or quests: a short celebration (cook #N, streak, stars, "add your photo"), distinct haptic, confetti, Reduce
   Motion respected; nudges a photo for My Cookbook. *Measure:* share of cooks with a rating/photo. *Done when:* summary
   content logic tested, screenshot, CI green.
