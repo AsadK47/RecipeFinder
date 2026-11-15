@@ -619,7 +619,7 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 - 🔴 After a Reset that erased every device (sync on), the *other* devices keep their recipe photo files (this device
   is fixed, 3d042a4) — photo sync never deletes files; needs a safe rule (rows removed by a Reset elsewhere), not
   "file without a row" (rejected in 4b-2a). Also see CHALLENGES 14 Nov (in-flight downloads can re-write a file).
-- 🔴 Store history purged after 7 days even while sync is off (`RecipeFinderApp.swift:37-42`, `PersistenceController+RemoteChanges.swift:46,55-61`) — CloudKit needs it to send off-period changes when sync is turned back on — skip the purge while sync is off but has been on before (or reconcile on re-attach); test the off > 7 days case.
+- 🔴 Store history purged after 7 days even while sync is off — 🚧 builder agent 2026-11-15 — (`RecipeFinderApp.swift:37-42`, `PersistenceController+RemoteChanges.swift:46,55-61`) — CloudKit needs it to send off-period changes when sync is turned back on — skip the purge while sync is off but has been on before (or reconcile on re-attach); test the off > 7 days case.
 - 🟡 Policy §5.1 / website say web browsing data "is not kept", but recent search terms are kept on device (`RecipeWebSearchView.swift:5,230`) — once Reset clears them, reword to "Your recent searches are kept on your device so you can repeat them; Reset clears them." Privacy text for all of these lives on `agent/privacy-photo-sync` + website `fix/privacy-icloud-sync` — publish together only after these land and two reviewers re-check code vs text.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
