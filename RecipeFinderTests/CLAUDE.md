@@ -22,6 +22,7 @@ label the fix *unconfirmed*, and leave the issue open until the device or Metric
 - Inject fakes — no shared `UserDefaults` / real Core Data / network in unit tests.
 - One behaviour per test. Arrange–Act–Assert. Name the behaviour, not the method.
 - Pyramid: many unit tests, targeted integration tests, small set of UI tests for critical flows.
+- UI tests: call `checkpoint(app, "…")` before each critical tap/wait (kept only on failure); no per-step screenshots.
 
 ## Coverage
 **100% of logic-bearing code.** Accepted exemptions (note with a comment in the test file):
