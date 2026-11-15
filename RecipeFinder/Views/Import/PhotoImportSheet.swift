@@ -31,7 +31,7 @@ struct PhotoImportSheet: View {
         // Capture the theme as a Sendable value so the @Sendable label closures don't touch @MainActor state.
         let theme = ThemeStore.shared.theme
         return VStack(spacing: AppTheme.spacing16) {
-            Text("Point at a cookbook page, screenshot, or handwritten recipe — or pick up to \(MultiPageRecipeReader.maxPhotos) photos, or a PDF. We read the text on your device — nothing leaves your phone.")
+            Text("Point at a cookbook page, screenshot, or handwritten recipe — or pick up to \(MultiPageRecipeReader.maxPhotos) photos, or a PDF. We read the text right here on your device.")
                 .font(.subheadline)
                 .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)

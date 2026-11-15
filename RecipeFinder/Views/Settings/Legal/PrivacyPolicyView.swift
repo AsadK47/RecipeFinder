@@ -3,6 +3,8 @@ import SwiftUI
 // NOTE: Updated 2026-11-10 (owner request): describes today's data flows without promising they can never change,
 // so opt-in features (iCloud sync/sharing, accounts) can be added by updating this policy first.
 // Updated 2026-11-14 (owner OK in BACKLOG, Data safety 2/4): Section 7 describes the opt-in iCloud sync.
+// Updated 2026-11-15 (BACKLOG Inbox): 4.2 lists what stays on the Device (recent searches, update safety copies);
+// 5.1/5.2 describe the web search session and kept copies of web pictures.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -34,20 +36,27 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("4. Information Stored on Your Device")
 
-                BodyText("4.1 The following is created and held on your Device (and, if you turn on iCloud sync, in your own iCloud account, except your app preferences — see Section 7):")
+                BodyText("4.1 The following is created and held on your Device (and, if you turn on iCloud sync, in your own iCloud account — see Section 7):")
                 LegalBulletPoint("Recipes you create or import, including ingredients, instructions, notes, tags, cuisine, dietary information, favourites and the original text a recipe was imported from")
                 LegalBulletPoint("Meal plans, shopping lists (including shop names) and kitchen inventory")
                 LegalBulletPoint("Collections, cooking history, ratings and achievements")
                 LegalBulletPoint("Photos you add to recipes, together with your profile name, chef type and any profile photo")
+
+                BodyText("4.2 The following is held on your Device:")
                 LegalBulletPoint("Your app preferences and settings")
+                LegalBulletPoint("Your recent web searches, so you can repeat them")
+                LegalBulletPoint("Copies of pictures from recipe websites, so imported recipes show their picture offline")
+                LegalBulletPoint("Up to three safety copies of your recipe database, made before an app update changes how it is stored, so an update can't lose your recipes. They are kept out of device backups.")
+
+                BodyText("4.3 Reset (Settings > Data Management) clears the information in Section 4.1, your recent web searches and the copies of website pictures. The safety copies are removed when you uninstall the Application.")
             }
 
             Group {
                 SectionTitle("5. Network Activity")
 
-                BodyText("5.1 Recipe import. When you import a recipe by supplying a URL (directly or via the share sheet), the Application retrieves content directly from the website you specify. The Developer does not intermediate, store copies of, or monitor those requests. Web searches and the pages you open from them load directly from the search engine or website you choose; browsing data from them is not kept.")
+                BodyText("5.1 Recipe import. When you import a recipe by supplying a URL (directly or via the share sheet), the Application retrieves content directly from the website you specify. The Developer does not intermediate, store copies of, or monitor those requests. Web searches and the pages you open from them load directly from the search engine or website you choose, in a private browsing session that is cleared when you close the search. Your recent searches are kept on your Device so you can repeat them; Reset clears them.")
 
-                BodyText("5.2 Images. The Application may load recipe images directly from image addresses contained within recipes you import. No information about you is sent to those sources beyond what is required to request the image.")
+                BodyText("5.2 Images. The Application may load recipe images directly from image addresses contained within recipes you import, and keeps a copy on your Device so the picture shows offline. No information about you is sent to those sources beyond what is required to request the image.")
 
                 BodyText("5.3 On-device processing. Where supported, recipe text interpretation (using Apple's on-device foundation models) and photo text recognition (using Apple's Vision framework) run entirely on your Device. The text and photos you process are not sent to the Developer or any third party.")
 
@@ -65,7 +74,7 @@ struct PrivacyPolicyView: View {
 
                 SectionTitle("7. Optional Sync and Sharing")
 
-                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. Turning it on or off takes effect the next time you open the Application. While it is on, everything described in Section 4 except your app preferences, including photos you add to recipes, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. Recipe pictures loaded from websites are fetched again on each device rather than synced. The Developer cannot access your iCloud account or the data in it.")
+                BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. Turning it on or off takes effect the next time you open the Application. While it is on, everything described in Section 4.1, including photos you add to recipes, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. Each device fetches its own copy of pictures from recipe websites (Section 5.2). The Developer cannot access your iCloud account or the data in it.")
 
                 BodyText("7.2 You can turn iCloud sync off at any time in the same place; sync stops the next time you open the Application, and your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, removes it from your iCloud account and from every device signed in to it. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, the Application then sends those changes to your iCloud account and to every device signed in to it.")
 

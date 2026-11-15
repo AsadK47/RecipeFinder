@@ -29,7 +29,7 @@ struct RecipeSearchSettingsView: View {
                     }
                 }
 
-                Text("Searches and pages load straight from the site you pick. Browsing data isn't kept.")
+                Text("Searches and pages load straight from the site you pick, in a private session cleared when you close it. Your recent searches are kept on your device so you can repeat them; Reset clears them.")
                     .font(.footnote)
                     .adaptiveSecondaryForeground()
                     .padding(.horizontal, AppTheme.spacing4)

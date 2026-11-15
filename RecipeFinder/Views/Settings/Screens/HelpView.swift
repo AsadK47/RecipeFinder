@@ -189,7 +189,7 @@ struct HelpView: View {
 
                         FAQItem(
                             question: "How do I delete my data?",
-                            answer: "Go to Settings > Data Management > Reset App to Default. Note that this will remove all your data permanently."
+                            answer: "Go to Settings > Data Management > Reset App to Default. This clears your recipes, lists, plans, photos and history from the app, and with iCloud sync on, from every device signed in to your iCloud. It can't be undone. The Privacy Policy has the details."
                         )
                     }
                     .padding(AppTheme.spacing20)
