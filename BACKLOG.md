@@ -363,7 +363,7 @@ are merged into a newer item or parked — never start them; their text stays as
   line (recipe that unlocked it); share card image via `ShareLink` (rendered on device); "2 more cooks to Head Chef"
   on the Made it sheet and Today. *Done when:* tier mapping/migration, story capture and next-badge logic tested,
   screenshots, CI green.
-- [ ] **My Cookbook — made by cooking** (Phase 1 · Remember · owner 2026-11-14: "add cookbook"; absorbs *Me 1/3* + *Cooking diary*). A beautiful book of every dish the cook
+- [ ] **My Cookbook — made by cooking** — 🚧 builder agent 2026-11-15 — (Phase 1 · Remember · owner 2026-11-14: "add cookbook"; absorbs *Me 1/3* + *Cooking diary*). A beautiful book of every dish the cook
   has made: their Made-it photo (else the recipe picture), date, rating, a line of notes ("for Mum's birthday"), who it
   was for. Builds itself from Made it — no entry. Page-turn / full-bleed layout; tap a page → cook it again. Lives at
   the top of Me (Me's character = your cookbook + one line "Spice Explorer · 34 dinners this year"; stats/badges one
@@ -628,6 +628,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   a library recovery set aside — Reset's copy says "use this if you encounter any issues". Ship as is / keep `.corrupt-*`
   (delete safety copies only) / warn in the Reset dialog when a set-aside copy exists? Also unverified: set-aside
   libraries' large photos in `_EXTERNAL_DATA` aren't moved aside or removed.
+- 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
 - 🙋 **CI 10 minutes vs runner slots** (CI lane 2026-11-15): jobs themselves now run 7:40–8:30 (push) and 8–10 (UI
   shards), but the free plan allows 5 macOS jobs at once for the whole account; with 4 lanes pushing, runs wait 2–9 min
   for a runner, which counts in wall time. Options: (a) fewer parallel lanes during the day (free); (b) GitHub larger
@@ -658,7 +659,6 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
-- 🟡 Privacy policy §2.2/§6.2 "only" wording breaks the copy rule (Privacy lane; legal text).
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
