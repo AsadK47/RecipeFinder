@@ -73,6 +73,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         tab(app, "Groceries", shot: "03-groceries")
         tab(app, "Plan", shot: "04-meal-plan")
         tab(app, "Today", shot: "16-today")
+        // Adding to groceries can earn a badge; a tab tap on its reveal lands on "View all badges" (→ Profile).
+        dismissBadgeSheet(app)
         tab(app, "Me", shot: "17-me")
         tab(app, "Recipes", shot: nil)
         let add = app.buttons["recipes.add"]

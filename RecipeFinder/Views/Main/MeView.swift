@@ -41,7 +41,9 @@ struct MeView: View {
                             MyCookbookSection(pages: cookbookPages)
                             MeProfileRow(
                                 image: profileImage,
-                                initials: profileManager.initials,
+                                // No name yet → a person symbol, as on Profile, not "RC" from the "Recipe Chef" stand-in.
+                                initials: profileManager.firstName.isEmpty && profileManager.lastName.isEmpty
+                                    ? "" : profileManager.initials,
                                 name: profileManager.fullName,
                                 line: MyCookbook.meLine(chefType: profileManager.chefType,
                                                         cooksThisYear: cookingStreak.streak.cooksThisYear),

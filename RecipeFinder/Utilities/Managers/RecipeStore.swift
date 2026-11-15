@@ -268,7 +268,8 @@ final class RecipeStore: RecipeStoring {
             cooked.lastCookedAt = cookedAt
             cooked.rating = 6 - rank
             guard persistence.saveRecipeModel(cooked) else { return recipe }
-            seededCooks.append(cookedAt)
+            // One log entry per cook (the latest on `lastCookedAt`, earlier ones a week apart).
+            seededCooks += (0..<rank).compactMap { Calendar.current.date(byAdding: .day, value: -7 * $0, to: cookedAt) }
             return cooked
         }
         // The cook log too, so Me's "N cooks this year" line agrees with the pages.
