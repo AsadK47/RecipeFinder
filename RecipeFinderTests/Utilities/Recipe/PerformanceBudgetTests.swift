@@ -49,17 +49,25 @@ struct PerformanceBudgetTests {
     @MainActor @Test("DiscoveryFeedModel.update stays within budget for a 350-recipe library")
     func discoveryFeedBudget() {
         let letters = Array("abcdefghijklmnopqrstuvwxyz")
-        let words = (0..<120).map { n in "\(letters[n % 26])\(letters[(n / 26) % 26])root" }
-        let recipes = (0..<350).map { i in
-            RecipeModel(
-                name: "Recipe \(i)", category: ["Main", "Dessert", "Side"][i % 3], difficulty: "Basic",
+        let words: [String] = (0..<120).map { (n: Int) -> String in
+            String(letters[n % 26]) + String(letters[(n / 26) % 26]) + "root"
+        }
+        let categories = ["Main", "Dessert", "Side"]
+        let cuisines: [String?] = ["Italian", "Indian", nil]
+        var recipes: [RecipeModel] = []
+        for i in 0..<350 {
+            let ingredients: [Ingredient] = (0..<12).map { offset in
+                Ingredient(baseQuantity: 1, unit: "", name: words[(i * 7 + offset) % 120])
+            }
+            let cooked = i % 5 == 0
+            let lastCooked: Date? = cooked ? Date(timeIntervalSinceNow: -86_400 * Double(i)) : nil
+            recipes.append(RecipeModel(
+                name: "Recipe \(i)", category: categories[i % 3], difficulty: "Basic",
                 prepTime: "10 min", cookingTime: "\(i % 50) min", baseServings: 2,
-                ingredients: (0..<12).map { Ingredient(baseQuantity: 1, unit: "", name: "\(words[(i * 7 + $0) % 120])") },
-                prePrepInstructions: [], instructions: ["Cook"], notes: "",
-                isFavorite: i % 17 == 0, cookCount: i % 5 == 0 ? 2 : 0,
-                lastCookedAt: i % 5 == 0 ? Date(timeIntervalSinceNow: -Double(i) * 86_400) : nil,
-                cuisine: ["Italian", "Indian", nil][i % 3]
-            )
+                ingredients: ingredients, prePrepInstructions: [], instructions: ["Cook"], notes: "",
+                isFavorite: i % 17 == 0, cookCount: cooked ? 2 : 0, lastCookedAt: lastCooked,
+                cuisine: cuisines[i % 3]
+            ))
         }
         let kitchen = Array(words.prefix(30))
         let feed = DiscoveryFeedModel(seed: 1)
