@@ -58,7 +58,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("5.2 Images. The Application may load recipe images directly from image addresses contained within recipes you import, and keeps a copy on your Device so the picture shows offline. No information about you is sent to those sources beyond what is required to request the image.")
 
-                BodyText("5.3 On-device processing. Where supported, recipe text interpretation (using Apple's on-device foundation models) and photo text recognition (using Apple's Vision framework) run entirely on your Device. The text and photos you process are not sent to the Developer or any third party.")
+                BodyText("5.3 On-device processing. Where supported, recipe text interpretation (using Apple's on-device foundation models) and photo text recognition (using Apple's Vision framework) run entirely on your Device. The text and photos you process are not sent to the Developer or any third party. To offer to import a copied recipe link, the Application asks iOS whether your clipboard holds a web link, which does not reveal its contents; it reads the clipboard when you tap Paste.")
 
                 BodyText("5.4 The Application does not integrate with any third-party analytics services, advertising networks, or tracking technologies, and does not use advertising identifiers.")
             }
