@@ -16,6 +16,7 @@ on:
       - '**/*.md'
       - 'tools/**'
       - '.github/scripts/**'
+      - '!.github/scripts/shard-ui-tests.py'   # used by the UI shards
       - '.github/workflows/testflight*.yml'
       - '.github/workflows/screenshots.yml'
       - '.github/workflows/cleanup-agent-branches.yml'
@@ -25,6 +26,7 @@ on:
       - '**/*.md'
       - 'tools/**'
       - '.github/scripts/**'
+      - '!.github/scripts/shard-ui-tests.py'   # used by the UI shards
       - '.github/workflows/testflight*.yml'
       - '.github/workflows/screenshots.yml'
       - '.github/workflows/cleanup-agent-branches.yml'
@@ -34,8 +36,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # The nightly gets its own group, so it never cancels or holds up a push to main.
-  group: ${{ github.workflow }}-${{ github.ref }}${{ github.event_name == 'schedule' && '-nightly' || '' }}
+  # Nightly and "Run workflow" get their own groups, so a push never cancels their UI shards (or the reverse).
+  group: ${{ github.workflow }}-${{ github.ref }}${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && format('-{0}', github.event_name) || '' }}
   # Pushes to main queue rather than cancel each other, so every commit gets tested and the build cache gets
   # saved; a newer push to an agent branch or PR cancels the now-outdated run.
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}

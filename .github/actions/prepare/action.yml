@@ -58,10 +58,13 @@ runs:
         SIM=$(xcrun simctl list devices available -j \
           | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
         XCODE=$(xcodebuild -version | awk '/Build version/ {print $3}')
+        RUNTIME=$(xcrun simctl list devices available -j | jq -r --arg u "$SIM" \
+          '.devices | to_entries[] | select(any(.value[]; .udid == $u)) | .key' | sed 's/.*SimRuntime\.//')
+        RUNTIME_BUILD=$(xcrun simctl list runtimes -j | jq -r --arg r "$RUNTIME" '.runtimes[] | select(.identifier | endswith($r)) | .buildversion')
         {
           echo "SIM=$SIM"
           echo "SIM_DIR=$HOME/Library/Developer/CoreSimulator/Devices/$SIM"
-          echo "SIM_KEY=simulator-$XCODE-$SIM-v1"
+          echo "SIM_KEY=simulator-$XCODE-$RUNTIME_BUILD-$SIM-v1"
         } >> "$GITHUB_ENV"
 
     # A simulator's first boot spends ~70s migrating data, and its services then keep all 3 CPUs busy for minutes.
