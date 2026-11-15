@@ -68,7 +68,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Operations] `chapters` grows for the session (lazy stacks keep views).
   → Accepted until a long-scroll memory check shows a problem.
 - ⚔️ [Cost] `DiscoveryPool.make` runs on the main thread per Recipes appear / library change; `kitchenMatches` re-normalises the pantry per recipe (older code). Budget in `PerformanceBudgetTests.discoveryFeedBudget`.
-  → Accepted; move off-main if the budget or a device trace says so.
+  → Accepted; move off-main if the budget or a device trace says so. Budget failed in CI (0.96 s / 0.5 s): match words now built once per term (`KitchenRecipeMatcher.MatchTerm`), pager skips spent deck heads → green.
 
 ## 2026-11-15 (bug pass: 🐞 #16 froze on the badge reveal after a web import with sync just on — history read + recipe-copy merge moved off the main thread)
 - ⚔️ [Assumption] The freeze was main-thread Core Data work after each iCloud import burst; not proven (no device log). Fix may be incomplete, follow-up = MirroredSnapshot loads off main, or skip reloads until the CloudKit import Event ends, if timing/MetricKit shows them (the other 7 list reloads and viewContext's automatic merges still run on main; slow steps now log under "Diagnostics").
