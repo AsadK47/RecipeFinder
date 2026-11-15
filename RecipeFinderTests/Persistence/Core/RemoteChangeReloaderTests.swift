@@ -1,6 +1,7 @@
 import Testing
 import CoreData
 import Foundation
+import os
 @testable import RecipeFinder
 
 /// Data safety 2/4 slice 3b: lists re-read the store when another device's edits arrive through iCloud.
@@ -12,8 +13,27 @@ import Foundation
         var plans = 0
         var checks = 0
 
-        var reloads: [@MainActor () async -> Void] {
-            [{ self.recipes += 1 }, { self.plans += 1 }]
+        var reloads: [RemoteChangeReloader.Reload] {
+            [.init(name: "recipes") { self.recipes += 1 }, .init(name: "plans") { self.plans += 1 }]
+        }
+
+        @MainActor final class Reports {
+            var names: [String] = []
+        }
+    }
+
+    /// Holds the outside-change check open until the test answers it.
+    @MainActor final class Gate {
+        private var continuation: CheckedContinuation<Bool, Never>?
+        var isWaiting: Bool { continuation != nil }
+
+        func answer() async -> Bool {
+            await withCheckedContinuation { continuation = $0 }
+        }
+
+        func open(with answer: Bool) {
+            continuation?.resume(returning: answer)
+            continuation = nil
         }
     }
 
@@ -66,6 +86,66 @@ import Foundation
         await reloader.waitUntilIdle()
 
         #expect(lists.recipes == 2)
+    }
+
+    /// A test (or anything else) waiting after a pass has started — its check still running — waits for that pass's
+    /// reloads too, not just for the pass to have begun.
+    @Test func waitingAfterAPassStartedWaitsForItsReloads() async throws {
+        let lists = Lists()
+        let gate = Gate()
+        let reloader = RemoteChangeReloader(
+            delay: .zero, hasOutsideChanges: { await gate.answer() }, reloads: lists.reloads
+        )
+
+        reloader.storeChanged()
+        try await Self.waitFor { gate.isWaiting }
+        let waiter = Task { @MainActor in
+            await reloader.waitUntilIdle()
+            return lists.recipes
+        }
+        await Task.yield()
+        gate.open(with: true)
+
+        #expect(await waiter.value == 1)
+    }
+
+    @Test func aChangeDuringAPassGetsAPassAfterIt() async throws {
+        let lists = Lists()
+        let gate = Gate()
+        let reloader = RemoteChangeReloader(
+            delay: .zero, hasOutsideChanges: { lists.checks += 1; return await gate.answer() }, reloads: lists.reloads
+        )
+
+        reloader.storeChanged()
+        try await Self.waitFor { gate.isWaiting }
+        reloader.storeChanged()
+        gate.open(with: true)
+        try await Self.waitFor { gate.isWaiting }
+        gate.open(with: true)
+        await reloader.waitUntilIdle()
+
+        #expect(lists.checks == 2)
+        #expect(lists.recipes == 2)
+    }
+
+    /// Issue #16 follow-up: a step that holds the main thread is reported by its list's name, so the next freeze
+    /// says which reload it was. Fast steps say nothing.
+    @Test func aSlowReloadIsReportedByName() async {
+        let reported = Lists.Reports()
+        let reloader = RemoteChangeReloader(
+            delay: .zero,
+            hasOutsideChanges: { true },
+            reloads: [
+                .init(name: "kitchen") { try? await Task.sleep(for: .milliseconds(250)) },
+                .init(name: "badges") {}
+            ],
+            reportSlowStep: { name, _ in reported.names.append(name) }
+        )
+
+        reloader.storeChanged()
+        await reloader.waitUntilIdle()
+
+        #expect(reported.names == ["kitchen"])
     }
 
     @Test func theStoresRemoteChangeNotificationSchedulesAReload() async throws {
@@ -121,49 +201,81 @@ import Foundation
         try context.save()
     }
 
-    @Test func anICloudImportIsAnOutsideChange() throws {
+    @Test func anICloudImportIsAnOutsideChange() async throws {
         let persistence = PersistenceController(inMemory: true)
         persistence.startTrackingOutsideChanges()
 
         try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
 
-        #expect(persistence.takeOutsideChanges())
+        #expect(await persistence.takeOutsideChanges())
     }
 
-    @Test func thisAppsOwnSaveIsNotAnOutsideChange() throws {
+    @Test func thisAppsOwnSaveIsNotAnOutsideChange() async throws {
         let persistence = PersistenceController(inMemory: true)
         persistence.startTrackingOutsideChanges()
 
         try Self.addRecipe(named: "Soup from here", to: persistence, author: nil)
 
-        #expect(!persistence.takeOutsideChanges())
+        #expect(await !persistence.takeOutsideChanges())
     }
 
-    @Test func anOutsideChangeIsReportedOnce() throws {
+    @Test func anOutsideChangeIsReportedOnce() async throws {
         let persistence = PersistenceController(inMemory: true)
         persistence.startTrackingOutsideChanges()
         try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
 
-        #expect(persistence.takeOutsideChanges())
-        #expect(!persistence.takeOutsideChanges())
+        #expect(await persistence.takeOutsideChanges())
+        #expect(await !persistence.takeOutsideChanges())
     }
 
-    @Test func importsBeforeTrackingStartedAreNotReported() throws {
+    @Test func importsBeforeTrackingStartedAreNotReported() async throws {
         let persistence = PersistenceController(inMemory: true)
         try Self.addRecipe(named: "Soup already on screen", to: persistence, author: Self.importer)
 
         persistence.startTrackingOutsideChanges()
 
-        #expect(!persistence.takeOutsideChanges())
+        #expect(await !persistence.takeOutsideChanges())
     }
 
-    @Test func anImportAfterThisAppsOwnSaveIsStillSeen() throws {
+    @Test func anImportAfterThisAppsOwnSaveIsStillSeen() async throws {
         let persistence = PersistenceController(inMemory: true)
         persistence.startTrackingOutsideChanges()
         try Self.addRecipe(named: "Soup from here", to: persistence, author: nil)
         try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
 
-        #expect(persistence.takeOutsideChanges())
+        #expect(await persistence.takeOutsideChanges())
+    }
+
+    /// Checks run one after another (the history is read off the main thread now), so two at once report an import
+    /// once and the checkpoint never moves back.
+    @Test func twoChecksAtOnceReportAnImportOnce() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        persistence.startTrackingOutsideChanges()
+        try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
+
+        async let first = persistence.takeOutsideChanges()
+        async let second = persistence.takeOutsideChanges()
+        let results = await [first, second]
+
+        #expect(results.filter { $0 }.count == 1)
+        #expect(await !persistence.takeOutsideChanges())
+    }
+
+    /// Issue #16: the history read runs on a background context, never the main thread (a first iCloud import is
+    /// thousands of transactions). Fails if the read moves back onto the main thread's context.
+    @Test func theHistoryIsReadOffTheMainThread() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        persistence.startTrackingOutsideChanges()
+        try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
+        let readOnMain = OSAllocatedUnfairLock<[Bool]>(initialState: [])
+
+        let changed = await persistence.takeOutsideChanges { checkpoint, entities, context in
+            readOnMain.withLock { $0.append(Thread.isMainThread) }
+            return PersistenceController.readHistory(after: checkpoint, appEntities: entities, in: context)
+        }
+
+        #expect(changed)
+        #expect(readOnMain.withLock { $0 } == [false])
     }
 
     @Test func syncIsOffForAStoreOpenedWithoutICloud() {
@@ -246,21 +358,21 @@ import Foundation
         await persistence.purgeHistory(before: cutoff)
         try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
 
-        #expect(persistence.takeOutsideChanges())
-        #expect(!persistence.takeOutsideChanges())
+        #expect(await persistence.takeOutsideChanges())
+        #expect(await !persistence.takeOutsideChanges())
     }
 
     @Test func aPurgedCheckpointReloadsOnceThenReadsOn() async throws {
         let persistence = PersistenceController(inMemory: true)
         persistence.startTrackingOutsideChanges()
         try Self.addRecipe(named: "Soup from here", to: persistence, author: nil)
-        #expect(!persistence.takeOutsideChanges())
+        #expect(await !persistence.takeOutsideChanges())
 
         await persistence.purgeHistory(before: Date().addingTimeInterval(60))
         try Self.addRecipe(named: "Soup from the iPad", to: persistence, author: Self.importer)
 
-        #expect(persistence.takeOutsideChanges())
-        #expect(!persistence.takeOutsideChanges())
+        #expect(await persistence.takeOutsideChanges())
+        #expect(await !persistence.takeOutsideChanges())
     }
 }
 

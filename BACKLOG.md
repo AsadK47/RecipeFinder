@@ -158,7 +158,9 @@ are merged into a newer item or parked — never start them; their text stays as
 - [ ] **Recipes — endless discovery** — 🚧 Discover lane session 2026-11-15 — (Phase 3 · Discover, pulled into Now by owner). The *Today feed* chapters (below, kept as spec; `docs/PLAY.md`
   §14) move here as how you browse below your library: "Because you loved…", "Under 30 minutes", "Uses what you have",
   "Cook it again", "New to you", "A trip to <cuisine>"; rotating layouts, no repeats until the pool is spent; absorbs
-  *Recently cooked row*. *Measure:* recipes opened from discovery that get cooked. *Done when:* chapter ranking +
+  *Recently cooked row*. Owner 2026-11-15: "We have enough recipes to loop. It's fun." — once the pool is spent it
+  reshuffles (new chapter order and layouts, never the same recipe twice in a row); no "seen everything" end state.
+  *Measure:* recipes opened from discovery that get cooked. *Done when:* chapter ranking +
   paging tested, perf budget for 300+ recipes, screenshots (scrolled 3 screens), CI green.
 - [ ] **Today — decide tonight** (Phase 3 · Decide). Trim Today to tonight's pick (big picture, reason, Cook this,
   Shuffle), the time line, and what to do now (prep-ahead, use-it-up); move browsing to Recipes; absorbs *Pictures 4/4*.
@@ -195,7 +197,7 @@ are merged into a newer item or parked — never start them; their text stays as
   without loading every photo into memory. Settings → "iCloud sync" on by default when signed in to iCloud, with
   status (synced / syncing / off / iCloud full) and a clear off switch; works fully offline. Owner steps: ✅ 2026-11-12 container
   `iCloud.com.asadkhan.recipefinder` created and iCloud + CloudKit enabled on App ID `com.asadkhan.recipefinder`
-  (CI uses automatic signing + ASC key with -allowProvisioningUpdates, so no manual profile); 🙋 later: deploy the CloudKit schema to production before App Store
+  (CI uses automatic signing + ASC key with -allowProvisioningUpdates, so no manual profile); 🙋 **deploy the CloudKit schema to Production before any TestFlight build that adds synced fields** (TestFlight uses Production; model 17 `RecipePhotoEntity` + model 18 `deletedAt`)
   release. Privacy Policy section 7: describe the sync (owner OK to update that legal text in line with this
   feature). Dedupe on first sync (same recipe on two devices). ✅ Slice 1 (38feeee): `SyncMerge` + `MirroredSnapshot.SyncRules`
   store-wins mode (3-way merge on save, add-only kept copy). ✅ Slice 2a (f44a58c): `SyncPreference` flag (off) +
@@ -628,6 +630,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🟡 Recipe-copy merge (`mergeRecipeCopies`, background) can overwrite an edit to a merged field (cook count, favourite, rating, photos) saved in the same few ms — optimistic locking didn't fire in CI; write only differing fields after re-reading the row (first sync of duplicated built-ins only). Also: 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 - 🟡 Link import uses `URLSession.shared` (`Services/HTMLFetcher.swift:12`) — cookies + response cache persist and Reset doesn't clear them; use an ephemeral session like `RemoteImageFetcher` (privacy review 2026-11-15).
 - 🟡 Reset leaves `StoreBackups/` safety copies and `.corrupt-*` store copies (`PersistenceController.swift:150-172`, unbounded, not excluded from device backup) — policy §4.3 now says so; better: Reset removes them, cap/exclude corrupt copies, then update §4.2/4.3 + Help.
 - 🧹 `Services/UnsplashClient.swift` (api.unsplash.com) has no callers — delete it (policy would need to cover it if wired in). Policy §2.2/§6.2 "only" wording breaks the copy rule.
@@ -745,3 +748,5 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-15 · Inbox 🔴 store history purged while sync is off · 8be3cb1 · nothing visible; with sync on, turn sync off >1 week, delete a recipe, turn sync on → it stays deleted on other devices (device check in CHALLENGES 15 Nov) · review: challenge + deep-review — 2 fixed (first cut purged after a week of syncing launches even if nothing exported → now only before the last finished iCloud export; MainActor compile error), checkpoint/split-export risks → CHALLENGES · looked at: no UI · CI flake CookingStreakTests (also fixed on main, f0ecaff)
 - 2026-11-15 · Inbox 🔴 photo files kept on other devices after a Reset elsewhere · e67da6f · with sync on, add a recipe with a photo, wait a minute, Reset on another device (or delete it there) → after a reload the photo file is gone here too · review: deep-review + challenge — 3 fixed (legacy full-path photos counted unused, sign-out purge could delete never-sent photos → export guard, one bad file stopped the clear), 3 noted in CHALLENGES · looked at: none (no UI) · new app + test file registered in pbxproj by hand
 - 2026-11-15 · Inbox 🟡 privacy §5.1 recent searches + policy audit · 037a8ea · Settings → Privacy Policy shows §4.2–4.4 and 15 Nov date; web search screen says recent searches stay on this device · review: two independent (claims-vs-code + challenger) — fixed overclaim on safety copies, search screen "nothing is kept", Terms 3.1 iCloud, Help Reset, 2.1/5.1/5.2 disclosures; 3 code follow-ups → Inbox · looked at: no screenshots (text only) · website privacy.html changes handed to the website session
+- 2026-11-15 · Recipes — endless discovery (slice 1, **not landed**) · `agent/endless-discovery` 36c4c42 · stopped after 4 red CI runs (BACKLOG step 5): missing pbxproj entry, mutating-self capture, type-check timeout, then one test missing `@MainActor` (`DiscoveryFeedTests.swift:218`) — fix is in WORK.md · review: deep-review (approve, 7 minor) + challenger (7 real) — 11 fixed, 6 → CHALLENGES · looked at: no screenshots yet (needs green) · 6 new files registered in pbxproj by hand
+- 2026-11-15 · 🐞 #16 froze on badge reveal after a web import with sync on · a95d0ee..aed7309 · with sync on on iPhone + Mac, import a web recipe right after launch → badge flips in, app stays responsive; slow steps / hangs log under Console "Diagnostics" · review: 2 independent (correctness + challenger) — fixed waitUntilIdle, a test that couldn't fail, slow-step timing; edit-during-merge window → Inbox · cause likely (main-thread history read + copy merge during first iCloud import), not proven · ⚠️ main briefly at 1b621b5 (fix without review commits, green earlier) after a mid-rebase push

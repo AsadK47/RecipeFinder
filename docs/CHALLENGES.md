@@ -56,6 +56,27 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: Recipes — endless discovery — fixed: preview of six A–Z air-fryer samples (now own + favourites first), a chosen sort still counted as browsing, Cook it again re-dealt the Recently cooked row and preview, untested browse/search switch (now `RecipeBrowse`), reshuffle test passed without the shuffle, 2–7 recipe libraries ended the "endless" feed, a renamed recipe dealt stale (pool `==` ignores names), loose similarity words, fixtures that made everything similar)
+- ⚔️ [Loop] Tiles only open the recipe; PRODUCT "Feel" wants one tap to plan or cook from the scroll. Serves the loop via the detail page.
+  → Later (next slice: double-tap/plan action on tiles).
+- ⚔️ [Measure] Nothing records that a cook came from a discovery tile, so "recipes opened from discovery that get cooked" can't be counted on device yet.
+  → Later; owner's week of use until then.
+- ⚔️ [Data] Fresh install: "New to you" is the whole library, so the deal is effectively random and the end of a ~70-chapter cycle alternates "Dinner ideas" / "New to you".
+  → Accepted.
+- ⚔️ [Structure] A new favourite inserts a source at the front, shifting the round robin; two chapters of one kind can then sit together once.
+  → Accepted (cosmetic).
+- ⚔️ [Operations] `chapters` grows for the session (lazy stacks keep views).
+  → Accepted until a long-scroll memory check shows a problem.
+- ⚔️ [Cost] `DiscoveryPool.make` runs on the main thread per Recipes appear / library change; `kitchenMatches` re-normalises the pantry per recipe (older code). Budget in `PerformanceBudgetTests.discoveryFeedBudget`.
+  → Accepted; move off-main if the budget or a device trace says so.
+
+## 2026-11-15 (bug pass: 🐞 #16 froze on the badge reveal after a web import with sync just on — history read + recipe-copy merge moved off the main thread)
+- ⚔️ [Assumption] The freeze was main-thread Core Data work after each iCloud import burst; not proven (no device log). Fix may be incomplete, follow-up = MirroredSnapshot loads off main, or skip reloads until the CloudKit import Event ends, if timing/MetricKit shows them (the other 7 list reloads and viewContext's automatic merges still run on main; slow steps now log under "Diagnostics").
+- ⚔️ [Data] Optimistic locking (`NSMergePolicy.error`) did not fire in CI: an edit saved mid-merge to a field the merge writes (cook count, last cooked, favourite, rating, photos) can still be overwritten — only duplicated built-in recipes, only during the first sync, a few ms. Follow-up: write only differing merge fields after re-reading the row just before save.
+  → Accepted for now (coordinator 2026-11-15); Inbox follow-up.
+- ⚔️ [Would the tests notice] `mergeSyncedRecipeCopies`' own wrapper (sync guard, one pass at a time, background context) is untested: it needs a store mirrored to iCloud. Tests drive `mergeRecipeCopies` on a background context instead, including an edit saved mid-merge.
+- ⚔️ [Time] `RecipeStore.load` now awaits the merge, so a recipe saved while a load runs can drop out of the list until the next load (the store keeps it). Not fixed: needs a "saved since this load's fetch" merge.
+
 ## 2026-11-15 (item pass: Data safety 4/4 Recently Deleted, lean — two reviewers + challenger. Fixed: purge from a stale or unsent stamp (now waits for this launch's iCloud import and an export after the stamp); duplicate rows purged one by one (now per recipe, by the latest stamp, photos only once no row is left); quick snacks couldn't be deleted; background touch-ups rewrote or revived trashed copies; restore out of name order; Recently Deleted read on the main thread; seed guard untested; §7.2 wording)
 - ⚔️ [Assumption] CloudKit Production schema must gain `Recipe.deletedAt` (Dashboard → Deploy schema) before a TestFlight build with sync on exports it; unverified what export does until then — cost if wrong: recipe changes stop syncing. Main is on hold for it.
 - ⚔️ [Time] A device whose clock runs ahead purges early, for every device (the delete syncs). Accepted: no trusted clock. A stamp >1 day in the future counts as now.

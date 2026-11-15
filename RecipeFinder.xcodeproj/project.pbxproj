@@ -88,6 +88,7 @@
 		9E6DEA702EF5EF47001E7B24 /* CompactRecipeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA472EF5EF47001E7B24 /* CompactRecipeCard.swift */; };
 		9E6DEA882EF5EFE8001E7B24 /* UnitConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA852EF5EFE8001E7B24 /* UnitConversion.swift */; };
 		9E6DEA892EF5EFE8001E7B24 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA7C2EF5EFE8001E7B24 /* HapticManager.swift */; };
+		34E296C739C5749F35DDD87C /* DiagnosticReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4253AC21D709F2B8E3B0E6D5 /* DiagnosticReporter.swift */; };
 		BFEF9790D4F2D3559616A552 /* TiltMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FABE7628F51D8802C3B149E /* TiltMotion.swift */; };
 		9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA802EF5EFE8001E7B24 /* CategoryClassifier.swift */; };
 		9E6DEA8B2EF5EFE8001E7B24 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA7E2EF5EFE8001E7B24 /* NotificationManager.swift */; };
@@ -282,6 +283,7 @@
 		F3B837DF3055F17C0003AEF8 /* CollectionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837DE3055F17C0003AEF8 /* CollectionManagerTests.swift */; };
 		F3B837E13055F9EE0003AEF8 /* RecipeWizardPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837E03055F9EE0003AEF8 /* RecipeWizardPersistenceTests.swift */; };
 		F3B837E63055FD270003AEF8 /* RecipeTimerManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837E53055FD270003AEF8 /* RecipeTimerManagerTests.swift */; };
+		BD4342149C05A6AC92142A6E /* DiagnosticSummaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D6A78CC700A8F56983AF3C /* DiagnosticSummaryTests.swift */; };
 		F3B837E83055FD3F0003AEF8 /* NotificationSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837E73055FD3F0003AEF8 /* NotificationSettingsTests.swift */; };
 		F3B837EA3055FD5C0003AEF8 /* RecipeFilterIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837E93055FD5C0003AEF8 /* RecipeFilterIntegrationTests.swift */; };
 		F3B837EC3055FD740003AEF8 /* ShoppingListFromRecipeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837EB3055FD740003AEF8 /* ShoppingListFromRecipeTests.swift */; };
@@ -651,6 +653,7 @@
 		9E6DEA782EF5EFE8001E7B24 /* AdaptiveSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSpacing.swift; sourceTree = "<group>"; };
 		9E6DEA792EF5EFE8001E7B24 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		9E6DEA7C2EF5EFE8001E7B24 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		4253AC21D709F2B8E3B0E6D5 /* DiagnosticReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticReporter.swift; sourceTree = "<group>"; };
 		8FABE7628F51D8802C3B149E /* TiltMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiltMotion.swift; sourceTree = "<group>"; };
 		9E6DEA7D2EF5EFE8001E7B24 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		9E6DEA7E2EF5EFE8001E7B24 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -844,6 +847,7 @@
 		F3B837DE3055F17C0003AEF8 /* CollectionManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManagerTests.swift; sourceTree = "<group>"; };
 		F3B837E03055F9EE0003AEF8 /* RecipeWizardPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeWizardPersistenceTests.swift; sourceTree = "<group>"; };
 		F3B837E53055FD270003AEF8 /* RecipeTimerManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeTimerManagerTests.swift; sourceTree = "<group>"; };
+		F8D6A78CC700A8F56983AF3C /* DiagnosticSummaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticSummaryTests.swift; sourceTree = "<group>"; };
 		F3B837E73055FD3F0003AEF8 /* NotificationSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsTests.swift; sourceTree = "<group>"; };
 		F3B837E93055FD5C0003AEF8 /* RecipeFilterIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFilterIntegrationTests.swift; sourceTree = "<group>"; };
 		F3B837EB3055FD740003AEF8 /* ShoppingListFromRecipeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListFromRecipeTests.swift; sourceTree = "<group>"; };
@@ -1529,6 +1533,7 @@
 			children = (
 				9E5542C92FD20F1700856DC5 /* RecipeTimerManager.swift */,
 				9E6DEA7C2EF5EFE8001E7B24 /* HapticManager.swift */,
+				4253AC21D709F2B8E3B0E6D5 /* DiagnosticReporter.swift */,
 				8FABE7628F51D8802C3B149E /* TiltMotion.swift */,
 				9E6DEA7D2EF5EFE8001E7B24 /* NetworkMonitor.swift */,
 				9E6DEA7E2EF5EFE8001E7B24 /* NotificationManager.swift */,
@@ -2159,6 +2164,7 @@
 			isa = PBXGroup;
 			children = (
 				F3B837E53055FD270003AEF8 /* RecipeTimerManagerTests.swift */,
+				F8D6A78CC700A8F56983AF3C /* DiagnosticSummaryTests.swift */,
 				F3B837E73055FD3F0003AEF8 /* NotificationSettingsTests.swift */,
 			);
 			path = Managers;
@@ -2646,6 +2652,7 @@
 				9E6DEA882EF5EFE8001E7B24 /* UnitConversion.swift in Sources */,
 				F3AEF8FD309C977800A9C5E0 /* IconBadge.swift in Sources */,
 				9E6DEA892EF5EFE8001E7B24 /* HapticManager.swift in Sources */,
+				34E296C739C5749F35DDD87C /* DiagnosticReporter.swift in Sources */,
 				BFEF9790D4F2D3559616A552 /* TiltMotion.swift in Sources */,
 				9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */,
 				F36AED6F3043392200935A3C /* RecipeFilterButton.swift in Sources */,
@@ -2875,6 +2882,7 @@
 				9E6C2C1A2FB394090083A08B /* RecipeParserTests.swift in Sources */,
 				F3E9D26C304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift in Sources */,
 				F3B837E63055FD270003AEF8 /* RecipeTimerManagerTests.swift in Sources */,
+				BD4342149C05A6AC92142A6E /* DiagnosticSummaryTests.swift in Sources */,
 				9E5D20502FB358F000F2896A /* RecipeModelTests.swift in Sources */,
 				F3E9D278304D7D0D008BF231 /* PrefilledRecipeDataMappingTests.swift in Sources */,
 				F3AEF8D5309B572300A9C5E0 /* ManagerRelaunchPersistenceTests.swift in Sources */,

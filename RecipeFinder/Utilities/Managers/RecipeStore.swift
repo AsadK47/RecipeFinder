@@ -107,10 +107,11 @@ final class RecipeStore: RecipeStoring {
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
             // With iCloud sync on, another device's built-in recipes arrive with the same ids as this one's.
-            if persistence.mergeSyncedRecipeCopies(of: RecipeCopyMerge.repeatedIDs(in: fetched)) {
+            if await persistence.mergeSyncedRecipeCopies(of: RecipeCopyMerge.repeatedIDs(in: fetched)) {
                 fetched = await persistence.fetchRecipesAsync()
-                guard generation == loadGeneration else { return }
             }
+            // The merge runs off the main thread, so a newer load may have started meanwhile.
+            guard generation == loadGeneration else { return }
             fetched = RecipeCopyMerge.oneCopyEach(fetched)
             // Repair flags first: dedupe only removes sample copies, and legacy samples lacked the flag.
             let repaired = await repairLegacySampleFlags(in: fetched)

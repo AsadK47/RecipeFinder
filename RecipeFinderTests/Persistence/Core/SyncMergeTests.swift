@@ -1,4 +1,5 @@
 import Testing
+import CoreData
 import Foundation
 @testable import RecipeFinder
 
@@ -491,8 +492,93 @@ private func recipe(
 
     @Test func withSyncOffCopiesAreNotMerged() async {
         let persistence = await storeWithTwoCopies()
-        #expect(!persistence.mergeSyncedRecipeCopies(of: [fishPie]))
+        #expect(await !persistence.mergeSyncedRecipeCopies(of: [fishPie]))
         #expect(persistence.fetchRecipes().count == 2)
+    }
+
+    /// Runs the merge the way the app does since issue #16: on a background context, never the main thread.
+    private func mergeInBackground(_ persistence: PersistenceController, named: Bool) async -> Bool {
+        let container = persistence.container
+        let ids: Set<UUID> = [fishPie]
+        return await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                let merged = PersistenceController.mergeRecipeCopies(of: ids, in: context) { objectIDs in
+                    guard named else { return [:] }
+                    return Dictionary(uniqueKeysWithValues: objectIDs.map { ($0, $0.uriRepresentation().absoluteString) })
+                }
+                continuation.resume(returning: merged)
+            }
+        }
+    }
+
+    @Test func copiesInICloudMergeIntoOneKeepingBothCopiesMarks() async {
+        let persistence = PersistenceController(inMemory: true)
+        _ = await persistence.seedRecipes([recipe(fishPie, cooks: 2)])
+        _ = await persistence.seedRecipes([recipe(fishPie, favourite: true)])
+
+        let merged = await mergeInBackground(persistence, named: true)
+
+        let copies = persistence.fetchRecipes().filter { $0.id == fishPie }
+        #expect(merged)
+        #expect(copies.count == 1)
+        #expect(copies.first?.cookCount == 2)
+        #expect(copies.first?.isFavorite == true)
+    }
+
+    /// Review of issue #16: the merge runs off the main thread now, so the cook can save between its read and its
+    /// save. That edit must stand (optimistic locking): the pass gives up and the next load merges again.
+    @Test func anEditSavedWhileTheMergeRunsIsKept() async {
+        let persistence = PersistenceController(inMemory: true)
+        _ = await persistence.seedRecipes([recipe(fishPie, cooks: 2)])
+        _ = await persistence.seedRecipes([recipe(fishPie, favourite: true)])
+        let container = persistence.container
+        let viewContext = container.viewContext
+        let id = fishPie
+        let ids: Set<UUID> = [id]
+
+        let merged = await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                let result = PersistenceController.mergeRecipeCopies(of: ids, in: context) { objectIDs in
+                    // The rows are read; the cook rates the recipe on the main context before the pass saves.
+                    viewContext.performAndWait {
+                        let request = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+                        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+                        do {
+                            for row in try viewContext.fetch(request) { row.setValue(4, forKey: "rating") }
+                            try viewContext.save()
+                        } catch {
+                            Issue.record("Couldn't save the edit: \(error)")
+                        }
+                    }
+                    return Dictionary(uniqueKeysWithValues: objectIDs.map { ($0, $0.uriRepresentation().absoluteString) })
+                }
+                continuation.resume(returning: result)
+            }
+        }
+
+        // Either the pass gave up (both rows stay, the next load merges) or it merged around the edit; the rating
+        // the cook saved stands either way.
+        let copies = persistence.fetchRecipes().filter { $0.id == fishPie }
+        #expect(!copies.isEmpty)
+        #expect(copies.allSatisfy { $0.rating == 4 })
+        if merged {
+            #expect(copies.count == 1)
+            #expect(copies.first?.cookCount == 2)
+            #expect(copies.first?.isFavorite == true)
+        } else {
+            #expect(copies.count == 2)
+            #expect(await mergeInBackground(persistence, named: true))
+            #expect(persistence.fetchRecipes().filter { $0.id == fishPie }.map(\.rating) == [4])
+        }
+    }
+
+    @Test func copiesWithoutRecordNamesWaitForALaterPass() async {
+        let persistence = await storeWithTwoCopies()
+
+        let merged = await mergeInBackground(persistence, named: false)
+
+        #expect(!merged)
+        #expect(persistence.fetchRecipes().filter { $0.id == fishPie }.count == 2)
     }
 }
 

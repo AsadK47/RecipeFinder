@@ -11,6 +11,8 @@ struct RecipeFinderApp: App {
     init() {
         // First, before anything opens the database: the Settings sync switch only takes effect at launch.
         SyncPreference.applyAtLaunch(in: .shared)
+        // Hang and crash reports from earlier runs arrive through this (issue #16).
+        DiagnosticReporter.shared.start()
 
         #if DEBUG
         // UI-test launch hook; DEBUG-gated, and App.init is main-thread so assumeIsolated is safe.
@@ -76,16 +78,17 @@ struct RecipeFinderApp: App {
         persistence.startTrackingOutsideChanges()
         recordICloudExports()
         let reloader = RemoteChangeReloader(
-            hasOutsideChanges: { persistence.takeOutsideChanges() },
+            hasOutsideChanges: { await persistence.takeOutsideChanges() },
             reloads: [
-                { RecipeStore.shared.load() },
-                { CollectionManager.shared.reload() },
-                { MealPlanningManager.shared.reload() },
-                { ShoppingListManager.shared.reload() },
-                { KitchenInventoryManager.shared.reload() },
-                { BadgeManager.shared.reload() },
-                { CookingStreakManager.shared.reload() },
-                { ProfileManager.shared.loadProfile() }
+                // Starts the recipe fetch and returns; the fetch itself runs off the main thread.
+                .init(name: "recipes") { RecipeStore.shared.load() },
+                .init(name: "collections") { CollectionManager.shared.reload() },
+                .init(name: "meal plans") { MealPlanningManager.shared.reload() },
+                .init(name: "shopping list") { ShoppingListManager.shared.reload() },
+                .init(name: "kitchen") { KitchenInventoryManager.shared.reload() },
+                .init(name: "badges") { BadgeManager.shared.reload() },
+                .init(name: "cooking streak") { CookingStreakManager.shared.reload() },
+                .init(name: "profile") { ProfileManager.shared.loadProfile() }
             ]
         )
         reloader.observe(persistence.container.persistentStoreCoordinator)
