@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: 🔴 history purged while sync is off — fixed: first cut counted a week of syncing launches, but an attached mirror may not export (signed out, iCloud full, offline); now purges only before the start of the last finished, successful CloudKit export)
+- ⚔️ [Assumption] Purging history before the last export's start may also remove CloudKit's own checkpoint transaction; if the mirror treats that as an expired token it resets and re-sends survivors, so deletes made since could come back — same risk as Apple's 7-day sample purge while idle; unverifiable in unit CI — cost if wrong: off-period deletes undone.
+  → Owner: device check (sync off, delete a recipe, wait >7 days or fake clock, sync on, confirm it stays deleted elsewhere).
+- ⚔️ [Assumption] One `.export` success event covers all history before its start; if a large backlog is split across events, the first success moves the mark early — cost if wrong: part of a bulk off-period delete lost.
+  → Owner: same device check with many deletes.
+- ⚔️ [Tests] The `eventChangedNotification` wiring in `RecipeFinderApp.recordICloudExports` has no test (needs CloudKit); the rule and mark helpers do.
+  → Accepted.
+
 ## 2026-11-14 (item pass: 🔴 photo removals while sync is off — rows now deleted locally so CloudKit sends the delete on re-attach)
 - ⚔️ [Time] A removal made with sync off reaches iCloud only if store history survives until sync is back on — `RecipeFinderApp.swift:37-42` purges history older than 7 days at every launch, sync on or off — fix lands with the Inbox 🔴 "store history purged while off" — cost if wrong: after > 7 days off the photo row stays in iCloud forever (as before this fix). Both reviewers raised it.
   → Owner:

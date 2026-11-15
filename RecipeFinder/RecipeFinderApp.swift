@@ -58,7 +58,7 @@ struct RecipeFinderApp: App {
                     startDate: event.startDate, endDate: event.endDate
                   )
             else { return }
-            MainActor.assumeIsolated { HistoryPurgeRule.recordExport(startedAt: sent, in: .shared) }
+            HistoryPurgeRule.recordExport(startedAt: sent, in: .shared)
         }
     }
 

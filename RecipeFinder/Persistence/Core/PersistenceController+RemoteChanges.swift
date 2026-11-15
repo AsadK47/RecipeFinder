@@ -43,9 +43,9 @@ extension PersistenceController {
 /// of it. A week matches Apple's CloudKit sample; `HistoryPurgeRule` says when the purge may run. After a week with no writes the launch purge can remove `takeOutsideChanges()`'s
 /// checkpoint (the latest transaction), costing one extra reload of every list — accepted.
 extension PersistenceController {
-    static let historyKeptFor: TimeInterval = 7 * 24 * 60 * 60
+    nonisolated static let historyKeptFor: TimeInterval = 7 * 24 * 60 * 60
 
-    static func historyPurgeCutoff(now: Date) -> Date {
+    nonisolated static func historyPurgeCutoff(now: Date) -> Date {
         now.addingTimeInterval(-historyKeptFor)
     }
 
