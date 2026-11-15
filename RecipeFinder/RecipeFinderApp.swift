@@ -8,7 +8,20 @@ private let logger = AppLogger.logger(category: "RecipeFinderApp")
 @main
 struct RecipeFinderApp: App {
 
+    /// Unit tests run inside this app; skipping its launch work and screens keeps them off CI's 3 CPUs.
+    /// UI tests launch the app as a separate process without these variables, so they get the real app.
+    private static let isHostingUnitTests: Bool = {
+        #if DEBUG
+        let env = ProcessInfo.processInfo.environment
+        return env["XCTestConfigurationFilePath"] != nil || env["XCTestBundlePath"] != nil
+            || env["XCTestSessionIdentifier"] != nil
+        #else
+        false
+        #endif
+    }()
+
     init() {
+        guard !Self.isHostingUnitTests else { return }
         // First, before anything opens the database: the Settings sync switch only takes effect at launch.
         SyncPreference.applyAtLaunch(in: .shared)
         // Hang and crash reports from earlier runs arrive through this (issue #16).
@@ -95,7 +108,11 @@ struct RecipeFinderApp: App {
     var body: some Scene {
         // Keep trivial: SwiftUI may evaluate this closure off-main, so all MainActor state stays in AppRootView — reading it here crashes (dispatch_assert_queue_fail).
         WindowGroup {
-            AppRootView()
+            if Self.isHostingUnitTests {
+                Color.clear
+            } else {
+                AppRootView()
+            }
         }
     }
     
