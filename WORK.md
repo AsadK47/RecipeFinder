@@ -1,22 +1,19 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
-## Request from the Xcode session (owner OK 2026-11-15) — do this first, then delete this section
-Any knowledge you hold that isn't in the repo (owner decisions from chat, claude.ai memory, device/TestFlight findings,
-preferences about how to work) → write it into its canonical doc: product → `docs/PRODUCT.md`, work items → `BACKLOG.md`,
-rules → `CLAUDE.md`, rationale → `WORK.md` Decisions. Push docs-only to `main`. Nothing to add → just delete this section.
-
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — lands as soon as the owner deploys the CloudKit Production schema (model 17 photos + model 18 deletedAt).
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
 - Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - Bug: ✅ #16 freeze fix landed (aed7309). Recently deleted waits for the owner to deploy the CloudKit Production schema.
+- CI: `agent/nightly-timeout` (362fcf0) — nightly/dispatch job timeout 30→75 min; dispatched full run on the branch to prove UI tests + coverage finish. Lands alone (no app code) once green.
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
+- **Nightly timeout** (Inbox 🐞): timeout is an expression — 75 min for schedule/dispatch, 30 for pushes (pushes skip UI tests, so a hang still fails fast). Rejected: splitting UI tests into a second job (second build or artifact hand-off ≈ +7 min and more YAML for the same result). **Pre-mortem:** (1) 75 still too short → the dispatched branch run must finish; (2) push runs lose their fast-fail → push run still shows 30; (3) coverage still fails → dispatched run publishes coverage.txt.
 - **Endless discovery** (`DiscoveryPool` ranks, `DiscoveryPager` deals, `DiscoveryFeedModel` pages, `RecipeBrowse`
   decides browse vs results): browsing = nothing typed, filtered or re-sorted → Recently cooked row, a 6-card library
   preview (own recipes + favourites first, then A–Z) + "See all N recipes", then chapters forever. Why the preview: all

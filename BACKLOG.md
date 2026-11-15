@@ -632,7 +632,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 - 🐞 CI: dispatched UI-test runs now exceed the 30-min job timeout (2026-11-15: both badge runs cancelled mid
   `testCaptureTodayWeek`, coverage step then fails on the incomplete xcresult). Split UI tests into their own job or
-  raise the timeout; check the nightly run too.
+  raise the timeout; check the nightly run too. — 🚧 builder agent 2026-11-15
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
