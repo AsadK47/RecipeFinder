@@ -1,12 +1,26 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. History purge rule merged (8be3cb1..f5082ce). Data safety 2/4 still claimed 🚧.
+`agent/erased-photo-files` — Inbox 🔴 photo files left on other devices after a Reset elsewhere. New
+`Persistence/Core/ErasedPhotoCleanup.swift` (+ tests), hooked from `RecipeStore.loadRecipes` →
+`clearPhotosErasedElsewhere()` (RecipeStore+RemoteImages). Waiting on Build & Test.
 
 ## Next action
-Next Inbox 🔴: other devices keep recipe photo files after a Reset elsewhere (sync on).
+Check the branch's Build & Test; fix; reviewers + challenger; ff main; tick Inbox line; Log.
 
 ## Decisions (why)
+- **Photo files after a Reset elsewhere** (`ErasedPhotoCleanup`): with sync on, after each load: remember the store
+  file once it holds photo rows (`syncedStoreFile.recipePhotos`); when that same file holds **zero photo rows and no
+  recipe shows an own photo** (throwing fetch, never the swallowing `fetchRecipesAsync`), delete own photo files
+  (`syncablePath` names) written before the check, then forget the file. Rejected: "store has no recipes" — Reset
+  re-seeds samples at once, so other devices may never see it empty; "file without a row" (4b-2a). Kept: web copies
+  (re-downloadable caches). Accepted: an iCloud sign-out purge of the same file also clears (as for lists); deleting
+  every own-photo recipe elsewhere one by one clears too (correct: they're orphans). Queued on the `photoSync` chain so
+  an in-flight pass can't write a file back after (CHALLENGES 14 Nov). **Pre-mortem:** (1) recovery/first import
+  wipes photos → `anEmptyStoreInANewFileKeepsThePhotos`, `anUnknownStoreFileKeepsThePhotos`; (2) a photo still in use
+  or just taken deleted → `aRecipeThatStillShowsAPhotoKeepsThePhotos`, `aPhotoARecipeShowsIsKept`,
+  `aPhotoSavedAfterTheCheckIsKept`; (3) failed read counts as erased → `anUnreadableStoreKeepsThePhotos`,
+  `storeView` throws.
 - **History purge while sync is off**: purge only before `min(now − 7d, start of last finished successful CloudKit
   export)` once sync has ever been on (`iCloudLastExportStart`, recorded from `eventChangedNotification` while
   syncing); never-synced devices purge at 7 days as before. First cut (a week of syncing *launches*) rejected by the

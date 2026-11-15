@@ -61,6 +61,40 @@ extension RecipeStore {
         }
     }
 
+    /// With sync on, deletes the cook's photo files once the library they belonged to was erased on another device
+    /// (`ErasedPhotoCleanup`). Queued with the photo passes so an earlier pass can't write a file back after it.
+    func clearPhotosErasedElsewhere(storage: LocalStore = .shared) {
+        guard persistence.isSyncing,
+              let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let previous = photoSync
+        let persistence = self.persistence
+        photoSync = Task {
+            await previous?.value
+            let cutoff = Date()
+            let store = await persistence.photoUseInSyncedStore()
+            let step = ErasedPhotoCleanup.step(
+                store: store, storeFile: persistence.storeFileID,
+                remembered: storage.string(forKey: ErasedPhotoCleanup.rememberedFileKey)
+            )
+            switch step {
+            case .remember(let storeFile):
+                storage.set(storeFile, forKey: ErasedPhotoCleanup.rememberedFileKey)
+            case .clear:
+                storage.removeObject(forKey: ErasedPhotoCleanup.rememberedFileKey)
+                do {
+                    let removed = try ErasedPhotoCleanup.removeFiles(
+                        in: documents, keeping: store?.referencedPaths ?? [], modifiedBefore: cutoff
+                    )
+                    Self.logger.info("iCloud photos: library erased on another device, \(removed) photo files removed")
+                } catch {
+                    Self.logger.error("❌ Couldn't remove photos erased on another device: \(error.localizedDescription)")
+                }
+            case .nothing:
+                break
+            }
+        }
+    }
+
     private func removePhotoRowsWhileSyncIsOff(_ removed: Set<String>, keeping paths: Set<String>) {
         guard !removed.isEmpty else { return }
         let previous = photoSync

@@ -104,6 +104,7 @@ final class RecipeStore: RecipeStoring {
             recipes = await refreshStaleSamples(in: deduped)
             isLoading = false
             keepWebPictures(of: recipes)
+            clearPhotosErasedElsewhere()
             syncPhotosWithICloud()
         }
     }
