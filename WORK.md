@@ -10,7 +10,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Data: `agent/recently-deleted` — Data safety 4/4 lean (model 18 OK). (Photo files after Reset landed by another session, e67da6f.)
 - Cook: `agent/cooking-flow-ticks` — Cooking flow slice 1 (ingredient ticking).
 - Bug (first): `agent/freeze-badge-reveal` — issue #16, iPhone froze on the Link Master badge reveal right after a web import with sync on; + MetricKit hang reports.
-- Privacy: `agent/privacy-recent-searches` — Inbox 🟡 §5.1 wording + policy audit; website text goes to the website session.
+- Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
