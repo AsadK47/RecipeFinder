@@ -27,9 +27,9 @@ import Foundation
 
     @Test(arguments: [(0.0, false), (29.9, false), (30.1, true), (45.0, true)])
     func aRecipeIsKeptForThirtyDays(daysAgo: Double, expired: Bool) {
-        let item = DeletedRecipe(recipe: Self.recipe("Pie"), deletedAt: Self.monday)
+        let now = Self.monday.addingTimeInterval(daysAgo * Self.day)
 
-        #expect(RecentlyDeleted.isExpired(item, now: Self.monday.addingTimeInterval(daysAgo * Self.day)) == expired)
+        #expect(RecentlyDeleted.mayPurge(deletedAt: Self.monday, now: now, sync: .neverSynced) == expired)
     }
 
     @Test(arguments: [(-2.0, 30, "30 days left"), (0.0, 30, "30 days left"), (0.5, 30, "30 days left"), (29.5, 1, "1 day left"),
@@ -59,28 +59,29 @@ import Foundation
 
     // MARK: - When a device may remove it for good
 
-    private static let afterThirtyOne = monday.addingTimeInterval(31 * day)
-    private static let afterTwentyNine = monday.addingTimeInterval(29 * day)
-    private static let exportAfterStamp = monday.addingTimeInterval(day)
-    private static let exportBeforeStamp = monday.addingTimeInterval(-day)
-
+    /// (ever synced, last export start in days after the stamp or nil, import seen this launch, days since the stamp,
+    /// may purge). Plain numbers: arguments are built outside the suite's main actor.
     @Test(arguments: [
         // Never synced: 30 days is enough.
-        (RecentlyDeleted.SyncState.neverSynced, afterThirtyOne, true),
-        (RecentlyDeleted.SyncState.neverSynced, afterTwentyNine, false),
+        (false, nil, false, 31.0, true),
+        (false, nil, false, 29.0, false),
         // Synced: also needs the stamp sent and this launch's import in.
-        (RecentlyDeleted.SyncState(everSynced: true, lastExportStart: exportAfterStamp, importSeenThisLaunch: true),
-         afterThirtyOne, true),
-        (RecentlyDeleted.SyncState(everSynced: true, lastExportStart: exportAfterStamp, importSeenThisLaunch: false),
-         afterThirtyOne, false),
-        (RecentlyDeleted.SyncState(everSynced: true, lastExportStart: exportBeforeStamp, importSeenThisLaunch: true),
-         afterThirtyOne, false),
-        (RecentlyDeleted.SyncState(everSynced: true, lastExportStart: nil, importSeenThisLaunch: true),
-         afterThirtyOne, false),
-        (RecentlyDeleted.SyncState(everSynced: true, lastExportStart: exportAfterStamp, importSeenThisLaunch: true),
-         afterTwentyNine, false),
-    ] as [(RecentlyDeleted.SyncState, Date, Bool)])
-    func aRecipeGoesOnlyOnceEveryDeviceHasHadItsThirtyDays(sync: RecentlyDeleted.SyncState, now: Date, purged: Bool) {
+        (true, 1.0, true, 31.0, true),
+        (true, 1.0, false, 31.0, false),
+        (true, -1.0, true, 31.0, false),
+        (true, nil, true, 31.0, false),
+        (true, 1.0, true, 29.0, false),
+    ] as [(Bool, Double?, Bool, Double, Bool)])
+    func aRecipeGoesOnlyOnceEveryDeviceHasHadItsThirtyDays(
+        everSynced: Bool, exportDays: Double?, importSeen: Bool, daysSince: Double, purged: Bool
+    ) {
+        let sync = RecentlyDeleted.SyncState(
+            everSynced: everSynced,
+            lastExportStart: exportDays.map { Self.monday.addingTimeInterval($0 * Self.day) },
+            importSeenThisLaunch: importSeen
+        )
+        let now = Self.monday.addingTimeInterval(daysSince * Self.day)
+
         #expect(RecentlyDeleted.mayPurge(deletedAt: Self.monday, now: now, sync: sync) == purged)
     }
 
