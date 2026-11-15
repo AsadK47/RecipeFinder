@@ -153,7 +153,7 @@ are merged into a newer item or parked — never start them; their text stays as
   steps (several named timers per the upgrade item), resume at the same step after leaving, last step → Made it.
   One-time pulse on the first circle; no hint text. *Measure:* cooks started that reach Made it. *Done when:*
   step↔ingredient matching, resume state and timers tested; UI test ticks a row and steps through; screenshots; CI green.
-- [ ] **Made-it moment** — 🚧 builder agent 2026-11-15 — (Phase 1 · Cook→Remember). The simple core of Play 3/7 (`docs/PLAY.md` §7) without Spoons,
+- [x] **Made-it moment** ✅ e48fd5c — (Phase 1 · Cook→Remember). The simple core of Play 3/7 (`docs/PLAY.md` §7) without Spoons,
   levels or quests: a short celebration (cook #N, streak, stars, "add your photo"), distinct haptic, confetti, Reduce
   Motion respected; nudges a photo for My Cookbook. *Measure:* share of cooks with a rating/photo. *Done when:* summary
   content logic tested, screenshot, CI green.
@@ -653,13 +653,13 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
-- ✅ 🟡 Link import uses `URLSession.shared` (`Services/HTMLFetcher.swift:12`) — cookies + response cache persist and Reset doesn't clear them; use an ephemeral session like `RemoteImageFetcher` (privacy review 2026-11-15).
 - 🟡 Reset leaves `StoreBackups/` safety copies and `.corrupt-*` store copies (`PersistenceController.swift:150-172`, unbounded, not excluded from device backup) — policy §4.3 now says so; better: Reset removes them, cap/exclude corrupt copies, then update §4.2/4.3 + Help.
 - 🟡 Privacy policy §2.2/§6.2 "only" wording breaks the copy rule (Privacy lane; legal text).
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-15 · Made-it moment · e48fd5c · The Made it sheet now shows the dish picture popping in with a tick, "First time making X!" / "X · made N times", "N cooks this week", and "Add a photo to remember this one" when the dish has no photo yet; own haptic + confetti fire from the sheet once it lands (before, they fired behind cooking mode's closing cover); Reduce Motion drops confetti/pop; VoiceOver hears one summary; opens full height. New MadeItMoment.swift + MadeItMomentTests.swift registered in pbxproj by hand; screenshot 41-made-it (named to sort last). Not done: on-device "share of cooks with a rating/photo" counter (for My Cookbook). On phone: open a recipe → Mark as Cooked (or finish cooking mode) · review: 1 reviewer + challenger, 0 code bugs; 5 fixed (VoiceOver timing — both agreed; detent hid the nudge; pop lost in slide-up; screenshot order; tests that couldn't fail), 1 CI cycle (announcement full stop) · looked at: 41-made-it
 - 2026-11-15 · 🧹 Inbox: delete unused UnsplashClient · c6cee26 · Removed `Services/UnsplashClient.swift`, its 4 pbxproj entries and the empty `UnsplashAccessKey` Info.plist key (owner rejected Unsplash 2026-11-12); policy wording half kept as its own Inbox line. On phone: nothing visible — app runs as before · review: 1 reviewer + challenger, 0 findings · looked at: n/a (no UI)
 - 2026-11-15 · 🟡 Inbox: flaky discovery perf budget · 0a41340 · Already fixed: the 509 ms run (43694034350, agent/ci-10min @3fd94b0) predates the best-of-three timing in 0a41340; main green since. Closed, no code change · review: n/a · looked at: n/a
 - 2026-11-15 · 🐞 Inbox: View-all badge UI test red · 732ec22 · Root cause from the failing run's accessibility tree: Head Chef closed and Me opened, then a queued "Welcome Aboard!" reveal popped on top (profile unlocked it without `silent`, against the "always silent" rule). `BadgeManager.unlockBadge` never queues Welcome Aboard; new BadgeManagerTests case seen red (3cbacec) then green; original unfiltered UI test green in a full UI run. On phone: fresh install → no Welcome Aboard pop-up; cook once → Head Chef → View all badges → lands on Me, nothing else pops · review: challenger (rejected my first test-only fix as hiding this bug) + 1 reviewer, 1 test check added · looked at: n/a (no layout change)
