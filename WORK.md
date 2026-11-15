@@ -14,10 +14,20 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook→Remember: ✅ Made-it moment landed e48fd5c (builder 2026-11-15). Next Phase 1 item after Cooking flow: My Cookbook. Leftover branch agent/made-it-moment (auto-cleanup).
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
+- Inbox 🟡 Reset store copies: 🚧 `agent/reset-store-copies` (builder 2026-11-15) — Reset removes StoreBackups/ + `.corrupt-*`; waiting on CI + reviews.
+
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
+- **Reset removes store copies** (`StoreBackup.removeAllCopies`, `PersistenceController.removeStoreCopies`): Reset
+  erases the library, so its safety (`StoreBackups/store-*`) and set-aside (`<store>.corrupt-*`) copies go too —
+  only when the recipes really went (same gate as photos), every copy tried, first error logged. Other files left.
+  Rejected: capping/excluding `.corrupt-*` copies from device backup — each is the only copy of a library that
+  wouldn't open; rare, and dropping it from backups could lose it. Policy 4.3 + Help updated. **Pre-mortem:**
+  (1) deletes the live store → `resetRemovesSetAsideCopiesButKeepsTheLiveStore` + upgrade test keeps recipes;
+  (2) name drift between recovery and Reset → `recoverySetsCopiesAsideUnderTheNameResetRemoves`; (3) one locked
+  copy stops the rest → `oneCopyThatWontGoStillLetsTheRestGoAndReportsIt`.
 - **Made-it moment** (`MadeItMoment` pure copy/motion rules; `MadeItSummary` moved beside it): the existing Made it
   sheet already had cook #N, streak, stars and photo buttons, so this adds what was missing rather than a new screen:
   the dish picture (hero/art) popping in with a tick, "First time making X!" / "X · made N times", "N cooks this week"

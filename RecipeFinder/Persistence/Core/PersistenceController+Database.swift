@@ -32,4 +32,13 @@ extension PersistenceController {
             return false
         }
     }
+
+    /// Settings → Reset: the store's safety copies and set-aside copies (`StoreBackup.removeAllCopies`), so the erased
+    /// library doesn't stay on the phone in them. An in-memory store has none.
+    func removeStoreCopies() throws {
+        guard let storeURL = container.persistentStoreDescriptions.first?.url, storeURL.isFileURL,
+              storeURL.path != "/dev/null"
+        else { return }
+        try StoreBackup.removeAllCopies(storeURL: storeURL, backupDirectory: backupDirectory)
+    }
 }

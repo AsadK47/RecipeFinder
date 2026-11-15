@@ -6,6 +6,8 @@ import Foundation
 enum StoreBackup {
     static let folderPrefix = "store-"
     static let keepCount = 3
+    /// Recovery moves a store it can't open aside as `<store file>.corrupt-<seconds>` (+ sidecars).
+    static let setAsideMarker = ".corrupt-"
     private static let sidecars = ["", "-wal", "-shm"]
 
     /// Application Support/StoreBackups — kept out of Caches so iOS never purges it.
@@ -72,6 +74,26 @@ enum StoreBackup {
         values.isExcludedFromBackup = true
         var url = directory
         try url.setResourceValues(values)
+    }
+
+    /// Settings → Reset: removes every safety copy in `backupDirectory` and every set-aside copy of the store beside
+    /// `storeURL`, so an erased library leaves no old copies of itself on the phone. Other files are left alone. Tries
+    /// every copy, then throws the first failure.
+    static func removeAllCopies(storeURL: URL, backupDirectory: URL?, fileManager: FileManager = .default) throws {
+        var firstError: Error?
+        func remove(names prefix: String, in folder: URL) throws {
+            guard fileManager.fileExists(atPath: folder.path) else { return }
+            for name in try fileManager.contentsOfDirectory(atPath: folder.path) where name.hasPrefix(prefix) {
+                do {
+                    try fileManager.removeItem(at: folder.appendingPathComponent(name))
+                } catch {
+                    if firstError == nil { firstError = error }
+                }
+            }
+        }
+        if let backupDirectory { try remove(names: folderPrefix, in: backupDirectory) }
+        try remove(names: storeURL.lastPathComponent + setAsideMarker, in: storeURL.deletingLastPathComponent())
+        if let firstError { throw firstError }
     }
 
     /// `store-<ms since 1970, zero-padded>-<random>`: names sort in time order, and two copies in the same

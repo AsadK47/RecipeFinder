@@ -227,6 +227,99 @@ import Foundation
         #expect(!FileManager.default.fileExists(atPath: backups.path))
     }
 
+    // MARK: - Reset removes the copies
+
+    private func storeFolderContents() throws -> [String] {
+        try FileManager.default.contentsOfDirectory(atPath: storeURL.deletingLastPathComponent().path).sorted()
+    }
+
+    private func writeSetAsideCopy(_ name: String) throws {
+        try Data("old".utf8).write(to: storeURL.deletingLastPathComponent().appendingPathComponent(name))
+    }
+
+    @Test func resetRemovesEverySafetyCopyAndLeavesOtherFiles() throws {
+        defer { cleanUp() }
+        try writeStoreFiles()
+        for second in 0..<3 {
+            try StoreBackup.backUp(storeURL: storeURL, into: backups, now: Date(timeIntervalSince1970: Double(second)))
+        }
+        let note = backups.appendingPathComponent("keep-me.txt")
+        try Data("hi".utf8).write(to: note)
+
+        try StoreBackup.removeAllCopies(storeURL: storeURL, backupDirectory: backups)
+
+        #expect(try backupFolders().isEmpty)
+        #expect(FileManager.default.fileExists(atPath: note.path))
+    }
+
+    @Test func resetRemovesSetAsideCopiesButKeepsTheLiveStore() throws {
+        defer { cleanUp() }
+        try writeStoreFiles()
+        for name in ["RecipeModel.sqlite.corrupt-100", "RecipeModel.sqlite.corrupt-100-wal", "RecipeModel.sqlite.corrupt-200-shm",
+                     "Other.sqlite.corrupt-100"] {
+            try writeSetAsideCopy(name)
+        }
+
+        try StoreBackup.removeAllCopies(storeURL: storeURL, backupDirectory: backups)
+
+        #expect(try storeFolderContents() == ["Other.sqlite.corrupt-100", "RecipeModel.sqlite", "RecipeModel.sqlite-shm", "RecipeModel.sqlite-wal"])
+    }
+
+    @Test func resetWithNoCopiesDoesNothing() throws {
+        defer { cleanUp() }
+
+        try StoreBackup.removeAllCopies(storeURL: storeURL, backupDirectory: backups)
+        try StoreBackup.removeAllCopies(storeURL: storeURL, backupDirectory: nil)
+
+        #expect(!FileManager.default.fileExists(atPath: backups.path))
+    }
+
+    @Test func oneCopyThatWontGoStillLetsTheRestGoAndReportsIt() throws {
+        defer { cleanUp() }
+        try writeStoreFiles()
+        try writeSetAsideCopy("RecipeModel.sqlite.corrupt-100")
+        // A safety copy folder whose contents can't be removed (locked parent) fails; the set-aside copy still goes.
+        let folder = try #require(try StoreBackup.backUp(storeURL: storeURL, into: backups))
+        try FileManager.default.setAttributes([.posixPermissions: 0o500], ofItemAtPath: folder.path)
+        defer { try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: folder.path) }
+
+        #expect(throws: (any Error).self) {
+            try StoreBackup.removeAllCopies(storeURL: storeURL, backupDirectory: backups)
+        }
+
+        #expect(try !storeFolderContents().contains("RecipeModel.sqlite.corrupt-100"))
+    }
+
+    @Test func recoverySetsCopiesAsideUnderTheNameResetRemoves() throws {
+        defer { cleanUp() }
+        try writeStoreFiles([""])   // not a database: opening it fails and recovery moves it aside
+
+        let controller = PersistenceController(storeURL: storeURL, backupDirectory: backups)
+        #expect(try storeFolderContents().contains { $0.hasPrefix("RecipeModel.sqlite" + StoreBackup.setAsideMarker) })
+
+        try controller.removeStoreCopies()
+
+        #expect(try !storeFolderContents().contains { $0.contains(StoreBackup.setAsideMarker) })
+    }
+
+    @Test func resetAfterAnUpgradeRemovesTheCopyAndKeepsTheRecipes() throws {
+        defer { cleanUp() }
+        let id = try writeStore(with: try olderModel(), recipeName: "Gran's Stew")
+        let controller = PersistenceController(storeURL: storeURL, backupDirectory: backups)
+        #expect(try backupFolders().count == 1)
+
+        try controller.removeStoreCopies()
+
+        #expect(try backupFolders().isEmpty)
+        let request = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        #expect(try controller.container.viewContext.fetch(request).count == 1)
+    }
+
+    @Test func anInMemoryStoreHasNoCopiesToRemove() throws {
+        try PersistenceController(inMemory: true).removeStoreCopies()
+    }
+
     // MARK: - Helpers
 
     private func momd() throws -> URL {

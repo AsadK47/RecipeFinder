@@ -12,6 +12,8 @@ final class PersistenceController {
     )
 
     let container: NSPersistentContainer
+    /// Where store safety copies go (`StoreBackup`); nil = none (tests, previews).
+    let backupDirectory: URL?
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
     /// Where `takeOutsideChanges()` last stopped reading the store's history (`PersistenceController+RemoteChanges`).
@@ -67,6 +69,7 @@ final class PersistenceController {
     /// `syncOn`: mirror the store to the cook's iCloud (`CloudSyncStore`); read once at launch. Never in tests.
     init(inMemory: Bool = false, storeURL: URL? = nil, backupDirectory: URL? = nil, syncOn: Bool = false) {
         container = NSPersistentCloudKitContainer(name: "RecipeModel")
+        self.backupDirectory = backupDirectory
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         } else if let storeURL {
@@ -152,7 +155,7 @@ final class PersistenceController {
         }
 
         // Never destroy data: move the unreadable store (+ -wal/-shm sidecars) aside rather than delete, so a failed migration is recoverable. Only replace once originals are preserved.
-        let backupSuffix = ".corrupt-\(Int(Date().timeIntervalSince1970))"
+        let backupSuffix = StoreBackup.setAsideMarker + "\(Int(Date().timeIntervalSince1970))"
         var preservedMainStore = false
         for sidecar in ["", "-wal", "-shm"] {
             let source = URL(fileURLWithPath: storeURL.path + sidecar)

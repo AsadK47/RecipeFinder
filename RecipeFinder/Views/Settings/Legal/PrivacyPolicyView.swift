@@ -5,6 +5,7 @@ import SwiftUI
 // Updated 2026-11-14 (owner OK in BACKLOG, Data safety 2/4): Section 7 describes the opt-in iCloud sync.
 // Updated 2026-11-15 (BACKLOG Inbox): 4.2 lists what stays on the Device (recent searches, update safety copies);
 // 5.1/5.2 describe the web search session and kept copies of web pictures.
+// Updated 2026-11-15 (BACKLOG Inbox): 4.3 Reset also removes the safety and set-aside database copies.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -49,7 +50,7 @@ struct PrivacyPolicyView: View {
                 LegalBulletPoint("Up to three safety copies of your recipe database, made before an app update changes how it is stored, to help recover your recipes if an update goes wrong. Newer copies replace older ones after later updates, and they are kept out of device backups.")
                 LegalBulletPoint("If your recipe database can't be opened, a copy of it set aside so it can be recovered")
 
-                BodyText("4.3 Reset (Settings > Data Management) clears the information in Section 4.1, your recent web searches, the copies of website pictures and your preferences (your iCloud sync choice is kept), and restores the sample recipes. The safety copies and set-aside database copies stay until you uninstall the Application.")
+                BodyText("4.3 Reset (Settings > Data Management) clears the information in Section 4.1, your recent web searches, the copies of website pictures and your preferences (your iCloud sync choice is kept), and restores the sample recipes. It also removes the safety copies and any set-aside database copies.")
 
                 BodyText("4.4 Your Device's own backups (iCloud Backup or a computer) include this information, except the safety copies, and are managed by Apple or your computer.")
             }

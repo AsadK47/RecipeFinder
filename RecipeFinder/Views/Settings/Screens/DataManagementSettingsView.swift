@@ -298,12 +298,18 @@ struct DataManagementSettingsView: View {
         let recipesErased = PersistenceController.shared.deleteAllRecipes()
         LocalStore.shared.clearAll(keeping: SyncPreference.keptThroughReset)
         // Photo rows went with the recipes above; the files they mirrored (and kept web copies) go too — but only if
-        // the recipes really went, or the cook would keep recipes whose photos are gone.
+        // the recipes really went, or the cook would keep recipes whose photos are gone. Same for store copies.
         if recipesErased {
             do {
                 try RecipeImageStore().deleteAllPhotos()
             } catch {
                 resetLogger.error("❌ Reset couldn't delete recipe photos: \(error.localizedDescription)")
+            }
+            // The store's safety/set-aside copies hold the library just erased.
+            do {
+                try PersistenceController.shared.removeStoreCopies()
+            } catch {
+                resetLogger.error("❌ Reset couldn't delete store safety copies: \(error.localizedDescription)")
             }
         }
 
