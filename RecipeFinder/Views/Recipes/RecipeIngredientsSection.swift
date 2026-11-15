@@ -23,6 +23,8 @@ struct RecipeIngredientsSection: View {
     var onStartCooking: (() -> Void)? = nil
     /// Pulses the first circle (shows rows can be ticked) until the cook has ticked a row once.
     var hasTickedBefore: Bool = true
+    var timesPulsed: Int = IngredientChecklist.maxPulses
+    var onPulsed: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -222,7 +224,9 @@ struct RecipeIngredientsSection: View {
             }
             // Stable entry ids let SwiftUI slide a ticked row down into "Got it" instead of rebuilding the list.
             let substituteIDs = ingredientsWithSubstitutes
-            let pulseIndex = IngredientChecklist.pulseIndex(count: ingredients.count, hasTickedBefore: hasTickedBefore)
+            let pulseIndex = IngredientChecklist.pulseIndex(
+                count: ingredients.count, hasTickedBefore: hasTickedBefore, timesPulsed: timesPulsed
+            )
             ForEach(IngredientChecklist.entries(sections: ingredients.map(\.section), ticked: ingredientsState)) { entry in
                 switch entry {
                 case .groupTitle(let title, _):
@@ -242,7 +246,8 @@ struct RecipeIngredientsSection: View {
                             onTapQuantity: { onEditIngredient(index) },
                             onSubstitute: (substituteIDs.contains(ingredient.id) && onSubstitute != nil)
                                 ? { onSubstitute?(index) } : nil,
-                            pulses: pulseIndex == index
+                            pulses: pulseIndex == index,
+                            onPulsed: onPulsed
                         )
                     }
                 }

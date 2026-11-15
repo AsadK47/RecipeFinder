@@ -81,8 +81,16 @@ struct IngredientChecklistTests {
 
     @Test("The first circle pulses until the cook has ticked a row once")
     func pulseUntilFirstTick() {
-        #expect(IngredientChecklist.pulseIndex(count: 4, hasTickedBefore: false) == 0)
-        #expect(IngredientChecklist.pulseIndex(count: 4, hasTickedBefore: true) == nil)
-        #expect(IngredientChecklist.pulseIndex(count: 0, hasTickedBefore: false) == nil)
+        #expect(IngredientChecklist.pulseIndex(count: 4, hasTickedBefore: false, timesPulsed: 0) == 0)
+        #expect(IngredientChecklist.pulseIndex(count: 4, hasTickedBefore: true, timesPulsed: 0) == nil)
+        #expect(IngredientChecklist.pulseIndex(count: 0, hasTickedBefore: false, timesPulsed: 0) == nil)
+    }
+
+    @Test("The pulse stops after a few visits for a cook who never ticks")
+    func pulseStopsAfterAFewVisits() {
+        let last = IngredientChecklist.maxPulses - 1
+        #expect(IngredientChecklist.pulseIndex(count: 4, hasTickedBefore: false, timesPulsed: last) == 0)
+        #expect(IngredientChecklist.pulseIndex(count: 4, hasTickedBefore: false,
+                                                timesPulsed: IngredientChecklist.maxPulses) == nil)
     }
 }

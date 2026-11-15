@@ -391,7 +391,9 @@ extension RecipeDetailView {
             onEditIngredients: { beginEdit(section: .ingredients) },
             onEstimateAmounts: estimateAmountsAction,
             onStartCooking: { showCookingMode = true },
-            hasTickedBefore: hasTickedIngredient
+            hasTickedBefore: hasTickedIngredient,
+            timesPulsed: ingredientPulseCount,
+            onPulsed: { ingredientPulseCount += 1 }
         )
         .sheet(item: $amountEstimateTarget) { target in
             AmountEstimateReviewSheet(

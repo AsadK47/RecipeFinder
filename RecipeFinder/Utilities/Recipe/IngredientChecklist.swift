@@ -54,8 +54,13 @@ enum IngredientChecklist {
         count > 0 && ticked.count >= count && ticked.prefix(count).allSatisfy { $0 }
     }
 
-    /// The row whose circle pulses to show it can be tapped: the first one, until the cook has ticked a row once.
-    static func pulseIndex(count: Int, hasTickedBefore: Bool) -> Int? {
-        !hasTickedBefore && count > 0 ? 0 : nil
+    /// How many recipe visits the pulse plays on at most. It can play while the ingredients are scrolled out of
+    /// view, so it isn't spent on the first visit — but it stops for a cook who never ticks.
+    static let maxPulses = 3
+
+    /// The row whose circle pulses to show it can be tapped: the first one, until the cook has ticked a row once
+    /// or it has played `maxPulses` times.
+    static func pulseIndex(count: Int, hasTickedBefore: Bool, timesPulsed: Int) -> Int? {
+        !hasTickedBefore && timesPulsed < maxPulses && count > 0 ? 0 : nil
     }
 }

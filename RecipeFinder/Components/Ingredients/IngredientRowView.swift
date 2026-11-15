@@ -13,6 +13,7 @@ struct IngredientRowView: View {
 
     /// Pulses the circle once on appear, to show the row can be ticked (instead of hint text).
     var pulses: Bool = false
+    var onPulsed: () -> Void = {}
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var pulseTrigger = 0
@@ -66,6 +67,7 @@ struct IngredientRowView: View {
                 return  // left the screen before the pulse; it plays next time
             }
             pulseTrigger += 1
+            onPulsed()
         }
     }
 
@@ -132,8 +134,9 @@ struct IngredientRowView: View {
 
     @ViewBuilder
     private func trailingButtons(amount: (quantity: String?, unit: String?)) -> some View {
-        if Self.showsAddAmount(for: ingredient, amount: amount, canEdit: onTapQuantity != nil) {
-            // Amount-less rows have no amount to long-press for; keep a visible way into the editor.
+        // Hidden once ticked: the cook already has it, and "Got it" reads calmer without editing prompts.
+        if !isChecked, Self.showsAddAmount(for: ingredient, amount: amount, canEdit: onTapQuantity != nil) {
+            // Amount-less rows keep a visible way into the editor beside the long-press menu.
             Button(action: { onTapQuantity?() }) {
                 Label("Add amount", systemImage: "plus.circle")
                     .font(.caption.weight(.semibold))
