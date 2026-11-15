@@ -653,7 +653,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
-- 🟡 Reset leaves `StoreBackups/` safety copies and `.corrupt-*` store copies (`PersistenceController.swift:150-172`, unbounded, not excluded from device backup) — policy §4.3 now says so; better: Reset removes them, cap/exclude corrupt copies, then update §4.2/4.3 + Help.
+- 🟡 Reset leaves `StoreBackups/` safety copies and `.corrupt-*` store copies — 🚧 builder agent 2026-11-15 — (`PersistenceController.swift:150-172`, unbounded, not excluded from device backup) — policy §4.3 now says so; better: Reset removes them, cap/exclude corrupt copies, then update §4.2/4.3 + Help.
 - 🟡 Privacy policy §2.2/§6.2 "only" wording breaks the copy rule (Privacy lane; legal text).
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
