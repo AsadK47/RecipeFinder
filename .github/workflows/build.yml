@@ -32,7 +32,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # The nightly gets its own group, so its long UI-test run never holds a push to main in the queue.
+  group: ${{ github.workflow }}-${{ github.ref }}${{ github.event_name == 'schedule' && '-nightly' || '' }}
   # Pushes to main queue rather than cancel each other, so every commit gets tested and the build cache gets
   # saved; a newer push to an agent branch or PR cancels the now-outdated run.
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
