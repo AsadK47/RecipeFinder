@@ -72,6 +72,8 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 ## 2026-11-15 (bug pass: 🐞 #16 froze on the badge reveal after a web import with sync just on — history read + recipe-copy merge moved off the main thread)
 - ⚔️ [Assumption] The freeze was main-thread Core Data work after each iCloud import burst; not proven (no device log). Fix may be incomplete, follow-up = MirroredSnapshot loads off main, or skip reloads until the CloudKit import Event ends, if timing/MetricKit shows them (the other 7 list reloads and viewContext's automatic merges still run on main; slow steps now log under "Diagnostics").
+- ⚔️ [Data] Optimistic locking (`NSMergePolicy.error`) did not fire in CI: an edit saved mid-merge to a field the merge writes (cook count, last cooked, favourite, rating, photos) can still be overwritten — only duplicated built-in recipes, only during the first sync, a few ms. Follow-up: write only differing merge fields after re-reading the row just before save.
+  → Accepted for now (coordinator 2026-11-15); Inbox follow-up.
 - ⚔️ [Would the tests notice] `mergeSyncedRecipeCopies`' own wrapper (sync guard, one pass at a time, background context) is untested: it needs a store mirrored to iCloud. Tests drive `mergeRecipeCopies` on a background context instead, including an edit saved mid-merge.
 - ⚔️ [Time] `RecipeStore.load` now awaits the merge, so a recipe saved while a load runs can drop out of the list until the next load (the store keeps it). Not fixed: needs a "saved since this load's fetch" merge.
 
