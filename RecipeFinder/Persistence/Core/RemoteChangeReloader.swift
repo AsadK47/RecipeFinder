@@ -3,18 +3,19 @@ import Foundation
 
 /// Re-reads every list after another device's edits land in the store (iCloud sync, Data safety 2/4), so the cook
 /// sees them without relaunching. A burst of store changes (an iCloud import arrives in many saves) waits `delay`
-/// and reloads once; changes this app made itself reload nothing.
+/// and reloads once; changes this app made itself reload nothing. The check is async so reading the store's history
+/// never holds the main thread (a first iCloud import is thousands of transactions; issue #16).
 @MainActor
 final class RemoteChangeReloader {
     private let delay: Duration
-    private let hasOutsideChanges: @MainActor () -> Bool
+    private let hasOutsideChanges: @MainActor () async -> Bool
     private let reloads: [@MainActor () async -> Void]
     private var observer: (any NSObjectProtocol)?
     private var pending: Task<Void, Never>?
 
     init(
         delay: Duration = .seconds(1),
-        hasOutsideChanges: @escaping @MainActor () -> Bool,
+        hasOutsideChanges: @escaping @MainActor () async -> Bool,
         reloads: [@MainActor () async -> Void]
     ) {
         self.delay = delay
@@ -42,7 +43,7 @@ final class RemoteChangeReloader {
             }
             // Cleared before reloading: a change during the reload gets its own pass.
             pending = nil
-            guard hasOutsideChanges() else { return }
+            guard await hasOutsideChanges() else { return }
             for reload in reloads {
                 await reload()
             }

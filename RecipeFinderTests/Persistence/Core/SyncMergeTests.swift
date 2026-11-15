@@ -491,8 +491,46 @@ private func recipe(
 
     @Test func withSyncOffCopiesAreNotMerged() async {
         let persistence = await storeWithTwoCopies()
-        #expect(!persistence.mergeSyncedRecipeCopies(of: [fishPie]))
+        #expect(await !persistence.mergeSyncedRecipeCopies(of: [fishPie]))
         #expect(persistence.fetchRecipes().count == 2)
+    }
+
+    /// Runs the merge the way the app does since issue #16: on a background context, never the main thread.
+    private func mergeInBackground(_ persistence: PersistenceController, named: Bool) async -> Bool {
+        let container = persistence.container
+        let ids: Set<UUID> = [fishPie]
+        return await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                let merged = PersistenceController.mergeRecipeCopies(of: ids, in: context) { objectIDs in
+                    guard named else { return [:] }
+                    return Dictionary(uniqueKeysWithValues: objectIDs.map { ($0, $0.uriRepresentation().absoluteString) })
+                }
+                continuation.resume(returning: merged)
+            }
+        }
+    }
+
+    @Test func copiesInICloudMergeIntoOneKeepingBothCopiesMarks() async {
+        let persistence = PersistenceController(inMemory: true)
+        _ = await persistence.seedRecipes([recipe(fishPie, cooks: 2)])
+        _ = await persistence.seedRecipes([recipe(fishPie, favourite: true)])
+
+        let merged = await mergeInBackground(persistence, named: true)
+
+        let copies = persistence.fetchRecipes().filter { $0.id == fishPie }
+        #expect(merged)
+        #expect(copies.count == 1)
+        #expect(copies.first?.cookCount == 2)
+        #expect(copies.first?.isFavorite == true)
+    }
+
+    @Test func copiesWithoutRecordNamesWaitForALaterPass() async {
+        let persistence = await storeWithTwoCopies()
+
+        let merged = await mergeInBackground(persistence, named: false)
+
+        #expect(!merged)
+        #expect(persistence.fetchRecipes().filter { $0.id == fishPie }.count == 2)
     }
 }
 

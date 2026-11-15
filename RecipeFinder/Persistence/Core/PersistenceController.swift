@@ -16,6 +16,10 @@ final class PersistenceController {
     private(set) var isStoreLoaded = false
     /// Where `takeOutsideChanges()` last stopped reading the store's history (`PersistenceController+RemoteChanges`).
     var lastHistoryToken: NSPersistentHistoryToken?
+    /// The latest `takeOutsideChanges()` read; each waits for the one before so the checkpoint only moves forward.
+    var outsideChangeCheck: Task<Bool, Never>?
+    /// The latest `mergeSyncedRecipeCopies` pass; each waits for the one before so two never delete the same copies.
+    var copyMerge: Task<Bool, Never>?
 
     /// The open store file's identifier; a fresh file (recovery, reinstall) gets a new one.
     var storeFileID: String? {

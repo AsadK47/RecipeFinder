@@ -72,7 +72,7 @@ struct RecipeFinderApp: App {
         persistence.startTrackingOutsideChanges()
         recordICloudExports()
         let reloader = RemoteChangeReloader(
-            hasOutsideChanges: { persistence.takeOutsideChanges() },
+            hasOutsideChanges: { await persistence.takeOutsideChanges() },
             reloads: [
                 { RecipeStore.shared.load() },
                 { CollectionManager.shared.reload() },
