@@ -641,7 +641,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🐞 UI test `testBadgeRevealViewAllClosesAndOpensMe` (c6ff1c6) fails on CI: the reveal title still exists 5s after
+- 🐞 — 🚧 builder agent 2026-11-15 — UI test `testBadgeRevealViewAllClosesAndOpensMe` (c6ff1c6) fails on CI: the reveal title still exists 5s after
   "View all" (`RecipeFinderScreenshotTests.swift:600`, run 43702606609 shard 3) — consistent with the TestFlight freeze
   still being there; investigate the fix, don't loosen the test.
 - 🟡 Flaky perf budget: `DiscoveryFeedModel.update stays within budget for a 350-recipe library` measured 509 ms vs
