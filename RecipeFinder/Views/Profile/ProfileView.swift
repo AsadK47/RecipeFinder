@@ -20,6 +20,8 @@ struct ProfileView: View {
     @State private var pagerStart: BadgePagerStart?
     /// Set by a locked badge's "earn it here" button; acted on once the pager has fully closed.
     @State private var pendingEarn: BadgeEarnAction?
+    /// My Cookbook's pages, rebuilt when recipes change rather than in `body`.
+    @State private var cookbookPages: [CookbookPage] = []
 
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -42,6 +44,11 @@ struct ProfileView: View {
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
+                        // Me's character is the cook's cookbook; pushed copies (Settings → Profile) stay a profile form.
+                        if showsSettingsLink {
+                            MyCookbookSection(pages: cookbookPages)
+                        }
+
                         ProfileAvatar(
                             image: profileImage,
                             initials: getInitials(),
@@ -130,9 +137,13 @@ struct ProfileView: View {
             loadCurrentProfile()
             cookingStreak.reload()
             refreshBadgeMetrics()
+            refreshCookbook()
         }
         // Recipes can load after Me appears, or change under a sheet; keep the rings in step with the shelf.
-        .onChange(of: recipeStore.recipes) { _, _ in refreshBadgeMetrics() }
+        .onChange(of: recipeStore.recipes) { _, _ in
+            refreshBadgeMetrics()
+            refreshCookbook()
+        }
         .onChange(of: profileImage) { _, newImage in
             profileManager.saveProfileImage(newImage)
         }
@@ -144,6 +155,11 @@ struct ProfileView: View {
 
     private func refreshBadgeMetrics() {
         badgeMetrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
+    }
+
+    private func refreshCookbook() {
+        guard showsSettingsLink else { return }
+        cookbookPages = MyCookbook.pages(from: recipeStore.recipes)
     }
 
     private func openPendingEarn() {
