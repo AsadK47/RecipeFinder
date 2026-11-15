@@ -15,6 +15,9 @@ struct DiscoveryPager {
     private var order: [Int] = []
     /// Each source's candidates in this cycle's dealing order.
     private var decks: [[RecipeModel]] = []
+    /// Per deck, how many leading recipes are already seen this cycle — `seen` only grows until the decks are rebuilt,
+    /// so dealing skips them instead of rescanning the whole deck for every chapter.
+    private var spent: [Int] = []
     private var cursor = 0
     private var nextID = 0
 
@@ -28,7 +31,7 @@ struct DiscoveryPager {
         self.seed = seed
         seen = alreadyShown
         order = chapterOrder(cycle: 0)
-        decks = makeDecks()
+        rebuildDecks()
     }
 
     /// The next `count` chapters (fewer only when the library is too small to fill any chapter).
@@ -46,7 +49,7 @@ struct DiscoveryPager {
     mutating func replacePool(_ newPool: DiscoveryPool) {
         pool = newPool
         order = chapterOrder(cycle: cycle)
-        decks = makeDecks()
+        rebuildDecks()
         cursor = order.isEmpty ? 0 : cursor % order.count
     }
 
@@ -57,7 +60,10 @@ struct DiscoveryPager {
                 let index = order[cursor]
                 cursor = (cursor + 1) % order.count
                 let excluded = seen, previous = lastDealt
-                let fresh = Array(decks[index].lazy
+                var start = spent[index]
+                while start < decks[index].count, excluded.contains(decks[index][start].id) { start += 1 }
+                spent[index] = start
+                let fresh = Array(decks[index][start...].lazy
                     .filter { !excluded.contains($0.id) && !previous.contains($0.id) }
                     .prefix(DiscoveryChapter.Layout.row.size))
                 guard fresh.count >= Self.minimumChapterSize else { continue }
@@ -81,7 +87,7 @@ struct DiscoveryPager {
         cycle += 1
         seen = []
         order = chapterOrder(cycle: cycle)
-        decks = makeDecks()
+        rebuildDecks()
         cursor = 0
     }
 
@@ -100,6 +106,11 @@ struct DiscoveryPager {
         guard cycle > 0 else { return indices }
         var generator = SeededGenerator(seed: Self.mix(seed, UInt64(cycle)))
         return indices.shuffled(using: &generator)
+    }
+
+    private mutating func rebuildDecks() {
+        decks = makeDecks()
+        spent = Array(repeating: 0, count: decks.count)
     }
 
     private func makeDecks() -> [[RecipeModel]] {

@@ -20,8 +20,25 @@ enum KitchenRecipeMatcher {
         return !words(recipeIngredient).isDisjoint(with: words(kitchenIngredient))
     }
 
+    /// A normalised term with its match words built once, so batch checks (recipes × ingredients × pantry) don't
+    /// rebuild both word sets for every pair — that made a 350-recipe discovery rebuild take ~1 s.
+    struct MatchTerm: Sendable {
+        let term: String
+        let words: Set<String>
+
+        init(_ term: String) {
+            self.term = term
+            words = KitchenRecipeMatcher.words(term)
+        }
+    }
+
+    /// Same rule as `ingredientMatches(_:_:)` on prepared terms.
+    static func ingredientMatches(_ recipeIngredient: MatchTerm, _ kitchenIngredient: MatchTerm) -> Bool {
+        recipeIngredient.term == kitchenIngredient.term || !recipeIngredient.words.isDisjoint(with: kitchenIngredient.words)
+    }
+
     /// Whole words worth matching on (≥3 chars to drop filler like "of"), singularised so "egg" matches "eggs".
-    private static func words(_ term: String) -> Set<String> {
+    fileprivate static func words(_ term: String) -> Set<String> {
         Set(
             term.split(separator: " ")
                 .map(String.init)

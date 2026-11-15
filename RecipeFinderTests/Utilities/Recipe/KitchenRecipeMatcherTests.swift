@@ -95,4 +95,17 @@ struct KitchenRecipeMatcherTests {
         let a = recipe(["Garlic"])
         #expect(KitchenRecipeMatcher.quickMatches(recipes: [a], kitchenItemNames: []).isEmpty)
     }
+
+    @Test("Prepared terms match exactly like raw terms")
+    func preparedTermsMatchLikeRawTerms() {
+        let terms = ["rice", "ice", "egg", "eggs", "tomatoes", "tomato", "gin", "ginger", "red onion", "onion",
+                     "berries", "berry", "chicken breast", "breast"]
+        for a in terms {
+            for b in terms {
+                let prepared = KitchenRecipeMatcher.ingredientMatches(
+                    KitchenRecipeMatcher.MatchTerm(a), KitchenRecipeMatcher.MatchTerm(b))
+                #expect(prepared == KitchenRecipeMatcher.ingredientMatches(a, b), "\(a) vs \(b)")
+            }
+        }
+    }
 }

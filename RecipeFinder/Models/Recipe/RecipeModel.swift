@@ -241,18 +241,20 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return ingredients.filter { !Self.isSatisfied($0, by: pantry) }
     }
 
-    /// Normalises pantry terms once for reuse across a batch of ingredient checks.
-    private static func normalizedPantry(_ availableIngredients: Set<String>) -> Set<String> {
+    /// Normalises pantry terms (and their match words) once for reuse across a batch of ingredient checks.
+    private static func normalizedPantry(_ availableIngredients: Set<String>) -> [KitchenRecipeMatcher.MatchTerm] {
         Set(availableIngredients
             .map { KitchenRecipeMatcher.normalizedTerm($0) }
             .filter { !$0.isEmpty })
+            .map(KitchenRecipeMatcher.MatchTerm.init)
     }
 
     /// Whether the normalised pantry covers `ingredient`, via the word-boundary matcher so "ice" doesn't satisfy "rice".
-    private static func isSatisfied(_ ingredient: Ingredient, by pantry: Set<String>) -> Bool {
+    private static func isSatisfied(_ ingredient: Ingredient, by pantry: [KitchenRecipeMatcher.MatchTerm]) -> Bool {
         let term = KitchenRecipeMatcher.normalizedTerm(ingredient.name)
         guard !term.isEmpty else { return false }
-        return pantry.contains { KitchenRecipeMatcher.ingredientMatches(term, $0) }
+        let prepared = KitchenRecipeMatcher.MatchTerm(term)
+        return pantry.contains { KitchenRecipeMatcher.ingredientMatches(prepared, $0) }
     }
     
     init(
