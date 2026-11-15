@@ -20,10 +20,22 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Next slice (challenger): subtract — profile form, badges and chef type one tap deeper so Me has one primary action
   ("Me = your cookbook + one line"). Later: per-cook notes / "who it was for" (model change → owner), share image.
 
+- Remember: 🚧 **My Cookbook slice 2** on `agent/my-cookbook-2` (builder 2026-11-15) — Me = cookbook + one line
+  ("Home Cook · 34 cooks this year") in a row that opens Profile (form, trophy shelf, chef type). CI + review pending.
+
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
+- **My Cookbook slice 2 (subtract)**: Me's root is now `MeView` itself (cookbook + `MeProfileRow`), and
+  `ProfileView` is just the profile page (lost `showsSettingsLink`/`showsCookbook` flags). One line = chef type +
+  `CookingStreak.cooksThisYear` (new, from the cook-date log, calendar year of `now`) — "cooks", not "dinners" (not
+  every cook is a dinner). Row also shows badges earned ("5 / 24") so the shelf is findable one tap deeper. "View all
+  badges" still lands on Me (not deep-linked into Profile — a tab that may not exist yet can miss a notification; the
+  row is right under the cookbook). Settings → Profile left as is (Me 3/3 tidies Settings). **Pre-mortem:** (1) wrong
+  count/wording → `CookingStreakTests` cooksThisYear (+ no-live-streak path) and `MyCookbookTests.meLine`; (2) badges
+  unreachable → `testCaptureTrophyShelf` taps `me.profile` then a badge; (3) row missing/blank or layout clipped →
+  `testZZCaptureCookbook` asserts `me.profile` value + 17-me/43 screenshots looked at.
 - **My Cookbook slice 1**: pages come from what recipes already store (`cookCount`, `lastCookedAt`, `rating`,
   `photoNames`) — no model change. One page per dish (not per cook): cook dates aren't linked to recipes, so a
   per-cook page would need a new entity (guardrail). Picture = the cook's latest own photo, else `heroImageName`
