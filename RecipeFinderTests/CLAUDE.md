@@ -13,6 +13,9 @@ Swift Testing (`@Suite`, `@Test`, `#expect`) for all new/migrated tests. No new 
 
 ## Workflow
 Red → green → refactor. Write the failing test first. TDD required for all logic; not required for pure UI layout or thin glue.
+**Bug fixes (incl. TestFlight feedback):** the reproducing test must be *seen* failing on the unfixed code (run it
+before the fix, or on a branch with the fix reverted). If no test reproduces it, say so in the commit log and the issue,
+label the fix *unconfirmed*, and leave the issue open until the device or MetricKit confirms it — never "fixed".
 
 ## Conventions
 - Parameterise data-driven cases with `@Test(arguments: [...])`.
