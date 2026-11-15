@@ -105,7 +105,8 @@ are merged into a newer item or parked — never start them; their text stays as
    **Now (owner 2026-11-15, parallel lanes, batch landing):** *Data lane:* ~~Inbox 🔴 photo files after a Reset~~ (e67da6f) →
    Data safety 4/4 Recently deleted, lean (recipes + photos, 30 days; **RecipeModel 18 approved** for
    one optional deleted-at date) · *Cook lane:* Cooking flow · *Privacy lane:* 🟡 §5.1 recent-searches wording, then
-   tick 2/4 (website `privacy.html` is the website session's). Deferred to between phases: 3/4 backups with photos,
+   tick 2/4 (website `privacy.html` is the website session's) · *Discover lane (owner 2026-11-15, pulled forward from
+   Phase 3):* Recipes — endless discovery. Deferred to between phases: 3/4 backups with photos,
    2/4 live sync status / iCloud full.
    **Phase 1 — Cook it well:** Cooking flow → Made-it moment → My Cookbook.
    **Phase 2 — Decide & get:** Plan — swipe to match → Groceries writes itself.
@@ -154,7 +155,7 @@ are merged into a newer item or parked — never start them; their text stays as
   Put-away step); asks only when it matters ("Still got the coriander?"). Delete the duplicated Kitchen/Shopping views.
   *Measure:* planned weeks that produce a used list. *Done when:* list building/merging/scaling/aisle-learning tested,
   screenshots, net line count down, CI green.
-- [ ] **Recipes — endless discovery** (Phase 3 · Discover). The *Today feed* chapters (below, kept as spec; `docs/PLAY.md`
+- [ ] **Recipes — endless discovery** — 🚧 Discover lane session 2026-11-15 — (Phase 3 · Discover, pulled into Now by owner). The *Today feed* chapters (below, kept as spec; `docs/PLAY.md`
   §14) move here as how you browse below your library: "Because you loved…", "Under 30 minutes", "Uses what you have",
   "Cook it again", "New to you", "A trip to <cuisine>"; rotating layouts, no repeats until the pool is spent; absorbs
   *Recently cooked row*. *Measure:* recipes opened from discovery that get cooked. *Done when:* chapter ranking +
