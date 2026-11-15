@@ -572,6 +572,56 @@ private func recipe(
         }
     }
 
+    /// Inbox 2026-11-15: the test above saves the edit before the pass reads the rows' values (fault firing picks the
+    /// edit up), so optimistic locking never had to fire. Here the pass has read every value first, then the cook rates
+    /// the recipe: the save must fail and roll back rather than write the stale rating over the edit.
+    @Test func anEditSavedAfterTheMergeReadTheRowsIsKept() async {
+        let persistence = PersistenceController(inMemory: true)
+        _ = await persistence.seedRecipes([recipe(fishPie, cooks: 2)])
+        _ = await persistence.seedRecipes([recipe(fishPie, favourite: true)])
+        let container = persistence.container
+        let viewContext = container.viewContext
+        let id = fishPie
+        let ids: Set<UUID> = [id]
+
+        let merged = await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                let result = PersistenceController.mergeRecipeCopies(of: ids, in: context) { objectIDs in
+                    // The pass holds every value of both rows now (faults fired), as it does once it maps them.
+                    for objectID in objectIDs {
+                        let row = context.object(with: objectID)
+                        _ = row.value(forKey: "rating")
+                        _ = row.value(forKey: "isFavorite")
+                    }
+                    viewContext.performAndWait {
+                        let request = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+                        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+                        do {
+                            for row in try viewContext.fetch(request) { row.setValue(4, forKey: "rating") }
+                            try viewContext.save()
+                        } catch {
+                            Issue.record("Couldn't save the edit: \(error)")
+                        }
+                    }
+                    return Dictionary(uniqueKeysWithValues: objectIDs.map { ($0, $0.uriRepresentation().absoluteString) })
+                }
+                continuation.resume(returning: result)
+            }
+        }
+
+        let copies = persistence.fetchRecipes().filter { $0.id == fishPie }
+        #expect(!copies.isEmpty)
+        #expect(copies.allSatisfy { $0.rating == 4 })
+        if !merged {
+            #expect(copies.count == 2)
+            #expect(await mergeInBackground(persistence, named: true))
+            let after = persistence.fetchRecipes().filter { $0.id == fishPie }
+            #expect(after.map(\.rating) == [4])
+            #expect(after.first?.cookCount == 2)
+            #expect(after.first?.isFavorite == true)
+        }
+    }
+
     @Test func copiesWithoutRecordNamesWaitForALaterPass() async {
         let persistence = await storeWithTwoCopies()
 
