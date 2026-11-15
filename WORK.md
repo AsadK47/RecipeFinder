@@ -1,12 +1,10 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-`agent/history-purge-sync-off` — Inbox 🔴 "Store history purged after 7 days even while sync is off": `HistoryPurgeRule`
-(`PersistenceController+RemoteChanges.swift`), used by `RecipeFinderApp.purgeOldStoreHistory`; tests
-`HistoryPurgeRuleTests`. Waiting on Build & Test.
+Nothing. History purge rule merged (8be3cb1..f5082ce). Data safety 2/4 still claimed 🚧.
 
 ## Next action
-Green → reviews (deep-review + challenger) → ff main, tick Inbox line, Log. Then Inbox 🔴 other-devices-keep-photo-files.
+Next Inbox 🔴: other devices keep recipe photo files after a Reset elsewhere (sync on).
 
 ## Decisions (why)
 - **History purge while sync is off**: purge only before `min(now − 7d, start of last finished successful CloudKit
