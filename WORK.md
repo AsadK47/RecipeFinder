@@ -12,7 +12,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Discover: `agent/endless-discovery` (34db781) — builder agent took over 04:40: `@MainActor` fix pushed, CI
   running. Next if green: Screenshots on the branch (Recipes scrolled 3 screens), then `ready to batch`.
   Reviewer + challenger already done and acted on (CHALLENGES 15 Nov).
-- Bug (first): `agent/freeze-badge-reveal` — issue #16, iPhone froze on the Link Master badge reveal right after a web import with sync on; + MetricKit hang reports.
+- Bug: ✅ #16 freeze fix landed (aed7309). Recently deleted waits for the owner to deploy the CloudKit Production schema.
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 ## Next action
