@@ -5,11 +5,13 @@ protocol HTMLFetching: Sendable {
     func fetch(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse)
 }
 
-/// Live implementation backed by `URLSession`.
+/// Live implementation backed by `URLSession`. Ephemeral, like `URLSessionRemoteImageFetcher`: cookies and cached
+/// responses from recipe sites stay in memory for this importer and are never written to disk, so nothing outlives
+/// the import (Reset has nothing to clear).
 struct URLSessionHTMLFetcher: HTMLFetching {
-    private let session: URLSession
+    let session: URLSession
 
-    init(session: URLSession = .shared) {
+    init(session: URLSession = URLSession(configuration: .ephemeral)) {
         self.session = session
     }
 

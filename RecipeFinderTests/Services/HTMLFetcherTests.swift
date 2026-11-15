@@ -53,6 +53,15 @@ struct HTMLFetcherTests {
 
     // MARK: - Tests
 
+    @Test("By default nothing a recipe site sets is kept: no shared cookie jar, no on-disk cache")
+    func defaultSessionKeepsNoCookiesOrCacheOnDisk() {
+        let configuration = URLSessionHTMLFetcher().session.configuration
+
+        #expect(configuration.httpCookieStorage !== HTTPCookieStorage.shared)
+        #expect(configuration.urlCache !== URLCache.shared)
+        #expect((configuration.urlCache?.diskCapacity ?? 0) == 0)
+    }
+
     @Test("200 response returns body data and an HTTPURLResponse")
     func okResponseReturnsDataAndResponse() async throws {
         let expected = Data("hello".utf8)
