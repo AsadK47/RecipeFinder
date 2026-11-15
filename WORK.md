@@ -6,7 +6,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
 - Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - Bug: ✅ #16 freeze fix landed (aed7309). Recently deleted waits for the owner to deploy the CloudKit Production schema.
-- CI (CI lane, owner TOP 2026-11-15): `agent/ci-10min` — supersedes `agent/nightly-timeout` (don't land that). Push runs down from ~12.5 to 6.5–10 min; dispatched full run (unit + 3 UI shards) in flight on f69d883. Next: read that run's shard times, then 3 push runs + 1 UI run ≤10 min → land alone, run Coverage + Build & Test once on main to seed the simulator cache, log timings in BACKLOG, tick. Notes: scratch measurements are in the item's Log line.
+- CI (CI lane, owner TOP): ✅ landed f343fa5. Next: dispatch Build & Test + Coverage on main (seeds the booted-simulator cache), then log 3 push runs + 1 UI run ≤10 min in the BACKLOG item and tick it.
 - Inbox 🟡 ephemeral link import: ✅ landed 7041540 (reviewer + challenger; leftovers in CHALLENGES 2026-11-15).
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 

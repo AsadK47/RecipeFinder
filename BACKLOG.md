@@ -120,12 +120,14 @@ are merged into a newer item or parked — never start them; their text stays as
 ## Queue
 - [ ] **CI under 10 minutes** — 🚧 CI lane session 2026-11-15 — (owner 2026-11-15: "30 minutes is unacceptable, 10 or
   nothing"). Every Build & Test run — push (build + unit) and dispatch/nightly (+ UI tests) — finishes in ≤10 min wall
-  time on free runners. Today: push ~13 min (cache restore ~3, build ~5.5, test ~5.5); UI runs >30 min and get cut
-  off. Measure each step first, then e.g. shrink the cached DerivedData, shard UI tests across parallel jobs
-  (`-only-testing` per class, test-without-building from one build), drop needless coverage/diagnostics, run UI
-  tests only for UI-touching changes. Never skip or weaken tests to hit the number. If ≤10 min is impossible on
-  free runners, put the measured numbers and the paid-runner cost in Needs owner. *Done when:* three consecutive
-  push runs and one full UI run each ≤10 min, timings logged.
+  time on free runners. Never skip or weaken tests to hit the number. *Done when:* three consecutive push runs and one
+  full UI run each ≤10 min, timings logged. **Landed f343fa5** (`.github/actions/prepare`, UI tests in 3 shards,
+  coverage → `coverage.yml`; why in WORK.md Decisions). Measured: before — push 12:22 (restore 2:49, build 3:34, test
+  4:58), nightly cut off at 30 min. Cause: the simulator's first boot (70s migration + widget/Health/Siri/push storm
+  pegging 3 CPUs ~5 min) overlapped everything. After, on the branch with **no** caches (full rebuild + first boot):
+  push 9:58, full UI run 12:10 (prepare 3:40–5:50, unit 2:40, shards 4:40–5:45, balanced ~300s each). With caches
+  (main build cache ~0:45 build, cached booted simulator ~130s vs ~260s) expected push ~6–7, UI ~8–9.
+  **Left:** dispatch Build & Test + Coverage on main to seed the simulator cache, then record 3 push runs + 1 UI run.
 - [ ] **Docs refresh** (quality, next between-phases item — owner 2026-11-14 wants developer docs + website dev
   updates; audit + plan in this session). (1) Retire ROADMAP.md into `docs/PRODUCT.md` + BACKLOG Roadmap
   (move to `docs/archive/`), point root CLAUDE.md "Session start" at PRODUCT/BACKLOG instead of ROADMAP. (2) HANDBOOK.md
@@ -639,6 +641,11 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🐞 UI test `testBadgeRevealViewAllClosesAndOpensMe` (c6ff1c6) fails on CI: the reveal title still exists 5s after
+  "View all" (`RecipeFinderScreenshotTests.swift:600`, run 43702606609 shard 3) — consistent with the TestFlight freeze
+  still being there; investigate the fix, don't loosen the test.
+- 🟡 Flaky perf budget: `DiscoveryFeedModel.update stays within budget for a 350-recipe library` measured 509 ms vs
+  500 ms once on a loaded runner (run 43694034350). Time it on its own (`.serialized` / median of N) rather than raise the budget.
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
