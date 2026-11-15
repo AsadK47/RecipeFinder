@@ -121,13 +121,16 @@ are merged into a newer item or parked — never start them; their text stays as
 - [ ] **CI under 10 minutes** — 🚧 CI lane session 2026-11-15 — (owner 2026-11-15: "30 minutes is unacceptable, 10 or
   nothing"). Every Build & Test run — push (build + unit) and dispatch/nightly (+ UI tests) — finishes in ≤10 min wall
   time on free runners. Never skip or weaken tests to hit the number. *Done when:* three consecutive push runs and one
-  full UI run each ≤10 min, timings logged. **Landed f343fa5** (`.github/actions/prepare`, UI tests in 3 shards,
-  coverage → `coverage.yml`; why in WORK.md Decisions). Measured: before — push 12:22 (restore 2:49, build 3:34, test
-  4:58), nightly cut off at 30 min. Cause: the simulator's first boot (70s migration + widget/Health/Siri/push storm
-  pegging 3 CPUs ~5 min) overlapped everything. After, on the branch with **no** caches (full rebuild + first boot):
-  push 9:58, full UI run 12:10 (prepare 3:40–5:50, unit 2:40, shards 4:40–5:45, balanced ~300s each). With caches
-  (main build cache ~0:45 build, cached booted simulator ~130s vs ~260s) expected push ~6–7, UI ~8–9.
-  **Left:** dispatch Build & Test + Coverage on main to seed the simulator cache, then record 3 push runs + 1 UI run.
+  full UI run each ≤10 min, timings logged. **Landed f343fa5 + d775cf6** (`.github/actions/prepare`, cached booted
+  simulator, UI tests in 4 duration-balanced shards, coverage → `coverage.yml`; why in WORK.md Decisions).
+  Before: push 12:22 (restore 2:49, build 3:34, test 4:58); nightly cut off at 30 min. Cause: the simulator's first
+  boot (70s migration + widget/Health/Siri/push storm pegging all 3 CPUs ~5 min) overlapped everything.
+  Now (warm caches): push job 7:40–8:10 (prepare 3:27, test 4:00); push run 43707768481 8:33 wall ✅; UI run
+  43708536350: 4 shards done at 10:04 (prepare 2:30–3:20, tests 3:46–5:00), unit job 12:50 (slow runner: prepare 5:35,
+  test 6:00). **Left:** (1) queueing — with 4 lanes on the free plan's 5 macOS slots runs wait 2–9 min for a runner
+  (push run 43706365362: 7 min queue, 7:40 job) → Needs owner; (2) unit job variance: XCTest stalls ~60s on one
+  trivial test early in ~half the runs and the test host spends ~1–2 min launching (causes not found yet; next: sample
+  the RecipeFinder process with `spindump`/`sample` during the stall); (3) record 3 consecutive pushes ≤10 then tick.
 - [ ] **Docs refresh** (quality, next between-phases item — owner 2026-11-14 wants developer docs + website dev
   updates; audit + plan in this session). (1) Retire ROADMAP.md into `docs/PRODUCT.md` + BACKLOG Roadmap
   (move to `docs/archive/`), point root CLAUDE.md "Session start" at PRODUCT/BACKLOG instead of ROADMAP. (2) HANDBOOK.md
@@ -620,6 +623,11 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
+- 🙋 **CI 10 minutes vs runner slots** (CI lane 2026-11-15): jobs themselves now run 7:40–8:30 (push) and 8–10 (UI
+  shards), but the free plan allows 5 macOS jobs at once for the whole account; with 4 lanes pushing, runs wait 2–9 min
+  for a runner, which counts in wall time. Options: (a) fewer parallel lanes during the day (free); (b) GitHub larger
+  macOS runners (M2 Pro xlarge, roughly $0.16/min per GitHub's pricing page — check current; ~8 min ≈ $1.30 per push
+  run, and also faster CPUs); (c) accept "≤10 min once a runner starts". Which?
 - 🙋 **Play decisions** (see `docs/PLAY.md`; agents start Play 1/7 once answered): (1) daily streak from a
   1-minute action (Tonight check-in, Kitchen Bite or a cook) replaces the weekly flame, weekly cooks become the goal
   ring — OK? (2) RecipeModel 18 with a synced `PlayEventEntity` — OK? (3) agents write Kitchen Bites quiz content

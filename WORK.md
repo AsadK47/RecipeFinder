@@ -6,7 +6,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
 - Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - Bug: ✅ #16 freeze fix landed (aed7309). Recently deleted waits for the owner to deploy the CloudKit Production schema.
-- CI (CI lane, owner TOP): ✅ landed f343fa5. Next: dispatch Build & Test + Coverage on main (seeds the booted-simulator cache), then log 3 push runs + 1 UI run ≤10 min in the BACKLOG item and tick it.
+- CI (CI lane, owner TOP): landed f343fa5 + d775cf6 (prepare action, cached booted simulator, 4 UI shards, coverage.yml). Jobs 7:40–10; wall time hurt by runner queueing (Needs owner) and unit-job variance. Next: sample the test host during the ~60s XCTest stall (`xcrun simctl spawn $SIM spindump` or `sample` on RecipeFinder) on agent/ci-10min, then 3 consecutive pushes ≤10 → tick.
 - Inbox 🐞 View-all UI test: ✅ landed 732ec22 (Welcome Aboard never queues a reveal). Leftover branch agent/badge-viewall-label (auto-cleanup).
 - Inbox 🟡 ephemeral link import: ✅ landed 7041540 (reviewer + challenger; leftovers in CHALLENGES 2026-11-15).
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
