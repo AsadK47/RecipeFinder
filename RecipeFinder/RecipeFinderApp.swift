@@ -11,6 +11,8 @@ struct RecipeFinderApp: App {
     init() {
         // First, before anything opens the database: the Settings sync switch only takes effect at launch.
         SyncPreference.applyAtLaunch(in: .shared)
+        // Hang and crash reports from earlier runs arrive through this (issue #16).
+        DiagnosticReporter.shared.start()
 
         #if DEBUG
         // UI-test launch hook; DEBUG-gated, and App.init is main-thread so assumeIsolated is safe.
