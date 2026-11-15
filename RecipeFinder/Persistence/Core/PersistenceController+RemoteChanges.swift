@@ -148,6 +148,11 @@ enum HistoryPurgeRule {
     }
 
     /// When a CloudKit event proves history up to a point was sent: a finished, successful export, by its start.
+    /// A CloudKit import that finished and succeeded: other devices' changes up to then are in this store.
+    static func isFinishedImport(isImport: Bool, succeeded: Bool, endDate: Date?) -> Bool {
+        isImport && succeeded && endDate != nil
+    }
+
     static func sentUpTo(isExport: Bool, succeeded: Bool, startDate: Date, endDate: Date?) -> Date? {
         isExport && succeeded && endDate != nil ? startDate : nil
     }

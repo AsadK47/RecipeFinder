@@ -63,6 +63,20 @@ extension RecipeStore {
         return removePhotos(of: load.purged)
     }
 
+    /// The first finished iCloud import this launch: from now on the purge may run (`RecentlyDeleted.mayPurge`), so
+    /// run it once here — a launch whose import brings no outside changes triggers no further load. Returns the
+    /// purge task (nil when it already ran), for tests.
+    @discardableResult
+    func iCloudImportFinished() -> Task<Void, Never>? {
+        guard !persistence.finishedICloudImportThisLaunch else { return nil }
+        persistence.finishedICloudImportThisLaunch = true
+        return Task {
+            let purged = await purgeExpired()
+            guard !purged.isEmpty else { return }
+            syncPhotosWithICloud(removing: purged)
+        }
+    }
+
     /// This device's iCloud state for the purge.
     var purgeSyncState: RecentlyDeleted.SyncState {
         RecentlyDeleted.SyncState(

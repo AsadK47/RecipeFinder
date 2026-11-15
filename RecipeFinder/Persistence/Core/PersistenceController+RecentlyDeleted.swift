@@ -12,6 +12,8 @@ extension PersistenceController {
     struct RecentlyDeletedLoad: Sendable {
         var trash: [DeletedRecipe] = []
         var purged: [RecipeModel] = []
+        /// False when the store couldn't be read: `trash` is then empty for want of knowing, not because it is.
+        var wasRead = true
     }
 
     /// Moves every row with `id` that's in the library to Recently Deleted. Returns false when nothing was moved.
@@ -42,7 +44,7 @@ extension PersistenceController {
     /// `RecentlyDeleted.mayPurge` allows — all its stamped rows together, judged by the latest stamp, so a duplicate
     /// row can't outlive the photos removed with the others.
     func loadRecentlyDeleted(now: Date = Date(), purgingWith sync: RecentlyDeleted.SyncState?) async -> RecentlyDeletedLoad {
-        guard ensureStoreIsReady() else { return RecentlyDeletedLoad() }
+        guard ensureStoreIsReady() else { return RecentlyDeletedLoad(wasRead: false) }
         let container = self.container
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
@@ -111,7 +113,7 @@ extension PersistenceController {
             items = try deletedItems(in: context)
         } catch {
             persistenceLogger.error("❌ Failed to read recently deleted recipes: \(error.localizedDescription)")
-            return RecentlyDeletedLoad()
+            return RecentlyDeletedLoad(wasRead: false)
         }
         let latest = RecentlyDeleted.oneEach(items)
         guard let sync else { return RecentlyDeletedLoad(trash: latest) }

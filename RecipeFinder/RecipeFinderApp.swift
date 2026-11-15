@@ -56,8 +56,10 @@ struct RecipeFinderApp: App {
         ) { notification in
             guard let event = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
                     as? NSPersistentCloudKitContainer.Event else { return }
-            if event.type == .import, event.succeeded, event.endDate != nil {
-                MainActor.assumeIsolated { PersistenceController.shared.finishedICloudImportThisLaunch = true }
+            if HistoryPurgeRule.isFinishedImport(
+                isImport: event.type == .import, succeeded: event.succeeded, endDate: event.endDate
+            ) {
+                MainActor.assumeIsolated { _ = RecipeStore.shared.iCloudImportFinished() }
             }
             guard let sent = HistoryPurgeRule.sentUpTo(
                     isExport: event.type == .export, succeeded: event.succeeded,

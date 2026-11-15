@@ -287,8 +287,13 @@ final class RecipeStore: RecipeStoring {
         if seedBundled {
             // Decode the bundled JSON off the main actor — it's a few hundred recipes.
             let bundled = await Task.detached(priority: .userInitiated) { BundledRecipeCatalog.load() }.value
-            let trashed = await persistence.loadRecentlyDeleted(purgingWith: nil).trash.map(\.id)
-            toSeed += RecentlyDeleted.recipesToSeed(bundled: bundled, existing: existing, trashed: trashed)
+            let trash = await persistence.loadRecentlyDeleted(purgingWith: nil)
+            if trash.wasRead {
+                toSeed += RecentlyDeleted.recipesToSeed(bundled: bundled, existing: existing, trashed: trash.trash.map(\.id))
+            } else {
+                // Unknown Recently Deleted could seed a deleted built-in back: try again next launch.
+                storage.set(false, forKey: bundledKey)
+            }
         }
         guard !toSeed.isEmpty else { return nil }
         guard await persistence.seedRecipes(toSeed) else {

@@ -184,6 +184,20 @@ import Foundation
         #expect(fileExists("RecipeImages/pie.jpg"))
     }
 
+    @Test func aRestoredRecipeIsReadBackFromTheStore() async {
+        // The list's copy is older than the store's (a rating saved straight to the store).
+        let store = makeStore()
+        let pie = Self.recipe("Pie")
+        #expect(store.add(pie))
+        await controller.updateRating(withId: pie.id, rating: 5)
+        #expect(store.delete(id: pie.id))
+        #expect(store.recentlyDeleted.first?.recipe.rating == 0)
+
+        #expect(store.restore(id: pie.id))
+
+        #expect(store.recipes.first?.rating == 5)
+    }
+
     @Test func aRestoredRecipeTakesItsPlaceInNameOrder() {
         let store = makeStore()
         let apple = Self.recipe("Apple")
@@ -197,7 +211,7 @@ import Foundation
         #expect(store.recipes.map(\.name) == ["Apple", "banana", "Cherry"])
     }
 
-    @Test func backgroundTouchUpsLeaveARecentlyDeletedRecipeAlone() async {
+    @Test func backgroundTouchUpsLeaveARecentlyDeletedRecipeAlone() async throws {
         let pie = Self.recipe("Pie")
         #expect(controller.saveRecipeModel(pie))
         #expect(controller.moveRecipeToRecentlyDeleted(withId: pie.id))
@@ -209,9 +223,16 @@ import Foundation
 
         #expect(await controller.updateRecipesInBackground([renamed]))
         #expect(!controller.updateRecipe(renamed))
+        await controller.recordCook(withId: pie.id)
+        await controller.updateRating(withId: pie.id, rating: 4)
+        controller.toggleFavorite(withId: pie.id)
 
         #expect(controller.fetchRecipes().isEmpty)
-        #expect(controller.fetchRecentlyDeletedRecipes().map(\.recipe.name) == ["Pie"])
+        let trashed = try #require(controller.fetchRecentlyDeletedRecipes().first?.recipe)
+        #expect(trashed.name == "Pie")
+        #expect(trashed.cookCount == 0)
+        #expect(trashed.rating == 0)
+        #expect(!trashed.isFavorite)
     }
 
     @Test func restoringABackupBringsARecentlyDeletedRecipeBack() {
@@ -422,6 +443,61 @@ import Foundation
 
         #expect(await store.purgeExpired(now: Date()).isEmpty)
         #expect(store.recentlyDeleted.map(\.id) == [pie.id])
+    }
+
+    @Test func theFirstFinishedICloudImportRunsThePurgeWithoutAnotherLoad() async throws {
+        try writeFile("RecipeImages/old.jpg")
+        syncStorage.set(true, forKey: SyncPreference.everSyncedKey)
+        HistoryPurgeRule.recordExport(startedAt: Date(), in: syncStorage)
+        let store = makeStore()
+        let old = Self.recipe("Old", image: "RecipeImages/old.jpg")
+        #expect(store.add(old))
+        #expect(controller.moveRecipeToRecentlyDeleted(withId: old.id, at: Date().addingTimeInterval(-31 * Self.day)))
+        await store.refresh()
+
+        let purge = try #require(store.iCloudImportFinished())
+        await purge.value
+        await store.photoSync?.value
+
+        #expect(controller.finishedICloudImportThisLaunch)
+        #expect(store.recentlyDeleted.isEmpty)
+        #expect(controller.recipeRowCount(withId: old.id) == 0)
+        #expect(!fileExists("RecipeImages/old.jpg"))
+        #expect(store.iCloudImportFinished() == nil)
+    }
+
+    @Test(arguments: [
+        (true, true, true, true),
+        (false, true, true, false),
+        (true, false, true, false),
+        (true, true, false, false),
+    ])
+    func onlyAFinishedSuccessfulImportCountsAsReceived(isImport: Bool, succeeded: Bool, ended: Bool, counts: Bool) {
+        let endDate: Date? = ended ? Date(timeIntervalSince1970: 1_794_000_000) : nil
+
+        #expect(HistoryPurgeRule.isFinishedImport(isImport: isImport, succeeded: succeeded, endDate: endDate) == counts)
+    }
+
+    @Test func aPurgedCopyLeavesThePhotosWhileALibraryCopyOfTheRecipeRemains() async throws {
+        // The trashed copy shows a photo the library copy doesn't: only the row check keeps it.
+        try writeFile("RecipeImages/old.jpg")
+        let trashedCopy = Self.recipe("Pie", image: "RecipeImages/old.jpg")
+        let libraryCopy = RecipeModel(
+            id: trashedCopy.id, name: "Pie", category: "Dinner", difficulty: "Easy", prepTime: "5 min",
+            cookingTime: "10 min", baseServings: 2, ingredients: trashedCopy.ingredients, prePrepInstructions: [],
+            instructions: ["Cook"], notes: ""
+        )
+        #expect(controller.saveRecipe(parameters: .init(from: trashedCopy)))
+        #expect(controller.moveRecipeToRecentlyDeleted(
+            withId: trashedCopy.id, at: Date().addingTimeInterval(-31 * Self.day)
+        ))
+        #expect(controller.saveRecipe(parameters: .init(from: libraryCopy)))
+        let store = makeStore()
+
+        #expect(await store.purgeExpired(now: Date()).isEmpty)
+
+        #expect(controller.recipeRowCount(withId: trashedCopy.id) == 1)
+        #expect(fileExists("RecipeImages/old.jpg"))
     }
 
     @Test func resetErasesRecentlyDeletedToo() {
