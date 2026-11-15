@@ -33,6 +33,9 @@ What's cooked feeds "Because you loved X" back in Recipes — the loop closes.
 - **Phase 1 — Cook it well:** Cooking flow → Made-it moment → My Cookbook.
 - **Phase 2 — Decide & get:** Plan (swipe to match + week of photos + fill my week) → Groceries writes itself.
 - **Phase 3 — Discover:** Recipes as endless discovery → Today trimmed to deciding tonight.
+  *Feel (owner 2026-11-15):* as compelling as Instagram, for food — big photo-first feed, instant, always something
+  new — but every scroll leads towards cooking: one tap to plan or cook, and the habit loop rewards meals made, not
+  time spent scrolling.
 - **Wrapped:** skipped for 2026 (owner 2026-11-15: a few weeks of history makes a thin card); revisit for Dec 2027.
 - **Between phases:** quality — screenshots, Settings tidy-up, smells, polish. Bug fixes (🐞, TestFlight, Inbox) any time.
 
