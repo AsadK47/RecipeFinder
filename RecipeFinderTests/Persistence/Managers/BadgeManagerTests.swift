@@ -83,6 +83,7 @@ struct BadgeManagerTests {
     @Test func dismissCelebration_clearsCurrentCelebration() {
         let sut = makeSUT()
         sut.unlockBadge(.firstRecipe)
+        #expect(sut.pendingCelebration == .firstRecipe)
         sut.dismissCelebration()
         #expect(sut.pendingCelebration == nil)
     }
@@ -213,6 +214,7 @@ struct BadgeManagerTests {
         #expect(sut.isBadgeUnlocked(BadgeType.welcomeAboard.rawValue))
         #expect(sut.pendingCelebration == nil)
         sut.unlockBadge(.firstRecipe)
+        #expect(sut.pendingCelebration == .firstRecipe)
         sut.dismissCelebration()
         #expect(sut.pendingCelebration == nil)
     }
