@@ -39,8 +39,8 @@ extension PersistenceController {
     }
 }
 
-/// Store history grows with every save, sync on or off; nothing needs more than a few days of it. A week matches
-/// Apple's CloudKit sample. After a week with no writes the launch purge can remove `takeOutsideChanges()`'s
+/// Store history grows with every save, sync on or off; once CloudKit has sent it, nothing needs more than a few days
+/// of it. A week matches Apple's CloudKit sample; `HistoryPurgeRule` says when the purge may run. After a week with no writes the launch purge can remove `takeOutsideChanges()`'s
 /// checkpoint (the latest transaction), costing one extra reload of every list — accepted.
 extension PersistenceController {
     static let historyKeptFor: TimeInterval = 7 * 24 * 60 * 60
@@ -66,6 +66,41 @@ extension PersistenceController {
                 }
             }
         }
+    }
+}
+
+/// When the launch purge may run (Inbox 🔴 2026-11-14). CloudKit sends a mirrored store's changes from its history,
+/// so after sync has been on here, history written while it was off must survive until sync has run again long
+/// enough to send it: a full week of syncing launches. A device that never synced has no one to send it to.
+/// Accepted: history grows while sync stays off on a device that once synced.
+enum HistoryPurgeRule {
+    /// When the current unbroken run of syncing launches began; removed by any launch that doesn't sync.
+    static let syncingSinceKey = "iCloudSyncRunningSince"
+
+    /// The date to purge history before, or nil to keep all of it this launch.
+    static func cutoff(now: Date, isSyncing: Bool, everSynced: Bool, syncingSince: Date?) -> Date? {
+        let cutoff = PersistenceController.historyPurgeCutoff(now: now)
+        guard isSyncing else { return everSynced ? nil : cutoff }
+        guard let syncingSince, syncingSince <= cutoff else { return nil }
+        return cutoff
+    }
+
+    /// Records this launch in the syncing run (starting it, or ending it when not syncing), then gives `cutoff`.
+    static func cutoffAtLaunch(now: Date, isSyncing: Bool, in storage: LocalStore) -> Date? {
+        if !isSyncing {
+            storage.removeObject(forKey: syncingSinceKey)
+        } else if storage.object(forKey: syncingSinceKey) == nil {
+            storage.set(now.timeIntervalSinceReferenceDate, forKey: syncingSinceKey)
+        }
+        let since = storage.object(forKey: syncingSinceKey) == nil
+            ? nil
+            : Date(timeIntervalSinceReferenceDate: storage.double(forKey: syncingSinceKey))
+        return cutoff(
+            now: now,
+            isSyncing: isSyncing,
+            everSynced: SyncPreference.hasEverSynced(in: storage),
+            syncingSince: since
+        )
     }
 }
 

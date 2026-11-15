@@ -34,10 +34,12 @@ struct RecipeFinderApp: App {
         }
     }
 
-    /// Keeps the store's history to the last week (`PersistenceController.purgeHistory`).
+    /// Keeps the store's history to the last week, unless iCloud still needs it (`HistoryPurgeRule`).
     @MainActor private static func purgeOldStoreHistory() {
         let persistence = PersistenceController.shared
-        let cutoff = PersistenceController.historyPurgeCutoff(now: .now)
+        guard persistence.isStoreLoaded,
+              let cutoff = HistoryPurgeRule.cutoffAtLaunch(now: .now, isSyncing: persistence.isSyncing, in: .shared)
+        else { return }
         Task { await persistence.purgeHistory(before: cutoff) }
     }
 

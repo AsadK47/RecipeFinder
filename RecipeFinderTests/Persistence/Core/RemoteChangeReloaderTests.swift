@@ -263,3 +263,78 @@ import Foundation
         #expect(!persistence.takeOutsideChanges())
     }
 }
+
+/// While sync is off after having been on, CloudKit needs the store's history to send the off-period changes once
+/// sync is back on, so the launch purge waits until sync has run for a full week again (Inbox 🔴 2026-11-14).
+@MainActor
+@Suite struct HistoryPurgeRuleTests {
+    private let now = Date(timeIntervalSinceReferenceDate: 800_000_000)
+    private let week = PersistenceController.historyKeptFor
+    private func storage() -> LocalStore { LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!) }
+
+    @Test func aDeviceThatNeverSyncedPurgesAfterAWeek() {
+        let cutoff = HistoryPurgeRule.cutoff(now: now, isSyncing: false, everSynced: false, syncingSince: nil)
+        #expect(cutoff == now.addingTimeInterval(-week))
+    }
+
+    @Test func syncTurnedOffAfterBeingOnKeepsAllHistory() {
+        #expect(HistoryPurgeRule.cutoff(now: now, isSyncing: false, everSynced: true, syncingSince: nil) == nil)
+    }
+
+    @Test func syncOffForMoreThanAWeekStillKeepsAllHistory() {
+        let since = now.addingTimeInterval(-30 * 24 * 60 * 60)
+        #expect(HistoryPurgeRule.cutoff(now: now, isSyncing: false, everSynced: true, syncingSince: since) == nil)
+    }
+
+    @Test func syncBackOnForLessThanAWeekKeepsAllHistory() {
+        let since = now.addingTimeInterval(-week + 60)
+        #expect(HistoryPurgeRule.cutoff(now: now, isSyncing: true, everSynced: true, syncingSince: since) == nil)
+    }
+
+    @Test func syncOnForAWeekPurgesAgain() {
+        let since = now.addingTimeInterval(-week)
+        let cutoff = HistoryPurgeRule.cutoff(now: now, isSyncing: true, everSynced: true, syncingSince: since)
+        #expect(cutoff == now.addingTimeInterval(-week))
+    }
+
+    @Test func syncOnWithNoStartDateKeepsAllHistory() {
+        #expect(HistoryPurgeRule.cutoff(now: now, isSyncing: true, everSynced: true, syncingSince: nil) == nil)
+    }
+
+    @Test func theFirstSyncingLaunchStartsTheWeekAndKeepsHistory() {
+        let storage = storage()
+        storage.set(true, forKey: SyncPreference.key)
+
+        #expect(HistoryPurgeRule.cutoffAtLaunch(now: now, isSyncing: true, in: storage) == nil)
+        let later = now.addingTimeInterval(week)
+        #expect(HistoryPurgeRule.cutoffAtLaunch(now: later, isSyncing: true, in: storage) == later.addingTimeInterval(-week))
+    }
+
+    @Test func anOffLaunchRestartsTheWeekForTheNextSyncingRun() {
+        let storage = storage()
+        storage.set(true, forKey: SyncPreference.key)
+        _ = HistoryPurgeRule.cutoffAtLaunch(now: now, isSyncing: true, in: storage)
+        storage.set(false, forKey: SyncPreference.key)
+        storage.set(true, forKey: SyncPreference.everSyncedKey)
+
+        let offLaunch = now.addingTimeInterval(30 * 24 * 60 * 60)
+        #expect(HistoryPurgeRule.cutoffAtLaunch(now: offLaunch, isSyncing: false, in: storage) == nil)
+        storage.set(true, forKey: SyncPreference.key)
+        let backOn = offLaunch.addingTimeInterval(60)
+        #expect(HistoryPurgeRule.cutoffAtLaunch(now: backOn, isSyncing: true, in: storage) == nil)
+        #expect(HistoryPurgeRule.cutoffAtLaunch(now: backOn.addingTimeInterval(week - 60), isSyncing: true, in: storage) == nil)
+    }
+
+    @Test func aLaunchWhereICloudCouldNotBeReachedKeepsHistory() {
+        let storage = storage()
+        storage.set(true, forKey: SyncPreference.key)
+        _ = HistoryPurgeRule.cutoffAtLaunch(now: now, isSyncing: true, in: storage)
+
+        let paused = now.addingTimeInterval(2 * week)
+        #expect(HistoryPurgeRule.cutoffAtLaunch(now: paused, isSyncing: false, in: storage) == nil)
+    }
+
+    @Test func aDeviceThatNeverSyncedPurgesAtLaunch() {
+        #expect(HistoryPurgeRule.cutoffAtLaunch(now: now, isSyncing: false, in: storage()) == now.addingTimeInterval(-week))
+    }
+}

@@ -1,13 +1,22 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Photo removals with sync off merged (4b28065). Data safety 2/4 still claimed 🚧.
+`agent/history-purge-sync-off` — Inbox 🔴 "Store history purged after 7 days even while sync is off": `HistoryPurgeRule`
+(`PersistenceController+RemoteChanges.swift`), used by `RecipeFinderApp.purgeOldStoreHistory`; tests
+`HistoryPurgeRuleTests`. Waiting on Build & Test.
 
 ## Next action
-Next Inbox 🔴: "Store history purged after 7 days even while sync is off" (`RecipeFinderApp.swift:37-42`) — the
-sync-off photo removal fix depends on it; then other-devices-keep-photo-files 🔴.
+Green → reviews (deep-review + challenger) → ff main, tick Inbox line, Log. Then Inbox 🔴 other-devices-keep-photo-files.
 
 ## Decisions (why)
+- **History purge while sync is off**: no purge on any non-syncing launch once sync has ever been on; while syncing,
+  purge only after an unbroken week of syncing launches (`iCloudSyncRunningSince`, cleared by any non-syncing launch
+  incl. "paused on this device") — so off-period history gets a week to export after re-attach. Rejected: reconciling
+  on re-attach (CloudKit owns export; we can't rebuild lost history). Accepted: history grows while off. Store not
+  loaded at launch → skip purge (else the run marker would be wrongly cleared). **Pre-mortem:** (1) off > 7 days loses
+  changes → `syncOffForMoreThanAWeekStillKeepsAllHistory`; (2) purge right after re-attach before export →
+  `syncBackOnForLessThanAWeekKeepsAllHistory`, `anOffLaunchRestartsTheWeek…`; (3) never-synced store grows forever →
+  `aDeviceThatNeverSyncedPurgesAtLaunch`.
 - **Photo removals with sync off**: delete the row in the local store at once (same store file, history tracking always
   on), so CloudKit exports the delete on re-attach — the same path every other off-period change takes. Rejected: a
   pending-removals list in UserDefaults (second source of truth, needs its own clear/retry rules) and reconciling rows
