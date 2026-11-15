@@ -57,7 +57,7 @@ runs:
       run: |
         SIM=$(xcrun simctl list devices available -j \
           | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
-        XCODE=$(xcodebuild -version | awk '/Build version/ {print $3}')
+        XCODE=$(/usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' "$(xcode-select -p)/../version.plist")   # instant; xcodebuild -version took ~20s
         RUNTIME=$(xcrun simctl list devices available -j | jq -r --arg u "$SIM" \
           '.devices | to_entries[] | select(any(.value[]; .udid == $u)) | .key' | sed 's/.*SimRuntime\.//')
         RUNTIME_BUILD=$(xcrun simctl list runtimes -j | jq -r --arg r "$RUNTIME" '.runtimes[] | select(.identifier | endswith($r)) | .buildversion')

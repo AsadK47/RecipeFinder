@@ -1,6 +1,6 @@
 name: Build & Test
 
-# Pushes and PRs: build + unit tests. Nightly and "Run workflow": also every UI test, split across 3 parallel jobs.
+# Pushes and PRs: build + unit tests. Nightly and "Run workflow": also every UI test, split across 4 parallel jobs.
 # Coverage runs nightly in coverage.yml (a coverage build can't reuse this cache). Target: every run <= 10 min.
 # Build cache: written only by main, read by every run (cold build 8m41s vs restore 0:12 + incremental build ~1 min).
 
@@ -125,10 +125,10 @@ jobs:
 
   # Each shard builds for itself (~1 min from the cache) rather than downloading one build: same wall time, no
   # artifact hand-off. shard-ui-tests.py deals Xcode's own test list by measured duration, so every UI test runs
-  # in exactly one shard. 3 shards + the unit job leave 1 of the free plan's 5 macOS slots for other lanes (a
-  # 5th job queued 9 min behind them).
+  # in exactly one shard. 4 shards + the unit job use all 5 of the free plan's macOS slots: 3 shards ran 11:16,
+  # 4 fit in 10 min but queue behind other lanes' jobs (one waited 9 min), so nightly runs at 03:00.
   ui:
-    name: UI tests ${{ matrix.shard }}/3
+    name: UI tests ${{ matrix.shard }}/4
     needs: gate
     if: needs.gate.outputs.run == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
     runs-on: macos-26
@@ -136,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [ 1, 2, 3 ]
+        shard: [ 1, 2, 3, 4 ]
 
     steps:
       - uses: actions/checkout@v4
@@ -148,7 +148,7 @@ jobs:
       - name: UI tests
         env:
           SHARD: ${{ matrix.shard }}
-          SHARDS: 3
+          SHARDS: 4
           NSUnbufferedIO: 'YES'
         run: |
           set -o pipefail
