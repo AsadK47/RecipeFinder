@@ -205,6 +205,18 @@ struct BadgeManagerTests {
         #expect(sut.pendingCelebration != .welcomeAboard)
     }
 
+    /// The profile unlocks Welcome Aboard on a fresh install with a plain `unlockBadge`; its reveal then opened over
+    /// the next screen (e.g. Me after "View all badges").
+    @Test func unlockingWelcomeAboardDirectlyQueuesNoReveal() {
+        let sut = makeSUT()
+        sut.unlockBadge(.welcomeAboard)
+        #expect(sut.isBadgeUnlocked(BadgeType.welcomeAboard.rawValue))
+        #expect(sut.pendingCelebration == nil)
+        sut.unlockBadge(.firstRecipe)
+        sut.dismissCelebration()
+        #expect(sut.pendingCelebration == nil)
+    }
+
     // MARK: - getAllBadges
 
     @Test func getAllBadges_returnsAllBadgeTypes() {
