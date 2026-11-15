@@ -11,12 +11,24 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Inbox 🟡 ephemeral link import: ✅ landed 7041540 (reviewer + challenger; leftovers in CHALLENGES 2026-11-15).
 - Inbox 🧹 UnsplashClient deleted: ✅ landed c6cee26 (builder 2026-11-15); 🟡 perf-budget flake closed (already fixed 0a41340). Leftover branch agent/delete-unsplash-client (auto-cleanup).
 - Inbox 🟡 recipe-copy merge race: ✅ landed 70dbaaf (builder 2026-11-15) — test only; locking already fires. Leftover branch agent/copy-merge-lock (auto-cleanup).
+- Cook→Remember: `agent/made-it-moment` (builder 2026-11-15) — Made-it moment, one slice: building in CI.
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
+- **Made-it moment** (`MadeItMoment` pure copy/motion rules; `MadeItSummary` moved beside it): the existing Made it
+  sheet already had cook #N, streak, stars and photo buttons, so this adds what was missing rather than a new screen:
+  the dish picture (hero/art) popping in with a tick, "First time making X!" / "X · made N times", "N cooks this week"
+  (north-star number shown back), a photo prompt only when the dish has no photo yet, its own haptic
+  (`HapticManager.madeIt`) and confetti fired **from the sheet** once it is up — fired in `recordCook` they landed
+  behind cooking mode's closing cover. Reduce Motion: no confetti, no pop; haptic + words stay. VoiceOver gets one
+  announcement. Rejected: a full-screen moment (two modals vs badge reveal sequencing in `MadeItPresenter`); Spoons/
+  levels/impact line (parked Play extras). Not done: the "Measure" share of cooks with rating/photo — no on-device
+  counter yet (My Cookbook can show it). **Pre-mortem:** (1) wrong/odd copy (first vs repeat, blank name) →
+  `MadeItMomentTests`; (2) motion ignores Reduce Motion → `reduceMotion` test; (3) sheet no longer opens or Done
+  hidden by the bigger header → HabitLoop UI test (Done hittable + `madeIt.week`) and screenshot 41-made-it.
 - **CI under 10 min** (`agent/ci-10min`): measured, not guessed. (1) The simulator was the cost, not Xcode: a first
   boot does ~70s data migration then widgets/Health/News/Siri/push peg all 3 CPUs ~5 min (sim+host diagnosticd ~50–90%).
   Booting it in the background starved everything else (cache download 0.3–5 MB/s vs 120, actool 11s→71s, build

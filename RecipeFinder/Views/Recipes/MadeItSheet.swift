@@ -1,24 +1,18 @@
+import ConfettiSwiftUI
 import PhotosUI
 import SwiftUI
 import UIKit
 
-/// Snapshot of a just-logged cook for the "Made it" sheet. Identifiable so it drives `.sheet(item:)`.
-struct MadeItSummary: Identifiable, Equatable {
-    let id = UUID()
-    /// Total cooks across the library, including this one.
-    let cookNumber: Int
-    let streakWeeks: Int
-    let rating: Int
-    let milestone: CookingMilestoneProgress?
-}
-
-/// The one post-cook moment: cook number, streak, rating, optional dish photo and next-badge progress.
+/// The one post-cook moment: the dish, cook number, streak, cooks this week, rating, a photo nudge and next-badge
+/// progress, with its own haptic and confetti (Reduce Motion drops the movement; wording in `MadeItMoment`).
 /// The caller persists the rating and photo; the sheet stays open after either so both can be done.
 struct MadeItSheet: View {
     let summary: MadeItSummary
     let onRate: (Int) -> Void
     let onPhotoSelected: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
 
     @State private var rating: Int
     @State private var selectedItem: PhotosPickerItem?
@@ -26,6 +20,8 @@ struct MadeItSheet: View {
     @State private var showCamera = false
     @State private var photoAdded = false
     @State private var loadError: String?
+    @State private var confettiCounter = 0
+    @State private var landed = false
 
     init(summary: MadeItSummary, onRate: @escaping (Int) -> Void, onPhotoSelected: @escaping (UIImage) -> Void) {
         self.summary = summary
@@ -79,6 +75,37 @@ struct MadeItSheet: View {
             }
         }
         .errorAlert("Couldn't load photo", message: $loadError)
+        .confettiCannon(
+            trigger: $confettiCounter,
+            num: AppTheme.confettiCount,
+            radius: AppTheme.confettiRadius,
+            // The moment plays its own haptic pattern; the cannon's would land on top of it.
+            hapticFeedback: false
+        )
+        .task { await play() }
+    }
+
+    private var motion: MadeItMoment.Motion { MadeItMoment.motion(reduceMotion: reduceMotion) }
+
+    /// Lands the moment once the sheet is up: the picture pops in, then haptic and confetti together.
+    private func play() async {
+        guard !landed else { return }
+        let motion = self.motion
+        if motion.popsIn {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { landed = true }
+            try? await Task.sleep(for: .milliseconds(250))
+        } else {
+            landed = true
+        }
+        guard !Task.isCancelled else { return }
+        if motion.playsHaptic { HapticManager.shared.madeIt() }
+        if motion.firesConfetti { confettiCounter += 1 }
+        if voiceOverEnabled {
+            AccessibilityNotification.Announcement(MadeItMoment.announcement(
+                cookNumber: summary.cookNumber, recipeName: summary.recipeName, timesCooked: summary.timesCooked,
+                streakWeeks: summary.streakWeeks, cooksThisWeek: summary.cooksThisWeek
+            )).post()
+        }
     }
 
     private func addPhoto(_ image: UIImage) {
@@ -88,29 +115,49 @@ struct MadeItSheet: View {
 
     private var header: some View {
         VStack(spacing: AppTheme.spacing8) {
-            IconBadge(systemName: "checkmark", tint: .green, diameter: 72, iconSize: 30, weight: .bold)
+            dishPicture
             Text("Cook #\(summary.cookNumber)")
                 .font(.title.bold())
                 .adaptiveForegroundColor()
                 .accessibilityIdentifier("madeIt.cookNumber")
-            Text("Nice cooking!")
-                .font(.subheadline)
+            Text(MadeItMoment.subtitle(recipeName: summary.recipeName, timesCooked: summary.timesCooked))
+                .font(.subheadline.weight(.semibold))
                 .adaptiveSecondaryForeground()
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("madeIt.subtitle")
         }
         .accessibilityElement(children: .combine)
     }
 
+    /// The dish itself, with a tick — big pictures, few words. Falls back to the recipe's illustrated art.
+    private var dishPicture: some View {
+        RecipeImageView(imageName: summary.imageName, height: Layout.picture, recipeName: summary.recipeName,
+                        category: summary.category, cuisine: summary.cuisine)
+            .frame(width: Layout.picture, height: Layout.picture)
+            .clipShape(Circle())
+            .overlay(alignment: .bottomTrailing) {
+                IconBadge(systemName: "checkmark", tint: .green, diameter: 36, iconSize: 16, weight: .bold, style: .solid)
+            }
+            .scaleEffect(landed ? 1 : 0.6)
+            .opacity(landed ? 1 : 0)
+            .accessibilityHidden(true)
+    }
+
+    private enum Layout {
+        static let picture: CGFloat = 104
+    }
+
     private var statsCard: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            if summary.streakWeeks > 0 {
-                HStack(spacing: AppTheme.spacing8) {
-                    Image(systemName: "flame.fill")
-                        .foregroundStyle(.orange)
-                        .accessibilityHidden(true)
-                    Text(summary.streakWeeks == 1 ? "1-week cooking streak" : "\(summary.streakWeeks)-week cooking streak")
-                        .font(.subheadline.weight(.semibold))
-                        .adaptiveForegroundColor()
-                }
+            if let streak = MadeItMoment.streakLine(weeks: summary.streakWeeks) {
+                statRow(icon: "flame.fill", tint: .orange, text: streak)
+            }
+            if let week = MadeItMoment.weekLine(cooksThisWeek: summary.cooksThisWeek) {
+                statRow(icon: "fork.knife", tint: .green, text: week)
+                    .accessibilityIdentifier("madeIt.week")
+            }
+            if summary.streakWeeks > 0 || summary.cooksThisWeek > 0 {
                 Divider()
             }
 
@@ -144,6 +191,18 @@ struct MadeItSheet: View {
         .appCard(elevated: true)
     }
 
+    private func statRow(icon: String, tint: Color, text: String) -> some View {
+        HStack(spacing: AppTheme.spacing8) {
+            Image(systemName: icon)
+                .foregroundStyle(tint)
+                .frame(width: 20)
+                .accessibilityHidden(true)
+            Text(text)
+                .font(.subheadline.weight(.semibold))
+                .adaptiveForegroundColor()
+        }
+    }
+
     @ViewBuilder
     private var photoSection: some View {
         if photoAdded {
@@ -151,19 +210,32 @@ struct MadeItSheet: View {
                 .font(.subheadline.weight(.semibold))
                 .adaptiveForegroundColor()
         } else {
-            HStack(spacing: AppTheme.spacing8) {
-                PrimaryButton("Add photo", systemImage: "photo.on.rectangle", fillWidth: true, variant: .secondary) {
-                    showPhotoPicker = true
+            VStack(spacing: AppTheme.spacing8) {
+                if let prompt = MadeItMoment.photoNudge(hasCookPhoto: summary.hasCookPhoto).prompt {
+                    Text(prompt)
+                        .font(.subheadline)
+                        .adaptiveSecondaryForeground()
+                        .multilineTextAlignment(.center)
+                        .accessibilityIdentifier("madeIt.photoPrompt")
                 }
-                if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                    PrimaryButton("Take photo", systemImage: "camera", fillWidth: true, variant: .secondary) {
-                        showCamera = true
-                    }
+                photoButtons
+            }
+        }
+    }
+
+    private var photoButtons: some View {
+        HStack(spacing: AppTheme.spacing8) {
+            PrimaryButton("Add photo", systemImage: "photo.on.rectangle", fillWidth: true, variant: .secondary) {
+                showPhotoPicker = true
+            }
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                PrimaryButton("Take photo", systemImage: "camera", fillWidth: true, variant: .secondary) {
+                    showCamera = true
                 }
             }
-            .lineLimit(1)
-            .minimumScaleFactor(0.8)
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
     }
 }
 

@@ -249,6 +249,7 @@
 		7E9DDB8D3E359EFEAF9482A6 /* UseSoon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A414F58226D9CE98D8DD3B /* UseSoon.swift */; };
 		9E97169D1B8CE5CA16EF5CB7 /* TodayWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2487F3BE883092F34E13594 /* TodayWeek.swift */; };
 		2F390B87D67B023F60F9B798 /* TodayProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770CAD13044475807B73ADE7 /* TodayProgress.swift */; };
+		B3FE45676FA29189CE069464 /* MadeItMoment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9B791A8BA527A250E31727 /* MadeItMoment.swift */; };
 		3FFCA904256FAD1130989BAF /* TodaySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A197EC37074221054BC8EF6 /* TodaySnapshot.swift */; };
 		9AA659538B431F45084C520F /* TonightTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */; };
 		39080F3DF876433E53B3C53F /* ClipboardRecipeLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */; };
@@ -259,6 +260,7 @@
 		12BCE99BC0045C919CD07056 /* UseSoonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7C7C5D1346D15F4F10C84E /* UseSoonTests.swift */; };
 		D264E282CB491A6866369AA7 /* TodayWeekTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B7E4039911E356666ED70C /* TodayWeekTests.swift */; };
 		3F80C6BC0621CA22D6A0CD6C /* TodayProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038755EE92A6E70598C3A798 /* TodayProgressTests.swift */; };
+		9EAB6F20FADCB261B5CEA96D /* MadeItMomentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7716BC9CCE76DAA467B0AB /* MadeItMomentTests.swift */; };
 		931617E37423BCB8878324AE /* TodaySnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3174F5CEF5CB0D221A68903E /* TodaySnapshotTests.swift */; };
 		F58295A3D95AC30CD5B0C575 /* ClipboardRecipeLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */; };
 		F3B7D9113074FCFF00991908 /* StreakChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9103074FCFF00991908 /* StreakChip.swift */; };
@@ -818,6 +820,7 @@
 		79A414F58226D9CE98D8DD3B /* UseSoon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseSoon.swift; sourceTree = "<group>"; };
 		D2487F3BE883092F34E13594 /* TodayWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWeek.swift; sourceTree = "<group>"; };
 		770CAD13044475807B73ADE7 /* TodayProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayProgress.swift; sourceTree = "<group>"; };
+		DA9B791A8BA527A250E31727 /* MadeItMoment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MadeItMoment.swift; sourceTree = "<group>"; };
 		2A197EC37074221054BC8EF6 /* TodaySnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySnapshot.swift; sourceTree = "<group>"; };
 		4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTiming.swift; sourceTree = "<group>"; };
 		9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardRecipeLink.swift; sourceTree = "<group>"; };
@@ -828,6 +831,7 @@
 		AF7C7C5D1346D15F4F10C84E /* UseSoonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseSoonTests.swift; sourceTree = "<group>"; };
 		51B7E4039911E356666ED70C /* TodayWeekTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWeekTests.swift; sourceTree = "<group>"; };
 		038755EE92A6E70598C3A798 /* TodayProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayProgressTests.swift; sourceTree = "<group>"; };
+		4B7716BC9CCE76DAA467B0AB /* MadeItMomentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MadeItMomentTests.swift; sourceTree = "<group>"; };
 		3174F5CEF5CB0D221A68903E /* TodaySnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySnapshotTests.swift; sourceTree = "<group>"; };
 		BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardRecipeLinkTests.swift; sourceTree = "<group>"; };
 		F3B7D9103074FCFF00991908 /* StreakChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakChip.swift; sourceTree = "<group>"; };
@@ -1329,6 +1333,7 @@
 				AF7C7C5D1346D15F4F10C84E /* UseSoonTests.swift */,
 				51B7E4039911E356666ED70C /* TodayWeekTests.swift */,
 				038755EE92A6E70598C3A798 /* TodayProgressTests.swift */,
+				4B7716BC9CCE76DAA467B0AB /* MadeItMomentTests.swift */,
 				3174F5CEF5CB0D221A68903E /* TodaySnapshotTests.swift */,
 				BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */,
 				F3B7D91C30793B9100991908 /* CookingPlanTests.swift */,
@@ -2130,6 +2135,7 @@
 				79A414F58226D9CE98D8DD3B /* UseSoon.swift */,
 				D2487F3BE883092F34E13594 /* TodayWeek.swift */,
 				770CAD13044475807B73ADE7 /* TodayProgress.swift */,
+				DA9B791A8BA527A250E31727 /* MadeItMoment.swift */,
 				2A197EC37074221054BC8EF6 /* TodaySnapshot.swift */,
 				4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */,
 				9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */,
@@ -2643,6 +2649,7 @@
 				7E9DDB8D3E359EFEAF9482A6 /* UseSoon.swift in Sources */,
 				9E97169D1B8CE5CA16EF5CB7 /* TodayWeek.swift in Sources */,
 				2F390B87D67B023F60F9B798 /* TodayProgress.swift in Sources */,
+				B3FE45676FA29189CE069464 /* MadeItMoment.swift in Sources */,
 				3FFCA904256FAD1130989BAF /* TodaySnapshot.swift in Sources */,
 				9AA659538B431F45084C520F /* TonightTiming.swift in Sources */,
 				39080F3DF876433E53B3C53F /* ClipboardRecipeLink.swift in Sources */,
@@ -2876,6 +2883,7 @@
 				12BCE99BC0045C919CD07056 /* UseSoonTests.swift in Sources */,
 				D264E282CB491A6866369AA7 /* TodayWeekTests.swift in Sources */,
 				3F80C6BC0621CA22D6A0CD6C /* TodayProgressTests.swift in Sources */,
+				9EAB6F20FADCB261B5CEA96D /* MadeItMomentTests.swift in Sources */,
 				931617E37423BCB8878324AE /* TodaySnapshotTests.swift in Sources */,
 				F58295A3D95AC30CD5B0C575 /* ClipboardRecipeLinkTests.swift in Sources */,
 				F3E9D289304E056A008BF231 /* CoreDataStorePersistenceTests.swift in Sources */,

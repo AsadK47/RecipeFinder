@@ -640,6 +640,30 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
     }
 
+    /// Made-it moment: the sheet after Mark as Cooked — dish picture, "First time making …", week count, photo nudge.
+    /// Skipped (not failed) when an earlier run already cooked this recipe today, which disables the button.
+    @MainActor
+    func testCaptureMadeIt() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Recipes", shot: nil)
+        let recipe = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
+        guard recipe.waitForExistence(timeout: 10) else { return }
+        recipe.tap()
+        let markCooked = app.buttons["recipe.markCooked"]
+        guard markCooked.waitForExistence(timeout: 10), markCooked.isEnabled else { return }
+        // XCUITest can't scroll this SwiftUI page to the button on its own.
+        for _ in 0..<15 where !markCooked.isHittable { app.swipeUp(velocity: .slow) }
+        guard markCooked.isHittable else { return }
+        markCooked.tap()
+        XCTAssertTrue(app.buttons["madeIt.done"].waitForExistence(timeout: 5), "Mark as Cooked should open Made it.")
+        settle(2.5)
+        snap(app, "41-made-it")
+    }
+
     @MainActor
     private func tab(_ app: XCUIApplication, _ name: String, shot: String?) {
         let button = app.tabBars.buttons[name]

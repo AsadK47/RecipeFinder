@@ -88,6 +88,17 @@ final class HapticManager: Sendable {
         }
     }
     
+    /// Made it's own pattern: a success buzz, then three rising taps — like a little drum roll for the dish.
+    func madeIt() {
+        Task { @MainActor in
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            for intensity in [0.5, 0.75, 1.0] {
+                try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalShort)
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred(intensity: intensity)
+            }
+        }
+    }
+
     /// A badge reveal's own pattern: a firm tap as the medallion lands, a success buzz, then two sparkles.
     func badgeReveal() {
         Task { @MainActor in

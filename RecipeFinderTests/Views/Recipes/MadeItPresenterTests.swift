@@ -13,7 +13,13 @@ struct MadeItPresenterTests {
     private func request() -> MadeItPresenter.Request {
         MadeItPresenter.Request(
             recipeId: recipeId,
-            summary: MadeItSummary(cookNumber: 1, streakWeeks: 1, rating: 0, milestone: nil),
+            summary: MadeItSummary(
+                recipe: RecipeModel(
+                    name: "Dal", category: "Main", difficulty: "Easy", prepTime: "", cookingTime: "",
+                    baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: "", cookCount: 1
+                ),
+                cookNumber: 1, streakWeeks: 1, cooksThisWeek: 1, milestone: nil
+            ),
             onRate: { _ in },
             onPhotoSelected: { _ in }
         )

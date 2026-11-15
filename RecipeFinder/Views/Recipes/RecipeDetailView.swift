@@ -352,9 +352,8 @@ struct RecipeDetailView: View {
         Task { await PersistenceController.shared.recordCook(withId: recipe.id) }
         recipeStore.sync(recipe)
 
-        // Cooking is the rewarded action — celebrate every cook, not just the week's first.
-        confettiCounter += 1
-        HapticManager.shared.celebrate()
+        // Cooking is the rewarded action: the Made it sheet plays the haptic and confetti for every cook, once it's
+        // on screen — fired here, they landed behind cooking mode's closing cover.
 
         // Feed the weekly cooking-streak habit loop; the Made it sheet shows the resulting streak.
         _ = cookingStreak.recordCookToday()
@@ -367,9 +366,10 @@ struct RecipeDetailView: View {
 
         // One celebratory sheet replaces the scattered toast / photo prompt / scroll-down rating.
         let summary = MadeItSummary(
+            recipe: recipe,
             cookNumber: totalCooks,
             streakWeeks: cookingStreak.streak.currentWeeks,
-            rating: recipe.rating,
+            cooksThisWeek: cookingStreak.streak.cooksThisWeek,
             milestone: BadgeType.nextCookingMilestone(totalCooks: totalCooks)
         )
         let request = MadeItPresenter.Request(

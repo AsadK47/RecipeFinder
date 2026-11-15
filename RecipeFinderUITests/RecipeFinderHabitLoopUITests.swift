@@ -94,6 +94,8 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
             checkpoint(app, "after Mark as Cooked")
             XCTAssertTrue(sheetShown, "Marking as cooked should open the Made it sheet.")
             XCTAssertTrue(done.isHittable, "Done must be on screen without scrolling the Made it sheet.")
+            XCTAssertTrue(app.descendants(matching: .any)["madeIt.week"].exists,
+                          "Made it should count this cook in the week's cooks.")
             done.tap()
             XCTAssertTrue(done.waitForNonExistence(timeout: 4), "Done should close the Made it sheet.")
         }
