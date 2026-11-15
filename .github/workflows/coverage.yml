@@ -1,0 +1,60 @@
+name: Coverage
+
+# Nightly line coverage from the unit tests, published to the "coverage" release as a text file agents can read.
+# Its own workflow: a coverage build can't reuse the Build & Test cache (it compiles from scratch, ~7 min), which
+# would push Build & Test past its 10-minute target. Not a gate; Build & Test runs every test.
+
+permissions:
+  contents: write   # publish coverage.txt to the "coverage" release
+
+on:
+  schedule:
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  coverage:
+    runs-on: macos-26
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/prepare
+        with:
+          coverage: 'YES'
+
+      - name: Test
+        env:
+          NSUnbufferedIO: 'YES'
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
+            -resultBundlePath TestResults.xcresult -collect-test-diagnostics never -enableCodeCoverage YES \
+            -skip-testing:RecipeFinderUITests | tee -a xcodebuild.log
+
+      - name: Publish coverage
+        if: always() && hashFiles('TestResults.xcresult/**') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Coverage for ${GITHUB_REF_NAME} @ ${GITHUB_SHA::7} ($(date -u +%F)), unit tests"
+            xcrun xccov view --report --only-targets TestResults.xcresult
+            echo
+            echo "App files, lowest coverage first:"
+            xcrun xccov view --report --json TestResults.xcresult \
+              | jq -r '.targets[] | select(.name == "RecipeFinder.app") | .files
+                       | sort_by(.lineCoverage)[] | "\(.lineCoverage * 100 | floor)%\t\(.executableLines)\t\(.path | sub(".*/RecipeFinder/"; ""))"'
+          } > coverage.txt
+          head -5 coverage.txt >> "$GITHUB_STEP_SUMMARY"
+          [ "$GITHUB_REF_NAME" = "main" ] || exit 0   # branch runs show it in the summary only
+          gh release view coverage >/dev/null 2>&1 || \
+            gh release create coverage --title "Test coverage" --notes "Nightly line coverage." --latest=false
+          gh release upload coverage coverage.txt --clobber

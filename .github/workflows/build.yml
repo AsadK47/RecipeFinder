@@ -1,11 +1,11 @@
 name: Build & Test
 
-# Pushes and PRs: build + unit tests.
-# Nightly and "Run workflow": everything, including the slow UI tests.
-# Build cache: written only by main, read by every run (cold build 8m41s vs restore ~3 min + incremental build).
+# Pushes and PRs: build + unit tests. Nightly and "Run workflow": also every UI test, split across 3 parallel jobs.
+# Coverage runs nightly in coverage.yml (a coverage build can't reuse this cache). Target: every run <= 10 min.
+# Build cache: written only by main, read by every run (cold build 8m41s vs restore 0:12 + incremental build ~1 min).
 
 permissions:
-  contents: write   # publish coverage.txt to the "coverage" release
+  contents: read
   actions: read     # the gate job lists earlier runs
 
 on:
@@ -19,6 +19,7 @@ on:
       - '.github/workflows/testflight*.yml'
       - '.github/workflows/screenshots.yml'
       - '.github/workflows/cleanup-agent-branches.yml'
+      - '.github/workflows/coverage.yml'
   pull_request:
     paths-ignore:
       - '**/*.md'
@@ -27,12 +28,14 @@ on:
       - '.github/workflows/testflight*.yml'
       - '.github/workflows/screenshots.yml'
       - '.github/workflows/cleanup-agent-branches.yml'
+      - '.github/workflows/coverage.yml'
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # The nightly gets its own group, so it never cancels or holds up a push to main.
+  group: ${{ github.workflow }}-${{ github.ref }}${{ github.event_name == 'schedule' && '-nightly' || '' }}
   # Pushes to main queue rather than cancel each other, so every commit gets tested and the build cache gets
   # saved; a newer push to an agent branch or PR cancels the now-outdated run.
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -62,103 +65,44 @@ jobs:
     name: Build & Test
     needs: gate
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # full history, so file dates can be restored below
+          fetch-depth: 0   # full history, so file dates can be restored
 
-      # Spotlight, crash reporting and other background services compete with the simulator for the runner's 3 CPUs
-      # (Bitwarden's macos-runner-tuneup). Swift Testing ran in 45s on a settled runner vs 119s on a busy one.
-      - name: Quiet the runner
-        run: |
-          sudo mdutil -a -i off >/dev/null || true
-          for s in com.apple.metadata.mds com.apple.metadata.mds.index com.apple.metadata.mds.scan com.apple.ReportCrash; do
-            sudo launchctl bootout "system/$s" 2>/dev/null || true
-          done
-          sudo pkill -SIGKILL -f "Metadata.framework/Versions/A/Support/mds" || true
-
-      # A fresh checkout stamps every file "now", which makes Xcode recompile everything even with a cached build
-      # folder. Reset each file to its last commit time; tell Xcode new disk inodes aren't changes (TCA, Supabase).
-      - name: Restore file dates
-        run: |
-          python3 - <<'PY'
-          import os, subprocess
-          out = subprocess.run(["git", "log", "--format=@%ct", "--name-only"],
-                               capture_output=True, text=True, check=True).stdout
-          seen, ts = set(), None
-          for line in out.splitlines():
-              if line.startswith("@"):
-                  ts = int(line[1:])
-              elif line and line not in seen and os.path.isfile(line):
-                  seen.add(line)
-                  os.utime(line, (ts, ts))
-          PY
-          defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
-
-      # Start the simulator now, in the background, so it boots while Xcode compiles (Sentry, Nuke, Home Assistant).
-      - name: Boot simulator early
-        run: |
-          SIM=$(xcrun simctl list devices available -j \
-            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
-          echo "SIM=$SIM" >> "$GITHUB_ENV"
-          if [ "${{ needs.gate.outputs.run }}" = "true" ]; then xcrun simctl boot "$SIM" & fi
-
-      - name: Restore build cache
-        uses: actions/cache/restore@v4
+      - uses: ./.github/actions/prepare
         with:
-          path: DerivedData
-          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
-          restore-keys: deriveddata-test-${{ runner.os }}-
-
-      # Build once, then test that exact build, so compile and test time show separately.
-      # No index store; coverage only on nightly / "Run workflow" (published to the "coverage" release), so pushes
-      # stay fast. No macro/plugin validation prompts.
-      - name: Build
-        env:
-          COVERAGE: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'YES' || 'NO' }}
-        run: |
-          set -o pipefail
-          xcodebuild build-for-testing -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
-            -enableCodeCoverage "$COVERAGE" -skipPackagePluginValidation -skipMacroValidation \
-            COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
+          boot: ${{ needs.gate.outputs.run }}
 
       - name: Test
         if: needs.gate.outputs.run == 'true'
         env:
-          EVENT: ${{ github.event_name }}
           NSUnbufferedIO: 'YES'   # log lines arrive as they happen, so the timestamps show where time goes
         run: |
           set -o pipefail
-          SKIP="-skip-testing:RecipeFinderUITests"
-          COVERAGE=NO
-          if [ "$EVENT" = "schedule" ] || [ "$EVENT" = "workflow_dispatch" ]; then SKIP=""; COVERAGE=YES; fi
-          time xcrun simctl bootstatus "$SIM" -b
           # -collect-test-diagnostics never: no `simctl diagnose` dump after the run (Nuke measured 610s -> 6s).
           xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult -collect-test-diagnostics never \
-            -enableCodeCoverage "$COVERAGE" $SKIP | tee -a xcodebuild.log
+            -skip-testing:RecipeFinderUITests | tee -a xcodebuild.log
 
-      # Nightly: per-file line coverage for the app, as a text file agents can read (they can't open run artifacts).
-      - name: Publish coverage
-        if: always() && needs.gate.outputs.run == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && hashFiles('TestResults.xcresult/**') != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
+      # main saves a booted, emptied simulator for every later run (once per Xcode version; branches can't save
+      # caches other branches read).
+      - name: Empty the simulator
+        if: always() && github.ref == 'refs/heads/main' && needs.gate.outputs.run == 'true' && env.SIM_CACHE_HIT != 'true'
         run: |
-          {
-            echo "Coverage for ${GITHUB_REF_NAME} @ ${GITHUB_SHA::7} ($(date -u +%F))"
-            xcrun xccov view --report --only-targets TestResults.xcresult
-            echo
-            echo "App files, lowest coverage first:"
-            xcrun xccov view --report --json TestResults.xcresult \
-              | jq -r '.targets[] | select(.name == "RecipeFinder.app") | .files
-                       | sort_by(.lineCoverage)[] | "\(.lineCoverage * 100 | floor)%\t\(.executableLines)\t\(.path | sub(".*/RecipeFinder/"; ""))"'
-          } > coverage.txt
-          head -5 coverage.txt >> "$GITHUB_STEP_SUMMARY"
-          gh release view coverage >/dev/null 2>&1 || \
-            gh release create coverage --title "Test coverage" --notes "Nightly line coverage." --latest=false
-          gh release upload coverage coverage.txt --clobber
+          for APP in com.asadkhan.recipefinder com.asadkhan.recipefinderuitests.xctrunner; do
+            xcrun simctl uninstall "$SIM" "$APP" || true
+          done
+          xcrun simctl shutdown "$SIM" || true
+
+      - name: Save booted simulator
+        if: always() && github.ref == 'refs/heads/main' && needs.gate.outputs.run == 'true' && env.SIM_CACHE_HIT != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.SIM_DIR }}
+          key: ${{ env.SIM_KEY }}
 
       # Only main writes the cache (Home Assistant, Element X): per-branch saves filled the 10 GB limit and evicted it.
       - name: Save build cache
@@ -173,6 +117,52 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
+          path: |
+            xcodebuild.log
+            TestResults.xcresult
+
+  # Each shard builds for itself (~1 min from the cache) rather than downloading one build: same wall time, no
+  # artifact hand-off. shard-ui-tests.py deals Xcode's own test list by measured duration, so every UI test runs
+  # in exactly one shard. 3 shards + the unit job leave 1 of the free plan's 5 macOS slots for other lanes (a
+  # 5th job queued 9 min behind them).
+  ui:
+    name: UI tests ${{ matrix.shard }}/3
+    needs: gate
+    if: needs.gate.outputs.run == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [ 1, 2, 3 ]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/prepare
+
+      - name: UI tests
+        env:
+          SHARD: ${{ matrix.shard }}
+          SHARDS: 3
+          NSUnbufferedIO: 'YES'
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
+            -only-testing:RecipeFinderUITests -enumerate-tests -test-enumeration-style flat \
+            -test-enumeration-format json -test-enumeration-output-path tests.json >/dev/null
+          ONLY=$(python3 .github/scripts/shard-ui-tests.py tests.json "$SHARD" "$SHARDS")
+          echo "$ONLY" | tr ' ' '\n'
+          xcodebuild test-without-building -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
+            -resultBundlePath TestResults.xcresult -collect-test-diagnostics never $ONLY | tee -a xcodebuild.log
+
+      - name: Keep logs if it fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-results-${{ matrix.shard }}
           path: |
             xcodebuild.log
             TestResults.xcresult

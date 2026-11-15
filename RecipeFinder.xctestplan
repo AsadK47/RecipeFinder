@@ -9,7 +9,7 @@
     }
   ],
   "defaultOptions" : {
-    "areLocalizationScreenshotsEnabled" : true,
+    "areLocalizationScreenshotsEnabled" : false,
     "commandLineArgumentEntries" : [
       {
         "argument" : ""

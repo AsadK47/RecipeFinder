@@ -1,0 +1,112 @@
+name: Prepare and build
+description: Quiet the runner, restore the caches, boot a quiet simulator and build for testing.
+# Shared by Build & Test (unit and UI shard jobs) and Coverage. Expects a full-history checkout.
+# Leaves SIM, SIM_DIR, SIM_KEY and SIM_CACHE_HIT in the env (save-simulator in build.yml uses them).
+# Timings behind each step: BACKLOG "CI under 10 minutes".
+
+inputs:
+  coverage:
+    description: YES to build with code coverage (does not match the cached build, so it compiles from scratch).
+    default: 'NO'
+  boot:
+    description: 'false to skip the simulator (main pushes only compile, to save the build cache).'
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    # Spotlight, crash reporting and software update compete with the simulator for the runner's 3 CPUs.
+    - name: Quiet the runner
+      shell: bash
+      run: |
+        sudo mdutil -a -i off >/dev/null || true
+        for s in com.apple.metadata.mds com.apple.metadata.mds.index com.apple.metadata.mds.scan com.apple.ReportCrash \
+                 com.apple.softwareupdated; do
+          sudo launchctl bootout "system/$s" 2>/dev/null || true
+        done
+        sudo pkill -SIGKILL -f "Metadata.framework/Versions/A/Support/mds" || true
+
+    # A fresh checkout stamps every file "now", which makes Xcode recompile everything even with a cached build
+    # folder. Reset each file to its last commit time; tell Xcode new disk inodes aren't changes (TCA, Supabase).
+    - name: Restore file dates
+      shell: bash
+      run: |
+        python3 - <<'PY'
+        import os, subprocess
+        out = subprocess.run(["git", "log", "--format=@%ct", "--name-only"],
+                             capture_output=True, text=True, check=True).stdout
+        seen, ts = set(), None
+        for line in out.splitlines():
+            if line.startswith("@"):
+                ts = int(line[1:])
+            elif line and line not in seen and os.path.isfile(line):
+                seen.add(line)
+                os.utime(line, (ts, ts))
+        PY
+        defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
+
+    - name: Restore build cache
+      uses: actions/cache/restore@v4
+      with:
+        path: DerivedData
+        key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
+        restore-keys: deriveddata-test-${{ runner.os }}-
+
+    - name: Pick simulator
+      shell: bash
+      run: |
+        SIM=$(xcrun simctl list devices available -j \
+          | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+        XCODE=$(xcodebuild -version | awk '/Build version/ {print $3}')
+        {
+          echo "SIM=$SIM"
+          echo "SIM_DIR=$HOME/Library/Developer/CoreSimulator/Devices/$SIM"
+          echo "SIM_KEY=simulator-$XCODE-$SIM-v1"
+        } >> "$GITHUB_ENV"
+
+    # A simulator's first boot spends ~70s migrating data, and its services then keep all 3 CPUs busy for minutes.
+    # A device that already booted once (saved by main, 0.7 GB) is settled in ~130s instead of ~260s.
+    - name: Restore booted simulator
+      if: inputs.boot == 'true'
+      id: simcache
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ env.SIM_DIR }}
+        key: ${{ env.SIM_KEY }}
+
+    # Widgets, Health, News, Siri and push start at every boot and their logs keep diagnosticd busy; booting them out
+    # (the app uses none) as soon as launchd answers leaves the simulator idle. bootout, not kill: killed services
+    # respawn on demand. Nothing else runs meanwhile: alongside it the cache restore went 0:12 -> 2-3.5 min and a
+    # build 0:43 -> 6+ min.
+    - name: Boot simulator
+      if: inputs.boot == 'true'
+      shell: bash
+      env:
+        HIT: ${{ steps.simcache.outputs.cache-hit }}
+      run: |
+        echo "SIM_CACHE_HIT=${HIT:-false}" >> "$GITHUB_ENV"
+        S=$(date +%s)
+        xcrun simctl boot "$SIM"
+        until xcrun simctl spawn "$SIM" launchctl list >/dev/null 2>&1; do sleep 2; done
+        for L in chronod apsd healthd healthappd fitnessintelligenced fitcore fitnesscoachingd newsd suggestd \
+                 mediaanalysisd photoanalysisd siriactionsd siriinferenced siriknowledged assistantd triald \
+                 mobileassetd weatherd itunescloudd spotlightknowledged corespotlightservice searchd \
+                 intelligenceplatformd knowledgeconstructiond biomed duetexpertd amsengagementd; do
+          ( xcrun simctl spawn "$SIM" launchctl disable "user/foreground/com.apple.$L"
+            xcrun simctl spawn "$SIM" launchctl bootout "user/foreground/com.apple.$L" ) >/dev/null 2>&1 &
+        done
+        wait
+        xcrun simctl bootstatus "$SIM" -b >/dev/null
+        echo "Simulator ready $(( $(date +%s) - S ))s after boot (cached device: ${HIT:-false})"
+
+    # Build once, then test that exact build, so compile and test time show separately. No index store, no
+    # macro/plugin validation prompts.
+    - name: Build
+      shell: bash
+      env:
+        COVERAGE: ${{ inputs.coverage }}
+      run: |
+        set -o pipefail
+        xcodebuild build-for-testing -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
+          -enableCodeCoverage "$COVERAGE" -skipPackagePluginValidation -skipMacroValidation \
+          COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
