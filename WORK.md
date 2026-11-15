@@ -7,8 +7,8 @@ rules → `CLAUDE.md`, rationale → `WORK.md` Decisions. Push docs-only to `mai
 
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
-- Data: `agent/recently-deleted` — Data safety 4/4 lean (model 18 OK). (Photo files after Reset landed by another session, e67da6f.)
-- Cook: `agent/cooking-flow-ticks` — Cooking flow slice 1 (ingredient ticking).
+- Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — lands as soon as the owner deploys the CloudKit Production schema (model 17 photos + model 18 deletedAt).
+- Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
 - Discover: `agent/endless-discovery` (34db781) — builder agent took over 04:40: `@MainActor` fix pushed, CI
   running. Next if green: Screenshots on the branch (Recipes scrolled 3 screens), then `ready to batch`.
   Reviewer + challenger already done and acted on (CHALLENGES 15 Nov).
