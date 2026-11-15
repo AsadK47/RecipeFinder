@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (bug pass: 🐞 nightly UI tests cancelled at 30 min — fixed: 75 min for nightly/dispatch; nightly in its own concurrency group so it never queues main pushes)
+- ⚔️ [Break] "Publish coverage" runs on a cancelled run's incomplete xcresult and fails in `xccov` — noise on a run that already failed.
+  → Later (guard with an `xccov view` probe if it recurs once runs finish).
+- ⚔️ [Break] No per-step timeout: a hung UI test burns the full 75 min of runner time, nightly only.
+  → Accept (pushes stay at 30).
+
 ## 2026-11-15 (item pass: Recipes — endless discovery — fixed: preview of six A–Z air-fryer samples (now own + favourites first), a chosen sort still counted as browsing, Cook it again re-dealt the Recently cooked row and preview, untested browse/search switch (now `RecipeBrowse`), reshuffle test passed without the shuffle, 2–7 recipe libraries ended the "endless" feed, a renamed recipe dealt stale (pool `==` ignores names), loose similarity words, fixtures that made everything similar)
 - ⚔️ [Loop] Tiles only open the recipe; PRODUCT "Feel" wants one tap to plan or cook from the scroll. Serves the loop via the detail page.
   → Later (next slice: double-tap/plan action on tiles).
