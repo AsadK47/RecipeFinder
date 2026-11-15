@@ -98,6 +98,47 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
     }
 
+    /// Cooking flow: tapping ingredient rows ticks them into "Got it"; ticking them all offers cooking mode.
+    /// Asserts the flow (it's the cook's first step), then captures both states.
+    @MainActor
+    func testCaptureRecipeTicks() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        tab(app, "Recipes", shot: nil)
+        let recipe = app.descendants(matching: .any).matching(identifier: "recipe.row").firstMatch
+        guard recipe.waitForExistence(timeout: 10) else { return }
+        recipe.tap()
+        settle()
+
+        let rows = app.buttons.matching(identifier: "recipe.ingredient.row")
+        XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 5), "The recipe should list its ingredients.")
+        // Bring the ingredients card up under the title; the page doesn't auto-scroll for taps.
+        app.swipeUp(velocity: .slow)
+        settle(1)
+        let total = rows.count
+        XCTAssertGreaterThan(total, 1, "Need two or more ingredients to show both groups.")
+
+        // Unticked rows stay first, so the first row is always the next thing to get.
+        rows.element(boundBy: 0).tap()
+        let gotIt = app.descendants(matching: .any).matching(identifier: "recipe.ingredients.gotIt").firstMatch
+        XCTAssertTrue(gotIt.waitForExistence(timeout: 3), "A ticked row should move into Got it.")
+        rows.element(boundBy: 0).tap()
+        settle(1)
+        snap(app, "38-recipe-got-it")
+
+        for _ in 2..<max(total, 2) { rows.element(boundBy: 0).tap() }
+        let startCooking = app.buttons["recipe.ingredients.startCooking"]
+        XCTAssertTrue(startCooking.waitForExistence(timeout: 3), "All ticked should offer to start cooking.")
+        settle(1)
+        snap(app, "39-recipe-all-set")
+        if startCooking.isHittable {
+            startCooking.tap()
+            XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 5), "Start cooking should open cooking mode.")
+        }
+    }
+
     /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,
     /// so this run seeds one (`-seed-reimport-recipe`, sorts first) and captures the open menu.
     @MainActor

@@ -19,8 +19,10 @@ struct RecipeIngredientsSection: View {
     /// Non-nil only where the on-device model can run: offers "Estimate amounts" alongside typing them in.
     var onEstimateAmounts: (() -> Void)? = nil
 
-    // One-time hint for the non-obvious tap-to-check / tap-amount-to-edit gestures; hidden once seen or anything is checked off.
-    @AppStorage("hasSeenIngredientTapHint") private var hasSeenTapHint = false
+    /// Offers cooking mode once every ingredient is ticked; nil hides the prompt.
+    var onStartCooking: (() -> Void)? = nil
+    /// Pulses the first circle (shows rows can be ticked) until the cook has ticked a row once.
+    var hasTickedBefore: Bool = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -127,32 +129,42 @@ struct RecipeIngredientsSection: View {
         .accessibilityAddTraits(.isButton)
     }
 
-    private var tapHint: some View {
-        HStack(alignment: .top, spacing: AppTheme.spacing8) {
-            Image(systemName: "hand.tap")
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.accentColor)
-                .accessibilityHidden(true)
-            Text("Tap a name to check it off while cooking · tap its amount to edit.")
-                .font(.caption)
-                .adaptiveSecondaryForeground()
+    /// Every ingredient ticked: the natural moment to start cooking.
+    private func allSetPrompt(_ onStartCooking: @escaping () -> Void) -> some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            Text("All set — start cooking?")
+                .font(.headline)
+                .adaptiveForegroundColor()
                 .fixedSize(horizontal: false, vertical: true)
-            Spacer(minLength: AppTheme.spacing8)
-            Button {
-                withAnimation { hasSeenTapHint = true }
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Dismiss tip")
+            PrimaryButton("Start cooking", systemImage: "frying.pan.fill", fillWidth: true, action: onStartCooking)
+                .accessibilityIdentifier("recipe.ingredients.startCooking")
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(AppTheme.spacing12)
         .background(
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                 .fill(AppTheme.accentColor.opacity(0.10))
         )
+        .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
+    }
+
+    private func gotItHeader(count: Int) -> some View {
+        HStack(spacing: AppTheme.spacing6) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(AppTheme.accentColor)
+                .accessibilityHidden(true)
+            Text("Got it")
+                .font(.headline)
+                .adaptiveForegroundColor()
+            Text("\(count)")
+                .font(.subheadline.weight(.semibold))
+                .adaptiveSecondaryForeground()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, AppTheme.spacing8)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityIdentifier("recipe.ingredients.gotIt")
     }
 
     /// Shown when most ingredients have no amount (e.g. a recipe imported from a caption that never listed them).
@@ -204,27 +216,36 @@ struct RecipeIngredientsSection: View {
             if IngredientAmountGaps.isMostlyMissing(recipe.ingredients) {
                 missingAmountsCard
             }
-            if !hasSeenTapHint && !ingredientsState.contains(true) && !recipe.ingredients.isEmpty {
-                tapHint
+            let ingredients = recipe.ingredients
+            if let onStartCooking, IngredientChecklist.isAllSet(count: ingredients.count, ticked: ingredientsState) {
+                allSetPrompt(onStartCooking)
             }
-            // ingredient.id identity lets SwiftUI diff individual rows, not rebuild all N on every pantry/shopping change.
+            // Stable entry ids let SwiftUI slide a ticked row down into "Got it" instead of rebuilding the list.
             let substituteIDs = ingredientsWithSubstitutes
-            ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
-                if let group = IngredientSections.title(startingAt: index, in: recipe.ingredients) {
-                    IngredientGroupHeader(title: group)
+            let pulseIndex = IngredientChecklist.pulseIndex(count: ingredients.count, hasTickedBefore: hasTickedBefore)
+            ForEach(IngredientChecklist.entries(sections: ingredients.map(\.section), ticked: ingredientsState)) { entry in
+                switch entry {
+                case .groupTitle(let title, _):
+                    IngredientGroupHeader(title: title)
+                case .gotItTitle(let count):
+                    gotItHeader(count: count)
+                case .row(let index, let isTicked):
+                    if let ingredient = ingredients[safe: index] {
+                        IngredientRowView(
+                            ingredient: ingredient,
+                            isChecked: isTicked,
+                            toggle: { onToggleIngredient(index) },
+                            scaleFactor: recipe.scaleFactor,
+                            measurementSystem: measurementSystem,
+                            onAddToShopping: { onAddToShopping(index) },
+                            isInShoppingList: isInShoppingList(ingredient),
+                            onTapQuantity: { onEditIngredient(index) },
+                            onSubstitute: (substituteIDs.contains(ingredient.id) && onSubstitute != nil)
+                                ? { onSubstitute?(index) } : nil,
+                            pulses: pulseIndex == index
+                        )
+                    }
                 }
-                IngredientRowView(
-                    ingredient: ingredient,
-                    // Safe read: the parent resizes its state in onChange, which runs after this render sees an edited recipe.
-                    isChecked: ingredientsState[safe: index] ?? false,
-                    toggle: { onToggleIngredient(index) },
-                    scaleFactor: recipe.scaleFactor,
-                    measurementSystem: measurementSystem,
-                    onAddToShopping: { onAddToShopping(index) },
-                    isInShoppingList: isInShoppingList(ingredient),
-                    onTapQuantity: { onEditIngredient(index) },
-                    onSubstitute: (substituteIDs.contains(ingredient.id) && onSubstitute != nil) ? { onSubstitute?(index) } : nil
-                )
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

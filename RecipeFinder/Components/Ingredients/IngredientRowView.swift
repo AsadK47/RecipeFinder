@@ -11,110 +11,163 @@ struct IngredientRowView: View {
     var onTapQuantity: (() -> Void)?
     var onSubstitute: (() -> Void)?
 
+    /// Pulses the circle once on appear, to show the row can be ticked (instead of hint text).
+    var pulses: Bool = false
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var pulseTrigger = 0
+
     private enum Timing {
         static let springResponse: Double = 0.3
         static let springDamping: Double = 0.6
+        static let pulseDelay: Duration = .milliseconds(700)
     }
 
     var body: some View {
         let amount = Self.amount(for: ingredient, scaleFactor: scaleFactor, system: measurementSystem)
         HStack(alignment: .center, spacing: AppTheme.spacing12) {
-
-            // Fixed-width amount column so names align; the whole column is the tap target. A line with no amount at all
-            // ("fresh coriander") drops the column and runs full width as plain text — an empty column read as broken.
-            if amount.quantity != nil || amount.unit != nil {
-                Button(action: { onTapQuantity?() }) {
-                    HStack(alignment: .firstTextBaseline, spacing: 3) {
-                        if let quantity = amount.quantity {
-                            Text(quantity)
-                                .font(.subheadline)
-                                .fontWeight(.bold)
-                                .foregroundStyle(isChecked ? .secondary : .primary)
-                        }
-
-                        if let unit = amount.unit {
-                            Text(unit)
-                                .font(.caption)
-                                .adaptiveSecondaryForeground()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
-                        }
-                    }
-                    .frame(width: 72, alignment: .leading)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .disabled(onTapQuantity == nil)
-            }
-
+            // The whole row (circle, amount, name) is one tick target; amounts are edited from the pencil or by
+            // long-pressing the row.
             Button(action: {
-                HapticManager.shared.light()
                 withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
                     toggle()
                 }
             }) {
-                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                    let parts = ingredient.displayParts
-                    Text(parts.name)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .strikethrough(isChecked)
-                        .foregroundStyle(isChecked ? .secondary : .primary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    if let prep = parts.note {
-                        Text(prep)
-                            .font(.caption)
-                            .adaptiveSecondaryForeground()
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                HStack(alignment: .center, spacing: AppTheme.spacing12) {
+                    tickCircle
+                    rowText(amount: amount)
+                        .opacity(isChecked ? 0.5 : 1)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .opacity(isChecked ? 0.5 : 1)
-            .accessibilityValue(isChecked ? "checked" : "unchecked")
+            .accessibilityValue(isChecked ? "Got it" : "")
+            .accessibilityAddTraits(isChecked ? .isSelected : [])
+            .accessibilityHint(isChecked ? "Double tap to put it back" : "Double tap to tick it off")
+            .accessibilityIdentifier("recipe.ingredient.row")
 
-            if Self.showsAddAmount(for: ingredient, amount: amount, canEdit: onTapQuantity != nil) {
-                // Amount-less rows drop the amount column, which was their only way into the editor.
-                Button(action: { onTapQuantity?() }) {
-                    Label("Add amount", systemImage: "plus.circle")
-                        .font(.caption.weight(.semibold))
-                        .labelStyle(.titleAndIcon)
-                        .frame(minHeight: 44)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.tint)
-                .accessibilityLabel("Add amount for \(ingredient.mainIngredientName)")
-            }
-
-            if let onSubstitute {
-                Button(action: onSubstitute) {
-                    Image(systemName: "arrow.2.squarepath")
-                        .font(.system(size: AppTheme.fontSize16))
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Find substitute for \(ingredient.mainIngredientName)")
-            }
-
-            if let onAddToShopping {
-                Button(action: {
-                    onAddToShopping()
-                    HapticManager.shared.light()
-                }) {
-                    Image(systemName: isInShoppingList ? "cart.fill" : "cart.badge.plus")
-                        .font(.system(size: AppTheme.fontSize16))
-                        .foregroundStyle(isInShoppingList ? .green : .secondary)
-                }
-                .buttonStyle(.plain)
-                .disabled(isInShoppingList)
-            }
+            trailingButtons(amount: amount)
+                .opacity(isChecked ? 0.5 : 1)
         }
         .padding(.vertical, AppTheme.spacing8)
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
+        .contextMenu {
+            if let onTapQuantity {
+                Button("Edit amount", systemImage: "pencil", action: onTapQuantity)
+            }
+        }
+        .task(id: pulses) {
+            guard pulses, !reduceMotion else { return }
+            do {
+                try await Task.sleep(for: Timing.pulseDelay)
+            } catch {
+                return  // left the screen before the pulse; it plays next time
+            }
+            pulseTrigger += 1
+        }
+    }
+
+    private var tickCircle: some View {
+        Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+            .font(.title3)
+            .foregroundStyle(isChecked ? AppTheme.accentColor : AppTheme.adaptiveHighEmphasis)
+            .contentTransition(.symbolEffect(.replace))
+            .keyframeAnimator(initialValue: CGFloat(1), trigger: pulseTrigger) { content, scale in
+                content.scaleEffect(scale)
+            } keyframes: { _ in
+                KeyframeTrack {
+                    SpringKeyframe(CGFloat(1.3), duration: 0.25)
+                    SpringKeyframe(CGFloat(1), duration: 0.3)
+                    SpringKeyframe(CGFloat(1.3), duration: 0.25)
+                    SpringKeyframe(CGFloat(1), duration: 0.3)
+                }
+            }
+            .frame(minWidth: 28, minHeight: 44)
+            .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private func rowText(amount: (quantity: String?, unit: String?)) -> some View {
+        // Fixed-width amount column so names align. A line with no amount at all ("fresh coriander") drops the
+        // column and runs full width as plain text — an empty column read as broken.
+        if amount.quantity != nil || amount.unit != nil {
+            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                if let quantity = amount.quantity {
+                    Text(quantity)
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.primary)
+                }
+
+                if let unit = amount.unit {
+                    Text(unit)
+                        .font(.caption)
+                        .adaptiveSecondaryForeground()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+            }
+            .frame(width: 72, alignment: .leading)
+        }
+
+        VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+            let parts = ingredient.displayParts
+            Text(parts.name)
+                .font(.body)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let prep = parts.note {
+                Text(prep)
+                    .font(.caption)
+                    .adaptiveSecondaryForeground()
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func trailingButtons(amount: (quantity: String?, unit: String?)) -> some View {
+        if Self.showsAddAmount(for: ingredient, amount: amount, canEdit: onTapQuantity != nil) {
+            // Amount-less rows have no amount to long-press for; keep a visible way into the editor.
+            Button(action: { onTapQuantity?() }) {
+                Label("Add amount", systemImage: "plus.circle")
+                    .font(.caption.weight(.semibold))
+                    .labelStyle(.titleAndIcon)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.tint)
+            .accessibilityLabel("Add amount for \(ingredient.mainIngredientName)")
+        }
+
+        if let onSubstitute {
+            Button(action: onSubstitute) {
+                Image(systemName: "arrow.2.squarepath")
+                    .font(.system(size: AppTheme.fontSize16))
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Find substitute for \(ingredient.mainIngredientName)")
+        }
+
+        if let onAddToShopping {
+            Button(action: {
+                onAddToShopping()
+                HapticManager.shared.light()
+            }) {
+                Image(systemName: isInShoppingList ? "cart.fill" : "cart.badge.plus")
+                    .font(.system(size: AppTheme.fontSize16))
+                    .foregroundStyle(isInShoppingList ? .green : .secondary)
+            }
+            .buttonStyle(.plain)
+            .disabled(isInShoppingList)
+        }
     }
 
     /// The amount column exactly as shown — one function shared by the row and the bundled-recipe render audit.

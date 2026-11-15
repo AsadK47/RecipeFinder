@@ -40,6 +40,8 @@ struct RecipeDetailView: View {
     @Environment(\.recipeStore) var recipeStore
     @Environment(\.cookingStreak) var cookingStreak
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
+    // Once the cook has ticked an ingredient, the first circle stops pulsing (it replaces the old hint text).
+    @AppStorage("hasTickedIngredient") var hasTickedIngredient = false
     @Environment(\.requestReview) private var requestReview
     @Environment(\.dismiss) private var dismiss
 

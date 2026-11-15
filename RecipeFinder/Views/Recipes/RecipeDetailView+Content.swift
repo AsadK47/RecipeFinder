@@ -371,8 +371,13 @@ extension RecipeDetailView {
             onToggleMeasurement: toggleMeasurementSystem,
             onToggleIngredient: { index in
                 guard index < ingredientsState.count else { return }
-                HapticManager.shared.light()
                 ingredientsState[index].toggle()
+                hasTickedIngredient = true
+                if IngredientChecklist.isAllSet(count: recipe.ingredients.count, ticked: ingredientsState) {
+                    HapticManager.shared.success()
+                } else {
+                    HapticManager.shared.light()
+                }
                 checkForCompletion()
             },
             onAddToShopping: { index in
@@ -384,7 +389,9 @@ extension RecipeDetailView {
             onEditIngredient: { _ in beginEdit(section: .ingredients) },
             onSubstitute: { index in substitutingIngredientIndex = index },
             onEditIngredients: { beginEdit(section: .ingredients) },
-            onEstimateAmounts: estimateAmountsAction
+            onEstimateAmounts: estimateAmountsAction,
+            onStartCooking: { showCookingMode = true },
+            hasTickedBefore: hasTickedIngredient
         )
         .sheet(item: $amountEstimateTarget) { target in
             AmountEstimateReviewSheet(
