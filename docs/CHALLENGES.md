@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: My Cookbook slice 1 — fixed: name on the clear end of the shade, page height clipped large text, lines rebuilt per render and stale over midnight, nothing showed more pages exist, headline squeezed at large text, cookbook keyed off the gear's flag, no same-date order test, seed trap on duplicate ids)
+- ⚔️ [Break] Page picture = last-added own photo without checking the file exists — a synced row whose file isn't on this device shows the art instead of the web picture (same as `heroImageName` today) — alternative: pick the last photo that resolves — cost if wrong: art instead of a picture on some pages.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] `RecipeModel ==` ignores `lastCookedAt`/`name`, so a sync merge that only moves a cook date reorders the cookbook on the next visit to Me, not live — accepted: changing `==` touches every list diff.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Loop] Me still has two primary actions (cookbook + profile form/Save) — next slice moves profile, badges and chef type one tap deeper.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] No unit test fails if Me's `navigationDestination` or `refreshCookbook()` is removed — caught only by `testZZCaptureCookbook` in the Screenshots run; `42-cookbook-one` depends on `testZCaptureMadeIt` running first. `RecipeStore.swift` now 347 lines (DEBUG seeds) — extract them in the Smells batch.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-15 (item pass: ephemeral link import — fixed: test wiped the real shared cookie jar and never checked cookies, comment said nothing else used the shared cache, this run's site cookies survived Reset)
 - ⚔️ [Break] Reset clears older builds' recipe-site cookies/cache — the share extension ran imports in its own process (`ShareViewController.swift:130`), so its container's legacy jar/cache isn't cleared by the app — alternative: clear them on next extension launch — cost if wrong: stale cookies stay on disk in the extension container until reinstall (no new ones are written).
   → Owner: Accept / Reject / Later

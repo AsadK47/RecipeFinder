@@ -15,8 +15,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 - Inbox 🟡 Reset store copies: ⏸ parked in Needs owner (data-loss risk on `.corrupt-*`, 2 reviewers agree); branch `agent/reset-store-copies` (87f5737) unmerged, Decisions on that branch's WORK.md — rework per owner's answer.
-- Remember: 🚧 **My Cookbook slice 1** on `agent/my-cookbook` (builder 2026-11-15) — `MyCookbook` (pure pages/lines) +
-  `MyCookbookSection` at the top of Me, page → recipe; screenshots 17-me (empty), 42-cookbook-one, 43-cookbook-many.
+- Remember: ✅ **My Cookbook slice 1** landed 53fb4b1 (builder 2026-11-15) — `MyCookbook` (pure pages/lines) +
+  `MyCookbookSection` at the top of Me, page → recipe. Leftover branch agent/my-cookbook (auto-cleanup).
   Next slice (challenger): subtract — profile form, badges and chef type one tap deeper so Me has one primary action
   ("Me = your cookbook + one line"). Later: per-cook notes / "who it was for" (model change → owner), share image.
 
