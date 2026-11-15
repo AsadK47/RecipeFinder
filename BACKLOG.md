@@ -595,6 +595,7 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 - Fridge photo, family cookbooks (iCloud sharing), cook-along Q&A, heirloom mode — earlier owner ideas, undecided.
 
 ## Needs owner
+_Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
 - 🙋 **Play decisions** (see `docs/PLAY.md`; agents start Play 1/7 once answered): (1) daily streak from a
   1-minute action (Tonight check-in, Kitchen Bite or a cook) replaces the weekly flame, weekly cooks become the goal
   ring — OK? (2) RecipeModel 18 with a synced `PlayEventEntity` — OK? (3) agents write Kitchen Bites quiz content
