@@ -595,8 +595,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         settle(1.5)
         viewAll.tap()
 
-        let title = app.staticTexts["badge.reveal.title"]
-        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: title)
+        // Match Head Chef by name: a fresh simulator has "Welcome Aboard!" queued, and it rightly opens next.
+        let headChef = app.staticTexts.matching(
+            NSPredicate(format: "identifier == 'badge.reveal.title' AND label == 'Head Chef'")
+        ).firstMatch
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: headChef)
         waitForExpectations(timeout: 5)
         let me = app.tabBars.buttons["Me"]
         expectation(for: NSPredicate(format: "isSelected == true"), evaluatedWith: me)
