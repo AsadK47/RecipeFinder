@@ -114,7 +114,7 @@ are merged into a newer item or parked — never start them; their text stays as
    **Phase 3 — Discover:** Recipes — endless discovery → Today — decide tonight.
    **Wrapped:** skipped for 2026 (owner 2026-11-15).
    **Between phases (one each):** Me 3/3 Settings tidy-up · CI screenshots of key screens · Showcase screenshots ·
-   Polish batch + Scroll fade · Swipes you can see and trust · Add flow 3/3 follow-up · Smells A → F + Large wizard · Pictures 3/4 leftovers (owner-paced).
+   Polish batch + Scroll fade · Swipes you can see and trust · Launch kit · Add flow 3/3 follow-up · Smells A → F + Large wizard · Pictures 3/4 leftovers (owner-paced).
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
@@ -525,6 +525,14 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
 - [ ] **Polish batch** (from WORK.md 2026-11-06): forced `.toolbarColorScheme(.dark)` on MealPlanningView /
   ProfileView / SmartCollectionDetailView (white title in Light); "1 active filters" plural; "Don't ask again"
   checkbox a11y state; ingredient delete only via long-press (add swipe).
+- [ ] **Launch kit** (owner OK 2026-11-15, between phases, before public launch). Agents: (1) press kit page on
+  recipefinder.uk (website session) — one-line promise "Dinner, sorted", 5 loop screenshots (import → plan → groceries
+  → cooking mode → My Cookbook), short description, contact; (2) `docs/LAUNCH.md` — App Store keyword shortlist
+  (recipe keeper, meal planner, grocery list, recipe import…), screenshot captions, 30-s preview video script
+  (paste a messy blog link → clean recipe), community launch list with each place's self-promo rules; (3) in-app
+  review prompt (`SKStoreReviewController`) after a Made-it moment, at most per Apple's limits, never on a first cook —
+  tested; (4) "Imported with RecipeFinder" line on shared recipes. 🙋 Owner: App Store listing text, launch date, posting.
+  Blocked before going public by the bundled-recipes method-text question (Needs owner). *Done when:* (1)–(4) landed, CI green.
 - [ ] **Swipes you can see and trust** (owner 2026-11-15, between phases). (1) Every swipe-only action gets a visible
   control (principle 2) — check Kitchen and Pantry-alert delete first (swipe only today), then every `.swipeActions`.
   (2) UI tests for row swipe actions (Groceries, Kitchen, Pantry alerts) and the My Cookbook pager — today only the
