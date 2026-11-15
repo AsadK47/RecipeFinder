@@ -1,10 +1,13 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
 ## In progress
-Nothing. Inbox 🔴 photo files after a Reset elsewhere merged (be81a0e..e67da6f). Data safety 2/4 still claimed 🚧.
+Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
+- Data: `agent/photo-files-after-reset` — Inbox 🔴 other devices keep photo files after a Reset. Then Recently deleted (model 18 OK).
+- Cook: `agent/cooking-flow-ticks` — Cooking flow slice 1 (ingredient ticking).
+- Privacy: `agent/privacy-recent-searches` — Inbox 🟡 §5.1 wording + policy audit; website text goes to the website session.
 
 ## Next action
-Next Inbox: 🟡 Policy §5.1 recent-searches wording (privacy text — two reviewers, publish with `agent/privacy-photo-sync`).
+When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
 - **Photo files after a Reset elsewhere** (`ErasedPhotoCleanup`): with sync on, after each load: remember the store
