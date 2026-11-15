@@ -30,7 +30,7 @@ enum ErasedPhotoCleanup {
         return .clear
     }
 
-    /// Photo rows and every own photo a recipe in the store shows (`RecipePhotoSync.syncablePath`). Throws rather
+    /// Photo rows and every own photo a recipe in the store shows (`photoFilePath`). Throws rather
     /// than reading a failed fetch as "no photos". Call on `context`'s queue.
     static func storeView(in context: NSManagedObjectContext) throws -> StoreView {
         let rows = try context.count(for: NSFetchRequest<NSManagedObject>(entityName: RecipePhotoSync.entityName))
@@ -41,10 +41,20 @@ enum ErasedPhotoCleanup {
             let hero = recipe.value(forKey: PersistenceController.RecipeKey.imageName) as? String
             let gallery = recipe.value(forKey: PersistenceController.RecipeKey.photoNames) as? [String] ?? []
             for reference in [hero].compactMap({ $0 }) + gallery {
-                if let path = RecipePhotoSync.syncablePath(reference) { paths.insert(path) }
+                if let path = photoFilePath(reference) { paths.insert(path) }
             }
         }
         return StoreView(photoRows: rows, referencedPaths: paths)
+    }
+
+    /// The photo-folder file a reference points at: `RecipeImages/<name>.jpg`, or an older build's absolute path to
+    /// the same folder (never synced, but still a photo in use).
+    static func photoFilePath(_ reference: String) -> String? {
+        if let path = RecipePhotoSync.syncablePath(reference) { return path }
+        guard reference.hasPrefix("/") else { return nil }
+        let url = URL(fileURLWithPath: reference)
+        guard url.deletingLastPathComponent().lastPathComponent + "/" == RecipePhotoSync.folder else { return nil }
+        return RecipePhotoSync.syncablePath(RecipePhotoSync.folder + url.lastPathComponent)
     }
 
     /// Deletes the cook's own photo files (not kept web copies or anything else) that `keeping` doesn't name and

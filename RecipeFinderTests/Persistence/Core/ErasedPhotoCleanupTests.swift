@@ -81,6 +81,22 @@ import Foundation
         ))
     }
 
+    @Test func aPhotoAnOlderBuildSavedByFullPathCountsAsShown() throws {
+        // Older builds stored absolute paths; those photos never got rows, so with none left they must still count.
+        let legacy = documents.appendingPathComponent("RecipeImages/old.jpg").path
+        #expect(controller.saveRecipeModel(Self.recipe("Stew", image: legacy)))
+
+        let view = try ErasedPhotoCleanup.storeView(in: context)
+
+        #expect(view.referencedPaths == ["RecipeImages/old.jpg"])
+        #expect(ErasedPhotoCleanup.step(store: view, storeFile: "file-A", remembered: "file-A") == .nothing)
+    }
+
+    @Test(arguments: ["/var/Documents/Other/a.jpg", "/var/Documents/RecipeImages/web-abc.jpg", "https://x.com/a.jpg"])
+    func otherFullPathsAreNotPhotoFiles(reference: String) {
+        #expect(ErasedPhotoCleanup.photoFilePath(reference) == nil)
+    }
+
     @Test func anErasedStoreReadsAsNoPhotos() throws {
         #expect(controller.saveRecipeModel(Self.recipe("Toast")))
 
