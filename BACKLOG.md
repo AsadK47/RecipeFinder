@@ -609,10 +609,6 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
   generally fine; written steps may be protected — not legal advice). Recommended: agents rewrite every method in our
   own words in batches (same curated-JSON + seed + drift-test process), or trim the bundled set. Owner to confirm
   before agents start.
-- 🙋 **Repo: open or closed?** (strategic, waits for you) Today it's public with a proprietary licence: none of the
-  open-source benefits, none of the privacy of closed code. ⭐ (a) open source on purpose, AGPL (clones must publish
-  their code; "private by design, and you can check"; free CI) · (b) private before App Store launch, with a
-  self-hosted runner on your Mac or paid GitHub Mac minutes. Either way the bundled method text gets rewritten (above).
 - 🙋 From Sept 2027, device-only task: renew the CI signing cert (`CI_DEV_CERT_P12`, expires 2027-11-10) and update
   the GitHub secrets.
 - 🙋 Later, once there is revenue: owner-funded charity pledge (e.g. "every 1,000 community Spoons funds a meal" via a UK food charity). Needs your decision + a Charities Act-compliant statement/agreement; agents never link money to Spoons.

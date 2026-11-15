@@ -10,7 +10,7 @@
 [![Platform](https://img.shields.io/badge/platform-iOS%2017.5%2B-blue.svg)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org/)
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
-[![License](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 
 **[Join the TestFlight beta](https://testflight.apple.com/join/UJWrMbk2)** · **[recipefinder.uk](https://recipefinder.uk)**
 
@@ -132,11 +132,13 @@ RecipeFinderUITests/     UI, screenshot and accessibility tests
 - 📧 recipefinderuk@gmail.com
 - 🌐 [recipefinder.uk](https://recipefinder.uk)
 
-> Proprietary software — bug reports and ideas are welcome via Issues or TestFlight feedback.
+> Open source — bug reports and ideas are welcome via Issues or TestFlight feedback.
 
 ## Licence
 
-**© 2024–2026 Asad Khan. All rights reserved.** See [LICENSE](LICENSE), the
+**© 2024–2026 Asad Khan.** The source code is licensed under the
+[GNU Affero General Public License v3.0](LICENSE). The RecipeFinder name and app icon are not covered by the
+licence, and the bundled recipe text (`RecipeFinder/RecipeSeed/`) is not offered under it. See also the
 [Privacy Policy](https://recipefinder.uk/privacy.html) and [Terms of Service](https://recipefinder.uk/terms.html).
 
 <div align="center">

@@ -23,7 +23,7 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 - [ROADMAP.md](ROADMAP.md) — product direction and priorities. Part I: Hardening (done), Part II: Improvements, Part III: New Features. Strategy: *"ReciMe, but private, unlimited, and better at the actual cooking."*
 
 ## Legal & licensing
-- [LICENSE](LICENSE) — proprietary licence.
+- [LICENSE](LICENSE) — AGPL-3.0 (name, icon and bundled recipe text excluded; see README).
 - Privacy Policy & Terms: the canonical copies are the in-app views
   (`RecipeFinder/Views/Settings/Legal/PrivacyPolicyView.swift`,
   `TermsOfServiceView.swift`) and the website (recipefinder.uk/privacy.html, /terms.html).

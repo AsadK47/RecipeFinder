@@ -1,7 +1,7 @@
 # RecipeFinder
 
 Privacy-first, offline-first iOS recipe manager (SwiftUI, iOS 17.5+, Swift 6).
-Proprietary — Asad Khan. GitHub: https://github.com/AsadK47/RecipeFinder
+Open source (AGPL-3.0) — © Asad Khan. GitHub: https://github.com/AsadK47/RecipeFinder
 
 ## Hard constraints
 These are non-negotiable. Violations are bugs, not style choices.
