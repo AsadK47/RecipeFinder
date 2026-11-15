@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: My Cookbook slice 2 — fixed: View all badges landed on a Me with no badges (both reviewers), VoiceOver read "5 slash 24", a UI assertion that couldn't fail, seeded cookbook disagreed with "N cooks this year", line stale over New Year, row squeezed at accessibility sizes, "?" avatar)
+- ⚔️ [Data] The cookbook counts `recipe.cookCount`, the line counts the cook-date log — older libraries whose counts predate the log can show more cooks on the pages than "this year" suggests — alternative: one per-cook record (slice 3, model change → owner) — cost if wrong: two numbers that don't match.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Simplify] Me → profile row and Me → ⚙︎ → Settings → Profile now open the same screen — drop the Settings row in Me 3/3.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] "Earn it here" from the pushed badge pager switches tab but leaves Me on Profile, so the next visit to Me opens on Profile, not the cookbook — minor; pop on earn if testers notice.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Loop] The one line uses the self-picked chef type ("Home Cook"), not an earned title ("Spice Explorer"); `rawValue` as display text is a localisation smell.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-15 (item pass: My Cookbook slice 1 — fixed: name on the clear end of the shade, page height clipped large text, lines rebuilt per render and stale over midnight, nothing showed more pages exist, headline squeezed at large text, cookbook keyed off the gear's flag, no same-date order test, seed trap on duplicate ids)
 - ⚔️ [Break] Page picture = last-added own photo without checking the file exists — a synced row whose file isn't on this device shows the art instead of the web picture (same as `heroImageName` today) — alternative: pick the last photo that resolves — cost if wrong: art instead of a picture on some pages.
   → Owner: Accept / Reject / Later
