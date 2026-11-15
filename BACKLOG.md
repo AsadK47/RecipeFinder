@@ -114,7 +114,7 @@ are merged into a newer item or parked — never start them; their text stays as
    **Phase 3 — Discover:** Recipes — endless discovery → Today — decide tonight.
    **Wrapped:** skipped for 2026 (owner 2026-11-15).
    **Between phases (one each):** Me 3/3 Settings tidy-up · CI screenshots of key screens · Showcase screenshots ·
-   Polish batch + Scroll fade · Add flow 3/3 follow-up · Smells A → F + Large wizard · Pictures 3/4 leftovers (owner-paced).
+   Polish batch + Scroll fade · Swipes you can see and trust · Add flow 3/3 follow-up · Smells A → F + Large wizard · Pictures 3/4 leftovers (owner-paced).
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
@@ -525,6 +525,10 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
 - [ ] **Polish batch** (from WORK.md 2026-11-06): forced `.toolbarColorScheme(.dark)` on MealPlanningView /
   ProfileView / SmartCollectionDetailView (white title in Light); "1 active filters" plural; "Don't ask again"
   checkbox a11y state; ingredient delete only via long-press (add swipe).
+- [ ] **Swipes you can see and trust** (owner 2026-11-15, between phases). (1) Every swipe-only action gets a visible
+  control (principle 2) — check Kitchen and Pantry-alert delete first (swipe only today), then every `.swipeActions`.
+  (2) UI tests for row swipe actions (Groceries, Kitchen, Pantry alerts) and the My Cookbook pager — today only the
+  badge pager's swipe is tested. *Done when:* no action is swipe-only, those UI tests green, CI green.
 - [ ] **Scroll fade elsewhere.** Check other screens with a nav bar + scrolling content for text showing through the
   toolbar; apply `NavigationBarScrollFade` (see DesignSystem.md lesson 2026-11-08) where it does.
 
@@ -614,6 +618,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 
 ## Parking lot (owner 2026-11-14 — ideas wait here; reviewed monthly with the owner)
 Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — why it might matter`. No loop step → it stays.
+- Swipe between tabs (Instagram-style) — loop step: none — owner idea 2026-11-15; clashes with sideways rows (Today, Recipes, Me) and the edge back-swipe; decide after the owner's week of use.
 - Play extras (Kitchen Bites, Cooking Path, quests, mascot, Spoons + shop, daily-streak rework) — loop step: Cook
   (habit) — revisit after Phase 1 shows whether Made-it alone builds the habit. Items: Play 1/7, 2/7, 4/7–7/7.
 - Badge tiers, stories, sharing (Badges 2/2) — Remember — after My Cookbook.
