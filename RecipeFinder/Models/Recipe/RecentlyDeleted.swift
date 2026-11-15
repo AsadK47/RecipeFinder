@@ -23,11 +23,12 @@ enum RecentlyDeleted {
         item.deletedAt < purgeCutoff(now: now)
     }
 
-    /// Whole days left before it goes, rounded up (a recipe deleted a minute ago has 30); 0 once it's due.
+    /// Whole days left before it goes, rounded up (a recipe deleted a minute ago has 30); 0 once it's due. Never more
+    /// than 30, even when another device's clock stamped the delete in this device's future.
     static func daysLeft(_ item: DeletedRecipe, now: Date) -> Int {
         let remaining = item.deletedAt.addingTimeInterval(keptFor).timeIntervalSince(now)
         guard remaining > 0 else { return 0 }
-        return Int((remaining / (24 * 60 * 60)).rounded(.up))
+        return min(Int((remaining / (24 * 60 * 60)).rounded(.up)), Int(keptFor / (24 * 60 * 60)))
     }
 
     /// "30 days left", "1 day left", "Removed soon".

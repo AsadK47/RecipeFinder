@@ -29,7 +29,7 @@ import Foundation
         #expect(RecentlyDeleted.isExpired(item, now: Self.monday.addingTimeInterval(daysAgo * Self.day)) == expired)
     }
 
-    @Test(arguments: [(0.0, 30, "30 days left"), (0.5, 30, "30 days left"), (29.5, 1, "1 day left"),
+    @Test(arguments: [(-2.0, 30, "30 days left"), (0.0, 30, "30 days left"), (0.5, 30, "30 days left"), (29.5, 1, "1 day left"),
                       (30.0, 0, "Removed soon"), (31.0, 0, "Removed soon")])
     func theDaysLeftCountDown(daysAgo: Double, days: Int, text: String) {
         let item = DeletedRecipe(recipe: Self.recipe("Pie"), deletedAt: Self.monday)
@@ -83,6 +83,16 @@ import Foundation
         await store.refresh()
 
         #expect(store.recipes.isEmpty)
+        #expect(store.recentlyDeleted.map(\.id) == [pie.id])
+    }
+
+    @Test func aRecipeDeletedBeforeTheLibraryLoadedStillShowsInRecentlyDeleted() {
+        let store = RecipeStore(persistence: controller, imageStore: imageStore)
+        let pie = Self.recipe("Pie")
+        #expect(controller.saveRecipeModel(pie))
+
+        #expect(store.delete(id: pie.id))
+
         #expect(store.recentlyDeleted.map(\.id) == [pie.id])
     }
 

@@ -13,6 +13,9 @@ extension RecipeStore {
         if let recipe = recipes.first(where: { $0.id == id }) {
             recentlyDeleted.removeAll { $0.id == id }
             recentlyDeleted.insert(DeletedRecipe(recipe: recipe, deletedAt: deletedAt), at: 0)
+        } else {
+            // Not in the loaded library (e.g. it arrived after the last load): read the list back so it shows there.
+            recentlyDeleted = persistence.fetchRecentlyDeletedRecipes()
         }
         recipes.removeAll { $0.id == id }
         return true
