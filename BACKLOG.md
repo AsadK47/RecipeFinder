@@ -102,11 +102,15 @@ drop a line while moving it.
 One phase at a time; within a phase, top to bottom. 🐞 / TestFlight / Inbox items still go first. Items marked `[~]`
 are merged into a newer item or parked — never start them; their text stays as reference spec.
    **Next (owner order 2026-11-14, docs/PRODUCT.md):**
-   **Now:** Data safety 2/4 (iCloud sync) → 3/4 → 4/4.
+   **Now (owner 2026-11-15, parallel lanes, batch landing):** *Data lane:* Inbox 🔴 other devices keep photo files
+   after a Reset → Data safety 4/4 Recently deleted, lean (recipes + photos, 30 days; **RecipeModel 18 approved** for
+   one optional deleted-at date) · *Cook lane:* Cooking flow · *Privacy lane:* 🟡 §5.1 recent-searches wording, then
+   tick 2/4 (website `privacy.html` is the website session's). Deferred to between phases: 3/4 backups with photos,
+   2/4 live sync status / iCloud full.
    **Phase 1 — Cook it well:** Cooking flow → Made-it moment → My Cookbook.
    **Phase 2 — Decide & get:** Plan — swipe to match → Groceries writes itself.
    **Phase 3 — Discover:** Recipes — endless discovery → Today — decide tonight.
-   **Fixed date:** Your Cooking Year (Wrapped) by 1 Dec (start by 24 Nov whatever phase we're in).
+   **Wrapped:** skipped for 2026 (owner 2026-11-15).
    **Between phases (one each):** Me 3/3 Settings tidy-up · CI screenshots of key screens · Showcase screenshots ·
    Polish batch + Scroll fade · Add flow 3/3 follow-up · Smells A → F + Large wizard · Pictures 3/4 leftovers (owner-paced).
    **Website** runs in its own session (Site 3/6, 4/6).
@@ -486,7 +490,7 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
   pre-curation copies (e.g. old "鷄肉炒麵" with steps as ingredients). Add a versioned one-time refresh that replaces
   content of `isSampleRecipe` recipes the user hasn't edited with the bundled version, preserving favourite, rating,
   cook history, photos, tags. *Done when:* tested for edited vs unedited, version bump re-runs it, CI green.
-- [ ] **Your Cooking Year (Wrapped).** Ship before 1 Dec. Shareable card: dishes cooked, top cuisine, signature dish
+- [~] **Your Cooking Year (Wrapped).** ⟶ 🅿️ skipped for 2026 (owner 2026-11-15). Ship before 1 Dec. Shareable card: dishes cooked, top cuisine, signature dish
   (most cooked), longest streak, best photo. Pure stats function tested; share via `ShareLink` image render.
   Entry: Recipes header streak chip sheet in December. *Done when:* stats tested on empty + full data, CI green.
 - [~] **"What's for dinner?" decider.** ⟶ merged into **Plan — swipe to match** (2026-11-14) Swipeable cards from the user's library, ranked by can-make-now %, favourites,
