@@ -10,6 +10,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Inbox 🐞 View-all UI test: ✅ landed 732ec22 (Welcome Aboard never queues a reveal). Leftover branch agent/badge-viewall-label (auto-cleanup).
 - Inbox 🟡 ephemeral link import: ✅ landed 7041540 (reviewer + challenger; leftovers in CHALLENGES 2026-11-15).
 - Inbox 🧹 UnsplashClient deleted: ✅ landed c6cee26 (builder 2026-11-15); 🟡 perf-budget flake closed (already fixed 0a41340). Leftover branch agent/delete-unsplash-client (auto-cleanup).
+- Inbox 🟡 recipe-copy merge race: ✅ landed 70dbaaf (builder 2026-11-15) — test only; locking already fires. Leftover branch agent/copy-merge-lock (auto-cleanup).
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 ## Next action
