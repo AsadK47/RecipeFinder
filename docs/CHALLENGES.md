@@ -56,6 +56,15 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
+## 2026-11-15 (item pass: Data safety 4/4 Recently Deleted, lean — fixed: a recipe deleted before the library loaded was missing from the list; days left could read 31+ when another device's clock was ahead)
+- ⚔️ [Assumption] CloudKit Production schema must gain `Recipe.deletedAt` (Dashboard → Deploy schema) before a TestFlight build with sync on exports it; unverified what export does until then — cost if wrong: recipe changes stop syncing.
+- ⚔️ [Time] A device whose clock runs ahead purges early, for every device (the delete syncs). Accepted: no trusted clock.
+- ⚔️ [Two at once] Restore on one device while another purges the same recipe (both offline): the purge's delete can win and the restore is lost. Accepted (needs 30 days + both offline at the boundary).
+- ⚔️ [Two at once] An edit on a device that hasn't received the delete yet doesn't clear `deletedAt` (unchanged field), so the edit lands in Recently Deleted, not the library. Accepted: restore brings it back with the edit.
+- ⚔️ [Would the tests notice?] Untested glue: `seedIfNeeded` counting recently deleted ids (private, needs LocalStore flags) and `mergeSyncedRecipeCopies` skipping deleted rows (needs CloudKit record ids). A one-line removal of either passes CI.
+- ⚔️ [Orphans] A device that receives another device's purge before running its own keeps that recipe's photo files (same as hard delete before: other devices never infer deletes).
+- ⚔️ [Scope] Backups leave out Recently Deleted; restoring a backup that holds a recently deleted recipe brings it back (a save clears `deletedAt`). Old (model 17) builds on another device keep showing deleted recipes.
+
 ## 2026-11-15 (item pass: 🔴 photo files kept on other devices after a Reset elsewhere — fixed: legacy full-path photos read as unused; a sign-out purge looked like a Reset and could delete never-sent photos → now only files written before the last finished export − 10 min go)
 - ⚔️ [Assumption] An iCloud sign-out purges the store file like a Reset; photos iCloud already had are cleared and come back as rows on sign-in — cost if wrong: they don't come back. Unverified on device.
   → Owner: device check (sync on, photo, wait a minute, sign out/in of iCloud, photo returns).
