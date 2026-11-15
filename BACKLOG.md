@@ -53,8 +53,14 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
       threat model/MASVS/LLM Top 10 where input crosses a trust boundary, SFDIPOT break-it, simplify/delete with
       Chesterton's fence, would-the-tests-notice). Fix what's real; anything not fixed goes to `docs/CHALLENGES.md`
       with why.
-7. When green: rebase on `origin/main`; if that brought in new commits, push and wait for green again. Then
-   fast-forward `main` to the branch and push `main` (this ships a TestFlight build with auto-filled "What to Test").
+7. When green: if no other lane has a green branch waiting, land it alone: rebase on `origin/main`; if that brought
+   in new commits, push and wait for green again; then fast-forward `main` and push it (ships a TestFlight build with
+   auto-filled "What to Test"). **Batch landing** (owner 2026-11-15, for parallel lanes): mark the branch
+   `ready to batch` in its WORK.md lane line instead. The landing agent recreates `agent/batch` from `origin/main`,
+   merges every ready branch into it (`--no-ff`; a conflict → that branch is left out and its lane fixes it), pushes
+   it and waits for one green Build & Test; then fast-forwards `main` to `agent/batch` and pushes. Batch red → find the
+   branch that broke it (job log), drop it, re-run with the rest; never fix code on `agent/batch` itself. One Log line
+   per item as usual, plus the batch commit.
    Merged `agent/*` branches are deleted daily by `cleanup-agent-branches.yml` — no need to delete them yourself.
 8. Tick the item, append one line to **Log** (date · item · commit · what to check on device · review: N fixed ·
    looked at: <shots>), commit to `main`. A mistake that cost a CI cycle goes in `AGENT_LESSONS.md` (one line).
