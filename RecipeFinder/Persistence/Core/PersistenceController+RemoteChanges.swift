@@ -69,38 +69,42 @@ extension PersistenceController {
     }
 }
 
-/// When the launch purge may run (Inbox 🔴 2026-11-14). CloudKit sends a mirrored store's changes from its history,
-/// so after sync has been on here, history written while it was off must survive until sync has run again long
-/// enough to send it: a full week of syncing launches. A device that never synced has no one to send it to.
-/// Accepted: history grows while sync stays off on a device that once synced.
+/// How far back the launch purge may reach (Inbox 🔴 2026-11-14). CloudKit sends a mirrored store's changes from its
+/// history, and a purge that outruns it loses deletes (the mirror resets and re-sends what's left; deleted rows come
+/// back from iCloud). So once sync has been on here, only history written before the last export CloudKit finished is
+/// purged — sync off, paused, signed out or iCloud full all leave newer history in place. A device that never synced
+/// has no one to send it to. Accepted: history grows while nothing exports.
 enum HistoryPurgeRule {
-    /// When the current unbroken run of syncing launches began; removed by any launch that doesn't sync.
-    static let syncingSinceKey = "iCloudSyncRunningSince"
+    /// Start of the newest export CloudKit reported as finished; everything saved before it has been sent.
+    static let lastExportKey = "iCloudLastExportStart"
 
-    /// The date to purge history before, or nil to keep all of it this launch.
-    static func cutoff(now: Date, isSyncing: Bool, everSynced: Bool, syncingSince: Date?) -> Date? {
+    /// The date to purge history before, or nil to keep all of it.
+    static func cutoff(now: Date, everSynced: Bool, lastExportStart: Date?) -> Date? {
         let cutoff = PersistenceController.historyPurgeCutoff(now: now)
-        guard isSyncing else { return everSynced ? nil : cutoff }
-        guard let syncingSince, syncingSince <= cutoff else { return nil }
-        return cutoff
+        guard everSynced else { return cutoff }
+        guard let lastExportStart else { return nil }
+        return min(cutoff, lastExportStart)
     }
 
-    /// Records this launch in the syncing run (starting it, or ending it when not syncing), then gives `cutoff`.
-    static func cutoffAtLaunch(now: Date, isSyncing: Bool, in storage: LocalStore) -> Date? {
-        if !isSyncing {
-            storage.removeObject(forKey: syncingSinceKey)
-        } else if storage.object(forKey: syncingSinceKey) == nil {
-            storage.set(now.timeIntervalSinceReferenceDate, forKey: syncingSinceKey)
-        }
-        let since = storage.object(forKey: syncingSinceKey) == nil
+    static func cutoff(now: Date, in storage: LocalStore) -> Date? {
+        cutoff(now: now, everSynced: SyncPreference.hasEverSynced(in: storage), lastExportStart: lastExportStart(in: storage))
+    }
+
+    static func lastExportStart(in storage: LocalStore) -> Date? {
+        storage.object(forKey: lastExportKey) == nil
             ? nil
-            : Date(timeIntervalSinceReferenceDate: storage.double(forKey: syncingSinceKey))
-        return cutoff(
-            now: now,
-            isSyncing: isSyncing,
-            everSynced: SyncPreference.hasEverSynced(in: storage),
-            syncingSince: since
-        )
+            : Date(timeIntervalSinceReferenceDate: storage.double(forKey: lastExportKey))
+    }
+
+    /// When a CloudKit event proves history up to a point was sent: a finished, successful export, by its start.
+    static func sentUpTo(isExport: Bool, succeeded: Bool, startDate: Date, endDate: Date?) -> Date? {
+        isExport && succeeded && endDate != nil ? startDate : nil
+    }
+
+    /// Keeps the newest finished export; an older one reported late doesn't move it back.
+    static func recordExport(startedAt start: Date, in storage: LocalStore) {
+        if let known = lastExportStart(in: storage), known >= start { return }
+        storage.set(start.timeIntervalSinceReferenceDate, forKey: lastExportKey)
     }
 }
 

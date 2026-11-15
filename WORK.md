@@ -9,14 +9,16 @@
 Green → reviews (deep-review + challenger) → ff main, tick Inbox line, Log. Then Inbox 🔴 other-devices-keep-photo-files.
 
 ## Decisions (why)
-- **History purge while sync is off**: no purge on any non-syncing launch once sync has ever been on; while syncing,
-  purge only after an unbroken week of syncing launches (`iCloudSyncRunningSince`, cleared by any non-syncing launch
-  incl. "paused on this device") — so off-period history gets a week to export after re-attach. Rejected: reconciling
-  on re-attach (CloudKit owns export; we can't rebuild lost history). Accepted: history grows while off. Store not
-  loaded at launch → skip purge (else the run marker would be wrongly cleared). **Pre-mortem:** (1) off > 7 days loses
-  changes → `syncOffForMoreThanAWeekStillKeepsAllHistory`; (2) purge right after re-attach before export →
-  `syncBackOnForLessThanAWeekKeepsAllHistory`, `anOffLaunchRestartsTheWeek…`; (3) never-synced store grows forever →
-  `aDeviceThatNeverSyncedPurgesAtLaunch`.
+- **History purge while sync is off**: purge only before `min(now − 7d, start of last finished successful CloudKit
+  export)` once sync has ever been on (`iCloudLastExportStart`, recorded from `eventChangedNotification` while
+  syncing); never-synced devices purge at 7 days as before. First cut (a week of syncing *launches*) rejected by the
+  challenger: `isSyncing` = mirror attached, not exported (signed out / iCloud full / offline). A purge that outruns
+  export loses *deletes* (mirror resets, re-sends survivors). Rejected: reconciling on re-attach. Accepted: history
+  grows while nothing exports; Reset clears the mark → no purge until the next export; deletes already lost by
+  earlier builds can't be recovered; device check of off-period delete export still owner's (CHALLENGES).
+  **Pre-mortem:** (1) off > 7 days loses deletes → `syncOffForAMonthKeepsEverythingSinceTheLastExport`; (2) attached
+  but not exporting purges → `syncOnWithNoExportYetKeepsAllHistory`, `onlyAFinishedSuccessfulExportCountsAsSent`;
+  (3) never-synced store grows forever → `aDeviceThatNeverSyncedPurgesFromStorage`.
 - **Photo removals with sync off**: delete the row in the local store at once (same store file, history tracking always
   on), so CloudKit exports the delete on re-attach — the same path every other off-period change takes. Rejected: a
   pending-removals list in UserDefaults (second source of truth, needs its own clear/retry rules) and reconciling rows

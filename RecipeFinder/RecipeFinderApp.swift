@@ -1,3 +1,4 @@
+import CoreData
 import SwiftUI
 import TipKit
 import UIKit
@@ -37,10 +38,28 @@ struct RecipeFinderApp: App {
     /// Keeps the store's history to the last week, unless iCloud still needs it (`HistoryPurgeRule`).
     @MainActor private static func purgeOldStoreHistory() {
         let persistence = PersistenceController.shared
-        guard persistence.isStoreLoaded,
-              let cutoff = HistoryPurgeRule.cutoffAtLaunch(now: .now, isSyncing: persistence.isSyncing, in: .shared)
-        else { return }
+        guard let cutoff = HistoryPurgeRule.cutoff(now: .now, in: .shared) else { return }
         Task { await persistence.purgeHistory(before: cutoff) }
+    }
+
+    /// Holds the export-event observer for the app's lifetime; nil while sync is off.
+    @MainActor private static var exportObserver: NSObjectProtocol?
+
+    /// Records each export CloudKit finishes, so the launch purge keeps what it hasn't sent (`HistoryPurgeRule`).
+    @MainActor private static func recordICloudExports() {
+        guard exportObserver == nil else { return }
+        exportObserver = NotificationCenter.default.addObserver(
+            forName: NSPersistentCloudKitContainer.eventChangedNotification, object: nil, queue: .main
+        ) { notification in
+            guard let event = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
+                    as? NSPersistentCloudKitContainer.Event,
+                  let sent = HistoryPurgeRule.sentUpTo(
+                    isExport: event.type == .export, succeeded: event.succeeded,
+                    startDate: event.startDate, endDate: event.endDate
+                  )
+            else { return }
+            MainActor.assumeIsolated { HistoryPurgeRule.recordExport(startedAt: sent, in: .shared) }
+        }
     }
 
     /// Holds the app's reloader for its lifetime; nil while sync is off.
@@ -51,6 +70,7 @@ struct RecipeFinderApp: App {
         let persistence = PersistenceController.shared
         guard persistence.isSyncing, iCloudReloader == nil else { return }
         persistence.startTrackingOutsideChanges()
+        recordICloudExports()
         let reloader = RemoteChangeReloader(
             hasOutsideChanges: { persistence.takeOutsideChanges() },
             reloads: [
