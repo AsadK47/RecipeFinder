@@ -665,6 +665,37 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "41-made-it")
     }
 
+    /// My Cookbook at the top of Me: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
+    /// The empty cookbook is 17-me on a fresh simulator. Named to sort after testZCaptureMadeIt for the same reason.
+    @MainActor
+    func testZZCaptureCookbook() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Me", shot: nil)
+        let pages = app.descendants(matching: .any).matching(identifier: "cookbook.pages").firstMatch
+        if pages.waitForExistence(timeout: 5) {
+            settle()
+            snap(app, "42-cookbook-one")
+        }
+        app.terminate()
+
+        app.launchArguments += ["-seed-cookbook"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Me", shot: nil)
+        XCTAssertTrue(pages.waitForExistence(timeout: 10), "Cooked recipes should fill My Cookbook.")
+        settle()
+        snap(app, "43-cookbook-many")
+        // A page opens its recipe, to cook it again.
+        app.descendants(matching: .any).matching(identifier: "cookbook.page").firstMatch.tap()
+        XCTAssertTrue(app.buttons["Start Cooking Mode"].waitForExistence(timeout: 10),
+                      "Tapping a cookbook page should open the recipe.")
+    }
+
     @MainActor
     private func tab(_ app: XCUIApplication, _ name: String, shot: String?) {
         let button = app.tabBars.buttons[name]

@@ -15,11 +15,23 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 - Inbox 🟡 Reset store copies: ⏸ parked in Needs owner (data-loss risk on `.corrupt-*`, 2 reviewers agree); branch `agent/reset-store-copies` (87f5737) unmerged, Decisions on that branch's WORK.md — rework per owner's answer.
+- Remember: 🚧 **My Cookbook slice 1** on `agent/my-cookbook` (builder 2026-11-15) — `MyCookbook` (pure pages/lines) +
+  `MyCookbookSection` at the top of Me, page → recipe; screenshots 17-me (empty), 42-cookbook-one, 43-cookbook-many.
+  Left for later slices: per-cook notes / "who it was for" (needs a model change → owner), shareable page image.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why)
+- **My Cookbook slice 1**: pages come from what recipes already store (`cookCount`, `lastCookedAt`, `rating`,
+  `photoNames`) — no model change. One page per dish (not per cook): cook dates aren't linked to recipes, so a
+  per-cook page would need a new entity (guardrail). Picture = the cook's latest own photo, else `heroImageName`
+  (web picture/built-in art). Headline counts dishes + cooks, not "dinners this year" (the year count needs the
+  date log on the streak protocol, and not every cook is a dinner). Shown only on Me's root; Settings → Profile stays
+  a form. Empty page's button reuses `BadgeEarnAction.cook` (→ Today, which picks tonight). **Pre-mortem:** (1) wrong
+  dishes/order/picture → `MyCookbookTests` (only cooked, newest first, own photo wins); (2) page doesn't open the
+  recipe (Me's stack had no UUID route) → `testZZCaptureCookbook` taps a page and expects Start Cooking Mode;
+  (3) empty Me dead-ends or layout clips → 17-me + 42/43 screenshots looked at.
 - **Made-it moment** (`MadeItMoment` pure copy/motion rules; `MadeItSummary` moved beside it): the existing Made it
   sheet already had cook #N, streak, stars and photo buttons, so this adds what was missing rather than a new screen:
   the dish picture (hero/art) popping in with a tick, "First time making X!" / "X · made N times", "N cooks this week"

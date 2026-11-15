@@ -35,6 +35,12 @@ struct MyCookbookSection: View {
                                 CookbookPageView(page: page, height: Layout.pageHeight)
                             }
                             .buttonStyle(.plain)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(page.name)
+                            .accessibilityValue(Self.spokenDetails(page))
+                            .accessibilityHint("Opens the recipe to cook it again")
+                            .accessibilityAddTraits(.isButton)
+                            .accessibilityIdentifier("cookbook.page")
                             .containerRelativeFrame(.horizontal)
                         }
                     }
@@ -45,6 +51,11 @@ struct MyCookbookSection: View {
                 .accessibilityIdentifier("cookbook.pages")
             }
         }
+    }
+
+    private static func spokenDetails(_ page: CookbookPage) -> String {
+        let line = MyCookbook.pageLine(for: page)
+        return page.rating > 0 ? "\(line), \(page.rating) of 5 stars" : line
     }
 
     private var emptyPage: some View {
@@ -105,15 +116,5 @@ private struct CookbookPageView: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16, style: .continuous))
             .contentShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16, style: .continuous))
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(page.name)
-            .accessibilityValue(spokenDetails)
-            .accessibilityHint("Opens the recipe to cook it again")
-            .accessibilityAddTraits(.isButton)
-    }
-
-    private var spokenDetails: String {
-        let line = MyCookbook.pageLine(for: page)
-        return page.rating > 0 ? "\(line), \(page.rating) of 5 stars" : line
     }
 }

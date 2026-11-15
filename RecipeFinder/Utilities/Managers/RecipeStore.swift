@@ -89,6 +89,7 @@ final class RecipeStore: RecipeStoring {
             fetched = seedUITestMissingAmountsRecipeIfRequested(into: fetched)
             seedUITestTonightPlanIfRequested(from: fetched)
             seedUITestUseSoonIfRequested()
+            fetched = seedUITestCookbookIfRequested(into: fetched)
             #endif
             // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
@@ -247,6 +248,23 @@ final class RecipeStore: RecipeStoring {
             kitchen.addInventoryItem(KitchenInventoryModel(
                 name: name, category: .produce, quantity: 1, unit: "", storageLocation: .fridge, expiryDate: expiry
             ))
+        }
+    }
+
+    /// UI-test hook (`-seed-cookbook`): marks the first five recipes by name cooked on different days with stars, so Screenshots can
+    /// capture My Cookbook with many pages. Recipes already cooked keep their history.
+    private func seedUITestCookbookIfRequested(into library: [RecipeModel]) -> [RecipeModel] {
+        guard ProcessInfo.processInfo.arguments.contains("-seed-cookbook") else { return library }
+        // The same five (first by name) every launch, so repeated loads never add more pages.
+        let picks = Dictionary(uniqueKeysWithValues: library.sorted { $0.name < $1.name }.prefix(5).enumerated()
+            .map { ($1.id, $0 + 1) })
+        return library.map { recipe in
+            guard recipe.lastCookedAt == nil, let rank = picks[recipe.id] else { return recipe }
+            var cooked = recipe
+            cooked.cookCount = rank
+            cooked.lastCookedAt = Calendar.current.date(byAdding: .day, value: -rank * 3, to: Date())
+            cooked.rating = 6 - rank
+            return persistence.saveRecipeModel(cooked) ? cooked : recipe
         }
     }
     #endif
