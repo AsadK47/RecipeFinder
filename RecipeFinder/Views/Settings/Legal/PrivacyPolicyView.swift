@@ -5,7 +5,7 @@ import SwiftUI
 // Updated 2026-11-14 (owner OK in BACKLOG, Data safety 2/4): Section 7 describes the opt-in iCloud sync.
 // Updated 2026-11-15 (BACKLOG Inbox): 4.2 lists what stays on the Device (recent searches, update safety copies);
 // 5.1/5.2 describe the web search session and kept copies of web pictures.
-// Updated 2026-11-15 (Data safety 4/4): 7.2 and 9.1 describe Recently Deleted (recipes kept 30 days).
+// Updated 2026-11-15 (Data safety 4/4): 7.2 and 9.1 describe Recently Deleted (recipes kept at least 30 days).
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -80,7 +80,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. Turning it on or off takes effect the next time you open the Application. While it is on, everything described in Section 4.1, including photos you add to recipes, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. Each device fetches its own copy of pictures from recipe websites (Section 5.2). The Developer cannot access your iCloud account or the data in it.")
 
-                BodyText("7.2 You can turn iCloud sync off at any time in the same place; sync stops the next time you open the Application, and your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application removes it from your iCloud account and from every device signed in to it. Deleting a recipe moves it to Recently Deleted; it is removed from your iCloud account and every device signed in to it after 30 days, or straight away when you delete it there or use Reset. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, the Application then sends those changes to your iCloud account and to every device signed in to it.")
+                BodyText("7.2 You can turn iCloud sync off at any time in the same place; sync stops the next time you open the Application, and your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application removes it from your iCloud account and from every device signed in to it. Deleting a recipe moves it to Recently Deleted, where it is kept for at least 30 days and then removed from your iCloud account and every device signed in to it; deleting it there or using Reset removes it straight away. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, the Application then sends those changes to your iCloud account and to every device signed in to it.")
 
                 BodyText("7.3 Future versions may offer sharing recipes and collections with people you choose. Content you choose to share will be visible to the people you share it with. Any such feature will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
             }
@@ -97,7 +97,7 @@ struct PrivacyPolicyView: View {
                 BodyText("9.1 You stay in control of your data. You may at any time:")
                 LegalBulletPoint("Export your recipes and other data via Settings > Data Management (photos are not included in the export)")
                 LegalBulletPoint("Delete your data via Settings > Data Management")
-                LegalBulletPoint("Restore a recipe you deleted from Settings > Data Management > Recently Deleted, where it and its photos are kept for 30 days and then removed (with iCloud sync on, from your iCloud account and every device signed in to it); you can also delete it there straight away")
+                LegalBulletPoint("Restore a recipe you deleted from Settings > Data Management > Recently Deleted, where it and its photos are kept for at least 30 days and then removed (with iCloud sync on, from your iCloud account and every device signed in to it); you can also delete it there straight away")
                 LegalBulletPoint("Remove all data from your Device by uninstalling the Application (data in your iCloud account is removed as described in Section 7.2)")
             }
 

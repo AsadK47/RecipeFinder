@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Settings → Data Management → Recently Deleted: recipes the cook deleted, kept with their photos for 30 days.
+/// Settings → Data Management → Recently Deleted: recipes the cook deleted, kept with their photos for at least 30 days.
 /// Restore puts one back; Delete Now removes it (and its photos) straight away.
 struct RecentlyDeletedView: View {
     @Environment(\.recipeStore) private var recipeStore
@@ -13,7 +13,7 @@ struct RecentlyDeletedView: View {
             if recipeStore.recentlyDeleted.isEmpty {
                 emptyState
             } else {
-                Text("Recipes you delete wait here with their photos for 30 days, so you can bring them back.")
+                Text("Recipes you delete wait here with their photos for at least 30 days, so you can bring them back.")
                     .font(.subheadline)
                     .adaptiveSecondaryForeground()
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,7 +52,7 @@ struct RecentlyDeletedView: View {
                 Text("Nothing here")
                     .font(.headline)
                     .adaptiveForegroundColor()
-                Text("Recipes you delete wait here for 30 days, so you can bring them back.")
+                Text("Recipes you delete wait here for at least 30 days, so you can bring them back.")
                     .font(.subheadline)
                     .adaptiveSecondaryForeground()
                     .multilineTextAlignment(.center)

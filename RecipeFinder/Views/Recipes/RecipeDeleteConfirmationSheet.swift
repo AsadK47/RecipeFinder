@@ -39,7 +39,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: contentMaxWidth)
                             
-                            Text("You can restore it from Recently Deleted in Settings for 30 days.")
+                            Text("You can restore it from Recently Deleted in Settings for at least 30 days.")
                                 .font(.subheadline)
                                 .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                 .multilineTextAlignment(.center)

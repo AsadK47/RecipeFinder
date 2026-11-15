@@ -174,7 +174,7 @@ struct HelpView: View {
 
                         FAQItem(
                             question: "Can I get a deleted recipe back?",
-                            answer: "Yes. Deleted recipes and their photos wait in Settings > Data Management > Recently Deleted for 30 days, where you can restore them or delete them straight away. With iCloud sync on, this works across your devices."
+                            answer: "Yes. Deleted recipes and their photos wait in Settings > Data Management > Recently Deleted for at least 30 days, where you can restore them or delete them straight away. With iCloud sync on, this works across your devices."
                         )
 
                         FAQItem(
