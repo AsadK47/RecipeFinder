@@ -1,5 +1,10 @@
 # WORK.md — handoff (2026-11-14, builder agent)
 
+## Request from the Xcode session (owner OK 2026-11-15) — do this first, then delete this section
+Any knowledge you hold that isn't in the repo (owner decisions from chat, claude.ai memory, device/TestFlight findings,
+preferences about how to work) → write it into its canonical doc: product → `docs/PRODUCT.md`, work items → `BACKLOG.md`,
+rules → `CLAUDE.md`, rationale → `WORK.md` Decisions. Push docs-only to `main`. Nothing to add → just delete this section.
+
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` — Data safety 4/4 lean (model 18 OK). (Photo files after Reset landed by another session, e67da6f.)
