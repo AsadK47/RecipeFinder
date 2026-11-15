@@ -2,7 +2,7 @@
 
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
-- Data: `agent/photo-files-after-reset` — Inbox 🔴 other devices keep photo files after a Reset. Then Recently deleted (model 18 OK).
+- Data: `agent/recently-deleted` — Data safety 4/4 lean (model 18 OK). (Photo files after Reset landed by another session, e67da6f.)
 - Cook: `agent/cooking-flow-ticks` — Cooking flow slice 1 (ingredient ticking).
 - Privacy: `agent/privacy-recent-searches` — Inbox 🟡 §5.1 wording + policy audit; website text goes to the website session.
 
