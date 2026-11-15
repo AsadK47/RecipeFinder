@@ -160,7 +160,9 @@ final class BadgeManager: BadgeManaging {
         if changed { save() }
     }
 
-    /// Unlock a badge; `silent: true` persists without a celebration sheet (used for welcome/seed badges at launch).
+    /// Unlock a badge; `silent: true` persists without a celebration sheet (used for seed badges at launch).
+    /// Welcome Aboard never celebrates, however it is unlocked: the profile earns it on a fresh install, and its
+    /// reveal then opened over whatever came next (e.g. Me after "View all badges").
     func unlockBadge(_ badgeType: BadgeType, customDate: Date? = nil, silent: Bool = false) {
         guard !isBadgeUnlocked(badgeType.rawValue) else { return }
 
@@ -178,7 +180,8 @@ final class BadgeManager: BadgeManaging {
         unlockedBadges[badge.id] = unlockedBadge
         save()
 
-        guard !isBulkImporting, !silent, !shownCelebrationIds.contains(badge.id) else { return }
+        guard !isBulkImporting, !silent, badgeType != .welcomeAboard, !shownCelebrationIds.contains(badge.id)
+        else { return }
         celebrationQueue.append(badgeType)
         drainQueueIfIdle()
     }
