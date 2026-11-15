@@ -307,6 +307,8 @@ struct DataManagementSettingsView: View {
             }
         }
 
+        URLSessionHTMLFetcher.clearSharedSessionData()
+
         // Appearance settings are app-wide (global @AppStorage) — restore defaults.
         let defaults = UserDefaults.standard
         ThemeStore.shared.theme = .teal

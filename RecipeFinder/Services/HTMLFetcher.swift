@@ -6,13 +6,26 @@ protocol HTMLFetching: Sendable {
 }
 
 /// Live implementation backed by `URLSession`. Ephemeral, like `URLSessionRemoteImageFetcher`: cookies and cached
-/// responses from recipe sites stay in memory for this importer and are never written to disk, so nothing outlives
-/// the import (Reset has nothing to clear).
+/// responses from recipe sites stay in memory while the app runs and are never written to disk. One session for the
+/// app, so connections are reused between imports and refreshes.
 struct URLSessionHTMLFetcher: HTMLFetching {
+    /// Internal (not private) so `HTMLFetcherTests` can check its configuration.
     let session: URLSession
 
-    init(session: URLSession = URLSession(configuration: .ephemeral)) {
+    static let ephemeralSession = URLSession(configuration: .ephemeral)
+
+    init(session: URLSession = URLSessionHTMLFetcher.ephemeralSession) {
         self.session = session
+    }
+
+    /// Reset: builds before the import went ephemeral kept recipe sites' cookies and cached pages in the app's
+    /// shared jar and on-disk cache; nothing else in the app uses them.
+    static func clearSharedSessionData(
+        cookies: HTTPCookieStorage = .shared,
+        cache: URLCache = .shared
+    ) {
+        cookies.removeCookies(since: .distantPast)
+        cache.removeAllCachedResponses()
     }
 
     func fetch(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
