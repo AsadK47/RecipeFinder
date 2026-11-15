@@ -2,7 +2,7 @@ import SwiftUI
 import WebKit
 
 /// Recipes + → "Search the web": search on the cook's chosen engine in an in-app browser, then import the page they're
-/// on with the existing link importer. Pages load straight from the site; browsing data isn't kept (non-persistent store).
+/// on with the existing link importer. Pages load straight from the site; browsing data isn't kept (non-persistent store), recent search terms are.
 struct RecipeWebSearchView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("webSearchEngine") private var engineRaw = WebRecipeSearchEngine.default.rawValue
@@ -130,7 +130,7 @@ struct RecipeWebSearchView: View {
                     chipSection("Recent", items: recent, icon: "clock.arrow.circlepath")
                 }
                 chipSection("Ideas", items: WebSearchBrowsing.suggestions, icon: "sparkles")
-                Text("Searches use \(engine.displayName) — change it in Settings → Recipe Search. Pages load straight from each site; nothing is kept after you close this.")
+                Text("Searches use \(engine.displayName) — change it in Settings → Recipe Search. Pages load straight from each site in a private session cleared when you close this; your recent searches stay on this device so you can repeat them.")
                     .font(.footnote)
                     .adaptiveSecondaryForeground()
                     .fixedSize(horizontal: false, vertical: true)

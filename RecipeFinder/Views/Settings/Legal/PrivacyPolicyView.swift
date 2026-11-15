@@ -24,7 +24,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("2. Our Approach to Privacy")
 
-                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device (and, if you turn on iCloud sync, in your own iCloud account) and is not collected by, or accessible to, the Developer, except where you direct the Application to retrieve content from the internet (see Section 5).")
+                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device (and, if you turn on iCloud sync, in your own iCloud account) and is not collected by, or accessible to, the Developer, except where the Application retrieves content from the internet for features you use (see Section 5).")
 
                 BodyText("2.2 We will only collect or share Personal Information in the ways described in this Privacy Policy. If we introduce a feature that would handle your information differently, we will update this Privacy Policy before that feature is made available, and any such feature will be optional.")
 
@@ -46,17 +46,20 @@ struct PrivacyPolicyView: View {
                 LegalBulletPoint("Your app preferences and settings")
                 LegalBulletPoint("Your recent web searches, so you can repeat them")
                 LegalBulletPoint("Copies of pictures from recipe websites, so imported recipes show their picture offline")
-                LegalBulletPoint("Up to three safety copies of your recipe database, made before an app update changes how it is stored, so an update can't lose your recipes. They are kept out of device backups.")
+                LegalBulletPoint("Up to three safety copies of your recipe database, made before an app update changes how it is stored, to help recover your recipes if an update goes wrong. Newer copies replace older ones after later updates, and they are kept out of device backups.")
+                LegalBulletPoint("If your recipe database can't be opened, a copy of it set aside so it can be recovered")
 
-                BodyText("4.3 Reset (Settings > Data Management) clears the information in Section 4.1, your recent web searches and the copies of website pictures. The safety copies are removed when you uninstall the Application.")
+                BodyText("4.3 Reset (Settings > Data Management) clears the information in Section 4.1, your recent web searches, the copies of website pictures and your preferences (your iCloud sync choice is kept), and restores the sample recipes. The safety copies and set-aside database copies stay until you uninstall the Application.")
+
+                BodyText("4.4 Your Device's own backups (iCloud Backup or a computer) include this information, except the safety copies, and are managed by Apple or your computer.")
             }
 
             Group {
                 SectionTitle("5. Network Activity")
 
-                BodyText("5.1 Recipe import. When you import a recipe by supplying a URL (directly or via the share sheet), the Application retrieves content directly from the website you specify. The Developer does not intermediate, store copies of, or monitor those requests. Web searches and the pages you open from them load directly from the search engine or website you choose, in a private browsing session that is cleared when you close the search. Your recent searches are kept on your Device so you can repeat them; Reset clears them.")
+                BodyText("5.1 Recipe import. When you import a recipe by supplying a URL (directly or via the share sheet), the Application retrieves content directly from the website you specify. The Developer does not intermediate, store copies of, or monitor those requests. What you type in a web search is sent to the search engine you choose (change it in Settings > Recipe Search) and is handled under that engine's privacy policy. Web searches and the pages you open from them load directly from the search engine or website you choose, in a private browsing session that is cleared when you close the search. Your recent searches are kept on your Device so you can repeat them; Reset clears them.")
 
-                BodyText("5.2 Images. The Application may load recipe images directly from image addresses contained within recipes you import, and keeps a copy on your Device so the picture shows offline. No information about you is sent to those sources beyond what is required to request the image.")
+                BodyText("5.2 Images. When a recipe you import has a picture from a website, the Application downloads it directly from that address in the background (on each of your devices, if iCloud sync is on) and keeps a copy on your Device so the picture shows offline. No information about you is sent to those sources beyond what is required to request the image.")
 
                 BodyText("5.3 On-device processing. Where supported, recipe text interpretation (using Apple's on-device foundation models) and photo text recognition (using Apple's Vision framework) run entirely on your Device. The text and photos you process are not sent to the Developer or any third party. To offer to import a copied recipe link, the Application asks iOS whether your clipboard holds a web link, which does not reveal its contents; it reads the clipboard when you tap Paste.")
 

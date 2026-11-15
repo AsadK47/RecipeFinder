@@ -25,7 +25,7 @@ struct TermsOfServiceView: View {
 
                 SectionTitle("3. Access")
 
-                BodyText("3.1 The current version of the Application does not require an account or sign-in, and your profile and data are stored on your device (see the Privacy Policy). If optional accounts or online features are introduced, additional terms for those features will be shown before you use them.")
+                BodyText("3.1 The current version of the Application does not require an account or sign-in, and your profile and data are stored on your device and, if you turn on iCloud sync, in your own iCloud account (see the Privacy Policy). If optional accounts or online features are introduced, additional terms for those features will be shown before you use them.")
 
                 BodyText("3.2 You are responsible for keeping your device secure. You must be at least 13 years old to use the Application.")
                 
