@@ -9,8 +9,7 @@ rules → `CLAUDE.md`, rationale → `WORK.md` Decisions. Push docs-only to `mai
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — lands as soon as the owner deploys the CloudKit Production schema (model 17 photos + model 18 deletedAt).
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
-- Discover: `agent/endless-discovery` (6a688e8) — builder agent: perf budget fixed, green at 12c8ac0, Screenshots
-  looked at (40-recipes-discovery-1…3); rebased on main, re-running Build & Test, then ff main alone (no batch waiting).
+- Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - Bug: ✅ #16 freeze fix landed (aed7309). Recently deleted waits for the owner to deploy the CloudKit Production schema.
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
