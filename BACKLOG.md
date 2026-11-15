@@ -630,6 +630,12 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🐞 CI: dispatched UI-test runs now exceed the 30-min job timeout (2026-11-15: both badge runs cancelled mid
+  `testCaptureTodayWeek`, coverage step then fails on the incomplete xcresult). Split UI tests into their own job or
+  raise the timeout; check the nightly run too.
+- 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
+  completion (hypothesis). New UI test passes **with and without** the fix in the simulator, so it is not proof —
+  confirm on device / via MetricKit hang reports before closing.
 - 🟡 Recipe-copy merge (`mergeRecipeCopies`, background) can overwrite an edit to a merged field (cook count, favourite, rating, photos) saved in the same few ms — optimistic locking didn't fire in CI; write only differing fields after re-reading the row (first sync of duplicated built-ins only). Also: 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 - 🟡 Link import uses `URLSession.shared` (`Services/HTMLFetcher.swift:12`) — cookies + response cache persist and Reset doesn't clear them; use an ephemeral session like `RemoteImageFetcher` (privacy review 2026-11-15).
 - 🟡 Reset leaves `StoreBackups/` safety copies and `.corrupt-*` store copies (`PersistenceController.swift:150-172`, unbounded, not excluded from device backup) — policy §4.3 now says so; better: Reset removes them, cap/exclude corrupt copies, then update §4.2/4.3 + Help.
