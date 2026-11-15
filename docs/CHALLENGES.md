@@ -56,14 +56,15 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger appends below this line -->
 
-## 2026-11-15 (item pass: Data safety 4/4 Recently Deleted, lean — fixed: a recipe deleted before the library loaded was missing from the list; days left could read 31+ when another device's clock was ahead)
-- ⚔️ [Assumption] CloudKit Production schema must gain `Recipe.deletedAt` (Dashboard → Deploy schema) before a TestFlight build with sync on exports it; unverified what export does until then — cost if wrong: recipe changes stop syncing.
-- ⚔️ [Time] A device whose clock runs ahead purges early, for every device (the delete syncs). Accepted: no trusted clock.
-- ⚔️ [Two at once] Restore on one device while another purges the same recipe (both offline): the purge's delete can win and the restore is lost. Accepted (needs 30 days + both offline at the boundary).
+## 2026-11-15 (item pass: Data safety 4/4 Recently Deleted, lean — two reviewers + challenger. Fixed: purge from a stale or unsent stamp (now waits for this launch's iCloud import and an export after the stamp); duplicate rows purged one by one (now per recipe, by the latest stamp, photos only once no row is left); quick snacks couldn't be deleted; background touch-ups rewrote or revived trashed copies; restore out of name order; Recently Deleted read on the main thread; seed guard untested; §7.2 wording)
+- ⚔️ [Assumption] CloudKit Production schema must gain `Recipe.deletedAt` (Dashboard → Deploy schema) before a TestFlight build with sync on exports it; unverified what export does until then — cost if wrong: recipe changes stop syncing. Main is on hold for it.
+- ⚔️ [Time] A device whose clock runs ahead purges early, for every device (the delete syncs). Accepted: no trusted clock. A stamp >1 day in the future counts as now.
+- ⚔️ [Two at once] Restore on one device while another purges the same recipe, both after 30 days with the restore not yet exported: the purge's delete can win. Accepted (narrowed by the import + export guard).
+- ⚔️ [Sync off after syncing] A device that has ever synced keeps Recently Deleted past 30 days while sync is off (no import, so no purge) until sync is back on. Accepted: safe direction.
 - ⚔️ [Two at once] An edit on a device that hasn't received the delete yet doesn't clear `deletedAt` (unchanged field), so the edit lands in Recently Deleted, not the library. Accepted: restore brings it back with the edit.
-- ⚔️ [Would the tests notice?] Untested glue: `seedIfNeeded` counting recently deleted ids (private, needs LocalStore flags) and `mergeSyncedRecipeCopies` skipping deleted rows (needs CloudKit record ids). A one-line removal of either passes CI.
+- ⚔️ [Would the tests notice?] `mergeSyncedRecipeCopies` skipping trashed rows needs CloudKit record ids — untested glue.
 - ⚔️ [Orphans] A device that receives another device's purge before running its own keeps that recipe's photo files (same as hard delete before: other devices never infer deletes).
-- ⚔️ [Scope] Backups leave out Recently Deleted; restoring a backup that holds a recently deleted recipe brings it back (a save clears `deletedAt`). Old (model 17) builds on another device keep showing deleted recipes.
+- ⚔️ [Accepted, coordinator 2026-11-15] Older builds (model 17) on another device show trashed recipes as live, and deleting there hard-deletes — fine while TestFlight is the only channel; release note "update all devices". A fresh install seeding built-ins before its first import can double-list a trashed built-in. Backups leave out Recently Deleted (owner decision later); restoring a backup that holds a trashed recipe brings it back.
 
 ## 2026-11-15 (item pass: 🔴 photo files kept on other devices after a Reset elsewhere — fixed: legacy full-path photos read as unused; a sign-out purge looked like a Reset and could delete never-sent photos → now only files written before the last finished export − 10 min go)
 - ⚔️ [Assumption] An iCloud sign-out purges the store file like a Reset; photos iCloud already had are cleared and come back as rows on sign-in — cost if wrong: they don't come back. Unverified on device.
