@@ -9,9 +9,8 @@ rules → `CLAUDE.md`, rationale → `WORK.md` Decisions. Push docs-only to `mai
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` — Data safety 4/4 lean (model 18 OK). (Photo files after Reset landed by another session, e67da6f.)
 - Cook: `agent/cooking-flow-ticks` — Cooking flow slice 1 (ingredient ticking).
-- Discover: `agent/endless-discovery` (36c4c42) — **paused after 4 red CI runs** (BACKLOG step 5). Next: add
-  `@MainActor` to `cookAgainDoesNotRepeatTheRecentlyCookedRow` (`RecipeFinderTests/Models/DiscoveryFeedTests.swift:218`,
-  the only remaining error), push, then Screenshots on the branch (Recipes scrolled 3 screens), then `ready to batch`.
+- Discover: `agent/endless-discovery` (34db781) — builder agent took over 04:40: `@MainActor` fix pushed, CI
+  running. Next if green: Screenshots on the branch (Recipes scrolled 3 screens), then `ready to batch`.
   Reviewer + challenger already done and acted on (CHALLENGES 15 Nov).
 - Bug (first): `agent/freeze-badge-reveal` — issue #16, iPhone froze on the Link Master badge reveal right after a web import with sync on; + MetricKit hang reports.
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
