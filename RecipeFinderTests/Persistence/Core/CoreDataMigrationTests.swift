@@ -246,7 +246,9 @@ import Foundation
         let plans = try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "MealPlanEntity"))
         #expect(plans.compactMap { $0.value(forKey: "id") as? UUID } == [planId])
         #expect(plans.first?.value(forKey: "servings") as? Int == 4)
-        #expect(source.entitiesByName["Recipe"]?.versionHash == current.entitiesByName["Recipe"]?.versionHash)
+        // v16 left Recipe as it was (v18 then added `deletedAt`, pinned in its own test).
+        let v16 = try #require(NSManagedObjectModel(contentsOf: momd.appendingPathComponent("RecipeModel 16.mom")))
+        #expect(source.entitiesByName["Recipe"]?.versionHash == v16.entitiesByName["Recipe"]?.versionHash)
     }
 
     /// Pins the v16→v17 upgrade (v17 adds `RecipePhotoEntity` for photo sync): recipes and app data survive untouched
