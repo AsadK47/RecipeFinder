@@ -65,9 +65,10 @@ struct HTMLFetcherTests {
     @Test("Reset clears pages a recipe site left in the shared cache")
     func clearingSharedSessionDataEmptiesTheCache() throws {
         let cache = URLCache(memoryCapacity: 1_000_000, diskCapacity: 0, directory: nil)
-        let request = URLRequest(url: try #require(URL(string: "https://example.com/recipe")))
+        let url = try #require(URL(string: "https://example.com/recipe"))
+        let request = URLRequest(url: url)
         let response = try #require(HTTPURLResponse(
-            url: try #require(request.url), statusCode: 200, httpVersion: nil, headerFields: nil
+            url: url, statusCode: 200, httpVersion: nil, headerFields: nil
         ))
         cache.storeCachedResponse(CachedURLResponse(response: response, data: Data("page".utf8)), for: request)
         #expect(cache.cachedResponse(for: request) != nil)
