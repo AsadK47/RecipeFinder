@@ -108,4 +108,25 @@ struct KitchenRecipeMatcherTests {
             }
         }
     }
+
+    @Test func aCachedMatchTermMatchesLikeAFreshOne() {
+        let fresh = KitchenRecipeMatcher.MatchTerm(KitchenRecipeMatcher.normalizedTerm("2 large eggs"))
+        let cached = KitchenRecipeMatcher.matchTerm("2 large eggs")
+        #expect(cached?.term == fresh.term)
+        #expect(cached?.words == fresh.words)
+        #expect(KitchenRecipeMatcher.matchTerm("   ") == nil)
+    }
+
+    @Test func aPreparedPantryFindsTheSameMissingIngredients() {
+        let recipe = RecipeModel(
+            name: "Omelette", category: "Breakfast", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+            baseServings: 1,
+            ingredients: ["eggs", "cheddar cheese", "chives"].map { Ingredient(baseQuantity: 1, unit: "", name: $0) },
+            prePrepInstructions: [], instructions: ["Cook"], notes: ""
+        )
+        let pantry: Set<String> = ["egg", "cheese"]
+        let prepared = recipe.missingIngredients(fromPrepared: RecipeModel.normalizedPantry(pantry)).map(\.name)
+        #expect(prepared == recipe.missingIngredients(from: pantry).map(\.name))
+        #expect(prepared == ["chives"])
+    }
 }

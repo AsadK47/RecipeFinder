@@ -223,12 +223,13 @@ struct TodayFeed: Equatable {
     static func kitchenMatches(recipes: [RecipeModel], kitchenItemNames: [String]) -> [KitchenMatch] {
         let pantry = Set(kitchenItemNames.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty })
         guard !pantry.isEmpty else { return [] }
+        let prepared = RecipeModel.normalizedPantry(pantry)
 
         return recipes
             .compactMap { recipe -> KitchenMatch? in
                 let total = recipe.ingredients.count
                 guard total > 0 else { return nil }
-                let have = total - recipe.missingIngredients(from: pantry).count
+                let have = total - recipe.missingIngredients(fromPrepared: prepared).count
                 guard have > 0, have * 2 >= total else { return nil }
                 return KitchenMatch(recipe: recipe, have: have, total: total)
             }

@@ -237,12 +237,17 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     }
 
     func missingIngredients(from availableIngredients: Set<String>) -> [Ingredient] {
-        let pantry = Self.normalizedPantry(availableIngredients)
-        return ingredients.filter { !Self.isSatisfied($0, by: pantry) }
+        missingIngredients(fromPrepared: Self.normalizedPantry(availableIngredients))
+    }
+
+    /// Same as `missingIngredients(from:)` with the pantry prepared once by the caller (`normalizedPantry`) — batch
+    /// callers checking hundreds of recipes would otherwise re-normalise the whole pantry per recipe.
+    func missingIngredients(fromPrepared pantry: [KitchenRecipeMatcher.MatchTerm]) -> [Ingredient] {
+        ingredients.filter { !Self.isSatisfied($0, by: pantry) }
     }
 
     /// Normalises pantry terms (and their match words) once for reuse across a batch of ingredient checks.
-    private static func normalizedPantry(_ availableIngredients: Set<String>) -> [KitchenRecipeMatcher.MatchTerm] {
+    static func normalizedPantry(_ availableIngredients: Set<String>) -> [KitchenRecipeMatcher.MatchTerm] {
         Set(availableIngredients
             .map { KitchenRecipeMatcher.normalizedTerm($0) }
             .filter { !$0.isEmpty })
@@ -251,9 +256,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
 
     /// Whether the normalised pantry covers `ingredient`, via the word-boundary matcher so "ice" doesn't satisfy "rice".
     private static func isSatisfied(_ ingredient: Ingredient, by pantry: [KitchenRecipeMatcher.MatchTerm]) -> Bool {
-        let term = KitchenRecipeMatcher.normalizedTerm(ingredient.name)
-        guard !term.isEmpty else { return false }
-        let prepared = KitchenRecipeMatcher.MatchTerm(term)
+        guard let prepared = KitchenRecipeMatcher.matchTerm(ingredient.name) else { return false }
         return pantry.contains { KitchenRecipeMatcher.ingredientMatches(prepared, $0) }
     }
     

@@ -42,8 +42,16 @@ enum FractionFormatter {
 }
 
 enum TimeExtractor {
+    // Cards, Today and discovery read `totalMinutes` for hundreds of recipes per rebuild; the Regex below is slow,
+    // and time strings repeat ("10 min"), so cache by input.
+    private static let cache = MemoCache<String, Int>(maxSize: 1000)
+
     /// Sums hours and minutes in a free-form duration ("1 hr 30 min" → 90, "1.5 hours" → 90); bare number = minutes; unparseable = 0.
     static func extractMinutes(from timeString: String) -> Int {
+        cache.value(for: timeString, compute: parse)
+    }
+
+    private static func parse(_ timeString: String) -> Int {
         // Collapse a numeric range to its upper bound ("20-30 min" → "30 min") so the hyphen isn't scanned as a negative sign.
         let normalized = timeString.lowercased()
             .replacing(/([0-9.]+)\s*[-–—]\s*([0-9.]+)/) { String($0.output.2) }
