@@ -14,9 +14,10 @@ enum NutritionLabelFormat {
     }
 
     /// "% RI" text: none at all reads 0%, a trace rounds up to 1%. Blank when there's no reference.
+    /// Non-numbers (NaN, infinity) read 0% rather than trapping in `Int(_:)`.
     static func percent(_ value: Double, of reference: Double) -> String {
         guard reference > 0 else { return "" }
-        guard value > 0 else { return "0%" }
+        guard value > 0, value.isFinite else { return "0%" }
         return "\(max(1, Int((value / reference * 100).rounded())))%"
     }
 
