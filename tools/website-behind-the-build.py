@@ -15,33 +15,47 @@ Usage (from the repo root):
 import datetime, html, re, sys
 
 HEADING = re.compile(r"^## (\d{4}-\d{2}-\d{2}) · (.+) · (\S+)$")
+LOOSE_HEADING = re.compile(r"^#{1,6}\s*\d")  # anything that looks like an entry heading
+CLOSING = "Earlier builds are in"
 FOR_YOU, BEHIND = "- For you: ", "- Behind the build: "
 START, END = "<!-- behind-the-build:start -->", "<!-- behind-the-build:end -->"
 
 
 def parse(text):
-    """Returns [(date, for_you, behind)] in file order; raises ValueError naming the first bad entry."""
-    lines, out = text.splitlines(), []
-    in_fence = False
-    for i, line in enumerate(lines):
+    """Returns [(date, for_you, behind)] in file order; raises ValueError naming the first bad line.
+
+    Strict on purpose: a typo'd heading, an extra bullet or stray text between entries is an error, never silently
+    dropped. Prose is allowed before the first entry and as one closing line pointing to older history.
+    """
+    lines, out, i, in_fence = text.splitlines(), [], 0, False
+    while i < len(lines):
+        line = lines[i].rstrip()
         if line.startswith("```"):
             in_fence = not in_fence
-        if in_fence or not line.startswith("## "):
+        elif not in_fence and LOOSE_HEADING.match(line):
+            m = HEADING.match(line)
+            if not m:
+                raise ValueError(f"line {i + 1}: heading must be '## YYYY-MM-DD · item · commit': {line}")
+            try:
+                day = datetime.date.fromisoformat(m.group(1))
+            except ValueError:
+                raise ValueError(f"line {i + 1}: not a date: {m.group(1)}") from None
+            body = [l.rstrip() for l in lines[i + 1:i + 3]]
+            if len(body) < 2 or not body[0].startswith(FOR_YOU) or not body[1].startswith(BEHIND):
+                raise ValueError(f"line {i + 1}: '{m.group(2)}' needs '{FOR_YOU.strip()}' then '{BEHIND.strip()}' lines")
+            for_you, behind = body[0][len(FOR_YOU):].strip(), body[1][len(BEHIND):].strip()
+            if not for_you or not behind:
+                raise ValueError(f"line {i + 1}: '{m.group(2)}' has an empty line")
+            out.append((day, for_you, behind))
+            i += 3
             continue
-        m = HEADING.match(line)
-        if not m:
-            raise ValueError(f"line {i + 1}: heading must be '## YYYY-MM-DD · item · commit': {line}")
-        try:
-            day = datetime.date.fromisoformat(m.group(1))
-        except ValueError:
-            raise ValueError(f"line {i + 1}: not a date: {m.group(1)}") from None
-        body = lines[i + 1:i + 3]
-        if len(body) < 2 or not body[0].startswith(FOR_YOU) or not body[1].startswith(BEHIND):
-            raise ValueError(f"line {i + 1}: '{m.group(2)}' needs '{FOR_YOU.strip()}' then '{BEHIND.strip()}' lines")
-        for_you, behind = body[0][len(FOR_YOU):].strip(), body[1][len(BEHIND):].strip()
-        if not for_you or not behind:
-            raise ValueError(f"line {i + 1}: '{m.group(2)}' has an empty line")
-        out.append((day, for_you, behind))
+        elif not in_fence and out and line and not line.startswith(CLOSING):
+            raise ValueError(f"line {i + 1}: unexpected text between entries: {line}")
+        i += 1
+    if in_fence:
+        raise ValueError("a ``` code fence is never closed")
+    if not out:
+        raise ValueError("no entries found")
     return out
 
 
@@ -72,8 +86,8 @@ def render(entries):
 
 
 def fill(page, entries):
-    if START not in page or END not in page:
-        raise ValueError(f"page needs {START} and {END} markers")
+    if page.count(START) != 1 or page.count(END) != 1 or page.index(END) < page.index(START):
+        raise ValueError(f"page needs one {START} followed by one {END}")
     a, b = page.index(START) + len(START), page.index(END)
     return page[:a] + "\n" + render(entries) + "\n            " + page[b:]
 

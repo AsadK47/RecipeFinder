@@ -1,10 +1,11 @@
 # Changelog
 
-What changed for you, one entry per TestFlight build, newest first. Write the entry when the change lands on `main`
+What changed for you, one entry per change that ships in a TestFlight build, newest first. Write the entry when the change lands on `main`
 (BACKLOG "How an agent works this file" step 8). The website's "Behind the build" page is generated from this file
 by `tools/website-behind-the-build.py`; the team's detailed Log history is in `docs/LOG.md`.
 
-Each entry is exactly three lines (the script checks this — run `python3 tools/website-behind-the-build.py --check`):
+Each entry is exactly three lines; run `python3 tools/website-behind-the-build.py --check` before committing (it rejects
+anything else between entries):
 
 ```
 ## YYYY-MM-DD · <BACKLOG item> · <commit>
@@ -64,6 +65,10 @@ Each entry is exactly three lines (the script checks this — run `python3 tools
 - For you: a photo you remove while sync is off is removed from your other devices once sync is back on.
 - Behind the build: two reviewers checked it, and their shared note became the next fix above.
 
+## 2026-11-14 · Inbox 🔴 cook history came back after a Reset elsewhere (sync on) · 29addf7
+- For you: with iCloud sync on, a Reset on one device keeps your cooking streak fresh on your other devices too.
+- Behind the build: two reviewers agreed on the fix — the on-device copy now follows the synced library every time it loads.
+
 ## 2026-11-14 · 🐞 Inbox: Reset left photo files + recent web searches · 3d042a4
 - For you: Reset now also clears the photos you added and your recent web searches.
 - Behind the build: two reviewers agreed on two fixes, including keeping your existing recent searches through the update.
@@ -76,8 +81,24 @@ Each entry is exactly three lines (the script checks this — run `python3 tools
 - For you: with iCloud sync on, a shopping list you clear on one device stays clear when you open another.
 - Behind the build: a challenge pass caught a threading risk before it reached a build.
 
+## 2026-11-14 · Data safety 2/4 slice 4b-2b (fold same shopping/kitchen item from two devices) · ab755c3
+- For you: with iCloud sync on, adding "Eggs" on two devices gives you one line on your shopping list, with the larger amount.
+- Behind the build: a two-step merge keeps every amount safe when both devices tidy up at the same moment.
+
+## 2026-11-14 · Data safety 2/4 slice 4b-2a (photo deletes reach iCloud) · 481cd33
+- For you: with iCloud sync on, a recipe or photo you delete on one device stays deleted on your others.
+- Behind the build: a review caught a clean-up that could have removed photos after a failed download; the design changed so deletes happen at the moment you make them.
+
+## 2026-11-14 · Data safety 2/4 slice 4b-1 (recipe photo sync, RecipeModel 17) · 3c995f9
+- For you: with iCloud sync on, recipe photos you add or replace appear on your other devices too.
+- Behind the build: the library upgrades in place on launch, with every recipe kept.
+
 ## 2026-11-14 · 🐞 Recipe facts card overlap (owner screenshot: "Intermediate" ran into "Main course") · f2cd226
 - For you: the facts card on a recipe fits neatly — one row when everything fits, two when it doesn't, with words wrapping cleanly.
 - Behind the build: started from a screenshot sent in from a phone; new tests cover each layout.
+
+## 2026-11-14 · Data safety 2/4 slice 3b-2b (opt-in iCloud sync switch + Privacy §7) · a4ee07f
+- For you: a new "Sync with iCloud" switch in Me → Settings → Data Management keeps your recipes, plans and lists in step across your devices, using your own iCloud. It takes effect the next time you open the app.
+- Behind the build: a challenge pass made sure your choice survives a Reset and that the Privacy Policy matches what syncs.
 
 Earlier builds are in the Log in `BACKLOG.md` (older lines move to `docs/LOG.md`).

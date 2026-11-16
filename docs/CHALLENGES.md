@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-16 (item pass: Docs refresh slice 5 — fixed: 10 overclaims in CHANGELOG entries (Reset photo clear-up sounded like single deletes, onboarding, #16 cause unproven, share-extension cookies, fallback picture, "only"), 5 missing 14 Nov sync entries, parser silently dropped malformed lines / typo'd headings / unclosed fences / empty file, `fill` duplicated the page with END before START, tests missed week rounding, order, Behind-line escaping)
+- ⚔️ [Verify] CI never runs `tools/test_website_behind_the_build.py` or `--check` (build.yml ignores `tools/**` and `*.md`); a malformed CHANGELOG reaches main unless the lander runs `--check` (step 8 says to; the website run fails loudly). Adding a small ubuntu job is a workflow change → owner.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Simplify] whats-new (`whats-new-copy.json`) and Behind the build (CHANGELOG "For you") are two per-item user lines; whats-new could read the CHANGELOG instead of the JSON.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Copy] The renderer curls `'` but leaves straight `"…"`, so quotes mix on the page; inline Markdown would show literally (none today).
+  → Owner: Accept / Reject / Later
+- ⚔️ [Publish] Sync entries (14–15 Nov) describe photo sync and the new policy while the website `privacy.html` is still stale and the CloudKit Production schema isn't deployed — the website session should publish Behind the build after privacy.html updates.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-15 (item pass: My Cookbook slice 2 — fixed: View all badges landed on a Me with no badges (both reviewers), VoiceOver read "5 slash 24", a UI assertion that couldn't fail, seeded cookbook disagreed with "N cooks this year", line stale over New Year, row squeezed at accessibility sizes, "?" avatar)
 - ⚔️ [Data] The cookbook counts `recipe.cookCount`, the line counts the cook-date log — older libraries whose counts predate the log can show more cooks on the pages than "this year" suggests — alternative: one per-cook record (slice 3, model change → owner) — cost if wrong: two numbers that don't match.
   → Owner: Accept / Reject / Later
