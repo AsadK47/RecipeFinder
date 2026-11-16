@@ -17,19 +17,19 @@ Each entry is exactly three lines (the script checks this — run `python3 tools
 - Behind the build: a reviewer and a challenger found seven things to fix first, including a VoiceOver label that read out a slash.
 
 ## 2026-11-15 · My Cookbook slice 1 · 53fb4b1
-- For you: Me now opens on My Cookbook — a full page for every dish you've cooked, with your photo, how many times you've made it and your stars. Tap a page to cook it again.
-- Behind the build: pages were checked at the largest text sizes and in screenshots before landing.
+- For you: Me now opens on My Cookbook — a full page for every dish you've cooked, with your photo (or the recipe's picture), how many times you've made it and your stars. Tap a page to cook it again.
+- Behind the build: a reviewer and a challenger found nine things to fix first, and pages grow with your text size.
 
 ## 2026-11-15 · Made-it moment · e48fd5c
 - For you: finishing a recipe now celebrates properly — the dish pops in with a tick, you see how many times you've made it and your cooks this week, with confetti and a haptic of its own.
 - Behind the build: the moment follows Reduce Motion, and VoiceOver hears it as one summary.
 
 ## 2026-11-15 · 🐞 Inbox: View-all badge UI test red · 732ec22
-- For you: a new install opens straight into the app, and View all badges lands on Me with nothing else popping up.
-- Behind the build: the cause came from the failing test's screen record, and a new test proves the fix.
+- For you: on a new install, Welcome Aboard joins your badges quietly, and View all badges takes you straight to your trophy shelf.
+- Behind the build: the cause came from the failing test's accessibility tree, and a new test failed before the fix and passes with it.
 
 ## 2026-11-15 · Inbox 🟡 ephemeral link import · 7041540
-- For you: link imports keep site cookies in memory while the app is open, and Reset clears any left from earlier builds.
+- For you: recipe sites you import from keep their cookies in memory while the app is open, and Reset clears what the app kept from earlier builds.
 - Behind the build: a test now checks cookies in a separate jar so it can tell when they leak.
 
 ## 2026-11-15 · Discovery perf budget (main red at 0.565 s) · 19250ff
@@ -38,14 +38,14 @@ Each entry is exactly three lines (the script checks this — run `python3 tools
 
 ## 2026-11-15 · Recipes — endless discovery · 2b6847f
 - For you: the Recipes tab now keeps going — below your library come chapters like Under 30 minutes, Dinner ideas and New to you, in changing layouts, for as long as you like to scroll.
-- Behind the build: tested for no back-to-back repeats and screenshotted three screens deep.
+- Behind the build: tested so each recipe waits its turn before coming back, and screenshotted three screens deep.
 
 ## 2026-11-15 · Cooking flow slice 1 (ingredient ticking) · 85bfddf
 - For you: tap an ingredient to tick it off — ticked ones settle into "Got it" at the bottom, and when everything's ticked you're asked if you're ready to start cooking. Hold a row to edit its amount.
 - Behind the build: a reviewer and a challenger found nine things to polish, from rows moving under your finger to VoiceOver actions.
 
 ## 2026-11-15 · 🐞 #16 froze on badge reveal after a web import with sync on · aed7309
-- For you: with iCloud sync on, importing a web recipe right after opening the app keeps the app responsive while a badge appears.
+- For you: with iCloud sync on, importing a web recipe right after opening the app runs more smoothly while a badge appears.
 - Behind the build: the likely cause was fixed, and slow steps now leave a note in the device log so anything left is quicker to find.
 
 ## 2026-11-15 · Inbox 🟡 privacy §5.1 recent searches + policy audit · 037a8ea
@@ -53,12 +53,12 @@ Each entry is exactly three lines (the script checks this — run `python3 tools
 - Behind the build: two separate reviewers checked every claim in the policy against the code.
 
 ## 2026-11-15 · Inbox 🔴 photo files kept on other devices after a Reset elsewhere · e67da6f
-- For you: with iCloud sync on, a recipe photo you delete or Reset on one device is cleared from your other devices too.
-- Behind the build: a guard keeps any photo that hasn't reached iCloud yet.
+- For you: with iCloud sync on, a Reset on one device also clears your recipe photos from your other devices the next time they open the app.
+- Behind the build: a guard keeps any photo that hasn't reached iCloud yet, so everything unsent stays safe.
 
 ## 2026-11-15 · Inbox 🔴 store history purged while sync is off · 8be3cb1
-- For you: recipes you delete while sync is paused stay deleted on your other devices when you turn it back on, even weeks later.
-- Behind the build: history is tidied only up to the last finished iCloud upload.
+- For you: recipes you delete while sync is off stay deleted on your other devices when you turn it back on, even weeks later.
+- Behind the build: history is tidied up to the last finished iCloud upload, so every change is sent first.
 
 ## 2026-11-14 · 🐞 Inbox: photo removals made while sync is off never reached iCloud · 4b28065
 - For you: a photo you remove while sync is off is removed from your other devices once sync is back on.
@@ -80,4 +80,4 @@ Each entry is exactly three lines (the script checks this — run `python3 tools
 - For you: the facts card on a recipe fits neatly — one row when everything fits, two when it doesn't, with words wrapping cleanly.
 - Behind the build: started from a screenshot sent in from a phone; new tests cover each layout.
 
-Earlier builds are described line by line in `docs/LOG.md`.
+Earlier builds are in the Log in `BACKLOG.md` (older lines move to `docs/LOG.md`).
