@@ -27,8 +27,12 @@ When lanes report green + reviewed: batch them into `agent/batch`, one green run
 - **My Cookbook (3) share a page**: visible share button on the page (not a long-press menu — primary actions
   visible). Card drawn with `ImageRenderer` from a bitmap fetched via Kingfisher (KFImage loads async, so a rendered
   `RecipeImageView` would capture the placeholder). Fixed font sizes: it's a picture for other people's screens. 4:5
-  1080×1350 fits feeds and messages. System share sheet = user-chosen destination, same class as the existing recipe
-  ShareLink, so no privacy-policy change. **Pre-mortem:** (1) card captures a blank/placeholder instead of the photo
+  1080×1350 JPEG fits feeds and messages. Unlike the recipe file share (which strips rating/cooks/photos on purpose),
+  the card *is* the cook's own page — that's the point, and the user picks where it goes in the system share sheet; the
+  app sends nothing itself, so policy text unchanged (legal text = owner guardrail) and an optional §7.4 clause is
+  asked in Needs owner. Share line uses an absolute date (a kept picture saying "yesterday" goes wrong). Opaque black
+  base + dark scheme so the placeholder card isn't see-through. Downsample long side 2700 so fill-cropped landscape
+  photos stay sharp. **Pre-mortem:** (1) card captures a blank/placeholder instead of the photo
   → 44-cookbook-share screenshot (seeded recipes use bundled art); (2) share button steals the page tap or is hidden
   → UI test taps share, then still taps the page into the recipe; (3) caption/stars wrong → MyCookbookTests share cases.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several

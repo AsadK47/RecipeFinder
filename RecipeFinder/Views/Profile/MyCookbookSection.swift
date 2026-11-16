@@ -65,8 +65,9 @@ struct MyCookbookSection: View {
             HapticManager.shared.light()
             sharing = page
         } label: {
+            // Fixed size: the circle is a fixed 44 pt tap target, so a Dynamic Type glyph would overflow it.
             Image(systemName: "square.and.arrow.up")
-                .font(.subheadline.weight(.semibold))
+                .font(.system(size: 16, weight: .semibold))
                 .adaptiveForegroundColor()
                 .frame(width: 44, height: 44)
                 .appCard(in: Circle())

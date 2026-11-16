@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+import UIKit
 @testable import RecipeFinder
 
 /// My Cookbook builds itself from cook history: which dishes get a page, in what order, with which picture and line.
@@ -179,19 +180,112 @@ struct MyCookbookTests {
     @Test("the share caption names the dish and when it was made")
     func shareCaption() {
         let now = Self.date(2026, 11, 16)
-        let page = MyCookbook.pages(
+        let pages = MyCookbook.pages(
             from: [recipe("Chicken Curry", cookCount: 3, lastCookedAt: Self.date(2026, 11, 2))],
             now: now, calendar: Self.calendar, locale: Self.locale
         )
-        #expect(page.count == 1)
-        #expect(page.first.map(MyCookbook.shareCaption(for:))
+        #expect(pages.count == 1)
+        #expect(pages.first.map { MyCookbook.shareCaption(for: $0, now: now, calendar: Self.calendar, locale: Self.locale) }
                 == "Chicken Curry · Made 3 times · 2 Nov — from my cookbook in RecipeFinder")
     }
 
-    @Test("the share card renders 1080 × 1350 pixels, a 4:5 portrait that fits feeds and messages")
-    func shareCardPixels() {
-        let size = MyCookbook.shareCardSize
-        #expect(size.width * MyCookbook.shareCardScale == 1080)
-        #expect(size.height * MyCookbook.shareCardScale == 1350)
+    @Test("a shared page gives the date, never today or yesterday, since the picture is seen later", arguments: [
+        (16, "Made once · 16 Nov"), (15, "Made once · 15 Nov")
+    ])
+    func shareLineIsAbsolute(day: Int, expected: String) {
+        let now = Self.date(2026, 11, 16, hour: 21)
+        let pages = MyCookbook.pages(from: [recipe("Dal", cookCount: 1, lastCookedAt: Self.date(2026, 11, day))],
+                                     now: now, calendar: Self.calendar, locale: Self.locale)
+        #expect(pages.first?.line != expected)   // the page itself still says today / yesterday
+        #expect(pages.first.map { MyCookbook.shareLine(for: $0, now: now, calendar: Self.calendar, locale: Self.locale) }
+                == expected)
+    }
+
+    @Test("a shared page from an earlier year keeps its year")
+    func shareLineOtherYear() {
+        let now = Self.date(2026, 11, 16)
+        let pages = MyCookbook.pages(from: [recipe("Dal", cookCount: 2, lastCookedAt: Self.date(2025, 12, 30))],
+                                     now: now, calendar: Self.calendar, locale: Self.locale)
+        #expect(pages.first.map { MyCookbook.shareLine(for: $0, now: now, calendar: Self.calendar, locale: Self.locale) }
+                == "Made 2 times · 30 Dec 2025")
     }
 }
+
+/// The shared picture itself: drawn at full size, opaque, with the dish photo when there is one.
+@Suite("Cookbook share card")
+@MainActor
+struct CookbookShareCardTests {
+
+    private let page = CookbookPage(
+        id: UUID(), name: "Chicken Curry", imageName: nil, category: "Main", cuisine: "Indian",
+        lastCookedAt: Date(timeIntervalSince1970: 1_700_000_000), timesCooked: 3, rating: 4, line: "Made 3 times · today"
+    )
+
+    private static func solid(_ color: UIColor, size: CGSize) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            color.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
+    }
+
+    /// Alpha and red of one pixel (x, y from the top-left) of the rendered card, read back through a bitmap context.
+    private static func pixel(_ image: UIImage, x: Int, y: Int) -> (alpha: UInt8, red: UInt8)? {
+        guard let cgImage = image.cgImage else { return nil }
+        var bytes = [UInt8](repeating: 0, count: 4)
+        let drawn: Bool = bytes.withUnsafeMutableBytes { buffer in
+            guard let context = CGContext(data: buffer.baseAddress, width: 1, height: 1, bitsPerComponent: 8,
+                                          bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(),
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+            context.draw(cgImage, in: CGRect(x: -x, y: -(cgImage.height - 1 - y), width: cgImage.width,
+                                              height: cgImage.height))
+            return true
+        }
+        return drawn ? (bytes[3], bytes[0]) : nil
+    }
+
+    @Test("the card renders 1080 × 1350 pixels, a 4:5 portrait that fits feeds and messages")
+    func cardPixelSize() throws {
+        let card = try #require(CookbookShareCard.render(page: page, picture: nil))
+        let cgImage = try #require(card.cgImage)
+        #expect(cgImage.width == 1080)
+        #expect(cgImage.height == 1350)
+    }
+
+    @Test("a card without a photo is still fully opaque, not see-through placeholder tints")
+    func placeholderCardIsOpaque() throws {
+        let card = try #require(CookbookShareCard.render(page: page, picture: nil))
+        let corner = try #require(Self.pixel(card, x: 2, y: 2))
+        #expect(corner.alpha == 255)
+    }
+
+    @Test("the card shows the dish photo, filling the top of the card")
+    func cardShowsPhoto() throws {
+        let photo = Self.solid(.red, size: CGSize(width: 400, height: 300))
+        let card = try #require(CookbookShareCard.render(page: page, picture: photo))
+        let top = try #require(Self.pixel(card, x: 540, y: 20))
+        #expect(top.red > 200)
+        #expect(top.alpha == 255)
+    }
+
+    @Test("the card's photo is loaded from a file on the phone")
+    func pictureLoadsFromFile() async throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let file = folder.appendingPathComponent("dish.jpg")
+        let jpeg = try #require(Self.solid(.green, size: CGSize(width: 64, height: 48))
+            .jpegData(compressionQuality: 0.9))
+        try jpeg.write(to: file)
+        let picture = await CookbookShareCard.picture(for: file.path)
+        #expect(picture != nil)
+    }
+
+    @Test("no picture name means the placeholder art")
+    func noPictureName() async {
+        #expect(await CookbookShareCard.picture(for: nil) == nil)
+        #expect(await CookbookShareCard.picture(for: "") == nil)
+    }
+}
+

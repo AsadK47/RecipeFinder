@@ -1,4 +1,3 @@
-import CoreGraphics
 import Foundation
 
 /// One dish in My Cookbook: the cook's own picture of it, how often and when it was made, and its stars.
@@ -66,11 +65,6 @@ enum MyCookbook {
 
     // MARK: - Share a page
 
-    /// The shared card in points; rendered at `shareCardScale` it's 1080 × 1350 px, a 4:5 portrait that fills a feed
-    /// post or a message without cropping.
-    static let shareCardSize = CGSize(width: 360, height: 450)
-    static let shareCardScale: CGFloat = 3
-
     /// "★★★★☆" on the shared card; nil when unrated so the card leaves the line out.
     static func starText(rating: Int) -> String? {
         guard rating > 0 else { return nil }
@@ -78,18 +72,30 @@ enum MyCookbook {
         return String(repeating: "★", count: filled) + String(repeating: "☆", count: 5 - filled)
     }
 
+    /// "Made 3 times · 16 Nov" on the shared card: always a date, never "today", because the picture is kept and
+    /// seen days later.
+    static func shareLine(for page: CookbookPage, now: Date = Date(), calendar: Calendar = .current,
+                          locale: Locale = .current) -> String {
+        let made = "Made \(timesText(page.timesCooked))"
+        guard let cooked = page.lastCookedAt else { return made }
+        return "\(made) · \(dayText(cooked, now: now, calendar: calendar, locale: locale, relative: false))"
+    }
+
     /// Text that travels with the shared picture (message body, post caption).
-    static func shareCaption(for page: CookbookPage) -> String {
-        "\(page.name) · \(page.line) — from my cookbook in RecipeFinder"
+    static func shareCaption(for page: CookbookPage, now: Date = Date(), calendar: Calendar = .current,
+                             locale: Locale = .current) -> String {
+        "\(page.name) · \(shareLine(for: page, now: now, calendar: calendar, locale: locale))"
+            + " — from my cookbook in RecipeFinder"
     }
 
     private static func timesText(_ count: Int) -> String {
         count == 1 ? "once" : "\(count) times"
     }
 
-    private static func dayText(_ date: Date, now: Date, calendar: Calendar, locale: Locale) -> String {
-        if calendar.isDate(date, inSameDayAs: now) { return "today" }
-        if let yesterday = calendar.date(byAdding: .day, value: -1, to: now),
+    private static func dayText(_ date: Date, now: Date, calendar: Calendar, locale: Locale,
+                                relative: Bool = true) -> String {
+        if relative, calendar.isDate(date, inSameDayAs: now) { return "today" }
+        if relative, let yesterday = calendar.date(byAdding: .day, value: -1, to: now),
            calendar.isDate(date, inSameDayAs: yesterday) { return "yesterday" }
         let formatter = DateFormatter()
         formatter.calendar = calendar
