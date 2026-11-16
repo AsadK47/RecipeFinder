@@ -661,6 +661,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         tab(app, "Recipes", shot: "40-recipes-discovery-0")
+        checkpoint(app, "recipes-discover")
+        let chapter = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "identifier BEGINSWITH 'discovery.chapter.'")).firstMatch
+        XCTAssertTrue(chapter.waitForExistence(timeout: 10), "Discover should show at least one chapter.")
         for screen in 1...3 {
             app.swipeUp(velocity: .slow)
             settle()

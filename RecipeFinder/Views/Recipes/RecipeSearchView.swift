@@ -40,7 +40,8 @@ struct RecipeSearchView: View {
     @State private var discovery = DiscoveryFeedModel()
     @State private var recentlyCooked: [RecipeModel] = []
     /// Discover | My recipes; remembered, and set to Discover by Today's "Keep browsing →".
-    @AppStorage(RecipeBrowse.modeKey) private var browseMode: RecipeBrowse.Mode = .myRecipes
+    @AppStorage(RecipeBrowse.modeKey) private var browseMode: RecipeBrowse.Mode = RecipeBrowse.defaultMode
+    @AppStorage(RecipeBrowse.discoverRequestKey) private var discoverRequests = 0
     @State private var showCookingSheet = false
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
@@ -126,6 +127,8 @@ struct RecipeSearchView: View {
             updateDerivedMetadata()
             updateDiscovery()
         }
+        .onChange(of: browseMode) { _, _ in updateDiscovery() }
+        .onChange(of: discoverRequests) { _, _ in showDiscover() }
         .onChange(of: recipes) { _, _ in
             updateDerivedMetadata()
             updateDiscovery()
@@ -264,7 +267,9 @@ struct RecipeSearchView: View {
     private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
-            modePicker
+            if RecipeBrowse.showsModePicker(criteria: filterCriteria, libraryCount: recipes.count) {
+                modePicker
+            }
             activeFiltersSection
             recipeContentArea
         }
@@ -336,6 +341,8 @@ struct RecipeSearchView: View {
                     onRequestDelete: { recipeToDelete = $0 },
                     onRefresh: refreshRecipesAsync
                 )
+                // A fresh scroll per side, so switching never lands mid-list or mid-feed.
+                .id(content)
             }
         }
     }
@@ -416,6 +423,8 @@ struct RecipeSearchView: View {
     /// Reads the kitchen here, not in `body`, so pantry toggles in a pushed detail don't re-render this list (as
     /// `availableIngredients`); the next appear picks them up.
     private func updateDiscovery() {
+        // Built only when shown: on My recipes the feed would be paid for on every appear and library change.
+        guard browseMode == .discover else { return }
         recentlyCooked = DiscoveryPool.recentlyCooked(recipes)
         // Kept out of the first deal: the Recently cooked row above already shows these.
         discovery.update(
@@ -430,8 +439,19 @@ struct RecipeSearchView: View {
     
     
     
+    /// "Keep browsing →" from Today: back to the top of Recipes, nothing typed or filtered, on Discover.
+    private func showDiscover() {
+        navigationPath = NavigationPath()
+        resetFilters()
+        browseMode = .discover
+    }
+
     private func clearAllFilters() {
         HapticManager.shared.medium()
+        resetFilters()
+    }
+
+    private func resetFilters() {
         isSearchFocused = false
         withAnimation {
             searchText = ""

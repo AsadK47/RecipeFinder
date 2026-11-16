@@ -334,6 +334,18 @@ import Foundation
         ) == .discover)
     }
 
+    @Test func theToggleShowsOnlyWhenFlippingItChangesTheScreen() {
+        var typed = RecipeFilterCriteria(); typed.searchText = "soup"
+        let big = RecipeBrowse.minimumDiscoverLibrary
+        #expect(RecipeBrowse.showsModePicker(criteria: RecipeFilterCriteria(), libraryCount: big))
+        #expect(!RecipeBrowse.showsModePicker(criteria: typed, libraryCount: big))
+        #expect(!RecipeBrowse.showsModePicker(criteria: RecipeFilterCriteria(), libraryCount: big - 1))
+    }
+
+    @Test func recipesOpensOnDiscoverUntilTheCookChoosesOtherwise() {
+        #expect(RecipeBrowse.defaultMode == .discover)
+    }
+
     /// The toggle's stored values: renaming a case would silently reset everyone's remembered choice.
     @Test func theRememberedModeKeepsItsStoredValues() {
         #expect(RecipeBrowse.Mode(rawValue: "discover") == .discover)

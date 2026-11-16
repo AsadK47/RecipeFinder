@@ -18,7 +18,7 @@ enum RecipeBrowse {
         }
     }
 
-    enum Content: Equatable {
+    enum Content: Hashable {
         /// Recently cooked, then endless chapters.
         case discover
         /// The whole library, A–Z.
@@ -29,6 +29,10 @@ enum RecipeBrowse {
 
     /// Shared with Today's "Keep browsing →", which switches Recipes to Discover before opening it.
     static let modeKey = "recipes.mode"
+    /// Discover is Recipes' job (PRODUCT.md); My recipes is one tap away and remembered once chosen.
+    static let defaultMode = Mode.discover
+    /// Bumped by "Keep browsing →" so an already-open Recipes tab pops any pushed recipe and clears its search.
+    static let discoverRequestKey = "recipes.discoverRequests"
 
     /// A library this small is all on one screen already; chapters would only repeat it.
     static let minimumDiscoverLibrary = 7
@@ -38,6 +42,11 @@ enum RecipeBrowse {
         criteria.searchText.trimmingCharacters(in: .whitespaces).isEmpty
             && criteria.activeCount == 0
             && criteria.sortOrder == .nameAZ
+    }
+
+    /// The toggle only shows when flipping it changes the screen: browsing, with a library big enough for chapters.
+    static func showsModePicker(criteria: RecipeFilterCriteria, libraryCount: Int) -> Bool {
+        isBrowsing(criteria) && libraryCount >= minimumDiscoverLibrary
     }
 
     static func content(mode: Mode, criteria: RecipeFilterCriteria, libraryCount: Int) -> Content {

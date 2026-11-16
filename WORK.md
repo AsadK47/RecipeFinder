@@ -29,9 +29,13 @@ When lanes report green + reviewed: batch them into `agent/batch`, one green run
 - **Recipes toggle + Today link** (tester batch 1 item 4 + owner option D, 16 Nov; `agent/recipes-discover-toggle`):
   segmented *Discover | My recipes* under the search header, remembered (`@AppStorage("recipes.mode")`); Discover =
   Recently cooked + endless chapters, My recipes = the full list; typing/filtering/sorting shows results on either
-  side (`RecipeBrowse.content`). The 6-card preview + "See all" is deleted (the toggle does that job). Default *My
-  recipes*: testers know Recipes as their list, and UI tests tap `recipe.row`; Today's "Not feeling it? Keep browsing
-  →" (under tonight's pick) flips to Discover and opens Recipes. UI tests start on My recipes (`-ui-testing` resets the
+  side (`RecipeBrowse.content`). The 6-card preview + "See all" is deleted (the toggle does that job). Default *Discover*
+  (Recipes' job in PRODUCT.md; challenger: the UI-test reason was moot since the launch hook pins tests to My
+  recipes). Today's "Not feeling it? Keep browsing
+  →" (under tonight's pick) flips to Discover, and bumps `recipes.discoverRequests` so an open Recipes tab pops a
+  pushed recipe and clears search/filters/sort (reviewer + challenger both found it could land elsewhere). Toggle hidden
+  when it wouldn't change the screen (searching, <7 recipes); `.id(content)` resets scroll per side; feed only built on
+  Discover. UI tests start on My recipes (`-ui-testing` resets the
   key; `-recipes-discover` for the discovery shots). Next slice: "Pick one for tonight" checkpoint cards (needs Today
   to accept any recipe as tonight's pick). **Pre-mortem:** (1) search shows chapters instead of results →
   `searchingShowsResultsOnEitherSide`; (2) choice forgotten / reset by a rename → `theRememberedModeKeepsItsStoredValues`;

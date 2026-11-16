@@ -98,23 +98,18 @@ struct TodayKeepBrowsingRow: View {
 
     var body: some View {
         Button(action: onBrowse) {
-            HStack(spacing: AppTheme.spacing4) {
-                Text("Not feeling it?")
-                    .adaptiveSecondaryForeground()
-                Text("Keep browsing")
-                    .fontWeight(.semibold)
-                    .adaptiveForegroundColor()
-                Image(systemName: "arrow.right")
-                    .adaptiveForegroundColor()
-            }
-            .font(.subheadline)
+            // One Text, so large type wraps as a sentence with the arrow at its end.
+            (Text("Not feeling it? ").foregroundStyle(.secondary)
+                + Text("Keep browsing \(Image(systemName: "arrow.right"))").fontWeight(.semibold))
+                .font(.subheadline)
+                .adaptiveForegroundColor()
+                .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, AppTheme.spacing4)
             .frame(minHeight: 44)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
         .accessibilityLabel("Not feeling it? Keep browsing")
         .accessibilityHint("Opens Discover in Recipes")
         .accessibilityIdentifier("today.keepBrowsing")

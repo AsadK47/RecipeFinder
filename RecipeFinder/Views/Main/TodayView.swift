@@ -43,7 +43,8 @@ struct TodayView: View {
     /// "Dinner at" from the Tonight card's timing line; read through `TonightTiming.eatAt(stored:)`.
     @AppStorage("today.eatAt") private var storedEatAt = TonightTiming.defaultEatAt
     /// Recipes' Discover | My recipes toggle; "Keep browsing →" flips it to Discover before switching tab.
-    @AppStorage(RecipeBrowse.modeKey) private var recipesMode: RecipeBrowse.Mode = .myRecipes
+    @AppStorage(RecipeBrowse.modeKey) private var recipesMode: RecipeBrowse.Mode = RecipeBrowse.defaultMode
+    @AppStorage(RecipeBrowse.discoverRequestKey) private var discoverRequests = 0
 
     /// Morning before noon, afternoon until 6pm, evening after.
     nonisolated static func greeting(forHour hour: Int) -> String {
@@ -220,6 +221,7 @@ struct TodayView: View {
             )
             TodayKeepBrowsingRow {
                 recipesMode = .discover
+                discoverRequests &+= 1
                 onOpen(.recipes)
             }
         } else if !feed.isNewUser {
