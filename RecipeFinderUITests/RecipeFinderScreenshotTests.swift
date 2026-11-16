@@ -591,7 +591,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             NSPredicate(format: "identifier == 'badge.reveal.title' AND label == 'Head Chef'")
         ).firstMatch
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: headChef)
-        waitForExpectations(timeout: 8)
+        waitForExpectations(timeout: Self.revealTimeout)
     }
 
     /// TestFlight 2026-11-15: "View all badges" left the reveal stuck on screen. It must close and land on Me's
@@ -610,30 +610,33 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
         // Head Chef must close. A badge the launch itself earned can queue behind it and open next; close that one
         // too — the cover then dismisses and Me opens.
-        // 20 s, not 8: as the first test on a cold simulator one accessibility query alone took 7–11 s (Screenshots
-        // 43871503359) and the reveal closed after the wait gave up — Me and the shelf then passed. A stuck reveal
-        // (the TestFlight bug) never closes, so it still fails.
         let headChef = app.staticTexts.matching(
             NSPredicate(format: "identifier == 'badge.reveal.title' AND label == 'Head Chef'")
         ).firstMatch
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: headChef)
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: Self.revealTimeout)
+        // The queued reveal may still be sliding in; give it a moment before deciding there is none.
         let title = app.staticTexts["badge.reveal.title"]
-        if title.exists {
+        if title.waitForExistence(timeout: 2) {
             checkpoint(app, "queued reveal after Head Chef: \(title.label)")
             app.buttons["badge.reveal.close"].tap()
         }
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: title)
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: Self.revealTimeout)
         let me = app.tabBars.buttons["Me"]
         expectation(for: NSPredicate(format: "isSelected == true"), evaluatedWith: me)
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: Self.revealTimeout)
         // Me opens Profile, where the badges are.
-        XCTAssertTrue(app.staticTexts["Trophy shelf"].waitForExistence(timeout: 5),
+        XCTAssertTrue(app.staticTexts["Trophy shelf"].waitForExistence(timeout: Self.revealTimeout),
                       "View all badges should land on the trophy shelf.")
     }
 
     // MARK: - Helpers
+
+    /// Waits around the badge reveal. 20 s, not 5–8: as the first test on a cold simulator one accessibility query
+    /// alone took 7–11 s (Screenshots 43871503359) and the reveal closed after an 8 s wait gave up — Me and the shelf
+    /// then passed. A stuck reveal (the TestFlight bug) never closes, so it still fails.
+    private static let revealTimeout: TimeInterval = 20
 
     /// A seeded recipe or plan can unlock a badge whose sheet covers the tab bar (e.g. "First Bite" when a seeded
     /// recipe isn't the first launch's); swipe it away.
