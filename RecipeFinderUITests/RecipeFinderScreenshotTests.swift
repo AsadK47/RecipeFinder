@@ -610,18 +610,21 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
         // Head Chef must close. A badge the launch itself earned can queue behind it and open next; close that one
         // too — the cover then dismisses and Me opens.
+        // 20 s, not 8: as the first test on a cold simulator one accessibility query alone took 7–11 s (Screenshots
+        // 43871503359) and the reveal closed after the wait gave up — Me and the shelf then passed. A stuck reveal
+        // (the TestFlight bug) never closes, so it still fails.
         let headChef = app.staticTexts.matching(
             NSPredicate(format: "identifier == 'badge.reveal.title' AND label == 'Head Chef'")
         ).firstMatch
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: headChef)
-        waitForExpectations(timeout: 8)
+        waitForExpectations(timeout: 20)
         let title = app.staticTexts["badge.reveal.title"]
         if title.exists {
             checkpoint(app, "queued reveal after Head Chef: \(title.label)")
             app.buttons["badge.reveal.close"].tap()
         }
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: title)
-        waitForExpectations(timeout: 8)
+        waitForExpectations(timeout: 20)
         let me = app.tabBars.buttons["Me"]
         expectation(for: NSPredicate(format: "isSelected == true"), evaluatedWith: me)
         waitForExpectations(timeout: 5)
