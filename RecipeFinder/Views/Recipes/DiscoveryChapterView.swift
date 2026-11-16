@@ -36,7 +36,8 @@ struct DiscoveryChapterView: View {
     private var feature: some View {
         VStack(spacing: AppTheme.spacing12) {
             if let lead = chapter.recipes.first {
-                DiscoveryTile(recipe: lead, imageHeight: 220)
+                // Full width alone on its row: no neighbour to line up with, so no reserved second name line.
+                DiscoveryTile(recipe: lead, imageHeight: 220, reservesNameSpace: false)
             }
             HStack(alignment: .top, spacing: AppTheme.spacing12) {
                 ForEach(chapter.recipes.dropFirst()) { recipe in
@@ -76,6 +77,8 @@ struct DiscoveryChapterView: View {
 private struct DiscoveryTile: View {
     let recipe: RecipeModel
     let imageHeight: CGFloat
+    /// Side-by-side tiles keep two name lines so their times line up.
+    var reservesNameSpace = true
 
     var body: some View {
         RecipeLink(recipe: recipe, identifier: "discovery.tile") {
@@ -88,7 +91,7 @@ private struct DiscoveryTile: View {
                 Text(recipe.name)
                     .font(.subheadline.weight(.semibold))
                     .adaptiveForegroundColor()
-                    .lineLimit(2, reservesSpace: true)
+                    .lineLimit(2, reservesSpace: reservesNameSpace)
                     .multilineTextAlignment(.leading)
                 if recipe.hasTotalTime {
                     Label(DurationFormatter.label(minutes: recipe.totalMinutes), systemImage: "clock")
