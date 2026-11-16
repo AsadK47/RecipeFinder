@@ -63,7 +63,8 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
    per item as usual, plus the batch commit.
    Merged `agent/*` branches are deleted daily by `cleanup-agent-branches.yml` — no need to delete them yourself.
 8. Tick the item, append one line to **Log** (date · item · commit · what to check on device · review: N fixed ·
-   looked at: <shots>), commit to `main`. Move the item's WORK.md Decisions entry to the top of `docs/DECISIONS.md` in that commit.
+   looked at: <shots>) and, for anything that ships in a TestFlight build, a `CHANGELOG.md` entry ("For you" +
+   "Behind the build", format at its top; `python3 tools/website-behind-the-build.py --check`), commit to `main`. Move the item's WORK.md Decisions entry to the top of `docs/DECISIONS.md` in that commit.
    A mistake that cost a CI cycle goes in `AGENT_LESSONS.md` (one line).
 
 ### Numbered series (e.g. "Import 2/5")
@@ -82,7 +83,7 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
   empty/broken states, unreadable text; note if Screenshots wasn't re-run on main after a UI change.
 
 ### Log rotation (reviewer, each run)
-Keep **Log** to the last 7 days. Move older lines, unchanged, to the top of `CHANGELOG.md` under a
+Keep **Log** to the last 7 days. Move older lines, unchanged, to the top of `docs/LOG.md` under a
 `## Week of <Monday YYYY-MM-DD>` heading (newest week first), in the same docs commit as the review. Never edit or
 drop a line while moving it.
 
@@ -701,7 +702,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 2026-11-14 · 🐞 Inbox: photo removals made while sync is off never reached iCloud · 4b28065 · with sync off, a removed photo's iCloud row is deleted in the store so the delete goes out when sync is turned back on (same as other off-period changes); replaced the test that pinned the old behaviour. On phone: sync off → remove a photo from a recipe → sync on (relaunch) → photo gone on your other device · review: 2 reviewers (deep review + challenge), 0 code fixes, both flagged the 7-day history purge (next Inbox 🔴), noted in CHALLENGES · looked at: n/a (no UI)
 - 2026-11-14 · 🐞 Inbox: Reset left photo files + recent web searches · 3d042a4 · Me → ⚙︎ → Data Management → Reset: photos you added are gone after (re-add a photo works), and Recipes + → Search the web shows no recent searches; existing recent searches still appear after update · review: 2 reviewers (code review + challenge) agreed on 2, fixed (photos deleted when erase failed; key rename lost searches), 5 noted in CHALLENGES · looked at: n/a (no UI change)
 - 2026-11-14 · 🐞 Inbox: Screenshots testCaptureTodayTimes red · 4b8f8ea · UI test now expects the evening "Start now to eat by"/"Takes …" line (test-only, no app change). review: test-only · looked at: 27-today-evening. On phone: nothing new.
-_Last 7 days; older entries are in `CHANGELOG.md`._
+_Last 7 days; older entries are in `docs/LOG.md`._
 - 2026-11-14 · 🔴 Privacy text said recipe photos stay on device (they sync since 9a44acb) · 4af4f67 · In-app policy §4/§7/§9/§10 + sync switch copy now say recipe photos sync to your own iCloud (web pictures re-fetched), list everything that syncs, sync starts/stops at next launch, Reset keeps the sync choice, off-period changes sent when resumed, export excludes photos. Two independent reviewers (text fidelity; claims vs code) — code review found 4 deletion bugs now 🔴 in Inbox; website privacy.html (branch fix/privacy-icloud-sync) publishes after those land and a re-check. On phone: Me → ⚙︎ → Legal → Privacy Policy §7; Data Management → iCloud sync text.
 - 2026-11-14 · Data safety 2/4 slice 4b-2c (erased elsewhere while closed) · cf12e72 · with sync on, clear the shopping list on one device, then open the other from closed: it should stay empty · review: challenge 1 fixed (main-actor compile risk) + 1 test added (same file keeps its name), 2 noted in CHALLENGES · looked at: n/a (no UI)
 - 2026-11-14 · 🐞 Recipe facts card overlap (owner screenshot: "Intermediate" ran into "Main course") · f2cd226 · Facts card shows one row when every value fits at full size, else two rows (2+2, or 3+2 with cuisine; times stay together); values may wrap to 2 lines and shrink to 80% instead of spilling into the next column. RecipeFactRowsTests. looked at: 02-recipe (single-row case; two-row case not in screenshots). On phone: open Speedy curry udon.

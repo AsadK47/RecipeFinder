@@ -1,5 +1,5 @@
 {
-  "_about": "User-facing line per BACKLOG/CHANGELOG Log item, for recipefinder.uk/whats-new.html (tools/website-whats-new.py). Items not listed here are left off the page; the script prints them so you can add copy.",
+  "_about": "User-facing line per BACKLOG / docs/LOG.md Log item, for recipefinder.uk/whats-new.html (tools/website-whats-new.py). Items not listed here are left off the page; the script prints them so you can add copy.",
   "Web search redesign": "Search the web feels like a browser: an address bar, back and forward, suggestions and your recent searches, with an Import button whenever a page holds a recipe.",
   "Import PDFs and multi-page photos": "Import recipes from PDFs, or from up to five photos of a cookbook spread, read in the order you pick them.",
   "Import from other apps": "Bring your recipes over from Paprika, Mela or a CSV file — photos come too, and recipes you already have are skipped.",

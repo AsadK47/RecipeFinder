@@ -22,7 +22,8 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 - [docs/DECISIONS.md](docs/DECISIONS.md) — why things are the way they are: options rejected and tradeoffs, per landed item, newest first.
 - [docs/CHALLENGES.md](docs/CHALLENGES.md) — the challenge-pass playbook and what each pass found.
 - [AGENT_LESSONS.md](AGENT_LESSONS.md) — lessons from AI-assisted sessions (verify premises, proportionate fixes, test cadence).
-- [CHANGELOG.md](CHANGELOG.md) — what landed, week by week.
+- [CHANGELOG.md](CHANGELOG.md) — what changed for you, one entry per TestFlight build; feeds the website's "Behind the build" page.
+- [docs/LOG.md](docs/LOG.md) — the team's Log lines older than 7 days.
 - [SHIP_BAR.md](SHIP_BAR.md) — the bar a change clears before it ships.
 
 ## History

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fill recipefinder.uk's whats-new.html from the Log in BACKLOG.md and CHANGELOG.md.
+"""Fill recipefinder.uk's whats-new.html from the Log in BACKLOG.md and docs/LOG.md (older Log lines).
 
 Log lines look like `- YYYY-MM-DD · item · commit · notes`. Only items with a user-facing line in
 tools/whats-new-copy.json are published (notes are for the team, not the page); others are listed on stderr.
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         sys.exit(__doc__)
     copy = json.load(open("tools/whats-new-copy.json", encoding="utf-8"))
-    items, missing = entries(log_lines("BACKLOG.md") + log_lines("CHANGELOG.md"), copy)
+    items, missing = entries(log_lines("BACKLOG.md") + log_lines("docs/LOG.md"), copy)
     page = open(sys.argv[1], encoding="utf-8").read()
     a, b = page.index(START) + len(START), page.index(END)
     page = page[:a] + "\n" + render(items) + "\n            " + page[b:]
