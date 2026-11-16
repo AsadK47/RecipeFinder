@@ -7,9 +7,6 @@ struct RecipeNutritionLabel: View {
     let servings: Int
     @Binding var showsWholeRecipe: Bool
 
-    private typealias Format = NutritionLabelFormat
-    private typealias RI = NutritionLabelFormat.ReferenceIntake
-
     var body: some View {
         let isWhole = showsWholeRecipe
         let n = isWhole ? perServing.scaled(by: servings) : perServing
@@ -39,36 +36,14 @@ struct RecipeNutritionLabel: View {
                 .padding(.bottom, -AppTheme.spacing4)
             }
 
-            labelRow(label: "Calories", value: "\(n.calories)", unit: "kcal", hero: true,
-                     percent: percent(Double(n.calories), of: RI.calories, isWhole))
-
-            Divider()
-
-            labelRow(label: "Fat", value: Format.macro(n.fat), unit: "g",
-                     percent: percent(n.fat, of: RI.fat, isWhole))
-            labelSubrow(label: "of which saturates", value: Format.macro(n.saturates), unit: "g",
-                        percent: percent(n.saturates, of: RI.saturates, isWhole))
-
-            Divider()
-
-            labelRow(label: "Carbohydrate", value: Format.macro(n.carbs), unit: "g",
-                     percent: percent(n.carbs, of: RI.carbs, isWhole))
-            labelSubrow(label: "of which sugars", value: Format.macro(n.sugars), unit: "g",
-                        percent: percent(n.sugars, of: RI.sugars, isWhole))
-
-            Divider()
-
-            labelRow(label: "Fibre", value: Format.macro(n.fibre), unit: "g")
-
-            Divider()
-
-            labelRow(label: "Protein", value: Format.macro(n.protein), unit: "g",
-                     percent: percent(n.protein, of: RI.protein, isWhole))
-
-            Divider()
-
-            labelRow(label: "Salt", value: Format.salt(n.salt), unit: "g",
-                     percent: percent(n.salt, of: RI.salt, isWhole))
+            ForEach(NutritionLabelFormat.rows(for: n, wholeRecipe: isWhole), id: \.label) { row in
+                if row.dividerAbove { Divider() }
+                if row.isSubrow {
+                    labelSubrow(label: row.label, value: row.value, unit: row.unit, percent: row.percent)
+                } else {
+                    labelRow(label: row.label, value: row.value, unit: row.unit, hero: row.isHero, percent: row.percent)
+                }
+            }
 
             if n.coverage < 0.8 {
                 Text("Estimated — \(Int(n.coverage * 100))% of ingredients matched")
@@ -84,10 +59,6 @@ struct RecipeNutritionLabel: View {
                     .padding(.top, AppTheme.spacing4)
             }
         }
-    }
-
-    private func percent(_ value: Double, of reference: Double, _ isWhole: Bool) -> String? {
-        isWhole ? nil : Format.percent(value, of: reference)
     }
 
     private func labelRow(label: String, value: String, unit: String, hero: Bool = false, percent: String? = nil) -> some View {

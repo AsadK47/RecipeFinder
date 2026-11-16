@@ -13,7 +13,7 @@ enum NutritionLabelFormat {
         static let salt: Double = 6
     }
 
-    /// "% RI" text; a present nutrient never reads 0%. Blank when there's no reference.
+    /// "% RI" text; never reads 0% (even 0 g shows 1%). Blank when there's no reference.
     static func percent(_ value: Double, of reference: Double) -> String {
         guard reference > 0 else { return "" }
         return "\(max(1, Int((value / reference * 100).rounded())))%"
@@ -27,6 +27,41 @@ enum NutritionLabelFormat {
     /// Salt: one decimal from 1 g up, two below (small amounts matter for salt).
     static func salt(_ value: Double) -> String {
         value >= 1.0 ? String(format: "%.1f", value) : String(format: "%.2f", value)
+    }
+
+    /// One line of the label. `isSubrow` = indented "of which …" line; `dividerAbove` = rule before it.
+    struct Row: Equatable {
+        let label: String
+        let value: String
+        let unit: String
+        /// nil when the label shows the whole recipe (% RI is per serving only) or the nutrient has no RI.
+        let percent: String?
+        var isHero = false
+        var isSubrow = false
+        var dividerAbove = false
+    }
+
+    /// The label's lines in UK order: calories, fat (saturates), carbohydrate (sugars), fibre, protein, salt.
+    static func rows(for n: NutritionInfo, wholeRecipe: Bool) -> [Row] {
+        func ri(_ value: Double, _ reference: Double) -> String? {
+            wholeRecipe ? nil : percent(value, of: reference)
+        }
+        typealias RI = ReferenceIntake
+        return [
+            Row(label: "Calories", value: "\(n.calories)", unit: "kcal",
+                percent: ri(Double(n.calories), RI.calories), isHero: true),
+            Row(label: "Fat", value: macro(n.fat), unit: "g", percent: ri(n.fat, RI.fat), dividerAbove: true),
+            Row(label: "of which saturates", value: macro(n.saturates), unit: "g",
+                percent: ri(n.saturates, RI.saturates), isSubrow: true),
+            Row(label: "Carbohydrate", value: macro(n.carbs), unit: "g", percent: ri(n.carbs, RI.carbs),
+                dividerAbove: true),
+            Row(label: "of which sugars", value: macro(n.sugars), unit: "g",
+                percent: ri(n.sugars, RI.sugars), isSubrow: true),
+            Row(label: "Fibre", value: macro(n.fibre), unit: "g", percent: nil, dividerAbove: true),
+            Row(label: "Protein", value: macro(n.protein), unit: "g", percent: ri(n.protein, RI.protein),
+                dividerAbove: true),
+            Row(label: "Salt", value: salt(n.salt), unit: "g", percent: ri(n.salt, RI.salt), dividerAbove: true),
+        ]
     }
 
     /// Share of energy from fat / carbs / protein (9 / 4 / 4 kcal per gram), so the bar shows energy, not mass.

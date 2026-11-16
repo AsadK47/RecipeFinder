@@ -13,8 +13,8 @@ import Foundation
     @Test(arguments: [
         (1000.0, 2000.0, "50%"),
         (35.4, 70.0, "51%"),
-        (0.1, 70.0, "1%"),   // never shows 0% for a present nutrient
-        (0.0, 6.0, "1%"),
+        (0.1, 70.0, "1%"),   // never shows 0%…
+        (0.0, 6.0, "1%"),    // …even for 0 g (existing behaviour, pinned not endorsed)
         (12.0, 0.0, ""),     // no reference intake → blank
     ])
     func percentOfReferenceIntake(value: Double, reference: Double, expected: String) {
@@ -48,5 +48,33 @@ import Foundation
     @Test func energySplitOfNothingIsAllZero() {
         let split = NutritionLabelFormat.energySplit(info())
         #expect(split.fat == 0 && split.carbs == 0 && split.protein == 0)
+    }
+
+    // MARK: - Label rows (wiring of value, formatter and reference intake per line)
+
+    private let sample = NutritionInfo(calories: 500, fat: 35, saturates: 10, carbs: 52, sugars: 9,
+                                       fibre: 4.3, protein: 25, salt: 0.6, coverage: 1)
+
+    @Test func perServingRowsPairEachNutrientWithItsReferenceIntake() {
+        let rows = NutritionLabelFormat.rows(for: sample, wholeRecipe: false)
+        #expect(rows.map(\.label) == ["Calories", "Fat", "of which saturates", "Carbohydrate", "of which sugars",
+                                     "Fibre", "Protein", "Salt"])
+        #expect(rows.map(\.value) == ["500", "35", "10", "52", "9.0", "4.3", "25", "0.60"])
+        #expect(rows.map(\.unit) == ["kcal", "g", "g", "g", "g", "g", "g", "g"])
+        // 500/2000, 35/70, 10/20, 52/260, 9/90, no RI for fibre, 25/50, 0.6/6.
+        #expect(rows.map(\.percent) == ["25%", "50%", "50%", "20%", "10%", nil, "50%", "10%"])
+    }
+
+    @Test func rowStylesMatchTheUKLabel() {
+        let rows = NutritionLabelFormat.rows(for: sample, wholeRecipe: false)
+        #expect(rows.map(\.isHero) == [true, false, false, false, false, false, false, false])
+        #expect(rows.map(\.isSubrow) == [false, false, true, false, true, false, false, false])
+        #expect(rows.map(\.dividerAbove) == [false, true, false, true, false, true, true, true])
+    }
+
+    @Test func wholeRecipeRowsHaveNoReferenceIntake() {
+        let rows = NutritionLabelFormat.rows(for: sample, wholeRecipe: true)
+        #expect(rows.allSatisfy { $0.percent == nil })
+        #expect(rows.first?.value == "500")
     }
 }
