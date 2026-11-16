@@ -131,7 +131,7 @@ are merged into a newer item or parked — never start them; their text stays as
   (push run 43706365362: 7 min queue, 7:40 job) → Needs owner; (2) unit job variance: XCTest stalls ~60s on one
   trivial test early in ~half the runs and the test host spends ~1–2 min launching (causes not found yet; next: sample
   the RecipeFinder process with `spindump`/`sample` during the stall); (3) record 3 consecutive pushes ≤10 then tick.
-- [ ] **Docs refresh** (quality, next between-phases item — owner 2026-11-14 wants developer docs + website dev
+- [ ] **Docs refresh** — 🚧 builder agent 2026-11-16 — (quality, next between-phases item — owner 2026-11-14 wants developer docs + website dev
   updates; audit + plan in this session). (1) Retire ROADMAP.md into `docs/PRODUCT.md` + BACKLOG Roadmap
   (move to `docs/archive/`), point root CLAUDE.md "Session start" at PRODUCT/BACKLOG instead of ROADMAP. (2) HANDBOOK.md
   = front door linking PRODUCT, BACKLOG, ARCHITECTURE, CHANGELOG, CHALLENGES, DesignSystem. (3) New
