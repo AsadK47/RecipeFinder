@@ -6,16 +6,10 @@ private let tagSuggestions = [
     "Vegetarian", "Vegan", "Gluten Free", "Freezer Friendly"
 ]
 
-private let cuisineSuggestions = [
-    "Italian", "Mexican", "Indian", "Chinese", "Japanese", "Thai",
-    "French", "Greek", "American", "British", "Middle Eastern", "Mediterranean"
-]
-
-/// Notes section of the recipe editor: cuisine, tags and free-form notes.
+/// Notes section of the recipe editor: tags and free-form notes (cuisine lives in Details, beside category).
 struct NotesStepView: View {
     @Binding var notes: String
     @Binding var tags: [String]
-    @Binding var cuisine: String
     let hasPrefilledNotes: Bool
 
     @State private var tagInput: String = ""
@@ -23,12 +17,8 @@ struct NotesStepView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             WizardCard {
-                VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-                    cuisineSection
-                    Divider()
-                    tagsSection
-                }
-                .padding()
+                tagsSection
+                    .padding()
             }
 
             WizardCard {
@@ -99,30 +89,6 @@ struct NotesStepView: View {
                 notes += "\n\n"
             }
             notes += template
-        }
-    }
-
-    @ViewBuilder
-    private var cuisineSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            Text("Cuisine")
-                .font(.headline)
-
-            Text("Helps filter recipes by origin. (Optional)")
-                .font(.caption)
-                .adaptiveSecondaryForeground()
-
-            TextField("e.g. Italian, Mexican, Indian…", text: $cuisine)
-                .textFieldStyle(.plain)
-                .appInputField()
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppTheme.spacing8) {
-                    ForEach(cuisineSuggestions.filter { $0 != cuisine }, id: \.self) { suggestion in
-                        SuggestionChip(suggestion) { cuisine = suggestion }
-                    }
-                }
-            }
         }
     }
 

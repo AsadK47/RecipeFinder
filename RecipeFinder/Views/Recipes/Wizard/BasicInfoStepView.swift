@@ -1,11 +1,18 @@
 import SwiftUI
 
-/// Step 2 of the Recipe Wizard: prep/cook time, difficulty, category, servings.
+private let cuisineSuggestions = [
+    "Italian", "Mexican", "Indian", "Chinese", "Japanese", "Thai",
+    "French", "Greek", "American", "British", "Middle Eastern", "Mediterranean"
+]
+
+/// Details section of the recipe editor: prep/cook time, difficulty, category, cuisine, servings — what the recipe
+/// screen's facts card shows, so tapping that card edits everything on it.
 struct BasicInfoStepView: View {
     @Binding var prepTime: Int
     @Binding var cookTime: Int
     @Binding var difficulty: String
     @Binding var category: String
+    @Binding var cuisine: String
     @Binding var servings: Int
     let difficulties: [String]
     let categories: [String]
@@ -64,6 +71,10 @@ struct BasicInfoStepView: View {
 
                     Divider()
 
+                    cuisineSection
+
+                    Divider()
+
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Servings")
                             .font(.headline)
@@ -89,6 +100,31 @@ struct BasicInfoStepView: View {
                     }
                 }
                 .padding()
+            }
+        }
+    }
+
+    private var cuisineSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+            Text("Cuisine")
+                .font(.headline)
+                .foregroundStyle(.primary)
+
+            Text("Tap it on the recipe to see more from the same cuisine. (Optional)")
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+
+            TextField("e.g. Italian, Mexican, Indian…", text: $cuisine)
+                .textFieldStyle(.plain)
+                .appInputField()
+                .accessibilityIdentifier("wizard.cuisine")
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: AppTheme.spacing8) {
+                    ForEach(cuisineSuggestions.filter { $0 != cuisine }, id: \.self) { suggestion in
+                        SuggestionChip(suggestion) { cuisine = suggestion }
+                    }
+                }
             }
         }
     }

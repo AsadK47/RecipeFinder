@@ -145,3 +145,53 @@ import Testing
         #expect(text == caption)
     }
 }
+
+/// Tester feedback 1: tapping a recipe's cuisine opens Recipes filtered to that cuisine.
+@Suite struct RecipeBrowseRequestTests {
+
+    private func recipe(_ name: String, cuisine: String?) -> RecipeModel {
+        RecipeModel(name: name, category: "Main", difficulty: "Basic", prepTime: "10 min", cookingTime: "20 min",
+                    baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: "",
+                    cuisine: cuisine)
+    }
+
+    @Test(arguments: [nil, "", "   ", "\n"] as [String?])
+    func blankCuisineMakesNoRequest(cuisine: String?) {
+        #expect(RecipeBrowseRequest(cuisine: cuisine) == nil)
+    }
+
+    @Test func survivesTheNotificationRoundTrip() {
+        let request = RecipeBrowseRequest(cuisine: "Italian")
+        let received = RecipeBrowseRequest(userInfo: request?.userInfo)
+        #expect(received == request)
+        #expect(received?.cuisine == "Italian")
+    }
+
+    @Test func plainOpenRecipesCarriesNoFilter() {
+        #expect(RecipeBrowseRequest(userInfo: nil) == nil)
+        #expect(RecipeBrowseRequest(userInfo: ["recipeId": "x"]) == nil)
+    }
+
+    @Test func showsEveryRecipeOfThatCuisineWhateverTheSpelling() {
+        let library = [recipe("Lasagne", cuisine: "Italian"), recipe("Risotto", cuisine: "italian "),
+                       recipe("Tacos", cuisine: "Mexican"), recipe("Toast", cuisine: nil)]
+        guard let request = RecipeBrowseRequest(cuisine: "Italian") else {
+            Issue.record("Expected a request")
+            return
+        }
+        let shown = request.criteria(for: library, keepingSort: .nameAZ).apply(to: library).map { $0.name }
+        #expect(shown == ["Lasagne", "Risotto"])
+    }
+
+    @Test func clearsOtherFiltersAndKeepsTheSort() {
+        guard let request = RecipeBrowseRequest(cuisine: "Mexican") else {
+            Issue.record("Expected a request")
+            return
+        }
+        let criteria = request.criteria(for: [], keepingSort: .ratingHighLow)
+        #expect(criteria.selectedCuisines == ["Mexican"])
+        #expect(criteria.sortOrder == .ratingHighLow)
+        #expect(criteria.searchText.isEmpty)
+        #expect(criteria.activeCount == 1)
+    }
+}

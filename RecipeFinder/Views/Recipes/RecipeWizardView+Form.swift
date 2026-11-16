@@ -110,6 +110,7 @@ extension RecipeWizardView {
                 cookTime: $cookTime,
                 difficulty: $difficulty,
                 category: $category,
+                cuisine: $recipeCuisine,
                 servings: $servings,
                 difficulties: difficulties,
                 categories: categories
@@ -137,7 +138,6 @@ extension RecipeWizardView {
             NotesStepView(
                 notes: $notes,
                 tags: $recipeTags,
-                cuisine: $recipeCuisine,
                 hasPrefilledNotes: prefilledData?.notes != nil
             )
         }

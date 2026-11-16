@@ -19,9 +19,23 @@ extension RecipeDetailView {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, galleryImageNames.isEmpty ? AppTheme.spacing8 : 0)
+                .padding(.bottom, cuisineRequest == nil ? AppTheme.spacing20 : 0)
+
+            if let request = cuisineRequest {
+                PrimaryButton("More \(request.cuisine) recipes", systemImage: "globe", size: .compact,
+                              variant: .secondary) {
+                    NotificationCenter.default.post(name: .openRecipes, object: nil, userInfo: request.userInfo)
+                }
+                .accessibilityIdentifier("recipe.cuisineChip")
                 .padding(.bottom, AppTheme.spacing20)
+            }
         }
         .padding(.horizontal, AppTheme.spacing20)
+    }
+
+    /// The cuisine chip under the title opens Recipes filtered to this cuisine.
+    private var cuisineRequest: RecipeBrowseRequest? {
+        RecipeBrowseRequest(cuisine: recipe.cuisine?.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 
     // Ordered displayable images (main first, then post-cook photos); filtered so stale refs don't gap. Cached in galleryImageNames to avoid FileManager checks every body pass.

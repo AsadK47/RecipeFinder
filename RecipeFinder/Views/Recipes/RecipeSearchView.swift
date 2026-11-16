@@ -79,9 +79,13 @@ struct RecipeSearchView: View {
 
     /// Opens the add-recipe sheet, presented by the app root so badge celebrations can wait for it to close.
     private let onAddRecipe: () -> Void
+    /// "More <cuisine> recipes" from a recipe screen; held by the app root so it survives this tab not existing yet.
+    @Binding private var browseRequest: RecipeBrowseRequest?
 
-    init(isLoading: Bool = false, onAddRecipe: @escaping () -> Void = {}) {
+    init(isLoading: Bool = false, browseRequest: Binding<RecipeBrowseRequest?> = .constant(nil),
+         onAddRecipe: @escaping () -> Void = {}) {
         self.isLoading = isLoading
+        self._browseRequest = browseRequest
         self.onAddRecipe = onAddRecipe
         // Seed from the shared store (the env default) so the first frame isn't an empty-state flash.
         _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: RecipeStore.shared.recipes))
@@ -126,9 +130,11 @@ struct RecipeSearchView: View {
             checkSharedImportInbox()
             updateDerivedMetadata()
             updateDiscovery()
+            applyBrowseRequest()
         }
         .onChange(of: browseMode) { _, _ in updateDiscovery() }
         .onChange(of: discoverRequests) { _, _ in showDiscover() }
+        .onChange(of: browseRequest) { _, _ in applyBrowseRequest() }
         .onChange(of: recipes) { _, _ in
             updateDerivedMetadata()
             updateDiscovery()
@@ -145,6 +151,26 @@ struct RecipeSearchView: View {
             pendingOpenRecipeId = recipeId
             openPendingRecipeIfAvailable()
         }
+    }
+
+    /// Back to the list, showing every recipe of the requested cuisine (other filters cleared so none hides one).
+    private func applyBrowseRequest() {
+        guard let request = browseRequest else { return }
+        browseRequest = nil
+        let criteria = request.criteria(for: recipes, keepingSort: sortOrder)
+        isSearchFocused = false
+        navigationPath = NavigationPath()
+        selectedCollectionID = nil
+        searchText = criteria.searchText
+        ingredientSearchText = criteria.ingredientSearchText
+        availableIngredientsOnly = criteria.availableIngredientsOnly
+        showFavoritesOnly = criteria.showFavoritesOnly
+        selectedCategories = criteria.selectedCategories
+        selectedDifficulties = criteria.selectedDifficulties
+        selectedCookTimes = criteria.selectedCookTimes
+        selectedDietaryFilters = criteria.selectedDietaryFilters
+        selectedTags = criteria.selectedTags
+        selectedCuisines = criteria.selectedCuisines
     }
 
     /// Navigates to a pending "OpenRecipe" deep link once its recipe is present in the loaded library; a no-op

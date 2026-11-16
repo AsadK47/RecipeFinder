@@ -17,6 +17,8 @@ struct ContentView: View {
     /// Asks Me to open Profile, where the trophy shelf lives; Me clears it once it has.
     @State private var showTrophyShelf = false
     @State private var showAddRecipe = false
+    /// A filter for Recipes to apply (tapping a recipe's cuisine); Recipes clears it once applied.
+    @State private var recipeBrowseRequest: RecipeBrowseRequest?
     /// True from opening the "+" sheet until it has fully dismissed: a badge earned by the import waits for it, since a
     /// second sheet presented over (or mid-dismissal of) another is silently dropped.
     @State private var addRecipeBusy = false
@@ -43,7 +45,10 @@ struct ContentView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openToday)) { select(AppTab.destination(for: $0.name)) }
-        .onReceive(NotificationCenter.default.publisher(for: .openRecipes)) { select(AppTab.destination(for: $0.name)) }
+        .onReceive(NotificationCenter.default.publisher(for: .openRecipes)) {
+            recipeBrowseRequest = RecipeBrowseRequest(userInfo: $0.userInfo)
+            select(AppTab.destination(for: $0.name))
+        }
         .onReceive(NotificationCenter.default.publisher(for: .openGroceries)) { select(AppTab.destination(for: $0.name)) }
         .onReceive(NotificationCenter.default.publisher(for: .openMealPlan)) { select(AppTab.destination(for: $0.name)) }
         .onReceive(NotificationCenter.default.publisher(for: .openRecipe)) { select(AppTab.destination(for: $0.name)) }
@@ -203,7 +208,8 @@ struct ContentView: View {
     private func tabRoot(_ tab: AppTab) -> some View {
         switch tab {
         case .today: TodayView(onOpen: { select($0) }, onAddRecipe: openAddRecipe, onImportLink: importClipboardLink)
-        case .recipes: RecipeSearchView(isLoading: store.isLoading, onAddRecipe: openAddRecipe)
+        case .recipes: RecipeSearchView(isLoading: store.isLoading, browseRequest: $recipeBrowseRequest,
+                                           onAddRecipe: openAddRecipe)
         case .plan: MealPlanningView()
         case .groceries: KitchenShoppingView()
         case .me: MeView(openProfile: $showTrophyShelf)

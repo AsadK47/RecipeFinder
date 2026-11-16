@@ -70,6 +70,40 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
         add(shot)
     }
 
+    /// Tester feedback 1: cuisine is edited with the other facts (Details), shows as a chip under the title, and the
+    /// chip opens the Recipes list filtered to that cuisine. Uses the seed's first row, so later shots may show it.
+    @MainActor
+    func testCuisineChipOpensRecipesFilteredToThatCuisine() {
+        let app = launchApp()
+
+        tapWhenReady(element(app, id: "recipe.row"), "Recipes home should list at least one recipe.")
+        tapWhenReady(element(app, id: "recipe.card.time"), "Recipe detail should show the editable facts card.")
+        XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5), "Facts card should open Details.")
+
+        let field = app.textFields["wizard.cuisine"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Details should include the cuisine field.")
+        for _ in 0..<3 where !field.isHittable { app.swipeUp() }
+        tapWhenReady(field, "Cuisine field should be reachable.")
+        // A rerun on the same simulator finds last run's cuisine saved; clear it rather than append.
+        if let existing = field.value as? String, !existing.isEmpty, existing != field.placeholderValue {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+        }
+        field.typeText("American")
+        checkpoint(app, "after typing cuisine")
+        tapWhenReady(app.navigationBars["Details"].buttons["Update"], "Focused editor should offer Update.")
+
+        let chip = app.buttons["recipe.cuisineChip"]
+        tapWhenReady(chip, "Recipe should show its cuisine as a chip after saving.")
+        checkpoint(app, "after tapping cuisine chip")
+
+        XCTAssertTrue(chip.waitForNonExistence(timeout: 5), "The chip should leave the recipe for the Recipes list.")
+        let activeFilter = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "American")).firstMatch
+        XCTAssertTrue(activeFilter.waitForExistence(timeout: 5),
+                      "Recipes should show the cuisine as an active filter.")
+        XCTAssertTrue(element(app, id: "recipe.row").waitForExistence(timeout: 5),
+                      "The filtered list should include the recipe just tagged.")
+    }
+
     /// Delete must be reachable from the detail screen, not only via the list's long-press. Asserts the menu item
     /// exists only — tapping it could delete a real recipe if "don't ask again" was persisted.
     @MainActor
