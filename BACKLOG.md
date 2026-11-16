@@ -123,7 +123,7 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Tester feedback batch 1** (tester K., 2026-11-16; owner: "implement this"). One slice each, in this order:
+- [ ] **Tester feedback batch 1** — 🚧 builder agent 2026-11-16 (slice 1) — (tester K., 2026-11-16; owner: "implement this"). One slice each, in this order:
   (1) **Cuisine on the recipe** — show `cuisine` (already on `RecipeModel`) in the detail facts card and as a tappable
   chip that opens Recipes filtered to that cuisine; editable in the wizard; imports fill it when the page states it.
   (2) **Badges from Today** — Today's cooking-progress card links straight to the badge shelf (Me → badges), showing the
