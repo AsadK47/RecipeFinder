@@ -20,8 +20,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Next slice (challenger): subtract — profile form, badges and chef type one tap deeper so Me has one primary action
   ("Me = your cookbook + one line"). Later: per-cook notes / "who it was for" (model change → owner), share image.
 
-- Remember: 🚧 **My Cookbook slice 2** on `agent/my-cookbook-2` (builder 2026-11-15) — Me = cookbook + one line
-  ("Home Cook · 34 cooks this year") in a row that opens Profile (form, trophy shelf, chef type). CI + review pending.
+- Remember: ✅ **My Cookbook slice 2** landed dde3797 (builder 2026-11-16). Next slice: (3) shareable page image.
+  Leftover branch agent/my-cookbook-2 (auto-cleanup). Watch: `testBadgeRevealViewAllClosesAndOpensMe` flaked 2/4 on the
+  branch (reveal still up 5s after View all; rerun green) — if it flakes again, read its "queued reveal" checkpoint.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
