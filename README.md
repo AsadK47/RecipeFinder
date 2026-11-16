@@ -14,11 +14,14 @@
 
 **[Join the TestFlight beta](https://testflight.apple.com/join/UJWrMbk2)** · **[recipefinder.uk](https://recipefinder.uk)**
 
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/16-today-web.jpg" alt="Today" width="160"/>
 <img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/01-recipes-web.jpg" alt="Recipes" width="160"/>
 <img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/02-recipe-web.jpg" alt="Recipe" width="160"/>
-<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/05-import-web.jpg" alt="Import" width="160"/>
-<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/03-groceries-web.jpg" alt="Groceries" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/06-cooking-mode-web.jpg" alt="Cooking mode" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/05-import-web.jpg" alt="Add a recipe" width="160"/>
 <img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/04-meal-plan-web.jpg" alt="Meal plan" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/03-groceries-web.jpg" alt="Groceries" width="160"/>
+<img src="https://github.com/AsadK47/RecipeFinder/releases/download/screenshots/17-me-web.jpg" alt="Me" width="160"/>
 
 <sub>Screenshots refresh nightly from the UI tests.</sub>
 
@@ -26,22 +29,35 @@
 
 ## What it is
 
-RecipeFinder is an iPhone and iPad app that helps you collect recipes from anywhere, plan your meals, shop for them
-and cook with confidence. Open it and start cooking: smart features like reading photos, tidying messy text and
-estimating amounts run privately on your device.
+RecipeFinder is an iPhone and iPad app for dinner, sorted: find something you'll love, plan it, shop for it, cook it
+well and remember it. Smart features like reading photos, tidying messy text and estimating amounts run privately on
+your device, and iCloud sync keeps your kitchen up to date on every device you own.
 
-It ships with 332 starter recipes so it's useful from the first launch.
+It ships with 332 starter recipes, so there's something good to cook from the first launch.
 
 ## Features
 
-**Get recipes in**
-- Paste a link — recipe data is read straight from the page, with automatic ingredient parsing
+Five tabs, each with one job: **Today** · **Recipes** · **Plan** · **Groceries** · **Me**.
+
+**Today — decide tonight**
+- Tonight's pick from your plan, what's in your kitchen or something quick, with one tap to start cooking
+- Your week at a glance and your progress towards this week's cooks
+- Copied a recipe link? Today offers to bring it in
+
+**Recipes — discover**
+- Your library plus an endless feed of chapters: "Because you loved…", "Under 30 minutes", "Uses what you have",
+  "Cook it again", "New to you" and trips through cuisines
+- Big pictures throughout: your own photos, pictures from the recipe's website, or illustrations for the bundled
+  recipes
+- Collections and smart collections, favourites, ratings, tags and filters
+
+**Add a recipe — one "+"**
+- Paste a link or any text into one box — recipe data is read straight from the page, with automatic ingredient parsing
 - Search the web without leaving the app and import any recipe you find in one tap
 - Share a link or text from Safari or any other app via the share sheet
 - Scan up to five photos of cookbook pages, or open a PDF
-- Paste any text and it's turned into a recipe
 - Bring your library over from Paprika, Mela or a CSV export
-- Write your own with a step-by-step wizard
+- Start blank with a step-by-step wizard
 - Missing amounts? "Estimate amounts" suggests them on-device (Apple Intelligence) for you to review
 
 **Cook**
@@ -49,7 +65,7 @@ It ships with 332 starter recipes so it's useful from the first launch.
 - Step timers with background alerts
 - Scale servings (½× to 3×) and switch metric / imperial
 - Ingredient substitutes and nutrition estimates
-- "Made it" — rate, add a photo, keep your cooking streak and earn badges
+- "Made it" — rate it, add a photo, keep your cooking streak and earn badges
 - Siri & Shortcuts: "What's for dinner", "Start cooking", "Next step", "Add to my list"
 
 **Plan & shop**
@@ -57,17 +73,24 @@ It ships with 332 starter recipes so it's useful from the first launch.
 - Groceries list that sorts itself by aisle; add a recipe or a whole week in one tap
 - Kitchen inventory with "what can I make?" matching and use-it-up suggestions
 
-**Organise**
-- Collections and smart collections, favourites, ratings, tags and filters
-- Eight colour themes, light and dark
+**Me — remember**
+- My Cookbook: a book of every dish you've made, built as you cook — tap a page to cook it again
+- Your profile, streak and badges
+
+**Your data, everywhere you cook**
+- iCloud sync (switch it on in Settings): recipes, photos, plans, lists and your profile follow you to every device
+  signed in to your iCloud account
 - Full backup and restore to a file you keep
+- Eight colour themes, light and dark
 
 **Accessible by default** — VoiceOver, Dynamic Type, WCAG 2.1 AA contrast and 44pt tap targets throughout.
 
 ## Privacy
 
-- Private by design: your recipes live on your device and you can start straight away
-- Text recognition and Apple Intelligence run privately on your device; pages you search or import load straight from the web
+- Private by design: your recipes live on your device, and in your own iCloud account when you turn on iCloud sync —
+  the developer never holds a copy
+- Text recognition and Apple Intelligence run privately on your device; pages you search or import load straight from
+  the web
 - In-app browsing is private: every session starts fresh
 - Details: [Privacy Policy](https://recipefinder.uk/privacy.html)
 
@@ -77,7 +100,7 @@ It ships with 332 starter recipes so it's useful from the first launch.
 |---|---|
 | UI | SwiftUI, Swift 6 strict concurrency, `async`/`await` |
 | Architecture | Clean Architecture — Presentation → Domain → Data; views reach managers through `@Environment` protocol seams |
-| Storage | Core Data, App Group `UserDefaults` (share extension hand-off) |
+| Storage | Core Data with opt-in CloudKit sync (`NSPersistentCloudKitContainer`, the cook's private database); kept JSON copies of each list in `UserDefaults`; App Group hand-off for the share extension — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | On-device AI | Vision (OCR), PDFKit, FoundationModels (iOS 26 + Apple Intelligence) |
 | System | App Intents (Siri/Shortcuts), Share Extension, local notifications |
 | Packages | [Kingfisher](https://github.com/onevcat/Kingfisher) (images), [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI) (celebrations), [ViewInspector](https://github.com/nalexn/ViewInspector) (tests only) |
@@ -104,15 +127,15 @@ xcodebuild test -scheme RecipeFinder -destination "platform=iOS Simulator,id=$SI
 
 ```
 RecipeFinder/            App target
-├── Views/               Screens (Recipes, Import, Kitchen, Shopping, MealPlanning, Profile, Settings…)
+├── Views/               Screens (Main = Today + tabs, Recipes, Import, MealPlanning, Shopping, Kitchen, Profile = Me, Settings…)
 ├── Components/          Reusable UI
 ├── Models/              Domain models
 ├── Utilities/Recipe/    Parsing, import pipeline, scaling, nutrition, matching (pure, tested)
-├── Persistence/         Core Data stack, managers, backup
+├── Persistence/         Core Data stack, iCloud sync, managers, backup
 ├── Services/            Networking, OCR, PDF, cooking session
 ├── Intents/             Siri & Shortcuts
 ├── Theme/               Design tokens (see DesignSystem.md)
-└── RecipeSeed/          Bundled starter recipes
+└── RecipeSeed/          Bundled starter recipes and their illustrations
 RecipeShareExtension/    Share sheet extension
 RecipeFinderTests/       Unit + fixture tests
 RecipeFinderUITests/     UI, screenshot and accessibility tests
@@ -123,8 +146,9 @@ RecipeFinderUITests/     UI, screenshot and accessibility tests
 - **CI** — `build.yml` builds and tests every `agent/*` branch and `main`; UI screenshots run nightly.
 - **TestFlight** — every app-code push to `main` uploads a beta build; tester feedback is filed as GitHub issues.
 - **Agent loop** — work is planned in [`BACKLOG.md`](BACKLOG.md) and built by scheduled Claude Code agents on
-  `agent/<slug>` branches; `main` advances when a branch is green. Session handoff lives in `WORK.md`; project rules
-  in `CLAUDE.md`.
+  `agent/<slug>` branches; `main` advances when a branch is green. Start at [`HANDBOOK.md`](HANDBOOK.md): product
+  strategy in [`docs/PRODUCT.md`](docs/PRODUCT.md), code map in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md),
+  project rules in `CLAUDE.md`, session handoff in `WORK.md`.
 
 ## Contact
 
