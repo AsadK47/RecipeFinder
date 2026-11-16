@@ -161,13 +161,7 @@ struct RecipeSearchView: View {
         guard let request = browseRequest else { return }
         browseRequest = nil
         let criteria = request.criteria(keepingSort: sortOrder)
-        isSearchFocused = false
-        showCollections = false
-        showFilters = false
-        showCookingSheet = false
-        // Rows push recipes with destination links, which aren't in `navigationPath`; a fresh stack pops them too.
-        navigationPath = NavigationPath()
-        stackID = UUID()
+        returnToRoot()
         selectedCollectionID = nil
         searchText = criteria.searchText
         ingredientSearchText = criteria.ingredientSearchText
@@ -475,9 +469,20 @@ struct RecipeSearchView: View {
     
     /// "Keep browsing →" from Today: back to the top of Recipes, nothing typed or filtered, on Discover.
     private func showDiscover() {
-        navigationPath = NavigationPath()
+        returnToRoot()
         resetFilters()
         browseMode = .discover
+    }
+
+    /// Closes this tab's sheets and pops everything pushed, for requests that arrive from another tab.
+    private func returnToRoot() {
+        isSearchFocused = false
+        showCollections = false
+        showFilters = false
+        showCookingSheet = false
+        // Rows push recipes with destination links, which aren't in `navigationPath`; a fresh stack pops them too.
+        navigationPath = NavigationPath()
+        stackID = UUID()
     }
 
     private func clearAllFilters() {
