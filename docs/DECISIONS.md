@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Inbox 🟡 View-all badge test flake** (builder 2026-11-16): longer waits, not a changed assertion. The failing run
+  was the first test on a cold simulator, where one accessibility query took 7–11 s; the reveal closed late and the
+  Me/shelf asserts passed. A stuck reveal never closes, so a 20 s `revealTimeout` still catches the TestFlight bug.
+  Rejected: retrying the test, or dropping the close check. Challenger added the 5 s Me/shelf waits, the same close
+  wait in `testCaptureBadgeReveal`, and a 2 s wait for a queued reveal that is still sliding in.
 - **My Cookbook slice 3 (share a page)**: visible share button on the page (not a long-press menu — primary actions
   visible). Card drawn with `ImageRenderer` from a bitmap fetched via Kingfisher (KFImage loads async, so a rendered
   `RecipeImageView` would capture the placeholder). Fixed font sizes: it's a picture for other people's screens. 4:5
