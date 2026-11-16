@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-16 (item pass: My Cookbook slice 3 — fixed: name on the clear end of the card's shade, landscape photos upscaled ~1.33×, "today"/"yesterday" baked into a kept picture, see-through placeholder card, system PNG instead of a 1080×1350 JPEG, dead-end render error, tautological pixel test → real render tests, CGSize in a Domain file)
+- ⚔️ [Privacy] The recipe *file* share strips rating/cook count/photos (`RecipeFileExporter.swift:10`), while the cookbook card shares exactly those; the policy never describes outbound sharing (§7.3 promises a description before "sharing" ships). The app sends nothing itself — the user picks the destination — so no text was changed (legal text = owner guardrail); question in Needs owner.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] The share step lives in `testZZCaptureCookbook`, which push CI skips (UI tests run nightly/Screenshots only); unit tests now cover the render, but the button→sheet path is checked once a day.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-16 (item pass: Docs refresh slice 5 — fixed: 10 overclaims in CHANGELOG entries (Reset photo clear-up sounded like single deletes, onboarding, #16 cause unproven, share-extension cookies, fallback picture, "only"), 5 missing 14 Nov sync entries, parser silently dropped malformed lines / typo'd headings / unclosed fences / empty file, `fill` duplicated the page with END before START, tests missed week rounding, order, Behind-line escaping)
 - ⚔️ [Verify] CI never runs `tools/test_website_behind_the_build.py` or `--check` (build.yml ignores `tools/**` and `*.md`); a malformed CHANGELOG reaches main unless the lander runs `--check` (step 8 says to; the website run fails loudly). Adding a small ubuntu job is a workflow change → owner.
   → Owner: Accept / Reject / Later

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-16 · My Cookbook slice 3 · 0adbf0b
+- For you: share any page of your cookbook — tap the share icon on a dish and send a picture of it, with your photo, when you made it and your stars, to anyone you like.
+- Behind the build: a reviewer and a challenger found eight things to fix first, from sharper landscape photos to a darker shade under the name, and new tests check the picture itself.
+
 ## 2026-11-16 · My Cookbook slice 2 · dde3797
 - For you: Me opens on your cookbook with a row for you underneath — your name, photo, cooks this year and badges earned. Tap it for your profile and trophy shelf; View all badges takes you straight there.
 - Behind the build: a reviewer and a challenger found seven things to fix first, including a VoiceOver label that read out a slash.

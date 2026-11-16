@@ -9,11 +9,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 - Inbox 🟡 Reset store copies: ⏸ parked in Needs owner (data-loss risk on `.corrupt-*`, 2 reviewers agree); branch `agent/reset-store-copies` (87f5737) unmerged, Decisions on that branch's WORK.md — rework per owner's answer.
-- Remember: 🚧 **My Cookbook slice 3** (shareable page image) on `agent/cookbook-share` (builder 2026-11-16): share button
-  on each page → sheet with the rendered 1080×1350 card (`CookbookShareSheet.swift`, new, pbxproj by hand) + ShareLink.
-  Leftover branch agent/my-cookbook-2 (auto-cleanup). Watch: `testBadgeRevealViewAllClosesAndOpensMe` flaked 2/4 on the
-  branch (reveal still up 5s after View all; rerun green) — if it flakes again, read its "queued reveal" checkpoint.
-  Later: per-cook notes / "who it was for" (model change → owner).
+- Remember: ✅ **My Cookbook** done — slice 3 (share a page) landed 0adbf0b (builder 2026-11-16); notes / "who it was
+  for" → Needs owner (model). Leftover branches agent/my-cookbook-2, agent/cookbook-share (auto-cleanup).
+  `testBadgeRevealViewAllClosesAndOpensMe` flaked a 3rd time → Inbox 🟡 (read its "queued reveal" checkpoint).
 
 - Docs: 🚧 **Docs refresh** slice 5a landed (builder 2026-11-16) — CHANGELOG = per-change "For you" + "Behind the
   build" entries, `tools/website-behind-the-build.py` (`--check`), old Log archive → `docs/LOG.md`. Next: slice 7 landed
@@ -24,17 +22,6 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **My Cookbook (3) share a page**: visible share button on the page (not a long-press menu — primary actions
-  visible). Card drawn with `ImageRenderer` from a bitmap fetched via Kingfisher (KFImage loads async, so a rendered
-  `RecipeImageView` would capture the placeholder). Fixed font sizes: it's a picture for other people's screens. 4:5
-  1080×1350 JPEG fits feeds and messages. Unlike the recipe file share (which strips rating/cooks/photos on purpose),
-  the card *is* the cook's own page — that's the point, and the user picks where it goes in the system share sheet; the
-  app sends nothing itself, so policy text unchanged (legal text = owner guardrail) and an optional §7.4 clause is
-  asked in Needs owner. Share line uses an absolute date (a kept picture saying "yesterday" goes wrong). Opaque black
-  base + dark scheme so the placeholder card isn't see-through. Downsample long side 2700 so fill-cropped landscape
-  photos stay sharp. **Pre-mortem:** (1) card captures a blank/placeholder instead of the photo
-  → 44-cookbook-share screenshot (seeded recipes use bundled art); (2) share button steals the page tap or is hidden
-  → UI test taps share, then still taps the page into the recipe; (3) caption/stars wrong → MyCookbookTests share cases.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

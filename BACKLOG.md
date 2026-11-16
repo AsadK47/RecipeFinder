@@ -375,7 +375,7 @@ are merged into a newer item or parked — never start them; their text stays as
   line (recipe that unlocked it); share card image via `ShareLink` (rendered on device); "2 more cooks to Head Chef"
   on the Made it sheet and Today. *Done when:* tier mapping/migration, story capture and next-badge logic tested,
   screenshots, CI green.
-- [ ] **My Cookbook — made by cooking** — 🚧 builder agent 2026-11-15 — (Phase 1 · Remember · owner 2026-11-14: "add cookbook"; absorbs *Me 1/3* + *Cooking diary*). A beautiful book of every dish the cook
+- [x] **My Cookbook — made by cooking** ✅ 0adbf0b — (Phase 1 · Remember · owner 2026-11-14: "add cookbook"; absorbs *Me 1/3* + *Cooking diary*). A beautiful book of every dish the cook
   has made: their Made-it photo (else the recipe picture), date, rating, a line of notes ("for Mum's birthday"), who it
   was for. Builds itself from Made it — no entry. Page-turn / full-bleed layout; tap a page → cook it again. Lives at
   the top of Me (Me's character = your cookbook + one line "Spice Explorer · 34 dinners this year"; stats/badges one
@@ -383,8 +383,9 @@ are merged into a newer item or parked — never start them; their text stays as
   "Cook something and it lands here", 1 page, many), CI green. **✅ Slice 1 (53fb4b1):** one page per cooked dish
   (own photo, else recipe picture; "Made 3 times · 2 Nov"; stars), newest first, at the top of Me, page → recipe,
   empty page → Today. **✅ Slice 2 (dde3797):** Me = cookbook + one row ("Home Cook · 34 cooks this year", badges
-  earned) → Profile (form, trophy shelf, chef type); View all badges opens the shelf. **Left:** (3) shareable page
-  image; notes / "who it was for" need a per-cook record (model → owner).
+  earned) → Profile (form, trophy shelf, chef type); View all badges opens the shelf. **✅ Slice 3 (0adbf0b):** share
+  button on each page → 1080×1350 JPEG card + caption via the share sheet. Notes / "who it was for" need a per-cook
+  record (model → Needs owner).
 - [~] **Me 1/3 — Your cooking life: chef card, this month, goals** ⟶ merged into **My Cookbook** (2026-11-14) (owner OK 2026-11-11: Me "lacks character"; wants
   better than a stats page). Order top→bottom: chef card → this month → taste fingerprint → skills → goals + wins →
   trophy shelf (Badges 1/2) → your story. This slice: chef card (cover = best Made-it photo, kitchen name e.g.
@@ -663,6 +664,12 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   for a runner, which counts in wall time. Options: (a) fewer parallel lanes during the day (free); (b) GitHub larger
   macOS runners (M2 Pro xlarge, roughly $0.16/min per GitHub's pricing page — check current; ~8 min ≈ $1.30 per push
   run, and also faster CPUs); (c) accept "≤10 min once a runner starts". Which?
+- 🙋 **Cookbook notes / "who it was for"** (builder 2026-11-16): needs a per-cook record (RecipeModel 19 or a synced
+  cook-log entity). Add it after Recently deleted's model 18 ships, or drop notes from My Cookbook?
+- 🙋 **Privacy §7.4 for sharing** (builder 2026-11-16, challenger): tapping Share hands a recipe or a cookbook page
+  picture (your photo, dish, dates, stars) to the iOS share sheet; the app sends nothing itself, so the policy is
+  unchanged. Add an optional clause ("When you tap Share, what you chose goes to the iOS share sheet; where it goes is
+  your choice") to §7 + `privacy.html`? Recommended: yes, next legal pass.
 - 🙋 **Play decisions** (see `docs/PLAY.md`; agents start Play 1/7 once answered): (1) daily streak from a
   1-minute action (Tonight check-in, Kitchen Bite or a cook) replaces the weekly flame, weekly cooks become the goal
   ring — OK? (2) RecipeModel 18 with a synced `PlayEventEntity` — OK? (3) agents write Kitchen Bites quiz content
@@ -687,11 +694,14 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
+- 🟡 `testBadgeRevealViewAllClosesAndOpensMe` flaked again (Screenshots 43871503359, agent/cookbook-share, 3rd time):
+  read its "queued reveal" checkpoint in the run's screenshot-logs artifact and fix the wait, not the assertion.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-16 · My Cookbook slice 3 (share a page) · b463161..0adbf0b · Each cookbook page has a share button → sheet with the page as a 1080×1350 JPEG card (your photo or the recipe art, name, "Made 3 times · 16 Nov" — a date, never "today" — stars, "My Cookbook · RecipeFinder") + Share with a caption. New `CookbookShareSheet.swift` registered in pbxproj by hand; item ticked (notes → Needs owner). On phone: Me → share icon on a cookbook page → Share · review: reviewer + challenger, 8 fixed (shade under the name — both; soft landscape photos — both; tests that couldn't fail → render/opaque/photo/file tests — both; dead-end error → Try again — both; transparent placeholder card; relative date baked into picture; JPEG not system PNG; glyph at AX sizes), 1 → Needs owner (privacy §7.4), domain CGSize moved to the view; CI green first try (43869193502); Screenshots 43871503359: share step green, 1 red = known `testBadgeRevealViewAllClosesAndOpensMe` flake (3rd time → Inbox) · looked at: 44-cookbook-share, 43-cookbook-many
 - 2026-11-16 · Docs refresh slice 7 (stale-docs step + reviewer notes) · see this commit · landing step 8 now greps every `*.md` for the names and behaviour changed and fixes them in the landing commit; root CLAUDE.md: app-code pushes to main build + TestFlight (docs-only don't), Domain SwiftUI exceptions point to an ARCHITECTURE grep; ARCHITECTURE migration coverage made exact. On phone: nothing — docs only · review: fact-checker + challenger, 7 findings, 6 fixed (docs-only pushes don't build, v10/v11 untested, 6 not 4 SwiftUI files, hard-coded doc list, rename-only grep, append vs refine), 1 deferred (Swift comment v6+ vs v9 → next Swift commit) · looked at: n/a (no UI)
 - 2026-11-16 · Docs refresh slice 5a (CHANGELOG + Behind the build script) · see this commit · CHANGELOG.md is now one "For you" + "Behind the build" entry per shipped change (22 backfilled 14–16 Nov), Log archive → `docs/LOG.md`, new `tools/website-behind-the-build.py` + 9 tests, landing step 8 writes the entry. On phone: nothing — docs only · review: fact-checker + challenger, 18 fixed (10 overclaims, 5 missing sync entries, strict parser, marker order, weak tests), 4 → CHALLENGES (no CI check, merge with whats-new, quote style, publish after privacy.html) · looked at: n/a (no UI)
 - 2026-11-16 · Docs refresh slice 4 (README) · 99464ea..7d521c2 · README shows the five tabs (Today, Recipes discovery chapters, "+" add flow, My Cookbook), iCloud sync scope + where to switch it on, storage row with CloudKit/kept copies, links to HANDBOOK/PRODUCT/ARCHITECTURE, screenshots incl. Today, Cooking mode, Me. On phone: nothing — docs only · review: fact-checker + challenger, 15 findings, 13 fixed (sync sounded on by default, "progress towards" goal that doesn't exist, "full backup" excludes photos, Me lives in Views/Main, copy-rule "one job"/"one +"/negative phrasing, dropped "start straight away", DesignSystem path), 2 dismissed (screenshot names verified on the release; "private database" wording kept, clarified) · looked at: n/a (no UI)
