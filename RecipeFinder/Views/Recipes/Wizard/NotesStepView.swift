@@ -164,7 +164,7 @@ struct NotesStepView: View {
 }
 
 /// One tappable suggestion pill (cuisine, tag or note template): light haptic, then the action.
-private struct SuggestionChip: View {
+struct SuggestionChip: View {
     let text: String
     let icon: String?
     let action: () -> Void
