@@ -104,6 +104,48 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
                       "The filtered list should include the recipe just tagged.")
     }
 
+    /// Inbox 🟡 (2026-11-16): Today's "Keep browsing →" must leave a recipe opened on Recipes, not land on it.
+    /// Rows push with destination links outside `navigationPath`, so clearing the path alone left the recipe up.
+    @MainActor
+    func testKeepBrowsingPopsAnOpenRecipe() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-tonight-plan"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        app.tabBars.buttons["Recipes"].tap()
+
+        tapWhenReady(element(app, id: "recipe.row"), "Recipes home should list at least one recipe.")
+        let detailMenu = app.buttons["More actions"]
+        XCTAssertTrue(detailMenu.waitForExistence(timeout: 10), "Tapping a row should open the recipe.")
+
+        app.tabBars.buttons["Today"].tap()
+        let keepBrowsing = element(app, id: "today.keepBrowsing")
+        XCTAssertTrue(keepBrowsing.waitForExistence(timeout: 10), "Today's Tonight card should offer Keep browsing.")
+        for _ in 0..<3 where !keepBrowsing.isHittable { app.swipeUp() }
+        tapWhenReady(keepBrowsing, "Keep browsing should be reachable.")
+        checkpoint(app, "after Keep browsing")
+
+        let recipesTab = app.tabBars.buttons["Recipes"]
+        XCTAssertEqual(XCTWaiter().wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "isSelected == true"), object: recipesTab)], timeout: 5), .completed,
+                       "Keep browsing should open Recipes.")
+        XCTAssertTrue(detailMenu.waitForNonExistence(timeout: 5),
+                      "Keep browsing should pop the open recipe back to the top of Recipes.")
+    }
+
+    /// A badge earned at launch (seeding a plan can unlock one) would cover the tabs; drag it away if it shows.
+    @MainActor
+    private func dismissBadgeSheet(_ app: XCUIApplication) {
+        let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
+        if badgeSheet.waitForExistence(timeout: 3) {
+            let window = app.windows.firstMatch
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+            XCTAssertTrue(badgeSheet.waitForNonExistence(timeout: 5), "The badge sheet should close.")
+        }
+    }
+
     /// Delete must be reachable from the detail screen, not only via the list's long-press. Asserts the menu item
     /// exists only — tapping it could delete a real recipe if "don't ask again" was persisted.
     @MainActor
