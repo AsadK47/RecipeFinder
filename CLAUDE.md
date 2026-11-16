@@ -17,6 +17,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 - `docs/PRODUCT.md` — **product north star**: the loop, each tab's one job, roadmap phases, parked list. Read before choosing or shaping any feature; new ideas go to BACKLOG Parking lot.
 - `RecipeFinder/CLAUDE.md` — Swift/SwiftUI rules, design principles, security, DI, UX checklist. Read when editing any app source file.
 - `RecipeFinderTests/CLAUDE.md` — Testing framework, conventions, coverage. Read when editing tests.
+- `docs/ARCHITECTURE.md` — map of layers, DI seams, Core Data/migrations, iCloud sync, import, share extension, CI. Read before touching an unfamiliar area.
 
 ## Apple Developer
 - Paid individual Apple Developer account (Asad Khan); TestFlight is live — `testflight.yml` uploads a build on every app-code push to `main`.

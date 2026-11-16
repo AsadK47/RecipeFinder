@@ -22,18 +22,24 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 - [docs/CHALLENGES.md](docs/CHALLENGES.md) — the challenge-pass playbook and what each pass found.
 - [AGENT_LESSONS.md](AGENT_LESSONS.md) — lessons from AI-assisted sessions (verify premises, proportionate fixes, test cadence).
 - [CHANGELOG.md](CHANGELOG.md) — what landed, week by week.
+- [SHIP_BAR.md](SHIP_BAR.md) — the bar a change clears before it ships.
+
+## Being retired (Docs refresh moves these to `docs/archive/`)
+- [ROADMAP.md](ROADMAP.md) — older roadmap and feature map; direction now lives in `docs/PRODUCT.md` + BACKLOG.
+- [CORE_LOOP_AUDIT.md](CORE_LOOP_AUDIT.md), [docs/AUDIT-2026-11-10.md](docs/AUDIT-2026-11-10.md) — past audits.
+- [docs/PLAY.md](docs/PLAY.md) — Play series spec, parked.
 
 ## Legal & licensing
 - [LICENSE](LICENSE) — AGPL-3.0 (name, icon and bundled recipe text excluded; see README).
-- Privacy Policy & Terms: the canonical copies are the in-app views
-  (`RecipeFinder/Views/Settings/Legal/PrivacyPolicyView.swift`, `TermsOfServiceView.swift`) and the website
-  (recipefinder.uk/privacy.html, /terms.html). Any change to what is stored, synced or sent updates both in the
-  same item (BACKLOG guardrails).
+- Privacy Policy & Terms: the in-app views are canonical
+  (`RecipeFinder/Views/Settings/Legal/PrivacyPolicyView.swift`, `TermsOfServiceView.swift`); the website
+  (recipefinder.uk/privacy.html, /terms.html) mirrors them. Any change to what is stored, synced or sent
+  updates both in the same item (BACKLOG guardrails).
 
 ---
 
 ### Conventions for these docs
 - `README.md`, `CLAUDE.md`, `docs/PRODUCT.md` and `docs/ARCHITECTURE.md` are long-lived — edit in place; history lives in git.
-- `WORK.md` is the short handoff for the current push — clear it when the work ships.
+- `WORK.md` is the handoff for the current push — keep it short and clear it when the work ships.
 - Docs touched by a change are updated in the same commit.
 - New durable doc? Add a one-line pointer here so this stays the single front door.

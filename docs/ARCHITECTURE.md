@@ -1,6 +1,6 @@
 # RecipeFinder architecture
 
-Last checked against code: 2026-11-16
+Last checked against code: 2026-11-16. Lists below name what exists today; the grep next to each finds the current set.
 
 A map of how the app is put together, for developers and agents. Rules and conventions live elsewhere — this
 doc links to them rather than repeating them:
@@ -29,7 +29,7 @@ doc links to them rather than repeating them:
  Presentation   Views/, Components/            SwiftUI only
       │  @Environment(\.recipeStore), \.mealPlanning, …  (protocol seams)
       ▼
- Managers       Utilities/Managers/RecipeStore, Persistence/Managers/*Manager   @Observable, @MainActor
+ Managers       Utilities/Managers/, Persistence/Managers/ (+ MadeItPresenter)    @Observable, @MainActor
       │  *Storing protocols / PersistenceController
       ▼
  Data           Persistence/Core (Core Data, CloudKit), LocalStore (UserDefaults), Services/ (URLSession, Vision)
@@ -41,11 +41,12 @@ doc links to them rather than repeating them:
   defaulting to `.shared`: `recipeStore: RecipeStoring`, `badges: BadgeManaging`, `profile: ProfileManaging`,
   `kitchen: KitchenInventoryManaging`, `mealPlanning: MealPlanningManaging`, `collections: CollectionManaging`,
   `shopping: ShoppingListManaging`, `cookingStreak: CookingStreakTracking`, `recipeTimer: RecipeTiming`,
-  `madeItPresenter: MadeItPresenting`. Tests and previews override them with `.environment(\.key, fake)`.
+  `madeItPresenter: MadeItPresenting` (current set: `grep -rn "extension EnvironmentValues" RecipeFinder`). Tests
+  and previews override them with `.environment(\.key, fake)`.
 - **Store seams.** Managers take a `LocalStore` and a store protocol in `init` (e.g.
   `CollectionManager(storage:collectionStore:)`); production uses `CoreData*Store` (`CoreDataCollectionStore`,
   `CoreDataMealPlanStore`, `CoreDataShoppingListStore`, `CoreDataKitchenStore`, `CoreDataProfileStore`,
-  `CoreDataCookDateStore`, `CoreDataEarnedBadgeStore`). Every `*Storing` protocol refines `StoreFileIdentifying`.
+  `CoreDataCookDateStore`, `CoreDataEarnedBadgeStore`). Every list-store protocol refines `StoreFileIdentifying` (`RecipeStoring`, the manager seam, does not).
 - **Service seams.** `HTMLFetching` (`Services/HTMLFetcher.swift`), `RecipeImageTextRecognizing` (Vision OCR),
   `RecipeTextInterpreting` (on-device model), `RecipeBackupStore` (backup).
 - **`LocalStore`** (`Utilities/Managers/LocalStore.swift`) wraps `UserDefaults`; every key is namespaced `rf.<key>`
@@ -64,13 +65,13 @@ doc links to them rather than repeating them:
 4. `purgeOldStoreHistory()` — `HistoryPurgeRule.cutoff` decides how much persistent history to drop.
 
 `AppRootView` shows `OnboardingView` until `hasCompletedOnboarding` is set, then `ContentView`, which calls
-`RecipeStore.load()` on first appear. Launch tab is `AppTab.launchDefault` (`.today`).
+`RecipeStore.load()` on appear while the library is empty. Launch tab is `AppTab.launchDefault` (`.today`).
 
 ## Core Data model and migrations
 
-- Model: `RecipeFinder/Models/RecipeModel.xcdatamodeld`. Current version (`.xccurrentversion`):
-  **`RecipeModel 17`**. Versions present: `RecipeModel` (v1) and `RecipeModel 2` … `RecipeModel 17`.
-- Entities (v17): `Recipe`, `RecipePhotoEntity` (added in v17), `CollectionEntity`, `MealPlanEntity`,
+- Model: `RecipeFinder/Models/RecipeModel.xcdatamodeld`. Current version: whatever `.xccurrentversion` names (root
+  `CLAUDE.md` guardrail holds the floor). Versions are `RecipeModel` (v1), `RecipeModel 2`, ….
+- Entities (as of v17): `Recipe`, `RecipePhotoEntity` (added in v17), `CollectionEntity`, `MealPlanEntity`,
   `ShoppingItemEntity`, `ShoppingStoreEntity`, `KitchenItemEntity`, `InventoryItemEntity`, `ProfileEntity`,
   `CookDateEntity`, `EarnedBadgeEntity`. `Recipe` attribute names are in `PersistenceController.RecipeKey`.
 - Container: `NSPersistentCloudKitContainer(name: "RecipeModel")`, always — the CloudKit mirror is attached or not
@@ -78,18 +79,19 @@ doc links to them rather than repeating them:
 - **Migration is lightweight only**: `NSMigratePersistentStoresAutomaticallyOption` +
   `NSInferMappingModelAutomaticallyOption` in `PersistenceController.configureStore`. There are no mapping models and
   no staged migration.
-- `CoreDataMigrationTests` pins the supported range: a v9 store and v12–v16 stores must migrate to current with no
+- `CoreDataMigrationTests` pins the supported range: a v9 store and each recent version's store must migrate to current with no
   data loss; stores older than the all-Binary `ingredients` baseline (v1, v3–v5) do not migrate.
 - `CloudSyncStore.problems(in:)` lists anything CloudKit would reject (unique constraints, required attributes
-  without defaults, non-optional / ordered / inverse-less / Deny relationships); `currentModelIsCloudKitReady`
-  asserts it is empty.
+  without defaults, non-optional / ordered / inverse-less / Deny relationships); `CloudSyncStoreTests.theShippedModelIsOneCloudKitAccepts`
+  asserts it is empty for the shipped model.
 - **Before a migration**, `StoreBackup` copies the SQLite file and sidecars to
   `Application Support/StoreBackups/store-*` (newest 3 kept, excluded from device backup).
 - **On load failure**, `PersistenceController` first retries without the CloudKit mirror (`retryWithoutSync`), then
   moves the unreadable store aside as `<store>.corrupt-<timestamp>` and opens a fresh one — it never deletes it.
 - **Guardrail:** root [`CLAUDE.md`](../CLAUDE.md) forbids pointing `.xccurrentversion` below `RecipeModel 17` and
   removing `NSPersistentHistoryTrackingKey`. Adding a model version: add a new `.xcdatamodel`, bump
-  `.xccurrentversion`, add a `CoreDataMigrationTests` case, update that CLAUDE.md line.
+  `.xccurrentversion`, add a `CoreDataMigrationTests` case, update that CLAUDE.md line and this
+  doc's entity list.
 
 ### Lists stored beside recipes
 
@@ -130,15 +132,15 @@ runs on the kept copy. `CookingStreakManager` uses the older one-shot `LegacyBlo
 
 - Settings → Reset (`DataManagementSettingsView.resetToDefault`): `PersistenceController.deleteAllRecipes()` batch-
   deletes photo rows then recipes; `LocalStore.clearAll(keeping: SyncPreference.keptThroughReset)`; photo files are
-  deleted only if the recipes really went; each manager's `removeAll…` runs; `RecipeStore.load()` re-seeds.
-- `MirroredSnapshot.removeAll()` records `wipePending.<key>`, retried each launch until the store is emptied, so a
+  deleted only if the recipes really went; `RecipeStore.load()` re-seeds; then each manager's `removeAll…` runs.
+- `MirroredSnapshot.removeAll()` records `wipePending.<key>`, retried on each `load()` until the store is emptied, so a
   failed delete never brings data back.
 - `SyncStatus.resetErasesEveryDevice(everSynced:)` drives the warning copy: a store that is, was or will be mirrored
   can carry the erase to every device.
 
 ## Import pipeline
 
-Entry points: the "+" sheet (`Views/Import/ImportView.swift`, options in `AddRecipeOption`: paste box, photo/PDF,
+Entry points: the "+" sheet (`Views/Import/ImportView.swift`, a paste box plus `AddRecipeOption`: photo/PDF,
 web search, another app, start blank), Today's clipboard card, the share extension, and `.recipefinderrecipe` files.
 
 ```
@@ -149,11 +151,11 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
                                                      RecipeModel ──► RecipeStore.add ──► RecipeImportStore.outcome
 ```
 
-- **Web.** `RecipeImportPipeline` (Foundation-only, no singletons) fetches through `HTMLFetching`, follows up to 5
-  redirects, and requires a name and ingredients. `RecipeParser.parse` tries structured strategies in order —
+- **Web.** `RecipeImportPipeline` (Foundation-only, no singletons) fetches through `HTMLFetching`, caps manual redirects (injected
+  fetchers only — production URLSession follows its own), and requires a name and ingredients. `RecipeParser.parse` tries structured strategies in order —
   JSON-LD, WP Recipe Maker, Microdata, RDFa, DOM lists — then free-text heuristics. Page text is kept capped at 50 KB.
   `RecipeImporter` is the `ObservableObject` UI wrapper; `AddRecipeImportFlow` is the one-sheet "Reading…" → draft UI.
-- **Text, photos, PDFs.** `RecipeImageTextRecognizer` (Vision OCR) and `MultiPageRecipeReader` (≤5 photos or a PDF)
+- **Text, photos, PDFs.** `VisionRecipeImageTextRecognizer` (Vision OCR) and `MultiPageRecipeReader` (≤5 photos or a PDF)
   produce text; `RecipeTextImportRouter` sends it to `FoundationModelsRecipeInterpreter` (iOS 26+, on-device) or falls
   back to `TextRecipeParser`. Results always go through the wizard for review.
 - **Other apps.** `OtherAppRecipeImport.swift`: `PaprikaRecipeParser`, `MelaRecipeParser`, `CSVRecipeParser`, then
@@ -167,12 +169,13 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
 - Target `RecipeShareExtension/` (`ShareViewController.swift`), App Group `group.com.asadkhan.recipefinder` in both
   entitlements.
 - For a URL, the extension runs `RecipeImportPipeline` itself. If `SharedImportInbox.isCompleteRecipe` passes it
-  queues the `ExtractedRecipeData`; otherwise it queues the raw URL. Plain text is queued as text.
+  queues the `ExtractedRecipeData`; otherwise it queues the raw URL. Shared text containing a link is handled as that URL; other text is queued as text.
 - `SharedImportInbox` (`Utilities/Managers/`, compiled into both targets) keeps a queue in App Group defaults and also
   drains the older single-slot keys.
 - The app drains it in `RecipeSearchView.checkSharedImportInbox()` (on appear and on `willEnterForeground`):
   extracted recipes are built with `RecipeImportBuilder` and saved (duplicates by name skipped, with a toast); the
-  first URL opens the import sheet, the first text goes to the wizard; further URLs/text are re-queued.
+  first URL or text opens (URL → import sheet, text → wizard) and the rest are re-queued. It is the Recipes tab's
+  view, so with Today as the launch tab a share is picked up once Recipes is opened.
 
 ## Today feed
 
@@ -182,7 +185,7 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
   `TodayWeek` (seven-day strip), `TodayProgress`, and the weekly `TrySomethingNew` pick (nil for new users).
 - `TodayFeed` picks Tonight in order: today's plans, kitchen matches, then quick recipes. Quick picks use a stable
   per-day/meal rank (`dailyRank`, FNV-1a) and `MealSlot` by clock (breakfast 5–11, lunch 11–16, else dinner).
-- Card views: `TodaySections`, `TodayWeekCard`, `TodayProgressCard`, `TodayUseSoonCard`, `TodayIntroCards`.
+- Card views live in `Views/Main/Today*.swift` (`TodaySections.swift`, `TodayWeekCard`, `TodayProgressCard`, …).
 
 ## Bundled recipes and art (`RecipeFinder/RecipeSeed`)
 
@@ -198,11 +201,11 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
 
 ## CI and TestFlight
 
-All in `.github/`. CI is the compiler for cloud sessions (see root `CLAUDE.md`).
+All in `.github/` (`ls .github/workflows` for the current set; each YAML's header says what it does). CI is the compiler for cloud sessions (see root `CLAUDE.md`).
 
 | Workflow | Trigger | Does |
 |---|---|---|
-| `build.yml` "Build & Test" | push to `main` / `agent/**`, PRs (docs/tools paths ignored), nightly 03:00, manual | Unit tests (UI tests skipped); UI tests in 4 shards nightly/manual only (`scripts/shard-ui-tests.py`). On `main`, a `gate` job skips tests when the same commit already passed and only compiles to refresh the build cache. |
+| `build.yml` "Build & Test" | push to `main` / `agent/**`, PRs (docs/tools paths ignored), nightly 03:00, manual | Unit tests (UI tests skipped); UI tests in 4 shards nightly/manual only (`.github/scripts/shard-ui-tests.py`). On `main`, a `gate` job skips tests when the same commit already passed and only compiles to refresh the build cache. |
 | `testflight.yml` | push to `main` touching app/extension/project files (not `*.md`), manual | Archive, upload to App Store Connect (build number = run number), then set "What to Test" (`testflight_notes.py`, `set_whats_new.py`) |
 | `coverage.yml` | nightly, manual | Unit tests with coverage; publishes to the `coverage` release on `main` |
 | `screenshots.yml` | manual | Captures App Store screenshots to the `screenshots` / `screenshots-preview` releases |
