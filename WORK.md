@@ -18,6 +18,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
+- Inbox 🟡 View-all flake: `agent/badge-viewall-wait` (2d5e8bc) — 5–8 s waits → shared 20 s `revealTimeout`, queued
+  reveal waited for (2 s). Waiting on Build & Test + Screenshots; green → land alone, delete Inbox line, Log.
+
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
