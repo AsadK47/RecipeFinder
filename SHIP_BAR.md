@@ -27,7 +27,7 @@ Real but not release-blocking. Fix now **only** if it's a small, low-risk change
 - Accessibility nits that aren't a hard blocker.
 
 ## Does not block ship (post-ship backlog) 🟢
-- "Nice to have" features and refinements — these live in `ROADMAP.md`, not here.
+- "Nice to have" features and refinements — these live in `BACKLOG.md` (Queue / Parking lot), not here.
 - Performance micro-optimisation without a measured problem.
 - Architecture/refactor wishes (modularisation, ViewInspector coverage expansion, etc.).
 - Exotic inputs no real user will hit.

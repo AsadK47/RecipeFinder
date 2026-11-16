@@ -1,5 +1,7 @@
 # RecipeFinder Roadmap
 
+> **Archived 2026-11-16** — kept for history, no longer maintained. Current direction: `docs/PRODUCT.md` + `BACKLOG.md`; how the app works: `docs/ARCHITECTURE.md`.
+
 This is the product's story and its direction — *why* things are the way they are
 and where they're going — not a changelog. Implementation history lives in git.
 

@@ -9,7 +9,7 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
    count-guard prevented it; and 2026-10-01: "5 badges have no unlock trigger" was false —
    all fire at real call sites, ImportView/MealPlanningManager/ShoppingListManager/
    CookingModeView). The status source can *also* be wrong the other way: there the
-   ROADMAP table was right and the fresh audit wrong. Trust neither marker — read the code.
+   ROADMAP table (now `docs/archive/`) was right and the fresh audit wrong. Trust neither marker — read the code.
    The `improve-loop` workflow bakes this in as an adversarial verify step.
 2. **Before removing a string/symbol, grep for dependents case-INSENSITIVELY.** A
    case-sensitive grep for "See recipe" missed a test asserting `"See Recipe"` →

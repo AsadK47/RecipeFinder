@@ -312,11 +312,11 @@ are merged into a newer item or parked — never start them; their text stays as
   (version, licences, Legal). Every row shows its current value; search field at the top; one icon colour per
   section. No legal text changes. *Done when:* settings search + row-value logic tested, screenshot of every
   settings screen, CI green.
-- [x] **Bug sweep (audit 2026-11-10)** — bugs 2–8 fixed (8d2091f); bug 1 (pantry expiry/quantity UI) moved into *Groceries + Kitchen* — the 8 likely bugs in `docs/AUDIT-2026-11-10.md` §0 (pantry expiry/quantity
+- [x] **Bug sweep (audit 2026-11-10)** — bugs 2–8 fixed (8d2091f); bug 1 (pantry expiry/quantity UI) moved into *Groceries + Kitchen* — the 8 likely bugs in `docs/archive/AUDIT-2026-11-10.md` §0 (pantry expiry/quantity
   UI, collection remove swipe, ½× servings → 0, week-to-groceries servings, unused shopping reminders toggle,
   one-slot share inbox, premature "Recipe saved", silent file-import failure). Test first for each. *Done when:*
   each has a failing-then-passing test (UI ones a screenshot), CI green.
-- [x] **Tabs 1/3 — new structure** (owner OK 2026-11-10; plan in `docs/AUDIT-2026-11-10.md` + chat 2026-11-10).
+- [x] **Tabs 1/3 — new structure** (owner OK 2026-11-10; plan in `docs/archive/AUDIT-2026-11-10.md` + chat 2026-11-10).
   Tabs become Today · Recipes · Plan · Groceries · Me. Import tab → "+" on Recipes (link, web search, paste,
   photo/PDF, other apps, manual) + one-time tip pointing at it; Settings → gear in Me (Me = profile, badges, streak,
   later diary/Spoons/impact). Today starts as a placeholder that 2/3 fills. *Done when:* tab routing + "+" sheet
@@ -509,7 +509,7 @@ leaves the device, warm copy (never guilt), existing streaks/badges carry over, 
   *Done when:* artifact with 10 PNGs on an agent-branch run, protocol updated, CI green.
 - [x] **"Made it" moment.** Tapping *Made it* opens one celebratory sheet: "Cook #N", streak flame + weeks, tap-to-rate
   stars, optional photo (reuse `PostCookPhotoSheet` logic), and progress to the next cooking badge ("2 more to
-  *Seasoned*"). Replaces the scattered rate/photo flow (CORE_LOOP_AUDIT "Track"). *Done when:* one sheet, rating +
+  *Seasoned*"). Replaces the scattered rate/photo flow (docs/archive/CORE_LOOP_AUDIT.md "Track"). *Done when:* one sheet, rating +
   photo saved from it, badge progress text unit-tested, CI green.
 - [x] **Refresh stale bundled recipes.** Sample recipes are seeded once (`RecipeStore.seedIfNeeded`), so devices keep
   pre-curation copies (e.g. old "鷄肉炒麵" with steps as ingredients). Add a versioned one-time refresh that replaces

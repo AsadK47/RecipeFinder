@@ -1,5 +1,7 @@
 # Core loop audit — import → find → cook → track
 
+> **Archived 2026-11-16** — kept for history, no longer maintained. Current direction: `docs/PRODUCT.md` + `BACKLOG.md`; how the app works: `docs/ARCHITECTURE.md`.
+
 Captured 2026-09-26. Goal: make the core loop *flawless* before adding breadth.
 Findings from a 4-stage code audit. Ranked; each has file:line + a one-line fix.
 ⚠️ = likely real bug (verify then fix). ✎ = UX/polish judgement.

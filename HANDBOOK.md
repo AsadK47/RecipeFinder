@@ -24,10 +24,9 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 - [CHANGELOG.md](CHANGELOG.md) — what landed, week by week.
 - [SHIP_BAR.md](SHIP_BAR.md) — the bar a change clears before it ships.
 
-## Being retired (Docs refresh moves these to `docs/archive/`)
-- [ROADMAP.md](ROADMAP.md) — older roadmap and feature map; direction now lives in `docs/PRODUCT.md` + BACKLOG.
-- [CORE_LOOP_AUDIT.md](CORE_LOOP_AUDIT.md), [docs/AUDIT-2026-11-10.md](docs/AUDIT-2026-11-10.md) — past audits.
-- [docs/PLAY.md](docs/PLAY.md) — Play series spec, parked.
+## History
+- [docs/archive/](docs/archive/) — retired docs kept for history: the old ROADMAP and past audits (CORE_LOOP_AUDIT, AUDIT-2026-11-10).
+- [docs/PLAY.md](docs/PLAY.md) — Play series spec, parked (see `docs/PRODUCT.md` → Parked).
 
 ## Legal & licensing
 - [LICENSE](LICENSE) — AGPL-3.0 (name, icon and bundled recipe text excluded; see README).

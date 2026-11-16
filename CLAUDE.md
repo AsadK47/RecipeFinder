@@ -61,7 +61,7 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 
 ## Session start checklist
 1. Read `WORK.md` — if it has content, resume from "Next action" without repeating completed work.
-2. If `WORK.md` is empty, orient via `git log --oneline -10` and `ROADMAP.md` before starting work.
+2. If `WORK.md` is empty, orient via `git log --oneline -10`, `docs/PRODUCT.md` and the `BACKLOG.md` Roadmap before starting work.
 3. `git status` — no unexpected staged/unstaged changes from a prior partial run.
 4. Check `.xccurrentversion` points at `RecipeModel 17` if Core Data was recently touched.
 
