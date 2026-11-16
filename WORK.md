@@ -15,10 +15,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Later: per-cook notes / "who it was for" (model change → owner).
 
 - Docs: 🚧 **Docs refresh** slice 5a landed (builder 2026-11-16) — CHANGELOG = per-change "For you" + "Behind the
-  build" entries, `tools/website-behind-the-build.py` (`--check`), old Log archive → `docs/LOG.md`. Next: (5b) website
-  session adds `behind-the-build.html` with markers and runs the script weekly with whats-new, after `privacy.html`
-  updates; then (7) landing-checklist docs step + reviewer notes (root CLAUDE.md "every push to main runs unit tests",
-  "Domain = Foundation only"). Leftover branch agent/docs-refresh-5 (auto-cleanup).
+  build" entries, `tools/website-behind-the-build.py` (`--check`), old Log archive → `docs/LOG.md`. Next: slice 7 landed
+  (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
+  with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.

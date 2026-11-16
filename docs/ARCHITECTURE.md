@@ -52,8 +52,8 @@ doc links to them rather than repeating them:
 - **`LocalStore`** (`Utilities/Managers/LocalStore.swift`) wraps `UserDefaults`; every key is namespaced `rf.<key>`
   so `clearAll()` only removes keys it wrote.
 - **Pure logic** sits in value types and enums (`TodayFeed`, `SyncMerge`, `ImportQuality`, `RecipeImportStore`…) so it
-  is testable without views. Some files in `Models/` still `import SwiftUI` (`RecipeModel`, `BadgeModel`,
-  `RecipeCollection`, `SmartCollection`).
+  is testable without views. Some Domain files still `import SwiftUI` — list them with
+  `grep -l "import SwiftUI" RecipeFinder/Models -r RecipeFinder/Utilities/Recipe`; that list must not grow.
 
 ## Launch sequence
 
@@ -79,8 +79,9 @@ doc links to them rather than repeating them:
 - **Migration is lightweight only**: `NSMigratePersistentStoresAutomaticallyOption` +
   `NSInferMappingModelAutomaticallyOption` in `PersistenceController.configureStore`. There are no mapping models and
   no staged migration.
-- `CoreDataMigrationTests` pins the supported range: a v9 store and each recent version's store must migrate to current with no
-  data loss; stores older than the all-Binary `ingredients` baseline (v1, v3–v5) do not migrate.
+- `CoreDataMigrationTests` tests v9 and v12–v16 stores migrating to current with no data loss. The supported floor is
+  v6 (all-Binary `ingredients`), but v6–v8, v10 and v11 have no test; v1–v5 (pre-baseline Transformable) are
+  documented as not migrating, with no test asserting it.
 - `CloudSyncStore.problems(in:)` lists anything CloudKit would reject (unique constraints, required attributes
   without defaults, non-optional / ordered / inverse-less / Deny relationships); `CloudSyncStoreTests.theShippedModelIsOneCloudKitAccepts`
   asserts it is empty for the shipped model.
