@@ -624,7 +624,10 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   *Done when:* migration + legacy-decode tests, every `prepTime`/`cookingTime` string use removed, CI green.
 - [ ] **Batch A — Large Class: `RecipeDetailView+Content.swift` (745) + `RecipeDetailView` (398).** — 🚧 builder agent 2026-11-16 — Extract Method/Class:
   nutrition section + `NutritionMacroBar`, ingredients/steps/timer sections into own views; `StarRatingView`,
-  `ShopIngredientsSheet` to own files. Target each file ≤300. One branch.
+  `ShopIngredientsSheet` to own files. Target each file ≤300. One branch. **✅ Slice 1 (e3ba711..9fc278a):** nutrition section →
+  `RecipeNutritionLabel` built from tested `NutritionLabelFormat.rows`; `StarRatingView`, `ShopIngredientsSheet` own
+  files (Content 794→486). **Left:** ingredients/pre-prep/steps/timer/cook-history into own views (Content ≤300),
+  `RecipeDetailView.swift` 475→≤300.
 - [ ] **Batch B — Duplicate Code: persisted managers.** `Badge/Collection/CookingStreak/KitchenInventory/MealPlanning/
   ShoppingList` managers hand-roll load/encode/save on `LocalStore` → one shared persisted-store helper (Extract
   Superclass → protocol + generic). Tests first: each manager's round-trip unchanged. One branch.
@@ -694,6 +697,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🟡 Nutrition label shows "1%" RI for 0 g (e.g. salt) — UK labels read 0%; `NutritionLabelFormat.percent` floors at 1 (pinned by a characterisation test, Batch A challenger 2026-11-16).
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
@@ -702,6 +706,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-16 · Smell Batch A slice 1 (RecipeDetailView split) · e3ba711..9fc278a · refactor, nothing should change: Nutrition card, stars and Add to Groceries sheet look and work as before. Content 794→486 lines; new RecipeNutritionLabel/StarRatingView/ShopIngredientsSheet/NutritionLabelFormat(+Tests) registered in pbxproj by hand; top Smell (recipe times) → Needs owner (model 18 sequencing). On phone: open a recipe → Nutrition (Per serving / Whole recipe), Shop, stars · review: reviewer 0 findings + challenger 4 (label wiring untested → rows tested; comment vs 0 g→1% → Inbox 🟡; rebase; scope noted) · CI green (43910208963) · looked at: n/a — no screenshot covers Nutrition; moved views byte-identical
 - 2026-11-16 · 🟡 Inbox: View-all badge UI test flake · 2d5e8bc · test-only: the badge reveal tests wait up to 20 s (`revealTimeout`) for the reveal to close and for Me/Trophy shelf, and wait 2 s for a queued reveal before deciding there is none. The failing run (43871503359) was a cold-sim first test where single queries took 7–11 s; the reveal closed late and the later asserts passed. On phone: nothing new · review: challenger, 3 fixed (5 s Me/shelf waits, same 8 s wait in testCaptureBadgeReveal, queued-reveal race) · CI green first try (Build & Test 43887876890, Screenshots 43887894606 all green) · looked at: n/a (no UI change) · leftover branch agent/badge-viewall-wait (auto-cleanup)
 - 2026-11-16 · My Cookbook slice 3 (share a page) · b463161..0adbf0b · Each cookbook page has a share button → sheet with the page as a 1080×1350 JPEG card (your photo or the recipe art, name, "Made 3 times · 16 Nov" — a date, never "today" — stars, "My Cookbook · RecipeFinder") + Share with a caption. New `CookbookShareSheet.swift` registered in pbxproj by hand; item ticked (notes → Needs owner). On phone: Me → share icon on a cookbook page → Share · review: reviewer + challenger, 8 fixed (shade under the name — both; soft landscape photos — both; tests that couldn't fail → render/opaque/photo/file tests — both; dead-end error → Try again — both; transparent placeholder card; relative date baked into picture; JPEG not system PNG; glyph at AX sizes), 1 → Needs owner (privacy §7.4), domain CGSize moved to the view; CI green first try (43869193502); Screenshots 43871503359: share step green, 1 red = known `testBadgeRevealViewAllClosesAndOpensMe` flake (3rd time → Inbox) · looked at: 44-cookbook-share, 43-cookbook-many
 - 2026-11-16 · Docs refresh slice 7 (stale-docs step + reviewer notes) · see this commit · landing step 8 now greps every `*.md` for the names and behaviour changed and fixes them in the landing commit; root CLAUDE.md: app-code pushes to main build + TestFlight (docs-only don't), Domain SwiftUI exceptions point to an ARCHITECTURE grep; ARCHITECTURE migration coverage made exact. On phone: nothing — docs only · review: fact-checker + challenger, 7 findings, 6 fixed (docs-only pushes don't build, v10/v11 untested, 6 not 4 SwiftUI files, hard-coded doc list, rename-only grep, append vs refine), 1 deferred (Swift comment v6+ vs v9 → next Swift commit) · looked at: n/a (no UI)

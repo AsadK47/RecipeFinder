@@ -18,9 +18,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
-- Smells: 🚧 **Batch A** (builder 2026-11-16) slice 1 on `agent/detail-split-a` — nutrition label, StarRatingView,
-  ShopIngredientsSheet out of `RecipeDetailView+Content.swift` (794→486) + pure `NutritionLabelFormat` + tests. Left:
-  Content ≤300 (timer/ingredients/cook-history views), `RecipeDetailView.swift` 475 ≤300.
+- Smells: 🚧 **Batch A** (builder 2026-11-16) slice 1 landed 9fc278a (Content 794→486). Next slice: extract
+  `timerControl`+`startCookTimer`+`timerRowLabel` and `cookHistoryCard` from `RecipeDetailView+Content.swift` into own
+  views; then ingredients/pre-prep; then `RecipeDetailView.swift` 475→≤300. Leftover branch agent/detail-split-a.
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
@@ -29,8 +29,8 @@ When lanes report green + reviewed: batch them into `agent/batch`, one green run
 - **Smell Batch A** (builder 2026-11-16): took it over the top Smell (recipe times → Int minutes) because that needs a
   new Core Data model on a synced entity, which must stack on unmerged model 18 (Recently deleted, waiting on the
   CloudKit Production deploy) → noted in Needs owner. Nutrition numbers moved to a pure enum so they're tested, not
-  just moved. **Pre-mortem:** (1) a label number changes (rounding) → characterisation tests pin each format; (2) a file
-  not in the target → CI build fails; (3) a layout shift in Nutrition → screenshot of the recipe detail nutrition card.
+  just moved; the label is built from `NutritionLabelFormat.rows` so wiring (value/unit/RI per line) is tested too
+  (challenger: no screenshot covers Nutrition). 0 g → "1%" pinned as-is, not fixed in a refactor (Inbox 🟡).
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

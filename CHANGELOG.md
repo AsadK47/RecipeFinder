@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-16 · Smell Batch A slice 1 · 9fc278a
+- For you: recipe pages work just as before, with tidier code behind the Nutrition card so it's easier to keep improving.
+- Behind the build: every line of the nutrition label — value, unit and reference intake — is now checked by tests, and a reviewer and a challenger compared the move line by line.
+
 ## 2026-11-16 · My Cookbook slice 3 · 0adbf0b
 - For you: share any page of your cookbook — tap the share icon on a dish and send a picture of it, with your photo, when you made it and your stars, to anyone you like.
 - Behind the build: a reviewer and a challenger found eight things to fix first, from sharper landscape photos to a darker shade under the name, and new tests check the picture itself.
