@@ -19,6 +19,7 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 
 ## How we work
 - [WORK.md](WORK.md) — live handoff between sessions: in progress, next action, decisions.
+- [docs/DECISIONS.md](docs/DECISIONS.md) — why things are the way they are: options rejected and tradeoffs, per landed item, newest first.
 - [docs/CHALLENGES.md](docs/CHALLENGES.md) — the challenge-pass playbook and what each pass found.
 - [AGENT_LESSONS.md](AGENT_LESSONS.md) — lessons from AI-assisted sessions (verify premises, proportionate fixes, test cadence).
 - [CHANGELOG.md](CHANGELOG.md) — what landed, week by week.
@@ -39,6 +40,6 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 
 ### Conventions for these docs
 - `README.md`, `CLAUDE.md`, `docs/PRODUCT.md` and `docs/ARCHITECTURE.md` are long-lived — edit in place; history lives in git.
-- `WORK.md` is the handoff for the current push — keep it short and clear it when the work ships.
+- `WORK.md` is the handoff for the current push — keep it short; when an item ships its Decisions entry moves to `docs/DECISIONS.md`.
 - Docs touched by a change are updated in the same commit.
 - New durable doc? Add a one-line pointer here so this stays the single front door.

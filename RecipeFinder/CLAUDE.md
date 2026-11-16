@@ -68,7 +68,7 @@ Visual language + shared UI tokens live in `RecipeFinder/DesignSystem.md` (livin
 - **Empty states** are actionable — always include a button, never dead-end copy.
 - **Primary actions** are visible — overflow menu is for rare/secondary actions only.
 - **Toolbar:** apply `.toolbarBackground(.hidden, for: .navigationBar)` with `backgroundGradient`.
-- **Sheets:** wrap content in `ZStack { gradient.ignoresSafeArea(); content }`. Forms also need `.scrollContentBackground(.hidden)`. Data-carrying sheets use `.sheet(item:)` (Identifiable value), never `.sheet(isPresented:)` + a separately-set `@State` the content reads — that renders stale on first present.
+- **Sheets:** wrap content in `.sheetScaffold("Title")` (`Components/Sheets/SheetScaffold.swift`: NavigationStack + `AppBackground` + nav chrome; `.sheetScaffold()` when the content shows its own heading); a button that only closes it is `.sheetDismissButton()`. Forms also need `.scrollContentBackground(.hidden)`. Data-carrying sheets use `.sheet(item:)` (Identifiable value), never `.sheet(isPresented:)` + a separately-set `@State` the content reads — that renders stale on first present.
 - **Nav title:** `.inline` everywhere — `.large` breaks visual rhythm.
 - **`NavigationView` is banned** — use `NavigationStack`.
 - **New files** via `XcodeWrite` (not `Write`) so Xcode registers them.

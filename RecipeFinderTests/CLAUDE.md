@@ -6,7 +6,7 @@ Applies to everything under `RecipeFinderTests/`.
 These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** use Swift Testing (`@Suite`, `@Test`, `#expect`) for all new tests — no new XCTest.
-- **MUST NOT** use shared `UserDefaults`, real Core Data, or network in unit tests — inject fakes.
+- **MUST NOT** use shared `UserDefaults`, the app's real Core Data store, or network in unit tests — inject fakes. Core Data: `PersistenceController(inMemory: true)`, or a SQLite file in a fresh `temporaryDirectory` folder when the test needs a real file (relaunch, migration, backup, recovery). Sole exception: `PersistenceControllerTests.sharedStoreLoadsImmediately` reads `.shared`'s load state (never writes).
 
 ## Framework
 Swift Testing (`@Suite`, `@Test`, `#expect`) for all new/migrated tests. No new XCTest — migrate XCTest files opportunistically. UI tests stay XCUITest.
@@ -19,7 +19,6 @@ label the fix *unconfirmed*, and leave the issue open until the device or Metric
 
 ## Conventions
 - Parameterise data-driven cases with `@Test(arguments: [...])`.
-- Inject fakes — no shared `UserDefaults` / real Core Data / network in unit tests.
 - One behaviour per test. Arrange–Act–Assert. Name the behaviour, not the method.
 - Pyramid: many unit tests, targeted integration tests, small set of UI tests for critical flows.
 - UI tests: call `checkpoint(app, "…")` before each critical tap/wait (kept only on failure); no per-step screenshots.

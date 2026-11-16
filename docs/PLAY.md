@@ -1,5 +1,8 @@
 # Play — making cooking a habit people love
 
+> **Parked** (owner 2026-11-14): kept as reference spec, not on the roadmap. The Made-it moment took its simple core
+> (§7); the rest (Spoons, levels, quests, Cooking Path, mascot, streak rework) waits in `docs/PRODUCT.md` → Parked.
+
 Design for the **Play** series in `BACKLOG.md` (owner 2026-11-13: "more exciting and addicting like Duolingo …
 better than those ideas plus more"). Agents working a Play item read this first. Internal doc — in-app copy follows
 the root CLAUDE.md copy rule (positive, warm, never guilt).

@@ -66,7 +66,7 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 4. Check `.xccurrentversion` points at `RecipeModel 17` if Core Data was recently touched.
 
 ## Session end checklist
-1. Update `WORK.md` Decisions — options rejected, tradeoffs accepted, constraints discovered.
+1. Update `WORK.md` Decisions — options rejected, tradeoffs accepted, constraints discovered; when an item lands, move its entry to `docs/DECISIONS.md`.
 2. Update In Progress with exact file / function / state (specific enough to resume cold).
 3. Set Next action to a single concrete step.
 4. `git status` — commit completed work or leave a clean working tree.
@@ -74,7 +74,7 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 If the task looks like it will exceed ~60% of the context window, run this checklist now — not when context is nearly full.
 
 ## Session handoff
-Write **`WORK.md`** (repo root) **before context pressure builds** — not after. The Decisions section captures *why* key choices were made (options rejected, tradeoffs); compaction preserves code but silently drops this reasoning, and the next session will "fix" deliberate decisions without it. Clear the file once the task is committed and done.
+Write **`WORK.md`** (repo root) **before context pressure builds** — not after. The Decisions section captures *why* key choices were made (options rejected, tradeoffs); compaction preserves code but silently drops this reasoning, and the next session will "fix" deliberate decisions without it. When an item lands, move its Decisions entry (newest first) to `docs/DECISIONS.md` — the durable record — and drop its In progress line, so WORK.md stays a short handoff.
 
 ## Harness decay
 When a new failure class appears or a convention changes, update the relevant section in the same commit — stale documentation is worse than none.
