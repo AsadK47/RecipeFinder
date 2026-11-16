@@ -26,6 +26,16 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Recipes toggle + Today link** (tester batch 1 item 4 + owner option D, 16 Nov; `agent/recipes-discover-toggle`):
+  segmented *Discover | My recipes* under the search header, remembered (`@AppStorage("recipes.mode")`); Discover =
+  Recently cooked + endless chapters, My recipes = the full list; typing/filtering/sorting shows results on either
+  side (`RecipeBrowse.content`). The 6-card preview + "See all" is deleted (the toggle does that job). Default *My
+  recipes*: testers know Recipes as their list, and UI tests tap `recipe.row`; Today's "Not feeling it? Keep browsing
+  →" (under tonight's pick) flips to Discover and opens Recipes. UI tests start on My recipes (`-ui-testing` resets the
+  key; `-recipes-discover` for the discovery shots). Next slice: "Pick one for tonight" checkpoint cards (needs Today
+  to accept any recipe as tonight's pick). **Pre-mortem:** (1) search shows chapters instead of results →
+  `searchingShowsResultsOnEitherSide`; (2) choice forgotten / reset by a rename → `theRememberedModeKeepsItsStoredValues`;
+  (3) UI tests land on Discover and miss `recipe.row` → launch hook + `40-recipes-discovery-0` shot.
 - **Smell Batch A** (builder 2026-11-16): took it over the top Smell (recipe times → Int minutes) because that needs a
   new Core Data model on a synced entity, which must stack on unmerged model 18 (Recently deleted, waiting on the
   CloudKit Production deploy) → noted in Needs owner. Nutrition numbers moved to a pure enum so they're tested, not
