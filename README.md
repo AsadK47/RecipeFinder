@@ -31,27 +31,28 @@
 
 RecipeFinder is an iPhone and iPad app for dinner, sorted: find something you'll love, plan it, shop for it, cook it
 well and remember it. Smart features like reading photos, tidying messy text and estimating amounts run privately on
-your device, and iCloud sync keeps your kitchen up to date on every device you own.
+your device, and when you turn on iCloud sync your kitchen follows you to every device signed in to your iCloud
+account.
 
 It ships with 332 starter recipes, so there's something good to cook from the first launch.
 
 ## Features
 
-Five tabs, each with one job: **Today** · **Recipes** · **Plan** · **Groceries** · **Me**.
+Five tabs: **Today** · **Recipes** · **Plan** · **Groceries** · **Me**.
 
 **Today — decide tonight**
 - Tonight's pick from your plan, what's in your kitchen or something quick, with one tap to start cooking
-- Your week at a glance and your progress towards this week's cooks
+- Your week at a glance, plus your streak, this week's cooks and your next badge
 - Copied a recipe link? Today offers to bring it in
 
 **Recipes — discover**
 - Your library plus an endless feed of chapters: "Because you loved…", "Under 30 minutes", "Uses what you have",
   "Cook it again", "New to you" and trips through cuisines
-- Big pictures throughout: your own photos, pictures from the recipe's website, or illustrations for the bundled
+- Big pictures throughout: your own photos, pictures from the recipe's website, or illustrations for the starter
   recipes
 - Collections and smart collections, favourites, ratings, tags and filters
 
-**Add a recipe — one "+"**
+**Add a recipe from anywhere — tap "+"**
 - Paste a link or any text into one box — recipe data is read straight from the page, with automatic ingredient parsing
 - Search the web without leaving the app and import any recipe you find in one tap
 - Share a link or text from Safari or any other app via the share sheet
@@ -78,17 +79,18 @@ Five tabs, each with one job: **Today** · **Recipes** · **Plan** · **Grocerie
 - Your profile, streak and badges
 
 **Your data, everywhere you cook**
-- iCloud sync (switch it on in Settings): recipes, photos, plans, lists and your profile follow you to every device
-  signed in to your iCloud account
-- Full backup and restore to a file you keep
+- iCloud sync (Settings › Data Management, from the next time you open the app): your recipes, photos,
+  collections, plans, lists, kitchen, cooking history and profile follow you to every device signed in to your
+  iCloud account; each device fetches its own copy of pictures from recipe websites
+- Back up and restore your recipes and lists to a file you keep
 - Eight colour themes, light and dark
 
 **Accessible by default** — VoiceOver, Dynamic Type, WCAG 2.1 AA contrast and 44pt tap targets throughout.
 
 ## Privacy
 
-- Private by design: your recipes live on your device, and in your own iCloud account when you turn on iCloud sync —
-  the developer never holds a copy
+- Private by design: open it and start cooking straight away; your recipes live on your device, and in your own
+  iCloud account when you turn on iCloud sync — it stays yours
 - Text recognition and Apple Intelligence run privately on your device; pages you search or import load straight from
   the web
 - In-app browsing is private: every session starts fresh
@@ -100,7 +102,7 @@ Five tabs, each with one job: **Today** · **Recipes** · **Plan** · **Grocerie
 |---|---|
 | UI | SwiftUI, Swift 6 strict concurrency, `async`/`await` |
 | Architecture | Clean Architecture — Presentation → Domain → Data; views reach managers through `@Environment` protocol seams |
-| Storage | Core Data with opt-in CloudKit sync (`NSPersistentCloudKitContainer`, the cook's private database); kept JSON copies of each list in `UserDefaults`; App Group hand-off for the share extension — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| Storage | Core Data with opt-in CloudKit sync (`NSPersistentCloudKitContainer`, the private CloudKit database of the user's own iCloud account); kept JSON copies of each list in `UserDefaults`; App Group hand-off for the share extension — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | On-device AI | Vision (OCR), PDFKit, FoundationModels (iOS 26 + Apple Intelligence) |
 | System | App Intents (Siri/Shortcuts), Share Extension, local notifications |
 | Packages | [Kingfisher](https://github.com/onevcat/Kingfisher) (images), [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI) (celebrations), [ViewInspector](https://github.com/nalexn/ViewInspector) (tests only) |
@@ -127,14 +129,15 @@ xcodebuild test -scheme RecipeFinder -destination "platform=iOS Simulator,id=$SI
 
 ```
 RecipeFinder/            App target
-├── Views/               Screens (Main = Today + tabs, Recipes, Import, MealPlanning, Shopping, Kitchen, Profile = Me, Settings…)
+├── Views/               Screens (Main = tab shell, Today and Me; Recipes, Import, MealPlanning, Shopping,
+│                        Kitchen, Profile = profile, badges and My Cookbook; Settings…)
 ├── Components/          Reusable UI
 ├── Models/              Domain models
 ├── Utilities/Recipe/    Parsing, import pipeline, scaling, nutrition, matching (pure, tested)
 ├── Persistence/         Core Data stack, iCloud sync, managers, backup
 ├── Services/            Networking, OCR, PDF, cooking session
 ├── Intents/             Siri & Shortcuts
-├── Theme/               Design tokens (see DesignSystem.md)
+├── Theme/               Design tokens (see RecipeFinder/DesignSystem.md)
 └── RecipeSeed/          Bundled starter recipes and their illustrations
 RecipeShareExtension/    Share sheet extension
 RecipeFinderTests/       Unit + fixture tests
