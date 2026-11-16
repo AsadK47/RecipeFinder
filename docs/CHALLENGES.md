@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-16 (item pass: Recipes toggle + Today "Keep browsing →" — fixed: Keep browsing landed on an old detail or search results, My-recipes default rested on a moot test reason, toggle shown when it did nothing, scroll carried between sides, feed built while hidden, UI test asserted nothing)
+- ⚔️ [Copy] "Not feeling it?" frames tonight's pick slightly negatively — the owner's own wording (PRODUCT.md, option D).
+  → Accepted.
+- ⚔️ [Data] *My recipes* is the whole library A–Z, so the cook's own recipes sit among 332 bundled ones (the deleted preview put own + favourites first).
+  → Later: own + favourites first on My recipes.
+- ⚔️ [Discoverability] "Keep browsing →" shows only under a tonight pick, so a brand-new cook (no pick) doesn't see it; the toggle still does.
+  → Accepted.
+- ⚔️ [Structure] `RecipeSearchView` is ~470 lines (smell threshold ~300).
+  → Smells list: Extract the filter state into a value + the header/mode picker into views.
+
 ## 2026-11-16 (item pass: 🟡 Inbox nutrition 0 g → 0% — fixed: NaN/negative unpinned, infinity trapped in `Int(_:)`)
 - ⚔️ [Break] A trace that prints as 0 g still shows 1% RI — `NutritionLabelFormat.percent` rounds any positive value up
   to 1% while `macro`/`salt` print 0.04 g fat as "0.0" and 0.004 g salt as "0.00" (NutritionLabelFormat.swift:20) — show
