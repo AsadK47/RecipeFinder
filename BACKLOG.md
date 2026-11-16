@@ -123,6 +123,14 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Me with character** (owner 2026-11-16: "profile … super bland"; unparks *Me 2/3*, kept below as spec). Today Me
+  is an empty circle, a First/Last-name form and 24 grey locked badges. (1) **Hero**: photo or initials on the chef-type
+  colour, name inline (tap to edit — the form moves to Settings → Profile), chef type as a title, and one stats strip:
+  dinners cooked · week streak · cuisines tried. (2) **My Cookbook up front**: latest dishes as a photo strip → the book.
+  (3) **Badges, earned first**: earned medals + "Next up" (the 3 closest, with progress rings); the full shelf behind
+  See all — no walls of locked circles. (4) **Taste fingerprint** + **Your cooking story** timeline from *Me 2/3*.
+  New user: warm empty states with one action each ("Cook your first dinner"). *Done when:* stats/next-up/fingerprint
+  logic tested, screenshots (new + seasoned cook), one reviewer + challenger, CI green.
 - [ ] **Tester feedback batch 1** (tester K., 2026-11-16; owner: "implement this"). One slice each, in this order:
   (1) ✅ 3ed805c **Cuisine on the recipe** — show `cuisine` (already on `RecipeModel`) in the detail facts card and as a tappable
   chip that opens Recipes filtered to that cuisine; editable in the wizard; imports fill it when the page states it.
