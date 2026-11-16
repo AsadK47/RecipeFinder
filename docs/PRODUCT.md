@@ -28,12 +28,12 @@ What's cooked feeds "Because you loved X" back in Recipes — the loop closes.
 6. **Big pictures, few words** — food sells itself.
 7. **One gesture means done; the app does the bookkeeping.**
 
-## Operating principles (carried over from the retired ROADMAP)
-- **Privacy first:** collect as little as possible; the cook's data lives on their device and in their own iCloud.
-- **Offline first:** the core loop works without signal; network features degrade gracefully.
-- **Freemium:** the free tier is genuinely useful; charge for added value (curated content, supermarket integration,
-  advanced planning), never for basics or things that cost us nothing (imports, iCloud sync).
-- **Secrets:** API keys live in `.xcconfig` files kept out of version control.
+## Standing decisions (carried over from the retired ROADMAP; changing one is an owner call)
+- **Free** (2026-11-03): everything ships to everyone, bundled recipes included; the goal is adoption and retention.
+  Revisit only once there are users: a one-time Pro unlock or tip jar for what proves popular — never a subscription.
+- **No accounts** (2026-11-04): single-user, no sign-in; the Profile is on-device data, not an account.
+- **The cook's own iCloud, not our backend:** private libraries sync through the CloudKit private database — we never
+  hold the data and never become its controller. A backend is considered only for a future public/social layer.
 
 ## Roadmap — one phase at a time
 - **Now — data you can trust:** iCloud sync (Data safety 2/4) → backups with photos (3/4) → Recently deleted (4/4).
