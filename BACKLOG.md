@@ -106,7 +106,8 @@ drop a line while moving it.
 One phase at a time; within a phase, top to bottom. 🐞 / TestFlight / Inbox items still go first. Items marked `[~]`
 are merged into a newer item or parked — never start them; their text stays as reference spec.
    **Next (owner order 2026-11-14, docs/PRODUCT.md):**
-   **TOP (owner 2026-11-15, before every lane): CI ≤ 10 minutes** — see Queue item *CI under 10 minutes*.
+   **CI (owner 2026-11-16): free runners only, no paid minutes.** Target is ≤10 min once a runner starts; lanes
+   stagger pushes (≤3 macOS jobs at once across lanes) so queueing stays short.
    **Now (owner 2026-11-15, parallel lanes, batch landing):** *Data lane:* ~~Inbox 🔴 photo files after a Reset~~ (e67da6f) →
    Data safety 4/4 Recently deleted, lean (recipes + photos, 30 days; **RecipeModel 18 approved** for
    one optional deleted-at date) · *Cook lane:* Cooking flow · *Privacy lane:* 🟡 §5.1 recent-searches wording, then
@@ -122,6 +123,14 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Reset follows the industry standard** (owner 2026-11-16: "follow industry standard protocol"; replaces the
+  Needs owner question on `agent/reset-store-copies`). Reset = full erasure (GDPR right to erasure, Apple "Erase All
+  Content" model): it deletes everything the app keeps, including `StoreBackups/`, `.corrupt-*` set-aside copies and
+  their `_EXTERNAL_DATA` photos — no hidden leftovers. Before that, the confirm dialog names what goes; when a set-aside
+  copy exists it says so and offers **Export first** (the existing backup/export) as the default button; destructive
+  button last, red, needs a second confirm. iCloud copy follows the existing sync rules (Reset keeps the sync choice).
+  Policy §4.3/Help match the code. *Done when:* tests cover each file class removed + dialog states, two reviewers on
+  code-vs-policy, CI green.
 - [ ] **CI under 10 minutes** — 🚧 CI lane session 2026-11-15 — (owner 2026-11-15: "30 minutes is unacceptable, 10 or
   nothing"). Every Build & Test run — push (build + unit) and dispatch/nightly (+ UI tests) — finishes in ≤10 min wall
   time on free runners. Never skip or weaken tests to hit the number. *Done when:* three consecutive push runs and one
@@ -656,17 +665,7 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
-- 🙋 **Reset vs store safety copies** (builder 2026-11-15, Inbox 🟡): `agent/reset-store-copies` makes Reset delete
-  `StoreBackups/` + `.corrupt-*` copies (policy §4.3/Help updated), but two reviewers agree it can destroy the only copy of
-  a library recovery set aside — Reset's copy says "use this if you encounter any issues". Ship as is / keep `.corrupt-*`
-  (delete safety copies only) / warn in the Reset dialog when a set-aside copy exists? Also unverified: set-aside
-  libraries' large photos in `_EXTERNAL_DATA` aren't moved aside or removed.
 - 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
-- 🙋 **CI 10 minutes vs runner slots** (CI lane 2026-11-15): jobs themselves now run 7:40–8:30 (push) and 8–10 (UI
-  shards), but the free plan allows 5 macOS jobs at once for the whole account; with 4 lanes pushing, runs wait 2–9 min
-  for a runner, which counts in wall time. Options: (a) fewer parallel lanes during the day (free); (b) GitHub larger
-  macOS runners (M2 Pro xlarge, roughly $0.16/min per GitHub's pricing page — check current; ~8 min ≈ $1.30 per push
-  run, and also faster CPUs); (c) accept "≤10 min once a runner starts". Which?
 - 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
   `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
   ships, or fold it into model 18 now? Builder skips to Batch A meanwhile.
@@ -693,7 +692,6 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 From Sept 2027, device-only task: renew the CI signing cert (`CI_DEV_CERT_P12`, expires 2027-11-10) and update
   the GitHub secrets.
 - 🙋 Later, once there is revenue: owner-funded charity pledge (e.g. "every 1,000 community Spoons funds a meal" via a UK food charity). Needs your decision + a Charities Act-compliant statement/agreement; agents never link money to Spoons.
-- 🙋 Website signup emails — needs a new Web3Forms access key for recipefinderuk@gmail.com.
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
