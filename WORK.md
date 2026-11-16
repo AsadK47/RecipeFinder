@@ -24,10 +24,11 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branch agent/my-cookbook-2 (auto-cleanup). Watch: `testBadgeRevealViewAllClosesAndOpensMe` flaked 2/4 on the
   branch (reveal still up 5s after View all; rerun green) — if it flakes again, read its "queued reveal" checkpoint.
 
-- Docs: 🚧 **Docs refresh** slice 1 landed 587cebb (builder 2026-11-16) — ARCHITECTURE.md + HANDBOOK. Next slice: (1) move
-  ROADMAP.md + CORE_LOOP_AUDIT.md + docs/AUDIT-2026-11-10.md to `docs/archive/`, repoint root CLAUDE.md session-start step 2
-  and SHIP_BAR/AGENT_LESSONS refs, drop HANDBOOK "Being retired" section. Decision: env-seam/workflow lists kept but each
-  points to a grep; model version left to `.xccurrentversion` so model 18 doesn't stale the doc.
+- Docs: 🚧 **Docs refresh** slice 2 landed d312a30..01cc1bf (builder 2026-11-16) — archive + PRODUCT standing decisions. Next slice: (6) rest —
+  move WORK.md's long Decisions into `docs/DECISIONS.md` (WORK.md back to a short handoff), CHALLENGES newest-first,
+  PLAY.md parked banner, RecipeFinder/CLAUDE.md `.sheetScaffold` + RecipeFinderTests/CLAUDE.md "in-memory Core Data
+  only" fixes. Decision: ROADMAP's "freemium" + `.xcconfig` API-key lines NOT carried (superseded by the 2026-11-03
+  free decision; no xcconfig/API keys exist since UnsplashClient was deleted).
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.

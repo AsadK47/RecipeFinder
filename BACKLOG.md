@@ -145,7 +145,9 @@ are merged into a newer item or parked — never start them; their text stays as
   (`.sheetScaffold`) and RecipeFinderTests/CLAUDE.md "in-memory Core Data only". (7) Landing checklist step 8 gains
   "docs touched by this change updated in the same commit". *Done when:* one reviewer + challenger find no stale
   statement in the touched docs; website page live. **✅ Slice 1 (587cebb):** (2) HANDBOOK front door (legacy docs listed under
-  "Being retired") + (3) `docs/ARCHITECTURE.md`, linked from root CLAUDE.md Topic docs. **Left:** (1), (4)–(7). Reviewer
+  "Being retired") + (3) `docs/ARCHITECTURE.md`, linked from root CLAUDE.md Topic docs. **✅ Slice 2:** (1) + the
+  archive half of (6) — ROADMAP, CORE_LOOP_AUDIT, AUDIT-2026-11-10 in `docs/archive/`, refs repointed, ROADMAP's
+  standing decisions (free, no accounts, own-iCloud not our backend) in PRODUCT.md. **Left:** (4), (5), (7), rest of (6). Reviewer
   notes for later slices: README storage line omits CloudKit/kept copies; root CLAUDE.md "every push to main runs unit
   tests" (gate job skips when already green) and "Domain = Foundation only" (4 Models files import SwiftUI);
   migration baseline comment says v6+ while tests pin v9; share inbox is drained only by the Recipes tab view.
@@ -809,3 +811,4 @@ _Last 7 days; older entries are in `CHANGELOG.md`._
 - 2026-11-15 · Inbox 🟡 ephemeral link import · 7041540 · nothing visible; import a recipe link (incl. a consent-page site) → still imports; Settings → Reset still works · link fetches use one ephemeral URLSession, Reset also clears this run's and older builds' site cookies/cache · review: reviewer + challenger, 3 fixed (shared-jar test → isolated jar + cookie assert, wrong comment, this-run cookies survived Reset), 1 accepted (share-extension legacy data, CHALLENGES) · CI: nested `#require` compile error + branch missing main's perf fix (merged main) · looked at: no UI change
 - 2026-11-15 · Inbox 🟡 recipe-copy merge overwrites a mid-merge edit · 70dbaaf · nothing to check on device (test only) · finding didn't hold: the old test saved the edit before the merge fired its faults, so locking never had to fire; new test edits after every value is read — optimistic locking fires and the edit stands (green, run 1121) · review: 1 challenger (agreed, 0 fixed) · looked at: none (no UI)
 - 2026-11-15 · 🟡 Inbox: Reset leaves store copies · not merged (agent/reset-store-copies, 87f5737) · moved to Needs owner: deleting `.corrupt-*` on Reset can lose the only copy of a library that wouldn't open · review: deep-review + challenger, 2 fixed (listing error skipped the rest, assertion-less test), 1 data-loss risk agreed → owner · looked at: n/a (no UI)
+- 2026-11-16 · Docs refresh slice 2 (archive ROADMAP + audits) · d312a30..01cc1bf · nothing on device (docs only) · review: 1 reviewer/challenger — 2 fixed (carried-over "freemium" line contradicted the 2026-11-03 free decision; free/no-accounts/own-iCloud decisions would have been lost), 1 dropped (stale `.xcconfig` API-key rule), 3 nits · looked at: no UI
