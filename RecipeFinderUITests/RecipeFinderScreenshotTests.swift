@@ -721,6 +721,18 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             let line = profile.value as? String ?? ""
             XCTAssertTrue(line.contains("cooks this year"), "Me's line should count this year's cooks: \(line)")
         }
+        // A page shares as a picture: the share button on the page opens a preview of exactly what gets sent.
+        let share = app.buttons["cookbook.page.share"].firstMatch
+        checkpoint(app, "cookbook share button")
+        XCTAssertTrue(share.waitForExistence(timeout: 5), "Each cookbook page should have a share button.")
+        share.tap()
+        let preview = app.descendants(matching: .any).matching(identifier: "cookbook.share.preview").firstMatch
+        XCTAssertTrue(preview.waitForExistence(timeout: 10), "Sharing a page should show the picture that gets sent.")
+        XCTAssertTrue(app.buttons["cookbook.share.send"].exists, "The share preview should offer Share.")
+        settle()
+        snap(app, "44-cookbook-share")
+        app.buttons["Done"].firstMatch.tap()
+        XCTAssertTrue(preview.waitForNonExistence(timeout: 5), "Done should close the share preview.")
         // A page opens its recipe, to cook it again.
         app.descendants(matching: .any).matching(identifier: "cookbook.page").firstMatch.tap()
         XCTAssertTrue(app.buttons["Start Cooking Mode"].waitForExistence(timeout: 10),

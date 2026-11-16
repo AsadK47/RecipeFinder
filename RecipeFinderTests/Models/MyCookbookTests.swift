@@ -161,4 +161,37 @@ struct MyCookbookTests {
     func meLine(cooks: Int, expected: String) {
         #expect(MyCookbook.meLine(chefType: .homeCook, cooksThisYear: cooks) == expected)
     }
+
+    // MARK: - Share a page
+
+    @Test("a shared page's stars read as filled and empty stars", arguments: [
+        (1, "★☆☆☆☆"), (4, "★★★★☆"), (5, "★★★★★"), (9, "★★★★★")
+    ])
+    func shareStars(rating: Int, expected: String) {
+        #expect(MyCookbook.starText(rating: rating) == expected)
+    }
+
+    @Test("an unrated page shares without stars", arguments: [0, -1])
+    func shareNoStars(rating: Int) {
+        #expect(MyCookbook.starText(rating: rating) == nil)
+    }
+
+    @Test("the share caption names the dish and when it was made")
+    func shareCaption() {
+        let now = Self.date(2026, 11, 16)
+        let page = MyCookbook.pages(
+            from: [recipe("Chicken Curry", cookCount: 3, lastCookedAt: Self.date(2026, 11, 2))],
+            now: now, calendar: Self.calendar, locale: Self.locale
+        )
+        #expect(page.count == 1)
+        #expect(page.first.map(MyCookbook.shareCaption(for:))
+                == "Chicken Curry · Made 3 times · 2 Nov — from my cookbook in RecipeFinder")
+    }
+
+    @Test("the share card renders 1080 × 1350 pixels, a 4:5 portrait that fits feeds and messages")
+    func shareCardPixels() {
+        let size = MyCookbook.shareCardSize
+        #expect(size.width * MyCookbook.shareCardScale == 1080)
+        #expect(size.height * MyCookbook.shareCardScale == 1350)
+    }
 }

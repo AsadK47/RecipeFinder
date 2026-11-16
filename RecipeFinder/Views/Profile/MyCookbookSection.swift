@@ -5,6 +5,8 @@ import SwiftUI
 struct MyCookbookSection: View {
     let pages: [CookbookPage]
 
+    @State private var sharing: CookbookPage?
+
     /// Grows with Dynamic Type so the text over the picture is never clipped.
     @ScaledMetric(relativeTo: .title3) private var pageHeight: CGFloat = 260
 
@@ -42,6 +44,7 @@ struct MyCookbookSection: View {
                             .accessibilityIdentifier("cookbook.page")
                             // The next page peeks in, so it's clear there are more to swipe through.
                             .containerRelativeFrame(.horizontal, count: 10, span: 9, spacing: AppTheme.spacing12)
+                            .overlay(alignment: .topTrailing) { shareButton(for: page) }
                         }
                     }
                     .scrollTargetLayout()
@@ -51,6 +54,27 @@ struct MyCookbookSection: View {
                 .accessibilityIdentifier("cookbook.pages")
             }
         }
+        .sheet(item: $sharing) { page in
+            CookbookShareSheet(page: page)
+        }
+    }
+
+    /// On the page itself, so sharing a dish is one tap and doesn't hide behind a long-press.
+    private func shareButton(for page: CookbookPage) -> some View {
+        Button {
+            HapticManager.shared.light()
+            sharing = page
+        } label: {
+            Image(systemName: "square.and.arrow.up")
+                .font(.subheadline.weight(.semibold))
+                .adaptiveForegroundColor()
+                .frame(width: 44, height: 44)
+                .appCard(in: Circle())
+        }
+        .buttonStyle(.plain)
+        .padding(AppTheme.spacing8)
+        .accessibilityLabel("Share \(page.name)")
+        .accessibilityIdentifier("cookbook.page.share")
     }
 
     private static func spokenDetails(_ page: CookbookPage) -> String {
