@@ -63,7 +63,8 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
    per item as usual, plus the batch commit.
    Merged `agent/*` branches are deleted daily by `cleanup-agent-branches.yml` — no need to delete them yourself.
 8. Tick the item, append one line to **Log** (date · item · commit · what to check on device · review: N fixed ·
-   looked at: <shots>), commit to `main`. A mistake that cost a CI cycle goes in `AGENT_LESSONS.md` (one line).
+   looked at: <shots>), commit to `main`. Move the item's WORK.md Decisions entry to the top of `docs/DECISIONS.md` in that commit.
+   A mistake that cost a CI cycle goes in `AGENT_LESSONS.md` (one line).
 
 ### Numbered series (e.g. "Import 2/5")
 Owner-approved series are worked strictly in order, one item at a time: start item N only after item N-1 is merged,
@@ -147,7 +148,8 @@ are merged into a newer item or parked — never start them; their text stays as
   statement in the touched docs; website page live. **✅ Slice 1 (587cebb):** (2) HANDBOOK front door (legacy docs listed under
   "Being retired") + (3) `docs/ARCHITECTURE.md`, linked from root CLAUDE.md Topic docs. **✅ Slice 2:** (1) + the
   archive half of (6) — ROADMAP, CORE_LOOP_AUDIT, AUDIT-2026-11-10 in `docs/archive/`, refs repointed, ROADMAP's
-  standing decisions (free, no accounts, own-iCloud not our backend) in PRODUCT.md. **Left:** (4), (5), (7), rest of (6). Reviewer
+  standing decisions (free, no accounts, own-iCloud not our backend) in PRODUCT.md. **✅ Slice 3:** rest of (6) — `docs/DECISIONS.md` (landed Decisions moved out of WORK.md; landing step 8 moves each new
+  one), CHALLENGES newest-first, PLAY.md parked banner, sheet + test-store rules. **Left:** (4), (5), (7). Reviewer
   notes for later slices: README storage line omits CloudKit/kept copies; root CLAUDE.md "every push to main runs unit
   tests" (gate job skips when already green) and "Domain = Foundation only" (4 Models files import SwiftUI);
   migration baseline comment says v6+ while tests pin v9; share inbox is drained only by the Recipes tab view.
@@ -686,6 +688,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-16 · Docs refresh slice 3 · 098a21a · New `docs/DECISIONS.md` holds every landed item's Decisions + Constraints (WORK.md now a short handoff; landing step 8 + CLAUDE.md/HANDBOOK move each entry on landing); CHALLENGES.md newest-first; PLAY.md marked parked; RecipeFinder/CLAUDE.md sheet rule = `.sheetScaffold`/`.sheetDismissButton`; RecipeFinderTests/CLAUDE.md allows in-memory/temp-folder Core Data, names the one `.shared` read. On phone: nothing — docs only · review: 1 reviewer/challenger, 4 findings, 4 fixed (test rule vs `sharedStoreLoadsImmediately`, dropped freemium decision, lost Later note, rule missing from step 8 + CHALLENGES pointer) · looked at: n/a (no UI)
 - 2026-11-16 · Docs refresh slice 1 · 587cebb · New `docs/ARCHITECTURE.md` (layers/DI seams, Core Data + lightweight migrations, iCloud sync/SyncRules/RecipePhotoSync/Reset, import, share extension, Today, bundled art, CI); HANDBOOK is the front door again; root CLAUDE.md links it. On phone: nothing — docs only · review: fact-checker + challenger, 15 + 8 findings, 14 fixed (lists point to a grep, model version not hard-coded, redirect/reset-order/share-inbox wording), rest → item's later slices · looked at: n/a (no UI)
 - 2026-11-16 · My Cookbook slice 2 · dde3797 · Me is now your cookbook plus one row: avatar, name, "Home Cook · N cooks this year" (new `CookingStreak.cooksThisYear` from the cook log) and badges earned; tap it → Profile (name/photo form, trophy shelf, chef type). "View all badges" opens Me straight on the trophy shelf. No-name avatar is a person symbol. `-seed-cookbook` also seeds the cook log so pages and line agree. On phone: Me tab → tap the row under the cookbook; earn a badge → View all badges · review: 1 reviewer + challenger, 7 fixed (View all landed with no badges — both; VoiceOver "slash"; assertion that couldn't fail; seeded counts disagreed; stale at New Year; XXXL row; "?" avatar), 4 noted in CHALLENGES; CI: 0 compile failures; Screenshots 2 red on the known View-all reveal flake (rerun green; test now closes a queued reveal) + 17-me caught a groceries badge reveal eating a tab tap (test fixed) · looked at: 17-me, 42-cookbook-one, 43-cookbook-many, 34-me-trophy-shelf, 03-groceries (Screenshots 43778784714)
 - 2026-11-15 · My Cookbook slice 1 · 53fb4b1 · Me opens on My Cookbook: one full-bleed page per dish you've cooked (your last photo, else the recipe picture; "Made 3 times · 2 Nov"; stars), newest first, next page peeks; tap a page → the recipe to cook again; nothing cooked yet → "Cook something and it lands here" + Pick something to cook (→ Today). New MyCookbook.swift, MyCookbookSection.swift, MyCookbookTests.swift registered in pbxproj by hand; DEBUG `-seed-cookbook` hook. On phone: Me tab (after cooking something), swipe pages, tap one · review: 1 reviewer + challenger, 0 compile bugs, 9 fixed (shade legibility, Dynamic Type height/headline, lines per render + midnight, peek, own flag, tie-break test, seed trap, badge sheet in shot), 4 noted in CHALLENGES; CI green first try (43759722394) · looked at: 17-me, 42-cookbook-one, 43-cookbook-many (Screenshots 43760565877)
