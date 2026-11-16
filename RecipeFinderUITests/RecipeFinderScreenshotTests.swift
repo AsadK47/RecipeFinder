@@ -657,10 +657,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
     @MainActor
     func testCaptureRecipesDiscovery() {
         let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing"]
+        app.launchArguments += ["-ui-testing", "-recipes-discover"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
-        tab(app, "Recipes", shot: nil)
+        tab(app, "Recipes", shot: "40-recipes-discovery-0")
         for screen in 1...3 {
             app.swipeUp(velocity: .slow)
             settle()

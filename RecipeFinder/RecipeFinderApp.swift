@@ -33,6 +33,11 @@ struct RecipeFinderApp: App {
             if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
                 // Deterministic, flicker-free UI so element queries don't race animations.
                 UIView.setAnimationsEnabled(false)
+                // The Recipes toggle is remembered, and UI tests share a simulator: start each run on My recipes
+                // (the list most tests tap into) unless a test asks for Discover.
+                let mode: RecipeBrowse.Mode = ProcessInfo.processInfo.arguments.contains("-recipes-discover")
+                    ? .discover : .myRecipes
+                UserDefaults.standard.set(mode.rawValue, forKey: RecipeBrowse.modeKey)
             }
             if ProcessInfo.processInfo.arguments.contains("-show-badge-reveal") {
                 BadgeManager.shared.showRevealForUITesting(.headChef)

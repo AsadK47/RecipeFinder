@@ -90,3 +90,33 @@ struct TodayShortcutCard: View {
         .accessibilityIdentifier("today.open.\(tab.rawValue)")
     }
 }
+
+/// Under tonight's pick: when it doesn't appeal, one tap opens Recipes on Discover to keep looking (owner 2026-11-16,
+/// option D — Today stays one pick; the endless feed lives on Recipes).
+struct TodayKeepBrowsingRow: View {
+    let onBrowse: () -> Void
+
+    var body: some View {
+        Button(action: onBrowse) {
+            HStack(spacing: AppTheme.spacing4) {
+                Text("Not feeling it?")
+                    .adaptiveSecondaryForeground()
+                Text("Keep browsing")
+                    .fontWeight(.semibold)
+                    .adaptiveForegroundColor()
+                Image(systemName: "arrow.right")
+                    .adaptiveForegroundColor()
+            }
+            .font(.subheadline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, AppTheme.spacing4)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Not feeling it? Keep browsing")
+        .accessibilityHint("Opens Discover in Recipes")
+        .accessibilityIdentifier("today.keepBrowsing")
+    }
+}

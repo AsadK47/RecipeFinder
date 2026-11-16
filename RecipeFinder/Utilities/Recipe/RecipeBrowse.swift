@@ -1,29 +1,48 @@
 import Foundation
 
-/// The Recipes home while browsing (nothing typed, filtered or re-sorted): a short library preview, then discovery.
-/// Pure so the browse/search switch is tested, not just eyeballed.
+/// What the Recipes home shows. A toggle at the top picks *Discover* (endless chapters) or *My recipes* (the list) and
+/// remembers the choice (tester feedback 2026-11-16); typing, filtering or re-sorting always shows results.
+/// Pure so the switch is tested, not just eyeballed.
 enum RecipeBrowse {
-    /// 300+ library cards would bury the chapters, so browsing shows a few and "See all".
-    static let previewLimit = 6
+    /// The toggle's two sides; raw values are stored, so don't rename them.
+    enum Mode: String, CaseIterable, Identifiable {
+        case discover, myRecipes
 
-    /// Searching, filtering or picking a sort shows the full results list instead.
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .discover: "Discover"
+            case .myRecipes: "My recipes"
+            }
+        }
+    }
+
+    enum Content: Equatable {
+        /// Recently cooked, then endless chapters.
+        case discover
+        /// The whole library, A–Z.
+        case library
+        /// What the search, filters or sort found.
+        case results
+    }
+
+    /// Shared with Today's "Keep browsing →", which switches Recipes to Discover before opening it.
+    static let modeKey = "recipes.mode"
+
+    /// A library this small is all on one screen already; chapters would only repeat it.
+    static let minimumDiscoverLibrary = 7
+
+    /// Searching, filtering or picking a sort means the cook is looking for something: show results.
     static func isBrowsing(_ criteria: RecipeFilterCriteria) -> Bool {
         criteria.searchText.trimmingCharacters(in: .whitespaces).isEmpty
             && criteria.activeCount == 0
             && criteria.sortOrder == .nameAZ
     }
 
-    /// The cook's own recipes and favourites first (keeping list order), then the rest — so the preview is theirs,
-    /// not the first few bundled recipes A–Z.
-    static func preview(_ recipes: [RecipeModel], limit: Int = previewLimit) -> [RecipeModel] {
-        let mine = recipes.filter { !$0.isSampleRecipe || $0.isFavorite }
-        guard mine.count < limit else { return Array(mine.prefix(limit)) }
-        let mineIDs = Set(mine.map(\.id))
-        return Array((mine + recipes.filter { !mineIDs.contains($0.id) }).prefix(limit))
-    }
-
-    /// Chapters only once the library outgrows the preview; a small library is all on screen already.
-    static func showsDiscovery(libraryCount: Int) -> Bool {
-        libraryCount > previewLimit
+    static func content(mode: Mode, criteria: RecipeFilterCriteria, libraryCount: Int) -> Content {
+        guard isBrowsing(criteria) else { return .results }
+        guard mode == .discover, libraryCount >= minimumDiscoverLibrary else { return .library }
+        return .discover
     }
 }

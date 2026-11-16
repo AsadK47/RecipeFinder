@@ -42,6 +42,8 @@ struct TodayView: View {
     @State private var showNoClipboardLink = false
     /// "Dinner at" from the Tonight card's timing line; read through `TonightTiming.eatAt(stored:)`.
     @AppStorage("today.eatAt") private var storedEatAt = TonightTiming.defaultEatAt
+    /// Recipes' Discover | My recipes toggle; "Keep browsing →" flips it to Discover before switching tab.
+    @AppStorage(RecipeBrowse.modeKey) private var recipesMode: RecipeBrowse.Mode = .myRecipes
 
     /// Morning before noon, afternoon until 6pm, evening after.
     nonisolated static func greeting(forHour hour: Int) -> String {
@@ -216,6 +218,10 @@ struct TodayView: View {
                 onOpen: { open(hero.recipe) },
                 onCook: { cook(hero.recipe) }
             )
+            TodayKeepBrowsingRow {
+                recipesMode = .discover
+                onOpen(.recipes)
+            }
         } else if !feed.isNewUser {
             TodayShortcutCard(
                 tab: .plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.",

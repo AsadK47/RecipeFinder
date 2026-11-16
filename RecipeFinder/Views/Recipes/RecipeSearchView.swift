@@ -39,7 +39,8 @@ struct RecipeSearchView: View {
     /// Endless chapters below the library while browsing; rebuilt on library/kitchen change, paged as you scroll.
     @State private var discovery = DiscoveryFeedModel()
     @State private var recentlyCooked: [RecipeModel] = []
-    @State private var browsePreview: [RecipeModel] = []
+    /// Discover | My recipes; remembered, and set to Discover by Today's "Keep browsing →".
+    @AppStorage(RecipeBrowse.modeKey) private var browseMode: RecipeBrowse.Mode = .myRecipes
     @State private var showCookingSheet = false
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
@@ -82,9 +83,7 @@ struct RecipeSearchView: View {
         self.isLoading = isLoading
         self.onAddRecipe = onAddRecipe
         // Seed from the shared store (the env default) so the first frame isn't an empty-state flash.
-        let initial = RecipeFilterCriteria().apply(to: RecipeStore.shared.recipes)
-        _cachedFilteredRecipes = State(initialValue: initial)
-        _browsePreview = State(initialValue: RecipeBrowse.preview(initial))
+        _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: RecipeStore.shared.recipes))
     }
 
     var body: some View {
@@ -265,6 +264,7 @@ struct RecipeSearchView: View {
     private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
+            modePicker
             activeFiltersSection
             recipeContentArea
         }
@@ -330,10 +330,8 @@ struct RecipeSearchView: View {
             } else {
                 RecipeResultsList(
                     filteredRecipes: current,
-                    browsing: isBrowsing
-                        ? RecipeResultsList.Browsing(
-                            recentlyCooked: recentlyCooked, preview: browsePreview, feed: discovery
-                        )
+                    discovery: content == .discover
+                        ? RecipeResultsList.Discovery(recentlyCooked: recentlyCooked, feed: discovery)
                         : nil,
                     onRequestDelete: { recipeToDelete = $0 },
                     onRefresh: refreshRecipesAsync
@@ -399,24 +397,35 @@ struct RecipeSearchView: View {
         categories = Array(Set(recipes.map { $0.category }).intersection(validCategories)).sorted()
     }
 
-    /// Nothing typed, filtered or re-sorted: the list shows Recently cooked, a library preview and discovery chapters.
-    private var isBrowsing: Bool {
-        RecipeBrowse.isBrowsing(filterCriteria)
+    private var content: RecipeBrowse.Content {
+        RecipeBrowse.content(mode: browseMode, criteria: filterCriteria, libraryCount: recipes.count)
+    }
+
+    private var modePicker: some View {
+        Picker("Show", selection: $browseMode) {
+            ForEach(RecipeBrowse.Mode.allCases) { mode in
+                Text(mode.title).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, AppTheme.cardHorizontalPadding)
+        .padding(.bottom, AppTheme.spacing8)
+        .accessibilityIdentifier("recipes.mode")
     }
 
     /// Reads the kitchen here, not in `body`, so pantry toggles in a pushed detail don't re-render this list (as
     /// `availableIngredients`); the next appear picks them up.
     private func updateDiscovery() {
         recentlyCooked = DiscoveryPool.recentlyCooked(recipes)
-        // Kept out of the first deal: the row and preview above already show these.
-        let onScreen = Set((recentlyCooked + browsePreview).map(\.id))
-        discovery.update(recipes: recipes, kitchenItemNames: kitchen.items.map(\.name), alreadyShown: onScreen)
+        // Kept out of the first deal: the Recently cooked row above already shows these.
+        discovery.update(
+            recipes: recipes, kitchenItemNames: kitchen.items.map(\.name), alreadyShown: Set(recentlyCooked.map(\.id))
+        )
     }
 
     /// Recomputes the displayed list only via `FilterCacheUpdateModifier` (debounced on criteria change, immediate on library change) + initial onAppear, so filter passes never run in `body`.
     private func updateFilterCache() {
         cachedFilteredRecipes = filterCriteria.apply(to: recipes)
-        browsePreview = RecipeBrowse.preview(cachedFilteredRecipes)
     }
     
     

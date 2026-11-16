@@ -310,19 +310,34 @@ import Foundation
         #expect(!RecipeBrowse.isBrowsing(sorted))
     }
 
-    @Test func thePreviewLeadsWithTheCooksOwnRecipesAndFavourites() {
-        var samples = library(10).map { r -> RecipeModel in var r = r; r.isSampleRecipe = true; return r }
-        samples[7].isFavorite = true
-        let own = recipe("Zebra cake")
-        let preview = RecipeBrowse.preview(samples + [own])
-        #expect(preview.count == RecipeBrowse.previewLimit)
-        #expect(preview.prefix(2).map(\.name) == [samples[7].name, "Zebra cake"])
-        #expect(preview.dropFirst(2).map(\.name) == samples.prefix(4).map(\.name))
+    @Test func discoverShowsTheFeedWhileBrowsing() {
+        #expect(RecipeBrowse.content(mode: .discover, criteria: RecipeFilterCriteria(), libraryCount: 300) == .discover)
     }
 
-    @Test func aSmallLibraryShowsNoChapters() {
-        #expect(!RecipeBrowse.showsDiscovery(libraryCount: RecipeBrowse.previewLimit))
-        #expect(RecipeBrowse.showsDiscovery(libraryCount: RecipeBrowse.previewLimit + 1))
+    @Test func myRecipesShowsTheWholeLibrary() {
+        #expect(RecipeBrowse.content(mode: .myRecipes, criteria: RecipeFilterCriteria(), libraryCount: 300) == .library)
+    }
+
+    @Test(arguments: [RecipeBrowse.Mode.discover, .myRecipes])
+    func searchingShowsResultsOnEitherSide(mode: RecipeBrowse.Mode) {
+        var typed = RecipeFilterCriteria(); typed.searchText = "soup"
+        var sorted = RecipeFilterCriteria(); sorted.sortOrder = .ratingHighLow
+        #expect(RecipeBrowse.content(mode: mode, criteria: typed, libraryCount: 300) == .results)
+        #expect(RecipeBrowse.content(mode: mode, criteria: sorted, libraryCount: 300) == .results)
+    }
+
+    @Test func aSmallLibraryShowsTheListEvenOnDiscover() {
+        let small = RecipeBrowse.minimumDiscoverLibrary - 1
+        #expect(RecipeBrowse.content(mode: .discover, criteria: RecipeFilterCriteria(), libraryCount: small) == .library)
+        #expect(RecipeBrowse.content(
+            mode: .discover, criteria: RecipeFilterCriteria(), libraryCount: RecipeBrowse.minimumDiscoverLibrary
+        ) == .discover)
+    }
+
+    /// The toggle's stored values: renaming a case would silently reset everyone's remembered choice.
+    @Test func theRememberedModeKeepsItsStoredValues() {
+        #expect(RecipeBrowse.Mode(rawValue: "discover") == .discover)
+        #expect(RecipeBrowse.Mode(rawValue: "myRecipes") == .myRecipes)
     }
 
     // MARK: Feed model
