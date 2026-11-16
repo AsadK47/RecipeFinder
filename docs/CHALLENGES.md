@@ -56,6 +56,13 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-16 (item pass: 🟡 Inbox nutrition 0 g → 0% — fixed: NaN/negative unpinned, infinity trapped in `Int(_:)`)
+- ⚔️ [Break] A trace that prints as 0 g still shows 1% RI — `NutritionLabelFormat.percent` rounds any positive value up
+  to 1% while `macro`/`salt` print 0.04 g fat as "0.0" and 0.004 g salt as "0.00" (NutritionLabelFormat.swift:20) — show
+  "<1%" (common on UK packs; challenger from memory, unchecked) or take the % from the shown amount — cost if we're
+  wrong: a label line that contradicts itself on near-zero nutrients. Not changed: it's a copy/product call, not the bug.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-16 (item pass: My Cookbook slice 3 — fixed: name on the clear end of the card's shade, landscape photos upscaled ~1.33×, "today"/"yesterday" baked into a kept picture, see-through placeholder card, system PNG instead of a 1080×1350 JPEG, dead-end render error, tautological pixel test → real render tests, CGSize in a Domain file)
 - ⚔️ [Privacy] The recipe *file* share strips rating/cook count/photos (`RecipeFileExporter.swift:10`), while the cookbook card shares exactly those; the policy never describes outbound sharing (§7.3 promises a description before "sharing" ships). The app sends nothing itself — the user picks the destination — so no text was changed (legal text = owner guardrail); question in Needs owner.
   → Owner: Accept / Reject / Later

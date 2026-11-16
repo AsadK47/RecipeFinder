@@ -16,8 +16,8 @@ import Foundation
         (0.1, 70.0, "1%"),   // a trace rounds up to 1%, never 0%…
         (0.0, 6.0, "0%"),    // …but none at all reads 0%, as on UK labels
         (-1.0, 70.0, "0%"),  // bad data never shows a negative share
-        (.nan, 70.0, "0%"),
-        (.infinity, 70.0, "0%"), // would trap in Int(_:) without the finite check
+        (Double.nan, 70.0, "0%"),
+        (Double.infinity, 70.0, "0%"), // would trap in Int(_:) without the finite check
         (12.0, 0.0, ""),     // no reference intake → blank
     ])
     func percentOfReferenceIntake(value: Double, reference: Double, expected: String) {
