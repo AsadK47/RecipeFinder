@@ -13,8 +13,8 @@ import Foundation
     @Test(arguments: [
         (1000.0, 2000.0, "50%"),
         (35.4, 70.0, "51%"),
-        (0.1, 70.0, "1%"),   // never shows 0%…
-        (0.0, 6.0, "1%"),    // …even for 0 g (existing behaviour, pinned not endorsed)
+        (0.1, 70.0, "1%"),   // a trace rounds up to 1%, never 0%…
+        (0.0, 6.0, "0%"),    // …but none at all reads 0%, as on UK labels
         (12.0, 0.0, ""),     // no reference intake → blank
     ])
     func percentOfReferenceIntake(value: Double, reference: Double, expected: String) {
@@ -76,5 +76,13 @@ import Foundation
         let rows = NutritionLabelFormat.rows(for: sample, wholeRecipe: true)
         #expect(rows.allSatisfy { $0.percent == nil })
         #expect(rows.first?.value == "500")
+    }
+
+    @Test func noSaltReadsZeroPercentOnTheLabel() {
+        let saltFree = NutritionInfo(calories: 500, fat: 35, saturates: 10, carbs: 52, sugars: 9,
+                                     fibre: 4.3, protein: 25, salt: 0, coverage: 1)
+        let rows = NutritionLabelFormat.rows(for: saltFree, wholeRecipe: false)
+        #expect(rows.last?.label == "Salt")
+        #expect(rows.last?.percent == "0%")
     }
 }
