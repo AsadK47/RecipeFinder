@@ -13,6 +13,9 @@ Measure of success: **dinners cooked per week per active cook.** Every item says
 |---|---|
 | **Recipes** | Discover — your library, plus endless "Because you loved…" chapters to browse |
 | **Today** | Decide tonight — one pick, what to do now. Short and calm; nothing to scroll forever |
+
+*Owner 2026-11-16 (option D):* Recipes has a *Discover | My recipes* toggle; Today links to Discover from under tonight's
+pick ("Not feeling it? Keep browsing →"), and the feed has "Pick one for tonight" checkpoints that set Today's pick.
 | **Plan** | Decide the week — swipe to match dinners; the week is seven photos; one minute on a Sunday |
 | **Groceries** | Get — the list writes itself from the plan; a shop mode to tick in the aisle; "at home" is inferred |
 | **Cooking mode → Me** | Cook it well (one step per screen), then remember it in **My Cookbook** |
