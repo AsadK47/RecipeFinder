@@ -35,7 +35,7 @@ extension RecipeDetailView {
 
     /// The cuisine chip under the title opens Recipes filtered to this cuisine.
     private var cuisineRequest: RecipeBrowseRequest? {
-        RecipeBrowseRequest(cuisine: recipe.cuisine?.trimmingCharacters(in: .whitespacesAndNewlines))
+        RecipeBrowseRequest(cuisine: recipe.cuisine)
     }
 
     // Ordered displayable images (main first, then post-cook photos); filtered so stale refs don't gap. Cached in galleryImageNames to avoid FileManager checks every body pass.

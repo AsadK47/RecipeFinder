@@ -766,3 +766,68 @@ struct RecipeParserDOMListHeaderTests {
         #expect(result.ingredients == ["400g tomato sauce", "1 pizza base"])
     }
 }
+
+/// Tester feedback 1: an imported cuisine is one clean name the Recipes cuisine filter can group.
+@Suite struct ImportedCuisineTests {
+
+    private func jsonLD(cuisine: String) -> String {
+        """
+        <html><head><script type="application/ld+json">
+        {"@context":"https://schema.org","@type":"Recipe","name":"Lasagne",
+         "recipeIngredient":["500 g beef mince","12 lasagne sheets"],
+         "recipeInstructions":["Brown the mince, layer with sheets and sauce, then bake for 40 minutes."],
+         "recipeCuisine":\(cuisine)}
+        </script></head><body></body></html>
+        """
+    }
+
+    private func wprm(cuisineMarkup: String) -> String {
+        """
+        <html><body><div class="wprm-recipe-container">
+          <span class="wprm-recipe-name">Lasagne</span>
+          \(cuisineMarkup)
+          <ul class="wprm-recipe-ingredients"><li class="wprm-recipe-ingredient"><span class="wprm-recipe-ingredient-amount">500</span> <span class="wprm-recipe-ingredient-unit">g</span> <span class="wprm-recipe-ingredient-name">beef mince</span></li></ul>
+          <ol class="wprm-recipe-instructions"><li class="wprm-recipe-instruction"><div class="wprm-recipe-instruction-text">Brown the mince, layer with sheets and sauce, then bake.</div></li></ol>
+        </div></body></html>
+        """
+    }
+
+    @Test(arguments: [
+        ("\"Italian\"", "Italian"),
+        ("\"Italian, Mediterranean\"", "Italian"),
+        ("\"Italian &amp; Sicilian\"", "Italian & Sicilian"),
+        ("[\"  \", \"Italian\"]", "Italian"),
+        ("\"  Italian \"", "Italian"),
+    ])
+    func jsonLDCuisineIsOneCleanName(value: String, expected: String) {
+        #expect(RecipeParser.parse(html: jsonLD(cuisine: value)).cuisine == expected)
+    }
+
+    @Test func blankJSONLDCuisineIsLeftEmpty() {
+        #expect(RecipeParser.parse(html: jsonLD(cuisine: "\"  \"")).cuisine == nil)
+    }
+
+    /// Real WPRM pages wrap the value in a container with a "Cuisine:" label; the label must not become the cuisine.
+    @Test func wprmLabelIsNotTheCuisine() {
+        let markup = """
+        <div class="wprm-recipe-block-container wprm-recipe-cuisine-container">\
+        <span class="wprm-recipe-details-label wprm-recipe-cuisine-label">Cuisine: </span>\
+        <span class="wprm-recipe-cuisine wprm-block-text-normal">Italian, Mediterranean</span></div>
+        <div class="wprm-recipe-course-container"><span class="wprm-recipe-course-label">Course: </span>\
+        <span class="wprm-recipe-course wprm-block-text-normal">Main Course</span></div>
+        """
+        let result = RecipeParser.parse(html: wprm(cuisineMarkup: markup))
+        #expect(result.cuisine == "Italian")
+        #expect(result.category == "Main Course")
+    }
+
+    @Test(arguments: ["Italian, Mediterranean", "Caf&eacute;, Bistro", " , "])
+    func cuisineNameTakesTheFirstNamedEntry(raw: String) {
+        let expected: String? = switch raw {
+        case "Italian, Mediterranean": "Italian"
+        case "Caf&eacute;, Bistro": "Café"
+        default: nil
+        }
+        #expect(RecipeParser.cuisineName(raw) == expected)
+    }
+}

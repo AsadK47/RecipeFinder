@@ -47,8 +47,8 @@ struct RecipeBrowseRequest: Equatable {
     let cuisine: String
 
     init?(cuisine: String?) {
-        guard let cuisine, !Self.normalized(cuisine).isEmpty else { return nil }
-        self.cuisine = cuisine
+        guard let trimmed = cuisine?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmed.isEmpty else { return nil }
+        self.cuisine = trimmed
     }
 
     init?(userInfo: [AnyHashable: Any]?) {
@@ -57,24 +57,12 @@ struct RecipeBrowseRequest: Equatable {
 
     var userInfo: [String: String] { [Self.cuisineKey: cuisine] }
 
-    /// Every spelling in the library that means this cuisine ("Italian", "italian ") — the filter matches exact
-    /// strings, so selecting one would hide recipes typed the other way.
-    func cuisines(in library: [RecipeModel]) -> Set<String> {
-        let key = Self.normalized(cuisine)
-        let matches = library.compactMap(\.cuisine).filter { Self.normalized($0) == key }
-        return matches.isEmpty ? [cuisine] : Set(matches)
-    }
-
     /// Filters showing every recipe of this cuisine: search and other filters cleared so none hides a match; the
     /// chosen sort stays.
-    func criteria(for library: [RecipeModel], keepingSort sortOrder: SortOrder) -> RecipeFilterCriteria {
+    func criteria(keepingSort sortOrder: SortOrder) -> RecipeFilterCriteria {
         var criteria = RecipeFilterCriteria()
-        criteria.selectedCuisines = cuisines(in: library)
+        criteria.selectedCuisines = [cuisine]
         criteria.sortOrder = sortOrder
         return criteria
-    }
-
-    private static func normalized(_ text: String) -> String {
-        text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 }

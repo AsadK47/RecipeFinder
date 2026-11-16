@@ -172,6 +172,10 @@ import Testing
         #expect(RecipeBrowseRequest(userInfo: ["recipeId": "x"]) == nil)
     }
 
+    @Test func cuisineIsTrimmed() {
+        #expect(RecipeBrowseRequest(cuisine: "  Italian \n")?.cuisine == "Italian")
+    }
+
     @Test func showsEveryRecipeOfThatCuisineWhateverTheSpelling() {
         let library = [recipe("Lasagne", cuisine: "Italian"), recipe("Risotto", cuisine: "italian "),
                        recipe("Tacos", cuisine: "Mexican"), recipe("Toast", cuisine: nil)]
@@ -179,8 +183,9 @@ import Testing
             Issue.record("Expected a request")
             return
         }
-        let shown = request.criteria(for: library, keepingSort: .nameAZ).apply(to: library).map { $0.name }
-        #expect(shown == ["Lasagne", "Risotto"])
+        let criteria = request.criteria(keepingSort: .nameAZ)
+        #expect(criteria.apply(to: library).map { $0.name } == ["Lasagne", "Risotto"])
+        #expect(criteria.activeCount == 1)
     }
 
     @Test func clearsOtherFiltersAndKeepsTheSort() {
@@ -188,10 +193,9 @@ import Testing
             Issue.record("Expected a request")
             return
         }
-        let criteria = request.criteria(for: [], keepingSort: .ratingHighLow)
+        let criteria = request.criteria(keepingSort: .ratingHighLow)
         #expect(criteria.selectedCuisines == ["Mexican"])
         #expect(criteria.sortOrder == .ratingHighLow)
-        #expect(criteria.searchText.isEmpty)
-        #expect(criteria.activeCount == 1)
+        #expect(criteria == RecipeFilterCriteria(selectedCuisines: ["Mexican"], sortOrder: .ratingHighLow))
     }
 }

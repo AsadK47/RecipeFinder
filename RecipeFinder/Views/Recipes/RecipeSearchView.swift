@@ -45,6 +45,8 @@ struct RecipeSearchView: View {
     @State private var showCookingSheet = false
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
+    /// Changed to rebuild the stack at its root (see `applyBrowseRequest`).
+    @State private var stackID = UUID()
     // Refreshed on appear so RecipeDetailView pantry toggles don't re-render this buried view and re-run apply(to:) 3x per toggle.
     @State private var availableIngredients: Set<String> = []
 
@@ -122,6 +124,7 @@ struct RecipeSearchView: View {
                     }
                 }
         }
+        .id(stackID)
         .sheet(isPresented: $showCollections) { collectionsSheet }
         .sheet(isPresented: $showCookingSheet) { CookingSheet(streak: cookingStreak.streak) }
         .onAppear {
@@ -157,9 +160,14 @@ struct RecipeSearchView: View {
     private func applyBrowseRequest() {
         guard let request = browseRequest else { return }
         browseRequest = nil
-        let criteria = request.criteria(for: recipes, keepingSort: sortOrder)
+        let criteria = request.criteria(keepingSort: sortOrder)
         isSearchFocused = false
+        showCollections = false
+        showFilters = false
+        showCookingSheet = false
+        // Rows push recipes with destination links, which aren't in `navigationPath`; a fresh stack pops them too.
         navigationPath = NavigationPath()
+        stackID = UUID()
         selectedCollectionID = nil
         searchText = criteria.searchText
         ingredientSearchText = criteria.ingredientSearchText
@@ -426,7 +434,7 @@ struct RecipeSearchView: View {
     private func updateDerivedMetadata() {
         let validCategories = Set(["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"])
         availableTags = Array(Set(recipes.flatMap { $0.tags })).sorted()
-        availableCuisines = Array(Set(recipes.compactMap { $0.cuisine })).sorted()
+        availableCuisines = RecipeFilterCriteria.distinctCuisines(in: recipes)
         categories = Array(Set(recipes.map { $0.category }).intersection(validCategories)).sorted()
     }
 

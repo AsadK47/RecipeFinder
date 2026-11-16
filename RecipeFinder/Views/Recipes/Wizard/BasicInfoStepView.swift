@@ -110,7 +110,7 @@ struct BasicInfoStepView: View {
                 .font(.headline)
                 .foregroundStyle(.primary)
 
-            Text("Tap it on the recipe to see more from the same cuisine. (Optional)")
+            Text("Shows on the recipe — tap it there to explore more from that cuisine. (Optional)")
                 .font(.caption)
                 .adaptiveSecondaryForeground()
 

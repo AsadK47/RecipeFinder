@@ -108,8 +108,9 @@ extension RecipeParser {
 
         result.instructions = instructions
 
-        if let cuisine = wprmText("wprm-recipe-cuisine[^>]*>([^<]+)<", in: html) { result.cuisine = cuisine }
-        if let course = wprmText("wprm-recipe-course[^>]*>([^<]+)<", in: html) { result.category = course }
+        // Whole class token only: WPRM also has `wprm-recipe-cuisine-label` ("Cuisine:") and `-container` elements.
+        if let cuisine = wprmText(wprmClassPattern("wprm-recipe-cuisine"), in: html) { result.cuisine = cuisineName(cuisine) }
+        if let course = wprmText(wprmClassPattern("wprm-recipe-course"), in: html) { result.category = course }
 
         if result.name != nil && !result.ingredients.isEmpty && !result.instructions.isEmpty {
             return result
@@ -127,6 +128,19 @@ extension RecipeParser {
         }
 
         return nil
+    }
+
+    /// An element whose class list holds exactly `token`, up to its first text: `…class="wprm-recipe-cuisine x">Italian<`.
+    static func wprmClassPattern(_ token: String) -> String {
+        "class=\"(?:[^\"]*\\s)?\(token)(?:\\s[^\"]*)?\"[^>]*>([^<]+)<"
+    }
+
+    /// One cuisine from a page's value: entities decoded, the first of a list ("Italian, Mediterranean" → "Italian")
+    /// so the Recipes cuisine filter groups it with other Italian recipes; nil when blank.
+    static func cuisineName(_ raw: String) -> String? {
+        let first = decodeHTMLEntities(raw).split(separator: ",").first.map(String.init) ?? ""
+        let name = first.trimmingCharacters(in: .whitespacesAndNewlines)
+        return name.isEmpty ? nil : name
     }
 
     /// Text of the first element matching `pattern` (its text in the first `>…<`), entity-decoded and trimmed — one

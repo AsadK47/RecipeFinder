@@ -306,6 +306,23 @@ struct RecipeFilterCriteriaTests {
         #expect(criteria.apply(to: [italianMain, italianDessert, mexicanMain]).map(\.name) == ["Pasta"])
     }
 
+    @Test("Cuisine filter ignores case and stray spaces")
+    func cuisineFilter_ignoresSpelling() {
+        let recipes = [makeRecipe(name: "Lasagne", cuisine: "Italian"), makeRecipe(name: "Risotto", cuisine: "italian "),
+                       makeRecipe(name: "Tacos", cuisine: "Mexican")]
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCuisines = ["ITALIAN"]
+        #expect(criteria.apply(to: recipes).map(\.name) == ["Lasagne", "Risotto"])
+    }
+
+    @Test("Filter sheet lists each cuisine once, trimmed and sorted")
+    func distinctCuisines_mergesSpellings() {
+        let recipes = [makeRecipe(name: "A", cuisine: "Mexican"), makeRecipe(name: "B", cuisine: " Italian"),
+                       makeRecipe(name: "C", cuisine: "italian"), makeRecipe(name: "D", cuisine: "  "),
+                       makeRecipe(name: "E")]
+        #expect(RecipeFilterCriteria.distinctCuisines(in: recipes) == ["Italian", "Mexican"])
+    }
+
     // MARK: - Sort order
 
     @Test("Sort nameAZ orders recipes alphabetically ascending")

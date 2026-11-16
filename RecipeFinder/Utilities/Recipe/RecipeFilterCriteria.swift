@@ -109,9 +109,10 @@ struct RecipeFilterCriteria: Hashable {
         }
 
         if !selectedCuisines.isEmpty {
+            let keys = Set(selectedCuisines.map(Self.cuisineKey))
             results = results.filter { recipe in
                 guard let cuisine = recipe.cuisine else { return false }
-                return selectedCuisines.contains(cuisine)
+                return keys.contains(Self.cuisineKey(cuisine))
             }
         }
 
@@ -146,5 +147,22 @@ struct RecipeFilterCriteria: Hashable {
         }
 
         return results
+    }
+
+    /// "Italian", "italian " and "ITALIAN" are one cuisine: typed, imported and edited spellings drift.
+    static func cuisineKey(_ cuisine: String) -> String {
+        cuisine.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    /// The filter sheet's cuisine list: one entry per cuisine (first spelling, trimmed), sorted, blanks dropped.
+    static func distinctCuisines(in recipes: [RecipeModel]) -> [String] {
+        var seen = Set<String>()
+        var names: [String] = []
+        for cuisine in recipes.compactMap({ $0.cuisine }) {
+            let key = cuisineKey(cuisine)
+            guard !key.isEmpty, seen.insert(key).inserted else { continue }
+            names.append(cuisine.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        return names.sorted()
     }
 }

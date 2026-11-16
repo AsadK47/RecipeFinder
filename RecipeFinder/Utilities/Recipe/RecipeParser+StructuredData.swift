@@ -139,9 +139,9 @@ extension RecipeParser {
         }
 
         if let cuisine = data["recipeCuisine"] as? String {
-            result.cuisine = cuisine
-        } else if let cuisineArray = data["recipeCuisine"] as? [String], let first = cuisineArray.first {
-            result.cuisine = first
+            result.cuisine = cuisineName(cuisine)
+        } else if let cuisineArray = data["recipeCuisine"] as? [String] {
+            result.cuisine = cuisineArray.lazy.compactMap(cuisineName).first
         }
 
         if let imageString = data["image"] as? String {
