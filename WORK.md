@@ -22,22 +22,13 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   `timerControl`+`startCookTimer`+`timerRowLabel` and `cookHistoryCard` from `RecipeDetailView+Content.swift` into own
   views; then ingredients/pre-prep; then `RecipeDetailView.swift` 475→≤300. Leftover branch agent/detail-split-a.
 
-- Tester feedback 1 (slice 1 cuisine): 🚧 `agent/cuisine-chip` (builder 2026-11-16) — "More <cuisine> recipes" chip
-  under the recipe title → Recipes filtered to that cuisine (`RecipeBrowseRequest` in AppTab.swift, carried on
-  `.openRecipes`, held in ContentView); cuisine field moved Notes → Details (the facts card's editor). Waiting on CI.
+- Tester feedback 1: ✅ slice 1 cuisine chip landed 3ed805c (builder 2026-11-16). Next: slice (2) Badges from Today (slice 4 toggle
+  landed via Discover lane; slice 5 is Cook lane's). Leftover branch agent/cuisine-chip (auto-cleanup).
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Tester feedback 1 — cuisine** (builder 2026-11-16): display, wizard field and import (JSON-LD `recipeCuisine`,
-  WPRM) already existed — the slice adds the tap-through and fixes the facts card editing a cuisine it didn't show.
-  Chip sits under the title, not inside the facts card (that card's tap = edit). Request held by ContentView as a
-  binding, not observed in RecipeSearchView, so it survives the Recipes tab never having been opened. Matches every
-  spelling ("Italian"/"italian ") since the filter compares exact strings. Pre-mortem: (1) tap from Today does
-  nothing (Recipes not built) → binding + onAppear apply; (2) chip pops nothing / leaves search hiding it →
-  `criteria` clears filters, UI test asserts row + active filter; (3) cuisine unreachable in editor → UI test edits
-  it via the facts card.
 - **Smell Batch A** (builder 2026-11-16): took it over the top Smell (recipe times → Int minutes) because that needs a
   new Core Data model on a synced entity, which must stack on unmerged model 18 (Recently deleted, waiting on the
   CloudKit Production deploy) → noted in Needs owner. Nutrition numbers moved to a pure enum so they're tested, not

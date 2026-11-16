@@ -56,6 +56,17 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-16 (item pass: tester feedback 1 slice 1 cuisine chip — fixed: stack pop, spellings, sheets, import parsing)
+- ⚔️ Tests — the cuisine request applied from `onAppear` (chip tapped on a recipe opened from Today or Me, Recipes
+  never opened) has no test; the UI test starts in Recipes (`RecipeFinderSheetPresentationUITests`) — add a Today-path
+  UI case when Today's shelves are stable — cost if wrong: chip switches tab but shows the unfiltered list.
+- ⚔️ Tests — the UI test saves "American" onto the first seed recipe on the simulator (no store reset under
+  `-ui-testing`), so later tests on that sim see a 5-fact card and the chip — cost: a position-based test drifts.
+- ⚔️ Simplify — the chip repeats the facts card's Cuisine and shows even when only this recipe has that cuisine; a
+  lowercase value reads "More italian recipes" — consider hiding below 2 matches / title-casing — cost: small.
+- ⚔️ Structure — `RecipeBrowseRequest` sits in `Views/Main/AppTab.swift` (no new file without Xcode) and
+  `RecipeSearchView.swift` is ~490 lines → Smell Batch D already lists it.
+
 ## 2026-11-16 (item pass: Recipes toggle + Today "Keep browsing →" — fixed: Keep browsing landed on an old detail or search results, My-recipes default rested on a moot test reason, toggle shown when it did nothing, scroll carried between sides, feed built while hidden, UI test asserted nothing)
 - ⚔️ [Copy] "Not feeling it?" frames tonight's pick slightly negatively — the owner's own wording (PRODUCT.md, option D).
   → Accepted.

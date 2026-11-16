@@ -123,8 +123,8 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Tester feedback batch 1** — 🚧 builder agent 2026-11-16 (slice 1) — (tester K., 2026-11-16; owner: "implement this"). One slice each, in this order:
-  (1) **Cuisine on the recipe** — show `cuisine` (already on `RecipeModel`) in the detail facts card and as a tappable
+- [ ] **Tester feedback batch 1** (tester K., 2026-11-16; owner: "implement this"). One slice each, in this order:
+  (1) ✅ 3ed805c **Cuisine on the recipe** — show `cuisine` (already on `RecipeModel`) in the detail facts card and as a tappable
   chip that opens Recipes filtered to that cuisine; editable in the wizard; imports fill it when the page states it.
   (2) **Badges from Today** — Today's cooking-progress card links straight to the badge shelf (Me → badges), showing the
   next badge you're closest to. (3) **Foreign recipes** — test import + parsing on non-English pages and text (FR, ES,
@@ -710,11 +710,15 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
+- 🟡 Today's "Keep browsing →" (`RecipeSearchView.showDiscover`) resets `navigationPath`, but rows push recipes with
+  destination links that aren't in the path, so an open recipe may stay on screen — reuse `stackID = UUID()` as
+  `applyBrowseRequest` does (builder 2026-11-16, found by two reviewers on the cuisine chip).
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-16 · Tester feedback 1 slice 1 (cuisine on the recipe) · ce30243..3ed805c · A "More <cuisine> recipes" chip under a recipe's title opens Recipes filtered to that cuisine (any tab; pops the open recipe, closes Collections/Filters); the cuisine field moved Notes → Details so the facts card's editor has it; the cuisine filter ignores case/spaces and the filter sheet lists each cuisine once; imports take one clean cuisine (first of "Italian, Mediterranean", entities decoded, WPRM "Cuisine:" label no longer read as the cuisine). On phone: open a recipe → tap the facts card → set Cuisine → Update → tap "More … recipes" · review: reviewer + challenger, 8 fixed (stack didn't pop destination pushes — both; spellings as separate chips — both; Collections sheet stayed up; WPRM label; entities; comma lists; hint copy; parser trim), 1 → Inbox 🟡 (Keep browsing has the same pop gap), rest → CHALLENGES · CI: Build & Test 43962616266 green after rebase; UI tests (4 shards) + Screenshots 43956662495 green pre-rebase · 1 CI cycle lost (private SuggestionChip → AGENT_LESSONS) · looked at: n/a — no screenshot covers the chip (seed recipes have no cuisine); the UI test drives it
 - 2026-11-16 · 🟡 Inbox: nutrition 0 g → 0% RI · 7a0787c..23d2025d · The Nutrition card's "% RI" reads 0% when a recipe has none of a nutrient (e.g. no salt) instead of 1%; traces still show at least 1%; NaN/infinity can't crash it. On phone: open a recipe with no salt → Nutrition → Per serving, Salt row · tests seen red first (Build & Test 43930760597: 2 new tests failed) · review: challenger, 2 fixed (NaN/negative unpinned, infinity trap), 1 → CHALLENGES (trace shows 1% next to "0.0 g") · looked at: n/a — no screenshot covers Nutrition
 - 2026-11-16 · Smell Batch A slice 1 (RecipeDetailView split) · e3ba711..9fc278a · refactor, nothing should change: Nutrition card, stars and Add to Groceries sheet look and work as before. Content 794→486 lines; new RecipeNutritionLabel/StarRatingView/ShopIngredientsSheet/NutritionLabelFormat(+Tests) registered in pbxproj by hand; top Smell (recipe times) → Needs owner (model 18 sequencing). On phone: open a recipe → Nutrition (Per serving / Whole recipe), Shop, stars · review: reviewer 0 findings + challenger 4 (label wiring untested → rows tested; comment vs 0 g→1% → Inbox 🟡; rebase; scope noted) · CI green (43910208963) · looked at: n/a — no screenshot covers Nutrition; moved views byte-identical
 - 2026-11-16 · 🟡 Inbox: View-all badge UI test flake · 2d5e8bc · test-only: the badge reveal tests wait up to 20 s (`revealTimeout`) for the reveal to close and for Me/Trophy shelf, and wait 2 s for a queued reveal before deciding there is none. The failing run (43871503359) was a cold-sim first test where single queries took 7–11 s; the reveal closed late and the later asserts passed. On phone: nothing new · review: challenger, 3 fixed (5 s Me/shelf waits, same 8 s wait in testCaptureBadgeReveal, queued-reveal race) · CI green first try (Build & Test 43887876890, Screenshots 43887894606 all green) · looked at: n/a (no UI change) · leftover branch agent/badge-viewall-wait (auto-cleanup)

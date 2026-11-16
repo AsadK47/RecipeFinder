@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-16 · Tester feedback 1 slice 1 · 3ed805c
+- For you: a recipe with a cuisine shows a "More Italian recipes" button under its name — tap it to see every Italian recipe you have. Set the cuisine with the times and category, and imported recipes bring a clean cuisine with them.
+- Behind the build: two reviewers caught that the button could leave you on the recipe and that "Italian" and "italian" counted twice; both are fixed and a UI test taps the button end to end.
+
 ## 2026-11-16 · 🟡 Inbox: nutrition 0 g → 0% RI · 23d2025d
 - For you: the Nutrition card reads 0% for anything a recipe doesn't contain, like salt in a salt-free dish, so the label matches what's on the plate.
 - Behind the build: new tests failed on the old code first, and a challenger added checks so odd numbers can never crash the label.

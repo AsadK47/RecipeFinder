@@ -5,6 +5,17 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Tester feedback 1 — cuisine** (builder 2026-11-16): display, wizard field and import (JSON-LD `recipeCuisine`,
+  WPRM) already existed — the slice adds the tap-through and fixes the facts card editing a cuisine it didn't show.
+  Chip sits under the title, not inside the facts card (that card's tap = edit). Request held by ContentView as a
+  binding, not observed in RecipeSearchView, so it survives the Recipes tab never having been opened. Matches every
+  spelling ("Italian"/"italian ") since the filter compares exact strings. Pre-mortem: (1) tap from Today does
+  nothing (Recipes not built) → binding + onAppear apply; (2) chip pops nothing / leaves search hiding it →
+  `criteria` clears filters, UI test asserts row + active filter; (3) cuisine unreachable in editor → UI test edits
+  it via the facts card.
+  Review round: `.id(stackID)` on the Recipes NavigationStack pops destination-link pushes that `navigationPath`
+  can't; cuisine filter compares trimmed+lowercased, so the request selects one name; imports keep the first of a
+  comma list (matches the array case) rather than splitting the filter.
 - **Recipes toggle + Today link** (Discover lane 2026-11-16; tester batch 1 item 4 + owner option D):
   segmented *Discover | My recipes* under the search header, remembered (`@AppStorage("recipes.mode")`); Discover =
   Recently cooked + endless chapters, My recipes = the full list; typing/filtering/sorting shows results on either
