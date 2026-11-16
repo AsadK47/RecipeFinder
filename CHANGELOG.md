@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-16 · 🟡 Inbox: Keep browsing leaves a recipe open · 877d75a
+- For you: "Keep browsing" on Today now takes you straight to Discover, even when you'd left a recipe open on Recipes.
+- Behind the build: a new UI test opens a recipe, taps Keep browsing and checks the recipe closes; it failed on the old code first.
+
 ## 2026-11-16 · Tester feedback 1 slice 1 · 3ed805c
 - For you: a recipe with a cuisine shows a "More Italian recipes" button under its name — tap it to see every Italian recipe you have. Set the cuisine with the times and category, and imported recipes bring a clean cuisine with them.
 - Behind the build: two reviewers caught that the button could leave you on the recipe and that "Italian" and "italian" counted twice; both are fixed and a UI test taps the button end to end.

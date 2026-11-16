@@ -25,9 +25,6 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Tester feedback 1: ✅ slice 1 cuisine chip landed 3ed805c (builder 2026-11-16). Next: slice (2) Badges from Today (slice 4 toggle
   landed via Discover lane; slice 5 is Cook lane's). Leftover branch agent/cuisine-chip (auto-cleanup).
 
-- Inbox 🟡 Keep browsing pop: 🚧 `agent/keep-browsing-pop` (builder 2026-11-16) — UI test aacb0cf (red run 43971833384
-  dispatched), fix c2899b1 local/unpushed until red seen: shared `returnToRoot()` (sheets + path + `stackID`).
-
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 

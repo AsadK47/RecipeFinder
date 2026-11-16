@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-16 (item pass: 🟡 Keep browsing pop — fixed: open recipe stayed on screen; 0 defects in the fix)
+- Not fixed (speculative): the `.openRecipe` deep link (`openPendingRecipeIfAvailable`) resets the path but doesn't
+  close Filters/Collections sheets or rebuild the stack — untested whether a row-pushed recipe stays underneath.
+- Not fixed (refactor, own commit): `dismissBadgeSheet` now exists in 3 UI test files → move to a shared XCTestCase
+  extension next time a UI test file is touched.
+
 ## 2026-11-16 (item pass: tester feedback 1 slice 1 cuisine chip — fixed: stack pop, spellings, sheets, import parsing)
 - ⚔️ Tests — the cuisine request applied from `onAppear` (chip tapped on a recipe opened from Today or Me, Recipes
   never opened) has no test; the UI test starts in Recipes (`RecipeFinderSheetPresentationUITests`) — add a Today-path
