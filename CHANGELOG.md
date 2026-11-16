@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-16 · 🟡 Inbox: nutrition 0 g → 0% RI · 23d2025d
+- For you: the Nutrition card reads 0% for anything a recipe doesn't contain, like salt in a salt-free dish, so the label matches what's on the plate.
+- Behind the build: new tests failed on the old code first, and a challenger added checks so odd numbers can never crash the label.
+
 ## 2026-11-16 · Smell Batch A slice 1 · 9fc278a
 - For you: recipe pages work just as before, with tidier code behind the Nutrition card so it's easier to keep improving.
 - Behind the build: every line of the nutrition label — value, unit and reference intake — is now checked by tests, and a reviewer and a challenger compared the move line by line.

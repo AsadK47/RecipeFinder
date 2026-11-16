@@ -5,6 +5,9 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Inbox 🟡 nutrition 0 g → 0%** (builder 2026-11-16): 0 g (or bad data: negative, NaN, infinity) reads "0%"; any
+  positive amount still rounds up to at least 1%. Kept the 1% floor for traces rather than "<1%": changing that is a
+  label/copy call → CHALLENGES. `isFinite` guard added because `Int(_:)` traps on infinity (challenger).
 - **Inbox 🟡 View-all badge test flake** (builder 2026-11-16): longer waits, not a changed assertion. The failing run
   was the first test on a cold simulator, where one accessibility query took 7–11 s; the reveal closed late and the
   Me/shelf asserts passed. A stuck reveal never closes, so a 20 s `revealTimeout` still catches the TestFlight bug.
