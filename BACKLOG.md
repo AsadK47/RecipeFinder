@@ -664,6 +664,9 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   for a runner, which counts in wall time. Options: (a) fewer parallel lanes during the day (free); (b) GitHub larger
   macOS runners (M2 Pro xlarge, roughly $0.16/min per GitHub's pricing page — check current; ~8 min ≈ $1.30 per push
   run, and also faster CPUs); (c) accept "≤10 min once a runner starts". Which?
+- 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
+  `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
+  ships, or fold it into model 18 now? Builder skips to Batch A meanwhile.
 - 🙋 **Cookbook notes / "who it was for"** (builder 2026-11-16): needs a per-cook record (RecipeModel 19 or a synced
   cook-log entity). Add it after Recently deleted's model 18 ships, or drop notes from My Cookbook?
 - 🙋 **Privacy §7.4 for sharing** (builder 2026-11-16, challenger): tapping Share hands a recipe or a cookbook page
