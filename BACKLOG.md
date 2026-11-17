@@ -128,7 +128,10 @@ are merged into a newer item or parked — never start them; their text stays as
   a **To buy | At home** switch at the top (same pattern as Recipes' Discover | My recipes, remembers the choice);
   At home = the Kitchen list with add/expiry; Today's kitchen shelves and "In kitchen" tags link to it. Remove the
   ⋯ entry. First step of *Groceries writes itself* (ticked → at home stays its job). *Done when:* UI test reaches At
-  home in one tap, screenshots, CI green.
+  home in one tap, screenshots, CI green. **Slice 1 built, not landed** (`agent/kitchen-at-home` e4fd606): switch,
+  At home view, routed reminders, Help/filter copy; push CI green, reviewed. Blocked on UI audit
+  `testGroceriesSearchResultsPassesAudit` (Dynamic Type on the "Apple" suggestion; passes on main) — see WORK.md.
+  Left: slice 2, Today's kitchen shelf + "In kitchen" tags open At home.
 - [ ] **Me with character** — 🚧 builder agent 2026-11-17 — (owner 2026-11-16: "profile … super bland"; unparks *Me 2/3*, kept below as spec). Today Me
   is an empty circle, a First/Last-name form and 24 grey locked badges. (1) **Hero**: photo or initials on the chef-type
   colour, name inline (tap to edit — the form moves to Settings → Profile), chef type as a title, and one stats strip:

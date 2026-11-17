@@ -30,10 +30,29 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   `MyCookbook.meLine` removed. Left: slice 2 inline name edit + form → Settings › Profile; 3 badges earned-first + Next
   up; 4 taste fingerprint + story. `agent/kitchen-at-home` belongs to another live session (left alone).
 
+- Kitchen you can find (Queue top, builder 2026-11-17): slice 1 on `agent/kitchen-at-home` (e4fd606) — Groceries
+  To buy | At home switch (`GroceriesMode`, remembered; hidden while searching), At home = `KitchenAtHomeView`, ⋯
+  Kitchen entry + sheet removed, header field adds to the side showing, reminders/badge open the side they're about.
+  Push Build & Test green, screenshots 03 + 46 looked at (fine), deep-review + challenger done (6 fixed). **Blocked:**
+  UI shard 4 fails `testGroceriesSearchResultsPassesAudit` twice (runs 44115798355, 44121344258): "Dynamic Type font
+  sizes are partially unsupported" on the first suggestion's `Text("Apple")` (frame 68,273). Same test passes on main
+  (dispatch 44125651760) and the row's code is unchanged. Keyboard looked still up in failure shots — suspect the
+  keyboard dismiss/re-render with the new `@AppStorage`/`@Environment(\.kitchen)` reads. 2 of 4 CI attempts used.
+  Left after landing: slice 2 — Today's "Fits your kitchen" shelf + "In kitchen" tags open At home.
+
 ## Next action
-When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
+Kitchen you can find: on a Mac (or with the xcresult), run `testGroceriesSearchResultsPassesAudit` on
+`agent/kitchen-at-home` and inspect why the "Apple" suggestion's font stops scaling; fix, dispatch Build & Test, land.
+Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Kitchen you can find** (branch `agent/kitchen-at-home`): an inline switch, not a sheet, using the same pattern as
+  Recipes' Discover | My recipes so cooks learn one pattern. Groceries opens on To buy, its job. The header field adds
+  to the side showing. Kitchen adds go through the pure `GroceriesMode.add`, which returns `.alreadyInKitchen` for an
+  existing name, because `toggleItem` would remove it. The switch hides while searching, like Recipes. **Pre-mortem:**
+  (1) cook can't find At home → `testGroceriesReachesAtHomeInOneTap` + shot 46; (2) a typed item lands on the wrong
+  list → `GroceriesModeTests` add cases + the UI test; (3) remembered At home breaks other UI tests → `-ui-testing`
+  resets to To buy. Rejected: `addItem` for kitchen adds — it isn't on `KitchenInventoryManaging`.
 - **Me with character (1)**: stats reuse `BadgeMetrics` (cuisine falls back to category, like the Cuisine badge) so
   the strip and badge rings never disagree — rejected a stricter cuisine-only count. "Dinners" = every cook (cookCount
   sum), all time. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the
