@@ -655,10 +655,11 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   Detail 474→286 over 4 slices (e3ba711..2ce0a78): nutrition label, star rating, shop sheet, timer, cook history, facts
   card, notes → own views; copy in tested `RecipeDetailCopy`; actions → `RecipeDetailView+Actions.swift` +
   `RecipeModel.recordingCook`.
-- [ ] **Batch B — Duplicate Code: persisted managers.** — 🚧 builder agent 2026-11-17 — `Badge/Collection/CookingStreak/KitchenInventory/MealPlanning/
-  ShoppingList` managers hand-roll load/encode/save on `LocalStore` → one shared persisted-store helper (Extract
-  Superclass → protocol + generic). Tests first: each manager's round-trip unchanged. One branch.
-- [ ] **Batch C — Duplicate Code: chip styling** copied in 9 files → `.chipStyle()` in DesignSystem; replace all. One branch.
+- [x] **Batch B — Duplicate Code: persisted managers.** — already done by Data safety 1/4: Collection, Kitchen,
+  MealPlanning, ShoppingList, Badge (and Profile) share `MirroredSnapshot`; CookingStreak keeps `LegacyBlobMigration`
+  on purpose (add-only cook dates, union on sync). Verified by builder 2026-11-17, no code change.
+- [ ] **Batch C — Duplicate Code: chip styling** — 🚧 builder agent 2026-11-17 — the 12×6 `Capsule().fill` chip is copied in 4 files
+  (FilterChip, store picker, Clear All, Data cleared) → `.chipStyle(fill)`; other capsules differ on purpose. One branch.
 - [ ] **Batch D — Large Class: big screens** `MealPlanningView` (440), `RecipeSearchView` (411), `CookingModeView`
   (391), `RecipeImportView` (360): extract subviews + move logic into tested pure functions. One branch per screen.
 - [ ] **Batch E — Large Class: `PersistenceController+RecipeWrites` (445)** → split by job (single writes / batch /
