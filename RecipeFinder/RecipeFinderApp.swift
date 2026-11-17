@@ -38,6 +38,8 @@ struct RecipeFinderApp: App {
                 let mode: RecipeBrowse.Mode = ProcessInfo.processInfo.arguments.contains("-recipes-discover")
                     ? .discover : .myRecipes
                 UserDefaults.standard.set(mode.rawValue, forKey: RecipeBrowse.modeKey)
+                // Groceries' To buy | At home is remembered too; every run starts on the shopping list.
+                UserDefaults.standard.set(GroceriesMode.toBuy.rawValue, forKey: GroceriesMode.modeKey)
             }
             if ProcessInfo.processInfo.arguments.contains("-show-badge-reveal") {
                 BadgeManager.shared.showRevealForUITesting(.headChef)

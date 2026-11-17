@@ -1,16 +1,20 @@
 import ConfettiSwiftUI
 import SwiftUI
 
-/// "Groceries" tab: focused shopping list; kitchen inventory tucked behind the header fridge button so it doesn't compete for space.
+/// "Groceries" tab: a To buy | At home switch over the shopping list and the kitchen (remembered between launches).
 struct KitchenShoppingView: View {
     @Environment(\.shopping) private var shopping
+    @Environment(\.kitchen) private var kitchen
+    @AppStorage(GroceriesMode.modeKey) private var mode: GroceriesMode = GroceriesMode.defaultMode
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
     @State private var shoppingCollapsed: Set<String> = []
     @State private var confettiTrigger = 0
     @State private var showShoppingQuickAdd = false
     @State private var showClearShopping = false
-    @State private var showKitchenSheet = false
+    @State private var showAddIngredient = false
+    @State private var showKitchenQuickAdd = false
+    @State private var showClearKitchen = false
     @State private var showManageStores = false
     @State private var assigningStore: GroceryStoreSelection?
     /// Last store filter, remembered between launches; "" means All.
@@ -47,11 +51,16 @@ struct KitchenShoppingView: View {
                     GroceriesHeader(
                         searchText: $searchText,
                         isSearchFocused: $isSearchFocused,
-                        onSubmit: addShoppingItem,
+                        placeholder: mode.searchPlaceholder,
+                        onSubmit: addTypedItem,
                         menuContent: { overflowMenu }
                     )
 
-                    if !shopping.stores.isEmpty && !showingSearchResults {
+                    modePicker
+
+                    if GroceriesMode.showsStoreFilter(
+                        mode: mode, hasStores: !shopping.stores.isEmpty, isSearching: showingSearchResults
+                    ) {
                         GroceryStoreFilterBar(
                             stores: shopping.stores,
                             selected: activeStore,
@@ -93,7 +102,12 @@ struct KitchenShoppingView: View {
             Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showShoppingQuickAdd) { ShoppingQuickAddSheet() }
-        .sheet(isPresented: $showKitchenSheet) { KitchenInventorySheet() }
+        .confirmationDialog("Clear Kitchen", isPresented: $showClearKitchen, titleVisibility: .visible) {
+            Button("Clear All Ingredients", role: .destructive) { kitchen.clearAll() }
+            Button("Cancel", role: .cancel) {}
+        }
+        .sheet(isPresented: $showAddIngredient) { AddIngredientSheet() }
+        .sheet(isPresented: $showKitchenQuickAdd) { KitchenQuickAddSheet() }
         .sheet(isPresented: $showManageStores) { GroceryStoresSheet() }
         .sheet(item: $assigningStore) { AssignStoreSheet(store: $0.name) }
     }
@@ -104,11 +118,12 @@ struct KitchenShoppingView: View {
             GrocerySearchResultsView(
                 searchText: searchText,
                 searchResults: searchResults,
-                isInShopping: { ingredient in
-                    shopping.items.contains { $0.name.lowercased() == ingredient.lowercased() }
-                },
-                onAddToShopping: addShoppingItemFromSearch,
+                listName: mode.listName,
+                isAdded: isAdded,
+                onAdd: addItemFromSearch
             )
+        } else if mode == .atHome {
+            KitchenAtHomeView(onAddIngredient: { showAddIngredient = true })
         } else if shopping.items.isEmpty {
             emptyState
         } else if let activeStore, visibleItems.isEmpty {
@@ -162,10 +177,40 @@ struct KitchenShoppingView: View {
         }
     }
 
+    private var modePicker: some View {
+        Picker("Show", selection: $mode) {
+            ForEach(GroceriesMode.allCases) { mode in
+                Text(mode.title).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, AppTheme.cardHorizontalPadding)
+        .padding(.bottom, AppTheme.spacing8)
+        .accessibilityIdentifier("groceries.mode")
+    }
+
     @ViewBuilder
     private var overflowMenu: some View {
-        Button { showKitchenSheet = true } label: { Label("Kitchen", systemImage: "refrigerator") }
-        Divider()
+        switch mode {
+        case .toBuy: shoppingMenu
+        case .atHome: kitchenMenu
+        }
+    }
+
+    @ViewBuilder
+    private var kitchenMenu: some View {
+        Button { showAddIngredient = true } label: { Label("Add Ingredient", systemImage: "plus.circle") }
+        Button { showKitchenQuickAdd = true } label: { Label("Quick Add", systemImage: "bolt") }
+        if !kitchen.items.isEmpty {
+            Divider()
+            Button(role: .destructive) { showClearKitchen = true } label: {
+                Label("Clear Kitchen", systemImage: "trash")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var shoppingMenu: some View {
         Button { showShoppingQuickAdd = true } label: { Label("Quick Add", systemImage: "plus.circle") }
         Button { showManageStores = true } label: { Label("Stores", systemImage: "storefront") }
         Button(action: shareShoppingList) { Label("Share Groceries", systemImage: "square.and.arrow.up") }
@@ -176,18 +221,36 @@ struct KitchenShoppingView: View {
         Button(role: .destructive) { showClearShopping = true } label: { Label("Clear Groceries", systemImage: "trash") }
     }
 
-    private func addShoppingItem() {
-        let trimmed = searchText.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return }
-        shopping.addItem(name: trimmed)
-        searchText = ""
-        isSearchFocused = false
-        HapticManager.shared.success()
+    private func isAdded(_ name: String) -> Bool {
+        switch mode {
+        case .toBuy: GroceriesMode.contains(name, in: shopping.items.map(\.name))
+        case .atHome: GroceriesMode.contains(name, in: kitchen.items.map(\.name))
+        }
     }
 
-    private func addShoppingItemFromSearch(_ ingredient: String) {
-        guard !shopping.items.contains(where: { $0.name.lowercased() == ingredient.lowercased() }) else { return }
-        shopping.addItem(name: ingredient)
+    /// Return in the header field: adds what was typed to the side that's showing.
+    private func addTypedItem() {
+        let trimmed = searchText.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        switch mode {
+        case .toBuy: shopping.addItem(name: trimmed)
+        case .atHome:
+            // The kitchen warns with a haptic on a duplicate; toggling an existing name would remove it.
+            if !isAdded(trimmed) { kitchen.toggleItem(trimmed, category: nil) }
+        }
+        finishAdding()
+    }
+
+    private func addItemFromSearch(_ ingredient: String) {
+        guard !isAdded(ingredient) else { return }
+        switch mode {
+        case .toBuy: shopping.addItem(name: ingredient)
+        case .atHome: kitchen.toggleItem(ingredient, category: nil)
+        }
+        finishAdding()
+    }
+
+    private func finishAdding() {
         searchText = ""
         isSearchFocused = false
         HapticManager.shared.success()
@@ -222,76 +285,6 @@ struct KitchenShoppingView: View {
             popover.permittedArrowDirections = []
         }
         topController.present(activityController, animated: true)
-    }
-}
-
-// MARK: - Kitchen sheet
-
-private struct KitchenInventorySheet: View {
-    @Environment(\.kitchen) private var manager
-    @State private var collapsed: Set<String> = []
-    @State private var showAddIngredient = false
-    @State private var showQuickAdd = false
-    @State private var showClear = false
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                VStack(spacing: 0) {
-                    ScreenTitleHeader("Kitchen") {
-                        CircleMenuButton(accessibilityLabel: "Kitchen options") {
-                            overflowMenu
-                        }
-                    }
-
-                    if manager.items.isEmpty {
-                        emptyState
-                    } else {
-                        List {
-                            KitchenSectionsView(
-                                collapsedCategories: $collapsed,
-                                onAddMore: { showAddIngredient = true }
-                            )
-                        }
-                        .listStyle(.plain)
-                        .scrollContentBackground(.hidden)
-                        .environment(\.defaultMinListHeaderHeight, 0)
-                    }
-                }
-            }
-            .toolbar(.hidden, for: .navigationBar)
-        }
-        .presentationDragIndicator(.visible)
-        .sheet(isPresented: $showAddIngredient) { AddIngredientSheet() }
-        .sheet(isPresented: $showQuickAdd) { KitchenQuickAddSheet() }
-        .confirmationDialog("Clear Kitchen", isPresented: $showClear, titleVisibility: .visible) {
-            Button("Clear All Ingredients", role: .destructive) { manager.clearAll() }
-            Button("Cancel", role: .cancel) {}
-        }
-    }
-
-    @ViewBuilder
-    private var overflowMenu: some View {
-        Button { showAddIngredient = true } label: { Label("Add Ingredient", systemImage: "plus.circle") }
-        Button { showQuickAdd = true } label: { Label("Quick Add", systemImage: "bolt") }
-        if !manager.items.isEmpty {
-            Divider()
-            Button(role: .destructive) { showClear = true } label: { Label("Clear Kitchen", systemImage: "trash") }
-        }
-    }
-
-    private var emptyState: some View {
-        ScrollView {
-            EmptyStateView(
-                icon: "refrigerator",
-                title: "Your kitchen is empty",
-                message: "Add ingredients you have at home.",
-                actionTitle: "Add Ingredient",
-                onAction: { showAddIngredient = true }
-            )
-        }
     }
 }
 
