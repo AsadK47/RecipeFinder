@@ -101,6 +101,13 @@ import Foundation
         #expect(result.alternatives.count == TodayFeed.alternativesLimit)
     }
 
+    /// Owner 2026-11-17: "Shuffle only shuffles through 4 recipes?" — it was capped at hero + 3.
+    @Test func shuffleOffersEverySuitablePickNotJustFour() {
+        let library = (1...8).map { recipe("Dish \($0)") }
+        let options = feed(library).tonightOptions
+        #expect(Set(options.map(\.recipe.id)) == Set(library.map(\.id)))
+    }
+
     @Test func shuffleStepsThroughThePicksAndWrapsRound() {
         let a = recipe("A"), b = recipe("B"), c = recipe("C", prepTime: "2 hr")
         let result = feed([a, b, c])
