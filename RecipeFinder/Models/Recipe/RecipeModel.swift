@@ -308,6 +308,16 @@ extension RecipeModel {
         return calendar.isDate(lastCookedAt, inSameDayAs: now)
     }
 
+    /// This recipe with one more cook logged at `now`; nil when one was already logged today (one cook a day, so
+    /// finishing cooking mode after Made it can't double-count).
+    func recordingCook(now: Date = Date(), calendar: Calendar = .current) -> RecipeModel? {
+        guard !wasCookedToday(now: now, calendar: calendar) else { return nil }
+        var cooked = self
+        cooked.cookCount += 1
+        cooked.lastCookedAt = now
+        return cooked
+    }
+
     /// Plain-text representation of the recipe for sharing via the system share sheet
     var shareText: String {
         var lines: [String] = []

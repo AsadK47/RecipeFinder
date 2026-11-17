@@ -16,6 +16,17 @@ enum RecipeDetailCopy {
         minutes > 0 ? (minutes / 60, minutes % 60) : nil
     }
 
+    static func addedToGroceries(name: String) -> String {
+        "\(name) added to Groceries"
+    }
+
+    static func addedToGroceries(count: Int) -> String {
+        "\(count == 1 ? "1 ingredient" : "\(count) ingredients") added to Groceries"
+    }
+
+    static let reimportUnreadable = "Couldn't read a recipe from the original text"
+    static let reimportUnchanged = "Already matches the original"
+
     static func cookCount(_ count: Int) -> String {
         count == 0 ? "Not cooked yet" : "Cooked \(count) \(count == 1 ? "time" : "times")"
     }
