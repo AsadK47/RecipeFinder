@@ -58,7 +58,9 @@ struct KitchenShoppingView: View {
                         menuContent: { overflowMenu }
                     )
 
-                    modePicker
+                    if GroceriesMode.showsModePicker(isSearching: showingSearchResults) {
+                        modePicker
+                    }
 
                     if GroceriesMode.showsStoreFilter(
                         mode: mode, hasStores: !shopping.stores.isEmpty, isSearching: showingSearchResults
