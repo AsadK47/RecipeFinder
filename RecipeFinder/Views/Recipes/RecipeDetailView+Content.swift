@@ -287,7 +287,7 @@ extension RecipeDetailView {
             onToggle: { toggleSection("Instructions") }
         ) {
             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-                timerControl
+                RecipeTimerControl(cookingTime: recipe.cookingTime, onPickTime: { showTimerSheet = true })
 
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     RecipeInstructionRow(
@@ -303,80 +303,6 @@ extension RecipeDetailView {
                 }
             }
         }
-    }
-
-    // Cooking timer co-located with the steps: Start button when idle, live pill when active.
-    @ViewBuilder
-    var timerControl: some View {
-        if recipeTimer.isActive {
-            Menu {
-                Button(action: { showTimerSheet = true }) {
-                    Label("Set New Timer", systemImage: "clock")
-                }
-                Divider()
-                Button(action: { recipeTimer.togglePause() }) {
-                    Label(recipeTimer.isPaused ? "Resume" : "Pause",
-                          systemImage: recipeTimer.isPaused ? "play.fill" : "pause.fill")
-                }
-                Button(role: .destructive, action: { recipeTimer.stop() }) {
-                    Label("Stop", systemImage: "stop.fill")
-                }
-            } label: {
-                timerRowLabel(
-                    icon: recipeTimer.isPaused ? "play.fill" : "pause.fill",
-                    text: recipeTimer.displayTime,
-                    monospaced: true
-                )
-            }
-            .accessibilityLabel("Recipe timer, \(recipeTimer.displayTime)")
-            .accessibilityHint("Open timer actions")
-        } else {
-            Button(action: startCookTimer) {
-                timerRowLabel(
-                    icon: "timer",
-                    text: cookTimerMinutes > 0 ? "Start \(cookTimerMinutes)-min timer" : "Start a timer",
-                    monospaced: false
-                )
-            }
-            .buttonStyle(.plain)
-            .accessibilityHint(cookTimerMinutes > 0
-                ? "Starts a \(cookTimerMinutes) minute timer"
-                : "Start a cooking timer")
-        }
-    }
-
-    // Minutes from the recipe's cook time; 0 when unparseable.
-    private var cookTimerMinutes: Int {
-        TimeExtractor.extractMinutes(from: recipe.cookingTime)
-    }
-
-    // One-tap start from the recipe's cook time; falls back to the picker sheet when there's none.
-    private func startCookTimer() {
-        let minutes = cookTimerMinutes
-        guard minutes > 0 else {
-            showTimerSheet = true
-            return
-        }
-        HapticManager.shared.light()
-        recipeTimer.start(hours: minutes / 60, minutes: minutes % 60, seconds: 0)
-    }
-
-    private func timerRowLabel(icon: String, text: String, monospaced: Bool) -> some View {
-        HStack(spacing: AppTheme.spacing8) {
-            Image(systemName: icon)
-                .font(.subheadline)
-            Text(text)
-                .font(monospaced ? .system(.subheadline, design: .monospaced).weight(.semibold) : .subheadline.weight(.medium))
-            Spacer(minLength: 0)
-        }
-        .adaptiveForegroundColor()
-        .padding(.horizontal, AppTheme.spacing12)
-        .padding(.vertical, AppTheme.spacing10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                .fill(AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(AppTheme.overlayLightOpacity)))
-        )
     }
 
     var notesSection: some View {
@@ -428,45 +354,8 @@ extension RecipeDetailView {
     }
 
     var cookHistoryCard: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            // Rating only appears once the recipe has actually been cooked — you rate what you've made,
-            // not a recipe you've never tried. Logging a cook is the "Made it" button in the action row.
-            if recipe.cookCount > 0 {
-                HStack {
-                    Label("Rating", systemImage: "star")
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
-                    Spacer()
-                    StarRatingView(rating: recipe.rating, onTap: updateRating)
-                        .accessibilityIdentifier("recipe.rating")
-                }
-
-                Divider()
-            }
-
-            HStack(alignment: .firstTextBaseline) {
-                Label(
-                    recipe.cookCount == 0
-                        ? "Not cooked yet"
-                        : "Cooked \(recipe.cookCount) \(recipe.cookCount == 1 ? "time" : "times")",
-                    systemImage: "frying.pan"
-                )
-                .font(.caption)
-                .adaptiveSecondaryForeground()
-
-                if let lastCooked = recipe.lastCookedAt {
-                    Spacer()
-                    // Named relative ("2 minutes ago"); `style: .relative` read like a duration ("44 secs").
-                    Text(lastCooked.formatted(.relative(presentation: .named)))
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
-                }
-            }
-
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .appCard(elevated: true)
+        RecipeCookHistoryCard(cookCount: recipe.cookCount, lastCookedAt: recipe.lastCookedAt,
+                              rating: recipe.rating, onRate: updateRating)
     }
 
     /// The recipe's main actions in one row under the title, so nothing important is a scroll away:

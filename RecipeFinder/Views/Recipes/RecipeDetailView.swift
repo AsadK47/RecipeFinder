@@ -36,7 +36,6 @@ struct RecipeDetailView: View {
     @State private var pendingDelete: RecipeModel?
     // Nutrition card: false = per-serving, true = whole-recipe totals.
     @State var nutritionShowsWholeRecipe = false
-    @Environment(\.recipeTimer) var recipeTimer
     @Environment(\.recipeStore) var recipeStore
     @Environment(\.cookingStreak) var cookingStreak
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
