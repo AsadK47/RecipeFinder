@@ -452,6 +452,26 @@ final class RecipeModelTests: XCTestCase {
     func cookedYesterday() {
         #expect(!recipe(lastCookedAt: now.addingTimeInterval(-86_400)).wasCookedToday(now: now, calendar: calendar))
     }
+
+    // Detail split slice 4: recordCook's count/date update moved out of RecipeDetailView.
+    @Test("Recording a cook bumps the count and stamps the time")
+    func recordingCookCountsAndStamps() {
+        var cooked = recipe(lastCookedAt: now.addingTimeInterval(-86_400))
+        cooked.cookCount = 2
+        let recorded = cooked.recordingCook(now: now, calendar: calendar)
+        #expect(recorded?.cookCount == 3)
+        #expect(recorded?.lastCookedAt == now)
+    }
+
+    @Test("A second cook the same day isn't recorded")
+    func recordingCookTwiceInADayIsIgnored() {
+        #expect(recipe(lastCookedAt: now.addingTimeInterval(-60)).recordingCook(now: now, calendar: calendar) == nil)
+    }
+
+    @Test("A first-ever cook is recorded as cook 1")
+    func recordingFirstCook() {
+        #expect(recipe(lastCookedAt: nil).recordingCook(now: now, calendar: calendar)?.cookCount == 1)
+    }
 }
 
 @Suite("RecipeModel display & source rules")

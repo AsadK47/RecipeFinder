@@ -78,4 +78,21 @@ import Testing
     func factIconsUnchanged(kind: RecipeFactKind, icon: String) {
         #expect(kind.icon == icon)
     }
+
+    // Slice 4: grocery and re-import toasts moved out of RecipeDetailView into its +Actions extension.
+
+    @Test func oneIngredientAddedToast() {
+        #expect(RecipeDetailCopy.addedToGroceries(name: "flour") == "flour added to Groceries")
+    }
+
+    @Test(arguments: [(1, "1 ingredient added to Groceries"), (2, "2 ingredients added to Groceries"),
+                      (12, "12 ingredients added to Groceries")])
+    func batchAddedToast(count: Int, expected: String) {
+        #expect(RecipeDetailCopy.addedToGroceries(count: count) == expected)
+    }
+
+    @Test func reimportToastsUnchanged() {
+        #expect(RecipeDetailCopy.reimportUnreadable == "Couldn't read a recipe from the original text")
+        #expect(RecipeDetailCopy.reimportUnchanged == "Already matches the original")
+    }
 }
