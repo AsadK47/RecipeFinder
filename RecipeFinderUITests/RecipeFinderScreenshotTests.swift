@@ -517,6 +517,40 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "33-today-cooking-sheet")
     }
 
+    /// Tester feedback: Today's next-badge row opens Me's trophy shelf with that badge's card up (not the Cooking sheet).
+    @MainActor
+    func testTodayBadgeRowOpensItsBadgeOnTheShelf() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        let row = app.buttons["today.progress.badges"]
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Today should show the next-badge row.")
+        let tabBarTop = app.tabBars.firstMatch.frame.minY
+        let window = app.windows.firstMatch
+        for _ in 0..<12 where row.frame.maxY > tabBarTop - 16 {
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+        }
+        // A fresh install has cooked nothing, so a badge is always left to earn.
+        XCTAssertTrue(row.label.contains(" more "), "The row should say what's left: \(row.label)")
+        checkpoint(app, "today badge row")
+        row.tap()
+
+        let progress = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH 'badge.pager.progress.'"))
+            .firstMatch
+        XCTAssertTrue(progress.waitForExistence(timeout: 8), "The badge's card should open on the shelf.")
+        XCTAssertTrue(app.tabBars.buttons["Me"].isSelected, "The row should switch to Me.")
+        XCTAssertFalse(app.staticTexts["Cooking badges"].exists, "The row shouldn't open the Cooking sheet.")
+        settle()
+        snap(app, "45-today-badge-on-shelf")
+
+        app.buttons["badge.pager.close"].tap()
+        XCTAssertTrue(app.staticTexts["Trophy shelf"].waitForExistence(timeout: 5),
+                      "Closing the card should leave the trophy shelf on screen.")
+    }
+
     /// Badges 1/2: Me's trophy shelf, a locked badge in the full-screen pager (progress + earn-here button), a swipe
     /// to the next card, and the earn-here button switching tab.
     @MainActor

@@ -88,6 +88,38 @@ import Foundation
         #expect(progress([recipe("Soup", cookCount: 2)], unlocked: all).nextBadge == nil)
     }
 
+    // MARK: Link to the trophy shelf (tester feedback: badges from Today)
+
+    @Test func theBadgeRowOpensTheNextBadgesCardOnTheShelf() {
+        let result = progress([recipe("Soup", sample: true)])
+        #expect(result.badgeShelfRequest == TrophyShelfRequest(badgeID: BadgeType.headChef.rawValue))
+    }
+
+    @Test func theBadgeRowFollowsTheClosestBadgeNotTheFirst() {
+        let soup = recipe("Soup", cookCount: 4, lastCooked: date(10))
+        let result = progress([soup], streak: CookingStreak(currentWeeks: 1, cooksThisWeek: 1), unlocked: [.headChef])
+        #expect(result.badgeShelfRequest.badgeID == BadgeType.sameRecipeFive.rawValue)
+    }
+
+    @Test func everyCookingBadgeEarnedOpensTheShelfItself() {
+        let result = progress([recipe("Soup", cookCount: 2)], unlocked: Set(BadgeType.allCases))
+        #expect(result.badgeShelfRequest == TrophyShelfRequest(badgeID: nil))
+        #expect(result.badgeRowText == "Every cooking badge earned")
+    }
+
+    @Test func theBadgeRowSaysWhatToDoWhileABadgeIsLeft() {
+        let result = progress([recipe("Soup", sample: true)])
+        #expect(result.badgeRowText == "1 more cook to Head Chef")
+    }
+
+    @Test func theBadgeRowReadsProgressAsWordsForVoiceOver() {
+        let soup = recipe("Soup", cookCount: 4, lastCooked: date(10))
+        let result = progress([soup], streak: CookingStreak(currentWeeks: 1, cooksThisWeek: 1), unlocked: [.headChef])
+        #expect(result.badgeRowSpokenText == "1 more cook of one dish to Signature Dish, 4 of 5")
+        let done = progress([recipe("Soup", cookCount: 2)], unlocked: Set(BadgeType.allCases))
+        #expect(done.badgeRowSpokenText == "Every cooking badge earned")
+    }
+
     @Test(arguments: [
         (BadgeType.streakFourWeeks, 2, 4, "2 more weeks to Hot Streak"),
         (BadgeType.cuisinesFive, 4, 5, "1 more cuisine to Globetrotter"),
