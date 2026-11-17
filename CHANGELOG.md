@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Smell Batch A slice 2 · 0a1dfc9
+- For you: recipe pages work just as before — the cooking timer and your cook history now have their own tidy code, so the timer updates smoothly without redrawing the whole page.
+- Behind the build: tests pin every word on the timer button and cook-history card, and a reviewer and a challenger compared the move line by line; the challenger added tests for how a one-tap timer splits hours and minutes.
+
 ## 2026-11-16 · 🟡 Inbox: Keep browsing leaves a recipe open · 877d75a
 - For you: "Keep browsing" on Today now takes you straight to Discover, even when you'd left a recipe open on Recipes.
 - Behind the build: a new UI test opens a recipe, taps Keep browsing and checks the recipe closes; it failed on the old code first.

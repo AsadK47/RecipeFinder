@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-17 (item pass: Smell Batch A slice 2 — fixed: one-tap timer start untested, pass-through test of TimeExtractor)
+- Not fixed (speculative, no `.xcstrings` yet): `RecipeCookHistoryCard` builds its Label from a `String`
+  (`RecipeDetailCopy.cookCount`), not a `LocalizedStringKey` literal — revisit when localisation lands.
+
 ## 2026-11-16 (item pass: 🟡 Keep browsing pop — fixed: open recipe stayed on screen; 0 defects in the fix)
 - Not fixed (speculative): the `.openRecipe` deep link (`openPendingRecipeIfAvailable`) resets the path but doesn't
   close Filters/Collections sheets or rebuild the stack — untested whether a row-pushed recipe stays underneath.

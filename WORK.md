@@ -18,9 +18,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
-- Smells: 🚧 **Batch A** (builder 2026-11-17) slice 1 landed 9fc278a (Content 794→486). Slice 2 on
-  `agent/detail-split-b`: `timerControl` → `RecipeTimerControl`, `cookHistoryCard` → `RecipeCookHistoryCard`, copy in
-  tested `RecipeDetailCopy`. Then ingredients/pre-prep; then `RecipeDetailView.swift` 475→≤300.
+- Smells: 🚧 **Batch A** slice 2 landed 0a1dfc9 (Content 486→389). Next slice: ingredients/pre-prep/steps sections
+  into own views (Content ≤300), then `RecipeDetailView.swift` →≤300. Leftover branch agent/detail-split-b.
 
 - Tester feedback 1: ✅ slice 1 cuisine chip landed 3ed805c (builder 2026-11-16). Next: slice (2) Badges from Today (slice 4 toggle
   landed via Discover lane; slice 5 is Cook lane's). Leftover branch agent/cuisine-chip (auto-cleanup).
