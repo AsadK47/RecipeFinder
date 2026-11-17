@@ -18,9 +18,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
-- Smells: 🚧 **Batch A** slice 3 landed 2f6ade8 (Content 389→295 ✅). Next slice: `RecipeDetailView.swift` (474) →≤300
-  (state/actions — extract shopping-list + cook-recording actions into a tested helper). Leftover branches
-  agent/detail-split-b, agent/detail-split-c.
+- Smells: 🚧 **Batch A** slice 4 on `agent/detail-split-d` (builder 2026-11-17): actions → `RecipeDetailView+Actions.swift`,
+  `RecipeModel.recordingCook`, grocery/re-import toasts in `RecipeDetailCopy` (Detail 474→286). Waiting on Build & Test +
+  2 reviewers; then ff main, tick Batch A. Leftover branches agent/detail-split-b, -c.
 
 - Tester feedback 1: ✅ slice 1 cuisine chip landed 3ed805c (builder 2026-11-16). Next: slice (2) Badges from Today (slice 4 toggle
   landed via Discover lane; slice 5 is Cook lane's). Leftover branch agent/cuisine-chip (auto-cleanup).
@@ -29,6 +29,11 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Smell Batch A slice 4** (builder 2026-11-17): one `+Actions` extension (191 lines) rather than a helper object —
+  the actions mutate `@State`/`@Environment`, so a separate type would need bindings for ~10 members; the testable
+  parts (one-cook-a-day rule, toast copy) went pure instead. Some `private` members became internal (file split).
+  Pre-mortem: (1) a cook double-counts / stops counting → `recordingCook` tests; (2) toast text drifts →
+  `RecipeDetailCopyTests`; (3) new file not compiled → CI build + pbxproj mirror of RecipeDetailView.swift.
 - **Smell Batch A** (builder 2026-11-16): took it over the top Smell (recipe times → Int minutes) because that needs a
   new Core Data model on a synced entity, which must stack on unmerged model 18 (Recently deleted, waiting on the
   CloudKit Production deploy) → noted in Needs owner. Nutrition numbers moved to a pure enum so they're tested, not
