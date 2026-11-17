@@ -47,10 +47,15 @@ enum IngredientLineParser {
         // 4d. Japanese puts the amount after the spoon/cup: "醤油 大さじ2" → "2 大さじ 醤油"; "1と1/2" is 1½.
         if working.contains("さじ") || working.contains("カップ") {
             working = working.replacingOccurrences(of: #"(\d+)と(\d+/\d+)"#, with: "$1 $2", options: .regularExpression)
+            working = working.replacingOccurrences(of: #"(\d+)\s*[〜~]\s*(\d+)"#, with: "$1-$2", options: .regularExpression)
             working = working.replacingOccurrences(
-                of: #"^(.+?)\s*(大さじ|小さじ|カップ)\s*(\d+(?:\.\d+)?(?:\s+\d+/\d+)?|\d+/\d+)$"#,
+                of: #"^(.+?)\s*(大さじ|小さじ|カップ)\s*(\d+(?:\.\d+)?(?:-\d+)?(?:\s+\d+/\d+)?|\d+/\d+)$"#,
                 with: "$3 $2 $1", options: .regularExpression)
         }
+
+        // 4e. German spoon abbreviations are capitals ("2 EL Olivenöl"); matched case-sensitively so "1 El Paso kit" stays.
+        working = working.replacingOccurrences(of: #"^([\d./]+)\s+EL(?=\s)"#, with: "$1 Esslöffel", options: .regularExpression)
+        working = working.replacingOccurrences(of: #"^([\d./]+)\s+TL(?=\s)"#, with: "$1 Teelöffel", options: .regularExpression)
 
         // 5. Split a leading number glued to letters: "200g" → "200 g".
         working = working.replacingOccurrences(of: #"^([0-9][0-9/.]*)([a-zA-Z])"#, with: "$1 $2", options: .regularExpression)
@@ -86,8 +91,9 @@ enum IngredientLineParser {
 
         // 8. Name = remainder (keep commas/prep notes); drop a leading "of" ("de", "di", "d'" in FR/ES/IT/PT).
         var name = afterUnit.trimmingCharacters(in: .whitespaces)
-        name = name.replacingOccurrences(of: #"^(?:of|de|di)\s+|^d['’]\s*"#, with: "",
-                                         options: [.regularExpression, .caseInsensitive])
+        name = name.replacingOccurrences(of: #"^of\s+"#, with: "", options: [.regularExpression, .caseInsensitive])
+        // Lower-case only, so brands keep their words: "De Cecco spaghetti", "d'Anjou pears".
+        name = name.replacingOccurrences(of: #"^(?:de|di)\s+(?=\p{Ll})|^d['’](?=\p{Ll})"#, with: "", options: .regularExpression)
         name = name.trimmingCharacters(in: .whitespaces)
 
         // Name-first fallback: lines like "Minced chicken 500g", "Butter: 60g", "Sugar 3tsp" have no

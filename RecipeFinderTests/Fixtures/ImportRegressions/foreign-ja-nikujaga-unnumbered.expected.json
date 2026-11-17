@@ -1,0 +1,12 @@
+{
+  "name": "肉じゃが",
+  "minIngredients": 4,
+  "maxIngredients": 4,
+  "minSteps": 3,
+  "maxSteps": 3,
+  "amountsPresent": true,
+  "amounts": [
+    {"name": "にんじん", "quantity": 1, "unit": "piece"},
+    {"name": "醤油", "quantity": 3, "unit": "tbsp"}
+  ]
+}

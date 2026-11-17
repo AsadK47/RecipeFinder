@@ -1,0 +1,14 @@
+{
+  "name": "tortilla de patatas",
+  "minIngredients": 6,
+  "maxIngredients": 6,
+  "minSteps": 5,
+  "maxSteps": 5,
+  "amountsPresent": true,
+  "servings": 4,
+  "amounts": [
+    {"name": "patatas", "quantity": 500, "unit": "g"},
+    {"name": "pimiento", "quantity": 4, "unit": ""},
+    {"name": "sal", "quantity": 1, "unit": "pinch"}
+  ]
+}

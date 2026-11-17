@@ -17,13 +17,12 @@ enum TextRecipeParser {
 
         let servings = RecipeParser.plausibleServings(
             firstIntMatch(#"(?:serves|servings?|yield|"# + servingsLabels + #")\s*:?\s*(\d+)"#, in: source)
-                ?? firstIntMatch(#"(\d+)\s*(?:"# + servingsCountWords + ")", in: source))
+                ?? firstIntMatch(#"(?<!\d)(\d{1,3})\s*(?:"# + servingsCountWords + ")", in: source))
         // "time" optional so "Prep 20 minutes" resolves; extractMinutes handles hours so "2 hours" → 120, not 2.
-        // Other languages' labels stay on the same line ([ \t]) — "Zubereitung" is also the method header above "1. …".
         let prepTime = extractMinutes(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: source)
-            ?? extractMinutes(#"(?:"# + foreignPrepLabels + #")[ \t]*:?[ \t]*(\d+)"#, in: source)
+            ?? foreignMinutes(after: foreignPrepLabels, in: source)
         let cookTime = extractMinutes(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: source)
-            ?? extractMinutes(#"(?:"# + foreignCookLabels + #")[ \t]*:?[ \t]*(\d+)"#, in: source)
+            ?? foreignMinutes(after: foreignCookLabels, in: source)
 
         var ingredients: [String]
         var instructions: [String]
@@ -70,9 +69,9 @@ enum TextRecipeParser {
 
     /// "Portionen: 4", "Rendimento: 4" — the label comes first.
     private static let servingsLabels = "portionen|porciones|porzioni|porções|raciones|rendimiento|rendimento"
-    /// "Pour 6 personnes", "Para 4 personas", "2人分", "لـ ٤ أشخاص" — the count comes first.
-    private static let servingsCountWords =
-        "personnes|personen|personas|persone|pessoas|porciones|porzioni|porções|raciones|portionen|人分|人前|أشخاص|اشخاص"
+    /// "Pour 6 personnes", "Para 4 personas", "2人分", "لـ ٤ أشخاص" — the count comes first. People, not portions:
+    /// "4 porciones de salmón" is an ingredient.
+    private static let servingsCountWords = "personnes|personen|personas|persone|pessoas|人分|人前|أشخاص|اشخاص"
     private static let foreignPrepLabels = "préparation|preparación|preparazione|zubereitungszeit|zubereitung|arbeitszeit|preparo"
     private static let foreignCookLabels = "cuisson|cocción|cottura|kochzeit|backzeit|garzeit|cozimento"
 
@@ -306,9 +305,10 @@ enum TextRecipeParser {
             #"^\d+$"#,                                                   // lone number ("2" under SERVES)
             #"^(time|serves|servings?)$"#,                               // lone label
             #"^(serves|servings?|yield)\b"#,                             // "Serves 2", "Yield: 4"
-            #"^\D{0,12}\d+\s*("# + servingsCountWords + ")",                   // "Pour 6 personnes", "2人分"
-            "^(\(foreignPrepLabels)|\(foreignCookLabels)|tempo|tiempo|temps)\\b.*\\b"   // "Cuisson : 35 min"
-                + "(\(RecipeParser.minutesUnitPattern)|\(RecipeParser.hoursUnitPattern))\\b",
+            // "Pour 6 personnes" (a label, so no sentence end — "Servir pour 4 personnes." is a step)
+            #"^[^\d.!?]{0,12}\d+\s*("# + servingsCountWords + #")[\s)]*$"#,
+            // "Cuisson : 35 min", "Tempo de preparo: 15" — a number straight after the label, not "Cuisson : enfournez…"
+            "^(\(foreignPrepLabels)|\(foreignCookLabels)|tempo|tiempo|temps)(\\s+de\\s+\\p{L}+)?\\s*:?\\s*\\d",
             #"^(prep(?:aration)?|cook(?:ing)?|total)\b.*\b"# + "(\(RecipeParser.minutesUnitPattern)|\(RecipeParser.hoursUnitPattern))" + #"\b"#  // "Prep 20 minutes"
         ]
         return patterns.contains {
@@ -342,6 +342,16 @@ enum TextRecipeParser {
         // Scripts without capitals (Japanese, Arabic) start a new sentence with any letter.
         let startsSentence = line.first.map { $0.isUppercase || ($0.isLetter && !$0.isLowercase) } ?? false
         return prevEndsSentence && startsSentence
+    }
+
+    /// Minutes after another language's label on the same line ([ \t]: "Zubereitung" is also the method header above
+    /// "1. …"). The span stops at the hours/minutes numbers so "Cuisson : 1h15" → 75 and "1 h 15" → 75.
+    private static func foreignMinutes(after labels: String, in text: String) -> Int? {
+        let pattern = "(?:" + labels + #")[ \t]*:?[ \t]*(\d{1,4}[ \t]*(?:h(?:eures?|oras?)?)?[ \t]*\d{0,2})"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+              let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..., in: text)),
+              let range = Range(match.range(at: 1), in: text) else { return nil }
+        return TimeExtractor.extractMinutes(from: String(text[range]))
     }
 
     /// Time in minutes after a label (pattern must capture the number in group 1): the regex only finds the duration's span

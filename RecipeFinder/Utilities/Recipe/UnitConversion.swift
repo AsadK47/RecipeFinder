@@ -48,6 +48,7 @@ struct UnitConversion {
         // Other languages, to the same canonical tokens (tester feedback 2026-11-16: imports from FR/ES/IT/DE/PT/JA/AR).
         "cuillère à soupe": "tbsp", "cuillères à soupe": "tbsp", "c. à soupe": "tbsp", "c. à s.": "tbsp", "càs": "tbsp",
         "cuillère à café": "tsp", "cuillères à café": "tsp", "c. à café": "tsp", "c. à c.": "tsp", "càc": "tsp",
+        "c.à.s.": "tbsp", "c.à.c.": "tsp",
         "pincée": "pinch", "pincées": "pinch", "gousse": "clove", "gousses": "clove", "tranche": "slice",
         "tranches": "slice", "boîte": "can", "boîtes": "can", "botte": "bunch", "brin": "sprig", "brins": "sprig",
         "cucharada": "tbsp", "cucharadas": "tbsp", "cucharadita": "tsp", "cucharaditas": "tsp", "taza": "cup",
@@ -57,13 +58,13 @@ struct UnitConversion {
         "cucchiaio": "tbsp", "cucchiai": "tbsp", "cucchiaino": "tsp", "cucchiaini": "tsp", "tazza": "cup",
         "tazze": "cup", "grammi": "g", "litri": "l", "spicchio": "clove", "spicchi": "clove", "pizzico": "pinch",
         "fetta": "slice", "fette": "slice",
-        "el": "tbsp", "esslöffel": "tbsp", "eßlöffel": "tbsp", "tl": "tsp", "teelöffel": "tsp", "prise": "pinch",
+        "esslöffel": "tbsp", "eßlöffel": "tbsp", "teelöffel": "tsp", "prise": "pinch",
         "prisen": "pinch", "zehe": "clove", "zehen": "clove", "dose": "can", "dosen": "can", "bund": "bunch",
         "scheibe": "slice", "scheiben": "slice",
         "colher de sopa": "tbsp", "colheres de sopa": "tbsp", "colher de chá": "tsp", "colheres de chá": "tsp",
         "xícara": "cup", "xícaras": "cup", "chávena": "cup", "chávenas": "cup", "dente": "clove", "dentes": "clove",
         "pitada": "pinch",
-        "大さじ": "tbsp", "小さじ": "tsp", "カップ": "cup", "個": "piece",
+        "大さじ": "tbsp", "小さじ": "tsp", "カップ": "cup", "個": "piece", "枚": "piece", "本": "piece",
         "ملعقة كبيرة": "tbsp", "ملعقة صغيرة": "tsp", "كوب": "cup", "غرام": "g", "جرام": "g", "كيلو": "kg",
         "لتر": "l", "مل": "ml", "فص": "clove", "فصوص": "clove", "رشة": "pinch"
     ]

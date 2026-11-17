@@ -5,13 +5,31 @@
   "minSteps": 5,
   "maxSteps": 5,
   "amountsPresent": true,
-  "forbidden": ["personnes", "Cuisson"],
+  "forbidden": [
+    "personnes",
+    "Cuisson"
+  ],
   "servings": 6,
   "prepTime": 20,
-  "cookTime": 35,
+  "cookTime": 65,
   "amounts": [
-    {"name": "lardons", "quantity": 200, "unit": "g"},
-    {"name": "crème fraîche", "quantity": 25, "unit": "cl"},
-    {"name": "noix de muscade", "quantity": 1, "unit": "pinch"}
+    {
+      "name": "lardons",
+      "quantity": 200,
+      "unit": "g"
+    },
+    {
+      "name": "crème fraîche",
+      "quantity": 25,
+      "unit": "cl"
+    },
+    {
+      "name": "noix de muscade",
+      "quantity": 1,
+      "unit": "pinch"
+    }
+  ],
+  "sections": [
+    "Pour la garniture"
   ]
 }

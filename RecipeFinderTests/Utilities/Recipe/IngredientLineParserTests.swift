@@ -69,6 +69,8 @@ import Foundation
             ("醤油 大さじ2", 2.0, "tbsp", "醤油"),
             ("砂糖 小さじ1と1/2", 1.5, "tsp", "砂糖"),
             ("卵 2個", 2.0, "piece", "卵"),
+            ("鶏もも肉 1枚", 1.0, "piece", "鶏もも肉"),
+            ("醤油 大さじ1〜2", 2.0, "tbsp", "醤油"),                      // range → upper bound
             ("豚肉 ２００ｇ", 200.0, "g", "豚肉"),                       // full-width digits and unit
             ("٢ ملعقة كبيرة زيت زيتون", 2.0, "tbsp", "زيت زيتون"),       // Arabic-Indic digits
             ("١٫٥ كوب أرز", 1.5, "cup", "أرز"),                           // Arabic decimal separator
@@ -83,7 +85,9 @@ import Foundation
     }
 
     @Test("English names that start like a foreign unit or article keep their words",
-          arguments: [("2 elotes", "elotes"), ("1 dill sprig", "dill sprig"), ("3 dentex fillets", "dentex fillets")])
+          arguments: [("2 elotes", "elotes"), ("1 dill sprig", "dill sprig"), ("3 dentex fillets", "dentex fillets"),
+                      ("500 g De Cecco spaghetti", "De Cecco spaghetti"), ("2 d'Anjou pears", "d'Anjou pears"),
+                      ("1 El Paso taco kit", "El Paso taco kit"), ("2 ملح", "ملح")])
     func englishNamesUntouched(input: String, name: String) {
         #expect(IngredientLineParser.parse(input).name == name)
     }
