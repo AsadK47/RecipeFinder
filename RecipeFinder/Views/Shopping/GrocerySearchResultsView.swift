@@ -1,11 +1,14 @@
 import SwiftUI
 
-/// Groceries search suggestions: an "add free text" row plus catalog matches; "Add" appends to the list and dismisses search.
+/// Groceries search suggestions: an "add free text" row plus catalog matches; "Add" appends to the side showing
+/// (groceries or kitchen) and dismisses search.
 struct GrocerySearchResultsView: View {
     let searchText: String
     let searchResults: [String]
-    let isInShopping: (String) -> Bool
-    let onAddToShopping: (String) -> Void
+    /// "groceries" or "kitchen", spoken in the add buttons' labels.
+    let listName: String
+    let isAdded: (String) -> Bool
+    let onAdd: (String) -> Void
 
     var body: some View {
         ScrollView {
@@ -37,7 +40,7 @@ struct GrocerySearchResultsView: View {
     }
 
     private func ingredientRow(name: String, isFreeText: Bool) -> some View {
-        let inList = isInShopping(name)
+        let inList = isAdded(name)
         let category = isFreeText ? nil : CategoryClassifier.suggestCategory(for: name)
         return HStack(spacing: AppTheme.spacing12) {
             HStack(alignment: .top, spacing: AppTheme.spacing12) {
@@ -61,7 +64,7 @@ struct GrocerySearchResultsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Button(action: { onAddToShopping(name) }) {
+            Button(action: { onAdd(name) }) {
                 Group {
                     if inList {
                         Image(systemName: "checkmark.circle.fill")
@@ -82,7 +85,7 @@ struct GrocerySearchResultsView: View {
             }
             .buttonStyle(.plain)
             .disabled(inList)
-            .accessibilityLabel(inList ? "Already in groceries" : "Add to groceries")
+            .accessibilityLabel(inList ? "Already in \(listName)" : "Add to \(listName)")
         }
         .padding(.horizontal, AppTheme.spacing16)
         .padding(.vertical, AppTheme.spacing10)
