@@ -47,4 +47,36 @@ struct GroceriesModeTests {
     func knowsWhatIsAlreadyOnTheList(name: String, names: [String], expected: Bool) {
         #expect(GroceriesMode.contains(name, in: names) == expected)
     }
+
+    // MARK: Adding from the header field
+
+    @Test func toBuyAddsToTheShoppingList() {
+        #expect(GroceriesMode.toBuy.add("  Milk ", kitchenNames: ["Milk"]) == .shopping("Milk"))
+    }
+
+    @Test func atHomeAddsToTheKitchen() {
+        #expect(GroceriesMode.atHome.add(" Saffron ", kitchenNames: ["Eggs"]) == .kitchen("Saffron"))
+    }
+
+    /// The kitchen add toggles: re-adding a name it already holds must keep that item, not remove it.
+    @Test func atHomeKeepsAnItemAlreadyInTheKitchen() {
+        #expect(GroceriesMode.atHome.add("eggs", kitchenNames: ["Eggs"]) == .alreadyInKitchen)
+    }
+
+    @Test(arguments: GroceriesMode.allCases)
+    func blankAddsNothing(mode: GroceriesMode) {
+        #expect(mode.add("   ", kitchenNames: []) == .nothing)
+    }
+
+    // MARK: Arriving from elsewhere
+
+    /// The expiry reminder is about the kitchen; the groceries reminder and the shopping badge are about the list.
+    @Test(arguments: [
+        ("expiry", GroceriesMode.atHome),
+        ("groceries-reminder", .toBuy),
+        (nil, .toBuy)
+    ] as [(String?, GroceriesMode)])
+    func opensTheSideTheReminderIsAbout(type: String?, side: GroceriesMode) {
+        #expect(GroceriesMode.side(openedBy: type) == side)
+    }
 }

@@ -121,8 +121,17 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
         tapWhenReady(field, "The header field should be there on At home.")
         field.typeText("Saffron threads\n")
         checkpoint(app, "after adding to the kitchen")
-        let added = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Saffron threads")).firstMatch
-        XCTAssertTrue(added.waitForExistence(timeout: 5), "Return on At home should add the item to the kitchen.")
+        // The suggestions echo what was typed ("Add \"Saffron threads\""); they close only once the add went through.
+        XCTAssertTrue(app.staticTexts["Suggested Ingredients"].waitForNonExistence(timeout: 5),
+                      "Return on At home should add the item and close the suggestions.")
+        let added = app.staticTexts["Saffron threads"]
+        XCTAssertTrue(added.waitForExistence(timeout: 5), "The new item should be listed in the kitchen.")
+
+        // Leave the shared simulator's kitchen as it was (later screenshots and Today shelves read it).
+        added.swipeLeft()
+        let delete = app.buttons["Delete"]
+        if delete.waitForExistence(timeout: 2) { delete.tap() }
+        checkpoint(app, "after removing the test item")
 
         tapWhenReady(app.buttons["To buy"], "The switch should lead back to the shopping list.")
         XCTAssertTrue(element(app, id: "groceries.atHome").waitForNonExistence(timeout: 5),
