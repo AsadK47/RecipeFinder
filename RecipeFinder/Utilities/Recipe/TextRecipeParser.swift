@@ -4,19 +4,26 @@ import Foundation
 enum TextRecipeParser {
 
     static func parse(_ text: String) -> RecipeWizardView.PrefilledRecipeData? {
-        let cleaned = text
+        let source = RecipeTextCleanup.normalizingDigits(text)
+        let cleaned = source
             .components(separatedBy: .newlines)
             .map { RecipeTextCleanup.normalizingKeycapNumber($0.trimmingCharacters(in: .whitespaces)) }
+            .map(RecipeTextCleanup.normalizingCircledNumber)
             .filter { !$0.isEmpty && !RecipeTextCleanup.isBoilerplate($0) }
         let (lines, trailingNotes) = RecipeTextCleanup.separatingTrailingSections(cleaned)
         var noteLines = trailingNotes
 
         guard lines.count >= 3 else { return nil }
 
-        let servings = RecipeParser.plausibleServings(firstIntMatch(#"(?:serves|servings?|yield)\s*:?\s*(\d+)"#, in: text))
+        let servings = RecipeParser.plausibleServings(
+            firstIntMatch(#"(?:serves|servings?|yield|"# + servingsLabels + #")\s*:?\s*(\d+)"#, in: source)
+                ?? firstIntMatch(#"(\d+)\s*(?:"# + servingsCountWords + ")", in: source))
         // "time" optional so "Prep 20 minutes" resolves; extractMinutes handles hours so "2 hours" → 120, not 2.
-        let prepTime = extractMinutes(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
-        let cookTime = extractMinutes(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
+        // Other languages' labels stay on the same line ([ \t]) — "Zubereitung" is also the method header above "1. …".
+        let prepTime = extractMinutes(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: source)
+            ?? extractMinutes(#"(?:"# + foreignPrepLabels + #")[ \t]*:?[ \t]*(\d+)"#, in: source)
+        let cookTime = extractMinutes(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: source)
+            ?? extractMinutes(#"(?:"# + foreignCookLabels + #")[ \t]*:?[ \t]*(\d+)"#, in: source)
 
         var ingredients: [String]
         var instructions: [String]
@@ -59,6 +66,16 @@ enum TextRecipeParser {
         )
     }
 
+    // MARK: - Other languages
+
+    /// "Portionen: 4", "Rendimento: 4" — the label comes first.
+    private static let servingsLabels = "portionen|porciones|porzioni|porções|raciones|rendimiento|rendimento"
+    /// "Pour 6 personnes", "Para 4 personas", "2人分", "لـ ٤ أشخاص" — the count comes first.
+    private static let servingsCountWords =
+        "personnes|personen|personas|persone|pessoas|porciones|porzioni|porções|raciones|portionen|人分|人前|أشخاص|اشخاص"
+    private static let foreignPrepLabels = "préparation|preparación|preparazione|zubereitungszeit|zubereitung|arbeitszeit|preparo"
+    private static let foreignCookLabels = "cuisson|cocción|cottura|kochzeit|backzeit|garzeit|cozimento"
+
     // MARK: - Title
 
     private static func title(from lines: [String]) -> String? {
@@ -76,8 +93,9 @@ enum TextRecipeParser {
         // OCR may split a wrapped ALL-CAPS title across two lines; merge line 2 when both are short, all-caps, digit-free.
         if candidates.count >= 2 {
             let raw2 = candidates[1].trimmingCharacters(in: .whitespaces)
-            let isAllCaps1 = cleaned == cleaned.uppercased() && cleaned.contains(where: { $0.isLetter })
-            let isAllCaps2 = raw2 == raw2.uppercased() && raw2.contains(where: { $0.isLetter })
+            // `isUppercase`, not `isLetter`: Japanese/Arabic have no case, so every line would look "all caps".
+            let isAllCaps1 = cleaned == cleaned.uppercased() && cleaned.contains(where: { $0.isUppercase })
+            let isAllCaps2 = raw2 == raw2.uppercased() && raw2.contains(where: { $0.isUppercase })
             let noDigits2 = !raw2.contains(where: { $0.isNumber })
             let combined = cleaned + " " + raw2
             if isAllCaps1 && isAllCaps2 && noDigits2 && raw2.count <= 25 && combined.count <= 70
@@ -166,8 +184,11 @@ enum TextRecipeParser {
 
     /// Cookbook group headers outside the fixed vocabulary: "FOR THE CHICKEN", "To make the glaze:".
     private static func isIngredientGroupHeader(_ line: String) -> Bool {
-        line.split(separator: " ").count <= 6
-            && line.range(of: #"^(for|to make) the [^\d:.]{2,30}:?$"#, options: [.regularExpression, .caseInsensitive]) != nil
+        guard line.split(separator: " ").count <= 6 else { return false }
+        return line.range(of: #"^(for|to make) the [^\d:.]{2,30}:?$"#, options: [.regularExpression, .caseInsensitive]) != nil
+            // "Pour la pâte :", "Für den Teig:", "Para la salsa:", "Per il ripieno:"
+            || line.range(of: #"^(pour (la|le|les)|für (den|die|das)|para (el|la|los|las|o|a)|per (il|la|lo|le|i)) [^\d:.,]{2,30}\s*:?$"#,
+                          options: [.regularExpression, .caseInsensitive]) != nil
     }
 
     /// A line that can only be a method step: a numbered step that isn't an amount, or a full sentence with no amount.
@@ -281,10 +302,13 @@ enum TextRecipeParser {
     /// Non-ingredient sidebar/metadata lines OCR/captions mix in (servings, times, lone labels/numbers) so they never become "ingredients".
     private static func isMetadataLine(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
-        let patterns = [
+        let patterns: [String] = [
             #"^\d+$"#,                                                   // lone number ("2" under SERVES)
             #"^(time|serves|servings?)$"#,                               // lone label
             #"^(serves|servings?|yield)\b"#,                             // "Serves 2", "Yield: 4"
+            #"^\D{0,12}\d+\s*("# + servingsCountWords + ")",                   // "Pour 6 personnes", "2人分"
+            "^(\(foreignPrepLabels)|\(foreignCookLabels)|tempo|tiempo|temps)\\b.*\\b"   // "Cuisson : 35 min"
+                + "(\(RecipeParser.minutesUnitPattern)|\(RecipeParser.hoursUnitPattern))\\b",
             #"^(prep(?:aration)?|cook(?:ing)?|total)\b.*\b"# + "(\(RecipeParser.minutesUnitPattern)|\(RecipeParser.hoursUnitPattern))" + #"\b"#  // "Prep 20 minutes"
         ]
         return patterns.contains {
@@ -314,8 +338,10 @@ enum TextRecipeParser {
 
     private static func beginsNewStep(_ line: String, afterLine previous: String) -> Bool {
         if looksLikeNumberedStep(line) || startsWithBullet(line) { return true }
-        let prevEndsSentence = ".!?".contains(previous.last ?? " ")
-        return prevEndsSentence && (line.first?.isUppercase ?? false)
+        let prevEndsSentence = ".!?。！？؟".contains(previous.last ?? " ")
+        // Scripts without capitals (Japanese, Arabic) start a new sentence with any letter.
+        let startsSentence = line.first.map { $0.isUppercase || ($0.isLetter && !$0.isLowercase) } ?? false
+        return prevEndsSentence && startsSentence
     }
 
     /// Time in minutes after a label (pattern must capture the number in group 1): the regex only finds the duration's span

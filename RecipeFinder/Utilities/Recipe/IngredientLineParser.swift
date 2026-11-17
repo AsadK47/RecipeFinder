@@ -17,7 +17,8 @@ enum IngredientLineParser {
 
     static func parse(_ line: String) -> Parsed {
         // 0. Strip a leading marker/checkbox glyph + whitespace so "▢100 g flour" parses as 100 g, not a bare name.
-        var stripped = Substring(line)
+        // Arabic-Indic / full-width digits as ASCII first, so every rule below sees "2", not "٢" or "２".
+        var stripped = Substring(RecipeTextCleanup.normalizingDigits(line))
         while let first = stripped.unicodeScalars.first,
               CharacterSet.whitespaces.contains(first) || leadingMarkers.contains(first) {
             stripped = stripped.dropFirst()
@@ -42,6 +43,14 @@ enum IngredientLineParser {
 
         // 4c. US hyphenated mixed number "1-1/2 teaspoons" is 1½, not the range 1 to ½.
         working = working.replacingOccurrences(of: #"^(\d{1,2})-(\d+/\d+)(?=\s|$)"#, with: "$1 $2", options: .regularExpression)
+
+        // 4d. Japanese puts the amount after the spoon/cup: "醤油 大さじ2" → "2 大さじ 醤油"; "1と1/2" is 1½.
+        if working.contains("さじ") || working.contains("カップ") {
+            working = working.replacingOccurrences(of: #"(\d+)と(\d+/\d+)"#, with: "$1 $2", options: .regularExpression)
+            working = working.replacingOccurrences(
+                of: #"^(.+?)\s*(大さじ|小さじ|カップ)\s*(\d+(?:\.\d+)?(?:\s+\d+/\d+)?|\d+/\d+)$"#,
+                with: "$3 $2 $1", options: .regularExpression)
+        }
 
         // 5. Split a leading number glued to letters: "200g" → "200 g".
         working = working.replacingOccurrences(of: #"^([0-9][0-9/.]*)([a-zA-Z])"#, with: "$1 $2", options: .regularExpression)
@@ -75,9 +84,10 @@ enum IngredientLineParser {
         let afterUnit = unit.isEmpty ? unitRemainder : unitRemainder.replacingOccurrences(
             of: alternateMeasurePattern, with: "", options: [.regularExpression, .caseInsensitive])
 
-        // 8. Name = remainder (keep commas/prep notes); drop a leading "of".
+        // 8. Name = remainder (keep commas/prep notes); drop a leading "of" ("de", "di", "d'" in FR/ES/IT/PT).
         var name = afterUnit.trimmingCharacters(in: .whitespaces)
-        name = name.replacingOccurrences(of: #"^of\s+"#, with: "", options: [.regularExpression, .caseInsensitive])
+        name = name.replacingOccurrences(of: #"^(?:of|de|di)\s+|^d['’]\s*"#, with: "",
+                                         options: [.regularExpression, .caseInsensitive])
         name = name.trimmingCharacters(in: .whitespaces)
 
         // Name-first fallback: lines like "Minced chicken 500g", "Butter: 60g", "Sugar 3tsp" have no
@@ -137,7 +147,8 @@ enum IngredientLineParser {
             .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }
             .map { NSRegularExpression.escapedPattern(for: $0) }
             .joined(separator: "|")
-        return #"(\d+(?:\.\d+)?(?:\s+\d+/\d+)?|\d*/\d+)\s*("# + alternatives + #")(?![A-Za-z])"#
+        // `\p{L}`, not A–Z: "2 ملح" must not read the "مل" (ml) at the start of a longer word as a unit.
+        return #"(\d+(?:\.\d+)?(?:\s+\d+/\d+)?|\d*/\d+)\s*("# + alternatives + #")(?!\p{L})"#
     }()
 
     // MARK: - Quantity

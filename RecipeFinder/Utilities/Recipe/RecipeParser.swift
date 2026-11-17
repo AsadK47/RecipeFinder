@@ -112,7 +112,10 @@ struct RecipeParser {
     static let ingredientSectionHeaderWords = [
         "ingredients", "you will need", "you'll need", "what you need", "what you'll need",
         // Alternative terms used on international and content-creator recipe sites
-        "material", "materials"
+        "material", "materials",
+        // Other languages (tester feedback 2026-11-16); digits and brackets drop out, so "材料（2人分）" is "材料 人分".
+        "ingrédients", "ingredientes", "ingredienti", "zutaten", "材料", "材料 人分", "材料 人前", "المكونات", "المقادير",
+        "ingrédients pour personnes", "zutaten für personen", "ingredientes para personas", "ingredienti per persone"
     ]
     static let ingredientSubsectionHeaderWords = [
         "garnish", "for the garnish", "to serve", "to garnish",
@@ -131,7 +134,10 @@ struct RecipeParser {
         "steps to make it", "how to make it", "cooking instructions", "recipe instructions",
         "to cook", "to prepare", "to make", "make it",
         "cooking order",      // used on some Chinese/Korean recipe sites
-        "method of preparation"
+        "method of preparation",
+        "préparation", "étapes", "zubereitung", "anleitung", "preparación", "elaboración", "instrucciones", "pasos",
+        "modo de preparación", "preparazione", "procedimento", "modo de preparo", "modo de fazer", "preparo",
+        "作り方", "手順", "طريقة التحضير", "طريقة العمل", "الطريقة"
     ]
 
     /// Whole-line match after reducing to letters/spaces, so "INGREDIENTS 👇"/"Method:" match but a longer phrase like "Ingredients you'll need for the base" doesn't.
@@ -235,8 +241,8 @@ struct RecipeParser {
     /// Regex fragments for duration unit words, so every time pattern accepts the same spellings (TimeExtractor only checks the
     /// "h" prefix). Single letters are deliberately left out: a site that wants "2h"/"45m" appends `|h` / `|m` behind a `\b`,
     /// otherwise a bare "m" would start matching "medium".
-    static let hoursUnitPattern = "(?:hours?|hrs?)"
-    static let minutesUnitPattern = "(?:minutes?|mins?)"
+    static let hoursUnitPattern = "(?:hours?|hrs?|heures?|horas?)"
+    static let minutesUnitPattern = "(?:minutes?|mins?|minutos?|minuti|minuten)"
 
     /// Drops one leading list marker and the whitespace after it; lines without one are returned unchanged.
     static func droppingLeadingListMarker(_ line: String) -> String {

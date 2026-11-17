@@ -41,6 +41,37 @@ enum RecipeTextCleanup {
         line.replacingOccurrences(of: #"^(\d{1,2})\x{FE0F}?\x{20E3}\s*"#, with: "$1. ", options: .regularExpression)
     }
 
+    /// "① 玉ねぎを切る" → "1. 玉ねぎを切る": circled step numbers (Japanese/Chinese recipes) read as numbered steps.
+    static func normalizingCircledNumber(_ line: String) -> String {
+        guard let first = line.unicodeScalars.first, (0x2460...0x2473).contains(first.value) else { return line }
+        let rest = line.dropFirst().trimmingCharacters(in: .whitespaces)
+        return "\(first.value - 0x2460 + 1). " + rest
+    }
+
+    /// Arabic-Indic, Persian and full-width digits (plus full-width ASCII such as "ｇ", "／", "（" and the ideographic
+    /// space) as plain ASCII, so amounts, step numbers and servings parse whatever script the recipe is written in.
+    static func normalizingDigits(_ text: String) -> String {
+        guard text.unicodeScalars.contains(where: { asciiEquivalent(of: $0) != nil }) else { return text }
+        var scalars = String.UnicodeScalarView()
+        for scalar in text.unicodeScalars {
+            scalars.append(asciiEquivalent(of: scalar) ?? scalar)
+        }
+        return String(scalars)
+    }
+
+    private static func asciiEquivalent(of scalar: Unicode.Scalar) -> Unicode.Scalar? {
+        if scalar.isASCII { return nil }
+        switch scalar.value {
+        case 0xFF01...0xFF5E: return Unicode.Scalar(scalar.value - 0xFEE0)  // full-width ASCII forms
+        case 0x3000: return " "                                             // ideographic space
+        case 0x066B: return "."                                             // Arabic decimal separator "١٫٥"
+        default: break
+        }
+        guard scalar.properties.numericType == .decimal, let value = scalar.properties.numericValue,
+              (0...9).contains(value) else { return nil }
+        return Unicode.Scalar(UInt32(48 + Int(value)))
+    }
+
     /// The section a header line opens ("Notes", "Recipe Variations", "How to Store Burgers", "Nutrition Facts"), else nil.
     static func trailingSection(startedBy line: String) -> TrailingSection? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
