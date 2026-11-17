@@ -94,12 +94,7 @@ struct ActiveFiltersBar: View {
                         .font(.caption)
                         .fontWeight(.semibold)
                         .adaptiveForegroundColor()
-                        .padding(.horizontal, AppTheme.spacing12)
-                        .padding(.vertical, AppTheme.spacing6)
-                        .background(
-                            Capsule()
-                                .fill(Color.red.opacity(AppTheme.highEmphasisOpacity))
-                        )
+                        .chipStyle(Color.red.opacity(AppTheme.highEmphasisOpacity))
                 })
             }
             .padding(.horizontal, AppTheme.spacing20)

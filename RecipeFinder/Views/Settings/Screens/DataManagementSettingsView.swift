@@ -99,9 +99,7 @@ struct DataManagementSettingsView: View {
                         .font(.caption.weight(.semibold))
                 }
                 .foregroundStyle(.white)
-                .padding(.horizontal, AppTheme.spacing12)
-                .padding(.vertical, AppTheme.spacing6)
-                .background(Capsule().fill(.green))
+                .chipStyle(Color.green)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }

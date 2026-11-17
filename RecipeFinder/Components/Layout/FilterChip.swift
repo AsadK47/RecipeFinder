@@ -19,11 +19,6 @@ struct FilterChip: View {
             })
         }
         .foregroundStyle(AppTheme.adaptiveEmphasis())
-        .padding(.horizontal, AppTheme.spacing12)
-        .padding(.vertical, AppTheme.spacing6)
-        .background(
-            Capsule()
-                .fill(AppTheme.adaptiveFilterChip)
-        )
+        .chipStyle(AppTheme.adaptiveFilterChip)
     }
 }

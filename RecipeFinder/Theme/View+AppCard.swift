@@ -11,6 +11,14 @@ extension View {
     func appCard<S: Shape>(in shape: S, elevated: Bool = false) -> some View {
         modifier(AppCardModifier(shape: shape, elevated: elevated))
     }
+
+    /// The small capsule chip (filter tags, store picker, status badges): 12×6 padding on a filled capsule.
+    /// Larger pills and buttons size themselves on purpose — this is only for chips.
+    func chipStyle<S: ShapeStyle>(_ fill: S) -> some View {
+        padding(.horizontal, AppTheme.spacing12)
+            .padding(.vertical, AppTheme.spacing6)
+            .background(Capsule().fill(fill))
+    }
 }
 
 private struct AppCardModifier<S: Shape>: ViewModifier {
