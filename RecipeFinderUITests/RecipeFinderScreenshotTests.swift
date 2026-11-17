@@ -517,6 +517,36 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "33-today-cooking-sheet")
     }
 
+    /// Owner 2026-11-17: a badge card should close with a swipe down, not only the ✕.
+    @MainActor
+    func testBadgeCardClosesWithASwipeDown() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        let row = app.buttons["today.progress.badges"]
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Today should show the next-badge row.")
+        let tabBarTop = app.tabBars.firstMatch.frame.minY
+        let window = app.windows.firstMatch
+        for _ in 0..<12 where row.frame.maxY > tabBarTop - 16 {
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+        }
+        checkpoint(app, "today badge row")
+        row.tap()
+        let position = app.staticTexts["badge.pager.position"]
+        XCTAssertTrue(position.waitForExistence(timeout: 8), "The badge card should open.")
+        settle(1)
+
+        checkpoint(app, "badge card open")
+        window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+            .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: position)
+        waitForExpectations(timeout: 5)
+        XCTAssertTrue(app.staticTexts["Trophy shelf"].waitForExistence(timeout: 5), "Me should be back after the swipe.")
+    }
+
     /// Tester feedback: Today's next-badge row opens Me's trophy shelf with that badge's card up (not the Cooking sheet).
     @MainActor
     func testTodayBadgeRowOpensItsBadgeOnTheShelf() {
