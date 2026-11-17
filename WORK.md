@@ -29,16 +29,14 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   inline (tap to edit) + the First/Last form → Settings › Profile, then (3) badges earned-first + Next up, (4) taste
   fingerprint + story. Leftover branch agent/me-hero (auto-cleanup).
 
-- Kitchen you can find (Queue top, builder 2026-11-17): slice 1 now on `agent/kitchen-at-home-2` (rebased on main,
-  7749861; old `agent/kitchen-at-home` superseded — force-push refused). Audit failure: xcresult shows the keyboard
-  *was* down and the flagged element is the first suggestion row's "Apple" text; the test is first in shard 4 on
-  main too, so not ordering. Attempt 3: ContentView no longer observes `groceries.mode` with `@AppStorage`
-  (`GroceriesMode.rememberSide` writes it) — hypothesis: a root that observes UserDefaults re-renders every tab when the
-  audit changes text size. Left after landing: slice 2 — Today's "Fits your kitchen" shelf + "In kitchen" tags open At home.
+- Kitchen you can find (Queue top, builder 2026-11-17): ✅ slice 1 landed 6f924c9 (To buy | At home switch). Audit
+  block fixed by dropping ContentView's `@AppStorage` (AGENT_LESSONS 22). Next: slice 2 — Today's "Fits your
+  kitchen" shelf + "In kitchen" tags open Groceries on At home (use `GroceriesMode.rememberSide`/`.openGroceries`
+  with the expiry-style routing); then tick. Leftover branches agent/kitchen-at-home (superseded), -2 (auto-cleanup).
 
 ## Next action
-Kitchen you can find: on a Mac (or with the xcresult), run `testGroceriesSearchResultsPassesAudit` on
-`agent/kitchen-at-home` and inspect why the "Apple" suggestion's font stops scaling; fix, dispatch Build & Test, land.
+Kitchen you can find slice 2 on a new `agent/kitchen-today-links` branch: Today's kitchen shelf + "In kitchen"
+tags open Groceries on At home; UI test + screenshot; two reviewers (last slice); then tick.
 Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
@@ -48,7 +46,8 @@ Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff m
   existing name, because `toggleItem` would remove it. The switch hides while searching, like Recipes. **Pre-mortem:**
   (1) cook can't find At home → `testGroceriesReachesAtHomeInOneTap` + shot 46; (2) a typed item lands on the wrong
   list → `GroceriesModeTests` add cases + the UI test; (3) remembered At home breaks other UI tests → `-ui-testing`
-  resets to To buy. Rejected: `addItem` for kitchen adds — it isn't on `KitchenInventoryManaging`.
+  resets to To buy. Rejected: `addItem` for kitchen adds — it isn't on `KitchenInventoryManaging`. Reminder routing
+  writes defaults via `GroceriesMode.rememberSide` instead of a root `@AppStorage` (failed the a11y audit twice).
 - **Me with character (1)**: stats reuse `BadgeMetrics` (cuisine falls back to category, like the Cuisine badge) so
   the strip and badge rings never disagree — cuisine-only count → Needs owner (both places or neither). Label "meals",
   not the spec's "dinners": the count is every cook (cookCount sum, all time). Strip shows if any stat > 0. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the

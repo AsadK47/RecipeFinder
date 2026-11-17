@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Kitchen you can find slice 1 · 6f924c9
+- For you: Groceries now has a To buy | At home switch at the top, so your kitchen is one tap away — add what you have at home right from the same field, and an expiry reminder opens straight to it.
+- Behind the build: a reviewer and a challenger checked that adding an item already in your kitchen keeps it, and an accessibility audit caught the whole app redrawing on a settings change, fixed before it shipped.
+
 ## 2026-11-17 · Me with character slice 1 · 57fae8c
 - For you: Me now opens with your own hero card — your photo or initials on your chef type's colour, your name, and how many meals you've cooked, your week streak and the cuisines you've tried.
 - Behind the build: the numbers come from the same counts as your badges so they always agree, and a reviewer and a challenger reshaped it — "meals" rather than "dinners", since every cook counts.
