@@ -109,13 +109,15 @@ struct ProfileView: View {
                 ImagePicker(image: $profileImage)
             }
         }
-        .fullScreenCover(item: $pagerStart, onDismiss: openPendingEarn) { start in
+        // A sheet, not a full-screen cover, so the card closes with a swipe down as well as the ✕ (owner 2026-11-17).
+        .sheet(item: $pagerStart, onDismiss: openPendingEarn) { start in
             BadgePagerView(
                 badges: BadgeShelf.pagerOrder(shelf),
                 startID: start.badgeID,
                 metrics: badgeMetrics,
                 onEarn: { pendingEarn = $0 }
             )
+            .presentationDragIndicator(.visible)
         }
         .animation(.appSpring, value: editingName)
         .animation(.appSpring, value: showSuccessFeedback)
