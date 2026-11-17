@@ -21,9 +21,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Smells: ✅ **Batch A** done (2ce0a78, builder 2026-11-17). Next Smell: Batch B (persisted managers) — top Smell (times →
   Int minutes) waits on Needs owner. Leftover branches agent/detail-split-b/-c/-d (auto-cleanup).
 
-- Tester feedback 1: ✅ slices 1 (3ed805c), 2 Badges from Today (7f8e5b1, builder 2026-11-17), 4. 🚧 slice (3)
-  foreign recipes on `agent/foreign-recipes` (builder 2026-11-17): 7 fixtures `foreign-*` + 22 IngredientLineParser
-  cases; CI pending. Slice 5 is Cook lane's. Leftover branches agent/cuisine-chip,
+- Tester feedback 1: ✅ slices 1 (3ed805c), 2 Badges from Today (7f8e5b1, builder 2026-11-17), 4. ✅ 3 foreign recipes
+  (d7bf8f7, builder 2026-11-17). Left: slice 5 (Cook lane's). Leftover branch agent/foreign-recipes (auto-cleanup). Leftover branches agent/cuisine-chip,
   agent/today-badges-link (auto-cleanup).
 
 
@@ -31,16 +30,6 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Foreign recipes (Tester feedback 3)**: heuristic text path + ingredient-line parser only (JSON-LD pages are
-  language-neutral; their ingredient lines go through the same `IngredientLineParser`). Foreign units map to the
-  existing canonical tokens in `unitSynonyms` (no new unit kinds). Foreign prep/cook labels match on the same line
-  only (`[ \t]`) because "Zubereitung"/"Preparación" is also the method header above "1. …". Digits normalised to
-  ASCII up front (`RecipeTextCleanup.normalizingDigits`) rather than teaching each regex Unicode digits — `\d` in ICU
-  already matched "٢" but `Double("٢")` is nil. Rejected: a translation/locale model (on-device FoundationModels path
-  already handles any language when available; this is the fallback). **Pre-mortem:** (1) an English recipe parses
-  differently (short keys "el"/"tl"/"gr", "de " name strip) → existing fixtures + seed-corpus quality tests + new
-  `englishNamesUntouched`; (2) Japanese steps all merge into one (no capitals, "。") → ja fixture pins 4 steps;
-  (3) "Zubereitung" header read as prep time → de fixture pins prep 20 / cook 25.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

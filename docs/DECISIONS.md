@@ -5,6 +5,16 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Tester 1 (3) Foreign recipes** (builder 2026-11-17): heuristic text path + ingredient-line parser only (JSON-LD pages are
+  language-neutral; their ingredient lines go through the same `IngredientLineParser`). Foreign units map to the
+  existing canonical tokens in `unitSynonyms` (no new unit kinds). Foreign prep/cook labels match on the same line
+  only (`[ \t]`) because "Zubereitung"/"Preparación" is also the method header above "1. …". Digits normalised to
+  ASCII up front (`RecipeTextCleanup.normalizingDigits`) rather than teaching each regex Unicode digits — `\d` in ICU
+  already matched "٢" but `Double("٢")` is nil. Rejected: a translation/locale model (on-device FoundationModels path
+  already handles any language when available; this is the fallback). **Pre-mortem:** (1) an English recipe parses
+  differently (short keys "el"/"tl"/"gr", "de " name strip) → existing fixtures + seed-corpus quality tests + new
+  `englishNamesUntouched`; (2) Japanese steps all merge into one (no capitals, "。") → ja fixture pins 4 steps;
+  (3) "Zubereitung" header read as prep time → de fixture pins prep 20 / cook 25.
 - **🐞 Recipe file open** (builder 2026-11-17): reading moved into `RecipeFileExporter.read(from:)` behind a `ScopedFileAccess` seam (URL's
   scoped-access methods can't be faked otherwise). 5 MB cap enforced by `FileHandle.read(upToCount: max+1)` (a size pre-check alone could be stale for iCloud placeholders; reviewer). A newer tap cancels the older read so the latest file wins.
   Pre-mortem: (1) access never stopped on a damaged file → `readFromURLStopsScopedAccessWhenTheFileIsDamaged`;

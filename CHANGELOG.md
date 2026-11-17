@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Tester feedback 1 slice 3 · d7bf8f7
+- For you: paste or share a recipe in French, Spanish, Italian, German, Portuguese, Japanese or Arabic and it comes in with its ingredients, amounts, steps, servings and times in place — "2 EL Olivenöl", "醤油 大さじ2" and "٢ ملعقة كبيرة" all read as tablespoons.
+- Behind the build: nine real-style recipes in seven languages are now import tests, and a reviewer and a challenger hunted for English recipes that might read differently — brand names like "De Cecco" and "El Paso" stay whole.
+
 ## 2026-11-17 · 🐞 Inbox: opening a recipe file · 642f8b6
 - For you: recipe files someone shares with you open straight from Files and iCloud Drive, and if one is still downloading the app tells you to give it a moment and try again.
 - Behind the build: new tests failed on the old code first; two reviewers checked the file handling, and the app now reads shared files in the background with a sensible size limit.
