@@ -31,24 +31,26 @@ struct TodayProgressCard: View {
                 .accessibilityHint("Shows your streak and cooking badges")
                 .accessibilityIdentifier("today.progress")
 
-                Divider().overlay(AppTheme.subtleStroke)
-                    .padding(.horizontal, AppTheme.spacing16)
+                if let next = progress.nextBadge, let request = progress.badgeShelfRequest {
+                    Divider().overlay(AppTheme.subtleStroke)
+                        .padding(.horizontal, AppTheme.spacing16)
 
-                Button {
-                    HapticManager.shared.light()
-                    onOpenBadges(progress.badgeShelfRequest)
-                } label: {
-                    badgeRow
-                        .padding(AppTheme.spacing16)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
+                    Button {
+                        HapticManager.shared.light()
+                        onOpenBadges(request)
+                    } label: {
+                        badgeRow(next)
+                            .padding(AppTheme.spacing16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(next.spokenText)
+                    .accessibilityHint("Opens this badge on your shelf")
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityIdentifier("today.progress.badges")
                 }
-                .buttonStyle(.plain)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(progress.badgeRowSpokenText)
-                .accessibilityHint(progress.nextBadge == nil ? "Opens your badges" : "Opens this badge on your shelf")
-                .accessibilityAddTraits(.isButton)
-                .accessibilityIdentifier("today.progress.badges")
             }
             .appCard()
         }
@@ -93,32 +95,22 @@ struct TodayProgressCard: View {
         }
     }
 
-    /// The next badge with its bar; once every cooking badge is earned, a trophy and the all-earned line.
-    private var badgeRow: some View {
-        let badge = progress.nextBadge?.type.badge
-        let color = badge.map { Badge.color(for: $0.color) } ?? .yellow
+    private func badgeRow(_ next: TodayProgress.NextBadge) -> some View {
+        let badge = next.type.badge
+        let color = Badge.color(for: badge.color)
         return HStack(spacing: AppTheme.spacing12) {
-            IconBadge(
-                systemName: badge?.icon ?? "trophy.fill", tint: color, diameter: 36,
-                iconSize: AppTheme.fontSize16, style: .tinted
-            )
-            .accessibilityHidden(true)
+            IconBadge(systemName: badge.icon, tint: color, diameter: 36, iconSize: AppTheme.fontSize16, style: .tinted)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                Text(progress.badgeRowText)
+                Text(next.text)
                     .font(.subheadline.weight(.semibold))
                     .adaptiveForegroundColor()
                     .fixedSize(horizontal: false, vertical: true)
-                if let next = progress.nextBadge {
-                    ProgressView(value: Double(next.current), total: Double(next.target))
-                        .tint(color)
-                    Text("\(next.current) / \(next.target)")
-                        .font(.caption2)
-                        .adaptiveSecondaryForeground()
-                } else {
-                    Text("See your badges")
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
-                }
+                ProgressView(value: Double(next.current), total: Double(next.target))
+                    .tint(color)
+                Text("\(next.current) / \(next.target)")
+                    .font(.caption2)
+                    .adaptiveSecondaryForeground()
             }
             Spacer(minLength: 0)
             chevron

@@ -533,22 +533,33 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
                 .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
         }
-        // A fresh install has cooked nothing, so a badge is always left to earn.
-        XCTAssertTrue(row.label.contains(" more "), "The row should say what's left: \(row.label)")
+        // A fresh install has cooked nothing, so a badge is always left to earn: "1 more cook to Head Chef".
+        let parts = row.label.components(separatedBy: " to ")
+        XCTAssertTrue(parts.count > 1 && row.label.contains(" more "), "The row should say what's left: \(row.label)")
+        let badgeTitle = (parts.last ?? "").components(separatedBy: ",").first ?? ""
         checkpoint(app, "today badge row")
         row.tap()
 
         let progress = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH 'badge.pager.progress.'"))
             .firstMatch
         XCTAssertTrue(progress.waitForExistence(timeout: 8), "The badge's card should open on the shelf.")
+        XCTAssertTrue(app.staticTexts[badgeTitle].exists, "The card should be the row's badge, \(badgeTitle).")
         XCTAssertTrue(app.tabBars.buttons["Me"].isSelected, "The row should switch to Me.")
         XCTAssertFalse(app.staticTexts["Cooking badges"].exists, "The row shouldn't open the Cooking sheet.")
         settle()
         snap(app, "45-today-badge-on-shelf")
 
         app.buttons["badge.pager.close"].tap()
-        XCTAssertTrue(app.staticTexts["Trophy shelf"].waitForExistence(timeout: 5),
-                      "Closing the card should leave the trophy shelf on screen.")
+        let shelf = app.staticTexts["Trophy shelf"]
+        XCTAssertTrue(shelf.waitForExistence(timeout: 5), "Closing the card should leave Profile up.")
+        XCTAssertTrue(shelf.isHittable, "Profile should have scrolled to the trophy shelf.")
+
+        // Profile already on screen in Me: a second tap from Today must still open the card.
+        app.tabBars.buttons["Today"].tap()
+        XCTAssertTrue(row.waitForExistence(timeout: 5), "Today should still show the next-badge row.")
+        checkpoint(app, "today badge row again")
+        row.tap()
+        XCTAssertTrue(progress.waitForExistence(timeout: 8), "A second tap should open the card again.")
     }
 
     /// Badges 1/2: Me's trophy shelf, a locked badge in the full-screen pager (progress + earn-here button), a swipe

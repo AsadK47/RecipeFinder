@@ -95,8 +95,8 @@ struct ProfileView: View {
                         .padding(.horizontal, AppTheme.cardHorizontalPadding)
                         .padding(.bottom, AppTheme.spacing100)
                     }
-                    .onAppear { handleShelfRequest(scroller) }
-                    .onChange(of: shelfRequest.wrappedValue) { _, _ in handleShelfRequest(scroller) }
+                    // Covers Profile appearing (fresh push) and a new request while it's already on screen.
+                    .task(id: shelfRequest.wrappedValue) { await handleShelfRequest(scroller) }
                 }
             }
         }
@@ -135,11 +135,14 @@ struct ProfileView: View {
 
     private static let shelfAnchor = "profile.trophyShelf"
 
-    private func handleShelfRequest(_ scroller: ScrollViewProxy) {
+    /// Waits for the tab switch / push to settle first: a cover presented mid-transition is silently dropped, and a
+    /// scroll before layout does nothing. Cleared last — clearing changes the task id, which cancels this task.
+    private func handleShelfRequest(_ scroller: ScrollViewProxy) async {
         guard let request = shelfRequest.wrappedValue else { return }
-        shelfRequest.wrappedValue = nil
-        scroller.scrollTo(Self.shelfAnchor, anchor: .top)
+        do { try await Task.sleep(for: .milliseconds(450)) } catch { return }
+        withAnimation(.appSpring) { scroller.scrollTo(Self.shelfAnchor, anchor: .top) }
         if let id = request.badgeID { pagerStart = BadgePagerStart(badgeID: id) }
+        shelfRequest.wrappedValue = nil
     }
 
     private var shelf: [BadgeShelfSection] {
