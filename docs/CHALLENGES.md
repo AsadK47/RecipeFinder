@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-17 (item pass: Smell Batch A slice 4 — detail actions split; challenger 0 defects)
+- ⚔️ Tests — `RecipeDetailView+Actions.recordCook` wiring (assign `recordingCook()`'s result, then sync/persist/Made it) has no push-CI test; dropping `recipe = cooked` only fails nightly `RecipeFinderHabitLoopUITests`, which skips when already cooked today — a view-model seam would let a unit test catch it — cost if wrong: Made it/review prompt read a stale cook count.
+  → Owner: Accept / Reject / Later
+- Not fixed (pre-existing): the one-cook-a-day rule lives only in `RecipeModel.recordingCook`; `PersistenceController.recordCook` (`PersistenceController+RecipeWrites.swift:372`) increments unconditionally with its own `Date()`, so any future caller that skips the model rule double-counts in the store.
+
 ## 2026-11-17 (item pass: Smell Batch A slice 3 — fixed: tints + notes link untested, factRows test home; reviewer 0 defects)
 - ⚔️ Simplify — `RecipeDetailCopy.shortTime` replaces " hours"/" hour", but its only inputs (`prepTimeDisplay`/`cookTimeDisplay` via `DurationFormatter.label`, `RecipeFormatters.swift:80`) already say "hr" at 60+ min, so those two replacements are dead (pinned as-is in a refactor) — drop them with the recipe-times Smell — cost if wrong: none.
   → Owner: Accept / Reject / Later

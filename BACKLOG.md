@@ -651,15 +651,10 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   version + lightweight migration parsing the old strings; bump the `.xccurrentversion` number in CLAUDE.md files),
   keep a `DurationFormatter` for display, decode legacy JSON (backups, `recipes_seed.json`) via `decodeIfPresent`.
   *Done when:* migration + legacy-decode tests, every `prepTime`/`cookingTime` string use removed, CI green.
-- [ ] **Batch A — Large Class: `RecipeDetailView+Content.swift` (745) + `RecipeDetailView` (398).** — 🚧 builder agent 2026-11-17 Extract Method/Class:
-  nutrition section + `NutritionMacroBar`, ingredients/steps/timer sections into own views; `StarRatingView`,
-  `ShopIngredientsSheet` to own files. Target each file ≤300. One branch. **✅ Slice 1 (e3ba711..9fc278a):** nutrition section →
-  `RecipeNutritionLabel` built from tested `NutritionLabelFormat.rows`; `StarRatingView`, `ShopIngredientsSheet` own
-  files (Content 794→486). **✅ Slice 2 (deb8349..0a1dfc9):** timer button →
-  `RecipeTimerControl`, cook history → `RecipeCookHistoryCard`, copy + one-tap start split in tested `RecipeDetailCopy`
-  (Content 486→389). **✅ Slice 3 (077a4ab..2f6ade8):** facts card → `RecipeFactsCard`, notes body →
-  `RecipeNotesContent`, facts/shortTime/factRows in tested `RecipeDetailCopy` (Content 389→295 ✅). **Left:**
-  `RecipeDetailView.swift` (474) →≤300.
+- [x] **Batch A — Large Class: `RecipeDetailView+Content.swift` (745) + `RecipeDetailView` (398)** — Content 794→295,
+  Detail 474→286 over 4 slices (e3ba711..2ce0a78): nutrition label, star rating, shop sheet, timer, cook history, facts
+  card, notes → own views; copy in tested `RecipeDetailCopy`; actions → `RecipeDetailView+Actions.swift` +
+  `RecipeModel.recordingCook`.
 - [ ] **Batch B — Duplicate Code: persisted managers.** `Badge/Collection/CookingStreak/KitchenInventory/MealPlanning/
   ShoppingList` managers hand-roll load/encode/save on `LocalStore` → one shared persisted-store helper (Extract
   Superclass → protocol + generic). Tests first: each manager's round-trip unchanged. One branch.
@@ -865,3 +860,4 @@ _Last 7 days; older entries are in `docs/LOG.md`._
 - 2026-11-15 · 🟡 Inbox: Reset leaves store copies · not merged (agent/reset-store-copies, 87f5737) · moved to Needs owner: deleting `.corrupt-*` on Reset can lose the only copy of a library that wouldn't open · review: deep-review + challenger, 2 fixed (listing error skipped the rest, assertion-less test), 1 data-loss risk agreed → owner · looked at: n/a (no UI)
 - 2026-11-16 · Docs refresh slice 2 (archive ROADMAP + audits) · d312a30..01cc1bf · nothing on device (docs only) · review: 1 reviewer/challenger — 2 fixed (carried-over "freemium" line contradicted the 2026-11-03 free decision; free/no-accounts/own-iCloud decisions would have been lost), 1 dropped (stale `.xcconfig` API-key rule), 3 nits · looked at: no UI
 - 2026-11-16 · Tester batch 1 (4) Recipes toggle + Today "Keep browsing →" (owner option D) · 1562987 · Recipes opens on Discover (chapters); tap My recipes for the list, it's remembered; on Today tap "Not feeling it? Keep browsing →" with a recipe open in Recipes → lands on Discover at the top · review: deep-review + challenger agreed on 1 fixed (Keep browsing could land on an old detail/search), 5 more fixed (default Discover, idle toggle hidden, scroll reset per side, feed built only on Discover, chapter assertion in UI test), 4 → CHALLENGES · looked at: 40-recipes-discovery-0..3, 01-recipes, 16-today (fixed gap under lead tile)
+- 2026-11-17 · Smell Batch A slice 4 (done) · 2ce5689..2ce0a78 · nothing new on device: recipe page groceries (+ / Shop), Made it, rating, cook photo, re-import still behave the same · new file `RecipeDetailView+Actions.swift` registered in pbxproj by hand (no XcodeWrite in cloud) · review: deep-review + challenger, 0 defects, 1 → CHALLENGES (recordCook wiring has no push-CI test) · CI green first try (run 44018498525) · looked at: no UI change · leftover branches agent/detail-split-b/-c/-d

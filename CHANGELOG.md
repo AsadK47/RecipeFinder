@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Smell Batch A slice 4 · 2ce0a78
+- For you: recipe pages work just as before — adding to Groceries, Made it, ratings and cook photos now have their own tidy code, which finishes the recipe page tidy-up.
+- Behind the build: tests pin the one-cook-a-day rule and every Groceries message, and a reviewer and a challenger compared the move line by line.
+
 ## 2026-11-17 · Smell Batch A slice 3 · 2f6ade8
 - For you: recipe pages look and work just as before — the facts card (prep, cook, difficulty, category, cuisine) and your notes now have their own tidy code, ready for what's next.
 - Behind the build: tests pin every fact's words, icon and colour plus the "View Original" link, and a reviewer and a challenger compared the move line by line.

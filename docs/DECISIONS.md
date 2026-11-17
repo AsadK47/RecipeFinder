@@ -5,6 +5,16 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Smell Batch A slice 4** (builder 2026-11-17): one `+Actions` extension (191 lines) rather than a helper object —
+  the actions mutate `@State`/`@Environment`, so a separate type would need bindings for ~10 members; the testable
+  parts (one-cook-a-day rule, toast copy) went pure instead. Some `private` members became internal (file split).
+  Pre-mortem: (1) a cook double-counts / stops counting → `recordingCook` tests; (2) toast text drifts →
+  `RecipeDetailCopyTests`; (3) new file not compiled → CI build + pbxproj mirror of RecipeDetailView.swift.
+- **Smell Batch A** (builder 2026-11-16): took it over the top Smell (recipe times → Int minutes) because that needs a
+  new Core Data model on a synced entity, which must stack on unmerged model 18 (Recently deleted, waiting on the
+  CloudKit Production deploy) → noted in Needs owner. Nutrition numbers moved to a pure enum so they're tested, not
+  just moved; the label is built from `NutritionLabelFormat.rows` so wiring (value/unit/RI per line) is tested too
+  (challenger: no screenshot covers Nutrition). 0 g → "1%" pinned as-is, not fixed in a refactor (Inbox 🟡).
 - **Tester feedback 1 — cuisine** (builder 2026-11-16): display, wizard field and import (JSON-LD `recipeCuisine`,
   WPRM) already existed — the slice adds the tap-through and fixes the facts card editing a cuisine it didn't show.
   Chip sits under the title, not inside the facts card (that card's tap = edit). Request held by ContentView as a
