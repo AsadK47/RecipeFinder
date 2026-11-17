@@ -28,6 +28,8 @@ struct ContentView: View {
     @State private var clipboardLink: ClipboardLinkImport?
     @State private var pendingFileImport: RecipeModel?
     @State private var fileImportError: String?
+    /// The latest file being read — a newer tap cancels it so a slow earlier read can't replace the newer recipe.
+    @State private var fileOpenTask: Task<Void, Never>?
     /// Held until the import sheet finishes dismissing — an alert raised while it's still up never appears.
     @State private var pendingFileSaveError: String?
     @State private var fileSaveError: String?
@@ -62,16 +64,20 @@ struct ContentView: View {
             CookTimerView()
         }
         .onOpenURL { url in
-            guard url.pathExtension == "recipefinderrecipe" else { return }
+            guard url.pathExtension.lowercased() == "recipefinderrecipe" else { return }
             // Read off the main actor: a file from iCloud Drive may still be downloading.
-            Task {
+            fileOpenTask?.cancel()
+            fileOpenTask = Task {
                 do {
-                    pendingFileImport = try await Task.detached { try RecipeFileExporter.read(from: url) }.value
+                    let recipe = try await Task.detached { try RecipeFileExporter.read(from: url) }.value
+                    guard !Task.isCancelled else { return }
+                    pendingFileImport = recipe
                 } catch {
+                    guard !Task.isCancelled else { return }
                     // Surface the failure — tapping a shared recipe file that won't open must not be a silent no-op.
                     logger.error("Failed to open shared recipe file: \(error.localizedDescription)")
                     fileImportError = (error as? RecipeFileError)?.errorDescription
-                        ?? "This recipe file couldn't be opened. It may be damaged or from a newer version."
+                        ?? "This recipe file couldn't be read. If it's in iCloud Drive, let it finish downloading and try again."
                 }
             }
         }

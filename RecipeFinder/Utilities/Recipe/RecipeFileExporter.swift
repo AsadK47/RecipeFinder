@@ -87,11 +87,11 @@ enum RecipeFileExporter {
     static func read(from url: URL, access: ScopedFileAccess = .securityScoped) throws -> RecipeModel {
         let didAccess = access.start(url)
         defer { if didAccess { access.stop(url) } }
-        // Check the size before reading so a huge file is never loaded; the byte check covers a missing size.
-        if let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize, size > maxFileBytes {
-            throw RecipeFileError.tooLarge
-        }
-        let data = try Data(contentsOf: url)
+        let handle = try FileHandle(forReadingFrom: url)
+        // A failed close of a read-only handle loses nothing; the bytes are already read or the read already threw.
+        defer { try? handle.close() }
+        // Read one byte past the cap so a huge file is never loaded whole, whatever size it reports.
+        let data = try handle.read(upToCount: maxFileBytes + 1) ?? Data()
         guard data.count <= maxFileBytes else { throw RecipeFileError.tooLarge }
         return try decode(data)
     }

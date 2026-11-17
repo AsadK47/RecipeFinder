@@ -186,14 +186,20 @@ import Foundation
         return url
     }
 
+    private func removeTempFile(_ url: URL) {
+        try? FileManager.default.removeItem(at: url.deletingLastPathComponent())
+    }
+
     @Test func readFromURLDecodesTheRecipe() throws {
         let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
         let recipe = try RecipeFileExporter.read(from: url, access: AccessSpy(grants: true).access)
         #expect(recipe.name == "Spaghetti Bolognese")
     }
 
     @Test func readFromURLStartsAndStopsScopedAccess() throws {
         let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
         let spy = AccessSpy(grants: true)
         _ = try RecipeFileExporter.read(from: url, access: spy.access)
         #expect(spy.starts == [url])
@@ -202,6 +208,7 @@ import Foundation
 
     @Test func readFromURLStopsScopedAccessWhenTheFileIsDamaged() throws {
         let url = try writeTempFile(Data("not a recipe".utf8))
+        defer { removeTempFile(url) }
         let spy = AccessSpy(grants: true)
         #expect(throws: (any Error).self) {
             _ = try RecipeFileExporter.read(from: url, access: spy.access)
@@ -212,6 +219,7 @@ import Foundation
 
     @Test func readFromURLDoesNotStopAccessItNeverGot() throws {
         let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
         let spy = AccessSpy(grants: false)
         _ = try RecipeFileExporter.read(from: url, access: spy.access)
         #expect(spy.starts == [url])
@@ -220,6 +228,7 @@ import Foundation
 
     @Test func readFromURLRejectsAFileOverTheSizeLimit() throws {
         let url = try writeTempFile(Data(count: RecipeFileExporter.maxFileBytes + 1))
+        defer { removeTempFile(url) }
         let spy = AccessSpy(grants: true)
         #expect(throws: RecipeFileError.tooLarge) {
             _ = try RecipeFileExporter.read(from: url, access: spy.access)
