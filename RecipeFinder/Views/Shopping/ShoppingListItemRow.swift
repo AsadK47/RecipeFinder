@@ -97,7 +97,8 @@ struct ShoppingListItemRow: View {
                                     .padding(.vertical, AppTheme.spacing2)
                                     .background(Color.blue.opacity(0.12), in: Capsule())
                                     .fixedSize()
-                                    .contentShape(Capsule())
+                                    // The capsule is ~18pt tall; pad the hit area towards 44pt without growing the row.
+                                    .contentShape(Rectangle().inset(by: -AppTheme.spacing12))
                             }
                             .buttonStyle(PlainButtonStyle())
                             .disabled(onShowKitchen == nil)

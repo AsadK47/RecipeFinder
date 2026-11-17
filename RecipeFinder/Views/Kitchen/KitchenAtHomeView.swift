@@ -8,10 +8,14 @@ struct KitchenAtHomeView: View {
 
     @Environment(\.kitchen) private var manager
 
+    private var hasAlerts: Bool {
+        !manager.expiredItems().isEmpty || !manager.expiringSoonItems().isEmpty || !manager.lowStockItems().isEmpty
+    }
+
     var body: some View {
-        // Items with a use-by date live apart from the plain list; they still count, or Today's "Use it up" link
+        // Use-by items show only as alerts (expired, going off, low); those still count, or Today's "Use it up" link
         // would land on "Your kitchen is empty" above the very items it's about.
-        if manager.items.isEmpty && manager.inventoryItems.isEmpty {
+        if manager.items.isEmpty && !hasAlerts {
             ScrollView {
                 EmptyStateView(
                     icon: "refrigerator",

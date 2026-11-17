@@ -462,10 +462,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         // Kitchen you can find slice 2: the section's "Your kitchen" link opens Groceries on At home.
         let link = app.buttons["today.useSoon.openKitchen"]
         XCTAssertTrue(link.waitForExistence(timeout: 5), "Use it up should link to the kitchen it's built from.")
+        // Scrolling the row into view can tuck the header just above it under the nav bar.
+        if !link.isHittable { app.swipeDown() }
         link.tap()
-        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "groceries.atHome").firstMatch
-                        .waitForExistence(timeout: 5), "Your kitchen should open Groceries on At home.")
-        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Spinach")).firstMatch
+        let atHome = app.descendants(matching: .any).matching(identifier: "groceries.atHome").firstMatch
+        XCTAssertTrue(atHome.waitForExistence(timeout: 5), "Your kitchen should open Groceries on At home.")
+        XCTAssertTrue(atHome.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Spinach")).firstMatch
                         .waitForExistence(timeout: 5), "At home should list the spinach.")
         settle()
         snap(app, "47-today-kitchen-at-home")

@@ -7,12 +7,17 @@ struct KitchenSectionsView: View {
 
     @Environment(\.kitchen) private var manager
 
+    /// Plain items and use-by items, by name — a use-by item (shown as an alert above) still counts.
+    private var ingredientCount: Int {
+        Set(manager.items.map(\.name.nameKey) + manager.inventoryItems.map(\.name.nameKey)).count
+    }
+
     var body: some View {
         PantryAlertsSectionContent(manager: manager)
 
         Section {
             HStack(spacing: AppTheme.spacing12) {
-                Text("\(manager.items.count) ingredient\(manager.items.count == 1 ? "" : "s")")
+                Text("\(ingredientCount) ingredient\(ingredientCount == 1 ? "" : "s")")
                     .font(.caption)
                     .foregroundStyle(AppTheme.adaptiveSubtitle)
                 Spacer()

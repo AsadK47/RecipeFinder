@@ -109,12 +109,15 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
     func testGroceriesReachesAtHomeInOneTap() {
         let app = launchApp()
         app.tabBars.buttons["Groceries"].tap()
+        // A run that failed midway leaves its item on the shared simulator; clear it so this run starts clean.
+        removeRow(app, named: "Saffron threads", timeout: 1)
 
         let atHome = app.buttons["At home"]
         tapWhenReady(atHome, "Groceries should offer an At home switch at the top.")
         checkpoint(app, "after tapping At home")
         XCTAssertTrue(element(app, id: "groceries.atHome").waitForExistence(timeout: 5),
                       "One tap on At home should show the kitchen.")
+        removeRow(app, named: "Saffron threads", timeout: 1)
 
         // A name unique to this test, so a rerun on a shared simulator finds it already there rather than toggled off.
         let field = app.textFields["groceries.search"]
@@ -153,12 +156,13 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
 
     /// Swipes a list row away by its visible name; a full swipe may delete before the button shows.
     @MainActor
-    private func removeRow(_ app: XCUIApplication, named name: String) {
+    private func removeRow(_ app: XCUIApplication, named name: String, timeout: TimeInterval = 5) {
         let row = app.staticTexts[name]
-        guard row.waitForExistence(timeout: 5) else { return }
+        guard row.waitForExistence(timeout: timeout) else { return }
         row.swipeLeft()
         let delete = app.buttons["Delete"]
         if delete.waitForExistence(timeout: 2) { delete.tap() }
+        XCTAssertTrue(row.waitForNonExistence(timeout: 5), "\(name) should be removed after the test.")
     }
 
     /// Inbox 🟡 (2026-11-16): Today's "Keep browsing →" must leave a recipe opened on Recipes, not land on it.
