@@ -101,7 +101,7 @@ import ViewInspector
         (0, []),
     ])
     func factsSplitIntoTwoBalancedRows(count: Int, expected: [[Int]]) {
-        #expect(RecipeDetailView.factRows(count: count) == expected)
+        #expect(RecipeDetailCopy.factRows(count: count) == expected)
     }
 }
 
