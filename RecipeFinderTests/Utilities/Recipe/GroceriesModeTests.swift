@@ -27,6 +27,12 @@ struct GroceriesModeTests {
         #expect(GroceriesMode.atHome.listName == "kitchen")
     }
 
+    /// Like Recipes' toggle: hidden while suggestions show, which already say where they add.
+    @Test(arguments: [(false, true), (true, false)])
+    func switchHidesWhileSearching(isSearching: Bool, shows: Bool) {
+        #expect(GroceriesMode.showsModePicker(isSearching: isSearching) == shows)
+    }
+
     @Test(arguments: [
         (GroceriesMode.toBuy, true, false, true),
         (.toBuy, false, false, false),
