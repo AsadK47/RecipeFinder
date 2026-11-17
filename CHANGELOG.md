@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Smell Batch A slice 3 · 2f6ade8
+- For you: recipe pages look and work just as before — the facts card (prep, cook, difficulty, category, cuisine) and your notes now have their own tidy code, ready for what's next.
+- Behind the build: tests pin every fact's words, icon and colour plus the "View Original" link, and a reviewer and a challenger compared the move line by line.
+
 ## 2026-11-17 · Smell Batch A slice 2 · 0a1dfc9
 - For you: recipe pages work just as before — the cooking timer and your cook history now have their own tidy code, so the timer updates smoothly without redrawing the whole page.
 - Behind the build: tests pin every word on the timer button and cook-history card, and a reviewer and a challenger compared the move line by line; the challenger added tests for how a one-tap timer splits hours and minutes.
