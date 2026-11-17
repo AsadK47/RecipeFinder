@@ -36,6 +36,11 @@ enum GroceriesMode: String, CaseIterable, Identifiable {
     /// Groceries' job is the shopping list (PRODUCT.md); At home is one tap away and remembered once chosen.
     static let defaultMode = GroceriesMode.toBuy
 
+    /// Same as Recipes' toggle: suggestions replace the list while typing and already say where they add.
+    static func showsModePicker(isSearching: Bool) -> Bool {
+        !isSearching
+    }
+
     /// Stores are where you buy, so their filter only shows on To buy, and not over search suggestions.
     static func showsStoreFilter(mode: GroceriesMode, hasStores: Bool, isSearching: Bool) -> Bool {
         mode == .toBuy && hasStores && !isSearching
