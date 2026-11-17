@@ -63,6 +63,7 @@ import Foundation
             ("1 spicchio d'aglio", 1.0, "clove", "aglio"),
             ("2 EL Olivenöl", 2.0, "tbsp", "Olivenöl"),
             ("1 TL Salz", 1.0, "tsp", "Salz"),
+            ("1 EL. Öl", 1.0, "tbsp", "Öl"),
             ("1,5 kg Kartoffeln", 1.5, "kg", "Kartoffeln"),
             ("2 colheres de sopa de azeite", 2.0, "tbsp", "azeite"),
             ("1 xícara de arroz", 1.0, "cup", "arroz"),

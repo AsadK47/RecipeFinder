@@ -54,8 +54,8 @@ enum IngredientLineParser {
         }
 
         // 4e. German spoon abbreviations are capitals ("2 EL Olivenöl"); matched case-sensitively so "1 El Paso kit" stays.
-        working = working.replacingOccurrences(of: #"^([\d./]+)\s+EL(?=\s)"#, with: "$1 Esslöffel", options: .regularExpression)
-        working = working.replacingOccurrences(of: #"^([\d./]+)\s+TL(?=\s)"#, with: "$1 Teelöffel", options: .regularExpression)
+        working = working.replacingOccurrences(of: #"^([\d./]+)\s+EL\.?(?=\s)"#, with: "$1 Esslöffel", options: .regularExpression)
+        working = working.replacingOccurrences(of: #"^([\d./]+)\s+TL\.?(?=\s)"#, with: "$1 Teelöffel", options: .regularExpression)
 
         // 5. Split a leading number glued to letters: "200g" → "200 g".
         working = working.replacingOccurrences(of: #"^([0-9][0-9/.]*)([a-zA-Z])"#, with: "$1 $2", options: .regularExpression)

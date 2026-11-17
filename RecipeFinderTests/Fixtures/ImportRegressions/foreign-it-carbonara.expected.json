@@ -5,7 +5,7 @@
   "minSteps": 4,
   "maxSteps": 4,
   "amountsPresent": true,
-  "forbidden": ["persone", "Cottura"],
+  "forbidden": ["porzioni", "Cottura"],
   "servings": 4,
   "prepTime": 10,
   "cookTime": 12,

@@ -8,7 +8,7 @@
   "forbidden": ["Portionen", "Kochzeit"],
   "servings": 4,
   "prepTime": 20,
-  "cookTime": 25,
+  "cookTime": 70,
   "amounts": [
     {"name": "Kartoffeln", "quantity": 1, "unit": "kg"},
     {"name": "Gemüsebrühe", "quantity": 250, "unit": "ml"},
