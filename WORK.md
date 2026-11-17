@@ -25,10 +25,18 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   foreign recipes (import fixtures FR/ES/IT/DE/PT/JP/AR); slice 5 is Cook lane's. Leftover branches agent/cuisine-chip,
   agent/today-badges-link (auto-cleanup).
 
+- Inbox 🐞 recipe file open (builder 2026-11-17): `agent/recipe-file-open` — `RecipeFileExporter.read(from:access:)`
+  (scoped access + 5 MB cap) used off-main by `ContentView.onOpenURL`. Red commit first, then fix.
+
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Recipe file open** : reading moved into `RecipeFileExporter.read(from:)` behind a `ScopedFileAccess` seam (URL's
+  scoped-access methods can't be faked otherwise). 5 MB cap checked from file size *before* reading, then on the bytes.
+  Pre-mortem: (1) access never stopped on a damaged file → `readFromURLStopsScopedAccessWhenTheFileIsDamaged`;
+  (2) a huge file hangs the UI → size-limit test + decode in `Task.detached`; (3) stop called without a grant →
+  `readFromURLDoesNotStopAccessItNeverGot`.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

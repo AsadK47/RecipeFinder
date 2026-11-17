@@ -80,6 +80,14 @@ enum RecipeFileExporter {
         try encode(recipe).write(to: url, options: .atomic)
     }
 
+    /// Largest file `read(from:)` opens — a recipe package is a few KB, so anything near this is not one.
+    static let maxFileBytes = 5 * 1024 * 1024
+
+    /// Reads and decodes a `.recipefinderrecipe` file opened from Files, iCloud Drive or another app.
+    static func read(from url: URL, access: ScopedFileAccess = .securityScoped) throws -> RecipeModel {
+        try decode(Data(contentsOf: url))
+    }
+
     /// Decodes `data` into a fresh `RecipeModel` with a new UUID; personal data reset to defaults.
     static func decode(_ data: Data) throws -> RecipeModel {
         let package = try decoder.decode(RecipePackage.self, from: data)
@@ -119,13 +127,30 @@ enum RecipeFileExporter {
 
 // MARK: - Errors
 
-enum RecipeFileError: LocalizedError {
+enum RecipeFileError: LocalizedError, Equatable {
     case unsupportedVersion(Int)
+    case tooLarge
 
     var errorDescription: String? {
         switch self {
         case .unsupportedVersion(let v):
             return "This recipe was exported with a newer version of RecipeFinder (format \(v))."
+        case .tooLarge:
+            return "This file is too large to be a recipe, so it was left unopened."
         }
     }
+}
+
+// MARK: - Scoped access
+
+/// Starts and stops access to a file another app hands us; files opened in place need security-scoped access.
+/// A seam so tests can check every start is balanced by a stop.
+struct ScopedFileAccess: Sendable {
+    let start: @Sendable (URL) -> Bool
+    let stop: @Sendable (URL) -> Void
+
+    static let securityScoped = ScopedFileAccess(
+        start: { $0.startAccessingSecurityScopedResource() },
+        stop: { $0.stopAccessingSecurityScopedResource() }
+    )
 }

@@ -175,4 +175,79 @@ import Foundation
             _ = try RecipeFileExporter.decode(data)
         }
     }
+
+    // MARK: - Opening a file (Files / iCloud Drive, opened in place)
+
+    private func writeTempFile(_ data: Data) throws -> URL {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let url = dir.appendingPathComponent("Shared.recipefinderrecipe")
+        try data.write(to: url)
+        return url
+    }
+
+    @Test func readFromURLDecodesTheRecipe() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        let recipe = try RecipeFileExporter.read(from: url, access: AccessSpy(grants: true).access)
+        #expect(recipe.name == "Spaghetti Bolognese")
+    }
+
+    @Test func readFromURLStartsAndStopsScopedAccess() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        let spy = AccessSpy(grants: true)
+        _ = try RecipeFileExporter.read(from: url, access: spy.access)
+        #expect(spy.starts == [url])
+        #expect(spy.stops == [url])
+    }
+
+    @Test func readFromURLStopsScopedAccessWhenTheFileIsDamaged() throws {
+        let url = try writeTempFile(Data("not a recipe".utf8))
+        let spy = AccessSpy(grants: true)
+        #expect(throws: (any Error).self) {
+            _ = try RecipeFileExporter.read(from: url, access: spy.access)
+        }
+        #expect(spy.starts == [url])
+        #expect(spy.stops == [url])
+    }
+
+    @Test func readFromURLDoesNotStopAccessItNeverGot() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        let spy = AccessSpy(grants: false)
+        _ = try RecipeFileExporter.read(from: url, access: spy.access)
+        #expect(spy.starts == [url])
+        #expect(spy.stops.isEmpty)
+    }
+
+    @Test func readFromURLRejectsAFileOverTheSizeLimit() throws {
+        let url = try writeTempFile(Data(count: RecipeFileExporter.maxFileBytes + 1))
+        let spy = AccessSpy(grants: true)
+        #expect(throws: RecipeFileError.tooLarge) {
+            _ = try RecipeFileExporter.read(from: url, access: spy.access)
+        }
+        #expect(spy.stops == [url])
+    }
+
+    @Test func tooLargeErrorExplainsItself() {
+        #expect(RecipeFileError.tooLarge.errorDescription?.isEmpty == false)
+    }
+}
+
+/// Records scoped-access calls so tests can check every start is balanced by a stop.
+private final class AccessSpy: @unchecked Sendable {
+    private let lock = NSLock()
+    private let grants: Bool
+    private var _starts: [URL] = []
+    private var _stops: [URL] = []
+
+    init(grants: Bool) { self.grants = grants }
+
+    var starts: [URL] { lock.withLock { _starts } }
+    var stops: [URL] { lock.withLock { _stops } }
+
+    var access: ScopedFileAccess {
+        ScopedFileAccess(
+            start: { url in self.lock.withLock { self._starts.append(url) }; return self.grants },
+            stop: { url in self.lock.withLock { self._stops.append(url) } }
+        )
+    }
 }
