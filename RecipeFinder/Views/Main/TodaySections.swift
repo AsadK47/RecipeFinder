@@ -149,13 +149,12 @@ struct TodayShelf: View {
     let id: String
     let items: [(recipe: RecipeModel, caption: String?)]
     let onOpen: (RecipeModel) -> Void
+    /// Set on shelves the kitchen powers: a "Your kitchen →" link to Groceries' At home.
+    var onOpenKitchen: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            Text(title)
-                .font(.headline)
-                .adaptiveForegroundColor()
-                .accessibilityAddTraits(.isHeader)
+            TodaySectionHeader(title: title, id: "shelf.\(id)", onOpenKitchen: onOpenKitchen)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: AppTheme.spacing12) {

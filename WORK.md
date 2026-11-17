@@ -35,11 +35,19 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   with the expiry-style routing); then tick. Leftover branches agent/kitchen-at-home (superseded), -2 (auto-cleanup).
 
 ## Next action
-Kitchen you can find slice 2 on a new `agent/kitchen-today-links` branch: Today's kitchen shelf + "In kitchen"
-tags open Groceries on At home; UI test + screenshot; two reviewers (last slice); then tick.
+Kitchen you can find slice 2 on `agent/kitchen-today-links` (pushed): check Build & Test + Screenshots, look at shots
+29 + 47, two reviewers (last slice), then land + tick.
 Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Kitchen you can find slice 2** (`agent/kitchen-today-links`): a "Your kitchen →" link in the header of the two
+  kitchen-built Today sections (Use it up, Fits your kitchen) posts `.openGroceries` with
+  `GroceriesMode.openRequest(for: .atHome)`, so it reuses the reminder routing (tab root stores the side, no root
+  `@AppStorage`). The To buy row's "In kitchen" tag became a button that flips the switch in place. At home's empty state
+  now also checks `inventoryItems` (use-by items), else the Use it up link landed on "Your kitchen is empty".
+  Rejected: making whole shelf tiles open the kitchen (tiles open recipes). **Pre-mortem:** (1) link opens To buy →
+  `opensTheSideALinkAsksFor` + Screenshots `testCaptureTodayUseSoon` asserts At home; (2) At home hides the expiring
+  items → same test asserts Spinach, shot 47; (3) the tag steals row taps → `testGroceriesReachesAtHomeInOneTap`.
 - **Kitchen you can find** (branch `agent/kitchen-at-home`): an inline switch, not a sheet, using the same pattern as
   Recipes' Discover | My recipes so cooks learn one pattern. Groceries opens on To buy, its job. The header field adds
   to the side showing. Kitchen adds go through the pure `GroceriesMode.add`, which returns `.alreadyInKitchen` for an

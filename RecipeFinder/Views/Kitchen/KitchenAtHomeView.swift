@@ -9,7 +9,9 @@ struct KitchenAtHomeView: View {
     @Environment(\.kitchen) private var manager
 
     var body: some View {
-        if manager.items.isEmpty {
+        // Items with a use-by date live apart from the plain list; they still count, or Today's "Use it up" link
+        // would land on "Your kitchen is empty" above the very items it's about.
+        if manager.items.isEmpty && manager.inventoryItems.isEmpty {
             ScrollView {
                 EmptyStateView(
                     icon: "refrigerator",

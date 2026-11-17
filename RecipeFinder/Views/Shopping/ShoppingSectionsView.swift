@@ -6,6 +6,8 @@ struct ShoppingSectionsView: View {
     /// Store being shopped at; nil shows every item.
     let store: String?
     let onManageStores: () -> Void
+    /// Switches Groceries to At home (the rows' "In kitchen" tag).
+    var onShowKitchen: (() -> Void)?
 
     @Environment(\.shopping) private var manager
     @Environment(\.kitchen) private var kitchen
@@ -90,7 +92,8 @@ struct ShoppingSectionsView: View {
                         manager.toggleRecurring(at: index)
                     }
                 },
-                allCategories: CategoryClassifier.categoryOrder
+                allCategories: CategoryClassifier.categoryOrder,
+                onShowKitchen: onShowKitchen
             )
             .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             .listRowSeparator(.hidden)

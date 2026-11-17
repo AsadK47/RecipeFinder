@@ -87,6 +87,13 @@ struct GroceriesModeTests {
         #expect(GroceriesMode.side(openedBy: type) == side)
     }
 
+    /// Today's kitchen links and the "In kitchen" tag ask for a side by name (Kitchen you can find, slice 2).
+    @Test(arguments: GroceriesMode.allCases)
+    func opensTheSideALinkAsksFor(mode: GroceriesMode) {
+        let type = GroceriesMode.openRequest(for: mode)["type"] as? String
+        #expect(GroceriesMode.side(openedBy: type) == mode)
+    }
+
     /// The tab root stores the side directly instead of observing the key with `@AppStorage`: a root that observes
     /// UserDefaults re-renders every tab on any defaults write (a11y audit, 2026-11-17). Groceries' own
     /// `@AppStorage` reads what's stored here.

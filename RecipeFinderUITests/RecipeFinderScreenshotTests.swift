@@ -458,6 +458,17 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         for _ in 0..<3 where !row.isHittable { app.swipeUp() }
         settle()
         snap(app, "29-today-use-soon")
+
+        // Kitchen you can find slice 2: the section's "Your kitchen" link opens Groceries on At home.
+        let link = app.buttons["today.useSoon.openKitchen"]
+        XCTAssertTrue(link.waitForExistence(timeout: 5), "Use it up should link to the kitchen it's built from.")
+        link.tap()
+        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "groceries.atHome").firstMatch
+                        .waitForExistence(timeout: 5), "Your kitchen should open Groceries on At home.")
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Spinach")).firstMatch
+                        .waitForExistence(timeout: 5), "At home should list the spinach.")
+        settle()
+        snap(app, "47-today-kitchen-at-home")
     }
 
     /// Today+ 2/3 slice 2: the "This week" strip and planning an empty day's dinner from it. Sorts after

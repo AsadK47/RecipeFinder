@@ -5,13 +5,12 @@ import SwiftUI
 struct TodayUseSoonCard: View {
     let pairs: [UseSoonPair]
     let onOpen: (RecipeModel) -> Void
+    /// Opens Groceries on At home, where the expiring items live.
+    var onOpenKitchen: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            Text("Use it up")
-                .font(.headline)
-                .adaptiveForegroundColor()
-                .accessibilityAddTraits(.isHeader)
+            TodaySectionHeader(title: "Use it up", id: "useSoon", onOpenKitchen: onOpenKitchen)
 
             VStack(spacing: 0) {
                 ForEach(Array(pairs.enumerated()), id: \.element.recipe.id) { index, pair in
@@ -61,5 +60,53 @@ struct TodayUseSoonCard: View {
         .accessibilityLabel("\(pair.message). \(pair.recipe.name)")
         .accessibilityHint("Opens the recipe")
         .accessibilityIdentifier("today.useSoon.row")
+    }
+}
+
+/// A Today section title with an optional "Your kitchen →" link on the right, for the sections the kitchen powers,
+/// so the cook can see and change what they're built from (Kitchen you can find, owner 2026-11-17).
+struct TodaySectionHeader: View {
+    let title: String
+    let id: String
+    var onOpenKitchen: (() -> Void)?
+
+    var body: some View {
+        // Side by side when it fits; stacked at large type so neither the title nor the link truncates.
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing8) {
+                heading
+                Spacer(minLength: AppTheme.spacing8)
+                link
+            }
+            VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                heading
+                link
+            }
+        }
+    }
+
+    private var heading: some View {
+        Text(title)
+            .font(.headline)
+            .adaptiveForegroundColor()
+            .accessibilityAddTraits(.isHeader)
+    }
+
+    @ViewBuilder
+    private var link: some View {
+        if let onOpenKitchen {
+            Button(action: onOpenKitchen) {
+                Text("Your kitchen \(Image(systemName: "arrow.right"))")
+                    .font(.subheadline.weight(.semibold))
+                    .adaptiveForegroundColor()
+                    .fixedSize()
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Your kitchen")
+            .accessibilityHint("Opens what you have at home in Groceries")
+            .accessibilityIdentifier("today.\(id).openKitchen")
+        }
     }
 }

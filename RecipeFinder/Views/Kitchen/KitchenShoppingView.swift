@@ -149,7 +149,8 @@ struct KitchenShoppingView: View {
             ShoppingSectionsView(
                 collapsedCategories: $shoppingCollapsed,
                 store: activeStore,
-                onManageStores: { showManageStores = true }
+                onManageStores: { showManageStores = true },
+                onShowKitchen: { mode = .atHome }
             )
         }
         .listStyle(.plain)

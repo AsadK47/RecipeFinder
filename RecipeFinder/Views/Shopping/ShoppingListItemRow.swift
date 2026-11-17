@@ -17,6 +17,8 @@ struct ShoppingListItemRow: View {
     let onManageStores: () -> Void
     let onToggleRecurring: () -> Void
     let allCategories: [String]
+    /// Tapping the "In kitchen" tag shows the kitchen side, so the cook can check what they have.
+    var onShowKitchen: (() -> Void)?
     
 
     private var defaultCategory: String {
@@ -86,14 +88,21 @@ struct ShoppingListItemRow: View {
                         }
 
                         if isInKitchen {
-                            Text("In kitchen")
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.blue)
-                                .padding(.horizontal, AppTheme.spacing6)
-                                .padding(.vertical, AppTheme.spacing2)
-                                .background(Color.blue.opacity(0.12), in: Capsule())
-                                .fixedSize()
+                            Button { onShowKitchen?() } label: {
+                                Text("In kitchen")
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.blue)
+                                    .padding(.horizontal, AppTheme.spacing6)
+                                    .padding(.vertical, AppTheme.spacing2)
+                                    .background(Color.blue.opacity(0.12), in: Capsule())
+                                    .fixedSize()
+                                    .contentShape(Capsule())
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .disabled(onShowKitchen == nil)
+                            .accessibilityHint("Shows what you have at home")
+                            .accessibilityIdentifier("groceries.inKitchen")
                         }
                     }
                     

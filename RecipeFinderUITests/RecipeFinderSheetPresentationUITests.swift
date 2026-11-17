@@ -127,15 +127,38 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
         let added = app.staticTexts["Saffron threads"]
         XCTAssertTrue(added.waitForExistence(timeout: 5), "The new item should be listed in the kitchen.")
 
-        // Leave the shared simulator's kitchen as it was (later screenshots and Today shelves read it).
-        added.swipeLeft()
-        let delete = app.buttons["Delete"]
-        if delete.waitForExistence(timeout: 2) { delete.tap() }
-        checkpoint(app, "after removing the test item")
-
         tapWhenReady(app.buttons["To buy"], "The switch should lead back to the shopping list.")
         XCTAssertTrue(element(app, id: "groceries.atHome").waitForNonExistence(timeout: 5),
                       "To buy should show the shopping list, not the kitchen.")
+
+        // Slice 2: a groceries item you already have is tagged "In kitchen", and the tag opens At home.
+        tapWhenReady(field, "The header field should be there on To buy.")
+        field.typeText("Saffron threads\n")
+        checkpoint(app, "after adding the kitchen item to groceries")
+        XCTAssertTrue(app.staticTexts["Suggested Ingredients"].waitForNonExistence(timeout: 5),
+                      "Return on To buy should add the item and close the suggestions.")
+        let tag = app.buttons["groceries.inKitchen"].firstMatch
+        tapWhenReady(tag, "An item that's also at home should carry an In kitchen tag.")
+        checkpoint(app, "after tapping In kitchen")
+        XCTAssertTrue(element(app, id: "groceries.atHome").waitForExistence(timeout: 5),
+                      "The In kitchen tag should open At home.")
+
+        // Leave the shared simulator as it was (later screenshots and Today shelves read the kitchen and list).
+        removeRow(app, named: "Saffron threads")
+        checkpoint(app, "after removing the kitchen test item")
+        tapWhenReady(app.buttons["To buy"], "The switch should lead back to the shopping list.")
+        removeRow(app, named: "Saffron threads")
+        checkpoint(app, "after removing the groceries test item")
+    }
+
+    /// Swipes a list row away by its visible name; a full swipe may delete before the button shows.
+    @MainActor
+    private func removeRow(_ app: XCUIApplication, named name: String) {
+        let row = app.staticTexts[name]
+        guard row.waitForExistence(timeout: 5) else { return }
+        row.swipeLeft()
+        let delete = app.buttons["Delete"]
+        if delete.waitForExistence(timeout: 2) { delete.tap() }
     }
 
     /// Inbox 🟡 (2026-11-16): Today's "Keep browsing →" must leave a recipe opened on Recipes, not land on it.

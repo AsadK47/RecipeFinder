@@ -238,7 +238,7 @@ struct TodayView: View {
         }
 
         if !feed.useSoon.isEmpty {
-            TodayUseSoonCard(pairs: feed.useSoon, onOpen: open)
+            TodayUseSoonCard(pairs: feed.useSoon, onOpen: open, onOpenKitchen: openKitchen)
         }
 
         let week = snapshot.week
@@ -272,7 +272,8 @@ struct TodayView: View {
         }
         if !shelves.kitchenMatches.isEmpty {
             TodayShelf(title: "Fits your kitchen", id: "kitchen",
-                       items: shelves.kitchenMatches.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open)
+                       items: shelves.kitchenMatches.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open,
+                       onOpenKitchen: openKitchen)
         }
         if !shelves.rediscover.isEmpty {
             TodayShelf(title: "Rediscover", id: "rediscover", items: shelves.rediscover.map { ($0, nil) }, onOpen: open)
@@ -289,6 +290,12 @@ struct TodayView: View {
     private func open(_ recipe: RecipeModel) {
         HapticManager.shared.light()
         path.append(recipe.id)
+    }
+
+    /// The tab root stores the side and switches tab, as it does for an expiry reminder.
+    private func openKitchen() {
+        HapticManager.shared.light()
+        NotificationCenter.default.post(name: .openGroceries, object: nil, userInfo: GroceriesMode.openRequest(for: .atHome))
     }
 
     private func cook(_ recipe: RecipeModel) {
