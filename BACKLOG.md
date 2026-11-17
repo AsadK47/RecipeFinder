@@ -123,14 +123,14 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Kitchen you can find** — 🚧 builder agent 2026-11-17 — (owner 2026-11-17: "Kitchen still exists? No user will be able to find it?"). Today it
+- [x] **Kitchen you can find** — (owner 2026-11-17: "Kitchen still exists? No user will be able to find it?"). Today it
   hides in Groceries' ⋯ menu, yet it powers "Fits your kitchen", "Uses what you have" and use-it-up. Give Groceries
   a **To buy | At home** switch at the top (same pattern as Recipes' Discover | My recipes, remembers the choice);
   At home = the Kitchen list with add/expiry; Today's kitchen shelves and "In kitchen" tags link to it. Remove the
   ⋯ entry. First step of *Groceries writes itself* (ticked → at home stays its job). *Done when:* UI test reaches At
   home in one tap, screenshots, CI green. **Slice 1 landed** 6f924c9 (switch, At home view, routed reminders,
   Help/filter copy).
-  Left: slice 2, Today's kitchen shelf + "In kitchen" tags open At home.
+  **Slice 2 landed** f8960bb (Today "Your kitchen →" links, "In kitchen" tag → At home, At home counts use-by alerts).
 - [ ] **Me with character** — 🚧 builder agent 2026-11-17 — (owner 2026-11-16: "profile … super bland"; unparks *Me 2/3*, kept below as spec). Today Me
   is an empty circle, a First/Last-name form and 24 grey locked badges. (1) **Hero**: photo or initials on the chef-type
   colour, name inline (tap to edit — the form moves to Settings → Profile), chef type as a title, and one stats strip:
@@ -885,3 +885,4 @@ _Last 7 days; older entries are in `docs/LOG.md`._
 - 2026-11-17 · Smell Batch A slice 4 (done) · 2ce5689..2ce0a78 · nothing new on device: recipe page groceries (+ / Shop), Made it, rating, cook photo, re-import still behave the same · new file `RecipeDetailView+Actions.swift` registered in pbxproj by hand (no XcodeWrite in cloud) · review: deep-review + challenger, 0 defects, 1 → CHALLENGES (recordCook wiring has no push-CI test) · CI green first try (run 44018498525) · looked at: no UI change · leftover branches agent/detail-split-b/-c/-d
 - 2026-11-17 · Tester batch 1 (2) Badges from Today · 9e4b4e8..7f8e5b1 · Today → "Your cooking": tap the "1 more cook to …" row → Me opens Profile at the trophy shelf with that badge's card up; the streak row still opens the Cooking sheet; go back to Today and tap again → card opens again · review: deep-review + challenger agreed on 2 fixed (card presented mid push/tab switch → waits for it to settle; scroll test couldn't fail → isHittable), 2 more fixed (test checks the badge title; second-tap path tested), row hidden again once every cooking badge is earned, 1 dismissed (two buttons on the card → CHALLENGES) · looked at: 32-today-progress, 45-today-badge-on-shelf (new UI test) · CI green 44037915572
 - 2026-11-17 · Kitchen you can find slice 1 · 08804bc..6f924c9 · Groceries: To buy | At home switch at the top; At home lists the kitchen and the header field adds to it; ⋯ shows the side's actions; an expiry reminder opens At home; leave on At home, relaunch → still At home · fix for the a11y audit block: ContentView no longer observes `groceries.mode` via `@AppStorage` (`GroceriesMode.rememberSide`) — audit green after 2 red runs · branch moved to agent/kitchen-at-home-2 (force-push refused; old agent/kitchen-at-home superseded, delete by hand) · landed commit differs from tested 7749861 only in WORK.md · review: deep-review + challenger on slice 1, 6 fixed · looked at: 03-groceries, 46-groceries-at-home · CI green 44150330958 + UI 44152657082
+- 2026-11-17 · Kitchen you can find slice 2 (✅ item done) · 109db78..f8960bb · Today: "Your kitchen →" on Use it up / Fits your kitchen opens Groceries on At home; To buy: tap an "In kitchen" tag → At home; At home with only use-by items shows them, not "empty" · finished by a later builder run (branch was pushed green by an earlier session that stopped before review) · review: deep-review high + challenger, 2 fixed (count of unlisted items, tag hit area), 3 accepted → CHALLENGES · looked at: 29-today-use-soon, 47-today-kitchen-at-home, 03-groceries · CI green 44192502771, Screenshots 44192123935 (on c00ee6c, before the count-only fix)

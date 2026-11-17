@@ -5,6 +5,26 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Kitchen you can find slice 2** (`agent/kitchen-today-links`): a "Your kitchen →" link in the header of the two
+  kitchen-built Today sections (Use it up, Fits your kitchen) posts `.openGroceries` with
+  `GroceriesMode.openRequest(for: .atHome)`, so it reuses the reminder routing (tab root stores the side, no root
+  `@AppStorage`). The To buy row's "In kitchen" tag became a button that flips the switch in place. At home's empty state
+  now also checks `inventoryItems` (use-by items), else the Use it up link landed on "Your kitchen is empty".
+  Rejected: making whole shelf tiles open the kitchen (tiles open recipes). **Pre-mortem:** (1) link opens To buy →
+  `opensTheSideALinkAsksFor` + Screenshots `testCaptureTodayUseSoon` asserts At home; (2) At home hides the expiring
+  items → same test asserts Spinach, shot 47; (3) the tag steals row taps → `testGroceriesReachesAtHomeInOneTap`.
+  Review (deep-review high + challenger, builder 2026-11-17): both flagged "N ingredients" counting use-by items that
+  aren't shown → `GroceriesMode.atHomeCount` (plain + alert names, once each); tag hit inset 12→8 (reached the minus
+  button). Accepted → CHALLENGES: link/reminder land on search suggestions if text is left in the field; dated items
+  with no alert stay unlisted (pre-existing, only via restore/sync); tag UI test taps the first tag, not Saffron's.
+- **Kitchen you can find** (branch `agent/kitchen-at-home`): an inline switch, not a sheet, using the same pattern as
+  Recipes' Discover | My recipes so cooks learn one pattern. Groceries opens on To buy, its job. The header field adds
+  to the side showing. Kitchen adds go through the pure `GroceriesMode.add`, which returns `.alreadyInKitchen` for an
+  existing name, because `toggleItem` would remove it. The switch hides while searching, like Recipes. **Pre-mortem:**
+  (1) cook can't find At home → `testGroceriesReachesAtHomeInOneTap` + shot 46; (2) a typed item lands on the wrong
+  list → `GroceriesModeTests` add cases + the UI test; (3) remembered At home breaks other UI tests → `-ui-testing`
+  resets to To buy. Rejected: `addItem` for kitchen adds — it isn't on `KitchenInventoryManaging`. Reminder routing
+  writes defaults via `GroceriesMode.rememberSide` instead of a root `@AppStorage` (failed the a11y audit twice).
 - **Smell Batch C chipStyle** (builder 2026-11-17): the "9 copied files" premise was off — most capsules differ on
   purpose (size, font, fill, material vs colour). Only the 12×6 `Capsule().fill` chip is truly duplicated (4 sites), so
   that's all `.chipStyle` covers; widening it would change pixels. Lives in `View+AppCard.swift` (surfaces) to avoid

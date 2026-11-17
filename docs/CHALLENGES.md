@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-17 (item pass: Kitchen you can find slice 2 — fixed: "N ingredients" counted unlisted use-by items, tag hit area reached the minus button)
+- [Function] Today's link and the expiry reminder land on Groceries' search suggestions if text was left in the field — shared with the reminder path; clear the field on a side change if a cook trips on it.
+- [Data] Use-by items with no alert (fresh, not low) aren't listed on At home and an "In kitchen" tag on one can land on the empty state — pre-existing, such items arrive only via restore/sync.
+- [Tests] `testGroceriesReachesAtHomeInOneTap` taps the first "In kitchen" tag, not Saffron's; the Spinach assertion passes on a simulator that already has plain items. UI tests run per-push shards + nightly.
+
 ## 2026-11-17 (item pass: Me with character slice 1 — fixed: "dinners" → "meals", streak-only hidden, streak stale after iCloud merge, UI assertion that couldn't fail)
 - [Function] "Cuisines tried" counts a category when cuisine is missing — pre-existing badge rule with its own test → Needs owner.
 - [Simplify] `CookingStreak.cooksThisYear` now has no reader — kept for slice 4 ("your cooking story"); delete if that slice doesn't use it.

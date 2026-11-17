@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Kitchen you can find slice 2 · f8960bb
+- For you: Today's "Use it up" and "Fits your kitchen" now have a "Your kitchen →" link that opens Groceries on At home, and tapping an "In kitchen" tag on your shopping list takes you to what you already have.
+- Behind the build: a reviewer and a challenger both caught the ingredient count including items it didn't show, fixed before it shipped; screenshots follow the link from Today to the spinach waiting at home.
+
 ## 2026-11-17 · Kitchen you can find slice 1 · 6f924c9
 - For you: Groceries now has a To buy | At home switch at the top, so your kitchen is one tap away — add what you have at home right from the same field, and an expiry reminder opens straight to it.
 - Behind the build: a reviewer and a challenger checked that adding an item already in your kitchen keeps it, and an accessibility audit caught the whole app redrawing on a settings change, fixed before it shipped.

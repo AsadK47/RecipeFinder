@@ -29,37 +29,15 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   inline (tap to edit) + the First/Last form → Settings › Profile, then (3) badges earned-first + Next up, (4) taste
   fingerprint + story. Leftover branch agent/me-hero (auto-cleanup).
 
-- Kitchen you can find (Queue top, builder 2026-11-17): ✅ slice 1 landed 6f924c9 (To buy | At home switch). Audit
-  block fixed by dropping ContentView's `@AppStorage` (AGENT_LESSONS 22). Next: slice 2 — Today's "Fits your
-  kitchen" shelf + "In kitchen" tags open Groceries on At home (use `GroceriesMode.rememberSide`/`.openGroceries`
-  with the expiry-style routing); then tick. Leftover branches agent/kitchen-at-home (superseded), -2 (auto-cleanup).
+- Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
+  builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Kitchen you can find slice 2 on `agent/kitchen-today-links` (pushed): review fixes pushed — check Build & Test +
-Screenshots, look at shots 29 + 47 + 46, then land + tick.
+Next Queue item per BACKLOG "Next (owner order …)" — likely Me with character slice (1b): name inline + form →
+Settings › Profile, on a new `agent/me-name-inline` branch.
 Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Kitchen you can find slice 2** (`agent/kitchen-today-links`): a "Your kitchen →" link in the header of the two
-  kitchen-built Today sections (Use it up, Fits your kitchen) posts `.openGroceries` with
-  `GroceriesMode.openRequest(for: .atHome)`, so it reuses the reminder routing (tab root stores the side, no root
-  `@AppStorage`). The To buy row's "In kitchen" tag became a button that flips the switch in place. At home's empty state
-  now also checks `inventoryItems` (use-by items), else the Use it up link landed on "Your kitchen is empty".
-  Rejected: making whole shelf tiles open the kitchen (tiles open recipes). **Pre-mortem:** (1) link opens To buy →
-  `opensTheSideALinkAsksFor` + Screenshots `testCaptureTodayUseSoon` asserts At home; (2) At home hides the expiring
-  items → same test asserts Spinach, shot 47; (3) the tag steals row taps → `testGroceriesReachesAtHomeInOneTap`.
-  Review (deep-review high + challenger, builder 2026-11-17): both flagged "N ingredients" counting use-by items that
-  aren't shown → `GroceriesMode.atHomeCount` (plain + alert names, once each); tag hit inset 12→8 (reached the minus
-  button). Accepted → CHALLENGES: link/reminder land on search suggestions if text is left in the field; dated items
-  with no alert stay unlisted (pre-existing, only via restore/sync); tag UI test taps the first tag, not Saffron's.
-- **Kitchen you can find** (branch `agent/kitchen-at-home`): an inline switch, not a sheet, using the same pattern as
-  Recipes' Discover | My recipes so cooks learn one pattern. Groceries opens on To buy, its job. The header field adds
-  to the side showing. Kitchen adds go through the pure `GroceriesMode.add`, which returns `.alreadyInKitchen` for an
-  existing name, because `toggleItem` would remove it. The switch hides while searching, like Recipes. **Pre-mortem:**
-  (1) cook can't find At home → `testGroceriesReachesAtHomeInOneTap` + shot 46; (2) a typed item lands on the wrong
-  list → `GroceriesModeTests` add cases + the UI test; (3) remembered At home breaks other UI tests → `-ui-testing`
-  resets to To buy. Rejected: `addItem` for kitchen adds — it isn't on `KitchenInventoryManaging`. Reminder routing
-  writes defaults via `GroceriesMode.rememberSide` instead of a root `@AppStorage` (failed the a11y audit twice).
 - **Me with character (1)**: stats reuse `BadgeMetrics` (cuisine falls back to category, like the Cuisine badge) so
   the strip and badge rings never disagree — cuisine-only count → Needs owner (both places or neither). Label "meals",
   not the spec's "dinners": the count is every cook (cookCount sum, all time). Strip shows if any stat > 0. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the
