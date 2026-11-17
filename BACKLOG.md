@@ -655,7 +655,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   Detail 474→286 over 4 slices (e3ba711..2ce0a78): nutrition label, star rating, shop sheet, timer, cook history, facts
   card, notes → own views; copy in tested `RecipeDetailCopy`; actions → `RecipeDetailView+Actions.swift` +
   `RecipeModel.recordingCook`.
-- [ ] **Batch B — Duplicate Code: persisted managers.** `Badge/Collection/CookingStreak/KitchenInventory/MealPlanning/
+- [ ] **Batch B — Duplicate Code: persisted managers.** — 🚧 builder agent 2026-11-17 — `Badge/Collection/CookingStreak/KitchenInventory/MealPlanning/
   ShoppingList` managers hand-roll load/encode/save on `LocalStore` → one shared persisted-store helper (Extract
   Superclass → protocol + generic). Tests first: each manager's round-trip unchanged. One branch.
 - [ ] **Batch C — Duplicate Code: chip styling** copied in 9 files → `.chipStyle()` in DesignSystem; replace all. One branch.
