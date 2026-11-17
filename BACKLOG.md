@@ -714,7 +714,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🐞 `ContentView.swift:62-67` — opening a `.recipefinderrecipe` from Files/iCloud (in place: `LSSupportsOpeningDocumentsInPlace = YES`, `project.pbxproj:3318`) reads `Data(contentsOf:)` without `startAccessingSecurityScopedResource()` (the 3 other file entry points do) and with no size cap on the main actor → likely "couldn't be opened" / UI hang — fix: scope access + `defer stop`, size limit, decode off-main, test with a fake scoped URL (challenger 2026-11-17, traced not device-run).
+- 🐞 — 🚧 builder agent 2026-11-17 — `ContentView.swift:62-67` — opening a `.recipefinderrecipe` from Files/iCloud (in place: `LSSupportsOpeningDocumentsInPlace = YES`, `project.pbxproj:3318`) reads `Data(contentsOf:)` without `startAccessingSecurityScopedResource()` (the 3 other file entry points do) and with no size cap on the main actor → likely "couldn't be opened" / UI hang — fix: scope access + `defer stop`, size limit, decode off-main, test with a fake scoped URL (challenger 2026-11-17, traced not device-run).
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
