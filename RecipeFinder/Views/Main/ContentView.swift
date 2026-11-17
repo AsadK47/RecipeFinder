@@ -6,6 +6,7 @@ struct ContentView: View {
     @Environment(\.recipeStore) private var store
     @State private var showTimer = false
     @State private var selectedTab: AppTab = .launchDefault
+    @AppStorage(GroceriesMode.modeKey) private var groceriesMode: GroceriesMode = GroceriesMode.defaultMode
     /// iPad sidebar selection; optional because `List(selection:)` can clear it.
     @State private var sidebarSelection: AppTab? = .launchDefault
     @Environment(\.colorScheme) var colorScheme
@@ -53,7 +54,10 @@ struct ContentView: View {
             recipeBrowseRequest = RecipeBrowseRequest(userInfo: $0.userInfo)
             select(AppTab.destination(for: $0.name))
         }
-        .onReceive(NotificationCenter.default.publisher(for: .openGroceries)) { select(AppTab.destination(for: $0.name)) }
+        .onReceive(NotificationCenter.default.publisher(for: .openGroceries)) {
+            groceriesMode = GroceriesMode.side(openedBy: $0.userInfo?["type"] as? String)
+            select(AppTab.destination(for: $0.name))
+        }
         .onReceive(NotificationCenter.default.publisher(for: .openMealPlan)) { select(AppTab.destination(for: $0.name)) }
         .onReceive(NotificationCenter.default.publisher(for: .openRecipe)) { select(AppTab.destination(for: $0.name)) }
         // Tapping a finished-timer notification opens the timer (it shows the shared RecipeTimerManager state).

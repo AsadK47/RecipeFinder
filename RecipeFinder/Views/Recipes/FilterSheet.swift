@@ -104,7 +104,7 @@ struct FilterSheet: View {
                     }
 
                     if availableIngredients.isEmpty {
-                        Text("Add ingredients to your Kitchen first (Groceries → Kitchen)")
+                        Text("Add what you have at home first (Groceries → At home)")
                             .font(.caption)
                             .adaptiveSecondaryForeground()
                     }

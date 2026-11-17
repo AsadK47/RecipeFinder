@@ -41,6 +41,32 @@ enum GroceriesMode: String, CaseIterable, Identifiable {
         mode == .toBuy && hasStores && !isSearching
     }
 
+    /// What Return in the header field (or a suggestion's Add) does on this side.
+    enum AddAction: Equatable {
+        case shopping(String)
+        case kitchen(String)
+        /// Kitchen adds toggle, so an existing name is kept and the cook is told instead.
+        case alreadyInKitchen
+        case nothing
+    }
+
+    /// The shopping list merges duplicates itself; the kitchen would remove an existing name, so it's checked here.
+    func add(_ text: String, kitchenNames: [String]) -> AddAction {
+        let name = text.trimmed
+        guard !name.isEmpty else { return .nothing }
+        switch self {
+        case .toBuy: return .shopping(name)
+        case .atHome:
+            return Self.contains(name, in: kitchenNames) ? .alreadyInKitchen : .kitchen(name)
+        }
+    }
+
+    /// Reminders and badges that open Groceries land on the side they're about: an expiry reminder on At home,
+    /// everything else (groceries reminder, shopping badge) on To buy. `type` is the notification's `userInfo["type"]`.
+    static func side(openedBy type: String?) -> GroceriesMode {
+        type == NotificationKind.expiry.rawValue ? .atHome : .toBuy
+    }
+
     /// Same-name check for the add buttons, so " Eggs" and "eggs" count as one item.
     static func contains(_ name: String, in names: [String]) -> Bool {
         let key = name.nameKey

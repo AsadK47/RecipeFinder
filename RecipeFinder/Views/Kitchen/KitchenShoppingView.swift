@@ -9,6 +9,8 @@ struct KitchenShoppingView: View {
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
     @State private var shoppingCollapsed: Set<String> = []
+    /// Kept here so typing in the header (which swaps in suggestions) doesn't re-open collapsed kitchen categories.
+    @State private var kitchenCollapsed: Set<String> = []
     @State private var confettiTrigger = 0
     @State private var showShoppingQuickAdd = false
     @State private var showClearShopping = false
@@ -123,7 +125,7 @@ struct KitchenShoppingView: View {
                 onAdd: addItemFromSearch
             )
         } else if mode == .atHome {
-            KitchenAtHomeView(onAddIngredient: { showAddIngredient = true })
+            KitchenAtHomeView(collapsed: $kitchenCollapsed, onAddIngredient: { showAddIngredient = true })
         } else if shopping.items.isEmpty {
             emptyState
         } else if let activeStore, visibleItems.isEmpty {
@@ -230,30 +232,31 @@ struct KitchenShoppingView: View {
 
     /// Return in the header field: adds what was typed to the side that's showing.
     private func addTypedItem() {
-        let trimmed = searchText.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return }
-        switch mode {
-        case .toBuy: shopping.addItem(name: trimmed)
-        case .atHome:
-            // The kitchen warns with a haptic on a duplicate; toggling an existing name would remove it.
-            if !isAdded(trimmed) { kitchen.toggleItem(trimmed, category: nil) }
-        }
-        finishAdding()
+        add(searchText)
     }
 
     private func addItemFromSearch(_ ingredient: String) {
         guard !isAdded(ingredient) else { return }
-        switch mode {
-        case .toBuy: shopping.addItem(name: ingredient)
-        case .atHome: kitchen.toggleItem(ingredient, category: nil)
-        }
-        finishAdding()
+        add(ingredient)
     }
 
-    private func finishAdding() {
+    private func add(_ text: String) {
+        switch mode.add(text, kitchenNames: kitchen.items.map(\.name)) {
+        case .shopping(let name):
+            shopping.addItem(name: name)
+            HapticManager.shared.success()
+        case .kitchen(let name):
+            // The kitchen plays its own add haptic.
+            kitchen.toggleItem(name, category: nil)
+        case .alreadyInKitchen:
+            // Nothing added: keep the text so the suggestions show it as "Already in kitchen".
+            HapticManager.shared.warning()
+            return
+        case .nothing:
+            return
+        }
         searchText = ""
         isSearchFocused = false
-        HapticManager.shared.success()
     }
 
     private func toggleCollapseAll() {
