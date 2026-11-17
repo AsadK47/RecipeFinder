@@ -123,7 +123,7 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Kitchen you can find** (owner 2026-11-17: "Kitchen still exists? No user will be able to find it?"). Today it
+- [ ] **Kitchen you can find** — 🚧 builder agent 2026-11-17 — (owner 2026-11-17: "Kitchen still exists? No user will be able to find it?"). Today it
   hides in Groceries' ⋯ menu, yet it powers "Fits your kitchen", "Uses what you have" and use-it-up. Give Groceries
   a **To buy | At home** switch at the top (same pattern as Recipes' Discover | My recipes, remembers the choice);
   At home = the Kitchen list with add/expiry; Today's kitchen shelves and "In kitchen" tags link to it. Remove the
