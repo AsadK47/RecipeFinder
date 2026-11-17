@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// Groceries tab header: title, overflow menu (kitchen + shopping actions), and search field.
+/// Groceries tab header: title, overflow menu (actions for the side showing), and the add/search field.
 struct GroceriesHeader<MenuContent: View>: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding
+    let placeholder: String
     let onSubmit: () -> Void
     @ViewBuilder let menuContent: () -> MenuContent
 
@@ -20,7 +21,7 @@ struct GroceriesHeader<MenuContent: View>: View {
     private var searchBar: some View {
         AppSearchField(
             text: $searchText,
-            placeholder: "Add or search groceries…",
+            placeholder: placeholder,
             isFocused: isSearchFocused,
             onSubmit: onSubmit,
             accessibilityID: "groceries.search"

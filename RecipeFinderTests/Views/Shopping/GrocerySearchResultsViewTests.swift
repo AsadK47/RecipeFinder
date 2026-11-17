@@ -9,13 +9,27 @@ import ViewInspector
 @MainActor
 @Suite struct GrocerySearchResultsViewTests {
 
-    private func make(searchText: String, results: [String], onAdd: @escaping (String) -> Void = { _ in }) -> GrocerySearchResultsView {
+    private func make(
+        searchText: String, results: [String], listName: String = "groceries",
+        isAdded: @escaping (String) -> Bool = { _ in false }, onAdd: @escaping (String) -> Void = { _ in }
+    ) -> GrocerySearchResultsView {
         GrocerySearchResultsView(
             searchText: searchText,
             searchResults: results,
-            isInShopping: { _ in false },
-            onAddToShopping: onAdd
+            listName: listName,
+            isAdded: isAdded,
+            onAdd: onAdd
         )
+    }
+
+    /// At home adds to the kitchen, so VoiceOver must say so rather than "groceries".
+    @Test(arguments: [("groceries", false, "Add to groceries"), ("kitchen", false, "Add to kitchen"),
+                      ("kitchen", true, "Already in kitchen")])
+    func addButtonNamesTheListItAddsTo(listName: String, added: Bool, label: String) throws {
+        let view = try make(searchText: "Apple", results: ["Apple"], listName: listName, isAdded: { _ in added })
+            .inspect()
+        let button = try view.find(ViewType.Button.self)
+        #expect(try button.accessibilityLabel().string() == label)
     }
 
     @Test("Renders the suggestions header and a row per match")

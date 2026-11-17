@@ -73,6 +73,14 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
         // 3–5. Other tabs and the "+" sheet
         tab(app, "Groceries", shot: "03-groceries")
+        let atHome = app.buttons["At home"]
+        if atHome.waitForExistence(timeout: 5) {
+            atHome.tap()
+            settle()
+            snap(app, "46-groceries-at-home")
+            app.buttons["To buy"].tap()
+            settle()
+        }
         tab(app, "Plan", shot: "04-meal-plan")
         tab(app, "Today", shot: "16-today")
         tab(app, "Me", shot: "17-me")

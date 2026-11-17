@@ -104,6 +104,31 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
                       "The filtered list should include the recipe just tagged.")
     }
 
+    /// Kitchen you can find (owner 2026-11-17): the kitchen is one tap from Groceries, and the header field adds to it.
+    @MainActor
+    func testGroceriesReachesAtHomeInOneTap() {
+        let app = launchApp()
+        app.tabBars.buttons["Groceries"].tap()
+
+        let atHome = app.buttons["At home"]
+        tapWhenReady(atHome, "Groceries should offer an At home switch at the top.")
+        checkpoint(app, "after tapping At home")
+        XCTAssertTrue(element(app, id: "groceries.atHome").waitForExistence(timeout: 5),
+                      "One tap on At home should show the kitchen.")
+
+        // A name unique to this test, so a rerun on a shared simulator finds it already there rather than toggled off.
+        let field = app.textFields["groceries.search"]
+        tapWhenReady(field, "The header field should be there on At home.")
+        field.typeText("Saffron threads\n")
+        checkpoint(app, "after adding to the kitchen")
+        let added = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Saffron threads")).firstMatch
+        XCTAssertTrue(added.waitForExistence(timeout: 5), "Return on At home should add the item to the kitchen.")
+
+        tapWhenReady(app.buttons["To buy"], "The switch should lead back to the shopping list.")
+        XCTAssertTrue(element(app, id: "groceries.atHome").waitForNonExistence(timeout: 5),
+                      "To buy should show the shopping list, not the kitchen.")
+    }
+
     /// Inbox 🟡 (2026-11-16): Today's "Keep browsing →" must leave a recipe opened on Recipes, not land on it.
     /// Rows push with destination links outside `navigationPath`, so clearing the path alone left the recipe up.
     @MainActor

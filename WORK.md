@@ -26,10 +26,22 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   agent/today-badges-link (auto-cleanup).
 
 
+- Kitchen you can find (Queue top, builder 2026-11-17): slice 1 on `agent/kitchen-at-home` — Groceries To buy | At
+  home switch (`GroceriesMode`, remembered), At home = `KitchenAtHomeView`, ⋯ Kitchen entry + `KitchenInventorySheet`
+  removed, header field adds to the side showing. Left: slice 2 — Today's "Fits your kitchen" shelf + "In kitchen" tags
+  open Groceries on At home.
+
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Kitchen you can find**: inline switch (not a sheet) mirrors Recipes' Discover | My recipes so cooks learn one
+  pattern; Groceries opens on To buy (its job). The header field is kept on At home and adds to the kitchen —
+  hiding it would make the header jump. Kitchen adds go through `toggleItem` only when the name is absent (toggle
+  on an existing name would remove it). **Pre-mortem:** (1) cook can't find At home → UI test
+  `testGroceriesReachesAtHomeInOneTap` + screenshot 46; (2) typing on At home lands on the shopping list → same UI
+  test adds via Return and checks the kitchen row; (3) remembered At home breaks other UI tests on a shared simulator
+  → `-ui-testing` resets to To buy.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to
