@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Tester feedback 1 slice 2 · 7f8e5b1
+- For you: on Today, tap the next badge under "Your cooking" to jump to it on your trophy shelf in Me, with its card open showing how close you are and where to earn it.
+- Behind the build: a reviewer and a challenger both spotted that the badge card could open too early while Me was still sliding in, so it now waits a moment; a new UI test taps the row twice and checks the right badge opens.
+
 ## 2026-11-17 · Smell Batch A slice 4 · 2ce0a78
 - For you: recipe pages work just as before — adding to Groceries, Made it, ratings and cook photos now have their own tidy code, which finishes the recipe page tidy-up.
 - Behind the build: tests pin the one-cook-a-day rule and every Groceries message, and a reviewer and a challenger compared the move line by line.

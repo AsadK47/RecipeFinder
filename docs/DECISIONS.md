@@ -5,6 +5,16 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Tester 1 (2) Badges from Today** (builder 2026-11-17): the card keeps two jobs as two buttons (stats → Cooking sheet, which is the
+  streak's only explainer; badge row → the shelf) rather than repointing the whole card — dropping the sheet would lose
+  the streak explanation. The pager opens on the badge (its card shows progress + "earn it here"), so the row lands
+  on the badge, not a shelf to hunt through; all earned → shelf only. Request is a value cleared once handled so a
+  second tap works when Profile is already on screen. **Pre-mortem:** (1) pager not presented during the push → UI
+  test `testTodayBadgeRowOpensItsBadgeOnTheShelf` asserts the card; (2) row opens the wrong badge → unit tests pin
+  request = nextBadge (closest); (3) VoiceOver reads "4 / 5" or loses the stats → spoken-text test + stats label kept
+  (`testCaptureTodayProgress`).
+  Review: presentation now waits 450 ms in `.task(id:)` (both reviewers: a cover set mid-push/tab switch is dropped);
+  row hidden once every cooking badge is earned (no permanent "all earned" row on Today).
 - **Smell Batch A slice 4** (builder 2026-11-17): one `+Actions` extension (191 lines) rather than a helper object —
   the actions mutate `@State`/`@Environment`, so a separate type would need bindings for ~10 members; the testable
   parts (one-cook-a-day rule, toast copy) went pure instead. Some `private` members became internal (file split).
