@@ -1,6 +1,6 @@
 import Foundation
 
-/// Copy for the recipe detail's timer button and cook-history card, kept pure so it is tested
+/// Copy for the recipe detail's timer button, cook-history card and facts card, kept pure so it is tested
 /// (`RecipeDetailCopyTests`) rather than buried in view bodies.
 enum RecipeDetailCopy {
     static func timerStartTitle(minutes: Int) -> String {
@@ -24,4 +24,64 @@ enum RecipeDetailCopy {
     static func showsRating(cookCount: Int) -> Bool {
         cookCount > 0
     }
+
+    /// "15 minutes" → "15 min" so four or five facts fit across one row.
+    static func shortTime(_ display: String) -> String {
+        display
+            .replacingOccurrences(of: " minutes", with: " min")
+            .replacingOccurrences(of: " minute", with: " min")
+            .replacingOccurrences(of: " hours", with: " hr")
+            .replacingOccurrences(of: " hour", with: " hr")
+    }
+
+    /// Prep, cook, difficulty, category — and cuisine when the recipe has one.
+    static func facts(for recipe: RecipeModel) -> [RecipeFactText] {
+        var facts = [
+            RecipeFactText(kind: .prep, value: shortTime(recipe.prepTimeDisplay)),
+            RecipeFactText(kind: .cook, value: shortTime(recipe.cookTimeDisplay)),
+            RecipeFactText(kind: .difficulty, value: recipe.difficulty),
+            RecipeFactText(kind: .category, value: recipe.category),
+        ]
+        if let cuisine = recipe.cuisine, !cuisine.isEmpty {
+            facts.append(RecipeFactText(kind: .cuisine, value: cuisine))
+        }
+        return facts
+    }
+
+    /// Indices for the two-row layout: 4 facts → 2 + 2, 5 → 3 + 2 (times stay together on the first row).
+    static func factRows(count: Int) -> [[Int]] {
+        guard count > 0 else { return [] }
+        let firstRow = (count + 1) / 2
+        return [Array(0..<firstRow), Array(firstRow..<count)].filter { !$0.isEmpty }
+    }
+}
+
+enum RecipeFactKind: Equatable, Sendable {
+    case prep, cook, difficulty, category, cuisine
+
+    var label: String {
+        switch self {
+        case .prep: "Prep"
+        case .cook: "Cook"
+        case .difficulty: "Difficulty"
+        case .category: "Category"
+        case .cuisine: "Cuisine"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .prep: "clock"
+        case .cook: "flame"
+        case .difficulty: "chart.bar"
+        case .category: "fork.knife"
+        case .cuisine: "globe"
+        }
+    }
+}
+
+struct RecipeFactText: Equatable, Identifiable, Sendable {
+    let kind: RecipeFactKind
+    let value: String
+    var id: String { kind.label }
 }
