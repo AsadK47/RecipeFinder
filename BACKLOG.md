@@ -651,7 +651,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   version + lightweight migration parsing the old strings; bump the `.xccurrentversion` number in CLAUDE.md files),
   keep a `DurationFormatter` for display, decode legacy JSON (backups, `recipes_seed.json`) via `decodeIfPresent`.
   *Done when:* migration + legacy-decode tests, every `prepTime`/`cookingTime` string use removed, CI green.
-- [ ] **Batch A — Large Class: `RecipeDetailView+Content.swift` (745) + `RecipeDetailView` (398).** — 🚧 builder agent 2026-11-16 — Extract Method/Class:
+- [ ] **Batch A — Large Class: `RecipeDetailView+Content.swift` (745) + `RecipeDetailView` (398).** — 🚧 builder agent 2026-11-17 — Extract Method/Class:
   nutrition section + `NutritionMacroBar`, ingredients/steps/timer sections into own views; `StarRatingView`,
   `ShopIngredientsSheet` to own files. Target each file ≤300. One branch. **✅ Slice 1 (e3ba711..9fc278a):** nutrition section →
   `RecipeNutritionLabel` built from tested `NutritionLabelFormat.rows`; `StarRatingView`, `ShopIngredientsSheet` own
