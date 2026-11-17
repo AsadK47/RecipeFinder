@@ -72,6 +72,12 @@ enum GroceriesMode: String, CaseIterable, Identifiable {
         type == NotificationKind.expiry.rawValue ? .atHome : .toBuy
     }
 
+    /// Stores the side a reminder or badge opens, for Groceries' `@AppStorage` to pick up. The tab root calls this
+    /// rather than observing the key itself, so a defaults write doesn't re-render every tab.
+    static func rememberSide(openedBy type: String?, in defaults: UserDefaults = .standard) {
+        defaults.set(side(openedBy: type).rawValue, forKey: modeKey)
+    }
+
     /// Same-name check for the add buttons, so " Eggs" and "eggs" count as one item.
     static func contains(_ name: String, in names: [String]) -> Bool {
         let key = name.nameKey

@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import RecipeFinder
 
@@ -84,5 +85,16 @@ struct GroceriesModeTests {
     ] as [(String?, GroceriesMode)])
     func opensTheSideTheReminderIsAbout(type: String?, side: GroceriesMode) {
         #expect(GroceriesMode.side(openedBy: type) == side)
+    }
+
+    /// The tab root stores the side directly instead of observing the key with `@AppStorage`: a root that observes
+    /// UserDefaults re-renders every tab on any defaults write (a11y audit, 2026-11-17). Groceries' own
+    /// `@AppStorage` reads what's stored here.
+    @Test func remembersTheSideAReminderOpens() throws {
+        let defaults = try #require(UserDefaults(suiteName: "GroceriesModeTests.\(UUID().uuidString)"))
+        GroceriesMode.rememberSide(openedBy: NotificationKind.expiry.rawValue, in: defaults)
+        #expect(defaults.string(forKey: GroceriesMode.modeKey) == "atHome")
+        GroceriesMode.rememberSide(openedBy: nil, in: defaults)
+        #expect(defaults.string(forKey: GroceriesMode.modeKey) == "toBuy")
     }
 }
