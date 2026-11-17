@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · 🐞 Inbox: opening a recipe file · 642f8b6
+- For you: recipe files someone shares with you open straight from Files and iCloud Drive, and if one is still downloading the app tells you to give it a moment and try again.
+- Behind the build: new tests failed on the old code first; two reviewers checked the file handling, and the app now reads shared files in the background with a sensible size limit.
+
 ## 2026-11-17 · Tester feedback 1 slice 2 · 7f8e5b1
 - For you: on Today, tap the next badge under "Your cooking" to jump to it on your trophy shelf in Me, with its card open showing how close you are and where to earn it.
 - Behind the build: a reviewer and a challenger both spotted that the badge card could open too early while Me was still sliding in, so it now waits a moment; a new UI test taps the row twice and checks the right badge opens.

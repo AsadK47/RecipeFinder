@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **🐞 Recipe file open** (builder 2026-11-17): reading moved into `RecipeFileExporter.read(from:)` behind a `ScopedFileAccess` seam (URL's
+  scoped-access methods can't be faked otherwise). 5 MB cap enforced by `FileHandle.read(upToCount: max+1)` (a size pre-check alone could be stale for iCloud placeholders; reviewer). A newer tap cancels the older read so the latest file wins.
+  Pre-mortem: (1) access never stopped on a damaged file → `readFromURLStopsScopedAccessWhenTheFileIsDamaged`;
+  (2) a huge file hangs the UI → size-limit test + decode in `Task.detached`; (3) stop called without a grant →
+  `readFromURLDoesNotStopAccessItNeverGot`.
 - **Tester 1 (2) Badges from Today** (builder 2026-11-17): the card keeps two jobs as two buttons (stats → Cooking sheet, which is the
   streak's only explainer; badge row → the shelf) rather than repointing the whole card — dropping the sheet would lose
   the streak explanation. The pager opens on the badge (its card shows progress + "earn it here"), so the row lands
