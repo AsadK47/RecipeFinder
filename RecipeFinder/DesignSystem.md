@@ -35,7 +35,7 @@ inputs **blend** into the glass via translucent fills, not solid fills.
   `secondaryBackground`, bare `.ultraThinMaterial`, `Color(.systemGray6)`). Route
   through `.appCard()` / `.appInputField()` so surfaces can't drift.
 - Chips/pills (suggestions, tags) are a **separate** element class — a small
-  `secondaryBackground` pill is fine; don't confuse them with input fields. Small 12×6 chips use
+  `secondaryBackground` pill is fine; don't confuse them with input fields. Small 12×6 capsule chips with a colour fill use
   `.chipStyle(fill)` (`View+AppCard.swift`).
 - Form section content stacks are `VStack(alignment: .leading)` **and** full
   width, or narrow controls (menus, steppers) drift to centre while wide ones
