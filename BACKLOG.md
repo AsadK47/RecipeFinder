@@ -131,7 +131,7 @@ are merged into a newer item or parked — never start them; their text stays as
   See all — no walls of locked circles. (4) **Taste fingerprint** + **Your cooking story** timeline from *Me 2/3*.
   New user: warm empty states with one action each ("Cook your first dinner"). *Done when:* stats/next-up/fingerprint
   logic tested, screenshots (new + seasoned cook), one reviewer + challenger, CI green.
-- [ ] **Tester feedback batch 1** (tester K., 2026-11-16; owner: "implement this"). One slice each, in this order:
+- [ ] **Tester feedback batch 1** — 🚧 builder agent 2026-11-17 (slice 3) — (tester K., 2026-11-16; owner: "implement this"). One slice each, in this order:
   (1) ✅ 3ed805c **Cuisine on the recipe** — show `cuisine` (already on `RecipeModel`) in the detail facts card and as a tappable
   chip that opens Recipes filtered to that cuisine; editable in the wizard; imports fill it when the page states it.
   (2) ✅ 7f8e5b1 **Badges from Today** — Today's cooking-progress card links straight to the badge shelf (Me → badges), showing the
