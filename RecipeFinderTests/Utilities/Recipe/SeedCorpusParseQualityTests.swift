@@ -107,6 +107,10 @@ import Foundation
         var amounts: [Amount]?
         /// Ingredient group titles, in order ("For the sauce"), kept as header lines rather than ingredients.
         var sections: [String]?
+        /// Yield and times as stated on the page ("Pour 6 personnes", "Kochzeit: 25 Min.").
+        var servings: Int?
+        var prepTime: Int?
+        var cookTime: Int?
     }
 
     private static var fixtureDirectory: URL {
@@ -155,6 +159,9 @@ import Foundation
             let hits = (ingredients + steps).filter { $0.localizedCaseInsensitiveContains(junk) }
             #expect(hits.isEmpty, "\(slug): junk \"\(junk)\" kept in \(hits)")
         }
+        if let servings = expected.servings { #expect(prefill.servings == servings, "\(report) servings") }
+        if let prep = expected.prepTime { #expect(prefill.prepTime == prep, "\(report) prep") }
+        if let cook = expected.cookTime { #expect(prefill.cookTime == cook, "\(report) cook") }
         if let expectedSections = expected.sections {
             #expect(sections == expectedSections, "\(slug): groups \(sections)")
         }

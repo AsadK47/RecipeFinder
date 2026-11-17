@@ -1,0 +1,19 @@
+{
+  "name": "kartoffelsalat",
+  "minIngredients": 7,
+  "maxIngredients": 7,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["Portionen", "Kochzeit"],
+  "servings": 4,
+  "prepTime": 20,
+  "cookTime": 25,
+  "amounts": [
+    {"name": "Kartoffeln", "quantity": 1, "unit": "kg"},
+    {"name": "Gemüsebrühe", "quantity": 250, "unit": "ml"},
+    {"name": "Weißweinessig", "quantity": 3, "unit": "tbsp"},
+    {"name": "Senf", "quantity": 1, "unit": "tsp"},
+    {"name": "Zucker", "quantity": 1, "unit": "pinch"}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "carbonara",
+  "minIngredients": 5,
+  "maxIngredients": 5,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["persone", "Cottura"],
+  "servings": 4,
+  "prepTime": 10,
+  "cookTime": 12,
+  "amounts": [
+    {"name": "spaghetti", "quantity": 320, "unit": "g"},
+    {"name": "guanciale", "quantity": 150, "unit": "g"},
+    {"name": "pecorino", "quantity": 50, "unit": "g"},
+    {"name": "pepe", "quantity": 1, "unit": "pinch"}
+  ]
+}

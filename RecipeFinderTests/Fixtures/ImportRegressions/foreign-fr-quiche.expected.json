@@ -1,0 +1,17 @@
+{
+  "name": "quiche lorraine",
+  "minIngredients": 6,
+  "maxIngredients": 6,
+  "minSteps": 5,
+  "maxSteps": 5,
+  "amountsPresent": true,
+  "forbidden": ["personnes", "Cuisson"],
+  "servings": 6,
+  "prepTime": 20,
+  "cookTime": 35,
+  "amounts": [
+    {"name": "lardons", "quantity": 200, "unit": "g"},
+    {"name": "crème fraîche", "quantity": 25, "unit": "cl"},
+    {"name": "noix de muscade", "quantity": 1, "unit": "pinch"}
+  ]
+}

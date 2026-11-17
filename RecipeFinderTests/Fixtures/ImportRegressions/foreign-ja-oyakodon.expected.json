@@ -1,0 +1,16 @@
+{
+  "name": "親子丼",
+  "minIngredients": 7,
+  "maxIngredients": 7,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["人分"],
+  "servings": 2,
+  "amounts": [
+    {"name": "鶏もも肉", "quantity": 200, "unit": "g"},
+    {"name": "玉ねぎ", "quantity": 0.5, "unit": "piece"},
+    {"name": "醤油", "quantity": 2, "unit": "tbsp"},
+    {"name": "砂糖", "quantity": 1.5, "unit": "tsp"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "شكشوكة",
+  "minIngredients": 6,
+  "maxIngredients": 6,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["أشخاص"],
+  "servings": 4,
+  "amounts": [
+    {"name": "زيت زيتون", "quantity": 2, "unit": "tbsp"},
+    {"name": "ثوم", "quantity": 2, "unit": "clove"},
+    {"name": "طماطم", "quantity": 400, "unit": "g"},
+    {"name": "كمون", "quantity": 1, "unit": "tsp"}
+  ]
+}

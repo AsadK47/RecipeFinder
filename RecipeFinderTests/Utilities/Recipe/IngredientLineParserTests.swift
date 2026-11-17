@@ -48,6 +48,47 @@ import Foundation
     }
 
     @Test(
+        "Parses amounts written in other languages and scripts (tester feedback: foreign recipes)",
+        arguments: [
+            // (input, quantity, unit, name)
+            ("200 g de farine", 200.0, "g", "farine"),
+            ("2 cuillères à soupe d'huile d'olive", 2.0, "tbsp", "huile d'olive"),
+            ("1 c. à c. de sel", 1.0, "tsp", "sel"),
+            ("0,5 l de lait", 0.5, "l", "lait"),
+            ("2 cucharadas de aceite de oliva", 2.0, "tbsp", "aceite de oliva"),
+            ("1 cucharadita de comino", 1.0, "tsp", "comino"),
+            ("1 diente de ajo, picado", 1.0, "clove", "ajo, picado"),
+            ("200 gr de tomates", 200.0, "g", "tomates"),
+            ("2 cucchiai di olio d'oliva", 2.0, "tbsp", "olio d'oliva"),
+            ("1 spicchio d'aglio", 1.0, "clove", "aglio"),
+            ("2 EL Olivenöl", 2.0, "tbsp", "Olivenöl"),
+            ("1 TL Salz", 1.0, "tsp", "Salz"),
+            ("1,5 kg Kartoffeln", 1.5, "kg", "Kartoffeln"),
+            ("2 colheres de sopa de azeite", 2.0, "tbsp", "azeite"),
+            ("1 xícara de arroz", 1.0, "cup", "arroz"),
+            ("醤油 大さじ2", 2.0, "tbsp", "醤油"),
+            ("砂糖 小さじ1と1/2", 1.5, "tsp", "砂糖"),
+            ("卵 2個", 2.0, "piece", "卵"),
+            ("豚肉 ２００ｇ", 200.0, "g", "豚肉"),                       // full-width digits and unit
+            ("٢ ملعقة كبيرة زيت زيتون", 2.0, "tbsp", "زيت زيتون"),       // Arabic-Indic digits
+            ("١٫٥ كوب أرز", 1.5, "cup", "أرز"),                           // Arabic decimal separator
+            ("۵۰۰ گرم برنج", 500.0, "", "گرم برنج")                       // Persian digits; unknown unit stays in the name
+        ]
+    )
+    func parsesForeignLines(input: String, quantity: Double, unit: String, name: String) {
+        let p = IngredientLineParser.parse(input)
+        #expect(p.quantity == quantity, "\(input) → \(p)")
+        #expect(p.unit == unit, "\(input) → \(p)")
+        #expect(p.name == name, "\(input) → \(p)")
+    }
+
+    @Test("English names that start like a foreign unit or article keep their words",
+          arguments: [("2 elotes", "elotes"), ("1 dill sprig", "dill sprig"), ("3 dentex fillets", "dentex fillets")])
+    func englishNamesUntouched(input: String, name: String) {
+        #expect(IngredientLineParser.parse(input).name == name)
+    }
+
+    @Test(
         "Strips leading list/checkbox markers so the amount parses (regression: WPRM ▢ lines)",
         arguments: [
             // (input, quantity, unit, name) — real lines from the seed corpus that previously parsed as qty 0.

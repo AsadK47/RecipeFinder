@@ -1,0 +1,18 @@
+{
+  "name": "gazpacho",
+  "minIngredients": 7,
+  "maxIngredients": 7,
+  "minSteps": 4,
+  "maxSteps": 4,
+  "amountsPresent": true,
+  "forbidden": ["personas", "Tiempo"],
+  "servings": 4,
+  "prepTime": 15,
+  "amounts": [
+    {"name": "tomates", "quantity": 1, "unit": "kg"},
+    {"name": "ajo", "quantity": 1, "unit": "clove"},
+    {"name": "aceite de oliva", "quantity": 50, "unit": "ml"},
+    {"name": "vinagre", "quantity": 2, "unit": "tbsp"},
+    {"name": "sal", "quantity": 1, "unit": "tsp"}
+  ]
+}
