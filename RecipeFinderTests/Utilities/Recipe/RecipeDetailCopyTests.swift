@@ -26,8 +26,14 @@ import Testing
         #expect(RecipeDetailCopy.showsRating(cookCount: count) == expected)
     }
 
-    @MainActor @Test func timerControlUsesTheRecipeCookTime() {
-        #expect(RecipeTimerControl.cookMinutes(from: "1 hour 30 min") == 90)
-        #expect(RecipeTimerControl.cookMinutes(from: "") == 0)
+    @Test(arguments: [(59, [0, 59]), (60, [1, 0]), (90, [1, 30]), (125, [2, 5])])
+    func timerStartSplitsHoursAndMinutes(minutes: Int, expected: [Int]) {
+        let start = RecipeDetailCopy.timerStart(minutes: minutes)
+        #expect(start.map { [$0.hours, $0.minutes] } == expected)
+    }
+
+    @Test(arguments: [0, -3])
+    func noCookTimeOpensThePicker(minutes: Int) {
+        #expect(RecipeDetailCopy.timerStart(minutes: minutes) == nil)
     }
 }

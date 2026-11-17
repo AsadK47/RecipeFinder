@@ -8,11 +8,6 @@ struct RecipeTimerControl: View {
     let onPickTime: () -> Void
     @Environment(\.recipeTimer) private var recipeTimer
 
-    /// Minutes from the recipe's cook time; 0 when unparseable.
-    nonisolated static func cookMinutes(from cookingTime: String) -> Int {
-        TimeExtractor.extractMinutes(from: cookingTime)
-    }
-
     var body: some View {
         if recipeTimer.isActive {
             Menu {
@@ -37,7 +32,7 @@ struct RecipeTimerControl: View {
             .accessibilityLabel("Recipe timer, \(recipeTimer.displayTime)")
             .accessibilityHint("Open timer actions")
         } else {
-            let minutes = Self.cookMinutes(from: cookingTime)
+            let minutes = TimeExtractor.extractMinutes(from: cookingTime)
             Button(action: startCookTimer) {
                 rowLabel(icon: "timer", text: RecipeDetailCopy.timerStartTitle(minutes: minutes), monospaced: false)
             }
@@ -48,13 +43,12 @@ struct RecipeTimerControl: View {
 
     // One-tap start from the recipe's cook time; falls back to the picker sheet when there's none.
     private func startCookTimer() {
-        let minutes = Self.cookMinutes(from: cookingTime)
-        guard minutes > 0 else {
+        guard let start = RecipeDetailCopy.timerStart(minutes: TimeExtractor.extractMinutes(from: cookingTime)) else {
             onPickTime()
             return
         }
         HapticManager.shared.light()
-        recipeTimer.start(hours: minutes / 60, minutes: minutes % 60, seconds: 0)
+        recipeTimer.start(hours: start.hours, minutes: start.minutes, seconds: 0)
     }
 
     private func rowLabel(icon: String, text: String, monospaced: Bool) -> some View {
