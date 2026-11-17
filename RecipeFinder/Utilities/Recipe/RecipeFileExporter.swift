@@ -85,7 +85,15 @@ enum RecipeFileExporter {
 
     /// Reads and decodes a `.recipefinderrecipe` file opened from Files, iCloud Drive or another app.
     static func read(from url: URL, access: ScopedFileAccess = .securityScoped) throws -> RecipeModel {
-        try decode(Data(contentsOf: url))
+        let didAccess = access.start(url)
+        defer { if didAccess { access.stop(url) } }
+        // Check the size before reading so a huge file is never loaded; the byte check covers a missing size.
+        if let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize, size > maxFileBytes {
+            throw RecipeFileError.tooLarge
+        }
+        let data = try Data(contentsOf: url)
+        guard data.count <= maxFileBytes else { throw RecipeFileError.tooLarge }
+        return try decode(data)
     }
 
     /// Decodes `data` into a fresh `RecipeModel` with a new UUID; personal data reset to defaults.

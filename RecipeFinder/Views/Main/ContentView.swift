@@ -63,13 +63,16 @@ struct ContentView: View {
         }
         .onOpenURL { url in
             guard url.pathExtension == "recipefinderrecipe" else { return }
-            do {
-                let data = try Data(contentsOf: url)
-                pendingFileImport = try RecipeFileExporter.decode(data)
-            } catch {
-                // Surface the failure — tapping a shared recipe file that won't open must not be a silent no-op.
-                logger.error("Failed to open shared recipe file: \(error.localizedDescription)")
-                fileImportError = "This recipe file couldn't be opened. It may be damaged or from a newer version."
+            // Read off the main actor: a file from iCloud Drive may still be downloading.
+            Task {
+                do {
+                    pendingFileImport = try await Task.detached { try RecipeFileExporter.read(from: url) }.value
+                } catch {
+                    // Surface the failure — tapping a shared recipe file that won't open must not be a silent no-op.
+                    logger.error("Failed to open shared recipe file: \(error.localizedDescription)")
+                    fileImportError = (error as? RecipeFileError)?.errorDescription
+                        ?? "This recipe file couldn't be opened. It may be damaged or from a newer version."
+                }
             }
         }
         .errorAlert("Couldn't Open Recipe", message: $fileImportError)
