@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Top of Me: who you are as a cook — photo or initials on your chef type's colour, name, chef type as a title, and
-/// one stats strip (dinners cooked · week streak · cuisines tried). Opens Profile, where the badges and form live.
+/// one stats strip (meals cooked · week streak · cuisines tried). Opens Profile, where the badges and form live.
 struct MeHeroCard: View {
     let image: UIImage?
     /// Empty when there's no name yet: the avatar shows a person symbol, not "RC" from the "Recipe Chef" stand-in.
@@ -26,7 +26,7 @@ struct MeHeroCard: View {
                 if MeStats.hasCooked(stats) {
                     statsStrip
                 } else {
-                    Text("Cook your first dinner and your story starts here.")
+                    Text("Cook your first meal and your story starts here.")
                         .font(.subheadline)
                         .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)
@@ -47,7 +47,7 @@ struct MeHeroCard: View {
     }
 
     private var spokenValue: String {
-        let cooking = MeStats.hasCooked(stats) ? MeStats.spokenSummary(stats) : "No dinners cooked yet"
+        let cooking = MeStats.hasCooked(stats) ? MeStats.spokenSummary(stats) : "Nothing cooked yet"
         return "\(chefType.rawValue), \(cooking), \(spokenBadgeCount)"
     }
 
@@ -97,24 +97,20 @@ struct MeHeroCard: View {
                 .clipShape(Circle())
                 .overlay(Circle().stroke(chefType.heroColor, lineWidth: 3))
                 .accessibilityHidden(true)
+        } else if initials.isEmpty {
+            IconBadge(systemName: "person.fill", tint: chefType.heroColor, diameter: avatarSize, style: .solid)
+                .accessibilityHidden(true)
         } else {
-            ZStack {
-                Circle().fill(chefType.heroColor)
-                if initials.isEmpty {
-                    Image(systemName: "person.fill")
-                        .font(.title)
-                } else {
-                    Text(initials)
-                        .font(.title.weight(.bold))
-                        .minimumScaleFactor(0.6)
-                        .lineLimit(1)
-                        .padding(AppTheme.spacing6)
-                }
-            }
-            // Fixed white: every hero colour is deep enough for white text in both modes.
-            .foregroundStyle(.white)
-            .frame(width: avatarSize, height: avatarSize)
-            .accessibilityHidden(true)
+            Text(initials)
+                .font(.title.weight(.bold))
+                .minimumScaleFactor(0.6)
+                .lineLimit(1)
+                .padding(AppTheme.spacing6)
+                // Fixed white: every hero colour is deep enough for white text in both modes.
+                .foregroundStyle(.white)
+                .frame(width: avatarSize, height: avatarSize)
+                .background(Circle().fill(chefType.heroColor))
+                .accessibilityHidden(true)
         }
     }
 
@@ -166,22 +162,22 @@ struct MeHeroCard: View {
 }
 
 extension ChefType {
-    /// The hero avatar's backdrop. Deep tones so white initials stay ≥4.5:1 on every one, in Light and Dark.
+    /// The hero avatar's backdrop (`AppTheme` palette — deep enough for white initials).
     var heroColor: Color {
         switch self {
-        case .homeCook:         Color(red: 0.75, green: 0.33, blue: 0.10)
-        case .foodie:           Color(red: 0.72, green: 0.16, blue: 0.38)
-        case .baker:            Color(red: 0.55, green: 0.33, blue: 0.20)
-        case .grillMaster:      Color(red: 0.70, green: 0.15, blue: 0.12)
-        case .healthNut:        Color(red: 0.13, green: 0.48, blue: 0.25)
-        case .adventurousEater: Color(red: 0.12, green: 0.35, blue: 0.70)
+        case .homeCook:         AppTheme.chefHomeCook
+        case .foodie:           AppTheme.chefFoodie
+        case .baker:            AppTheme.chefBaker
+        case .grillMaster:      AppTheme.chefGrillMaster
+        case .healthNut:        AppTheme.chefHealthNut
+        case .adventurousEater: AppTheme.chefAdventurousEater
         }
     }
 }
 
 #Preview("Seasoned cook") {
     MeHeroCard(image: nil, initials: "AK", name: "Asad Khan", chefType: .grillMaster,
-               stats: MeStats.strip(dinners: 42, streakWeeks: 6, cuisines: 9),
+               stats: MeStats.strip(meals: 42, streakWeeks: 6, cuisines: 9),
                badgeCount: "7 / 24", spokenBadgeCount: "7 of 24 badges earned") {}
         .padding()
         .background(AppBackground())
@@ -189,7 +185,7 @@ extension ChefType {
 
 #Preview("New cook") {
     MeHeroCard(image: nil, initials: "", name: "Recipe Chef", chefType: .homeCook,
-               stats: MeStats.strip(dinners: 0, streakWeeks: 0, cuisines: 0),
+               stats: MeStats.strip(meals: 0, streakWeeks: 0, cuisines: 0),
                badgeCount: "0 / 24", spokenBadgeCount: "0 of 24 badges earned") {}
         .padding()
         .background(AppBackground())

@@ -19,7 +19,7 @@ struct MeView: View {
     /// My Cookbook's pages, rebuilt when recipes change rather than in `body`.
     @State private var cookbookPages: [CookbookPage] = []
     @State private var profileImage: UIImage?
-    /// The hero's dinners · streak · cuisines, refreshed with the cookbook rather than in `body`.
+    /// The hero's meals · streak · cuisines, refreshed with the cookbook rather than in `body`.
     @State private var stats: [MeStat] = []
     /// "5 / 24" badges earned, refreshed with the cookbook rather than in `body`.
     @State private var badgeCount = ""
@@ -88,6 +88,8 @@ struct MeView: View {
                 refreshCookbook()
             }
             .onChange(of: recipeStore.recipes) { _, _ in refreshCookbook() }
+            // A cook merged from iCloud moves the streak without touching this device's recipes.
+            .onChange(of: cookingStreak.streak) { _, _ in refreshCookbook() }
             // "today" / "yesterday" on the pages move on overnight.
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active else { return }

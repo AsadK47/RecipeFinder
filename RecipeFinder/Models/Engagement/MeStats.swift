@@ -1,9 +1,9 @@
 import Foundation
 
-/// One number on Me's stats strip: "12" over "dinners", read by VoiceOver as "12 dinners cooked".
+/// One number on Me's stats strip: "12" over "meals", read by VoiceOver as "12 meals cooked".
 struct MeStat: Identifiable, Equatable {
     enum Kind: String {
-        case dinners, streak, cuisines
+        case meals, streak, cuisines
     }
 
     let kind: Kind
@@ -16,23 +16,24 @@ struct MeStat: Identifiable, Equatable {
     var id: Kind { kind }
 }
 
-/// Me's hero stats — dinners cooked · week streak · cuisines tried — from the same counts the badges use, so the
-/// strip and the badge progress never disagree. Pure so the wording is pinned by tests.
+/// Me's hero stats — meals cooked · week streak · cuisines tried — from the same counts the badges use, so the
+/// strip and the badge progress never disagree. "Meals", not "dinners": every cook counts,
+/// desserts and lunches too. Pure so the wording is pinned by tests.
 enum MeStats {
     static func strip(recipes: [RecipeModel], streakWeeks: Int) -> [MeStat] {
         let metrics = BadgeMetrics.from(recipes: recipes, streakWeeks: streakWeeks)
-        return strip(dinners: metrics.recipesCooked, streakWeeks: metrics.weeklyStreak,
+        return strip(meals: metrics.recipesCooked, streakWeeks: metrics.weeklyStreak,
                      cuisines: metrics.cuisinesCooked)
     }
 
-    static func strip(dinners: Int, streakWeeks: Int, cuisines: Int) -> [MeStat] {
-        let dinners = max(dinners, 0)
+    static func strip(meals: Int, streakWeeks: Int, cuisines: Int) -> [MeStat] {
+        let meals = max(meals, 0)
         let weeks = max(streakWeeks, 0)
         let cuisines = max(cuisines, 0)
         return [
-            MeStat(kind: .dinners, value: dinners,
-                   label: dinners == 1 ? "dinner" : "dinners",
-                   spoken: dinners == 1 ? "1 dinner cooked" : "\(dinners) dinners cooked"),
+            MeStat(kind: .meals, value: meals,
+                   label: meals == 1 ? "meal" : "meals",
+                   spoken: meals == 1 ? "1 meal cooked" : "\(meals) meals cooked"),
             MeStat(kind: .streak, value: weeks,
                    label: "week streak",
                    spoken: weeks == 1 ? "1 week streak" : "\(weeks) week streak"),
@@ -42,12 +43,13 @@ enum MeStats {
         ]
     }
 
-    /// Before the first cook the strip would be three zeros; the hero shows this invitation instead.
+    /// All zeros (a new cook) → the hero shows an invitation instead. Any number counts: the streak comes from the cook
+    /// log, which keeps a deleted recipe's cooks, so it can be live while the meal count is 0.
     static func hasCooked(_ stats: [MeStat]) -> Bool {
-        stats.contains { $0.kind == .dinners && $0.value > 0 }
+        stats.contains { $0.value > 0 }
     }
 
-    /// "12 dinners cooked, 3 week streak, 4 cuisines tried" — the hero's VoiceOver value.
+    /// "12 meals cooked, 3 week streak, 4 cuisines tried" — the hero's VoiceOver value.
     static func spokenSummary(_ stats: [MeStat]) -> String {
         stats.map(\.spoken).joined(separator: ", ")
     }

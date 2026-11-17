@@ -802,8 +802,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let profile = app.buttons["me.profile"]
         XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the profile hero.")
         let value = profile.value as? String ?? ""
-        XCTAssertTrue(value.contains("dinners cooked"), "Me's hero should count the seeded dinners: \(value)")
-        XCTAssertTrue(value.contains("cuisine"), "Me's hero should count cuisines tried: \(value)")
+        // A count above zero, so "Nothing cooked yet" or "0 meals cooked" fail.
+        XCTAssertNotNil(value.range(of: #"[1-9]\d* meals cooked"#, options: .regularExpression),
+                        "Me's hero should count the seeded meals: \(value)")
+        XCTAssertNotNil(value.range(of: #"[1-9]\d* cuisines? tried"#, options: .regularExpression),
+                        "Me's hero should count cuisines tried: \(value)")
         // A page shares as a picture: the share button on the page opens a preview of exactly what gets sent.
         let share = app.buttons["cookbook.page.share"].firstMatch
         checkpoint(app, "cookbook share button")

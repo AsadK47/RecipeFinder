@@ -64,6 +64,13 @@ extension AppTheme {
     static let error = Color.red
     /// Fixed deep red behind white text for destructive buttons; `.red`/`.orange` drop white text below 4.5:1 in Dark mode.
     static let destructiveFill = Color(red: 196/255, green: 40/255, blue: 40/255)
+    /// Me hero avatar backdrops, one per chef type. Deep tones: white initials measure 4.6–6.7:1 on each, both modes.
+    static let chefHomeCook = Color(red: 0.75, green: 0.33, blue: 0.10)
+    static let chefFoodie = Color(red: 0.72, green: 0.16, blue: 0.38)
+    static let chefBaker = Color(red: 0.55, green: 0.33, blue: 0.20)
+    static let chefGrillMaster = Color(red: 0.70, green: 0.15, blue: 0.12)
+    static let chefHealthNut = Color(red: 0.13, green: 0.48, blue: 0.25)
+    static let chefAdventurousEater = Color(red: 0.12, green: 0.35, blue: 0.70)
     
     static let dividerColor = Color(red: 60/255, green: 60/255, blue: 67/255).opacity(0.36)
     static let borderColor = Color(red: 72/255, green: 72/255, blue: 74/255)
