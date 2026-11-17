@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Smell Batch C chipStyle** (builder 2026-11-17): the "9 copied files" premise was off — most capsules differ on
+  purpose (size, font, fill, material vs colour). Only the 12×6 `Capsule().fill` chip is truly duplicated (4 sites), so
+  that's all `.chipStyle` covers; widening it would change pixels. Lives in `View+AppCard.swift` (surfaces) to avoid
+  a pbxproj entry. Batch B ticked without code: 5/6 managers already share `MirroredSnapshot`; CookingStreak keeps
+  `LegacyBlobMigration` because cook dates are add-only (union on sync) — forcing whole-list replace onto it is a data
+  change, not a refactor. Pre-mortem: (1) chip renders differently → Screenshots of Shopping/Recipes filters;
+  (2) a type mismatch in the ternary → CI build; (3) a missed identical site → challenger grep.
 - **Tester 1 (3) Foreign recipes** (builder 2026-11-17): heuristic text path + ingredient-line parser only (JSON-LD pages are
   language-neutral; their ingredient lines go through the same `IngredientLineParser`). Foreign units map to the
   existing canonical tokens in `unitSynonyms` (no new unit kinds). Foreign prep/cook labels match on the same line

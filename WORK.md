@@ -18,10 +18,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
-- Smells: ✅ Batch A (2ce0a78). Batch B: stale, already done by Data safety 1/4 (`MirroredSnapshot`), ticked with no
-  code. 🚧 **Batch C** `agent/chip-style` (f71c211): `.chipStyle(fill)` on the 4 exact 12×6 capsule chips; waiting
-  on Build & Test + Screenshots (look at Shopping store chips, Recipes active filters). Top Smell (times → Int
-  minutes) waits on Needs owner.
+- Smells: ✅ Batch A, B (stale, no code), C (e39fe71, builder 2026-11-17). Next Smell: Batch D (big screens, one branch
+  per screen) — top Smell (times → Int minutes) waits on Needs owner. Leftover branch agent/chip-style (auto-cleanup).
 
 - Tester feedback 1: ✅ slices 1 (3ed805c), 2 Badges from Today (7f8e5b1, builder 2026-11-17), 4. ✅ 3 foreign recipes
   (d7bf8f7, builder 2026-11-17). Left: slice 5 (Cook lane's). Leftover branch agent/foreign-recipes (auto-cleanup). Leftover branches agent/cuisine-chip,
@@ -32,13 +30,6 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Smell Batch C chipStyle** (builder 2026-11-17): the "9 copied files" premise was off — most capsules differ on
-  purpose (size, font, fill, material vs colour). Only the 12×6 `Capsule().fill` chip is truly duplicated (4 sites), so
-  that's all `.chipStyle` covers; widening it would change pixels. Lives in `View+AppCard.swift` (surfaces) to avoid
-  a pbxproj entry. Batch B ticked without code: 5/6 managers already share `MirroredSnapshot`; CookingStreak keeps
-  `LegacyBlobMigration` because cook dates are add-only (union on sync) — forcing whole-list replace onto it is a data
-  change, not a refactor. Pre-mortem: (1) chip renders differently → Screenshots of Shopping/Recipes filters;
-  (2) a type mismatch in the ternary → CI build; (3) a missed identical site → challenger grep.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

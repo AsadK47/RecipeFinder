@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Smell Batch C · e39fe71
+- For you: filter, grocery-store and status chips look and work just as before, and now share one style so they stay consistent as the app grows.
+- Behind the build: four copies of the same chip styling became one, and a challenger checked each swap kept every colour and spacing identical.
+
 ## 2026-11-17 · Tester feedback 1 slice 3 · d7bf8f7
 - For you: paste or share a recipe in French, Spanish, Italian, German, Portuguese, Japanese or Arabic and it comes in with its ingredients, amounts, steps, servings and times in place — "2 EL Olivenöl", "醤油 大さじ2" and "٢ ملعقة كبيرة" all read as tablespoons.
 - Behind the build: nine real-style recipes in seven languages are now import tests, and a reviewer and a challenger hunted for English recipes that might read differently — brand names like "De Cecco" and "El Paso" stay whole.
