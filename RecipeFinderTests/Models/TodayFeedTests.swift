@@ -93,12 +93,11 @@ import Foundation
             .init(recipe: curry, reason: .planned(.dinner)),
             .init(recipe: toast, reason: .kitchenMatch(have: 1, total: 1)),
         ])
-        // Quick picks rotate daily, so which two of the three lead isn't fixed — only that they're quick and distinct.
+        // Quick picks rotate daily, so their order isn't fixed — only that all three follow, quick and distinct.
         let quick = options.dropFirst(2)
         #expect(quick.allSatisfy { $0.reason == .quick(minutes: 15) })
-        #expect(Set(quick.map(\.recipe.id)).count == 2)
-        #expect(Set(quick.map(\.recipe.id)).isSubset(of: [wrap.id, eggs.id, salad.id]))
-        #expect(result.alternatives.count == TodayFeed.alternativesLimit)
+        #expect(quick.count == 3)
+        #expect(Set(quick.map(\.recipe.id)) == [wrap.id, eggs.id, salad.id])
     }
 
     /// Owner 2026-11-17: "Shuffle only shuffles through 4 recipes?" — it was capped at hero + 3.

@@ -52,7 +52,6 @@ struct TodayFeed: Equatable {
     let useSoon: [UseSoonPair]
 
     static let shelfLimit = 10
-    static let alternativesLimit = 3
     static let quickLimitMinutes = 30
 
     /// The hero first, then its alternatives — what Shuffle cycles through.
@@ -124,7 +123,8 @@ struct TodayFeed: Equatable {
     }
 
     /// Tonight's picks, best first: today's open plans (dinner, then the rest in meal order), then kitchen matches,
-    /// then quick recipes (favourites and your own first). One entry per recipe, capped at hero + `alternativesLimit`.
+    /// then quick recipes (favourites and your own first). One entry per recipe, uncapped: Shuffle steps through every
+    /// suitable pick (a cap of 4 made it loop the same few — owner 2026-11-17).
     /// Suggestions never repeat the last recipe cooked; a plan always shows (the cook chose it). A new user's Today
     /// leads with importing + Starters, so a quick pick can only follow a plan or kitchen match there, not lead.
     private static func tonightOptions(
@@ -149,7 +149,7 @@ struct TodayFeed: Equatable {
         var seen = Set<UUID>()
         let unique = (planned + suggested).filter { seen.insert($0.recipe.id).inserted }
         if !quickCanLead, case .quick? = unique.first?.reason { return [] }
-        return Array(unique.prefix(1 + alternativesLimit))
+        return unique
     }
 
     /// Recipes ready in `quickLimitMinutes` or less, your own before built-in samples, in an order that changes each
