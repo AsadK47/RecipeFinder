@@ -85,6 +85,12 @@ enum GroceriesMode: String, CaseIterable, Identifiable {
         defaults.set(side(openedBy: type).rawValue, forKey: modeKey)
     }
 
+    /// At home's "N ingredients": the plain items plus the use-by items it shows as alerts, once per name — so the
+    /// number matches the rows on screen (use-by items with no alert aren't listed, so they aren't counted).
+    static func atHomeCount(itemNames: [String], alertNames: [String]) -> Int {
+        Set((itemNames + alertNames).map(\.nameKey)).count
+    }
+
     /// Same-name check for the add buttons, so " Eggs" and "eggs" count as one item.
     static func contains(_ name: String, in names: [String]) -> Bool {
         let key = name.nameKey

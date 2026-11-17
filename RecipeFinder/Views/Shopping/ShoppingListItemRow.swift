@@ -97,8 +97,9 @@ struct ShoppingListItemRow: View {
                                     .padding(.vertical, AppTheme.spacing2)
                                     .background(Color.blue.opacity(0.12), in: Capsule())
                                     .fixedSize()
-                                    // The capsule is ~18pt tall; pad the hit area towards 44pt without growing the row.
-                                    .contentShape(Rectangle().inset(by: -AppTheme.spacing12))
+                                    // The capsule is ~18pt tall; pad the hit area without growing the row. 8pt, not 12:
+                                    // the stack spacing is 12, so 12 reached the minus button beside a long name.
+                                    .contentShape(Rectangle().inset(by: -AppTheme.spacing8))
                             }
                             .buttonStyle(PlainButtonStyle())
                             .disabled(onShowKitchen == nil)

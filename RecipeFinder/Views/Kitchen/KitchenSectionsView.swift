@@ -7,9 +7,10 @@ struct KitchenSectionsView: View {
 
     @Environment(\.kitchen) private var manager
 
-    /// Plain items and use-by items, by name — a use-by item (shown as an alert above) still counts.
+    /// Plain items plus the use-by items shown as alerts above, so the number matches the rows.
     private var ingredientCount: Int {
-        Set(manager.items.map(\.name.nameKey) + manager.inventoryItems.map(\.name.nameKey)).count
+        let alerts = manager.expiredItems() + manager.expiringSoonItems() + manager.lowStockItems()
+        return GroceriesMode.atHomeCount(itemNames: manager.items.map(\.name), alertNames: alerts.map(\.name))
     }
 
     var body: some View {

@@ -104,4 +104,16 @@ struct GroceriesModeTests {
         GroceriesMode.rememberSide(openedBy: nil, in: defaults)
         #expect(defaults.string(forKey: GroceriesMode.modeKey) == "toBuy")
     }
+
+    /// At home's count matches its rows: plain items plus use-by alerts, one per name whatever the case or spaces.
+    @Test(arguments: [
+        ([], [], 0),
+        ([], ["Spinach"], 1),
+        (["Rice", "Eggs"], [], 2),
+        (["Spinach", "Rice"], [" spinach", "Lemons"], 3),
+        ([], ["Milk", "milk"], 1)
+    ] as [([String], [String], Int)])
+    func atHomeCountsEachShownNameOnce(items: [String], alerts: [String], count: Int) {
+        #expect(GroceriesMode.atHomeCount(itemNames: items, alertNames: alerts) == count)
+    }
 }
