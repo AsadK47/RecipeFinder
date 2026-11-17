@@ -43,7 +43,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "refrigerator",
                             title: "Managing Your Kitchen",
-                            description: "Groceries → At home holds what you have on hand, with expiry dates, so Today can suggest recipes that fit your kitchen."
+                            description: "Groceries → At home holds what you have on hand, so Today can suggest recipes that fit your kitchen."
                         )
 
                         HelpItem(
