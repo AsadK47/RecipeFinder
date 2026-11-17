@@ -99,7 +99,7 @@ import Foundation
         #expect(s.currentWeeks == 1)
     }
 
-    // MARK: Cooks this year (Me's one line)
+    // MARK: Cooks this year
 
     @Test func cooksThisYear_countsOnlyThisCalendarYear() {
         let lastYear = cal.date(from: DateComponents(year: 2025, month: 12, day: 30, hour: 19)) ?? now

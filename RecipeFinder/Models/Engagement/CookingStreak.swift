@@ -13,7 +13,7 @@ struct CookingStreak: Equatable {
     let cooksThisWeek: Int
     /// Whether the user has cooked at least once this week.
     var cookedThisWeek: Bool { cooksThisWeek > 0 }
-    /// Cooks recorded in the current calendar year — Me's "34 cooks this year".
+    /// Cooks recorded in the current calendar year.
     var cooksThisYear = 0
 
     /// Live streak but no cook yet this week — the grace window where the streak is about to lapse.

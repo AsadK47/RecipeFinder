@@ -605,7 +605,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         // The shelf lives one tap deeper than Me, in Profile.
         let profile = app.buttons["me.profile"]
         for _ in 0..<4 where !(profile.exists && profile.isHittable) { app.swipeUp() }
-        XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the profile row under the cookbook.")
+        XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the profile hero.")
         profile.tap()
 
         // Third in the Streaks row, so it's on screen without a sideways scroll; nobody has a 12-week streak in CI.
@@ -772,7 +772,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "41-made-it")
     }
 
-    /// My Cookbook at the top of Me with the one line about you under it: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
+    /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
     /// The empty cookbook is 17-me on a fresh simulator. Named to sort after testZCaptureMadeIt for the same reason.
     @MainActor
     func testZZCaptureCookbook() {
@@ -798,14 +798,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(pages.waitForExistence(timeout: 10), "Cooked recipes should fill My Cookbook.")
         settle()
         snap(app, "43-cookbook-many")
-        // Me's one line sits under the cookbook: chef type (+ cooks this year once there are some).
+        // Me's hero sits above the cookbook: with cooks recorded, its stats strip counts them.
         let profile = app.buttons["me.profile"]
-        XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the one line about you.")
-        // The seeded cooks go back up to 43 days, so early in the year some fall in last year.
-        if Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0 > 45 {
-            let line = profile.value as? String ?? ""
-            XCTAssertTrue(line.contains("cooks this year"), "Me's line should count this year's cooks: \(line)")
-        }
+        XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the profile hero.")
+        let value = profile.value as? String ?? ""
+        XCTAssertTrue(value.contains("dinners cooked"), "Me's hero should count the seeded dinners: \(value)")
+        XCTAssertTrue(value.contains("cuisine"), "Me's hero should count cuisines tried: \(value)")
         // A page shares as a picture: the share button on the page opens a preview of exactly what gets sent.
         let share = app.buttons["cookbook.page.share"].firstMatch
         checkpoint(app, "cookbook share button")

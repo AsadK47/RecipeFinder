@@ -272,7 +272,7 @@ final class RecipeStore: RecipeStoring {
             seededCooks += (0..<rank).compactMap { Calendar.current.date(byAdding: .day, value: -7 * $0, to: cookedAt) }
             return cooked
         }
-        // The cook log too, so Me's "N cooks this year" line agrees with the pages.
+        // The cook log too, so the streak and cook counts agree with the pages.
         CookingStreakManager.shared.merge(cookDates: seededCooks)
         return seeded
     }

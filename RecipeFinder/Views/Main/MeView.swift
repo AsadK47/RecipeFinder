@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Me tab: your cookbook and one line about you. Profile, badges and chef type are one tap deeper; Settings is behind
-/// the gear.
+/// Me tab: who you are as a cook (hero + stats), then your cookbook. Profile, badges and chef type are one tap deeper;
+/// Settings is behind the gear.
 struct MeView: View {
     /// Set by "View all badges": Me opens Profile (the trophy shelf) and clears it.
     var openProfile: Binding<Bool> = .constant(false)
@@ -19,6 +19,8 @@ struct MeView: View {
     /// My Cookbook's pages, rebuilt when recipes change rather than in `body`.
     @State private var cookbookPages: [CookbookPage] = []
     @State private var profileImage: UIImage?
+    /// The hero's dinners · streak · cuisines, refreshed with the cookbook rather than in `body`.
+    @State private var stats: [MeStat] = []
     /// "5 / 24" badges earned, refreshed with the cookbook rather than in `body`.
     @State private var badgeCount = ""
     /// "5 of 24 badges earned" for VoiceOver, which reads "/" as "slash".
@@ -40,20 +42,20 @@ struct MeView: View {
 
                     ScrollView {
                         VStack(spacing: AppTheme.spacing24) {
-                            MyCookbookSection(pages: cookbookPages)
-                            MeProfileRow(
+                            MeHeroCard(
                                 image: profileImage,
                                 // No name yet → a person symbol, as on Profile, not "RC" from the "Recipe Chef" stand-in.
                                 initials: profileManager.firstName.isEmpty && profileManager.lastName.isEmpty
                                     ? "" : profileManager.initials,
                                 name: profileManager.fullName,
-                                line: MyCookbook.meLine(chefType: profileManager.chefType,
-                                                        cooksThisYear: cookingStreak.streak.cooksThisYear),
+                                chefType: profileManager.chefType,
+                                stats: stats,
                                 badgeCount: badgeCount,
                                 spokenBadgeCount: spokenBadgeCount
                             ) {
                                 showProfile = true
                             }
+                            MyCookbookSection(pages: cookbookPages)
                         }
                         .padding(.top, AppTheme.spacing16)
                         .padding(.horizontal, AppTheme.cardHorizontalPadding)
@@ -98,6 +100,7 @@ struct MeView: View {
 
     private func refreshCookbook() {
         cookbookPages = MyCookbook.pages(from: recipeStore.recipes)
+        stats = MeStats.strip(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
         let shelf = BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
         badgeCount = BadgeShelf.countText(shelf)
         spokenBadgeCount = BadgeShelf.spokenCount(shelf)
@@ -108,86 +111,6 @@ struct MeView: View {
         openProfile.wrappedValue = false
         showSettings = false
         showProfile = true
-    }
-}
-
-/// The one line about you under the cookbook — avatar, name, chef type and cooks this year — opening Profile, where
-/// the trophy shelf and chef type live.
-private struct MeProfileRow: View {
-    let image: UIImage?
-    let initials: String
-    let name: String
-    let line: String
-    let badgeCount: String
-    let spokenBadgeCount: String
-    let onTap: () -> Void
-
-    @ScaledMetric(relativeTo: .headline) private var avatarSize: CGFloat = 48
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-    var body: some View {
-        Button {
-            HapticManager.shared.light()
-            onTap()
-        } label: {
-            HStack(spacing: AppTheme.spacing12) {
-                avatar
-                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                    Text(name)
-                        .font(.headline)
-                        .adaptiveForegroundColor()
-                    Text(line)
-                        .font(.subheadline)
-                        .adaptiveSecondaryForeground()
-                    // At accessibility sizes the count drops under the line so neither is squeezed.
-                    if dynamicTypeSize.isAccessibilitySize { trophies }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                if !dynamicTypeSize.isAccessibilitySize { trophies }
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .adaptiveSecondaryForeground()
-                    .accessibilityHidden(true)
-            }
-            .padding(AppTheme.spacing16)
-            .appCard(cornerRadius: AppTheme.cornerRadius16)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(name)
-        .accessibilityValue("\(line), \(spokenBadgeCount)")
-        .accessibilityHint("Opens your profile, badges and chef type")
-        .accessibilityAddTraits(.isButton)
-        .accessibilityIdentifier("me.profile")
-    }
-
-    private var trophies: some View {
-        Label(badgeCount, systemImage: "trophy.fill")
-            .font(.subheadline.weight(.semibold))
-            .adaptiveSecondaryForeground()
-    }
-
-    @ViewBuilder private var avatar: some View {
-        if let image {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .frame(width: avatarSize, height: avatarSize)
-                .clipShape(Circle())
-                .accessibilityHidden(true)
-        } else if initials.isEmpty {
-            IconBadge(systemName: "person.fill", tint: AppTheme.accentColor, diameter: avatarSize)
-                .accessibilityHidden(true)
-        } else {
-            // Same treatment as Profile's big avatar.
-            Text(initials)
-                .font(.headline.weight(.bold))
-                .adaptiveForegroundColor()
-                .frame(width: avatarSize, height: avatarSize)
-                .background(Circle().fill(AppTheme.accentColor))
-                .accessibilityHidden(true)
-        }
     }
 }
 

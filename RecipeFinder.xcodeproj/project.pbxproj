@@ -253,6 +253,7 @@
 		2F390B87D67B023F60F9B798 /* TodayProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770CAD13044475807B73ADE7 /* TodayProgress.swift */; };
 		B3FE45676FA29189CE069464 /* MadeItMoment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9B791A8BA527A250E31727 /* MadeItMoment.swift */; };
 		BF4E6E82435578E08495162A /* MyCookbook.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D02120BF33B79B7515ECD0 /* MyCookbook.swift */; };
+		295DF1B6DFF9325558F11EDD /* MeStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CD40979951378ED3AE960D /* MeStats.swift */; };
 		3FFCA904256FAD1130989BAF /* TodaySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A197EC37074221054BC8EF6 /* TodaySnapshot.swift */; };
 		9AA659538B431F45084C520F /* TonightTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */; };
 		39080F3DF876433E53B3C53F /* ClipboardRecipeLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */; };
@@ -265,6 +266,7 @@
 		3F80C6BC0621CA22D6A0CD6C /* TodayProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038755EE92A6E70598C3A798 /* TodayProgressTests.swift */; };
 		9EAB6F20FADCB261B5CEA96D /* MadeItMomentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7716BC9CCE76DAA467B0AB /* MadeItMomentTests.swift */; };
 		49EB2BFE60B4FE4D948560A6 /* MyCookbookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C5EA3F34841901176DD6F2 /* MyCookbookTests.swift */; };
+		5A33C6C8562D1B47F8686855 /* MeStatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11DED011F1FD45B4CA93CB3 /* MeStatsTests.swift */; };
 		931617E37423BCB8878324AE /* TodaySnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3174F5CEF5CB0D221A68903E /* TodaySnapshotTests.swift */; };
 		F58295A3D95AC30CD5B0C575 /* ClipboardRecipeLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */; };
 		F3B7D9113074FCFF00991908 /* StreakChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9103074FCFF00991908 /* StreakChip.swift */; };
@@ -400,6 +402,7 @@
 		A0B62D02E87CD3FAC3B4D040 /* AmountEstimateReviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95146FE11277BA49B4FCDC3 /* AmountEstimateReviewSheet.swift */; };
 		F3E9D19E3045180D008BF231 /* ProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D19D3045180D008BF231 /* ProfileSheet.swift */; };
 		F3E9D1A030451817008BF231 /* ProfileAvatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D19F30451817008BF231 /* ProfileAvatar.swift */; };
+		B23F0BA8581A90A087162F91 /* MeHeroCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D2D6F78B9AB7330E13D126 /* MeHeroCard.swift */; };
 		F3E9D1A230451824008BF231 /* ProfilePersonalInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1A130451824008BF231 /* ProfilePersonalInfoSection.swift */; };
 		F3E9D1A430451832008BF231 /* ProfileBadgesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1A330451832008BF231 /* ProfileBadgesSection.swift */; };
 		44DF152DF50D585D5CB6B002 /* MyCookbookSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1292E64485F3A8F9BA9E5A4 /* MyCookbookSection.swift */; };
@@ -841,6 +844,7 @@
 		770CAD13044475807B73ADE7 /* TodayProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayProgress.swift; sourceTree = "<group>"; };
 		DA9B791A8BA527A250E31727 /* MadeItMoment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MadeItMoment.swift; sourceTree = "<group>"; };
 		C9D02120BF33B79B7515ECD0 /* MyCookbook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCookbook.swift; sourceTree = "<group>"; };
+		29CD40979951378ED3AE960D /* MeStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeStats.swift; sourceTree = "<group>"; };
 		2A197EC37074221054BC8EF6 /* TodaySnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySnapshot.swift; sourceTree = "<group>"; };
 		4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTiming.swift; sourceTree = "<group>"; };
 		9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardRecipeLink.swift; sourceTree = "<group>"; };
@@ -853,6 +857,7 @@
 		038755EE92A6E70598C3A798 /* TodayProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayProgressTests.swift; sourceTree = "<group>"; };
 		4B7716BC9CCE76DAA467B0AB /* MadeItMomentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MadeItMomentTests.swift; sourceTree = "<group>"; };
 		B2C5EA3F34841901176DD6F2 /* MyCookbookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCookbookTests.swift; sourceTree = "<group>"; };
+		D11DED011F1FD45B4CA93CB3 /* MeStatsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeStatsTests.swift; sourceTree = "<group>"; };
 		3174F5CEF5CB0D221A68903E /* TodaySnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySnapshotTests.swift; sourceTree = "<group>"; };
 		BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardRecipeLinkTests.swift; sourceTree = "<group>"; };
 		F3B7D9103074FCFF00991908 /* StreakChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakChip.swift; sourceTree = "<group>"; };
@@ -981,6 +986,7 @@
 		F95146FE11277BA49B4FCDC3 /* AmountEstimateReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountEstimateReviewSheet.swift; sourceTree = "<group>"; };
 		F3E9D19D3045180D008BF231 /* ProfileSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSheet.swift; sourceTree = "<group>"; };
 		F3E9D19F30451817008BF231 /* ProfileAvatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatar.swift; sourceTree = "<group>"; };
+		40D2D6F78B9AB7330E13D126 /* MeHeroCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeHeroCard.swift; sourceTree = "<group>"; };
 		F3E9D1A130451824008BF231 /* ProfilePersonalInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePersonalInfoSection.swift; sourceTree = "<group>"; };
 		F3E9D1A330451832008BF231 /* ProfileBadgesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBadgesSection.swift; sourceTree = "<group>"; };
 		B1292E64485F3A8F9BA9E5A4 /* MyCookbookSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCookbookSection.swift; sourceTree = "<group>"; };
@@ -1302,6 +1308,7 @@
 				9E51C3982EB3E9C20064B917 /* ProfileView.swift */,
 				F3E9D19D3045180D008BF231 /* ProfileSheet.swift */,
 				F3E9D19F30451817008BF231 /* ProfileAvatar.swift */,
+				40D2D6F78B9AB7330E13D126 /* MeHeroCard.swift */,
 				F3E9D1A130451824008BF231 /* ProfilePersonalInfoSection.swift */,
 				F3E9D1A330451832008BF231 /* ProfileBadgesSection.swift */,
 				C0B5A1E2D3F4A5B6C7D8E9F1 /* CookbookShareSheet.swift */,
@@ -1371,6 +1378,7 @@
 				038755EE92A6E70598C3A798 /* TodayProgressTests.swift */,
 				4B7716BC9CCE76DAA467B0AB /* MadeItMomentTests.swift */,
 				B2C5EA3F34841901176DD6F2 /* MyCookbookTests.swift */,
+				D11DED011F1FD45B4CA93CB3 /* MeStatsTests.swift */,
 				3174F5CEF5CB0D221A68903E /* TodaySnapshotTests.swift */,
 				BE7C6E37079684994C0003F9 /* ClipboardRecipeLinkTests.swift */,
 				F3B7D91C30793B9100991908 /* CookingPlanTests.swift */,
@@ -2186,6 +2194,7 @@
 				770CAD13044475807B73ADE7 /* TodayProgress.swift */,
 				DA9B791A8BA527A250E31727 /* MadeItMoment.swift */,
 				C9D02120BF33B79B7515ECD0 /* MyCookbook.swift */,
+				29CD40979951378ED3AE960D /* MeStats.swift */,
 				2A197EC37074221054BC8EF6 /* TodaySnapshot.swift */,
 				4C9AE4AA0A8AF238026E9014 /* TonightTiming.swift */,
 				9770A92FEC4FB2152358F08E /* ClipboardRecipeLink.swift */,
@@ -2707,6 +2716,7 @@
 				2F390B87D67B023F60F9B798 /* TodayProgress.swift in Sources */,
 				B3FE45676FA29189CE069464 /* MadeItMoment.swift in Sources */,
 				BF4E6E82435578E08495162A /* MyCookbook.swift in Sources */,
+				295DF1B6DFF9325558F11EDD /* MeStats.swift in Sources */,
 				3FFCA904256FAD1130989BAF /* TodaySnapshot.swift in Sources */,
 				9AA659538B431F45084C520F /* TonightTiming.swift in Sources */,
 				39080F3DF876433E53B3C53F /* ClipboardRecipeLink.swift in Sources */,
@@ -2869,6 +2879,7 @@
 				F3D04F2A305EC6D5005A930D /* CookingSession.swift in Sources */,
 				F3D40556305636B40076834D /* SeedRecipeProvider.swift in Sources */,
 				F3E9D1A030451817008BF231 /* ProfileAvatar.swift in Sources */,
+				B23F0BA8581A90A087162F91 /* MeHeroCard.swift in Sources */,
 				F3E9D1563043EBB2008BF231 /* AddIngredientSheet.swift in Sources */,
 				F3E9D10C30434D65008BF231 /* RecipeSelectionSheet.swift in Sources */,
 				9EA779272EB5725D0028F064 /* MealPlanModel.swift in Sources */,
@@ -2949,6 +2960,7 @@
 				3F80C6BC0621CA22D6A0CD6C /* TodayProgressTests.swift in Sources */,
 				9EAB6F20FADCB261B5CEA96D /* MadeItMomentTests.swift in Sources */,
 				49EB2BFE60B4FE4D948560A6 /* MyCookbookTests.swift in Sources */,
+				5A33C6C8562D1B47F8686855 /* MeStatsTests.swift in Sources */,
 				931617E37423BCB8878324AE /* TodaySnapshotTests.swift in Sources */,
 				F58295A3D95AC30CD5B0C575 /* ClipboardRecipeLinkTests.swift in Sources */,
 				F3E9D289304E056A008BF231 /* CoreDataStorePersistenceTests.swift in Sources */,
