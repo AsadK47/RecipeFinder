@@ -25,10 +25,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (d7bf8f7, builder 2026-11-17). Left: slice 5 (Cook lane's). Leftover branch agent/foreign-recipes (auto-cleanup). Leftover branches agent/cuisine-chip,
   agent/today-badges-link (auto-cleanup).
 
-- Me with character (Queue, builder 2026-11-17): slice 1 on `agent/me-hero` — `MeHeroCard` (avatar on
-  `ChefType.heroColor`, name, chef type, trophies, stats strip from `MeStats` = BadgeMetrics counts) above My Cookbook;
-  `MyCookbook.meLine` removed. Left: slice 2 inline name edit + form → Settings › Profile; 3 badges earned-first + Next
-  up; 4 taste fingerprint + story. `agent/kitchen-at-home` belongs to another live session (left alone).
+- Me with character (Queue, builder 2026-11-17): ✅ slice 1 landed 57fae8c (hero + stats). Next slice: (1b) name
+  inline (tap to edit) + the First/Last form → Settings › Profile, then (3) badges earned-first + Next up, (4) taste
+  fingerprint + story. Leftover branch agent/me-hero (auto-cleanup).
 
 - Kitchen you can find (Queue top, builder 2026-11-17): slice 1 on `agent/kitchen-at-home` (e4fd606) — Groceries
   To buy | At home switch (`GroceriesMode`, remembered; hidden while searching), At home = `KitchenAtHomeView`, ⋯
@@ -54,11 +53,11 @@ Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff m
   list → `GroceriesModeTests` add cases + the UI test; (3) remembered At home breaks other UI tests → `-ui-testing`
   resets to To buy. Rejected: `addItem` for kitchen adds — it isn't on `KitchenInventoryManaging`.
 - **Me with character (1)**: stats reuse `BadgeMetrics` (cuisine falls back to category, like the Cuisine badge) so
-  the strip and badge rings never disagree — rejected a stricter cuisine-only count. "Dinners" = every cook (cookCount
-  sum), all time. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the
+  the strip and badge rings never disagree — cuisine-only count → Needs owner (both places or neither). Label "meals",
+  not the spec's "dinners": the count is every cook (cookCount sum, all time). Strip shows if any stat > 0. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the
   cookbook's empty state below carries the action. Pre-mortem: (1) counts disagree with badges → `matchesBadgeMetrics`
   test; (2) hero squeezes at accessibility sizes → vertical layouts + screenshot; (3) seeded UI value lacks stats →
-  `testZZCaptureCookbook` asserts "dinners cooked".
+  `testZZCaptureCookbook` asserts "[1-9]… meals cooked".
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

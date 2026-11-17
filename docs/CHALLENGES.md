@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-17 (item pass: Me with character slice 1 — fixed: "dinners" → "meals", streak-only hidden, streak stale after iCloud merge, UI assertion that couldn't fail)
+- [Function] "Cuisines tried" counts a category when cuisine is missing — pre-existing badge rule with its own test → Needs owner.
+- [Simplify] `CookingStreak.cooksThisYear` now has no reader — kept for slice 4 ("your cooking story"); delete if that slice doesn't use it.
+- Not fixed on purpose: >9,999 meals (unrealistic), long names wrap, contrast of white on the six chef colours measured 4.6–6.7:1.
+
 ## 2026-11-17 (daily challenger)
 - ⚔️ [Strategy] The lanes are on the roadmap — PRODUCT.md says "Now: data you can trust", then Phase 1 Cook, then Phase 2 Plan; the Queue's top item is **Me with character** (BACKLOG Queue line 1) and 13 of the last 19 app-code commits are the RecipeDetailView split (`git log --since=2.days`: e3ba711..2ce0a78, Batch A, 4 slices of pure refactor + pinning tests). *Cooking flow* has been 🚧 since 2026-11-15 with one landed slice, Plan (Phase 2) has no commit, and Recently deleted (4/4 of "Now") sits unmerged waiting on an owner-only CloudKit schema deploy (WORK.md). Me isn't a loop step, and nothing says how it moves dinners cooked/week — the Parking-lot exit test (PRODUCT Discipline 2) fails on "how would we notice" — alternative: next slice is Cooking flow step 2 (per-step ingredients + timers), Smell batches only when a lane is blocked, and the CloudKit deploy goes to the top of Needs owner as a single 🙋 with the exact click path — cost if wrong: a month of polish on a profile page while the one screen that decides "cooked tonight?" (cooking mode) ships half-done to testers.
   → Owner: Accept / Reject (why) / Later

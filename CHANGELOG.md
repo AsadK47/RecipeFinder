@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-17 · Me with character slice 1 · 57fae8c
+- For you: Me now opens with your own hero card — your photo or initials on your chef type's colour, your name, and how many meals you've cooked, your week streak and the cuisines you've tried.
+- Behind the build: the numbers come from the same counts as your badges so they always agree, and a reviewer and a challenger reshaped it — "meals" rather than "dinners", since every cook counts.
+
 ## 2026-11-17 · Smell Batch C · e39fe71
 - For you: filter, grocery-store and status chips look and work just as before, and now share one style so they stay consistent as the app grows.
 - Behind the build: four copies of the same chip styling became one, and a challenger checked each swap kept every colour and spacing identical.
