@@ -5,6 +5,8 @@ import SwiftUI
 struct MeView: View {
     /// Set by "View all badges": Me opens Profile (the trophy shelf) and clears it.
     var openProfile: Binding<Bool> = .constant(false)
+    /// Set by Today's next-badge row alongside `openProfile`; Profile scrolls to the shelf, opens the badge, clears it.
+    var trophyShelfRequest: Binding<TrophyShelfRequest?> = .constant(nil)
 
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.profile) private var profileManager
@@ -63,7 +65,7 @@ struct MeView: View {
             // Me draws its own title header; an empty bar above it would only waste space.
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(isPresented: $showSettings) { SettingsTabView() }
-            .navigationDestination(isPresented: $showProfile) { ProfileView() }
+            .navigationDestination(isPresented: $showProfile) { ProfileView(shelfRequest: trophyShelfRequest) }
             // A cookbook page opens its recipe, to cook it again.
             .navigationDestination(for: UUID.self) { id in
                 if let recipe = recipeStore.recipes.first(where: { $0.id == id }) {

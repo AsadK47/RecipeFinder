@@ -21,13 +21,22 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Smells: ✅ **Batch A** done (2ce0a78, builder 2026-11-17). Next Smell: Batch B (persisted managers) — top Smell (times →
   Int minutes) waits on Needs owner. Leftover branches agent/detail-split-b/-c/-d (auto-cleanup).
 
-- Tester feedback 1: ✅ slice 1 cuisine chip landed 3ed805c (builder 2026-11-16). Next: slice (2) Badges from Today (slice 4 toggle
-  landed via Discover lane; slice 5 is Cook lane's). Leftover branch agent/cuisine-chip (auto-cleanup).
+- Tester feedback 1: ✅ slice 1 cuisine chip landed 3ed805c. 🚧 slice (2) Badges from Today on `agent/today-badges-link`
+  (builder 2026-11-17): Today card split — stats → Cooking sheet, next-badge row → Me → Profile scrolled to the shelf
+  with that badge's card up (`TrophyShelfRequest` ContentView → MeView → ProfileView). Then slice 3 (foreign recipes).
 
 ## Next action
 When lanes report green + reviewed: batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Tester 1 (2) Badges from Today**: the card keeps two jobs as two buttons (stats → Cooking sheet, which is the
+  streak's only explainer; badge row → the shelf) rather than repointing the whole card — dropping the sheet would lose
+  the streak explanation. The pager opens on the badge (its card shows progress + "earn it here"), so the row lands
+  on the badge, not a shelf to hunt through; all earned → shelf only. Request is a value cleared once handled so a
+  second tap works when Profile is already on screen. **Pre-mortem:** (1) pager not presented during the push → UI
+  test `testTodayBadgeRowOpensItsBadgeOnTheShelf` asserts the card; (2) row opens the wrong badge → unit tests pin
+  request = nextBadge (closest); (3) VoiceOver reads "4 / 5" or loses the stats → spoken-text test + stats label kept
+  (`testCaptureTodayProgress`).
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

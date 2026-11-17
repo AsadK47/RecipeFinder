@@ -8,6 +8,8 @@ import SwiftUI
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
     let onOpen: (AppTab) -> Void
+    /// Opens Me's trophy shelf (from the cooking card's next-badge row).
+    let onOpenBadges: (TrophyShelfRequest) -> Void
     /// Opens the "+" add-recipe sheet.
     let onAddRecipe: () -> Void
     /// Imports a recipe from a link pasted on the clipboard card.
@@ -252,7 +254,7 @@ struct TodayView: View {
             onOpenPlan: { onOpen(.plan) }
         )
 
-        TodayProgressCard(progress: snapshot.progress) { showsCookingSheet = true }
+        TodayProgressCard(progress: snapshot.progress, onOpen: { showsCookingSheet = true }, onOpenBadges: onOpenBadges)
 
         // Shelves and the weekly pick leave out the recipe on the card, so a shuffled-to dish isn't repeated below it.
         let shownID = shown?.recipe.id
@@ -296,5 +298,5 @@ struct TodayView: View {
 }
 
 #Preview {
-    TodayView(onOpen: { _ in }, onAddRecipe: {}, onImportLink: { _ in })
+    TodayView(onOpen: { _ in }, onOpenBadges: { _ in }, onAddRecipe: {}, onImportLink: { _ in })
 }

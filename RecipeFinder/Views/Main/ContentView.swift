@@ -16,6 +16,8 @@ struct ContentView: View {
     @State private var openMeAfterBadge = false
     /// Asks Me to open Profile, where the trophy shelf lives; Me clears it once it has.
     @State private var showTrophyShelf = false
+    /// Today's next-badge row: which badge card Profile opens on the shelf; Profile clears it once handled.
+    @State private var trophyShelfRequest: TrophyShelfRequest?
     @State private var showAddRecipe = false
     /// A filter for Recipes to apply (tapping a recipe's cuisine); Recipes clears it once applied.
     @State private var recipeBrowseRequest: RecipeBrowseRequest?
@@ -149,6 +151,12 @@ struct ContentView: View {
         showAddRecipe = true
     }
 
+    private func openTrophyShelf(_ request: TrophyShelfRequest) {
+        trophyShelfRequest = request
+        select(.me)
+        showTrophyShelf = true
+    }
+
     private func select(_ tab: AppTab?) {
         guard let tab else { return }
         selectedTab = tab
@@ -207,12 +215,13 @@ struct ContentView: View {
     @ViewBuilder
     private func tabRoot(_ tab: AppTab) -> some View {
         switch tab {
-        case .today: TodayView(onOpen: { select($0) }, onAddRecipe: openAddRecipe, onImportLink: importClipboardLink)
+        case .today: TodayView(onOpen: { select($0) }, onOpenBadges: openTrophyShelf, onAddRecipe: openAddRecipe,
+                               onImportLink: importClipboardLink)
         case .recipes: RecipeSearchView(isLoading: store.isLoading, browseRequest: $recipeBrowseRequest,
                                            onAddRecipe: openAddRecipe)
         case .plan: MealPlanningView()
         case .groceries: KitchenShoppingView()
-        case .me: MeView(openProfile: $showTrophyShelf)
+        case .me: MeView(openProfile: $showTrophyShelf, trophyShelfRequest: $trophyShelfRequest)
         }
     }
 

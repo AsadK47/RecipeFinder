@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ProfileView: View {
     var title = "Profile"
+    /// From Today's next-badge row: scroll to the trophy shelf and open that badge's card; cleared once handled.
+    var shelfRequest: Binding<TrophyShelfRequest?> = .constant(nil)
 
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
@@ -29,67 +31,72 @@ struct ProfileView: View {
             VStack(spacing: 0) {
                 ScreenTitleHeader(title) {}
 
-                ScrollView {
-                    VStack(spacing: AppTheme.spacing24) {
-                        ProfileAvatar(
-                            image: profileImage,
-                            initials: getInitials(),
-                            chefType: selectedChefType,
-                            onTap: {
-                                activeSheet = .imagePicker
-                                HapticManager.shared.light()
+                ScrollViewReader { scroller in
+                    ScrollView {
+                        VStack(spacing: AppTheme.spacing24) {
+                            ProfileAvatar(
+                                image: profileImage,
+                                initials: getInitials(),
+                                chefType: selectedChefType,
+                                onTap: {
+                                    activeSheet = .imagePicker
+                                    HapticManager.shared.light()
+                                }
+                            )
+
+                            ProfilePersonalInfoSection(
+                                firstName: $firstName,
+                                lastName: $lastName
+                            )
+
+                            ProfileBadgesSection(
+                                sections: shelf,
+                                metrics: badgeMetrics,
+                                onSelectBadge: { badge in
+                                    pagerStart = BadgePagerStart(badgeID: badge.id)
+                                }
+                            )
+                            .id(Self.shelfAnchor)
+
+                            ProfileChefTypeSection(
+                                selectedChefType: $selectedChefType,
+                            )
+
+                            Button(action: saveProfile) {
+                                HStack {
+                                    Image(systemName: "checkmark.circle.fill")
+                                    Text("Save Profile")
+                                        .fontWeight(.semibold)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(AppTheme.accentColor)
+                                .adaptiveForegroundColor()
+                                .cornerRadius(AppTheme.cornerRadius12)
                             }
-                        )
+                            .opacity(showSuccessFeedback ? 0.6 : 1)
+                            .disabled(showSuccessFeedback)
+                            .padding(.top, AppTheme.spacing8)
 
-                        ProfilePersonalInfoSection(
-                            firstName: $firstName,
-                            lastName: $lastName
-                        )
-
-                        ProfileBadgesSection(
-                            sections: shelf,
-                            metrics: badgeMetrics,
-                            onSelectBadge: { badge in
-                                pagerStart = BadgePagerStart(badgeID: badge.id)
+                            if showSuccessFeedback {
+                                HStack(spacing: AppTheme.spacing8) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.green)
+                                    Text("Profile saved successfully!")
+                                        .fontWeight(.medium)
+                                }
+                                .padding()
+                                .background(AppTheme.success.opacity(0.1))
+                                .cornerRadius(AppTheme.cornerRadius12)
+                                .transition(.scale.combined(with: .opacity))
                             }
-                        )
-
-                        ProfileChefTypeSection(
-                            selectedChefType: $selectedChefType,
-                        )
-
-                        Button(action: saveProfile) {
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                Text("Save Profile")
-                                    .fontWeight(.semibold)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(AppTheme.accentColor)
-                            .adaptiveForegroundColor()
-                            .cornerRadius(AppTheme.cornerRadius12)
                         }
-                        .opacity(showSuccessFeedback ? 0.6 : 1)
-                        .disabled(showSuccessFeedback)
-                        .padding(.top, AppTheme.spacing8)
-
-                        if showSuccessFeedback {
-                            HStack(spacing: AppTheme.spacing8) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.green)
-                                Text("Profile saved successfully!")
-                                    .fontWeight(.medium)
-                            }
-                            .padding()
-                            .background(AppTheme.success.opacity(0.1))
-                            .cornerRadius(AppTheme.cornerRadius12)
-                            .transition(.scale.combined(with: .opacity))
-                        }
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                        .padding(.bottom, AppTheme.spacing100)
                     }
-                    .padding(.top, AppTheme.spacing16)
-                    .padding(.horizontal, AppTheme.cardHorizontalPadding)
-                    .padding(.bottom, AppTheme.spacing100)
+                    .onAppear { handleShelfRequest(scroller) }
+                    .onChange(of: shelfRequest.wrappedValue) { _, _ in handleShelfRequest(scroller) }
                 }
             }
         }
@@ -124,6 +131,15 @@ struct ProfileView: View {
         .onChange(of: profileImage) { _, newImage in
             profileManager.saveProfileImage(newImage)
         }
+    }
+
+    private static let shelfAnchor = "profile.trophyShelf"
+
+    private func handleShelfRequest(_ scroller: ScrollViewProxy) {
+        guard let request = shelfRequest.wrappedValue else { return }
+        shelfRequest.wrappedValue = nil
+        scroller.scrollTo(Self.shelfAnchor, anchor: .top)
+        if let id = request.badgeID { pagerStart = BadgePagerStart(badgeID: id) }
     }
 
     private var shelf: [BadgeShelfSection] {

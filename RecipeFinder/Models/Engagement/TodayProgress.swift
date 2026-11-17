@@ -32,6 +32,20 @@ struct TodayProgress: Equatable {
     /// The locked cooking badge with the most progress; nil once every cooking badge is earned.
     let nextBadge: NextBadge?
 
+    /// The badge row opens Me's trophy shelf on this badge's card — or the shelf itself once every cooking badge is earned.
+    var badgeShelfRequest: TrophyShelfRequest { TrophyShelfRequest(badgeID: nextBadge?.type.rawValue) }
+
+    static let allEarnedText = "Every cooking badge earned"
+
+    /// "2 more cooks to Home Cook", or the all-earned line.
+    var badgeRowText: String { nextBadge?.text ?? Self.allEarnedText }
+
+    /// VoiceOver reads "4 of 5", not the "4 / 5" shown under the bar.
+    var badgeRowSpokenText: String {
+        guard let next = nextBadge else { return Self.allEarnedText }
+        return "\(next.text), \(next.current) of \(next.target)"
+    }
+
     /// Badges Today points at: the ones earned by cooking (library size is left to Me — Today rewards cooking).
     static let cookingMetrics: Set<BadgeMetric> = [
         .recipesCooked, .weeklyStreak, .cuisinesCooked, .sameRecipeCooked, .recipesRated, .cookPhotos,
@@ -62,6 +76,11 @@ struct TodayProgress: Equatable {
             return a.1 < b.1
         }?.0
     }
+}
+
+/// Asks Me to show the trophy shelf (Profile), opening one badge's card when `badgeID` is set.
+struct TrophyShelfRequest: Equatable {
+    let badgeID: String?
 }
 
 /// "Try something new": one recipe you've never cooked, the same all week, a different one next week.
