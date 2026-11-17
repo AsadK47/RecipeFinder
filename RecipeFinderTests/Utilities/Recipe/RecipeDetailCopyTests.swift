@@ -1,8 +1,8 @@
 import Testing
 @testable import RecipeFinder
 
-// Characterisation tests: pin the recipe detail's timer and cook-history copy before those views moved out of
-// RecipeDetailView+Content (Smell Batch A slice 2). Strings match what the screen showed before the move.
+// Characterisation tests: pin the recipe detail's timer, cook-history (slice 2) and facts-card (slice 3) copy before
+// those views moved out of RecipeDetailView+Content (Smell Batch A). Strings match what the screen showed before the move.
 @Suite struct RecipeDetailCopyTests {
 
     @Test(arguments: [(30, "Start 30-min timer"), (90, "Start 90-min timer"), (1, "Start 1-min timer"),

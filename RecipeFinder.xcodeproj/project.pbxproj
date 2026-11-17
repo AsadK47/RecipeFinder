@@ -311,6 +311,7 @@
 		F3D405493056204B0076834D /* NutritionCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D405483056204B0076834D /* NutritionCalculatorTests.swift */; };
 		6AF4B16A8ADBFFBF4E48A6C8 /* NutritionLabelFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D9BF224CA6203B340E19F3 /* NutritionLabelFormatTests.swift */; };
 		9D96E7760F9CC3B631F0AA96 /* RecipeDetailCopyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3107A2AACBEB7963998B527 /* RecipeDetailCopyTests.swift */; };
+		FD568C241746FF713F730282 /* RecipeFactsCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C8E7124B4FD9791D5CA83 /* RecipeFactsCardTests.swift */; };
 		F3D4054C305620510076834D /* NutritionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4054B305620510076834D /* NutritionInfo.swift */; };
 		91A19DF80D14CF8D6627BEE9 /* NutritionLabelFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D80CD60E864F3DFF9567DD /* NutritionLabelFormat.swift */; };
 		F3D4054E305620DC0076834D /* NutritionDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4054D305620DC0076834D /* NutritionDatabase.swift */; };
@@ -893,6 +894,7 @@
 		F3D405483056204B0076834D /* NutritionCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionCalculatorTests.swift; sourceTree = "<group>"; };
 		C9D9BF224CA6203B340E19F3 /* NutritionLabelFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelFormatTests.swift; sourceTree = "<group>"; };
 		F3107A2AACBEB7963998B527 /* RecipeDetailCopyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailCopyTests.swift; sourceTree = "<group>"; };
+		624C8E7124B4FD9791D5CA83 /* RecipeFactsCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFactsCardTests.swift; sourceTree = "<group>"; };
 		F3D4054B305620510076834D /* NutritionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionInfo.swift; sourceTree = "<group>"; };
 		F1D80CD60E864F3DFF9567DD /* NutritionLabelFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionLabelFormat.swift; sourceTree = "<group>"; };
 		F3D4054D305620DC0076834D /* NutritionDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionDatabase.swift; sourceTree = "<group>"; };
@@ -1928,6 +1930,7 @@
 				F3D405483056204B0076834D /* NutritionCalculatorTests.swift */,
 				C9D9BF224CA6203B340E19F3 /* NutritionLabelFormatTests.swift */,
 				F3107A2AACBEB7963998B527 /* RecipeDetailCopyTests.swift */,
+				624C8E7124B4FD9791D5CA83 /* RecipeFactsCardTests.swift */,
 				F3D405593056439C0076834D /* SeedRecipeProviderTests.swift */,
 				F3D4056F305994FC0076834D /* IngredientSubstituteProviderTests.swift */,
 				F3FF62D9305BE4760008B191 /* PantryExpirySuggestionsTests.swift */,
@@ -2953,6 +2956,7 @@
 				F3D405493056204B0076834D /* NutritionCalculatorTests.swift in Sources */,
 				6AF4B16A8ADBFFBF4E48A6C8 /* NutritionLabelFormatTests.swift in Sources */,
 				9D96E7760F9CC3B631F0AA96 /* RecipeDetailCopyTests.swift in Sources */,
+				FD568C241746FF713F730282 /* RecipeFactsCardTests.swift in Sources */,
 				F3E9D12030439DD1008BF231 /* WizardIngredientParserTests.swift in Sources */,
 				F3E9D22930477DBC008BF231 /* SharedImportInboxTests.swift in Sources */,
 				A1B2C3D4E5F6000000000002 /* NotificationManagerTests.swift in Sources */,

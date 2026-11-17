@@ -92,19 +92,6 @@ import ViewInspector
     }
 }
 
-/// Recipe detail facts card: when values are too long for one row, they split into two balanced rows.
-@MainActor @Suite struct RecipeFactRowsTests {
-    @Test(arguments: [
-        (4, [[0, 1], [2, 3]]),
-        (5, [[0, 1, 2], [3, 4]]),
-        (1, [[0]]),
-        (0, []),
-    ])
-    func factsSplitIntoTwoBalancedRows(count: Int, expected: [[Int]]) {
-        #expect(RecipeDetailCopy.factRows(count: count) == expected)
-    }
-}
-
 /// Confetti + the success haptic fire once everything on the recipe is ticked — never for a recipe with no steps,
 /// where ticking the ingredients alone would celebrate beside "start cooking?".
 @Suite struct RecipeCompletionTests {

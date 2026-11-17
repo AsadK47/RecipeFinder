@@ -51,7 +51,7 @@ struct RecipeFactsCard: View {
     }
 }
 
-private extension RecipeFactKind {
+extension RecipeFactKind {
     var tint: Color {
         switch self {
         case .prep: .orange

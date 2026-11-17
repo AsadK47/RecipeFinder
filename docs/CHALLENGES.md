@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-17 (item pass: Smell Batch A slice 3 — fixed: tints + notes link untested, factRows test home; reviewer 0 defects)
+- ⚔️ Simplify — `RecipeDetailCopy.shortTime` replaces " hours"/" hour", but its only inputs (`prepTimeDisplay`/`cookTimeDisplay` via `DurationFormatter.label`, `RecipeFormatters.swift:80`) already say "hr" at 60+ min, so those two replacements are dead (pinned as-is in a refactor) — drop them with the recipe-times Smell — cost if wrong: none.
+  → Owner: Accept / Reject / Later
+- ⚔️ Break — `RecipeDetailCopy.facts(for:)` hides an empty cuisine but shows an empty difficulty/category as a blank value over its caption (unchanged from before the move) — hide empty facts the same way? — cost if wrong: a bare "Category" caption on imports with no category.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-17 (item pass: Smell Batch A slice 2 — fixed: one-tap timer start untested, pass-through test of TimeExtractor)
 - Not fixed (speculative, no `.xcstrings` yet): `RecipeCookHistoryCard` builds its Label from a `String`
   (`RecipeDetailCopy.cookCount`), not a `LocalizedStringKey` literal — revisit when localisation lands.
