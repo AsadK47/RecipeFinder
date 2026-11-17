@@ -29,15 +29,12 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   inline (tap to edit) + the First/Last form → Settings › Profile, then (3) badges earned-first + Next up, (4) taste
   fingerprint + story. Leftover branch agent/me-hero (auto-cleanup).
 
-- Kitchen you can find (Queue top, builder 2026-11-17): slice 1 on `agent/kitchen-at-home` (e4fd606) — Groceries
-  To buy | At home switch (`GroceriesMode`, remembered; hidden while searching), At home = `KitchenAtHomeView`, ⋯
-  Kitchen entry + sheet removed, header field adds to the side showing, reminders/badge open the side they're about.
-  Push Build & Test green, screenshots 03 + 46 looked at (fine), deep-review + challenger done (6 fixed). **Blocked:**
-  UI shard 4 fails `testGroceriesSearchResultsPassesAudit` twice (runs 44115798355, 44121344258): "Dynamic Type font
-  sizes are partially unsupported" on the first suggestion's `Text("Apple")` (frame 68,273). Same test passes on main
-  (dispatch 44125651760) and the row's code is unchanged. Keyboard looked still up in failure shots — suspect the
-  keyboard dismiss/re-render with the new `@AppStorage`/`@Environment(\.kitchen)` reads. 2 of 4 CI attempts used.
-  Left after landing: slice 2 — Today's "Fits your kitchen" shelf + "In kitchen" tags open At home.
+- Kitchen you can find (Queue top, builder 2026-11-17): slice 1 now on `agent/kitchen-at-home-2` (rebased on main,
+  7749861; old `agent/kitchen-at-home` superseded — force-push refused). Audit failure: xcresult shows the keyboard
+  *was* down and the flagged element is the first suggestion row's "Apple" text; the test is first in shard 4 on
+  main too, so not ordering. Attempt 3: ContentView no longer observes `groceries.mode` with `@AppStorage`
+  (`GroceriesMode.rememberSide` writes it) — hypothesis: a root that observes UserDefaults re-renders every tab when the
+  audit changes text size. Left after landing: slice 2 — Today's "Fits your kitchen" shelf + "In kitchen" tags open At home.
 
 ## Next action
 Kitchen you can find: on a Mac (or with the xcresult), run `testGroceriesSearchResultsPassesAudit` on
