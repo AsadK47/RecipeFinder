@@ -878,6 +878,24 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         app.descendants(matching: .any).matching(identifier: "cookbook.page").firstMatch.tap()
         XCTAssertTrue(app.buttons["Start Cooking Mode"].waitForExistence(timeout: 10),
                       "Tapping a cookbook page should open the recipe.")
+
+        // Below the cookbook: "Your taste" from the seeded cooks; a trait row opens the recipes behind it.
+        checkpoint(app, "back to Me for taste")
+        app.navigationBars.buttons.firstMatch.tap()
+        let card = app.descendants(matching: .any).matching(identifier: "taste.card").firstMatch
+        for _ in 0..<6 where !card.exists || !card.isHittable { app.swipeUp(velocity: .slow) }
+        XCTAssertTrue(card.waitForExistence(timeout: 5), "Cooked meals should show Your taste on Me.")
+        XCTAssertTrue(app.staticTexts["taste.headline"].exists, "Your taste should say what the cook leans towards.")
+        settle()
+        snap(app, "48-me-taste")
+        let row = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'taste.row.'")).firstMatch
+        checkpoint(app, "taste row")
+        XCTAssertTrue(row.waitForExistence(timeout: 5), "A trait the cook has cooked should open its recipes.")
+        row.tap()
+        XCTAssertTrue(app.buttons["recipe.row"].firstMatch.waitForExistence(timeout: 10),
+                      "A taste row should list the recipes behind it.")
+        settle()
+        snap(app, "48a-me-taste-recipes")
     }
 
     @MainActor

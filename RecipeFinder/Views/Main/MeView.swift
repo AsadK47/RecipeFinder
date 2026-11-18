@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Me tab: who you are as a cook (hero: name you edit in place + stats), then your cookbook. Badges and chef type are
-/// one tap deeper in Profile; Settings (with the name/photo form under Profile) is behind the gear.
+/// Me tab: who you are as a cook (hero: name you edit in place + stats), then your cookbook and your taste. Badges and
+/// chef type are one tap deeper in Profile; Settings (with the name/photo form under Profile) is behind the gear.
 struct MeView: View {
     /// Set by "View all badges": Me opens Profile (the trophy shelf) and clears it.
     var openProfile: Binding<Bool> = .constant(false)
@@ -25,6 +25,8 @@ struct MeView: View {
     @State private var badgeCount = ""
     /// "5 of 24 badges earned" for VoiceOver, which reads "/" as "slash".
     @State private var spokenBadgeCount = ""
+    /// What the cook makes (spicy, comforting…), refreshed with the cookbook rather than in `body`.
+    @State private var taste = TasteFingerprint.empty
 
     var body: some View {
         NavigationStack {
@@ -60,6 +62,10 @@ struct MeView: View {
                                 showProfile = true
                             }
                             MyCookbookSection(pages: cookbookPages)
+                            // Nothing cooked → no card; the hero and the cookbook carry the first-cook invitation.
+                            if !taste.isEmpty {
+                                TasteFingerprintCard(fingerprint: taste)
+                            }
                         }
                         .padding(.top, AppTheme.spacing16)
                         .padding(.horizontal, AppTheme.cardHorizontalPadding)
@@ -77,6 +83,10 @@ struct MeView: View {
                 if let recipe = recipeStore.recipes.first(where: { $0.id == id }) {
                     RecipeDetailView(recipe: recipe)
                 }
+            }
+            // A taste row opens the cooked recipes behind that trait.
+            .navigationDestination(for: TasteTrait.self) { trait in
+                TasteTraitRecipesView(trait: trait, recipes: recipes(behind: trait))
             }
             .onAppear {
                 cookingStreak.reload()
@@ -110,6 +120,12 @@ struct MeView: View {
         let shelf = BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
         badgeCount = BadgeShelf.countText(shelf)
         spokenBadgeCount = BadgeShelf.spokenCount(shelf)
+        taste = TasteFingerprint.from(recipes: recipeStore.recipes)
+    }
+
+    private func recipes(behind trait: TasteTrait) -> [RecipeModel] {
+        let byID = Dictionary(recipeStore.recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return (taste.share(trait)?.recipeIDs ?? []).compactMap { byID[$0] }
     }
 
     /// The hero's inline name field: first word → first name, the rest → last name; chef type unchanged.
