@@ -131,7 +131,7 @@ are merged into a newer item or parked — never start them; their text stays as
   home in one tap, screenshots, CI green. **Slice 1 landed** 6f924c9 (switch, At home view, routed reminders,
   Help/filter copy).
   **Slice 2 landed** f8960bb (Today "Your kitchen →" links, "In kitchen" tag → At home, At home counts use-by alerts).
-- [ ] **Me with character** — (owner 2026-11-16: "profile … super bland"; unparks *Me 2/3*, kept below as spec). Today Me
+- [ ] **Me with character** — 🚧 builder agent 2026-11-18 (4b) — (owner 2026-11-16: "profile … super bland"; unparks *Me 2/3*, kept below as spec). Today Me
   is an empty circle, a First/Last-name form and 24 grey locked badges. (1) **Hero**: photo or initials on the chef-type
   colour, name inline (tap to edit — the form moves to Settings → Profile), chef type as a title, and one stats strip:
   dinners cooked · week streak · cuisines tried. (2) **My Cookbook up front**: latest dishes as a photo strip → the book.
