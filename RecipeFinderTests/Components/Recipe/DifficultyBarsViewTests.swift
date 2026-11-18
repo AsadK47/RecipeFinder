@@ -11,6 +11,11 @@ struct DifficultyBarsViewTests {
     // MARK: - filledBars
 
     @Test("Difficulty maps to filled-bar count, case-insensitively, defaulting to 2", arguments: [
+        ("Basic", 1),       // the app's own levels (wizard, bundled recipes)
+        ("Intermediate", 2),
+        ("Expert", 3),
+        ("beginner", 1),
+        ("Advanced", 3),
         ("easy", 1),
         ("medium", 2),
         ("hard", 3),
@@ -22,6 +27,12 @@ struct DifficultyBarsViewTests {
     ])
     func filledBarsForDifficulty(label: String, expected: Int) {
         #expect(DifficultyBarsView(difficulty: label).filledBars == expected)
+    }
+
+    @Test("Each of the app's levels fills one more bar than the one before it")
+    func levelsFillIncreasingBars() {
+        let bars = RecipeWizardBuilder.difficultyLevels.map { DifficultyBarsView(difficulty: $0).filledBars }
+        #expect(bars == Array(1...Layout.barCount))
     }
 
     // MARK: - cascadingHeight

@@ -17,13 +17,12 @@ struct DifficultyBarsView: View {
         static let heightMultipliers: [CGFloat] = [3, 4, 5]
     }
 
+    /// Bars filled for the recipe's level: the app's own Basic / Intermediate / Expert (and imported labels such as
+    /// easy / medium / hard) map through `RecipeWizardBuilder.normalizeDifficulty`; anything else shows the middle.
     var filledBars: Int {
-        switch difficulty.lowercased() {
-        case "easy":   return 1
-        case "medium": return 2
-        case "hard":   return 3
-        default:       return 2
-        }
+        let level = RecipeWizardBuilder.normalizeDifficulty(difficulty)
+        let index = RecipeWizardBuilder.difficultyLevels.firstIndex(of: level) ?? 1
+        return min(index + 1, Layout.barCount)
     }
 
     var body: some View {
