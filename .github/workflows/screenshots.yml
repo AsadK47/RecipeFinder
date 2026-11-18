@@ -14,7 +14,7 @@ jobs:
   capture:
     name: Capture screenshots
     runs-on: xcode-27   # Xcode 27 image (macOS 27); macos-26 tops out at Xcode 26.6
-    timeout-minutes: 30
+    timeout-minutes: 45   # capture is capped below so the publish steps always get their turn
 
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +22,16 @@ jobs:
           fetch-depth: 0   # file dates restored below so the reused build cache stays valid
 
       - uses: ./.github/actions/select-xcode
+
+      # Same as the prepare action: Spotlight, crash reporting and software update compete for the runner's 3 CPUs.
+      - name: Quiet the runner
+        run: |
+          sudo mdutil -a -i off >/dev/null || true
+          for s in com.apple.metadata.mds com.apple.metadata.mds.index com.apple.metadata.mds.scan com.apple.ReportCrash \
+                   com.apple.softwareupdated; do
+            sudo launchctl bootout "system/$s" 2>/dev/null || true
+          done
+          sudo pkill -SIGKILL -f "Metadata.framework/Versions/A/Support/mds" || true
 
       # Reuse Build & Test's compiled output (read-only) instead of building from scratch every time.
       - name: Restore file dates
@@ -54,10 +64,23 @@ jobs:
           [ -z "$SIM" ] && SIM=$(echo "$DEVICES" | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
           echo "SIM=$SIM" >> "$GITHUB_ENV"
           xcrun simctl boot "$SIM"
+          # Same list as the prepare action: services the app never uses that peg the CPUs for minutes after a boot.
+          until xcrun simctl spawn "$SIM" launchctl list >/dev/null 2>&1; do sleep 2; done
+          for L in chronod apsd healthd healthappd fitnessintelligenced fitcore fitnesscoachingd newsd suggestd \
+                   mediaanalysisd photoanalysisd siriactionsd siriinferenced siriknowledged assistantd triald \
+                   mobileassetd weatherd itunescloudd spotlightknowledged corespotlightservice searchd \
+                   intelligenceplatformd knowledgeconstructiond biomed duetexpertd amsengagementd; do
+            ( xcrun simctl spawn "$SIM" launchctl disable "user/foreground/com.apple.$L"
+              xcrun simctl spawn "$SIM" launchctl bootout "user/foreground/com.apple.$L" ) >/dev/null 2>&1 &
+          done
+          wait
+          xcrun simctl bootstatus "$SIM" -b >/dev/null
           xcrun simctl status_bar "$SIM" override --time 9:41 --batteryState charged --batteryLevel 100 \
             --cellularMode active --cellularBars 4 --wifiBars 3
 
+      # Capped so a slow run still publishes the shots it took (step timeout counts as failure(), cancel doesn't).
       - name: Capture
+        timeout-minutes: 36
         run: |
           set -o pipefail
           mkdir -p "$RUNNER_TEMP/shots"
