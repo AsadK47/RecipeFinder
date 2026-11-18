@@ -34,11 +34,19 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-"Build with Xcode 27" → Needs owner (workflow guardrail, builder 2026-11-18). Next run: first unticked non-🙋
-Queue item is Tester feedback 1 slice 5 (Cook lane's) → skip to the next unclaimed one, or Smell Batch D screen 2
-(RecipeSearchView) per feature/smell/feature. Lanes: when green + reviewed, batch into `agent/batch`, one green run, ff main.
+Xcode 27 (`agent/xcode-27`, builder 2026-11-18): wait for Build & Test green, then UI run + Screenshots on the branch,
+land, and confirm the first TestFlight upload has no ITMS-90725.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Xcode 27** (`agent/xcode-27`): `macos-26` stops at Xcode 26.6; Xcode 27 is only on the `xcode-27` runner label
+  (macOS 27 base, standard size = free). All app jobs moved there; `tools-build.yml` stays on macos-26 (Mac tool, no
+  upload). `.github/actions/select-xcode` picks the newest non-beta `Xcode_27*.app` and fails loudly if missing, so
+  an image change can't silently ship an old SDK. DerivedData cache key now includes the Xcode build (a 26.x cache
+  restored under 27 would just be rebuilt or confuse it). Xcode 27's type checker times out on long inferred chains
+  and inline arithmetic `@Test(arguments:)` tuples → split/typed, values unchanged. Rejected: `setup-xcode` action
+  (third-party dep, and the app isn't on the image anyway). **Pre-mortem:** (1) TestFlight still uses 26.x → the
+  select step runs first in testflight.yml and fails if 27 is missing; (2) iOS 27 SDK changes runtime behaviour on
+  device → UI shards + Screenshots on the branch; (3) cache miss makes runs slow for one main push → expected, once.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to
