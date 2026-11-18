@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Difficulty order** (landed 599cf90): list lives next to `normalizeDifficulty` (the thing that produces
+  those three labels) so the filter, editor and normaliser can't drift; filter sheet takes the editor's easiest-first
+  order. Active-filter chips iterate a `Set` (order unstable) — left alone (WIP=1). **Pre-mortem:** (1) a filter no
+  longer matches a recipe → `normalisedDifficultyIsAListedLevel`; (2) orders drift again → facets == builder test;
+  (3) a UI test taps by position → no UI test touches difficulty (grep).
 - **Screenshots timeout** (landed a1352af): capture went over the 30-min job limit on xcode-27, and a job timeout
   is a *cancel*, so `success() || failure()` publish steps were skipped. Step-level caps (boot 10, Capture 36) end as
   *failure*, so publish still runs; job 50 = caps + ~4 min setup/publish. Reused the prepare action's quieting rather

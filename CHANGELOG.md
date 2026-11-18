@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Inbox 🟡 difficulty order · 599cf90
+- For you: the Recipes filter now lists difficulty easiest first — Basic, Intermediate, Expert — the same order you pick it in when adding a recipe.
+- Behind the build: both screens now share one list, and tests check its order and that every difficulty a recipe can have is one the filter can find.
+
 ## 2026-11-18 · iOS 27 SDK warnings · bd96990
 - For you: alerts, the photo picker button and Today's "recipe link on your clipboard" card work as before, now on code that's ready for future iOS updates.
 - Behind the build: Xcode 27 flagged three spots that later versions will reject; each was rewritten with the same behaviour, pinned by new tests, and the build now finishes with no warnings.

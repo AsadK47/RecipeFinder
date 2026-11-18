@@ -34,15 +34,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-🚧 builder 2026-11-18 on agent/difficulty-order (599cf90): one shared `RecipeWizardBuilder.difficultyLevels`
-(Basic, Intermediate, Expert) for filter sheet + editor — wait for Build & Test, land, tick. Then Smell Batch D screen 3 (CookingModeView).
+Difficulty order ✅ (599cf90). Next: Smell Batch D screen 3 (CookingModeView, 392 lines).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Difficulty order** (`agent/difficulty-order`): list lives next to `normalizeDifficulty` (the thing that produces
-  those three labels) so the filter, editor and normaliser can't drift; filter sheet takes the editor's easiest-first
-  order. Active-filter chips iterate a `Set` (order unstable) — left alone (WIP=1). **Pre-mortem:** (1) a filter no
-  longer matches a recipe → `normalisedDifficultyIsAListedLevel`; (2) orders drift again → facets == builder test;
-  (3) a UI test taps by position → no UI test touches difficulty (grep).
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to
