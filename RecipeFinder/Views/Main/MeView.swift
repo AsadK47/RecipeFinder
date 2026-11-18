@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Me tab: who you are as a cook (hero: name you edit in place + stats), then your cookbook and your taste. Badges and
+/// Me tab: who you are as a cook (hero: name you edit in place + stats), then your cookbook, your taste and your story. Badges and
 /// chef type are one tap deeper in Profile; Settings (with the name/photo form under Profile) is behind the gear.
 struct MeView: View {
     /// Set by "View all badges": Me opens Profile (the trophy shelf) and clears it.
@@ -27,6 +27,9 @@ struct MeView: View {
     @State private var spokenBadgeCount = ""
     /// What the cook makes (spicy, comforting…), refreshed with the cookbook rather than in `body`.
     @State private var taste = TasteFingerprint.empty
+    /// First cook, milestones and badges, newest first — refreshed with the cookbook rather than in `body`.
+    @State private var story: [StoryMoment] = []
+    @State private var storyYearLine: String?
 
     var body: some View {
         NavigationStack {
@@ -65,6 +68,13 @@ struct MeView: View {
                             // No trait cooked yet → no card; the hero and the cookbook carry the first-cook invitation.
                             if !taste.isEmpty {
                                 TasteFingerprintCard(fingerprint: taste)
+                            }
+                            // Empty until the first cook, like the taste card.
+                            if !story.isEmpty {
+                                CookingStoryCard(moments: story, yearLine: storyYearLine) { badgeID in
+                                    trophyShelfRequest.wrappedValue = TrophyShelfRequest(badgeID: badgeID)
+                                    showProfile = true
+                                }
                             }
                         }
                         .padding(.top, AppTheme.spacing16)
@@ -117,10 +127,13 @@ struct MeView: View {
     private func refreshCookbook() {
         cookbookPages = MyCookbook.pages(from: recipeStore.recipes)
         stats = MeStats.strip(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
-        let shelf = BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
+        let badges = badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count)
+        let shelf = BadgeShelf.sections(badges)
         badgeCount = BadgeShelf.countText(shelf)
         spokenBadgeCount = BadgeShelf.spokenCount(shelf)
         taste = TasteFingerprint.from(recipes: recipeStore.recipes)
+        story = CookingStory.moments(cookDates: cookingStreak.recordedCookDates, badges: badges)
+        storyYearLine = CookingStory.yearLine(cooksThisYear: cookingStreak.streak.cooksThisYear)
     }
 
     /// The hero's inline name field: first word → first name, the rest → last name; chef type unchanged.
