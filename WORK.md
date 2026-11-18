@@ -34,9 +34,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Next Queue item (feature, smell, feature… rule; Batch D screens 2–3 after it): first unticked non-🙋 Queue item is
-"Build with Xcode 27" — touches CI/TestFlight workflows (guardrail): check BACKLOG for an owner yes before starting,
-else move it to Needs owner and take the next. Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main.
+"Build with Xcode 27" → Needs owner (workflow guardrail, builder 2026-11-18). Next run: first unticked non-🙋
+Queue item is Tester feedback 1 slice 5 (Cook lane's) → skip to the next unclaimed one, or Smell Batch D screen 2
+(RecipeSearchView) per feature/smell/feature. Lanes: when green + reviewed, batch into `agent/batch`, one green run, ff main.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
