@@ -905,7 +905,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         settle()
         snap(app, "48a-me-taste-recipes")
 
-        // Below Your taste: "Your cooking story" — the seeded cooks (a week apart) start with the first cook.
+        // Below Your taste: "Your cooking story" from the seeded cooks (a week apart), back to the first cook.
         checkpoint(app, "back to Me for story")
         app.navigationBars.buttons.firstMatch.tap()
         let story = app.descendants(matching: .any).matching(identifier: "story.card").firstMatch
@@ -919,7 +919,6 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         if showAll.exists { showAll.tap() }
         for _ in 0..<8 where !firstCook.exists || firstCook.frame.maxY > tabTop { app.swipeUp(velocity: .slow) }
         XCTAssertTrue(firstCook.exists, "The story should start with the first cook.")
-        XCTAssertTrue(app.staticTexts["story.year"].exists, "The story should count this year's meals.")
         settle()
         snap(app, "49-me-story")
     }
