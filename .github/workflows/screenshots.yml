@@ -13,7 +13,7 @@ permissions:
 jobs:
   capture:
     name: Capture screenshots
-    runs-on: macos-26
+    runs-on: xcode-27   # Xcode 27 image (macOS 27); macos-26 tops out at Xcode 26.6
     timeout-minutes: 30
 
     steps:
