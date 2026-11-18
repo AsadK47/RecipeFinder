@@ -637,11 +637,13 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(field.waitForExistence(timeout: 5), "Tapping the name should open the inline field.")
         // Cursor to the end (a tap mid-text would leave the tail), then clear what an earlier run saved.
         field.coordinate(withNormalizedOffset: CGVector(dx: 0.97, dy: 0.5)).tap()
-        if let current = field.value as? String, !current.isEmpty, current != "Your name" {
+        let current = field.value as? String ?? ""
+        if !current.isEmpty, current != "Your name" {
             field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
         }
-        // New each run: the simulator keeps the profile, so a fixed name would pass even if saving broke.
-        let newName = "Sam " + String((0..<5).map { _ in "abcdefghijklmnopqrstuvwxyz".randomElement() ?? "a" }).capitalized
+        // Never the name already saved (the simulator keeps the profile, so a fixed name would pass even if saving
+        // broke), but a real-looking one: it shows in the published Me screenshots.
+        let newName = ["Sam Rivera", "Alex Morgan"].first { $0 != current } ?? "Sam Rivera"
         field.typeText(newName)
         app.buttons["me.name.done"].tap()
         XCTAssertTrue(field.waitForNonExistence(timeout: 5), "Done should close the inline field.")
