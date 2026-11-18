@@ -118,6 +118,29 @@ extension BadgeType {
         return "\(progress.current) / \(progress.target) \(metric.unit)"
     }
 
+    /// The locked threshold badges closest to done: highest share done first, then fewest left, then the badge
+    /// list's own order. A badge already reached but not yet shown as earned is skipped (it's about to unlock).
+    /// `kinds` limits which metrics count (Today: cooking only); nil = every kind.
+    static func closest(
+        metrics: BadgeMetrics, unlockedBadgeIDs: Set<String>, among kinds: Set<BadgeMetric>? = nil, limit: Int
+    ) -> [BadgeType] {
+        let candidates = allCases.enumerated().compactMap { index, type -> (type: BadgeType, current: Int, target: Int, order: Int)? in
+            guard let metric = type.criterion.metric, kinds?.contains(metric) ?? true,
+                  !unlockedBadgeIDs.contains(type.rawValue),
+                  let progress = type.progress(for: metrics), progress.current < progress.target else { return nil }
+            return (type, progress.current, progress.target, index)
+        }
+        let ranked = candidates.sorted { a, b in
+            // Cross-multiplied so 1/2 vs 2/4 tie exactly (no floating point).
+            let left = a.current * b.target, right = b.current * a.target
+            if left != right { return left > right }
+            let aLeft = a.target - a.current, bLeft = b.target - b.current
+            if aLeft != bLeft { return aLeft < bLeft }
+            return a.order < b.order
+        }
+        return ranked.prefix(max(0, limit)).map(\.type)
+    }
+
     /// Share done, 0…1, for the ring; nil for one-off badges.
     func progressFraction(for metrics: BadgeMetrics) -> Double? {
         guard let progress = progress(for: metrics) else { return nil }
@@ -144,17 +167,39 @@ enum BadgeShelf {
             let inGroup = BadgeType.allCases.enumerated()
                 .filter { $0.element.group == group }
                 .map { (order: $0.offset, badge: byID[$0.element.rawValue] ?? $0.element.badge) }
-            let earned = inGroup.filter { $0.badge.isUnlocked }.sorted { lhs, rhs in
-                switch (lhs.badge.dateEarned, rhs.badge.dateEarned) {
-                case let (l?, r?) where l != r: return l > r
-                case (.some, nil): return true
-                case (nil, .some): return false
-                default: return lhs.order < rhs.order
-                }
-            }
-            let locked = inGroup.filter { !$0.badge.isUnlocked }
-            return BadgeShelfSection(group: group, badges: (earned + locked).map { $0.badge })
+            let locked = inGroup.filter { !$0.badge.isUnlocked }.map(\.badge)
+            return BadgeShelfSection(group: group, badges: newestFirst(inGroup.filter { $0.badge.isUnlocked }) + locked)
         }
+    }
+
+    /// Me's medal row: every earned badge across the groups, newest first. Ids no longer a `BadgeType` are dropped.
+    static func earned(_ badges: [Badge]) -> [Badge] {
+        let byID = Dictionary(badges.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let known = BadgeType.allCases.enumerated().compactMap { index, type -> (order: Int, badge: Badge)? in
+            guard let badge = byID[type.rawValue], badge.isUnlocked else { return nil }
+            return (index, badge)
+        }
+        return newestFirst(known)
+    }
+
+    /// Me's "Next up": the `limit` locked badges you're closest to, with a count to show (one-off badges have none).
+    static func nextUp(_ badges: [Badge], metrics: BadgeMetrics, limit: Int = 3) -> [Badge] {
+        let unlocked = Set(badges.filter(\.isUnlocked).map(\.id))
+        let byID = Dictionary(badges.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return BadgeType.closest(metrics: metrics, unlockedBadgeIDs: unlocked, limit: limit)
+            .map { byID[$0.rawValue] ?? $0.badge }
+    }
+
+    /// Dated newest first; an undated earned badge after the dated ones; ties keep the badge list's order.
+    private static func newestFirst(_ items: [(order: Int, badge: Badge)]) -> [Badge] {
+        items.sorted { lhs, rhs in
+            switch (lhs.badge.dateEarned, rhs.badge.dateEarned) {
+            case let (l?, r?) where l != r: return l > r
+            case (.some, nil): return true
+            case (nil, .some): return false
+            default: return lhs.order < rhs.order
+            }
+        }.map(\.badge)
     }
 
     /// Swipe order of the full-screen badge pager: the shelf, row by row.
@@ -169,6 +214,10 @@ enum BadgeShelf {
     /// VoiceOver reads "/" as "slash".
     static func spokenCount(_ sections: [BadgeShelfSection]) -> String {
         "\(sections.reduce(0) { $0 + $1.earnedCount }) of \(sections.reduce(0) { $0 + $1.total }) badges earned"
+    }
+
+    static func total(_ sections: [BadgeShelfSection]) -> Int {
+        sections.reduce(0) { $0 + $1.total }
     }
 
     static func countText(_ sections: [BadgeShelfSection]) -> String {

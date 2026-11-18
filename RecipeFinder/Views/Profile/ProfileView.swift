@@ -42,10 +42,15 @@ struct ProfileView: View {
                             )
 
                             ProfileBadgesSection(
-                                sections: shelf,
+                                sections: BadgeShelf.sections(allBadges),
+                                earned: BadgeShelf.earned(allBadges),
+                                nextUp: BadgeShelf.nextUp(allBadges, metrics: badgeMetrics),
                                 metrics: badgeMetrics,
                                 onSelectBadge: { badge in
                                     pagerStart = BadgePagerStart(badgeID: badge.id)
+                                },
+                                onStartCooking: {
+                                    NotificationCenter.default.post(name: BadgeEarnAction.cook.notification, object: nil)
                                 }
                             )
                             .id(Self.shelfAnchor)
@@ -104,7 +109,7 @@ struct ProfileView: View {
         // A sheet, not a full-screen cover, so the card closes with a swipe down as well as the ✕ (owner 2026-11-17).
         .sheet(item: $pagerStart, onDismiss: openPendingEarn) { start in
             BadgePagerView(
-                badges: BadgeShelf.pagerOrder(shelf),
+                badges: BadgeShelf.pagerOrder(BadgeShelf.sections(allBadges)),
                 startID: start.badgeID,
                 metrics: badgeMetrics,
                 onEarn: { pendingEarn = $0 }
@@ -138,8 +143,8 @@ struct ProfileView: View {
         shelfRequest.wrappedValue = nil
     }
 
-    private var shelf: [BadgeShelfSection] {
-        BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
+    private var allBadges: [Badge] {
+        badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count)
     }
 
     private func refreshBadgeMetrics() {

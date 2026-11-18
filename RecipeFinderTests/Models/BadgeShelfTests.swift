@@ -101,6 +101,80 @@ import Testing
         #expect(!ids.contains("retired_badge"))
     }
 
+    // MARK: Earned first
+
+    @Test func medalRowIsEveryEarnedBadgeNewestFirstAcrossGroups() {
+        let medals = BadgeShelf.earned(all([
+            earned(.headChef, daysAgo: 10),
+            earned(.mealPlanner, daysAgo: 1),
+            earned(.streakTwoWeeks, daysAgo: 4),
+        ]))
+        #expect(medals.map(\.id) == [BadgeType.mealPlanner, .streakTwoWeeks, .headChef].map(\.rawValue))
+    }
+
+    @Test func medalRowIsEmptyBeforeAnythingIsEarned() {
+        #expect(BadgeShelf.earned(all([])).isEmpty)
+    }
+
+    @Test func medalRowLeavesOffUnknownStoredBadges() {
+        let stray = Badge(id: "retired_badge", title: "Old", description: "", icon: "x", color: "blue",
+                          dateEarned: Date(), isUnlocked: true)
+        #expect(BadgeShelf.earned(all([earned(.headChef, daysAgo: 1)]) + [stray]).map(\.id) == [BadgeType.headChef.rawValue])
+    }
+
+    @Test func medalRowPutsAnUndatedBadgeAfterDatedOnes() {
+        let undated = Badge(id: BadgeType.welcomeAboard.rawValue, title: "Welcome", description: "", icon: "x",
+                            color: "blue", dateEarned: nil, isUnlocked: true)
+        let medals = BadgeShelf.earned(all([undated, earned(.headChef, daysAgo: 30)]))
+        #expect(medals.map(\.id) == [BadgeType.headChef, .welcomeAboard].map(\.rawValue))
+    }
+
+    // MARK: Next up
+
+    @Test func nextUpIsTheThreeClosestLockedBadges() {
+        // 7/10 cooks (70%), 4/5 of one dish (80%), 1/2 weeks (50%), 3/5 recipes (60%), 1/5 cuisines (20%).
+        let metrics = BadgeMetrics(recipesCollected: 3, recipesCooked: 7, weeklyStreak: 1, cuisinesCooked: 1,
+                                   sameRecipeCooked: 4)
+        let next = BadgeShelf.nextUp(all([earned(.headChef, daysAgo: 1), earned(.firstRecipe, daysAgo: 1)]),
+                                     metrics: metrics)
+        #expect(next.map(\.id) == [BadgeType.sameRecipeFive, .cookedTen, .fiveRecipes].map(\.rawValue))
+    }
+
+    @Test func nextUpSkipsEarnedAndOneOffBadges() {
+        let next = BadgeShelf.nextUp(all([earned(.headChef, daysAgo: 1)]), metrics: BadgeMetrics(), limit: 50)
+        let ids = Set(next.map(\.id))
+        #expect(!ids.contains(BadgeType.headChef.rawValue))
+        for oneOff in [BadgeType.welcomeAboard, .mealPlanner, .shoppingExpert, .firstImport, .firstPhotoImport] {
+            #expect(!ids.contains(oneOff.rawValue))
+        }
+        #expect(next.allSatisfy { !$0.isUnlocked })
+    }
+
+    @Test func nextUpForANewCookStartsWithTheFirstSteps() {
+        let next = BadgeShelf.nextUp(all([]), metrics: BadgeMetrics())
+        // Everything is 0%, so fewest left wins: the one-step badges, in the badge list's order.
+        #expect(next.map(\.id) == [BadgeType.firstRecipe, .headChef, .firstCookPhoto].map(\.rawValue))
+    }
+
+    @Test func nextUpSkipsABadgeAlreadyReachedButNotYetShown() {
+        let next = BadgeShelf.nextUp(all([]), metrics: BadgeMetrics(recipesCooked: 1), limit: 50)
+        #expect(!next.map(\.id).contains(BadgeType.headChef.rawValue))
+    }
+
+    @Test func nextUpIsEmptyWhenEveryCountedBadgeIsEarned() {
+        let everything = BadgeType.allCases.map { earned($0, daysAgo: 1) }
+        #expect(BadgeShelf.nextUp(everything, metrics: BadgeMetrics()).isEmpty)
+    }
+
+    @Test func nextUpAgreesWithTodaysNextBadge() {
+        let metrics = BadgeMetrics(recipesCooked: 7, weeklyStreak: 1, sameRecipeCooked: 2)
+        let today = BadgeType.closest(metrics: metrics, unlockedBadgeIDs: [BadgeType.headChef.rawValue],
+                                      among: TodayProgress.cookingMetrics, limit: 1)
+        #expect(today == [.cookedTen])
+        #expect(BadgeShelf.nextUp(all([earned(.headChef, daysAgo: 1)]), metrics: metrics).first?.id
+            == BadgeType.cookedTen.rawValue)
+    }
+
     // MARK: Pager
 
     @Test func pagerSwipesThroughTheShelfInShelfOrder() {

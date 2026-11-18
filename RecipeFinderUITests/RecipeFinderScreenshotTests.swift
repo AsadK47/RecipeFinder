@@ -651,6 +651,18 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
         profile.tap()
 
+        // Earned medals + "Next up" (closest three, with counts) come first; the full shelf is behind See all.
+        let nextUp = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'me.nextUp.'"))
+        XCTAssertTrue(nextUp.firstMatch.waitForExistence(timeout: 5), "Profile should show the badges up next.")
+        XCTAssertLessThanOrEqual(nextUp.count, 3, "Next up shows at most three badges.")
+        XCTAssertFalse(app.buttons["me.badge.streak_twelve_weeks"].exists, "Locked badges wait behind See all.")
+        let seeAll = app.buttons["me.badges.seeAll"]
+        for _ in 0..<6 where !(seeAll.exists && seeAll.isHittable) { app.swipeUp() }
+        settle()
+        snap(app, "34a-me-next-up")
+        checkpoint(app, "see all badges")
+        seeAll.tap()
+
         // Third in the Streaks row, so it's on screen without a sideways scroll; nobody has a 12-week streak in CI.
         let locked = app.buttons["me.badge.streak_twelve_weeks"]
         for _ in 0..<8 where !(locked.exists && locked.isHittable) { app.swipeUp() }

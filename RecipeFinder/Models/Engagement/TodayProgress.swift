@@ -52,21 +52,12 @@ struct TodayProgress: Equatable {
         )
     }
 
-    /// Closest first (highest share done), then fewest left, then the badge list's own order.
+    /// Closest first — the same ranking as Me's "Next up", limited to the cooking badges.
     private static func nextBadge(metrics: BadgeMetrics, unlockedBadgeIDs: Set<String>) -> NextBadge? {
-        let candidates = BadgeType.allCases.enumerated().compactMap { index, type -> (NextBadge, Int)? in
-            guard let metric = type.criterion.metric, cookingMetrics.contains(metric),
-                  !unlockedBadgeIDs.contains(type.rawValue),
-                  let progress = type.progress(for: metrics), progress.current < progress.target else { return nil }
-            return (NextBadge(type: type, current: progress.current, target: progress.target), index)
-        }
-        return candidates.min { a, b in
-            // Cross-multiplied so 1/2 vs 2/4 tie exactly (no floating point).
-            let left = a.0.current * b.0.target, right = b.0.current * a.0.target
-            if left != right { return left > right }
-            if a.0.remaining != b.0.remaining { return a.0.remaining < b.0.remaining }
-            return a.1 < b.1
-        }?.0
+        guard let type = BadgeType.closest(
+            metrics: metrics, unlockedBadgeIDs: unlockedBadgeIDs, among: cookingMetrics, limit: 1
+        ).first, let progress = type.progress(for: metrics) else { return nil }
+        return NextBadge(type: type, current: progress.current, target: progress.target)
     }
 }
 

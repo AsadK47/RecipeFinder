@@ -6,6 +6,8 @@ struct BadgeCard: View {
     let badge: Badge
     /// Share done (0…1) toward a locked threshold badge; nil hides the ring.
     var progress: Double?
+    /// Replaces the "Locked" line, e.g. "7 / 10 cooks" under a Next-up badge.
+    var caption: String?
 
     var badgeColor: Color { Badge.color(for: badge.color) }
 
@@ -44,7 +46,14 @@ struct BadgeCard: View {
                 .lineLimit(2, reservesSpace: true)
                 .frame(width: AppTheme.width88)
 
-            if badge.isUnlocked, let date = badge.dateEarned {
+            if let caption {
+                Text(caption)
+                    .font(.system(size: AppTheme.fontSize11))
+                    .adaptiveSecondaryForeground()
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .frame(width: AppTheme.width88)
+            } else if badge.isUnlocked, let date = badge.dateEarned {
                 Text(date.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)))
                     .font(.system(size: AppTheme.fontSize11))
                     .adaptiveSecondaryForeground()
