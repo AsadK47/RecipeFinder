@@ -14,7 +14,7 @@ jobs:
   capture:
     name: Capture screenshots
     runs-on: xcode-27   # Xcode 27 image (macOS 27); macos-26 tops out at Xcode 26.6
-    timeout-minutes: 45   # capture is capped below so the publish steps always get their turn
+    timeout-minutes: 50   # boot (10) + capture (36) caps + ~4 setup/publish, so publish always gets its turn
 
     steps:
       - uses: actions/checkout@v4
@@ -58,6 +58,7 @@ jobs:
           restore-keys: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-
 
       - name: Boot simulator with a clean status bar
+        timeout-minutes: 10
         run: |
           DEVICES=$(xcrun simctl list devices available -j)
           SIM=$(echo "$DEVICES" | jq -r '[.devices[][] | select(.name | test("iPhone.*Pro Max"))][0].udid // empty')
