@@ -40,6 +40,17 @@ for it) — tests first. Last slice → tick the item.
 Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Me with character (4b) cooking story** (`agent/me-cooking-story`): `CookingStory.moments` = first cook + meal
+  rungs (10/25/50/100) + streak rungs (2/4/12/52, each told once, first time reached) **from the cook log**, plus every
+  other earned badge on its `dateEarned`; cook/streak badges are skipped so nothing shows twice (rungs = the badges').
+  Rejected: "first save" / "first cuisine" / photo moments with their own dates — recipes have no created-at and cooks
+  aren't linked to recipes, so those would need a model change (guardrail); the First Recipe / First Cook Photo
+  badges already date them. Hidden until the first cook (new cook: hero + cookbook invite). Newest 5, "Show all" in
+  place; a badge row opens that badge on the shelf (`TrophyShelfRequest`). `CookingStreak.cooksThisYear` → "14 meals
+  cooked in 2026" under the title. `recordedCookDates` added to `CookingStreakTracking` (no fakes to update).
+  Pre-mortem: (1) streak rung on the wrong cook / told twice → `streakRungDate`, `streakRungsOnce`, `gapRestarts`;
+  (2) duplicate "first cook" + "Head Chef" lines → `cookLogBadgesSkipped`; (3) timeline line/clipping or first cook
+  hidden behind Show all → UI test taps Show all, asserts `story.row.first-cook`, shot 49-me-story looked at.
 - **Me with character (1b)**: the name is its own button *above* the profile button, not inside it — nested buttons in
   one label are unreliable and VoiceOver can't reach them. One field, split by `ProfileNameFormatter.rename` (first
   word / rest; unchanged → nil; a stored multi-word first name is kept when the text still starts with it; 60-char

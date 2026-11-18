@@ -4,6 +4,8 @@ import SwiftUI
 @MainActor
 protocol CookingStreakTracking: AnyObject, Observable {
     var streak: CookingStreak { get }
+    /// Every recorded cook, oldest first — Me's cooking story reads its milestones from these.
+    var recordedCookDates: [Date] { get }
     /// Records a cook; returns `true` if it extended the weekly streak (a new week was counted), so the UI can celebrate.
     @discardableResult func recordCook(on date: Date) -> Bool
     func reload()
