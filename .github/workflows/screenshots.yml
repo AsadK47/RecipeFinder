@@ -21,6 +21,8 @@ jobs:
         with:
           fetch-depth: 0   # file dates restored below so the reused build cache stays valid
 
+      - uses: ./.github/actions/select-xcode
+
       # Reuse Build & Test's compiled output (read-only) instead of building from scratch every time.
       - name: Restore file dates
         run: |
@@ -42,8 +44,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: DerivedData
-          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
-          restore-keys: deriveddata-test-${{ runner.os }}-
+          key: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-${{ github.sha }}
+          restore-keys: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-
 
       - name: Boot simulator with a clean status bar
         run: |

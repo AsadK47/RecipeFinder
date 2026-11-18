@@ -112,7 +112,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: DerivedData
-          key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
+          key: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-${{ github.sha }}
 
       - name: Keep logs if it fails
         if: failure()

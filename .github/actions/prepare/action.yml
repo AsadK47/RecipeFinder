@@ -15,6 +15,8 @@ inputs:
 runs:
   using: composite
   steps:
+    - uses: ./.github/actions/select-xcode
+
     # Spotlight, crash reporting and software update compete with the simulator for the runner's 3 CPUs.
     - name: Quiet the runner
       shell: bash
@@ -49,8 +51,8 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: DerivedData
-        key: deriveddata-test-${{ runner.os }}-${{ github.sha }}
-        restore-keys: deriveddata-test-${{ runner.os }}-
+        key: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-${{ github.sha }}
+        restore-keys: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-
 
     - name: Pick simulator
       shell: bash

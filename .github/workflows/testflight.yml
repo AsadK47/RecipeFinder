@@ -45,6 +45,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - uses: ./.github/actions/select-xcode
+
       - name: Show Xcode version
         run: xcodebuild -version
 

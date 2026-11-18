@@ -1,0 +1,28 @@
+name: Select Xcode
+description: Switch the runner to the newest installed Xcode of the required major version and fail early if it's missing.
+# App Store Connect rejects uploads not built with the current iOS SDK (ITMS-90725: iOS 27 SDK from April 2027).
+# Leaves XCODE_BUILD (e.g. 27A123) in the env so caches tied to a compiler version can key on it.
+
+inputs:
+  major:
+    description: Xcode major version to use.
+    default: '27'
+
+runs:
+  using: composite
+  steps:
+    - name: Select Xcode ${{ inputs.major }}
+      shell: bash
+      env:
+        MAJOR: ${{ inputs.major }}
+      run: |
+        APP=$(ls -d /Applications/Xcode_"$MAJOR"*.app 2>/dev/null | grep -v -i beta | sort -V | tail -1)
+        [ -z "$APP" ] && APP=$(ls -d /Applications/Xcode_"$MAJOR"*.app 2>/dev/null | sort -V | tail -1)
+        if [ -z "$APP" ]; then
+          echo "::error::No Xcode $MAJOR on this runner image. Installed:"; ls -d /Applications/Xcode*.app
+          exit 1
+        fi
+        sudo xcode-select -s "$APP/Contents/Developer"
+        BUILD=$(/usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' "$APP/Contents/version.plist")
+        echo "XCODE_BUILD=$BUILD" >> "$GITHUB_ENV"
+        echo "Using $APP ($BUILD)"
