@@ -883,8 +883,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         checkpoint(app, "back to Me for taste")
         app.navigationBars.buttons.firstMatch.tap()
         let card = app.descendants(matching: .any).matching(identifier: "taste.card").firstMatch
-        for _ in 0..<6 where !card.exists || !card.isHittable { app.swipeUp(velocity: .slow) }
         XCTAssertTrue(card.waitForExistence(timeout: 5), "Cooked meals should show Your taste on Me.")
+        // Scroll until the last trait row clears the tab bar, so the shot shows the whole card (hittable alone
+        // stops as soon as the card's top edge peeks in).
+        let lastRow = app.descendants(matching: .any).matching(identifier: "taste.row.fresh").firstMatch
+        let tabBarTop = app.tabBars.firstMatch.frame.minY
+        for _ in 0..<6 where !lastRow.exists || lastRow.frame.maxY > tabBarTop { app.swipeUp(velocity: .slow) }
         XCTAssertTrue(app.staticTexts["taste.headline"].exists, "Your taste should say what the cook leans towards.")
         settle()
         snap(app, "48-me-taste")
