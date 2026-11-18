@@ -5,6 +5,10 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Screenshots timeout** (landed a1352af): capture went over the 30-min job limit on xcode-27, and a job timeout
+  is a *cancel*, so `success() || failure()` publish steps were skipped. Step-level caps (boot 10, Capture 36) end as
+  *failure*, so publish still runs; job 50 = caps + ~4 min setup/publish. Reused the prepare action's quieting rather
+  than its cached booted device (cache key is for the test device, Screenshots uses a Pro Max).
 - **Smell Batch D screen 2 (RecipeSearchView)** (landed eaaccc2): folded 11 filter `@State`s into one
   `filters: RecipeFilterCriteria` (bindings `$filters.x`) so reset = `RecipeFilterCriteria()` and a browse request
   = `request.criteria(keepingSort:)` instead of three hand-synced field lists; its kitchen/collection fields stay empty
