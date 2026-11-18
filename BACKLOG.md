@@ -685,7 +685,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 - [x] **Batch C — Duplicate Code: chip styling** — the 12×6 `Capsule().fill` chip was copied in 4 files (FilterChip,
   store picker, Clear All, Data cleared) → `.chipStyle(fill)` in `View+AppCard.swift` (e39fe71); other capsules differ
   on purpose.
-- [ ] **Batch D — Large Class: big screens** `MealPlanningView` (440), `RecipeSearchView` (411), `CookingModeView`
+- [ ] **Batch D — Large Class: big screens** — 🚧 builder agent 2026-11-18 `MealPlanningView` (440), `RecipeSearchView` (411), `CookingModeView`
   (391), `RecipeImportView` (360): extract subviews + move logic into tested pure functions. One branch per screen.
 - [ ] **Batch E — Large Class: `PersistenceController+RecipeWrites` (445)** → split by job (single writes / batch /
   merge-restore). Behaviour tests already cover it; refactor only.
