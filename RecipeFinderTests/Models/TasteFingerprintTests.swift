@@ -47,6 +47,7 @@ struct TasteFingerprintTests {
 
     @Test("a sweet or mild chilli in the name isn't spicy; other heat in the name still is", arguments: [
         ("Sweet Chilli Chicken", false), ("Sweet Chili Salmon", false), ("Mild Chilli Beef", false),
+        ("Sweet-Chilli Prawns", false), ("Sweet  Chilli Tofu", false),
         ("Sweet Chilli Jalfrezi", true), ("Chilli Chicken", true),
     ])
     func notHotChilliName(name: String, spicy: Bool) {
