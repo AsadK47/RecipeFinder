@@ -123,6 +123,11 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Build with Xcode 27 / iOS 27 SDK** — 🚧 builder agent 2026-11-18 — (owner yes 2026-11-18 to change the
+  workflows; Apple ITMS-90725 on build 160: from April 2027 uploads must use the iOS 27 SDK; we build with 26.5).
+  Select Xcode 27 in build.yml, testflight.yml and screenshots.yml (runner image's `/Applications/Xcode_27*.app`),
+  fix new warnings/errors, keep iOS 17.5 deployment target. *Done when:* a TestFlight upload reports no ITMS-90725,
+  CI green. Deadline: before Mar 2027.
 - [x] **Kitchen you can find** — (owner 2026-11-17: "Kitchen still exists? No user will be able to find it?"). Today it
   hides in Groceries' ⋯ menu, yet it powers "Fits your kitchen", "Uses what you have" and use-it-up. Give Groceries
   a **To buy | At home** switch at the top (same pattern as Recipes' Discover | My recipes, remembers the choice);
@@ -707,10 +712,6 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
-- 🙋 **Build with Xcode 27 / iOS 27 SDK** (builder 2026-11-18; Apple ITMS-90725 on build 160: from April 2027 uploads
-  must use the iOS 27 SDK, we build with 26.5). Needs build.yml/testflight.yml/screenshots.yml to select Xcode 27
-  (CI/TestFlight workflow guardrail) — OK to switch now (deadline Mar 2027)? Spec was the Queue item: keep iOS 17.5
-  target; done when a TestFlight upload reports no ITMS-90725, CI green.
 - 🙋 **"Cuisines tried" counts courses** (builder 2026-11-17, Me hero): a cooked recipe with no cuisine counts its
   category (Main, Dessert…) as a cuisine — in the Globetrotter badge and now Me's strip (pinned by
   `metrics_cuisineFallsBackToCategoryWhenCuisineMissing`); starter recipes have no cuisine. Count real cuisines only
