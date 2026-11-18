@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Smell Batch D screen 1 (MealPlanningView)** (landed d52b80d): kept the "last 24 hours = yesterday" empty-state rule exactly (not the
+  calendar day) — refactor, not a fix; pinned by `MealPlanDayContentTests`. Moved state to internal (not private) so
+  the `+Actions` extension can reach it, same as RecipeDetailView+Actions. **Pre-mortem:** (1) Add Week shows wrong
+  count/copy → `WeekGroceryPlanTests` pin every string; (2) old day shows the wrong empty state → day-content tests;
+  (3) week arrows stop propagating recurring meals → moveWeek reads `currentWeekStart` after the date moves (same
+  order as before), screenshot 02-plan + UI tests.
 - **Me with character (4b) cooking story** (landed by 2026-11-18, Me with character done 40253df): `CookingStory.moments` = first cook + meal
   rungs (10/25/50/100) + streak rungs (2/4/12/52, each told once, first time reached) **from the cook log**, plus every
   other earned badge on its `dateEarned`; a cook/streak badge is skipped only when the log tells that same rung

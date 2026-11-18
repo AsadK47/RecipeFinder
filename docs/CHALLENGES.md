@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-18 (item pass: Smell Batch D screen 1 — MealPlanningView split; fixed: clock-change day and 24h edge untested, stale comment; reviewer 0 defects)
+- ⚔️ Tests — the view-to-pure-type wiring (Add Week button/message from `WeekGroceryPlan`, `confirmAddWeek` iterating `candidates`, `dayContent` switch) has no push-CI test; only screenshot 02-plan and nightly UI tests reach it — same gap as Batch A slice 4 — cost if wrong: wrong count or empty state on Plan.
+  → Owner: Accept / Reject / Later
+- Not fixed (kept on purpose, refactor not fix): Plan's "yesterday" empty state is anything within the last 24 hours, not the calendar day; `hasMealPlans(for:)` now runs on every render instead of short-circuiting (small scan, grows with uncleared recurring copies).
+
 ## 2026-11-18 (item pass: Me with character slice 4b — fixed: cook badges hidden when the log never reached the rung, same-day badges flooding the preview, future cooks, "Where it all started" above older rows, January-flaky year assertion; sweet chilli: hyphenated names)
 - ⚔️ [Break] Story counts the cook log while the hero and badges sum `cookCount` — after deleting a cooked recipe the hero can say 8 meals while the story says "10 meals cooked" (`CookingStory.swift` vs `MeStats`) — one source for both (log), or label the story "cooks" — cost if wrong: two numbers on one screen. Accepted for now: the log is the history of what happened; the hero matches the badges by design (DECISIONS slice 1).
   → Owner: Accept / Reject / Later

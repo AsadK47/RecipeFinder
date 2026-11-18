@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Smell Batch D screen 1 · d52b80d
+- For you: Plan works just as before — adding the week to Groceries, the day's empty states and moving between weeks now have their own tidy code.
+- Behind the build: tests pin every Groceries message and which empty state each day shows, including a clock-change day, and a reviewer and a challenger compared the move line by line.
+
 ## 2026-11-18 · Me with character slice 4b · 40253df
 - For you: Me now tells "Your cooking story" — your first cook, meal milestones, weeks in a row and the badges you've earned, newest first, with this year's meal count on top; tap a badge to see it on your shelf.
 - Behind the build: two reviewers caught an earned badge that could go untold and a busy import day crowding out your cooking; both fixed and tested, and the timeline was checked on a seeded cook's screenshot.
