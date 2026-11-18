@@ -91,14 +91,16 @@ struct RecipePhotoManagerSheet: View {
     }
 
     private var addButtons: some View {
-        VStack(spacing: AppTheme.spacing12) {
+        // Read here, not in the picker's label: that closure is `@Sendable` in iOS 27 and the theme is main-actor.
+        let accent = AppTheme.accentColor
+        return VStack(spacing: AppTheme.spacing12) {
             PhotosPicker(selection: $selectedItems, matching: .images) {
                 Label("Choose from Library", systemImage: "photo.on.rectangle")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, AppTheme.spacing14)
                     .background(
                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                            .fill(AppTheme.accentColor)
+                            .fill(accent)
                     )
                     .foregroundStyle(.white)
                     .font(.subheadline.weight(.semibold))

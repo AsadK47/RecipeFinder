@@ -305,10 +305,10 @@ enum ClipboardLinkProbe {
         guard pasteboard.hasStrings || pasteboard.hasURLs else { return false }
         return await withCheckedContinuation { continuation in
             // @Sendable: the handler runs off the main queue, so it must not inherit main-actor isolation.
-            pasteboard.detectPatterns(for: [.probableWebURL]) { @Sendable result in
+            pasteboard.detectPatterns(for: [\UIPasteboard.DetectedValues.probableWebURL]) { @Sendable result in
                 switch result {
                 case .success(let patterns):
-                    continuation.resume(returning: patterns.contains(.probableWebURL))
+                    continuation.resume(returning: patterns.contains(\UIPasteboard.DetectedValues.probableWebURL))
                 case .failure(let error):
                     logger.debug("Clipboard pattern check failed: \(error.localizedDescription)")
                     continuation.resume(returning: false)

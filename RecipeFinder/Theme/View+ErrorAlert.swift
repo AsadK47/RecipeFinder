@@ -2,11 +2,17 @@ import SwiftUI
 
 extension Binding where Value == Bool {
     /// True while `optional` holds a value; setting false clears it — the "show while non-nil" pattern for alerts and dialogs.
+    /// Derived through a key path, not `Binding(get:set:)`: iOS 27's closures are `@Sendable` and `Binding` isn't.
     static func isPresent<T>(_ optional: Binding<T?>) -> Binding<Bool> {
-        Binding(
-            get: { optional.wrappedValue != nil },
-            set: { if !$0 { optional.wrappedValue = nil } }
-        )
+        optional[dynamicMember: \.isPresentFlag]
+    }
+}
+
+extension Optional {
+    /// Writing false clears the value; writing true changes nothing (there's nothing to present).
+    fileprivate var isPresentFlag: Bool {
+        get { self != nil }
+        set { if !newValue { self = nil } }
     }
 }
 
