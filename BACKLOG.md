@@ -753,7 +753,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
-- 🟡 Difficulty order differs: the filter sheet lists Basic, Expert, Intermediate (`RecipeLibraryFacets.difficulties`,
+- 🟡 Difficulty order differs — 🚧 builder agent 2026-11-18: the filter sheet lists Basic, Expert, Intermediate (`RecipeLibraryFacets.difficulties`,
   moved unchanged), the wizard Basic, Intermediate, Expert (`RecipeWizardView.swift:92`) — one shared list, wizard order
   (challenger, Smell Batch D screen 2).
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
