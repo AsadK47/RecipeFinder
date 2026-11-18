@@ -756,7 +756,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🟡 Difficulty order differs: the filter sheet lists Basic, Expert, Intermediate (`RecipeLibraryFacets.difficulties`,
   moved unchanged), the wizard Basic, Intermediate, Expert (`RecipeWizardView.swift:92`) — one shared list, wizard order
   (challenger, Smell Batch D screen 2).
-- 🟡 iOS 27 SDK Sendable warnings (Xcode 27, 2026-11-18): `Binding<T?>` captured in a `@Sendable` closure
+- 🟡 iOS 27 SDK Sendable warnings (Xcode 27, 2026-11-18) — 🚧 builder agent 2026-11-18: `Binding<T?>` captured in a `@Sendable` closure
   (View+ErrorAlert.swift:7), main-actor `accentColor` in a Sendable closure (RecipePhotoManagerSheet.swift:101),
   deprecated `detectPatterns` (TodaySections.swift:308) — fix before a later Xcode makes them errors.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
