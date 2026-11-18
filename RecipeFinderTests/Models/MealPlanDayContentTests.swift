@@ -30,9 +30,21 @@ struct MealPlanDayContentTests {
         #expect(content(offset: hours * hour) == .emptyDay)
     }
 
-    @Test("Older than 24 hours shows the general empty state", arguments: [-25, -24 * 7])
+    @Test("Older than 24 hours shows the general empty state", arguments: [-24, -25, -24 * 7])
     func emptyPast(hours: Double) {
         #expect(content(offset: hours * hour) == .emptyPast)
+    }
+
+    @Test("Early today on a 25-hour clock-change day is still today")
+    func clockChangeDayIsToday() {
+        var london = Calendar(identifier: .gregorian)
+        london.timeZone = TimeZone(identifier: "Europe/London") ?? .current
+        // 25 Oct 2026, 23:30 GMT; 00:15 BST the same day is 24h15m earlier.
+        let lateEvening = Date(timeIntervalSince1970: 1_792_971_000)
+        let justAfterMidnight = Date(timeIntervalSince1970: 1_792_883_700)
+
+        #expect(MealPlanDayContent.make(hasSelectedMeals: false, hasPlans: false, date: justAfterMidnight,
+                                        now: lateEvening, calendar: london) == .emptyDay)
     }
 
     @Test("An old day with stored plans keeps the day's empty state")

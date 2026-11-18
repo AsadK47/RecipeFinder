@@ -14,7 +14,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 
 ## Swift & SwiftUI
 - PascalCase types, camelCase members.
-- `@State private` for local state; prefer value types; `@MainActor` on UI-facing types.
+- `@State private` for local state (internal only when a same-type `+Actions`/`+Content` file needs it); prefer value types; `@MainActor` on UI-facing types.
 - `async`/`await` only — no Combine. Swift 6 strict concurrency; no force-unwrap or force-try.
 - Verify unfamiliar/new APIs via `DocumentationSearch` (Liquid Glass, FoundationModels, etc.) — don't guess.
 - Comments explain *why*, not *what*.

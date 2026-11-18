@@ -15,7 +15,7 @@ struct MealPlanningView: View {
     @State private var pantryExpirySuggestions: [PantryExpirySuggestions.Match] = []
     /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
     @State private var pendingSuggestedRecipe: RecipeModel?
-    /// Deduped items awaiting confirmation before being added to Groceries.
+    /// The week's items to buy (minus what's at home) and their copy, awaiting confirmation.
     @State var weekPlan = WeekGroceryPlan.empty
     @State var showAddWeekConfirm = false
     /// Non-nil while the meal-reminder time picker is presented.
