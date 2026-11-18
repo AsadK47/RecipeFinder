@@ -5,6 +5,34 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Me with character (4b) cooking story** (landed by 2026-11-18, Me with character done 40253df): `CookingStory.moments` = first cook + meal
+  rungs (10/25/50/100) + streak rungs (2/4/12/52, each told once, first time reached) **from the cook log**, plus every
+  other earned badge on its `dateEarned`; a cook/streak badge is skipped only when the log tells that same rung
+  (log can lag `cookCount`, so an earned Cooked Ten still shows); badges earned on one day fold into one line ("4
+  badges earned", opens the newest) — imports/restores unlock several at the same instant. Future cooks dropped.
+  Rejected: "first save" / "first cuisine" / photo moments with their own dates — recipes have no created-at and cooks
+  aren't linked to recipes, so those would need a model change (guardrail); the First Recipe / First Cook Photo
+  badges already date them. Hidden until the first cook (new cook: hero + cookbook invite). Newest 5, "Show all" in
+  place; a badge row opens that badge on the shelf (`TrophyShelfRequest`). `CookingStreak.cooksThisYear` → "14 meals
+  cooked in 2026" under the title. `recordedCookDates` added to `CookingStreakTracking` (no fakes to update).
+  Pre-mortem: (1) streak rung on the wrong cook / told twice → `streakRungDate`, `streakRungsOnce`, `gapRestarts`;
+  (2) duplicate "first cook" + "Head Chef" lines → `cookLogBadgesSkipped`; (3) timeline line/clipping or first cook
+  hidden behind Show all → UI test taps Show all when present, asserts `story.row.first-cook`, shot 49-me-story looked at.
+- **Me with character (1b)** (landed by 2026-11-18, Me with character done 40253df): the name is its own button *above* the profile button, not inside it — nested buttons in
+  one label are unreliable and VoiceOver can't reach them. One field, split by `ProfileNameFormatter.rename` (first
+  word / rest; unchanged → nil; a stored multi-word first name is kept when the text still starts with it; 60-char
+  cap). Commits on Done, return, focus loss and disappear (`editing` guard → once). Form + photo → new
+  `ProfileSettingsView` (Settings row "Name & photo"); Me › Profile keeps photo/badges/chef type and saves the chef type
+  with the manager's current name, so nothing stale clobbers an inline rename. Rejected: two inline fields (first/last)
+  — heavier for a hero. UI test renames to a name ≠ the stored one (shared simulator keeps the profile). Pre-mortem: (1)
+  edit not saved → UI label assert with a fresh name; (2) "Mary Ann" re-split → `renameKeepsAMultiWordFirstName`; (3)
+  field leaves stale text → cursor-to-end + clear in the UI test.
+- **Me with character (1)** (landed by 2026-11-18, Me with character done 40253df): stats reuse `BadgeMetrics` (cuisine falls back to category, like the Cuisine badge) so
+  the strip and badge rings never disagree — cuisine-only count → Needs owner (both places or neither). Label "meals",
+  not the spec's "dinners": the count is every cook (cookCount sum, all time). Strip shows if any stat > 0. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the
+  cookbook's empty state below carries the action. Pre-mortem: (1) counts disagree with badges → `matchesBadgeMetrics`
+  test; (2) hero squeezes at accessibility sizes → vertical layouts + screenshot; (3) seeded UI value lacks stats →
+  `testZZCaptureCookbook` asserts "[1-9]… meals cooked".
 - **Me with character (4a) taste fingerprint** (landed 0dd898f, 2026-11-18): slice 4 split — 4a fingerprint, 4b cooking
   story. Five fixed traits (spicy, comforting, quick, baking, fresh), visible keyword rules: tags → name words →
   ingredients → method/time; share = cooks of trait recipes / all cooks (repeats count, shares overlap). Seed has no

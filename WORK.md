@@ -25,47 +25,18 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (d7bf8f7, builder 2026-11-17). Left: slice 5 (Cook lane's). Leftover branch agent/foreign-recipes (auto-cleanup). Leftover branches agent/cuisine-chip,
   agent/today-badges-link (auto-cleanup).
 
-- Me with character (Queue): ✅ slice 1 landed 57fae8c (hero + stats); ✅ slice 1b landed 1acdedc (name inline +
-  Settings › Profile form, builder 2026-11-18); ✅ slice 3 landed 82d238c (earned first + Next up + See all, builder
-  2026-11-18); ✅ slice 4a landed 0dd898f (taste fingerprint, builder 2026-11-18). Next: (4b) cooking story. Leftover
-  branches agent/me-hero, agent/me-name-inline, agent/me-badges-next-up, agent/me-taste-story (auto-cleanup).
+- Me with character: ✅ done — slice 4b cooking story landed 40253df (builder 2026-11-18). Leftover branches agent/me-hero,
+  agent/me-name-inline, agent/me-badges-next-up, agent/me-taste-story, agent/me-cooking-story, agent/sweet-chilli-name,
+  agent/batch (auto-cleanup).
 
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Me with character slice (4b) on a new `agent/me-cooking-story` branch: "Your cooking story" timeline (first save,
-first cook, streak milestones, badges, photos, first cuisine; spec *Me 2/3*; `CookingStreak.cooksThisYear` is waiting
-for it) — tests first. Last slice → tick the item.
-Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
+Top Smell (feature, smell, feature… rule): Batch D (big screens, one branch per screen) — characterisation tests
+first, refactor in its own commit. Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Me with character (4b) cooking story** (`agent/me-cooking-story`): `CookingStory.moments` = first cook + meal
-  rungs (10/25/50/100) + streak rungs (2/4/12/52, each told once, first time reached) **from the cook log**, plus every
-  other earned badge on its `dateEarned`; cook/streak badges are skipped so nothing shows twice (rungs = the badges').
-  Rejected: "first save" / "first cuisine" / photo moments with their own dates — recipes have no created-at and cooks
-  aren't linked to recipes, so those would need a model change (guardrail); the First Recipe / First Cook Photo
-  badges already date them. Hidden until the first cook (new cook: hero + cookbook invite). Newest 5, "Show all" in
-  place; a badge row opens that badge on the shelf (`TrophyShelfRequest`). `CookingStreak.cooksThisYear` → "14 meals
-  cooked in 2026" under the title. `recordedCookDates` added to `CookingStreakTracking` (no fakes to update).
-  Pre-mortem: (1) streak rung on the wrong cook / told twice → `streakRungDate`, `streakRungsOnce`, `gapRestarts`;
-  (2) duplicate "first cook" + "Head Chef" lines → `cookLogBadgesSkipped`; (3) timeline line/clipping or first cook
-  hidden behind Show all → UI test taps Show all, asserts `story.row.first-cook`, shot 49-me-story looked at.
-- **Me with character (1b)**: the name is its own button *above* the profile button, not inside it — nested buttons in
-  one label are unreliable and VoiceOver can't reach them. One field, split by `ProfileNameFormatter.rename` (first
-  word / rest; unchanged → nil; a stored multi-word first name is kept when the text still starts with it; 60-char
-  cap). Commits on Done, return, focus loss and disappear (`editing` guard → once). Form + photo → new
-  `ProfileSettingsView` (Settings row "Name & photo"); Me › Profile keeps photo/badges/chef type and saves the chef type
-  with the manager's current name, so nothing stale clobbers an inline rename. Rejected: two inline fields (first/last)
-  — heavier for a hero. UI test renames to a name ≠ the stored one (shared simulator keeps the profile). Pre-mortem: (1)
-  edit not saved → UI label assert with a fresh name; (2) "Mary Ann" re-split → `renameKeepsAMultiWordFirstName`; (3)
-  field leaves stale text → cursor-to-end + clear in the UI test.
-- **Me with character (1)**: stats reuse `BadgeMetrics` (cuisine falls back to category, like the Cuisine badge) so
-  the strip and badge rings never disagree — cuisine-only count → Needs owner (both places or neither). Label "meals",
-  not the spec's "dinners": the count is every cook (cookCount sum, all time). Strip shows if any stat > 0. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the
-  cookbook's empty state below carries the action. Pre-mortem: (1) counts disagree with badges → `matchesBadgeMetrics`
-  test; (2) hero squeezes at accessibility sizes → vertical layouts + screenshot; (3) seeded UI value lacks stats →
-  `testZZCaptureCookbook` asserts "[1-9]… meals cooked".
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

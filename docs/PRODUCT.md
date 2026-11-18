@@ -50,8 +50,8 @@ What's cooked feeds "Because you loved X" back in Recipes — the loop closes.
 - **Between phases:** quality — screenshots, Settings tidy-up, smells, polish. Bug fixes (🐞, TestFlight, Inbox) any time.
 
 ## Parked (not deleted — revisit when the loop feels effortless)
-Play extras (Kitchen Bites, Cooking Path, quests, mascot, Spoons + shop, daily-streak rework), badge tiers, taste
-fingerprint, video import, "Make a picture", guided tour, Widget + Live Activity. **Dropped:** Dinner Jackpot
+Play extras (Kitchen Bites, Cooking Path, quests, mascot, Spoons + shop, daily-streak rework), badge tiers (taste
+fingerprint + cooking story shipped in Me with character, 2026-11-18), video import, "Make a picture", guided tour, Widget + Live Activity. **Dropped:** Dinner Jackpot
 (gambling mechanics; pulls against calm and useful).
 
 ## Discipline

@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-18 (item pass: Me with character slice 4b — fixed: cook badges hidden when the log never reached the rung, same-day badges flooding the preview, future cooks, "Where it all started" above older rows, January-flaky year assertion; sweet chilli: hyphenated names)
+- ⚔️ [Break] Story counts the cook log while the hero and badges sum `cookCount` — after deleting a cooked recipe the hero can say 8 meals while the story says "10 meals cooked" (`CookingStory.swift` vs `MeStats`) — one source for both (log), or label the story "cooks" — cost if wrong: two numbers on one screen. Accepted for now: the log is the history of what happened; the hero matches the badges by design (DECISIONS slice 1).
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Story refreshes on `streak`/`recipes` changes only — an iCloud merge of past-year cooks that moves neither stays stale until Me reappears (`MeView.swift` onChange) — observe the log itself (it's `@ObservationIgnored`) — cost if wrong: an old moment shows up a tab-switch late.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] Only badge lines open anything (spec: "tap to open the moment"), and badge line → shelf has no UI test — first cook / milestone lines could open that week's cookbook page once cooks link to recipes — cost if wrong: a dead-looking row; low.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-18 (daily challenger)
 - ⚔️ [Strategy] "Taste fingerprint" is on the roadmap because the owner unparked Me — but `docs/PRODUCT.md:53-54` still lists *taste fingerprint* under **Parked**, Me appears in neither the loop table nor the phases, and `origin/agent/me-taste-story` (f72de15 + 3a9b77a, 652 + 127 lines, 5 axes, ~100 hand-written English keywords) is built anyway. Last 2 days on main (`git log --since=2.days`, scopes): me 7, groceries 7, import 7, **cooking 0, plan 0**; WORK.md still lists "Cook: next slice" as not started (In progress, line 6). The Parking-lot exit test (PRODUCT Discipline 2, "how would we notice?") has no answer for a fingerprint — alternative: update PRODUCT.md to say what Me is for in the loop (Remember) and cap it at the hero + cookbook, park fingerprint/story again, and make the next lane item Cooking flow step 2 — cost if wrong: Phase 1's one screen that decides "did I cook tonight?" stays half-finished while the profile gets a radar chart.
   → Owner: Accept / Reject (why) / Later
