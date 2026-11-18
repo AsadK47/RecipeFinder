@@ -14,11 +14,13 @@ struct TasteFingerprintCard: View {
                     .font(.headline)
                     .adaptiveForegroundColor()
                     .accessibilityAddTraits(.isHeader)
-                Text(fingerprint.headline)
-                    .font(.subheadline.weight(.semibold))
-                    .adaptiveSecondaryForeground()
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityIdentifier("taste.headline")
+                if let headline = fingerprint.headline {
+                    Text(headline)
+                        .font(.subheadline.weight(.semibold))
+                        .adaptiveSecondaryForeground()
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("taste.headline")
+                }
             }
 
             TasteShape(shares: fingerprint.shares)
@@ -34,11 +36,12 @@ struct TasteFingerprintCard: View {
                             TasteRow(share: share, opensRecipes: true)
                         }
                         .buttonStyle(.plain)
+                        // Straight on the link (no new element), so VoiceOver's double-tap still pushes.
                         .tasteRowAccessibility(share)
-                        .accessibilityAddTraits(.isButton)
                         .accessibilityHint("Shows the recipes behind it")
                     } else {
                         TasteRow(share: share, opensRecipes: false)
+                            .accessibilityElement(children: .ignore)
                             .tasteRowAccessibility(share)
                     }
                 }
@@ -105,8 +108,7 @@ private struct TasteRow: View {
 private extension View {
     /// On the outermost element (the link when there is one), so VoiceOver and UI tests see one control per trait.
     func tasteRowAccessibility(_ share: TasteShare) -> some View {
-        accessibilityElement(children: .ignore)
-            .accessibilityLabel(share.trait.title)
+        accessibilityLabel(share.trait.title)
             .accessibilityValue(share.cooks == 1 ? "\(share.percent) percent, 1 meal"
                                     : "\(share.percent) percent, \(share.cooks) meals")
             .accessibilityIdentifier("taste.row.\(share.trait.rawValue)")

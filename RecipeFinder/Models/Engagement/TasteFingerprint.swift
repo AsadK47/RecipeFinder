@@ -64,22 +64,21 @@ struct TasteFingerprint: Equatable, Sendable {
         shares: TasteTrait.allCases.map { TasteShare(trait: $0, cooks: 0, share: 0, recipeIDs: []) }, totalCooks: 0
     )
 
-    /// Nothing cooked yet → Me hides the card (the hero and cookbook carry the first-cook invitation).
-    var isEmpty: Bool { totalCooks == 0 }
+    /// No trait in anything cooked yet (or nothing cooked) → Me hides the card rather than show five empty bars; the
+    /// hero and cookbook carry the first-cook invitation.
+    var isEmpty: Bool { strongest == nil }
 
-    /// The biggest share; ties go to the earlier trait so the headline doesn't flicker.
+    /// The biggest share. Ties follow `headlinePriority`, so the headline is stable and the most common trait
+    /// (spicy — chilli is in most curries) doesn't win every tie.
     var strongest: TasteShare? {
         shares.filter { $0.cooks > 0 }.max { lhs, rhs in
-            lhs.cooks == rhs.cooks ? order(lhs.trait) > order(rhs.trait) : lhs.cooks < rhs.cooks
+            lhs.cooks == rhs.cooks ? priority(lhs.trait) > priority(rhs.trait) : lhs.cooks < rhs.cooks
         }
     }
 
-    /// "You lean towards spicy food — 6 of 10 meals". A cook with no trait yet gets an invitation instead.
-    var headline: String {
-        guard let top = strongest else {
-            return totalCooks == 0 ? "Cook a few meals and your taste takes shape"
-                : "Your taste takes shape as you cook more"
-        }
+    /// "You lean towards comfort food — 6 of 10 meals"; nil when there's no trait to name.
+    var headline: String? {
+        guard let top = strongest else { return nil }
         let meals = totalCooks == 1 ? "meal" : "meals"
         return "You lean towards \(top.trait.headlinePhrase) — \(top.cooks) of \(totalCooks) \(meals)"
     }
@@ -88,8 +87,16 @@ struct TasteFingerprint: Equatable, Sendable {
         shares.first { $0.trait == trait }
     }
 
-    private func order(_ trait: TasteTrait) -> Int {
-        TasteTrait.allCases.firstIndex(of: trait) ?? 0
+    /// The recipes behind a trait, in the share's order (most cooked first); ones deleted since are skipped.
+    func recipes(behind trait: TasteTrait, in library: [RecipeModel]) -> [RecipeModel] {
+        let byID = Dictionary(library.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return (share(trait)?.recipeIDs ?? []).compactMap { byID[$0] }
+    }
+
+    private static let headlinePriority: [TasteTrait] = [.comforting, .fresh, .baking, .quick, .spicy]
+
+    private func priority(_ trait: TasteTrait) -> Int {
+        Self.headlinePriority.firstIndex(of: trait) ?? Self.headlinePriority.count
     }
 
     static func from(recipes: [RecipeModel]) -> TasteFingerprint {
@@ -124,12 +131,17 @@ struct TasteFingerprint: Equatable, Sendable {
         let tags = Set(recipe.tags.map { $0.lowercased().trimmingCharacters(in: .whitespaces) })
         let name = Words(recipe.name)
         let ingredients = recipe.ingredients.map { $0.name.lowercased() }
-        let method = Words((recipe.prePrepInstructions + recipe.instructions).joined(separator: " "))
+        // "baking powder" / "a baking tray" are in pancakes and fried dishes — only the act of baking counts.
+        var methodText = (recipe.prePrepInstructions + recipe.instructions).joined(separator: " ").lowercased()
+        for phrase in notBakingPhrases { methodText = methodText.replacingOccurrences(of: phrase, with: " ") }
+        let method = Words(methodText)
         let category = recipe.category.lowercased()
 
         var traits = Set<TasteTrait>()
         if !tags.isDisjoint(with: ["spicy", "hot"]) || name.hasAny(spicyNameWords)
-            || ingredients.contains(where: { line in spicyIngredients.contains { line.contains($0) } }) {
+            || ingredients.contains(where: { line in
+                spicyIngredients.contains { line.contains($0) } && !notHotLineWords.contains { line.contains($0) }
+            }) {
             traits.insert(.spicy)
         }
         if !tags.isDisjoint(with: ["comfort food", "comfort", "sunday roast"]) || category == "soup"
@@ -140,11 +152,14 @@ struct TasteFingerprint: Equatable, Sendable {
             traits.insert(.quick)
         }
         // Baked goods by name, or a sweet/breakfast dish whose method bakes — a baked pasta is dinner, not baking.
-        if !tags.isDisjoint(with: ["baking", "baked goods"]) || name.hasAny(bakedGoods)
-            || (["dessert", "breakfast"].contains(category) && method.hasAny(["bake", "baked", "baking", "oven"])) {
+        let steamed = name.hasAny(steamedNameWords)
+        if !tags.isDisjoint(with: ["baking", "baked goods"]) || (name.hasAny(bakedGoods) && !steamed)
+            || (["dessert", "breakfast"].contains(category) && method.hasAny(["bake", "baked", "bakes"])) {
             traits.insert(.baking)
         }
-        let freshIngredients = ingredients.filter { line in freshIngredientWords.contains { line.contains($0) } }
+        // Distinct fresh words, so "lemon juice" twice is still one.
+        let freshLines = ingredients.filter { line in !notFreshLineWords.contains { line.contains($0) } }
+        let freshIngredients = freshIngredientWords.filter { word in freshLines.contains { $0.contains(word) } }
         if !tags.isDisjoint(with: ["fresh", "healthy", "salad"]) || name.hasAny(freshNameWords)
             || freshIngredients.count >= 3 {
             traits.insert(.fresh)
@@ -158,9 +173,12 @@ struct TasteFingerprint: Equatable, Sendable {
         "gochugaru", "chipotle", "scotch bonnet", "habanero", "hot sauce", "red pepper flakes", "peri peri",
         "piri piri", "sambal", "wasabi", "szechuan pepper", "sichuan pepper", "bird's eye", "birds eye",
     ]
+    /// A chilli line that doesn't bring heat: optional, for colour (Kashmiri), mild or sweet, or a garnish.
+    private static let notHotLineWords = ["optional", "kashmiri", "mild", "sweet chilli", "sweet chili", "to serve",
+                                          "garnish", "paprika"]
     private static let spicyNameWords: Set<String> = [
         "spicy", "chilli", "chili", "fiery", "vindaloo", "jalfrezi", "madras", "harissa", "jerk", "peri",
-        "piri", "szechuan", "sichuan", "arrabbiata", "diavola", "buffalo",
+        "piri", "szechuan", "sichuan", "arrabbiata", "diavola", "buffalo wings", "buffalo chicken",
     ]
     private static let comfortingNameWords: Set<String> = [
         "stew", "curry", "casserole", "lasagne", "lasagna", "pie", "risotto", "chowder", "dal", "dhal", "daal",
@@ -174,6 +192,13 @@ struct TasteFingerprint: Equatable, Sendable {
         "pastry", "bun", "croissant", "cupcake", "flapjack", "focaccia", "banana bread", "shortbread", "babka",
         "rugelach", "traybake", "galette", "strudel", "baklava", "macaron",
     ]
+    /// Steamed or savoury "buns" and "cakes" (bao, mantou, radish cake) aren't baking.
+    private static let steamedNameWords: Set<String> = ["steamed", "steam", "bao", "mantou", "radish", "fish",
+                                                        "crab", "rice", "nian"]
+    private static let notBakingPhrases = ["baking powder", "baking soda", "baking paper", "baking tray",
+                                           "baking sheet", "baking parchment", "oven glove"]
+    /// Dried, ground or bottled herbs and citrus aren't fresh ("coriander powder", "avocado oil", "mint sauce").
+    private static let notFreshLineWords = ["powder", "seed", "ground", "oil", "dried", "sauce", "paste"]
     private static let freshNameWords: Set<String> = [
         "salad", "slaw", "coleslaw", "salsa", "ceviche", "poke", "gazpacho", "smoothie", "tabbouleh", "carpaccio",
         "crudo", "raita",

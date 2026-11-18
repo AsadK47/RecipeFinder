@@ -38,6 +38,19 @@ struct TasteFingerprintTests {
         #expect(traits(recipe("Rice", tags: ["  spicy "])).contains(.spicy))
     }
 
+    @Test("an optional, mild, sweet or colouring chilli doesn't make a dish spicy", arguments: [
+        "sriracha sauce, optional", "kashmiri chilli powder", "mild chilli powder", "sweet chilli sauce",
+    ])
+    func notHotChilli(line: String) {
+        #expect(!traits(recipe("Mac and Cheese", ingredients: [line, "macaroni"])).contains(.spicy))
+    }
+
+    @Test("buffalo mozzarella isn't spicy; buffalo wings are")
+    func buffalo() {
+        #expect(!traits(recipe("Buffalo Mozzarella Salad")).contains(.spicy))
+        #expect(traits(recipe("Buffalo Wings")).contains(.spicy))
+    }
+
     @Test("hot chocolate isn't spicy")
     func hotChocolateIsNotSpicy() {
         #expect(!traits(recipe("Hot Chocolate", category: "Drink", ingredients: ["milk", "cocoa"])).contains(.spicy))
@@ -49,6 +62,11 @@ struct TasteFingerprintTests {
     ])
     func comforting(name: String, category: String) {
         #expect(traits(recipe(name, category: category)).contains(.comforting))
+    }
+
+    @Test("a soup by category is comforting, whatever its name")
+    func soupCategory() {
+        #expect(traits(recipe("Pho Ga", category: "Soup")).contains(.comforting))
     }
 
     @Test("a short word doesn't match inside a longer one")
@@ -85,6 +103,20 @@ struct TasteFingerprintTests {
             .contains(.baking))
     }
 
+    @Test("baking powder or a baking tray in a pancake's method isn't baking")
+    func bakingPowderIsNotBaking() {
+        let pancakes = recipe("American Pancakes", category: "Breakfast", ingredients: ["baking powder"],
+                              instructions: ["Whisk the flour and baking powder", "Fry on a baking tray-sized pan"])
+        #expect(!traits(pancakes).contains(.baking))
+    }
+
+    @Test("steamed buns and cakes aren't baking; baked buns are", arguments: [
+        ("Black Sesame Steamed Buns", false), ("Bao Buns", false), ("Radish Cake", false), ("Milk Buns", true),
+    ])
+    func steamedIsNotBaking(name: String, isBaking: Bool) {
+        #expect(traits(recipe(name, category: "Dessert")).contains(.baking) == isBaking)
+    }
+
     @Test("a baked dinner isn't baking")
     func bakedDinnerIsNotBaking() {
         #expect(!traits(recipe("Tuna Pasta Bake", instructions: ["Bake for 30 minutes"])).contains(.baking))
@@ -101,6 +133,18 @@ struct TasteFingerprintTests {
         let two = recipe("Fish", ingredients: ["lime", "fresh coriander", "salt"])
         #expect(traits(three).contains(.fresh))
         #expect(!traits(two).contains(.fresh))
+    }
+
+    @Test("dried, ground or bottled herbs and citrus aren't fresh")
+    func driedIsNotFresh() {
+        let curry = recipe("Nihari", ingredients: ["coriander powder", "coriander seeds", "avocado oil",
+                                                   "dried parsley", "mint sauce", "lemon juice"])
+        #expect(!traits(curry).contains(.fresh))
+    }
+
+    @Test("the same fresh ingredient twice counts once")
+    func freshWordsAreDistinct() {
+        #expect(!traits(recipe("Fish", ingredients: ["lemon juice", "lemon wedges", "lime"])).contains(.fresh))
     }
 
     @Test("one recipe can have several traits")
@@ -156,19 +200,32 @@ struct TasteFingerprintTests {
         #expect(taste.headline == "You lean towards spicy food — 6 of 10 meals")
     }
 
-    @Test("a tie goes to the earlier trait, so the headline is stable")
-    func tieGoesToEarlierTrait() {
-        let taste = TasteFingerprint.from(recipes: [recipe("Greek Salad", cookCount: 2),
-                                                    recipe("Beef Stew", cookCount: 2)])
-        #expect(taste.strongest?.trait == .comforting)
+    @Test("a tie goes by a fixed order, so the headline is stable", arguments: [
+        ("Greek Salad", "Beef Stew", TasteTrait.comforting), ("Spicy Rice", "Beef Stew", TasteTrait.comforting),
+        ("Spicy Rice", "Greek Salad", TasteTrait.fresh),
+    ])
+    func tieOrder(first: String, second: String, winner: TasteTrait) {
+        let taste = TasteFingerprint.from(recipes: [recipe(first, cookCount: 2), recipe(second, cookCount: 2)])
+        #expect(taste.strongest?.trait == winner)
     }
 
-    @Test("cooked meals with no trait yet get an invitation, not a zero")
-    func noTraitHeadline() {
+    @Test("cooked meals with no trait yet hide the card, not five empty bars")
+    func noTraitIsEmpty() {
         let taste = TasteFingerprint.from(recipes: [recipe("Boiled Rice", cookCount: 1)])
-        #expect(!taste.isEmpty)
-        #expect(taste.strongest == nil)
-        #expect(taste.headline == "Your taste takes shape as you cook more")
+        #expect(taste.totalCooks == 1)
+        #expect(taste.isEmpty)
+        #expect(taste.headline == nil)
+    }
+
+    @Test("a trait's recipes come back in its order, skipping ones deleted since")
+    func recipesBehindTrait() {
+        let stew = recipe("Beef Stew", cookCount: 1)
+        let curry = recipe("Lamb Curry", cookCount: 4)
+        let rice = recipe("Boiled Rice", cookCount: 2)
+        let taste = TasteFingerprint.from(recipes: [stew, curry, rice])
+        #expect(taste.recipes(behind: .comforting, in: [rice, stew, curry]).map(\.id) == [curry.id, stew.id])
+        #expect(taste.recipes(behind: .comforting, in: [rice, stew]).map(\.id) == [stew.id])
+        #expect(taste.recipes(behind: .fresh, in: [rice, stew, curry]).isEmpty)
     }
 
     @Test("one meal reads 'meal', not 'meals'")

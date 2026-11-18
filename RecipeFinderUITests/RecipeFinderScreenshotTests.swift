@@ -891,8 +891,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let row = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'taste.row.'")).firstMatch
         checkpoint(app, "taste row")
         XCTAssertTrue(row.waitForExistence(timeout: 5), "A trait the cook has cooked should open its recipes.")
+        // "taste.row.spicy" → the list is titled "Spicy", so the row opened its own trait.
+        let trait = row.identifier.replacingOccurrences(of: "taste.row.", with: "").capitalized
         row.tap()
-        XCTAssertTrue(app.buttons["recipe.row"].firstMatch.waitForExistence(timeout: 10),
+        XCTAssertTrue(app.navigationBars[trait].waitForExistence(timeout: 10),
+                      "The \(trait) row should open the \(trait) recipes.")
+        XCTAssertTrue(app.buttons["recipe.row"].firstMatch.waitForExistence(timeout: 5),
                       "A taste row should list the recipes behind it.")
         settle()
         snap(app, "48a-me-taste-recipes")

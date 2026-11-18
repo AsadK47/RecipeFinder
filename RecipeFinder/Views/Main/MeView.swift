@@ -62,7 +62,7 @@ struct MeView: View {
                                 showProfile = true
                             }
                             MyCookbookSection(pages: cookbookPages)
-                            // Nothing cooked → no card; the hero and the cookbook carry the first-cook invitation.
+                            // No trait cooked yet → no card; the hero and the cookbook carry the first-cook invitation.
                             if !taste.isEmpty {
                                 TasteFingerprintCard(fingerprint: taste)
                             }
@@ -86,7 +86,7 @@ struct MeView: View {
             }
             // A taste row opens the cooked recipes behind that trait.
             .navigationDestination(for: TasteTrait.self) { trait in
-                TasteTraitRecipesView(trait: trait, recipes: recipes(behind: trait))
+                TasteTraitRecipesView(trait: trait, recipes: taste.recipes(behind: trait, in: recipeStore.recipes))
             }
             .onAppear {
                 cookingStreak.reload()
@@ -121,11 +121,6 @@ struct MeView: View {
         badgeCount = BadgeShelf.countText(shelf)
         spokenBadgeCount = BadgeShelf.spokenCount(shelf)
         taste = TasteFingerprint.from(recipes: recipeStore.recipes)
-    }
-
-    private func recipes(behind trait: TasteTrait) -> [RecipeModel] {
-        let byID = Dictionary(recipeStore.recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        return (taste.share(trait)?.recipeIDs ?? []).compactMap { byID[$0] }
     }
 
     /// The hero's inline name field: first word → first name, the rest → last name; chef type unchanged.
