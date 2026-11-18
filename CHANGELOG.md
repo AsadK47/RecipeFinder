@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Inbox 🐞 sweet chilli in a recipe name · d92e13c
+- For you: "Your taste" now reads a Sweet Chilli Chicken or Mild Chilli Beef for what it is, so the spicy share reflects dishes that bring real heat.
+- Behind the build: a reviewer spotted the name rule missing the sweet-chilli check the ingredients already had; the new test was seen failing first, and a challenger caught hyphenated "Sweet-Chilli" too.
+
 ## 2026-11-18 · Me with character slice 4a · 0dd898f
 - For you: Me now shows "Your taste" — what you love to cook, as a shape and five rows (spicy, comforting, quick, baking, fresh), built from the meals you've made; tap a row to see the recipes behind it.
 - Behind the build: two reviewers ran the rules over all 332 bundled recipes and caught pancakes counting as baking and dried spices as fresh, fixed and tested before it shipped.
