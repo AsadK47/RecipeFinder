@@ -33,11 +33,19 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Me with character slice (3) on a new `agent/me-badges-next-up` branch: earned medals first + "Next up" (3 closest
-badges with progress rings, reuse `BadgeMetrics`) in Me › Profile, full shelf behind See all — tests first.
+`agent/me-badges-next-up` (slice 3) pushed: read its Build & Test run, fix, Screenshots (34a-me-next-up, 34), land.
 Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Me with character (3)** (`agent/me-badges-next-up`): Profile shelf = Earned (all groups, newest first) → Next
+  up (3 closest locked threshold badges, count under each ring) → See all toggles the grouped shelf in place
+  (rejected: a pushed screen — would need its own pager + Today deep-link plumbing). Ranking extracted to
+  `BadgeType.closest` (share done → fewest left → list order) and Today's next-badge row now calls it with the
+  cooking metrics, so the two can't disagree; library badges count on Me (Today stays cooking-only). Empty Earned →
+  "Your first medal is one cook away" + Pick something to cook (posts `.openToday`). One-off badges never in Next up
+  (no count). Pre-mortem: (1) Next up ranks wrong → `nextUpIsTheThreeClosestLockedBadges` + `nextUpAgreesWithTodaysNextBadge`;
+  (2) locked wall still shown → UI test asserts `me.badge.streak_twelve_weeks` absent until See all; (3) Today deep
+  link to a locked badge not on screen → pager still opens on any badge (`testTodayBadgeRowOpensItsBadgeOnTheShelf`).
 - **Me with character (1b)**: the name is its own button *above* the profile button, not inside it — nested buttons in
   one label are unreliable and VoiceOver can't reach them. One field, split by `ProfileNameFormatter.rename` (first
   word / rest; unchanged → nil; a stored multi-word first name is kept when the text still starts with it; 60-char
