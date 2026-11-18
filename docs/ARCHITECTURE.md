@@ -217,5 +217,8 @@ All in `.github/` (`ls .github/workflows` for the current set; each YAML's heade
 
 - `.github/actions/prepare` — composite action shared by unit, UI and coverage jobs: quiets the runner, restores
   file dates and the DerivedData cache, boots a (cached) simulator and builds for testing. Only `main` writes caches.
+- `.github/actions/select-xcode` — every app job (Build & Test, Coverage, Screenshots, TestFlight) runs on the
+  `xcode-27` runner and selects the newest release `Xcode_27*.app` (App Store uploads need the iOS 27 SDK); it fails
+  if none is installed. The DerivedData cache key includes the Xcode build, so an Xcode update means one cold build.
 - `testflight.yml` does not wait for Build & Test; safety comes from the branch policy in root `CLAUDE.md` (`main` is
   fast-forwarded only to a commit already green on its `agent/` branch).
