@@ -45,6 +45,14 @@ struct TasteFingerprintTests {
         #expect(!traits(recipe("Mac and Cheese", ingredients: [line, "macaroni"])).contains(.spicy))
     }
 
+    @Test("a sweet or mild chilli in the name isn't spicy; other heat in the name still is", arguments: [
+        ("Sweet Chilli Chicken", false), ("Sweet Chili Salmon", false), ("Mild Chilli Beef", false),
+        ("Sweet Chilli Jalfrezi", true), ("Chilli Chicken", true),
+    ])
+    func notHotChilliName(name: String, spicy: Bool) {
+        #expect(traits(recipe(name)).contains(.spicy) == spicy)
+    }
+
     @Test("buffalo mozzarella isn't spicy; buffalo wings are")
     func buffalo() {
         #expect(!traits(recipe("Buffalo Mozzarella Salad")).contains(.spicy))
