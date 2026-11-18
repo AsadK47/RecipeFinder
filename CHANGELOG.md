@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Me with character slice 3 · 82d238c
+- For you: your Profile now leads with the medals you've earned, newest first, then "Next up" — the three badges you're closest to, each with a ring and how far along you are; the whole shelf opens with See all.
+- Behind the build: a challenger caught Next up filling with three steps of the same badge (hiding your first cook) and a badge from Today vanishing once its card closed — both fixed and tested before it shipped.
+
 ## 2026-11-18 · Me with character slice 1b · 1acdedc
 - For you: tap your name on Me to change it right there, and your full name and photo form now sits in Settings › Profile, leaving Me's profile for your badges and chef type.
 - Behind the build: a reviewer and a challenger both caught a test that could pass with saving broken and a two-word first name like "Mary Ann" being split, fixed before it shipped.

@@ -5,6 +5,15 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Me with character (3)** (landed 82d238c, 2026-11-18): Profile shelf = Earned (all groups, newest first) → Next
+  up (3 closest locked threshold badges, count under each ring) → See all toggles the grouped shelf in place
+  (rejected: a pushed screen — would need its own pager + Today deep-link plumbing). Ranking extracted to
+  `BadgeType.closest` (share done → fewest left → list order) and Today's next-badge row now calls it with the
+  cooking metrics, so the two can't disagree; library badges count on Me (Today stays cooking-only). Only Welcome
+  Aboard earned (it unlocks on launch) → "Your next medal is one cook away" + Pick something to cook (`.openToday`). One-off badges never in Next up
+  (no count). Review added: one step per ladder, pager follows the tapped row, deep link opens See all. Pre-mortem: (1) Next up ranks wrong → `nextUpIsTheThreeClosestLockedBadges` + `nextUpAgreesWithTodaysNextBadge`;
+  (2) locked wall still shown → UI test asserts `me.badge.streak_twelve_weeks` absent until See all; (3) Today deep
+  link to a locked badge not on screen → pager still opens on any badge (`testTodayBadgeRowOpensItsBadgeOnTheShelf`).
 - **Kitchen you can find slice 2** (`agent/kitchen-today-links`): a "Your kitchen →" link in the header of the two
   kitchen-built Today sections (Use it up, Fits your kitchen) posts `.openGroceries` with
   `GroceriesMode.openRequest(for: .atHome)`, so it reuses the reminder routing (tab root stores the side, no root

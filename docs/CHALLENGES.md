@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-18 (item pass: Me with character slice 3 — fixed: ladder rungs crowded Next up, Today's badge hidden after its card closed, pager ignored the tapped row, unreachable empty state, VoiceOver "slash")
+- [Function] Captions under badges use fixed 11pt and titles cut at 88pt at accessibility sizes — pre-existing `BadgeCard` sizing; revisit with a Dynamic Type pass.
+- [Performance] Profile recomputes shelf/earned/next-up (24 badges) in `body` — trivial cost and kept live with badge unlocks; move to state if Profile grows.
+- [Function] See all collapses each time Profile is pushed — on purpose (the shelf is behind it); remember the choice if testers ask.
+
 ## 2026-11-18 (item pass: Me with character slice 1b — fixed: UI test passed with saving broken, cursor left text behind, "Mary Ann" re-split, draft lost on leaving the tab, disabled PrimaryButton, test name in screenshots)
 - [Function] Settings › Profile's name needs Save; Back with an edited name discards it while the hero's field saves on tap-away — explicit Save kept on purpose (a form), revisit if testers lose edits.
 - [Function] If `.onAppear { fieldFocused = true }` doesn't take, the field shows without a keyboard and only Done/tap-in closes it — not seen in the Screenshots run; a keyboard assertion would be flaky with CI's hardware keyboard.
