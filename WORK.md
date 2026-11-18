@@ -34,7 +34,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-iOS 27 warnings ✅ (bd96990, 0 warnings). Next: Screenshots capture takes ~26 of its 30 min on xcode-27, so publishing
+iOS 27 warnings ✅ (bd96990, 0 warnings). 🚧 builder 2026-11-18 on agent/screenshots-timeout: Screenshots capture takes ~26 of its 30 min on xcode-27, so publishing
 gets cut off — raise `timeout-minutes` or speed capture (workflow OK'd for CI speed 2026-11-10); then Inbox 🟡
 difficulty order, then Smell Batch D screen 3 (CookingModeView).
 
