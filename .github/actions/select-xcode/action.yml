@@ -18,10 +18,10 @@ runs:
       run: |
         echo "Installed: $(ls -d /Applications/Xcode*.app | tr '\n' ' ')"
         ALL=$(ls -d /Applications/Xcode_"$MAJOR"*.app 2>/dev/null | sort -V || true)
-        APP=$(grep -v -i beta <<<"$ALL" | tail -1 || true)
-        [ -z "$APP" ] && APP=$(tail -1 <<<"$ALL")
+        # Release builds only: an upload built with a beta or RC Xcode is rejected late by App Store Connect.
+        APP=$(grep -viE 'beta|release_candidate|_rc' <<<"$ALL" | tail -1 || true)
         if [ -z "$APP" ]; then
-          echo "::error::No Xcode $MAJOR on this runner image."
+          echo "::error::No release Xcode $MAJOR on this runner image."
           exit 1
         fi
         sudo xcode-select -s "$APP/Contents/Developer"
