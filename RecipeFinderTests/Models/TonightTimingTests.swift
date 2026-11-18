@@ -122,7 +122,12 @@ import Foundation
         #expect(choices.contains(TonightTiming.defaultEatAt))
     }
 
-    @Test(arguments: [(19 * 60, 19 * 60), (20 * 60 + 30, 20 * 60 + 30), (0, 19 * 60), (-5, 19 * 60), (24 * 60, 19 * 60), (19 * 60 + 7, 19 * 60)])
+    /// Typed up front: Xcode 27's type checker times out on the inline arithmetic tuple literal.
+    static let storedEatTimes: [(Int, Int)] = [
+        (1140, 1140), (1230, 1230), (0, 1140), (-5, 1140), (1440, 1140), (1147, 1140)
+    ]
+
+    @Test(arguments: storedEatTimes)
     func storedEatTimeFallsBackToSevenUnlessItsAChoice(stored: Int, expected: Int) {
         #expect(TonightTiming.eatAt(stored: stored) == expected)
     }
