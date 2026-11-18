@@ -1,88 +1,63 @@
 import SwiftUI
 
-private let logger = AppLogger.logger(category: "RecipeSearchView")
-
+// Split across files: chrome and sheets in `RecipeSearchView+Content.swift`, imports, browse requests and filter
+// resets in `RecipeSearchView+Actions.swift`; state is internal (not private) only so those extensions can use it.
 struct RecipeSearchView: View {
-    @Environment(\.recipeStore) private var recipeStore
+    @Environment(\.recipeStore) var recipeStore
     /// Library from the store; reading it in a body re-renders that view on any write.
-    private var recipes: [RecipeModel] { recipeStore.recipes }
+    var recipes: [RecipeModel] { recipeStore.recipes }
     /// True while the library is still fetching on launch, so empty `recipes` shows a skeleton, not the empty state.
     var isLoading: Bool = false
-    @State private var showCollections = false
+    @State var showCollections = false
     /// One-time tip for "+", which replaced the Import tab.
-    @AppStorage("hasSeenAddRecipeTip") private var hasSeenAddRecipeTip = false
-    @State private var searchText = ""
-    @State private var showFilters = false
-    @State private var selectedCategories: Set<String> = []
-    @State private var selectedDifficulties: Set<String> = []
-    @State private var selectedCookTimes: Set<Int> = []
-    @State private var selectedDietaryFilters: Set<String> = []
-    @State private var selectedTags: Set<String> = []
-    @State private var selectedCuisines: Set<String> = []
-    @State private var sortOrder: SortOrder = .nameAZ
-    @State private var ingredientSearchText = ""
-    @State private var availableIngredientsOnly = false
-    @State private var showFavoritesOnly = false
-    @State private var sharedImportURL: SharedImportURL?
-    @State private var sharedWizardPrefill: RecipeWizardView.PrefilledRecipeData?
-    @State private var pendingOpenRecipeId: UUID?
-    @State private var importToastMessage: String?
-    @State private var recipeToDelete: RecipeModel?
-    @State private var cachedFilteredRecipes: [RecipeModel] = []
-    @State private var availableTags: [String] = []
-    @State private var availableCuisines: [String] = []
-    @State private var categories: [String] = []
-    @FocusState private var isSearchFocused: Bool
-    @Environment(\.collections) private var collectionManager
-    @Environment(\.cookingStreak) private var cookingStreak
-    @Environment(\.kitchen) private var kitchen
+    @AppStorage("hasSeenAddRecipeTip") var hasSeenAddRecipeTip = false
+    @State var showFilters = false
+    /// What the cook typed, picked and sorted. The kitchen and the chosen collection are added in `filterCriteria`.
+    @State var filters = RecipeFilterCriteria()
+    @State var sharedImportURL: SharedImportURL?
+    @State var sharedWizardPrefill: RecipeWizardView.PrefilledRecipeData?
+    @State var pendingOpenRecipeId: UUID?
+    @State var importToastMessage: String?
+    @State var recipeToDelete: RecipeModel?
+    @State var cachedFilteredRecipes: [RecipeModel] = []
+    /// The filter sheet's courses, tags and cuisines; rebuilt when the library changes, not in `body`.
+    @State var facets = RecipeLibraryFacets()
+    @FocusState var isSearchFocused: Bool
+    @Environment(\.collections) var collectionManager
+    @Environment(\.cookingStreak) var cookingStreak
+    @Environment(\.kitchen) var kitchen
     /// Endless chapters below the library while browsing; rebuilt on library/kitchen change, paged as you scroll.
-    @State private var discovery = DiscoveryFeedModel()
-    @State private var recentlyCooked: [RecipeModel] = []
+    @State var discovery = DiscoveryFeedModel()
+    @State var recentlyCooked: [RecipeModel] = []
     /// Discover | My recipes; remembered, and set to Discover by Today's "Keep browsing →".
-    @AppStorage(RecipeBrowse.modeKey) private var browseMode: RecipeBrowse.Mode = RecipeBrowse.defaultMode
+    @AppStorage(RecipeBrowse.modeKey) var browseMode: RecipeBrowse.Mode = RecipeBrowse.defaultMode
     @AppStorage(RecipeBrowse.discoverRequestKey) private var discoverRequests = 0
-    @State private var showCookingSheet = false
-    @State private var selectedCollectionID: UUID? = nil
-    @State private var navigationPath = NavigationPath()
+    @State var showCookingSheet = false
+    @State var selectedCollectionID: UUID? = nil
+    @State var navigationPath = NavigationPath()
     /// Changed to rebuild the stack at its root (see `applyBrowseRequest`).
-    @State private var stackID = UUID()
+    @State var stackID = UUID()
     // Refreshed on appear so RecipeDetailView pantry toggles don't re-render this buried view and re-run apply(to:) 3x per toggle.
-    @State private var availableIngredients: Set<String> = []
+    @State var availableIngredients: Set<String> = []
 
     /// Current filters as a plain value; filtering/sorting lives in `RecipeFilterCriteria` to stay out of `body` and be unit tested.
-    private var filterCriteria: RecipeFilterCriteria {
-        var c = RecipeFilterCriteria()
-        c.searchText = searchText
-        c.ingredientSearchText = ingredientSearchText
-        c.availableIngredientsOnly = availableIngredientsOnly
-        c.showFavoritesOnly = showFavoritesOnly
-        c.selectedCategories = selectedCategories
-        c.selectedDifficulties = selectedDifficulties
-        c.selectedCookTimes = selectedCookTimes
-        c.selectedDietaryFilters = selectedDietaryFilters
-        c.selectedTags = selectedTags
-        c.selectedCuisines = selectedCuisines
-        c.sortOrder = sortOrder
+    var filterCriteria: RecipeFilterCriteria {
+        var c = filters
         c.availableIngredients = availableIngredients
         c.selectedCollectionRecipeIDs = selectedCollectionID
             .flatMap { collectionManager.collection(withID: $0) }
             .map { Set($0.recipeIDs) }
         return c
     }
-    
+
     var activeFilterCount: Int {
         filterCriteria.activeCount
     }
-    
-    var difficulties: [String] {
-        ["Basic", "Expert", "Intermediate"]
-    }
 
     /// Opens the add-recipe sheet, presented by the app root so badge celebrations can wait for it to close.
-    private let onAddRecipe: () -> Void
+    let onAddRecipe: () -> Void
     /// "More <cuisine> recipes" from a recipe screen; held by the app root so it survives this tab not existing yet.
-    @Binding private var browseRequest: RecipeBrowseRequest?
+    @Binding var browseRequest: RecipeBrowseRequest?
 
     init(isLoading: Bool = false, browseRequest: Binding<RecipeBrowseRequest?> = .constant(nil),
          onAddRecipe: @escaping () -> Void = {}) {
@@ -156,142 +131,19 @@ struct RecipeSearchView: View {
         }
     }
 
-    /// Back to the list, showing every recipe of the requested cuisine (other filters cleared so none hides one).
-    private func applyBrowseRequest() {
-        guard let request = browseRequest else { return }
-        browseRequest = nil
-        let criteria = request.criteria(keepingSort: sortOrder)
-        returnToRoot()
-        selectedCollectionID = nil
-        searchText = criteria.searchText
-        ingredientSearchText = criteria.ingredientSearchText
-        availableIngredientsOnly = criteria.availableIngredientsOnly
-        showFavoritesOnly = criteria.showFavoritesOnly
-        selectedCategories = criteria.selectedCategories
-        selectedDifficulties = criteria.selectedDifficulties
-        selectedCookTimes = criteria.selectedCookTimes
-        selectedDietaryFilters = criteria.selectedDietaryFilters
-        selectedTags = criteria.selectedTags
-        selectedCuisines = criteria.selectedCuisines
-    }
-
-    /// Navigates to a pending "OpenRecipe" deep link once its recipe is present in the loaded library; a no-op
-    /// until then, so the request survives arriving before `recipes` loads instead of being dropped.
-    private func openPendingRecipeIfAvailable() {
-        guard let id = pendingOpenRecipeId, recipes.contains(where: { $0.id == id }) else { return }
-        pendingOpenRecipeId = nil
-        navigationPath = NavigationPath()
-        navigationPath.append(id)
-    }
-
-    /// Handles the share-extension App Group inbox: finished recipe saved with a toast, URL opens the import sheet, text prefills the wizard.
-    /// Finished recipes all save; only the first link/text opens a sheet (one sheet at a time) and the rest go
-    /// back into the inbox for the next foreground.
-    private func checkSharedImportInbox() {
-        var openedInteractive = false
-        for payload in SharedImportInbox.consumePayloads() {
-            switch payload {
-            case .extracted(let data):
-                ingest(sharedRecipe: RecipeImportBuilder().build(from: data))
-            case .url(let urlString) where !openedInteractive:
-                openedInteractive = true
-                sharedImportURL = SharedImportURL(url: urlString)
-            case .text(let text) where !openedInteractive:
-                openedInteractive = true
-                Task { await importSharedText(text) }
-            case .url(let urlString):
-                SharedImportInbox.storeURL(urlString)
-            case .text(let text):
-                SharedImportInbox.storeText(text)
-            }
-        }
-    }
-
-    /// Routes shared free text into the wizard for review (AI results never saved silently); toasts when no recipe is found.
-    private func importSharedText(_ text: String) async {
-        if let prefill = await RecipeTextImportRouter().prefill(for: text) {
-            sharedWizardPrefill = prefill
-        } else {
-            showImportToast("Couldn't find a recipe in the shared text")
-        }
-    }
-
-    private func ingest(sharedRecipe recipe: RecipeModel) {
-        let normalizedName = recipe.name.trimmingCharacters(in: .whitespaces).lowercased()
-        let isDuplicate = recipes.contains {
-            $0.name.trimmingCharacters(in: .whitespaces).lowercased() == normalizedName
-        }
-
-        guard !isDuplicate else {
-            showImportToast("\"\(recipe.name)\" is already in your recipes")
-            return
-        }
-
-        // Don't silently save an unusable recipe — the interactive URL import already gates on this, so the
-        // share-extension path must too rather than dropping a half-parsed page into the library.
-        guard !recipe.ingredients.isEmpty, !recipe.instructions.isEmpty else {
-            showImportToast("Couldn't read a full recipe from that share")
-            return
-        }
-
-        addRecipe(recipe, successMessage: "Imported \"\(recipe.name)\"")
-    }
-
-    /// Adds a new/imported recipe optimistically then persists; on save failure it rolls back and alerts rather than vanishing on relaunch.
-    private func addRecipe(_ recipe: RecipeModel, successMessage: String) {
-        guard recipeStore.add(recipe) else {
-            showImportToast("Couldn't save \"\(recipe.name)\". Please try again.")
-            return
-        }
-
-        HapticManager.shared.success()
-        showImportToast(successMessage)
-    }
-
-    private func showImportToast(_ message: String) {
-        withAnimation(.appGentle) {
-            importToastMessage = message
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
-                importToastMessage = nil
-            }
-        }
-    }
-    
     private var mainContentView: some View {
         ZStack(alignment: .top) {
-            backgroundView
+            AppBackground()
             allRecipesContent
 
             if let importToastMessage {
-                importToast(message: importToastMessage)
+                RecipeImportToast(message: importToastMessage)
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .zIndex(1)
             }
         }
     }
 
-    private func importToast(message: String) -> some View {
-        HStack(spacing: AppTheme.spacing8) {
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-
-            Text(message)
-                .font(.subheadline)
-                .adaptiveForegroundColor()
-                .lineLimit(2)
-        }
-        .padding(.horizontal, AppTheme.spacing16)
-        .padding(.vertical, AppTheme.spacing12)
-        .background(.ultraThinMaterial, in: Capsule())
-        .shadow(color: .black.opacity(0.15), radius: 8, y: 2)
-        .padding(.top, AppTheme.spacing8)
-        .padding(.horizontal, AppTheme.spacing20)
-        .accessibilityElement(children: .combine)
-    }
-    
     private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
@@ -303,55 +155,6 @@ struct RecipeSearchView: View {
         }
     }
 
-    private var collectionsSheet: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-                CollectionsInlineView()
-            }
-            .appNavigationTitle("Collections")
-        }
-    }
-
-    private var searchHeaderGroup: some View {
-        RecipeSearchHeader(
-            searchText: $searchText,
-            isSearchFocused: $isSearchFocused,
-            activeFilterCount: activeFilterCount,
-            streak: recipes.isEmpty ? nil : cookingStreak.streak,
-            onToggleFilters: { showFilters.toggle() },
-            onShowCollections: { showCollections = true },
-            onShowStreak: { showCookingSheet = true },
-            onAdd: {
-                hasSeenAddRecipeTip = true
-                onAddRecipe()
-            },
-            showsAddTip: !hasSeenAddRecipeTip,
-            onDismissAddTip: { hasSeenAddRecipeTip = true }
-        )
-    }
-    
-    private var activeFiltersSection: some View {
-        Group {
-            if activeFilterCount > 0 {
-                ActiveFiltersBar(
-                    showFavoritesOnly: $showFavoritesOnly,
-                    availableIngredientsOnly: $availableIngredientsOnly,
-                    ingredientSearchText: $ingredientSearchText,
-                    selectedCategories: $selectedCategories,
-                    selectedDifficulties: $selectedDifficulties,
-                    selectedCookTimes: $selectedCookTimes,
-                    selectedDietaryFilters: $selectedDietaryFilters,
-                    selectedTags: $selectedTags,
-                    selectedCuisines: $selectedCuisines,
-                    selectedCollectionID: $selectedCollectionID,
-                    availableCollections: collectionManager.collections,
-                    onClearAll: clearAllFilters
-                )
-            }
-        }
-    }
-    
     private var recipeContentArea: some View {
         // Read the maintained cache directly (no filtering/hashing in `body`); updateFilterCache() keeps it current via onChange + onAppear.
         let current = cachedFilteredRecipes
@@ -375,141 +178,14 @@ struct RecipeSearchView: View {
         }
     }
 
-    @ToolbarContentBuilder
-    private var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
-            Spacer()
-            Button {
-                isSearchFocused = false
-            } label: {
-                Image(systemName: "keyboard.chevron.compact.down")
-                    .adaptiveSecondaryForeground()
-            }
-        }
-    }
-    
-    private var backgroundView: some View {
-        AppBackground()
-    }
-    
-    
-    
-    
-    private var filterSheet: some View {
-        FilterSheet(
-            categories: categories,
-            difficulties: difficulties,
-            availableTags: availableTags,
-            availableCuisines: availableCuisines,
-            availableIngredients: availableIngredients,
-            availableCollections: collectionManager.collections,
-            selectedCategories: $selectedCategories,
-            selectedDifficulties: $selectedDifficulties,
-            selectedCookTimes: $selectedCookTimes,
-            selectedDietaryFilters: $selectedDietaryFilters,
-            selectedTags: $selectedTags,
-            selectedCuisines: $selectedCuisines,
-            sortOrder: $sortOrder,
-            ingredientSearchText: $ingredientSearchText,
-            availableIngredientsOnly: $availableIngredientsOnly,
-            showFavoritesOnly: $showFavoritesOnly,
-            selectedCollectionID: $selectedCollectionID
-        )
-    }
-    
-    // Identifiable wrapper so a shared import URL presents via `.sheet(item:)` — content rebuilds from the value
-    // rather than reading a separately-set `@State`, which opened the import sheet with a nil URL on first run.
-    private struct SharedImportURL: Identifiable {
-        let id = UUID()
-        let url: String
-    }
-
-
-    private func updateDerivedMetadata() {
-        let validCategories = Set(["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"])
-        availableTags = Array(Set(recipes.flatMap { $0.tags })).sorted()
-        availableCuisines = RecipeFilterCriteria.distinctCuisines(in: recipes)
-        categories = Array(Set(recipes.map { $0.category }).intersection(validCategories)).sorted()
-    }
-
     private var content: RecipeBrowse.Content {
         RecipeBrowse.content(mode: browseMode, criteria: filterCriteria, libraryCount: recipes.count)
     }
 
-    private var modePicker: some View {
-        Picker("Show", selection: $browseMode) {
-            ForEach(RecipeBrowse.Mode.allCases) { mode in
-                Text(mode.title).tag(mode)
-            }
-        }
-        .pickerStyle(.segmented)
-        .padding(.horizontal, AppTheme.cardHorizontalPadding)
-        .padding(.bottom, AppTheme.spacing8)
-        .accessibilityIdentifier("recipes.mode")
-    }
-
-    /// Reads the kitchen here, not in `body`, so pantry toggles in a pushed detail don't re-render this list (as
-    /// `availableIngredients`); the next appear picks them up.
-    private func updateDiscovery() {
-        // Built only when shown: on My recipes the feed would be paid for on every appear and library change.
-        guard browseMode == .discover else { return }
-        recentlyCooked = DiscoveryPool.recentlyCooked(recipes)
-        // Kept out of the first deal: the Recently cooked row above already shows these.
-        discovery.update(
-            recipes: recipes, kitchenItemNames: kitchen.items.map(\.name), alreadyShown: Set(recentlyCooked.map(\.id))
-        )
-    }
-
-    /// Recomputes the displayed list only via `FilterCacheUpdateModifier` (debounced on criteria change, immediate on library change) + initial onAppear, so filter passes never run in `body`.
-    private func updateFilterCache() {
-        cachedFilteredRecipes = filterCriteria.apply(to: recipes)
-    }
-    
-    
-    
-    /// "Keep browsing →" from Today: back to the top of Recipes, nothing typed or filtered, on Discover.
-    private func showDiscover() {
-        returnToRoot()
-        resetFilters()
-        browseMode = .discover
-    }
-
-    /// Closes this tab's sheets and pops everything pushed, for requests that arrive from another tab.
-    private func returnToRoot() {
-        isSearchFocused = false
-        showCollections = false
-        showFilters = false
-        showCookingSheet = false
-        // Rows push recipes with destination links, which aren't in `navigationPath`; a fresh stack pops them too.
-        navigationPath = NavigationPath()
-        stackID = UUID()
-    }
-
-    private func clearAllFilters() {
-        HapticManager.shared.medium()
-        resetFilters()
-    }
-
-    private func resetFilters() {
-        isSearchFocused = false
-        withAnimation {
-            searchText = ""
-            selectedCategories.removeAll()
-            selectedDifficulties.removeAll()
-            selectedCookTimes.removeAll()
-            selectedDietaryFilters.removeAll()
-            selectedTags.removeAll()
-            selectedCuisines.removeAll()
-            ingredientSearchText = ""
-            availableIngredientsOnly = false
-            showFavoritesOnly = false
-            sortOrder = .nameAZ
-            selectedCollectionID = nil
-        }
-    }
-    
-    /// Awaitable reload so pull-to-refresh keeps its spinner up until the fetch completes.
-    private func refreshRecipesAsync() async {
-        await recipeStore.refresh()
+    // Identifiable wrapper so a shared import URL presents via `.sheet(item:)` — content rebuilds from the value
+    // rather than reading a separately-set `@State`, which opened the import sheet with a nil URL on first run.
+    struct SharedImportURL: Identifiable {
+        let id = UUID()
+        let url: String
     }
 }

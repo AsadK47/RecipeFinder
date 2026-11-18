@@ -173,8 +173,9 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
   queues the `ExtractedRecipeData`; otherwise it queues the raw URL. Shared text containing a link is handled as that URL; other text is queued as text.
 - `SharedImportInbox` (`Utilities/Managers/`, compiled into both targets) keeps a queue in App Group defaults and also
   drains the older single-slot keys.
-- The app drains it in `RecipeSearchView.checkSharedImportInbox()` (on appear and on `willEnterForeground`):
-  extracted recipes are built with `RecipeImportBuilder` and saved (duplicates by name skipped, with a toast); the
+- The app drains it in `RecipeSearchView.checkSharedImportInbox()` (`RecipeSearchView+Actions.swift`, on appear and on
+  `willEnterForeground`), with the routing and save gate in the pure, tested `SharedImportPlan`:
+  extracted recipes are built with `RecipeImportBuilder` and saved (duplicates by name and recipes missing ingredients or steps skipped, with a toast); the
   first URL or text opens (URL → import sheet, text → wizard) and the rest are re-queued. It is the Recipes tab's
   view, so with Today as the launch tab a share is picked up once Recipes is opened.
 
