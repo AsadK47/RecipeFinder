@@ -34,10 +34,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Xcode 27 ✅ (6608835, TestFlight 163). Next: iOS 27 Sendable warnings (View+ErrorAlert.swift:7, TodaySections.swift:308,
-RecipePhotoManagerSheet.swift:101) as Inbox 🟡; Screenshots capture now takes ~26 of its 30 min on xcode-27, so
-publishing gets cut off — raise `timeout-minutes` or speed capture (workflow OK'd for CI speed 2026-11-10); then the
-next Queue item per feature/smell order (Smell Batch D screen 2).
+iOS 27 warnings ✅ (bd96990, 0 warnings). Next: Screenshots capture takes ~26 of its 30 min on xcode-27, so publishing
+gets cut off — raise `timeout-minutes` or speed capture (workflow OK'd for CI speed 2026-11-10); then Inbox 🟡
+difficulty order, then Smell Batch D screen 3 (CookingModeView).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several

@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-18 (item pass: iOS 27 SDK warnings; fixed: isPresent comment named the wrong cause; reviewer 0 defects)
+- ⚔️ [Tests] `BindingIsPresentTests.settingTrueLeavesTheValueAlone` checks the value, not whether a write happened — the key-path binding now writes the unchanged optional back on set(true) (old setter wrote nothing); alerts only ever set false (`View+ErrorAlert.swift:7`) — count writes in the test's `Box` if it ever matters — cost if we're wrong: a redundant state write
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] Nothing exercises `ClipboardLinkProbe` with the key-path `detectPatterns` (`TodaySections.swift:308`); if the returned key path didn't compare equal the Today clipboard card would quietly never show — follows Apple's documented `contains(\.probableWebURL)` pattern; check on device — cost if we're wrong: clipboard card missing
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-18 (item pass: Smell Batch D screen 2 — RecipeSearchView split; fixed: requeue untested, weak/tautological tests; 0 regressions, reviewer 0 defects)
 - ⚔️ Tests — view wiring has no push-CI test: `applyBrowseRequest` clearing `selectedCollectionID` (else "More Thai" shows an empty list with a collection picked) and `checkSharedImportInbox` calling the plan; only nightly UI tests reach it — same gap as screen 1 and Batch A.
   → Owner: Accept / Reject / Later

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · iOS 27 SDK warnings · bd96990
+- For you: alerts, the photo picker button and Today's "recipe link on your clipboard" card work as before, now on code that's ready for future iOS updates.
+- Behind the build: Xcode 27 flagged three spots that later versions will reject; each was rewritten with the same behaviour, pinned by new tests, and the build now finishes with no warnings.
+
 ## 2026-11-18 · Build with Xcode 27 / iOS 27 SDK · 6608835
 - For you: RecipeFinder is now built with Apple's latest iOS 27 tools, keeping it ready for the App Store while it still runs on iOS 17.5 and later.
 - Behind the build: every check now runs on Xcode 27; two spots that its stricter compiler couldn't read quickly were rewritten with the same results, and two reviewers made sure uploads can't use a beta Xcode.
