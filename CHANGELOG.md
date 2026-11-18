@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Build with Xcode 27 / iOS 27 SDK · 6608835
+- For you: RecipeFinder is now built with Apple's latest iOS 27 tools, keeping it ready for the App Store while it still runs on iOS 17.5 and later.
+- Behind the build: every check now runs on Xcode 27; two spots that its stricter compiler couldn't read quickly were rewritten with the same results, and two reviewers made sure uploads can't use a beta Xcode.
+
 ## 2026-11-18 · Smell Batch D screen 1 · d52b80d
 - For you: Plan works just as before — adding the week to Groceries, the day's empty states and moving between weeks now have their own tidy code.
 - Behind the build: tests pin every Groceries message and which empty state each day shows, including a clock-change day, and a reviewer and a challenger compared the move line by line.

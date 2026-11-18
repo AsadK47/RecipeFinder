@@ -5,6 +5,15 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Xcode 27 / iOS 27 SDK** (landed 6608835): `macos-26` stops at Xcode 26.6; Xcode 27 is only on the `xcode-27` runner label
+  (macOS 27 base, standard size = free). All app jobs moved there; `tools-build.yml` stays on macos-26 (Mac tool, no
+  upload). `.github/actions/select-xcode` picks the newest non-beta `Xcode_27*.app` and fails loudly if missing, so
+  an image change can't silently ship an old SDK. DerivedData cache key now includes the Xcode build (a 26.x cache
+  restored under 27 would just be rebuilt or confuse it). Xcode 27's type checker times out on long inferred chains
+  and inline arithmetic `@Test(arguments:)` tuples → split/typed, values unchanged. Rejected: `setup-xcode` action
+  (third-party dep, and the app isn't on the image anyway). **Pre-mortem:** (1) TestFlight still uses 26.x → the
+  select step runs first in testflight.yml and fails if 27 is missing; (2) iOS 27 SDK changes runtime behaviour on
+  device → UI shards + Screenshots on the branch; (3) cache miss makes runs slow for one main push → expected, once.
 - **Smell Batch D screen 1 (MealPlanningView)** (landed d52b80d): kept the "last 24 hours = yesterday" empty-state rule exactly (not the
   calendar day) — refactor, not a fix; pinned by `MealPlanDayContentTests`. Moved state to internal (not private) so
   the `+Actions` extension can reach it, same as RecipeDetailView+Actions. **Pre-mortem:** (1) Add Week shows wrong
