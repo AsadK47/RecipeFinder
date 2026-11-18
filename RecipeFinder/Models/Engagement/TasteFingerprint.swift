@@ -139,7 +139,8 @@ struct TasteFingerprint: Equatable, Sendable {
 
         var traits = Set<TasteTrait>()
         // "Sweet Chilli Chicken" isn't hot — drop the not-hot phrases before looking for heat in the name.
-        var heatNameText = recipe.name.lowercased()
+        // Split to words first, so "Sweet-Chilli" and "Sweet  Chilli" lose the phrase too.
+        var heatNameText = recipe.name.lowercased().split { !$0.isLetter && $0 != "'" }.joined(separator: " ")
         for phrase in notHotNamePhrases { heatNameText = heatNameText.replacingOccurrences(of: phrase, with: " ") }
         if !tags.isDisjoint(with: ["spicy", "hot"]) || Words(heatNameText).hasAny(spicyNameWords)
             || ingredients.contains(where: { line in
