@@ -123,6 +123,10 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Build with Xcode 27 / iOS 27 SDK** (Apple ITMS-90725 on build 160, 2026-11-18: from April 2027 uploads must use
+  the iOS 27 SDK; we build with 26.5). Select Xcode 27 in build.yml, testflight.yml and screenshots.yml (runner image's
+  `/Applications/Xcode_27*.app`, or `maxim-lobanov/setup-xcode` pinned), fix new warnings/errors, keep iOS 17.5
+  deployment target. *Done when:* a TestFlight upload reports no ITMS-90725, CI green. Deadline: before Mar 2027.
 - [x] **Kitchen you can find** — (owner 2026-11-17: "Kitchen still exists? No user will be able to find it?"). Today it
   hides in Groceries' ⋯ menu, yet it powers "Fits your kitchen", "Uses what you have" and use-it-up. Give Groceries
   a **To buy | At home** switch at the top (same pattern as Recipes' Discover | My recipes, remembers the choice);
