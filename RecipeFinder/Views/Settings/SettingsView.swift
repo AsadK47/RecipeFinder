@@ -25,7 +25,7 @@ struct SettingsTabView: View {
                     SettingsSectionHeader(title: "Profile")
 
                     SettingsCard {
-                        NavigationLink(destination: ProfileView()) {
+                        NavigationLink(destination: ProfileSettingsView()) {
                             HStack(spacing: AppTheme.spacing16) {
                                 profileAvatar
 
@@ -34,7 +34,7 @@ struct SettingsTabView: View {
                                         .font(.headline)
                                         .adaptiveForegroundColor()
                                     
-                                    Text("Name, photo & badges")
+                                    Text("Name & photo")
                                         .font(.caption)
                                         .adaptiveSecondaryForeground()
                                 }

@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Me tab: who you are as a cook (hero + stats), then your cookbook. Profile, badges and chef type are one tap deeper;
-/// Settings is behind the gear.
+/// Me tab: who you are as a cook (hero: name you edit in place + stats), then your cookbook. Badges and chef type are
+/// one tap deeper in Profile; Settings (with the name/photo form under Profile) is behind the gear.
 struct MeView: View {
     /// Set by "View all badges": Me opens Profile (the trophy shelf) and clears it.
     var openProfile: Binding<Bool> = .constant(false)
@@ -48,10 +48,14 @@ struct MeView: View {
                                 initials: profileManager.firstName.isEmpty && profileManager.lastName.isEmpty
                                     ? "" : profileManager.initials,
                                 name: profileManager.fullName,
+                                editableName: ProfileNameFormatter.editableName(
+                                    firstName: profileManager.firstName, lastName: profileManager.lastName
+                                ),
                                 chefType: profileManager.chefType,
                                 stats: stats,
                                 badgeCount: badgeCount,
-                                spokenBadgeCount: spokenBadgeCount
+                                spokenBadgeCount: spokenBadgeCount,
+                                onRename: { rename(to: $0) }
                             ) {
                                 showProfile = true
                             }
@@ -106,6 +110,15 @@ struct MeView: View {
         let shelf = BadgeShelf.sections(badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count))
         badgeCount = BadgeShelf.countText(shelf)
         spokenBadgeCount = BadgeShelf.spokenCount(shelf)
+    }
+
+    /// The hero's inline name field: first word → first name, the rest → last name; chef type unchanged.
+    private func rename(to text: String) {
+        guard let name = ProfileNameFormatter.rename(
+            firstName: profileManager.firstName, lastName: profileManager.lastName, to: text
+        ) else { return }
+        profileManager.updateProfile(firstName: name.first, lastName: name.last, chefType: profileManager.chefType)
+        HapticManager.shared.success()
     }
 
     private func openProfileIfAsked() {

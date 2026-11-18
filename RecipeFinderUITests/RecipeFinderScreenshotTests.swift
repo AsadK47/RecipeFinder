@@ -627,6 +627,23 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let profile = app.buttons["me.profile"]
         for _ in 0..<4 where !(profile.exists && profile.isHittable) { app.swipeUp() }
         XCTAssertTrue(profile.waitForExistence(timeout: 5), "Me should show the profile hero.")
+
+        // The name is edited in place on the hero: tap it, type, Done — no form, no Save.
+        let name = app.buttons["me.name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5), "Me's hero should show the name as a button.")
+        checkpoint(app, "hero name")
+        name.tap()
+        let field = app.textFields["me.name.field"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Tapping the name should open the inline field.")
+        field.tap()
+        if let current = field.value as? String, !current.isEmpty, current != "Your name" {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+        }
+        field.typeText("Sam Rivera")
+        app.buttons["me.name.done"].tap()
+        XCTAssertTrue(field.waitForNonExistence(timeout: 5), "Done should close the inline field.")
+        XCTAssertEqual(app.buttons["me.name"].label, "Sam Rivera", "The hero should show the new name.")
+
         profile.tap()
 
         // Third in the Streaks row, so it's on screen without a sideways scroll; nobody has a 12-week streak in CI.

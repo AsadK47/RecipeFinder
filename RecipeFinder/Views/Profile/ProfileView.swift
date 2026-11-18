@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Me › Profile: photo, trophy shelf and chef type. The name is edited in place on Me's hero, or in Settings › Profile.
 struct ProfileView: View {
     var title = "Profile"
     /// From Today's next-badge row: scroll to the trophy shelf and open that badge's card; cleared once handled.
@@ -12,16 +13,12 @@ struct ProfileView: View {
 
     @State private var activeSheet: ProfileSheet?
     @State private var profileImage: UIImage?
-    @State private var editingName = false
-    @State private var tempName = ""
     @State private var showSuccessFeedback = false
     @State private var badgeMetrics = BadgeMetrics()
     @State private var pagerStart: BadgePagerStart?
     /// Set by a locked badge's "earn it here" button; acted on once the pager has fully closed.
     @State private var pendingEarn: BadgeEarnAction?
 
-    @State private var firstName: String = ""
-    @State private var lastName: String = ""
     @State private var selectedChefType: ChefType = .homeCook
 
     var body: some View {
@@ -42,11 +39,6 @@ struct ProfileView: View {
                                     activeSheet = .imagePicker
                                     HapticManager.shared.light()
                                 }
-                            )
-
-                            ProfilePersonalInfoSection(
-                                firstName: $firstName,
-                                lastName: $lastName
                             )
 
                             ProfileBadgesSection(
@@ -119,7 +111,6 @@ struct ProfileView: View {
             )
             .presentationDragIndicator(.visible)
         }
-        .animation(.appSpring, value: editingName)
         .animation(.appSpring, value: showSuccessFeedback)
         .onAppear {
             loadCurrentProfile()
@@ -161,24 +152,24 @@ struct ProfileView: View {
         NotificationCenter.default.post(name: action.notification, object: nil)
     }
 
+    /// Empty with no name, like Me's hero — not "RC" from the "Recipe Chef" stand-in.
     private func getInitials() -> String {
-        let firstInitial = firstName.first.map(String.init) ?? ""
-        let lastInitial = lastName.first.map(String.init) ?? ""
+        let firstInitial = profileManager.firstName.first.map(String.init) ?? ""
+        let lastInitial = profileManager.lastName.first.map(String.init) ?? ""
         return "\(firstInitial)\(lastInitial)".uppercased()
     }
 
     private func loadCurrentProfile() {
-        firstName = profileManager.firstName
-        lastName = profileManager.lastName
         selectedChefType = profileManager.chefType
 
         profileImage = profileManager.loadProfileImage()
     }
 
     private func saveProfile() {
+        // The name is edited on Me's hero or in Settings › Profile; this screen saves the chef type.
         profileManager.updateProfile(
-            firstName: firstName,
-            lastName: lastName,
+            firstName: profileManager.firstName,
+            lastName: profileManager.lastName,
             chefType: selectedChefType
         )
 

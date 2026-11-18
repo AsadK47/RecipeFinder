@@ -1,49 +1,61 @@
 import SwiftUI
 
-/// Top of Me: who you are as a cook — photo or initials on your chef type's colour, name, chef type as a title, and
-/// one stats strip (meals cooked · week streak · cuisines tried). Opens Profile, where the badges and form live.
+/// Top of Me: who you are as a cook — your name (tap to edit in place), photo or initials on your chef type's colour,
+/// chef type as a title, and one stats strip (meals cooked · week streak · cuisines tried). The rest of the card opens
+/// Profile, where the badges and chef type live; the name/photo form is in Settings › Profile.
 struct MeHeroCard: View {
     let image: UIImage?
     /// Empty when there's no name yet: the avatar shows a person symbol, not "RC" from the "Recipe Chef" stand-in.
     let initials: String
     let name: String
+    /// What the name field starts with — empty when there's no name, so the stand-in isn't typed over.
+    let editableName: String
     let chefType: ChefType
     let stats: [MeStat]
     let badgeCount: String
     let spokenBadgeCount: String
+    let onRename: (String) -> Void
     let onTap: () -> Void
 
     @ScaledMetric(relativeTo: .title) private var avatarSize: CGFloat = 72
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State private var editing = false
+    @State private var draft = ""
+    @FocusState private var fieldFocused: Bool
 
     var body: some View {
-        Button {
-            HapticManager.shared.light()
-            onTap()
-        } label: {
-            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                identity
-                if MeStats.hasCooked(stats) {
-                    statsStrip
-                } else {
-                    Text("Cook your first meal and your story starts here.")
-                        .font(.subheadline)
-                        .adaptiveSecondaryForeground()
-                        .fixedSize(horizontal: false, vertical: true)
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            nameRow
+            // The name is its own control above, so this button never nests one inside its label.
+            Button {
+                HapticManager.shared.light()
+                onTap()
+            } label: {
+                VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+                    identity
+                    if MeStats.hasCooked(stats) {
+                        statsStrip
+                    } else {
+                        Text("Cook your first meal and your story starts here.")
+                            .font(.subheadline)
+                            .adaptiveSecondaryForeground()
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
             }
-            .padding(AppTheme.spacing16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .appCard(cornerRadius: AppTheme.cornerRadius16, elevated: true)
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Your profile")
+            .accessibilityValue(spokenValue)
+            .accessibilityHint("Opens your badges and chef type")
+            .accessibilityAddTraits(.isButton)
+            .accessibilityIdentifier("me.profile")
         }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(name)
-        .accessibilityValue(spokenValue)
-        .accessibilityHint("Opens your profile, badges and chef type")
-        .accessibilityAddTraits(.isButton)
-        .accessibilityIdentifier("me.profile")
+        .padding(AppTheme.spacing16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .appCard(cornerRadius: AppTheme.cornerRadius16, elevated: true)
     }
 
     private var spokenValue: String {
@@ -51,19 +63,79 @@ struct MeHeroCard: View {
         return "\(chefType.rawValue), \(cooking), \(spokenBadgeCount)"
     }
 
+    // MARK: - Name (tap to edit)
+
+    @ViewBuilder private var nameRow: some View {
+        if editing {
+            HStack(spacing: AppTheme.spacing8) {
+                TextField("Your name", text: $draft)
+                    .font(.title2.weight(.bold))
+                    .textFieldStyle(.plain)
+                    .appInputField()
+                    .textContentType(.name)
+                    .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+                    .focused($fieldFocused)
+                    // Focus once the field exists; setting it alongside `editing` would target nothing yet.
+                    .onAppear { fieldFocused = true }
+                    .onSubmit(commit)
+                    .accessibilityIdentifier("me.name.field")
+                Button("Done", action: commit)
+                    .font(.body.weight(.semibold))
+                    .adaptiveForegroundColor()
+                    .accessibilityIdentifier("me.name.done")
+            }
+            // Tapping away commits too, so a half-typed name isn't silently thrown away.
+            .onChange(of: fieldFocused) { _, focused in
+                if !focused { commit() }
+            }
+        } else {
+            Button {
+                draft = editableName
+                editing = true
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing8) {
+                    Text(name)
+                        .font(.title2.weight(.bold))
+                        .adaptiveForegroundColor()
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
+                    Image(systemName: "pencil")
+                        .font(.subheadline.weight(.semibold))
+                        .adaptiveSecondaryForeground()
+                        .accessibilityHidden(true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(name)
+            .accessibilityHint("Edits your name")
+            .accessibilityIdentifier("me.name")
+        }
+    }
+
+    private func commit() {
+        guard editing else { return }
+        editing = false
+        fieldFocused = false
+        onRename(draft)
+    }
+
     // MARK: - Identity
 
     @ViewBuilder private var identity: some View {
-        // At accessibility sizes the name goes under the avatar so it isn't squeezed into a sliver.
+        // At accessibility sizes the titles go under the avatar so they aren't squeezed into a sliver.
         if dynamicTypeSize.isAccessibilitySize {
             VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                 avatar
-                nameAndTitle
+                titles
             }
         } else {
             HStack(spacing: AppTheme.spacing16) {
                 avatar
-                nameAndTitle
+                titles
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
@@ -73,12 +145,8 @@ struct MeHeroCard: View {
         }
     }
 
-    private var nameAndTitle: some View {
+    private var titles: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-            Text(name)
-                .font(.title2.weight(.bold))
-                .adaptiveForegroundColor()
-                .fixedSize(horizontal: false, vertical: true)
             Label(chefType.rawValue, systemImage: chefType.icon)
                 .font(.subheadline.weight(.semibold))
                 .adaptiveForegroundColor()
@@ -176,17 +244,17 @@ extension ChefType {
 }
 
 #Preview("Seasoned cook") {
-    MeHeroCard(image: nil, initials: "AK", name: "Asad Khan", chefType: .grillMaster,
+    MeHeroCard(image: nil, initials: "AK", name: "Asad Khan", editableName: "Asad Khan", chefType: .grillMaster,
                stats: MeStats.strip(meals: 42, streakWeeks: 6, cuisines: 9),
-               badgeCount: "7 / 24", spokenBadgeCount: "7 of 24 badges earned") {}
+               badgeCount: "7 / 24", spokenBadgeCount: "7 of 24 badges earned", onRename: { _ in }) {}
         .padding()
         .background(AppBackground())
 }
 
 #Preview("New cook") {
-    MeHeroCard(image: nil, initials: "", name: "Recipe Chef", chefType: .homeCook,
+    MeHeroCard(image: nil, initials: "", name: "Recipe Chef", editableName: "", chefType: .homeCook,
                stats: MeStats.strip(meals: 0, streakWeeks: 0, cuisines: 0),
-               badgeCount: "0 / 24", spokenBadgeCount: "0 of 24 badges earned") {}
+               badgeCount: "0 / 24", spokenBadgeCount: "0 of 24 badges earned", onRename: { _ in }) {}
         .padding()
         .background(AppBackground())
 }

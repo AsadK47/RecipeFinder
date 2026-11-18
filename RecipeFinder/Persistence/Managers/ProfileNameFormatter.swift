@@ -24,4 +24,32 @@ enum ProfileNameFormatter {
         }
         return initials.isEmpty ? "RC" : initials.uppercased()
     }
+
+    /// Longest name the inline editor keeps, so a stray paste can't push the hero off the screen.
+    static let maxNameLength = 60
+
+    /// What Me's inline name field starts with: the name as shown, or empty — never the "Recipe Chef" stand-in.
+    static func editableName(firstName: String, lastName: String) -> String {
+        words(in: "\(firstName) \(lastName)").joined(separator: " ")
+    }
+
+    /// Splits the inline field's text into first word + the rest. `nil` when the name is unchanged, so an untouched
+    /// "Mary Ann" + "Smith" isn't re-split into "Mary" + "Ann Smith".
+    static func rename(firstName: String, lastName: String, to text: String) -> ProfileName? {
+        let trimmed = words(in: text).joined(separator: " ")
+        guard trimmed != editableName(firstName: firstName, lastName: lastName) else { return nil }
+        let capped = words(in: String(trimmed.prefix(maxNameLength)))
+        guard let first = capped.first else { return ProfileName(first: "", last: "") }
+        return ProfileName(first: first, last: capped.dropFirst().joined(separator: " "))
+    }
+
+    private static func words(in text: String) -> [String] {
+        text.split(whereSeparator: { $0.isWhitespace }).map(String.init)
+    }
+}
+
+/// A first + last name pair as stored on the profile.
+struct ProfileName: Equatable, Sendable {
+    let first: String
+    let last: String
 }
