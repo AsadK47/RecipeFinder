@@ -904,6 +904,23 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                       "A taste row should list the recipes behind it.")
         settle()
         snap(app, "48a-me-taste-recipes")
+
+        // Below Your taste: "Your cooking story" from the seeded cooks (a week apart), back to the first cook.
+        checkpoint(app, "back to Me for story")
+        app.navigationBars.buttons.firstMatch.tap()
+        let story = app.descendants(matching: .any).matching(identifier: "story.card").firstMatch
+        let firstCook = app.descendants(matching: .any).matching(identifier: "story.row.first-cook").firstMatch
+        let tabTop = app.tabBars.firstMatch.frame.minY
+        // The seeded story is longer than the preview: open it all, so the oldest moment (the first cook) shows.
+        let showAll = app.buttons["story.showAll"]
+        for _ in 0..<6 where !showAll.exists || showAll.frame.maxY > tabTop { app.swipeUp(velocity: .slow) }
+        XCTAssertTrue(story.waitForExistence(timeout: 5), "Cooked meals should show Your cooking story on Me.")
+        checkpoint(app, "story show all")
+        if showAll.exists { showAll.tap() }
+        for _ in 0..<8 where !firstCook.exists || firstCook.frame.maxY > tabTop { app.swipeUp(velocity: .slow) }
+        XCTAssertTrue(firstCook.exists, "The story should start with the first cook.")
+        settle()
+        snap(app, "49-me-story")
     }
 
     @MainActor
