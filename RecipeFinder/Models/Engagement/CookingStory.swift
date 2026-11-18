@@ -34,42 +34,74 @@ struct StoryMoment: Identifiable, Equatable {
 }
 
 /// Me's "Your cooking story": first cook, meal and streak milestones read from the cook log (so they're right even when
-/// a badge was earned late, e.g. after a restore), plus every other badge on the day it was earned — first save, first
-/// photo, imports. Badges for the same milestones as the cook log are left out so nothing shows twice. Pure, so the
-/// timeline is pinned by tests.
+/// a badge was earned late, e.g. after a restore), plus the other badges on the day they were earned — first save, first
+/// photo, imports. A cook or streak badge is left out only when the log tells that same milestone, so nothing shows
+/// twice and nothing earned goes untold. Badges earned on one day (an import or restore unlocks several at once) fold
+/// into one line, so they don't push the cooking out of the preview. Pure, so the timeline is pinned by tests.
 enum CookingStory {
     /// The same rungs as the cook-count and streak badges, so the story and the shelf tell one story.
     static let mealMilestones = [10, 25, 50, 100]
     static let streakMilestones = [2, 4, 12, 52]
 
-    /// Badges the cook log already tells as a moment of its own.
-    private static let cookLogBadges = Set([
-        BadgeType.headChef, .cookedTen, .cookedTwentyFive, .cookedFifty, .cookedHundred,
-        .streakTwoWeeks, .streakFourWeeks, .streakTwelveWeeks, .streakFiftyTwoWeeks,
-    ].map(\.rawValue))
+    /// The moment the cook log tells instead of each cook or streak badge.
+    private static let cookLogBadges: [String: StoryMoment.Kind] = [
+        BadgeType.headChef.rawValue: .firstCook,
+        BadgeType.cookedTen.rawValue: .meals(10),
+        BadgeType.cookedTwentyFive.rawValue: .meals(25),
+        BadgeType.cookedFifty.rawValue: .meals(50),
+        BadgeType.cookedHundred.rawValue: .meals(100),
+        BadgeType.streakTwoWeeks.rawValue: .streak(weeks: 2),
+        BadgeType.streakFourWeeks.rawValue: .streak(weeks: 4),
+        BadgeType.streakTwelveWeeks.rawValue: .streak(weeks: 12),
+        BadgeType.streakFiftyTwoWeeks.rawValue: .streak(weeks: 52),
+    ]
 
-    /// Newest first. Empty until the first cook — before that the hero and the cookbook carry the invitation.
-    static func moments(cookDates: [Date], badges: [Badge], calendar: Calendar = .current) -> [StoryMoment] {
-        let cooks = cookDates.sorted()
+    /// Newest first. Empty until the first cook — before that the hero and the cookbook carry the invitation. Cooks
+    /// after `now` (another device's wrong clock) are left out, as the streak leaves them out.
+    static func moments(cookDates: [Date], badges: [Badge], now: Date = Date(),
+                        calendar: Calendar = .current) -> [StoryMoment] {
+        let cooks = cookDates.filter { $0 <= now }.sorted()
         guard let first = cooks.first else { return [] }
 
         var moments = [StoryMoment(kind: .firstCook, date: first, title: "Your first cook",
-                                   detail: "Where it all started", icon: "flag.fill", colorName: nil)]
+                                   detail: "Your first meal cooked", icon: "flag.fill", colorName: nil)]
         for milestone in mealMilestones where cooks.count >= milestone {
             moments.append(StoryMoment(kind: .meals(milestone), date: cooks[milestone - 1],
                                        title: "\(milestone) meals cooked", detail: "Meal number \(milestone)",
                                        icon: "fork.knife", colorName: nil))
         }
         moments += streakMoments(cooks: cooks, calendar: calendar)
-        for badge in badges where badge.isUnlocked && !cookLogBadges.contains(badge.id) {
-            guard let earned = badge.dateEarned else { continue }
-            moments.append(StoryMoment(kind: .badge(id: badge.id), date: earned, title: badge.title,
-                                       detail: "Badge earned", icon: badge.icon, colorName: badge.color))
+        let told = Set(moments.map(\.kind))
+        let earned = badges.filter { badge in
+            guard badge.isUnlocked, badge.dateEarned != nil else { return false }
+            guard let kind = cookLogBadges[badge.id] else { return true }
+            return !told.contains(kind)
         }
+        moments += badgeMoments(earned, calendar: calendar)
         // Newest first; on the same instant keep the order above (first cook, meals, streaks, badges).
         return moments.enumerated()
             .sorted { $0.element.date != $1.element.date ? $0.element.date > $1.element.date : $0.offset < $1.offset }
             .map(\.element)
+    }
+
+    /// One line per badge, or one line per day when several were earned that day ("3 badges earned"), opening the
+    /// day's newest badge.
+    private static func badgeMoments(_ badges: [Badge], calendar: Calendar) -> [StoryMoment] {
+        let byDay = Dictionary(grouping: badges) { calendar.startOfDay(for: $0.dateEarned ?? .distantPast) }
+        return byDay.values.compactMap { group in
+            let ordered = group.sorted {
+                let (lhs, rhs) = ($0.dateEarned ?? .distantPast, $1.dateEarned ?? .distantPast)
+                return lhs != rhs ? lhs > rhs : $0.id < $1.id
+            }
+            guard let newest = ordered.first, let date = newest.dateEarned else { return nil }
+            if ordered.count == 1 {
+                return StoryMoment(kind: .badge(id: newest.id), date: date, title: newest.title,
+                                   detail: "Badge earned", icon: newest.icon, colorName: newest.color)
+            }
+            return StoryMoment(kind: .badge(id: newest.id), date: date, title: "\(ordered.count) badges earned",
+                               detail: ordered.map(\.title).joined(separator: ", "), icon: "medal.fill",
+                               colorName: newest.color)
+        }
     }
 
     /// The cook that first made each streak rung: weeks in a row with at least one cook, counted the way the streak is.

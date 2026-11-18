@@ -26,7 +26,7 @@ struct CookingStoryTests {
     }
 
     private func moments(_ cooks: [Date], badges: [Badge] = []) -> [StoryMoment] {
-        CookingStory.moments(cookDates: cooks, badges: badges, calendar: calendar)
+        CookingStory.moments(cookDates: cooks, badges: badges, now: day(weeks: 200), calendar: calendar)
     }
 
     private func kinds(_ moments: [StoryMoment]) -> [StoryMoment.Kind] { moments.map(\.kind) }
@@ -103,15 +103,47 @@ struct CookingStoryTests {
     func lockedBadgesHidden() {
         let undated = Badge(id: BadgeType.ratedTen.rawValue, title: "Critic", description: "", icon: "star", color: "blue",
                             dateEarned: nil, isUnlocked: true)
-        let story = moments([day()], badges: [badge(.firstImport, earned: nil), undated])
+        let lockedButDated = Badge(id: BadgeType.mealPlanner.rawValue, title: "Planner", description: "", icon: "star",
+                                   color: "blue", dateEarned: day(), isUnlocked: false)
+        let story = moments([day()], badges: [badge(.firstImport, earned: nil), undated, lockedButDated])
         #expect(story.allSatisfy { $0.badgeID == nil })
     }
 
-    @Test("cook and streak badges aren't told twice — the cook log tells them", arguments: [
-        BadgeType.headChef, .cookedTen, .cookedHundred, .streakTwoWeeks, .streakFiftyTwoWeeks,
-    ])
-    func cookLogBadgesSkipped(type: BadgeType) {
-        #expect(moments([day()], badges: [badge(type, earned: day())]).allSatisfy { $0.badgeID == nil })
+    @Test("a cook or streak badge isn't told twice when the cook log tells its milestone")
+    func cookLogBadgesSkipped() {
+        let cooks = (0..<10).map { day(weeks: $0) }
+        let badges = [BadgeType.headChef, .cookedTen, .streakTwoWeeks, .streakFourWeeks].enumerated()
+            .map { badge($1, earned: day(weeks: 30 + $0 * 2)) }
+        #expect(moments(cooks, badges: badges).allSatisfy { $0.badgeID == nil })
+    }
+
+    @Test("a cook badge the log doesn't reach is still told (cooks recorded before the log)")
+    func cookBadgeBeyondLogKept() {
+        let story = moments([day()], badges: [badge(.cookedTen, earned: day(weeks: 1))])
+        #expect(story.first?.badgeID == BadgeType.cookedTen.rawValue)
+        #expect(!kinds(story).contains(.meals(10)))
+    }
+
+    @Test("badges earned on one day fold into one line that opens the newest")
+    func sameDayBadgesFold() {
+        let story = moments([day()], badges: [
+            badge(.firstRecipe, earned: day(weeks: 1)),
+            badge(.fiveRecipes, earned: day(weeks: 1).addingTimeInterval(60)),
+            badge(.tenRecipes, earned: day(weeks: 1).addingTimeInterval(60)),
+            badge(.firstImport, earned: day(weeks: 2)),
+        ])
+        let badgeLines = story.filter { $0.badgeID != nil }
+        #expect(badgeLines.count == 2)
+        let folded = badgeLines.first { $0.title == "3 badges earned" }
+        #expect(folded?.badgeID == BadgeType.fiveRecipes.rawValue)   // newest; same instant → by id
+        #expect(badgeLines.first { $0.badgeID == BadgeType.firstImport.rawValue }?.title == "Title first_import")
+    }
+
+    @Test("a cook dated after now (another device's clock) isn't told")
+    func futureCooksIgnored() {
+        let story = CookingStory.moments(cookDates: [day(), day(weeks: 1)], badges: [], now: day(days: 1),
+                                         calendar: calendar)
+        #expect(kinds(story) == [.firstCook])
     }
 
     @Test("newest first; at the same moment the first cook comes before its badge-free milestones")
