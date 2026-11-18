@@ -25,19 +25,28 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (d7bf8f7, builder 2026-11-17). Left: slice 5 (Cook lane's). Leftover branch agent/foreign-recipes (auto-cleanup). Leftover branches agent/cuisine-chip,
   agent/today-badges-link (auto-cleanup).
 
-- Me with character (Queue, builder 2026-11-17): ✅ slice 1 landed 57fae8c (hero + stats). Next slice: (1b) name
-  inline (tap to edit) + the First/Last form → Settings › Profile, then (3) badges earned-first + Next up, (4) taste
-  fingerprint + story. Leftover branch agent/me-hero (auto-cleanup).
+- Me with character (Queue): ✅ slice 1 landed 57fae8c (hero + stats); ✅ slice 1b landed 1acdedc (name inline +
+  Settings › Profile form, builder 2026-11-18). Next: (3) badges earned-first + Next up, then (4) taste fingerprint +
+  story. Leftover branches agent/me-hero, agent/me-name-inline (auto-cleanup).
 
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Next Queue item per BACKLOG "Next (owner order …)" — likely Me with character slice (1b): name inline + form →
-Settings › Profile, on a new `agent/me-name-inline` branch.
+Me with character slice (3) on a new `agent/me-badges-next-up` branch: earned medals first + "Next up" (3 closest
+badges with progress rings, reuse `BadgeMetrics`) in Me › Profile, full shelf behind See all — tests first.
 Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Me with character (1b)**: the name is its own button *above* the profile button, not inside it — nested buttons in
+  one label are unreliable and VoiceOver can't reach them. One field, split by `ProfileNameFormatter.rename` (first
+  word / rest; unchanged → nil; a stored multi-word first name is kept when the text still starts with it; 60-char
+  cap). Commits on Done, return, focus loss and disappear (`editing` guard → once). Form + photo → new
+  `ProfileSettingsView` (Settings row "Name & photo"); Me › Profile keeps photo/badges/chef type and saves the chef type
+  with the manager's current name, so nothing stale clobbers an inline rename. Rejected: two inline fields (first/last)
+  — heavier for a hero. UI test renames to a name ≠ the stored one (shared simulator keeps the profile). Pre-mortem: (1)
+  edit not saved → UI label assert with a fresh name; (2) "Mary Ann" re-split → `renameKeepsAMultiWordFirstName`; (3)
+  field leaves stale text → cursor-to-end + clear in the UI test.
 - **Me with character (1)**: stats reuse `BadgeMetrics` (cuisine falls back to category, like the Cuisine badge) so
   the strip and badge rings never disagree — cuisine-only count → Needs owner (both places or neither). Label "meals",
   not the spec's "dinners": the count is every cook (cookCount sum, all time). Strip shows if any stat > 0. Hero above the cookbook per spec order. Zero cooks → one warm line instead of three zeros; the

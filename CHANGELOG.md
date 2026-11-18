@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Me with character slice 1b · 1acdedc
+- For you: tap your name on Me to change it right there, and your full name and photo form now sits in Settings › Profile, leaving Me's profile for your badges and chef type.
+- Behind the build: a reviewer and a challenger both caught a test that could pass with saving broken and a two-word first name like "Mary Ann" being split, fixed before it shipped.
+
 ## 2026-11-17 · Kitchen you can find slice 2 · f8960bb
 - For you: Today's "Use it up" and "Fits your kitchen" now have a "Your kitchen →" link that opens Groceries on At home, and tapping an "In kitchen" tag on your shopping list takes you to what you already have.
 - Behind the build: a reviewer and a challenger both caught the ingredient count including items it didn't show, fixed before it shipped; screenshots follow the link from Today to the spinach waiting at home.

@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-18 (item pass: Me with character slice 1b — fixed: UI test passed with saving broken, cursor left text behind, "Mary Ann" re-split, draft lost on leaving the tab, disabled PrimaryButton, test name in screenshots)
+- [Function] Settings › Profile's name needs Save; Back with an edited name discards it while the hero's field saves on tap-away — explicit Save kept on purpose (a form), revisit if testers lose edits.
+- [Function] If `.onAppear { fieldFocused = true }` doesn't take, the field shows without a keyboard and only Done/tap-in closes it — not seen in the Screenshots run; a keyboard assertion would be flaky with CI's hardware keyboard.
+- [Tests] Settings › Profile Save has no test (thin glue onto `updateProfile`, which `ProfileManager` tests cover).
+
 ## 2026-11-17 (item pass: Kitchen you can find slice 2 — fixed: "N ingredients" counted unlisted use-by items, tag hit area reached the minus button)
 - [Function] Today's link and the expiry reminder land on Groceries' search suggestions if text was left in the field — shared with the reminder path; clear the field on a side change if a cook trips on it.
 - [Data] Use-by items with no alert (fresh, not low) aren't listed on At home and an "In kitchen" tag on one can land on the empty state — pre-existing, such items arrive only via restore/sync.
