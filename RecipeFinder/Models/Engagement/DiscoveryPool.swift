@@ -154,10 +154,15 @@ struct DiscoveryPool: Equatable {
             }
         }
 
-        let quick = sorted
-            .compactMap { recipe in TodayFeed.quickMinutes(of: recipe).map { (recipe, $0) } }
-            .sorted { $0.1 != $1.1 ? $0.1 < $1.1 : $0.0.name < $1.0.name }
-            .map(\.0)
+        // Typed in steps: Xcode 27's type checker times out on the single chained expression.
+        let timed: [(recipe: RecipeModel, minutes: Int)] = sorted.compactMap { recipe in
+            TodayFeed.quickMinutes(of: recipe).map { (recipe: recipe, minutes: $0) }
+        }
+        let quick: [RecipeModel] = timed
+            .sorted { lhs, rhs in
+                lhs.minutes != rhs.minutes ? lhs.minutes < rhs.minutes : lhs.recipe.name < rhs.recipe.name
+            }
+            .map { $0.recipe }
         let kitchen = TodayFeed.kitchenMatches(recipes: sorted, kitchenItemNames: kitchenItemNames).map(\.recipe)
         let fixed = [
             Source(kind: .quick, candidates: quick, isRanked: false),
@@ -174,9 +179,10 @@ struct DiscoveryPool: Equatable {
 
         // Interleave the families so the feed opens personal ("Because you loved…", "Under 30 minutes") and no two
         // chapters of one family sit together while others are left.
-        let families = [loved, fixed, cuisines, categories].map { $0.filter { !$0.candidates.isEmpty } }
+        let families: [[Source]] = [loved, fixed, cuisines, categories].map { $0.filter { !$0.candidates.isEmpty } }
         var interleaved: [Source] = []
-        for index in 0..<(families.map(\.count).max() ?? 0) {
+        let longest = families.map { $0.count }.max() ?? 0
+        for index in 0..<longest {
             for family in families where index < family.count {
                 interleaved.append(family[index])
             }
