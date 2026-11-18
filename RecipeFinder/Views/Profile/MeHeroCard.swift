@@ -90,6 +90,8 @@ struct MeHeroCard: View {
             .onChange(of: fieldFocused) { _, focused in
                 if !focused { commit() }
             }
+            // Leaving the tab or Me with the field open keeps what was typed.
+            .onDisappear(perform: commit)
         } else {
             Button {
                 draft = editableName

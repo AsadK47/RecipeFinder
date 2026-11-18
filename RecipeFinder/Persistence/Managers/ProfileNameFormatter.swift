@@ -33,13 +33,19 @@ enum ProfileNameFormatter {
         words(in: "\(firstName) \(lastName)").joined(separator: " ")
     }
 
-    /// Splits the inline field's text into first word + the rest. `nil` when the name is unchanged, so an untouched
+    /// Splits the inline field's text into first word + the rest (or the stored multi-word first name + the rest). `nil` when the name is unchanged, so an untouched
     /// "Mary Ann" + "Smith" isn't re-split into "Mary" + "Ann Smith".
     static func rename(firstName: String, lastName: String, to text: String) -> ProfileName? {
         let trimmed = words(in: text).joined(separator: " ")
         guard trimmed != editableName(firstName: firstName, lastName: lastName) else { return nil }
         let capped = words(in: String(trimmed.prefix(maxNameLength)))
         guard let first = capped.first else { return ProfileName(first: "", last: "") }
+        // A typo fixed after a multi-word first name keeps that first name ("Mary Ann" + "Smyth", not "Mary" + "Ann Smyth").
+        let keptFirst = words(in: firstName)
+        if keptFirst.count > 1, capped.starts(with: keptFirst) {
+            return ProfileName(first: keptFirst.joined(separator: " "),
+                               last: capped.dropFirst(keptFirst.count).joined(separator: " "))
+        }
         return ProfileName(first: first, last: capped.dropFirst().joined(separator: " "))
     }
 

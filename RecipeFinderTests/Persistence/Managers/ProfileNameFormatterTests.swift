@@ -55,6 +55,18 @@ import Foundation
         #expect(change == ProfileName(first: first, last: last))
     }
 
+    /// Fixing a typo in the last name mustn't move the second word of "Mary Ann" into the last name.
+    @Test(arguments: [
+        (text: "Mary Ann Smyth",   first: "Mary Ann", last: "Smyth"),
+        (text: "Mary Ann",         first: "Mary Ann", last: ""),
+        (text: "Mary Ann de Vere", first: "Mary Ann", last: "de Vere"),
+        (text: "Mary Smith",       first: "Mary",     last: "Smith"),   // first name changed → split afresh
+    ])
+    func renameKeepsAMultiWordFirstName(text: String, first: String, last: String) {
+        let change = ProfileNameFormatter.rename(firstName: "Mary Ann", lastName: "Smith", to: text)
+        #expect(change == ProfileName(first: first, last: last))
+    }
+
     @Test func renameToBlankClearsTheName() {
         #expect(ProfileNameFormatter.rename(firstName: "Jane", lastName: "Doe", to: "   ") == ProfileName(first: "", last: ""))
     }

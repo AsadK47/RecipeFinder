@@ -26,9 +26,7 @@ struct ProfileSettingsView: View {
 
             ProfilePersonalInfoSection(firstName: $firstName, lastName: $lastName)
 
-            PrimaryButton(saved && !hasChanges ? "Saved" : "Save", systemImage: "checkmark.circle.fill", fillWidth: true, action: save)
-                .disabled(!hasChanges)
-                .opacity(hasChanges ? 1 : AppTheme.mediumEmphasisOpacity)
+            PrimaryButton(saved ? "Saved" : "Save", systemImage: "checkmark.circle.fill", fillWidth: true, action: save)
                 .accessibilityIdentifier("settings.profile.save")
         }
         .sheet(item: $activeSheet) { sheet in
@@ -47,6 +45,8 @@ struct ProfileSettingsView: View {
         .onChange(of: profileImage) { _, newImage in
             profileManager.saveProfileImage(newImage)
         }
+        .onChange(of: firstName) { _, _ in saved = false }
+        .onChange(of: lastName) { _, _ in saved = false }
     }
 
     /// Empty with no name — the avatar then shows initials only once there's something to show.
@@ -56,16 +56,10 @@ struct ProfileSettingsView: View {
         return "\(first)\(last)".uppercased()
     }
 
-    private var hasChanges: Bool {
-        firstName.trimmed != profileManager.firstName || lastName.trimmed != profileManager.lastName
-    }
-
     private func save() {
+        // PrimaryButton already plays the tap haptic.
         profileManager.updateProfile(firstName: firstName, lastName: lastName, chefType: profileManager.chefType)
-        firstName = profileManager.firstName
-        lastName = profileManager.lastName
         saved = true
-        HapticManager.shared.success()
     }
 }
 
