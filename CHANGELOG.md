@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Inbox 🟡 difficulty bars · 532ecc7
+- For you: the difficulty bars on recipe cards now match the level — one bar for Basic, two for Intermediate, three for Expert.
+- Behind the build: the bars now read the same three levels the editor and filters use, with a test that each level fills one more bar than the last.
+
 ## 2026-11-18 · Inbox 🟡 difficulty order · 599cf90
 - For you: the Recipes filter now lists difficulty easiest first — Basic, Intermediate, Expert — the same order you pick it in when adding a recipe.
 - Behind the build: both screens now share one list, and tests check its order and that every difficulty a recipe can have is one the filter can find.
