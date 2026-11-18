@@ -1,45 +1,27 @@
 import SwiftUI
 
 struct MealPlanningView: View {
-    @Environment(\.recipeStore) private var recipeStore
-    private var recipes: [RecipeModel] { recipeStore.recipes }
-    @Environment(\.mealPlanning) private var mealPlanningManager
-    @Environment(\.kitchen) private var kitchenManager
-    @State private var selectedDate: Date = Date()
-    @State private var showMealTimeSelector = false
-    @State private var selectedMealTimes: Set<MealTime> = []
-    @State private var mealPlanSheet: MealPlanSheet?
-
-    /// One Identifiable target for the recipe-picker / quick-snack sheets so content rebuilds from the value
-    /// (`.sheet(item:)`) instead of reading a `currentMealTime` set in the same action — which rendered the
-    /// sheet with a nil meal time on first present.
-    private enum MealPlanSheet: Identifiable {
-        case recipeSelection(MealTime)
-        case quickSnack(MealTime)
-
-        var id: String {
-            switch self {
-            case .recipeSelection(let mealTime): "recipe-\(mealTime)"
-            case .quickSnack(let mealTime): "snack-\(mealTime)"
-            }
-        }
-    }
-    @State private var weekShoppingFeedback: String?
+    @Environment(\.recipeStore) var recipeStore
+    var recipes: [RecipeModel] { recipeStore.recipes }
+    @Environment(\.mealPlanning) var mealPlanningManager
+    @Environment(\.kitchen) var kitchenManager
+    @State var selectedDate: Date = Date()
+    @State var showMealTimeSelector = false
+    @State var selectedMealTimes: Set<MealTime> = []
+    @State var mealPlanSheet: MealPlanSheet?
+    @State var weekShoppingFeedback: String?
     /// Display order for the selected day's meal cards; persists drag order within a day.
     @State private var orderedMealTimes: [MealTime] = []
     @State private var pantryExpirySuggestions: [PantryExpirySuggestions.Match] = []
     /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
     @State private var pendingSuggestedRecipe: RecipeModel?
     /// Deduped items awaiting confirmation before being added to Groceries.
-    @State private var weekAddCandidates: [WeekShoppingSummary.Item] = []
-    @State private var weekMealsCovered = 0
-    @State private var weekSkippedInKitchen = 0
-    @State private var showAddWeekConfirm = false
+    @State var weekPlan = WeekGroceryPlan.empty
+    @State var showAddWeekConfirm = false
     /// Non-nil while the meal-reminder time picker is presented.
-    @State private var reminderContext: ReminderContext?
+    @State var reminderContext: ReminderContext?
 
-
-    private let mealCalendar = MealPlanCalendar()
+    let mealCalendar = MealPlanCalendar()
 
     var body: some View {
         ZStack {
@@ -74,15 +56,14 @@ struct MealPlanningView: View {
                             .transition(.move(edge: .top).combined(with: .opacity))
                         }
 
-                        if !selectedMealTimes.isEmpty {
+                        switch dayContent {
+                        case .plannedMeals:
                             selectedMealsSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                        } else if Calendar.current.isDate(selectedDate, inSameDayAs: Date())
-                            || hasMealPlans(for: selectedDate)
-                            || selectedDate > Date().addingTimeInterval(-86400) {
+                        case .emptyDay:
                             selectedDayEmptyState
                                 .transition(.opacity)
-                        } else {
+                        case .emptyPast:
                             emptyStateView
                                 .transition(.opacity)
                         }
@@ -101,12 +82,12 @@ struct MealPlanningView: View {
         .animation(.appGentle, value: selectedMealTimes)
         .animation(.appGentle, value: pantryExpirySuggestions.count)
         .confirmationDialog("Add to Groceries", isPresented: $showAddWeekConfirm, titleVisibility: .visible) {
-            Button("Add \(weekAddCandidates.count) item\(weekAddCandidates.count == 1 ? "" : "s")") {
+            Button(weekPlan.addButtonTitle) {
                 confirmAddWeek()
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(weekAddConfirmMessage)
+            Text(weekPlan.confirmMessage)
         }
         .toast($weekShoppingFeedback)
         .onAppear {
@@ -265,156 +246,21 @@ struct MealPlanningView: View {
         }
     }
 
-    // MARK: - Meal plan actions
-
-    private func saveMealPlan(recipe: RecipeModel, for date: Date, mealTime: MealTime) {
-        let mealPlan = MealPlanModel(
-            recipeId: recipe.id,
-            recipeName: recipe.name,
-            date: date,
-            mealTime: mealTime,
-            servings: recipe.currentServings
-        )
-        mealPlanningManager.addMealPlan(mealPlan)
-        selectedMealTimes.insert(mealTime)
-        HapticManager.shared.success()
-    }
-
-    private func getRecipe(for date: Date, mealTime: MealTime) -> RecipeModel? {
-        guard let mealPlan = mealPlanningManager.mealPlan(for: date, mealTime: mealTime) else {
-            return nil
-        }
-        return recipes.first { $0.id == mealPlan.recipeId }
-    }
-
-    private func removeMealPlan(for date: Date, mealTime: MealTime) {
-        mealPlanningManager.removeMealPlan(for: date, mealTime: mealTime)
-        if mealPlanningManager.mealPlan(for: date, mealTime: mealTime) == nil {
-            selectedMealTimes.remove(mealTime)
-        }
-    }
-
-    // MARK: - Reminders
-
-    private func editReminder(for mealTime: MealTime) {
-        guard let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
-        reminderContext = ReminderContext(
-            mealTime: mealTime,
-            recipeName: getRecipe(for: selectedDate, mealTime: mealTime)?.name ?? plan.recipeName,
-            initialTime: plan.reminderTime ?? mealTime.defaultReminderTime
-        )
-        HapticManager.shared.light()
-    }
-
-    private func saveReminder(_ time: Date, for mealTime: MealTime) {
-        guard var plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
-        plan.reminderTime = time
-        // Reminders are useless without permission; prompt on first opt-in (no-op if already granted).
-        NotificationManager.shared.requestPermission { _ in }
-        mealPlanningManager.updateMealPlan(plan)
-        HapticManager.shared.success()
-    }
-
-    private func removeReminder(for mealTime: MealTime) {
-        guard var plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
-        plan.reminderTime = nil
-        mealPlanningManager.updateMealPlan(plan)
-        HapticManager.shared.light()
-    }
-
-    private func hasMealPlans(for date: Date) -> Bool {
-        mealPlanningManager.hasMealPlans(for: date)
-    }
-
-    private func updateSelectedMealTimes(for date: Date) {
-        let mealsForDate = mealPlanningManager.mealPlans(for: date)
-        selectedMealTimes = Set(mealsForDate.map { $0.mealTime })
-    }
-
-    /// Computes what the week would add, skipping items already in the Kitchen, then asks for confirmation rather than bulk-dumping.
-    private func prepareAddWeek() {
-        guard let start = currentWeekStart else { return }
-        let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes)
-
-        let inKitchen = Set(
-            (kitchenManager.items.map(\.name) + kitchenManager.inventoryItems.map(\.name))
-                .map { IngredientNormalizer.normalize($0) }
-        )
-        let candidates = summary.items.filter { !inKitchen.contains(IngredientNormalizer.normalize($0.name)) }
-
-        weekAddCandidates = candidates
-        weekMealsCovered = summary.mealsCovered
-        weekSkippedInKitchen = summary.items.count - candidates.count
-
-        guard !candidates.isEmpty else {
-            let message: String
-            if summary.items.isEmpty {
-                message = summary.missingRecipeNames.isEmpty
-                    ? "No planned meals to shop for"
-                    : "Couldn't find this week's recipes"
-            } else {
-                message = "You already have everything in your kitchen"
-            }
-            showWeekShoppingFeedback(message)
-            return
-        }
-
-        showAddWeekConfirm = true
-    }
-
-    private func confirmAddWeek() {
-        for item in weekAddCandidates {
-            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
-        }
-        HapticManager.shared.success()
-
-        var message = "Added \(weekAddCandidates.count) item\(weekAddCandidates.count == 1 ? "" : "s") from \(weekMealsCovered) meal\(weekMealsCovered == 1 ? "" : "s")"
-        if weekSkippedInKitchen > 0 {
-            message += " · \(weekSkippedInKitchen) already in kitchen"
-        }
-        showWeekShoppingFeedback(message)
-    }
-
-    private var weekAddConfirmMessage: String {
-        var parts = ["From \(weekMealsCovered) planned meal\(weekMealsCovered == 1 ? "" : "s")."]
-        if weekSkippedInKitchen > 0 {
-            parts.append("\(weekSkippedInKitchen) already in your kitchen will be skipped.")
-        }
-        return parts.joined(separator: " ")
-    }
-
-    private func showWeekShoppingFeedback(_ message: String) {
-        weekShoppingFeedback = message
-    }
-
-    private func previousWeek() {
-        selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: -1, to: selectedDate) ?? selectedDate
-        propagateRecurringForCurrentWeek()
-        updateSelectedMealTimes(for: selectedDate)
-        HapticManager.shared.light()
-    }
-
-    private func nextWeek() {
-        selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: selectedDate) ?? selectedDate
-        propagateRecurringForCurrentWeek()
-        updateSelectedMealTimes(for: selectedDate)
-        HapticManager.shared.light()
-    }
-
-    private func propagateRecurringForCurrentWeek() {
-        guard let start = mealCalendar.weekRange(containing: selectedDate)?.start else { return }
-        mealPlanningManager.propagateRecurring(toWeekStarting: start)
-    }
-
-    // MARK: - Derived date values
+    // MARK: - Derived values
 
     // FormatStyle follows the user's locale (field order, month names); fixed dateFormat strings didn't.
     private var monthYearString: String { selectedDate.formatted(.dateTime.month(.wide).year()) }
     private var selectedDateString: String { selectedDate.formatted(.dateTime.month(.abbreviated).day().year()) }
     private var shortDateString: String { selectedDate.formatted(.dateTime.month(.abbreviated).day()) }
 
-    private var currentWeekStart: Date? {
+    var currentWeekStart: Date? {
         mealCalendar.weekRange(containing: selectedDate)?.start
+    }
+
+    private var dayContent: MealPlanDayContent {
+        MealPlanDayContent.make(hasSelectedMeals: !selectedMealTimes.isEmpty,
+                                hasPlans: mealPlanningManager.hasMealPlans(for: selectedDate),
+                                date: selectedDate, now: Date())
     }
 
     private var weekHasPlannedMeals: Bool {
@@ -425,14 +271,6 @@ struct MealPlanningView: View {
     private var daysInCurrentWeek: [Date] {
         mealCalendar.daysInWeek(containing: selectedDate)
     }
-}
-
-/// Identifiable payload driving the meal-reminder time-picker sheet.
-private struct ReminderContext: Identifiable {
-    let id = UUID()
-    let mealTime: MealTime
-    let recipeName: String
-    let initialTime: Date
 }
 
 #Preview {
