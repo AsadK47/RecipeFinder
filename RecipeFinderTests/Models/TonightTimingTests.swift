@@ -151,7 +151,12 @@ import Foundation
         #expect(line == "Start by 7:40 to eat at 9")
     }
 
-    @Test(arguments: [(0, "12"), (19 * 60, "7"), (17 * 60 + 40, "5:40"), (12 * 60 + 5, "12:05"), (25 * 60, "1"), (-20, "11:40")])
+    /// Minutes after midnight → label; typed up front for the Xcode 27 type checker.
+    static let clockLabels: [(Int, String)] = [
+        (0, "12"), (1140, "7"), (1060, "5:40"), (725, "12:05"), (1500, "1"), (-20, "11:40")
+    ]
+
+    @Test(arguments: clockLabels)
     func clockReadsLikeSpeech(minute: Int, expected: String) {
         #expect(TonightTiming.clock(minute) == expected)
     }
