@@ -39,8 +39,9 @@ import Foundation
         #expect(RecipeLibraryFacets(recipes: recipes).cuisines == ["Italian", "Thai"])
     }
 
-    /// Pins today's order (moved unchanged from RecipeSearchView); the wizard lists Basic, Intermediate, Expert — see BACKLOG Inbox.
-    @Test func difficultiesKeepTheSheetOrder() {
-        #expect(RecipeLibraryFacets.difficulties == ["Basic", "Expert", "Intermediate"])
+    /// The filter sheet lists difficulty easiest first, the same list the recipe editor offers.
+    @Test func difficultiesMatchTheEditorEasiestFirst() {
+        #expect(RecipeLibraryFacets.difficulties == ["Basic", "Intermediate", "Expert"])
+        #expect(RecipeLibraryFacets.difficulties == RecipeWizardBuilder.difficultyLevels)
     }
 }

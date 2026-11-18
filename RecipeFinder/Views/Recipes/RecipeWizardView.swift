@@ -89,7 +89,7 @@ struct RecipeWizardView: View {
         self.onComplete = onComplete
     }
 
-    let difficulties = ["Basic", "Intermediate", "Expert"]
+    let difficulties = RecipeWizardBuilder.difficultyLevels
     let categories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
 
     var body: some View {

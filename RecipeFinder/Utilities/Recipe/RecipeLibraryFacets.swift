@@ -4,8 +4,8 @@ import Foundation
 struct RecipeLibraryFacets: Equatable {
     /// Courses the filter sheet offers; anything else a recipe's category says (e.g. an import's "Dinner") is left out.
     static let knownCategories: Set<String> = ["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"]
-    /// The filter sheet's difficulty choices, in the order it lists them.
-    static let difficulties = ["Basic", "Expert", "Intermediate"]
+    /// The filter sheet's difficulty choices: the editor's levels, easiest first.
+    static let difficulties = RecipeWizardBuilder.difficultyLevels
 
     var categories: [String] = []
     var tags: [String] = []

@@ -25,6 +25,19 @@ struct RecipeWizardBuilderTests {
         #expect(RecipeWizardBuilder.normalizeDifficulty(input) == expected)
     }
 
+    @Test("Difficulty levels run easiest first")
+    func difficultyLevelsRunEasiestFirst() {
+        #expect(RecipeWizardBuilder.difficultyLevels == ["Basic", "Intermediate", "Expert"])
+    }
+
+    @Test(
+        "Every normalised difficulty is one of the listed levels, so the filter can match it",
+        arguments: ["easy", "medium", "hard", "", "chef's choice"]
+    )
+    func normalisedDifficultyIsAListedLevel(input: String) {
+        #expect(RecipeWizardBuilder.difficultyLevels.contains(RecipeWizardBuilder.normalizeDifficulty(input)))
+    }
+
     // MARK: - makeIngredients
 
     @Test("Blank-name rows are dropped and a blank amount stays 0 (no invented 1)")

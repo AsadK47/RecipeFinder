@@ -65,6 +65,9 @@ enum RecipeWizardBuilder {
         }
     }
 
+    /// The three difficulty levels, easiest first — the one list the editor and the filter sheet both show.
+    static let difficultyLevels = ["Basic", "Intermediate", "Expert"]
+
     /// Maps a free-text difficulty label onto one of the wizard's three levels.
     static func normalizeDifficulty(_ raw: String) -> String {
         let normalized = raw.lowercased()
