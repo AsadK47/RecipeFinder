@@ -42,6 +42,16 @@ struct SharedImportPlan: Equatable {
         }
     }
 
+    /// Puts the shares that didn't get the sheet back into the inbox, oldest first.
+    func requeue(storeURL: (String) -> Void, storeText: (String) -> Void) {
+        for share in requeued {
+            switch share {
+            case .url(let url): storeURL(url)
+            case .text(let text): storeText(text)
+            }
+        }
+    }
+
     static func verdict(for recipe: RecipeModel, existingNames: [String]) -> Verdict {
         let key = nameKey(recipe.name)
         if existingNames.contains(where: { nameKey($0) == key }) { return .duplicate }

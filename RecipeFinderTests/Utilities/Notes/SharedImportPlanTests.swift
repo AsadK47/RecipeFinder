@@ -60,6 +60,23 @@ import Foundation
         let plan = SharedImportPlan(payloads: [.extracted(Self.extracted("Soup")), .url("https://a.test")])
         #expect(plan.interactive == .url("https://a.test"))
         #expect(plan.requeued.isEmpty)
+        #expect(plan.extracted.map { $0.name } == ["Soup"])
+    }
+
+    @Test func waitingSharesGoBackToTheirOwnSlotInOrder() {
+        let plan = SharedImportPlan(payloads: [
+            .url("https://a.test"), .text("pasta"), .url("https://b.test"), .text("soup")
+        ])
+        var stored: [String] = []
+        plan.requeue(storeURL: { stored.append("url:" + $0) }, storeText: { stored.append("text:" + $0) })
+        #expect(stored == ["text:pasta", "url:https://b.test", "text:soup"])
+    }
+
+    @Test func nothingWaitingStoresNothing() {
+        var stored: [String] = []
+        SharedImportPlan(payloads: [.url("https://a.test")])
+            .requeue(storeURL: { stored.append($0) }, storeText: { stored.append($0) })
+        #expect(stored.isEmpty)
     }
 
     // MARK: - Verdict

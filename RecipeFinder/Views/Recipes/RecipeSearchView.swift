@@ -12,7 +12,8 @@ struct RecipeSearchView: View {
     /// One-time tip for "+", which replaced the Import tab.
     @AppStorage("hasSeenAddRecipeTip") var hasSeenAddRecipeTip = false
     @State var showFilters = false
-    /// What the cook typed, picked and sorted. The kitchen and the chosen collection are added in `filterCriteria`.
+    /// What the cook typed, picked and sorted. Its kitchen and collection fields stay empty — read it through
+    /// `filterCriteria`, which adds them, never directly (`activeCount`/`apply` would miss the collection chip).
     @State var filters = RecipeFilterCriteria()
     @State var sharedImportURL: SharedImportURL?
     @State var sharedWizardPrefill: RecipeWizardView.PrefilledRecipeData?

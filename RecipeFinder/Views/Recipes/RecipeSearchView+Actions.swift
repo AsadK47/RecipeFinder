@@ -33,12 +33,7 @@ extension RecipeSearchView {
         case .text(let text): Task { await importSharedText(text) }
         case nil: break
         }
-        for share in plan.requeued {
-            switch share {
-            case .url(let urlString): SharedImportInbox.storeURL(urlString)
-            case .text(let text): SharedImportInbox.storeText(text)
-            }
-        }
+        plan.requeue(storeURL: { SharedImportInbox.storeURL($0) }, storeText: { SharedImportInbox.storeText($0) })
     }
 
     /// Routes shared free text into the wizard for review (AI results never saved silently); toasts when no recipe is found.

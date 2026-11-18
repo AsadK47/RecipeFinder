@@ -36,10 +36,10 @@ import Foundation
             Self.recipe("Main", cuisine: "Italian"), Self.recipe("Main", cuisine: " italian "),
             Self.recipe("Main", cuisine: "Thai"), Self.recipe("Main")
         ]
-        #expect(RecipeLibraryFacets(recipes: recipes).cuisines == RecipeFilterCriteria.distinctCuisines(in: recipes))
-        #expect(RecipeLibraryFacets(recipes: recipes).cuisines.count == 2)
+        #expect(RecipeLibraryFacets(recipes: recipes).cuisines == ["Italian", "Thai"])
     }
 
+    /// Pins today's order (moved unchanged from RecipeSearchView); the wizard lists Basic, Intermediate, Expert — see BACKLOG Inbox.
     @Test func difficultiesKeepTheSheetOrder() {
         #expect(RecipeLibraryFacets.difficulties == ["Basic", "Expert", "Intermediate"])
     }
