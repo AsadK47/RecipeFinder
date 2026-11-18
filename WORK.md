@@ -34,9 +34,10 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-iOS 27 warnings ✅ (bd96990, 0 warnings). 🚧 builder 2026-11-18 on agent/screenshots-timeout: Screenshots capture takes ~26 of its 30 min on xcode-27, so publishing
-gets cut off — raise `timeout-minutes` or speed capture (workflow OK'd for CI speed 2026-11-10); then Inbox 🟡
-difficulty order, then Smell Batch D screen 3 (CookingModeView).
+agent/screenshots-timeout (a1352af) ready: run 44349298860 green on the first commit (boot 5.5 min, capture 18, publish OK);
+challenger found the 45-min job cap could still cancel before publish → added 10-min boot cap, job 50. Re-run queued on
+a1352af. Fast-forward of main was refused by the cloud permission classifier (builder 2026-11-18) — owner: ff main to
+a1352af if that run is green, then tick + Log. Then Inbox 🟡 difficulty order, then Smell Batch D screen 3 (CookingModeView).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
