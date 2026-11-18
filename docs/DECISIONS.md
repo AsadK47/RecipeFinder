@@ -5,6 +5,21 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Me with character (4a) taste fingerprint** (landed 0dd898f, 2026-11-18): slice 4 split — 4a fingerprint, 4b cooking
+  story. Five fixed traits (spicy, comforting, quick, baking, fresh), visible keyword rules: tags → name words →
+  ingredients → method/time; share = cooks of trait recipes / all cooks (repeats count, shares overlap). Seed has no
+  tags or cuisines, so rules lean on names/ingredients (seed spread: quick 129, spicy 122, baking 88, comforting 71,
+  fresh 37, none 32 of 332). Cuisines left out of the shape: cuisine is empty on every starter recipe and the
+  category fallback is in Needs owner. Shape scaled to the biggest trait (min 6%) so one-note cooks still see a
+  shape; rows carry the meaning for VoiceOver. Rejected: "pot"/"hot"/"pie" as trait words ("Instant Pot", "Hot
+  Chocolate", savoury pies as baking); baked dinners as baking (Dessert/Breakfast only). Pre-mortem: (1) wrong trait
+  for a common dish → name/ingredient tests incl. medallions/Instant Pot/hot chocolate; (2) card shows zeros for a
+  new cook → hidden when nothing cooked (`nothingCooked`); (3) row doesn't open its recipes → screenshot UI test taps
+  a row and waits for `recipe.row` (48a).
+  Review fixes: heat lines skip optional/Kashmiri/mild/sweet/garnish; fresh skips powder/seed/ground/oil/dried/
+  sauce/paste and counts distinct words; "baking powder/tray…" stripped from the method, steamed/bao/radish names
+  aren't baking; headline ties go comforting → fresh → baking → quick → spicy (spicy is the commonest); card hidden
+  until a trait exists. Seed spread after fixes: quick 129, spicy 110, comforting 71, baking 68, fresh 24, none 44.
 - **Me with character (3)** (landed 82d238c, 2026-11-18): Profile shelf = Earned (all groups, newest first) → Next
   up (3 closest locked threshold badges, count under each ring) → See all toggles the grouped shelf in place
   (rejected: a pushed screen — would need its own pager + Today deep-link plumbing). Ranking extracted to

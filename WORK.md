@@ -1,4 +1,4 @@
-# WORK.md — handoff (2026-11-17, builder agent)
+# WORK.md — handoff (2026-11-18, builder agent)
 
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
@@ -27,28 +27,19 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 
 - Me with character (Queue): ✅ slice 1 landed 57fae8c (hero + stats); ✅ slice 1b landed 1acdedc (name inline +
   Settings › Profile form, builder 2026-11-18); ✅ slice 3 landed 82d238c (earned first + Next up + See all, builder
-  2026-11-18). Next: (4) taste fingerprint + story. Leftover branches agent/me-hero, agent/me-name-inline, agent/me-badges-next-up (auto-cleanup).
+  2026-11-18); ✅ slice 4a landed 0dd898f (taste fingerprint, builder 2026-11-18). Next: (4b) cooking story. Leftover
+  branches agent/me-hero, agent/me-name-inline, agent/me-badges-next-up, agent/me-taste-story (auto-cleanup).
 
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Finish 4a on `agent/me-taste-story` (CI → Screenshots → look at 48-me-taste / 48a → reviewer + challenger → land).
-Then 4b "Your cooking story" timeline (spec *Me 2/3*; `CookingStreak.cooksThisYear` is waiting for it) — tests first.
+Me with character slice (4b) on a new `agent/me-cooking-story` branch: "Your cooking story" timeline (first save,
+first cook, streak milestones, badges, photos, first cuisine; spec *Me 2/3*; `CookingStreak.cooksThisYear` is waiting
+for it) — tests first. Last slice → tick the item.
 Lanes: when green + reviewed, batch them into `agent/batch`, one green run, ff main, Log lines, tick.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Me with character (4a) taste fingerprint** (`agent/me-taste-story`): slice 4 split — 4a fingerprint, 4b cooking
-  story. Five fixed traits (spicy, comforting, quick, baking, fresh), visible keyword rules: tags → name words →
-  ingredients → method/time; share = cooks of trait recipes / all cooks (repeats count, shares overlap). Seed has no
-  tags or cuisines, so rules lean on names/ingredients (seed spread: quick 129, spicy 122, baking 88, comforting 71,
-  fresh 37, none 32 of 332). Cuisines left out of the shape: cuisine is empty on every starter recipe and the
-  category fallback is in Needs owner. Shape scaled to the biggest trait (min 6%) so one-note cooks still see a
-  shape; rows carry the meaning for VoiceOver. Rejected: "pot"/"hot"/"pie" as trait words ("Instant Pot", "Hot
-  Chocolate", savoury pies as baking); baked dinners as baking (Dessert/Breakfast only). Pre-mortem: (1) wrong trait
-  for a common dish → name/ingredient tests incl. medallions/Instant Pot/hot chocolate; (2) card shows zeros for a
-  new cook → hidden when nothing cooked (`nothingCooked`); (3) row doesn't open its recipes → screenshot UI test taps
-  a row and waits for `recipe.row` (48a).
 - **Me with character (1b)**: the name is its own button *above* the profile button, not inside it — nested buttons in
   one label are unreliable and VoiceOver can't reach them. One field, split by `ProfileNameFormatter.rename` (first
   word / rest; unchanged → nil; a stored multi-word first name is kept when the text still starts with it; 60-char

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-18 · Me with character slice 4a · 0dd898f
+- For you: Me now shows "Your taste" — what you love to cook, as a shape and five rows (spicy, comforting, quick, baking, fresh), built from the meals you've made; tap a row to see the recipes behind it.
+- Behind the build: two reviewers ran the rules over all 332 bundled recipes and caught pancakes counting as baking and dried spices as fresh, fixed and tested before it shipped.
+
 ## 2026-11-18 · Me with character slice 3 · 82d238c
 - For you: your Profile now leads with the medals you've earned, newest first, then "Next up" — the three badges you're closest to, each with a ring and how far along you are; the whole shelf opens with See all.
 - Behind the build: a challenger caught Next up filling with three steps of the same badge (hiding your first cook) and a badge from Today vanishing once its card closed — both fixed and tested before it shipped.

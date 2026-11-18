@@ -70,6 +70,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Threat] Still open from 2026-11-17, not acted on and not answered: `HTMLFetcher.swift:36` buffers the whole response with `session.data(for:)` (no size cap, only the 30 s timeout) in both the app and the Share extension, whose jetsam limit is far lower; images already have a 10 MB cap (`RemoteImageFetcher.swift:49`). Foreign-recipe import (slice 3) just widened the set of pages people will paste — alternative: `session.bytes(for:)` with a 5 MB cap — cost if wrong: Share-extension import silently dies on a heavy page and reads as "import is broken".
   → Owner: Accept / Reject (why) / Later
 
+## 2026-11-18 (item pass: Me with character slice 4a — fixed: baking powder/steamed buns as baking, dried herbs as fresh, optional/mild chilli as spicy, ties to spicy, five empty bars, buffalo mozzarella, VoiceOver row wrapper, UI test not proving the trait)
+- ⚔️ [UX] Shares overlap (one butter chicken can be Spicy, Comforting and Quick at 100% each) — TasteFingerprint.swift `from(recipes:)`; rows read as a breakdown that doesn't add up — alternative: label rows "of your meals" or normalise — cost if wrong: a cook wonders why it's 160%.
+  → Owner:
+- ⚔️ [UX] One dominant trait draws a thin sliver, not a blob (48-me-taste: Quick 60%, others ≤27%) — TasteFingerprintCard.swift `TasteShape` floor 0.06 — alternative: floor ~0.15 or sqrt scaling — cost if wrong: the shape looks broken rather than characterful.
+  → Owner:
+- ⚔️ [Break] `TasteTraitRecipesView` has no empty state if every recipe behind a trait is deleted while the list is open — rare; Back still works — cost if wrong: a blank screen with a title.
+  → Owner:
+
 ## 2026-11-18 (item pass: Me with character slice 3 — fixed: ladder rungs crowded Next up, Today's badge hidden after its card closed, pager ignored the tapped row, unreachable empty state, VoiceOver "slash")
 - [Function] Captions under badges use fixed 11pt and titles cut at 88pt at accessibility sizes — pre-existing `BadgeCard` sizing; revisit with a Dynamic Type pass.
 - [Performance] Profile recomputes shelf/earned/next-up (24 badges) in `body` — trivial cost and kept live with badge unlocks; move to state if Profile grows.
