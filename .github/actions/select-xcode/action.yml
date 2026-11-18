@@ -16,10 +16,12 @@ runs:
       env:
         MAJOR: ${{ inputs.major }}
       run: |
-        APP=$(ls -d /Applications/Xcode_"$MAJOR"*.app 2>/dev/null | grep -v -i beta | sort -V | tail -1)
-        [ -z "$APP" ] && APP=$(ls -d /Applications/Xcode_"$MAJOR"*.app 2>/dev/null | sort -V | tail -1)
+        echo "Installed: $(ls -d /Applications/Xcode*.app | tr '\n' ' ')"
+        ALL=$(ls -d /Applications/Xcode_"$MAJOR"*.app 2>/dev/null | sort -V || true)
+        APP=$(grep -v -i beta <<<"$ALL" | tail -1 || true)
+        [ -z "$APP" ] && APP=$(tail -1 <<<"$ALL")
         if [ -z "$APP" ]; then
-          echo "::error::No Xcode $MAJOR on this runner image. Installed:"; ls -d /Applications/Xcode*.app
+          echo "::error::No Xcode $MAJOR on this runner image."
           exit 1
         fi
         sudo xcode-select -s "$APP/Contents/Developer"
