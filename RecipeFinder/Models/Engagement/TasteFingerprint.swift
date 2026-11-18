@@ -138,7 +138,10 @@ struct TasteFingerprint: Equatable, Sendable {
         let category = recipe.category.lowercased()
 
         var traits = Set<TasteTrait>()
-        if !tags.isDisjoint(with: ["spicy", "hot"]) || name.hasAny(spicyNameWords)
+        // "Sweet Chilli Chicken" isn't hot — drop the not-hot phrases before looking for heat in the name.
+        var heatNameText = recipe.name.lowercased()
+        for phrase in notHotNamePhrases { heatNameText = heatNameText.replacingOccurrences(of: phrase, with: " ") }
+        if !tags.isDisjoint(with: ["spicy", "hot"]) || Words(heatNameText).hasAny(spicyNameWords)
             || ingredients.contains(where: { line in
                 spicyIngredients.contains { line.contains($0) } && !notHotLineWords.contains { line.contains($0) }
             }) {
@@ -176,6 +179,8 @@ struct TasteFingerprint: Equatable, Sendable {
     /// A chilli line that doesn't bring heat: optional, for colour (Kashmiri), mild or sweet, or a garnish.
     private static let notHotLineWords = ["optional", "kashmiri", "mild", "sweet chilli", "sweet chili", "to serve",
                                           "garnish", "paprika"]
+    /// A chilli in a dish's name that doesn't bring heat.
+    private static let notHotNamePhrases = ["sweet chilli", "sweet chili", "mild chilli", "mild chili"]
     private static let spicyNameWords: Set<String> = [
         "spicy", "chilli", "chili", "fiery", "vindaloo", "jalfrezi", "madras", "harissa", "jerk", "peri",
         "piri", "szechuan", "sichuan", "arrabbiata", "diavola", "buffalo wings", "buffalo chicken",
