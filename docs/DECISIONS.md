@@ -5,6 +5,14 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Smell Batch D screen 2 (RecipeSearchView)** (landed eaaccc2): folded 11 filter `@State`s into one
+  `filters: RecipeFilterCriteria` (bindings `$filters.x`) so reset = `RecipeFilterCriteria()` and a browse request
+  = `request.criteria(keepingSort:)` instead of three hand-synced field lists; its kitchen/collection fields stay empty
+  — read through `filterCriteria`. Kept on purpose (refactor, not fix): name trim is `.whitespaces` only, filter
+  sheet difficulty order (→ Inbox 🟡). Share-inbox routing → pure `SharedImportPlan` (extracted saved before the sheet
+  opens instead of interleaved — same result, the duplicate check reads the live library). Dropped the file's unused
+  logger. **Pre-mortem:** (1) a second shared link lost → `requeue` test; (2) a share saved twice / half-parsed →
+  verdict tests; (3) filter sheet loses a course/cuisine → facets tests.
 - **Xcode 27 / iOS 27 SDK** (landed 6608835): `macos-26` stops at Xcode 26.6; Xcode 27 is only on the `xcode-27` runner label
   (macOS 27 base, standard size = free). All app jobs moved there; `tools-build.yml` stays on macos-26 (Mac tool, no
   upload). `.github/actions/select-xcode` picks the newest non-beta `Xcode_27*.app` and fails loudly if missing, so

@@ -18,9 +18,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
-- Smells: ✅ Batch A, B (stale, no code), C (e39fe71). 🚧 Batch D: ✅ screen 1 MealPlanningView landed d52b80d
-  (builder 2026-11-18). Left: RecipeSearchView (515), CookingModeView (392), one branch each. Leftover branch
-  agent/meal-planning-split (auto-cleanup). Top Smell (times → Int minutes) waits on Needs owner.
+- Smells: ✅ Batch A, B (stale, no code), C (e39fe71). 🚧 Batch D: ✅ screen 1 MealPlanningView (d52b80d), ✅ screen 2
+  RecipeSearchView (eaaccc2, builder 2026-11-18). Left: CookingModeView (392). Leftover branches
+  agent/meal-planning-split, agent/recipe-search-split (auto-cleanup). Top Smell (times → Int minutes) waits on Needs owner.
 
 - Tester feedback 1: ✅ slices 1 (3ed805c), 2 Badges from Today (7f8e5b1, builder 2026-11-17), 4. ✅ 3 foreign recipes
   (d7bf8f7, builder 2026-11-17). Left: slice 5 (Cook lane's). Leftover branch agent/foreign-recipes (auto-cleanup). Leftover branches agent/cuisine-chip,
@@ -36,7 +36,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 ## Next action
 Xcode 27 landed 6608835: run Screenshots on main (cache now warm) and look at the shots; read the first
 TestFlight upload (no ITMS-90725) → tick. Then: iOS 27 Sendable warnings (View+ErrorAlert.swift:7, TodaySections.swift:308,
-RecipePhotoManagerSheet.swift:101) as an Inbox 🟡; next Queue item per feature/smell order (Smell Batch D screen 2).
+RecipePhotoManagerSheet.swift:101) as an Inbox 🟡; next Queue item per feature/smell order (Smell Batch D screen 2 ✅ landed eaaccc2 → next a feature, then screen 3 CookingModeView).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several

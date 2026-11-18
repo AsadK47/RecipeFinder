@@ -17,6 +17,10 @@ anything else between entries):
 - For you: RecipeFinder is now built with Apple's latest iOS 27 tools, keeping it ready for the App Store while it still runs on iOS 17.5 and later.
 - Behind the build: every check now runs on Xcode 27; two spots that its stricter compiler couldn't read quickly were rewritten with the same results, and two reviewers made sure uploads can't use a beta Xcode.
 
+## 2026-11-18 · Smell Batch D screen 2 · eaaccc2
+- For you: Recipes works just as before — search, filters, Discover and recipes you share from other apps now have their own tidy code.
+- Behind the build: tests pin how shared links and recipes are saved, opened or kept for later, and a reviewer and a challenger compared the move line by line before it built green on Xcode 27.
+
 ## 2026-11-18 · Smell Batch D screen 1 · d52b80d
 - For you: Plan works just as before — adding the week to Groceries, the day's empty states and moving between weeks now have their own tidy code.
 - Behind the build: tests pin every Groceries message and which empty state each day shows, including a clock-change day, and a reviewer and a challenger compared the move line by line.

@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-18 (item pass: Smell Batch D screen 2 — RecipeSearchView split; fixed: requeue untested, weak/tautological tests; 0 regressions, reviewer 0 defects)
+- ⚔️ Tests — view wiring has no push-CI test: `applyBrowseRequest` clearing `selectedCollectionID` (else "More Thai" shows an empty list with a collection picked) and `checkSharedImportInbox` calling the plan; only nightly UI tests reach it — same gap as screen 1 and Batch A.
+  → Owner: Accept / Reject / Later
+- Not fixed (future risk, documented on the property): `filters` carries kitchen/collection fields that mean nothing there; a later direct `filters.activeCount` would miss the collection chip.
+
 ## 2026-11-18 (item pass: Smell Batch D screen 1 — MealPlanningView split; fixed: clock-change day and 24h edge untested, stale comment; reviewer 0 defects)
 - ⚔️ Tests — the view-to-pure-type wiring (Add Week button/message from `WeekGroceryPlan`, `confirmAddWeek` iterating `candidates`, `dayContent` switch) has no push-CI test; only screenshot 02-plan and nightly UI tests reach it — same gap as Batch A slice 4 — cost if wrong: wrong count or empty state on Plan.
   → Owner: Accept / Reject / Later
