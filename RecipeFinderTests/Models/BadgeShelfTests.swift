@@ -2,8 +2,9 @@ import Foundation
 import Testing
 @testable import RecipeFinder
 
-/// Trophy shelf on Me: badges grouped Cooking / Streaks / Importing / Planning, newest earned first, the swipe order
-/// of the badge pager, locked-badge progress text and the "earn it here" route.
+/// Trophy shelf on Me: the medal row (earned, newest first), Next up (closest locked badges, one per ladder), the
+/// full shelf grouped Cooking / Streaks / Importing / Planning, the pager's swipe order, locked-badge progress text
+/// and the "earn it here" route.
 @Suite struct BadgeShelfTests {
 
     private func earned(_ type: BadgeType, daysAgo: Int) -> Badge {
@@ -173,6 +174,50 @@ import Testing
         #expect(today == [.cookedTen])
         #expect(BadgeShelf.nextUp(all([earned(.headChef, daysAgo: 1)]), metrics: metrics).first?.id
             == BadgeType.cookedTen.rawValue)
+    }
+
+    @Test func nextUpShowsOneStepPerLadderSoTheFirstCookIsntCrowdedOut() {
+        // 1/5, 1/10, 1/25 recipes would all outrank Head Chef's 0/1 if every rung competed.
+        let next = BadgeShelf.nextUp(all([earned(.firstRecipe, daysAgo: 1)]), metrics: BadgeMetrics(recipesCollected: 1))
+        #expect(next.map(\.id) == [BadgeType.fiveRecipes, .headChef, .firstCookPhoto].map(\.rawValue))
+    }
+
+    @Test func nextUpOffersTheLowestRungStillLocked() {
+        let next = BadgeShelf.nextUp(all([earned(.headChef, daysAgo: 2), earned(.cookedTen, daysAgo: 1)]),
+                                     metrics: BadgeMetrics(recipesCooked: 12), limit: 50)
+        let cookingRungs = next.map(\.id).filter {
+            [BadgeType.cookedTwentyFive, .cookedFifty, .cookedHundred].map(\.rawValue).contains($0)
+        }
+        #expect(cookingRungs == [BadgeType.cookedTwentyFive.rawValue])
+    }
+
+    // MARK: New cook / deep link
+
+    @Test func onlyTheWelcomeBadgeMeansANewCook() {
+        #expect(BadgeShelf.isNewCook([]))
+        #expect(BadgeShelf.isNewCook([earned(.welcomeAboard, daysAgo: 1)]))
+        #expect(!BadgeShelf.isNewCook([earned(.welcomeAboard, daysAgo: 2), earned(.headChef, daysAgo: 1)]))
+    }
+
+    @Test func aRequestedBadgeOutsideBothRowsOpensTheFullShelf() {
+        let medals = [earned(.headChef, daysAgo: 1)]
+        let next = [BadgeType.cookedTen.badge]
+        #expect(BadgeShelf.needsFullShelf(for: BadgeType.streakTwelveWeeks.rawValue, earned: medals, nextUp: next))
+        #expect(!BadgeShelf.needsFullShelf(for: BadgeType.cookedTen.rawValue, earned: medals, nextUp: next))
+        #expect(!BadgeShelf.needsFullShelf(for: BadgeType.headChef.rawValue, earned: medals, nextUp: next))
+    }
+
+    @Test func pagerSwipesThroughTheRowYouTapped() {
+        let badges = all([earned(.headChef, daysAgo: 2), earned(.mealPlanner, daysAgo: 1)])
+        let medals = BadgeShelf.earned(badges)
+        let next = BadgeShelf.nextUp(badges, metrics: BadgeMetrics())
+        let sections = BadgeShelf.sections(badges)
+        #expect(BadgeShelf.pagerOrder(.earned, earned: medals, nextUp: next, sections: sections).map(\.id)
+            == medals.map(\.id))
+        #expect(BadgeShelf.pagerOrder(.nextUp, earned: medals, nextUp: next, sections: sections).map(\.id)
+            == next.map(\.id))
+        #expect(BadgeShelf.pagerOrder(.shelf, earned: medals, nextUp: next, sections: sections).count
+            == BadgeType.allCases.count)
     }
 
     // MARK: Pager

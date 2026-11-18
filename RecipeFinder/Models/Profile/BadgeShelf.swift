@@ -118,7 +118,7 @@ extension BadgeType {
         return "\(progress.current) / \(progress.target) \(metric.unit)"
     }
 
-    /// The locked threshold badges closest to done: highest share done first, then fewest left, then the badge
+    /// The locked threshold badges closest to done, one per metric: highest share done first, then fewest left, then the badge
     /// list's own order. A badge already reached but not yet shown as earned is skipped (it's about to unlock).
     /// `kinds` limits which metrics count (Today: cooking only); nil = every kind.
     static func closest(
@@ -130,7 +130,13 @@ extension BadgeType {
                   let progress = type.progress(for: metrics), progress.current < progress.target else { return nil }
             return (type, progress.current, progress.target, index)
         }
-        let ranked = candidates.sorted { a, b in
+        // One step per ladder (the lowest still locked), or "1/5, 1/10, 1/25 recipes" would crowd out Head Chef.
+        var seen = Set<BadgeMetric>()
+        let lowestSteps = candidates.filter { candidate in
+            guard let metric = candidate.type.criterion.metric else { return false }
+            return seen.insert(metric).inserted
+        }
+        let ranked = lowestSteps.sorted { a, b in
             // Cross-multiplied so 1/2 vs 2/4 tie exactly (no floating point).
             let left = a.current * b.target, right = b.current * a.target
             if left != right { return left > right }
@@ -146,6 +152,11 @@ extension BadgeType {
         guard let progress = progress(for: metrics) else { return nil }
         return Double(progress.current) / Double(progress.target)
     }
+}
+
+/// The Profile row a badge was opened from.
+enum BadgeRow: Equatable {
+    case earned, nextUp, shelf
 }
 
 /// One shelf row: a group's badges, newest earned first, then the locked ones in the order you'd earn them.
@@ -188,6 +199,27 @@ enum BadgeShelf {
         let byID = Dictionary(badges.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         return BadgeType.closest(metrics: metrics, unlockedBadgeIDs: unlocked, limit: limit)
             .map { byID[$0.rawValue] ?? $0.badge }
+    }
+
+    /// True until something beyond Welcome Aboard (earned by opening the app) is earned: the medal row then points
+    /// at the first cook.
+    static func isNewCook(_ earned: [Badge]) -> Bool {
+        earned.allSatisfy { $0.id == BadgeType.welcomeAboard.rawValue }
+    }
+
+    /// A badge Profile is asked to show (Today's next-badge row) that sits in neither the medal row nor Next up only
+    /// exists in the full shelf — open it, or the badge vanishes once its card closes.
+    static func needsFullShelf(for badgeID: String, earned: [Badge], nextUp: [Badge]) -> Bool {
+        !(earned + nextUp).contains { $0.id == badgeID }
+    }
+
+    /// The pager swipes through the row you tapped, in its on-screen order.
+    static func pagerOrder(_ row: BadgeRow, earned: [Badge], nextUp: [Badge], sections: [BadgeShelfSection]) -> [Badge] {
+        switch row {
+        case .earned: earned
+        case .nextUp: nextUp
+        case .shelf: pagerOrder(sections)
+        }
     }
 
     /// Dated newest first; an undated earned badge after the dated ones; ties keep the badge list's order.

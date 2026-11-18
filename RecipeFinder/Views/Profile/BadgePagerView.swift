@@ -3,6 +3,8 @@ import SwiftUI
 /// Which badge the full-screen pager opens on.
 struct BadgePagerStart: Identifiable {
     let badgeID: String
+    /// The row it was opened from: the pager swipes through that row.
+    var row: BadgeRow = .shelf
     var id: String { badgeID }
 }
 

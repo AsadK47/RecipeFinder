@@ -8,11 +8,11 @@ struct ProfileBadgesSection: View {
     let earned: [Badge]
     let nextUp: [Badge]
     let metrics: BadgeMetrics
-    let onSelectBadge: (Badge) -> Void
-    /// The empty medal row's one action (Me › Profile has no tab of its own to switch to).
+    /// Owned by Profile so a deep link to a badge outside both rows can open the full shelf.
+    @Binding var showAll: Bool
+    let onSelectBadge: (Badge, BadgeRow) -> Void
+    /// The new cook's one action under the medal row.
     let onStartCooking: () -> Void
-
-    @State private var showAll = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
@@ -50,6 +50,7 @@ struct ProfileBadgesSection: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityValue(showAll ? "Expanded" : "Collapsed")
             .accessibilityIdentifier("me.badges.seeAll")
 
             if showAll {
@@ -67,9 +68,18 @@ struct ProfileBadgesSection: View {
     @ViewBuilder private var earnedRow: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
             subheading("Earned", icon: "medal.fill", trailing: earned.isEmpty ? nil : "\(earned.count)")
-            if earned.isEmpty {
+            if !earned.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(alignment: .top, spacing: AppTheme.spacing4) {
+                        ForEach(earned) { badge in
+                            tile(badge, row: .earned, identifier: "me.earned.\(badge.id)")
+                        }
+                    }
+                }
+            }
+            if BadgeShelf.isNewCook(earned) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                    Text("Your first medal is one cook away.")
+                    Text("Your next medal is one cook away.")
                         .font(.subheadline)
                         .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)
@@ -77,14 +87,6 @@ struct ProfileBadgesSection: View {
                         onStartCooking()
                     }
                     .accessibilityIdentifier("me.badges.startCooking")
-                }
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(alignment: .top, spacing: AppTheme.spacing4) {
-                        ForEach(earned) { badge in
-                            tile(badge, identifier: "me.earned.\(badge.id)")
-                        }
-                    }
                 }
             }
         }
@@ -98,7 +100,7 @@ struct ProfileBadgesSection: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: AppTheme.spacing4) {
                     ForEach(nextUp) { badge in
-                        tile(badge, identifier: "me.nextUp.\(badge.id)", showCount: true)
+                        tile(badge, row: .nextUp, identifier: "me.nextUp.\(badge.id)", showCount: true)
                     }
                 }
             }
@@ -113,7 +115,7 @@ struct ProfileBadgesSection: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: AppTheme.spacing4) {
                     ForEach(section.badges) { badge in
-                        tile(badge, identifier: "me.badge.\(badge.id)")
+                        tile(badge, row: .shelf, identifier: "me.badge.\(badge.id)")
                     }
                 }
             }
@@ -139,12 +141,12 @@ struct ProfileBadgesSection: View {
         .accessibilityAddTraits(.isHeader)
     }
 
-    private func tile(_ badge: Badge, identifier: String, showCount: Bool = false) -> some View {
+    private func tile(_ badge: Badge, row: BadgeRow, identifier: String, showCount: Bool = false) -> some View {
         let type = BadgeType(rawValue: badge.id)
         let progressText = badge.isUnlocked ? nil : type?.progressText(for: metrics)
         return Button {
             HapticManager.shared.light()
-            onSelectBadge(badge)
+            onSelectBadge(badge, row)
         } label: {
             BadgeCard(
                 badge: badge,
@@ -154,7 +156,9 @@ struct ProfileBadgesSection: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(badge.title)
-        .accessibilityValue(badge.isUnlocked ? "Earned" : ["Locked", progressText].compactMap { $0 }.joined(separator: ", "))
+        // VoiceOver reads "/" as "slash": "7 of 10 cooks".
+        .accessibilityValue(badge.isUnlocked ? "Earned" : ["Locked", progressText?.replacingOccurrences(of: " / ", with: " of ")]
+            .compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Opens the badge")
         .accessibilityIdentifier(identifier)
     }

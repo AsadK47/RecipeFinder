@@ -16,6 +16,8 @@ struct ProfileView: View {
     @State private var showSuccessFeedback = false
     @State private var badgeMetrics = BadgeMetrics()
     @State private var pagerStart: BadgePagerStart?
+    /// The grouped shelf behind See all; opened by a deep link to a badge that's in neither row.
+    @State private var showFullShelf = false
     /// Set by a locked badge's "earn it here" button; acted on once the pager has fully closed.
     @State private var pendingEarn: BadgeEarnAction?
 
@@ -42,12 +44,13 @@ struct ProfileView: View {
                             )
 
                             ProfileBadgesSection(
-                                sections: BadgeShelf.sections(allBadges),
-                                earned: BadgeShelf.earned(allBadges),
-                                nextUp: BadgeShelf.nextUp(allBadges, metrics: badgeMetrics),
+                                sections: shelfSections,
+                                earned: earnedBadges,
+                                nextUp: nextUpBadges,
                                 metrics: badgeMetrics,
-                                onSelectBadge: { badge in
-                                    pagerStart = BadgePagerStart(badgeID: badge.id)
+                                showAll: $showFullShelf,
+                                onSelectBadge: { badge, row in
+                                    pagerStart = BadgePagerStart(badgeID: badge.id, row: row)
                                 },
                                 onStartCooking: {
                                     NotificationCenter.default.post(name: BadgeEarnAction.cook.notification, object: nil)
@@ -109,7 +112,9 @@ struct ProfileView: View {
         // A sheet, not a full-screen cover, so the card closes with a swipe down as well as the ✕ (owner 2026-11-17).
         .sheet(item: $pagerStart, onDismiss: openPendingEarn) { start in
             BadgePagerView(
-                badges: BadgeShelf.pagerOrder(BadgeShelf.sections(allBadges)),
+                badges: BadgeShelf.pagerOrder(
+                    start.row, earned: earnedBadges, nextUp: nextUpBadges, sections: shelfSections
+                ),
                 startID: start.badgeID,
                 metrics: badgeMetrics,
                 onEarn: { pendingEarn = $0 }
@@ -138,6 +143,10 @@ struct ProfileView: View {
     private func handleShelfRequest(_ scroller: ScrollViewProxy) async {
         guard let request = shelfRequest.wrappedValue else { return }
         do { try await Task.sleep(for: .milliseconds(450)) } catch { return }
+        if let id = request.badgeID,
+           BadgeShelf.needsFullShelf(for: id, earned: earnedBadges, nextUp: nextUpBadges) {
+            showFullShelf = true
+        }
         withAnimation(.appSpring) { scroller.scrollTo(Self.shelfAnchor, anchor: .top) }
         if let id = request.badgeID { pagerStart = BadgePagerStart(badgeID: id) }
         shelfRequest.wrappedValue = nil
@@ -146,6 +155,10 @@ struct ProfileView: View {
     private var allBadges: [Badge] {
         badgeManager.getAllBadges(recipeCount: recipeStore.recipes.count)
     }
+
+    private var shelfSections: [BadgeShelfSection] { BadgeShelf.sections(allBadges) }
+    private var earnedBadges: [Badge] { BadgeShelf.earned(allBadges) }
+    private var nextUpBadges: [Badge] { BadgeShelf.nextUp(allBadges, metrics: badgeMetrics) }
 
     private func refreshBadgeMetrics() {
         badgeMetrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
