@@ -226,7 +226,7 @@ are merged into a newer item or parked — never start them; their text stays as
   levels or quests: a short celebration (cook #N, streak, stars, "add your photo"), distinct haptic, confetti, Reduce
   Motion respected; nudges a photo for My Cookbook. *Measure:* share of cooks with a rating/photo. *Done when:* summary
   content logic tested, screenshot, CI green.
-- [ ] **Plan — swipe to match** — 🚧 builder agent 2026-11-19 (Phase 2 · Decide; tester K. 2026-11-19 asked for an "Inspire me" swipe area — the same
+- [ ] **Plan — swipe to match** (Phase 2 · Decide; tester K. 2026-11-19 asked for an "Inspire me" swipe area — the same
   deck also opens from an **Inspire me** button at the top of Recipes → Discover, matches go to Fancy it / tonight). Merges *Swipe to match dinners*, *Plan my week 1/3 + 2/3*,
   *"What's for dinner?" decider* and *Sunday planning nudge* (all below, kept as spec). Plan's home is the week as seven
   photos (tap = cook, hold = move); "Plan my week" opens full-screen cards, one per empty dinner — right/♥ plans it,
@@ -239,7 +239,7 @@ are merged into a newer item or parked — never start them; their text stays as
   as they're made. **✅ Slice 2 (a7948be..06094b2):** "This week's dinners" under Plan my week — seven photo tiles
   (`WeekDinners` + `WeekDinnersView`); tap = straight into cooking, hold = Cook / Move to / Swap with / Take off; empty
   night → recipe picker; missed nights half height. Repeating dinners don't move yet (series refill → CHALLENGES).
-  **Left:** (3) up = tonight + matches feed Today; (4) 30-day memory of passed dishes (on-device store → Privacy §4.2 line, two reviewers); (5) opt-in Sunday
+  **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; (4) 30-day memory of passed dishes (on-device store → Privacy §4.2 line, two reviewers); (5) opt-in Sunday
   nudge; (6) busy nights / lock / re-roll.
 - [ ] **Groceries writes itself** (Phase 2 · Get). Merges *Groceries + Kitchen* and *Plan my week 3/3* (below, kept as
   spec). Planning a week builds the list — merged and scaled, minus what's at home, in the order you usually tick
@@ -731,6 +731,10 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
+- 🙋 **Plan deck: what does swipe up do?** (builder 2026-11-19, swipe to match slice 3): the deck deals tonight's card
+  first, so "up = tonight" can only show after the cook taps *Leave tonight open* (challenger: it nudges what they just
+  declined). Pick one: (a) up on a later night **swaps** with an already-planned tonight (old dish moves to that night)
+  — recommended; (b) drop up from the week deck, keep it for the Inspire me deck; (c) land as built (branch e45d1ce).
 - 🙋 **Two timers in cooking mode** (builder 2026-11-19, Cooking flow 3b): step timers are now named pills; the toolbar ⏱ still opens the old single custom timer (`CookTimerView`), which doesn't show the pills. Retire the toolbar timer in cooking mode, or turn it into "add a custom named timer" to the pills?
 - 🙋 **"Cuisines tried" counts courses** (builder 2026-11-17, Me hero): a cooked recipe with no cuisine counts its
   category (Main, Dessert…) as a cuisine — in the Globetrotter badge and now Me's strip (pinned by
@@ -946,3 +950,4 @@ _Last 7 days; older entries are in `docs/LOG.md`._
 - 2026-11-17 · Tester batch 1 (2) Badges from Today · 9e4b4e8..7f8e5b1 · Today → "Your cooking": tap the "1 more cook to …" row → Me opens Profile at the trophy shelf with that badge's card up; the streak row still opens the Cooking sheet; go back to Today and tap again → card opens again · review: deep-review + challenger agreed on 2 fixed (card presented mid push/tab switch → waits for it to settle; scroll test couldn't fail → isHittable), 2 more fixed (test checks the badge title; second-tap path tested), row hidden again once every cooking badge is earned, 1 dismissed (two buttons on the card → CHALLENGES) · looked at: 32-today-progress, 45-today-badge-on-shelf (new UI test) · CI green 44037915572
 - 2026-11-17 · Kitchen you can find slice 1 · 08804bc..6f924c9 · Groceries: To buy | At home switch at the top; At home lists the kitchen and the header field adds to it; ⋯ shows the side's actions; an expiry reminder opens At home; leave on At home, relaunch → still At home · fix for the a11y audit block: ContentView no longer observes `groceries.mode` via `@AppStorage` (`GroceriesMode.rememberSide`) — audit green after 2 red runs · branch moved to agent/kitchen-at-home-2 (force-push refused; old agent/kitchen-at-home superseded, delete by hand) · landed commit differs from tested 7749861 only in WORK.md · review: deep-review + challenger on slice 1, 6 fixed · looked at: 03-groceries, 46-groceries-at-home · CI green 44150330958 + UI 44152657082
 - 2026-11-17 · Kitchen you can find slice 2 (✅ item done) · 109db78..f8960bb · Today: "Your kitchen →" on Use it up / Fits your kitchen opens Groceries on At home; To buy: tap an "In kitchen" tag → At home; At home with only use-by items shows them, not "empty" · finished by a later builder run (branch was pushed green by an earlier session that stopped before review) · review: deep-review high + challenger, 2 fixed (count of unlisted items, tag hit area), 3 accepted → CHALLENGES · looked at: 29-today-use-soon, 47-today-kitchen-at-home, 03-groceries · CI green 44192502771, Screenshots 44192123935 (on c00ee6c, before the count-only fix)
+- 2026-11-19 · Plan swipe to match slice 3 (up = tonight) · ⏸ parked in Needs owner, branch agent/plan-deck-tonight e45d1ce unmerged · review: deep-review (2 fixed: steep sideways swipes, dead UI-test path) + challenger (premise → owner; midnight-open deck noted) · looked at: none (Screenshots cancelled pending answer)

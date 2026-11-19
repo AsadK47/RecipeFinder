@@ -37,13 +37,19 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
 - Plan: 🚧 **Plan — swipe to match** — slices 1 (23134c8) and 2 week photos (06094b2, builder 2026-11-19) landed.
-  Next slice: (3) up = tonight + matches feed Today. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
+  Slice 3 (up = tonight) ⏸ Needs owner — branch `agent/plan-deck-tonight` (e45d1ce: model `planTonight`/`canPlanTonight`,
+  view swipe up + "Have it tonight", unit + UI tests, 2 review fixes) unmerged; rework per owner's (a)/(b)/(c).
+  Open: `tonight` is fixed at deck open (midnight-open deck plans yesterday) — fix in the rework. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
 
 ## Next action
-Plan — swipe to match slice 3: in `PlanDeckView` a swipe up plans the card for tonight; deck matches feed Today's
-tonight pick. New branch `agent/plan-deck-tonight`.
+Plan slice 3 waits on the owner (Needs owner "Plan deck: what does swipe up do?"). Meanwhile take Plan slice (5)
+opt-in Sunday nudge — needs no answer — on a new branch `agent/plan-sunday-nudge`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
+  tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
+  tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
+  choice) — a swap that moves the old dish keeps it (option a).
 - **Plan week photos (slice 2):** photos sit *under* the week strip + day list for now (strip still picks a day for
   breakfast/lunch); trimming the strip waits for *Groceries writes itself* (deletes duplicated views). Hold = context
   menu (Cook / Move to <day> / Swap with <day> (dish) / Take off the plan), not drag-and-drop — a drag across a
