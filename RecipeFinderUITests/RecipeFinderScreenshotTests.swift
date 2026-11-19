@@ -957,10 +957,17 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             XCTAssertNotEqual(card.label, firstCard, "Not this one should deal a different dish.")
         }
 
-        // Swipe up = tonight, offered while tonight is open and the card is for a later night (earlier tests usually
-        // plan tonight, so this runs when the simulator's tonight is still free).
+        // Swipe up = tonight, offered while tonight is open and the card is for a later night. When tonight is open its
+        // card comes first, so leave it open to reach a later night (earlier tests usually plan tonight, so this runs
+        // when the simulator's tonight is still free).
         let tonight = app.buttons["planDeck.tonight"]
-        if tonight.exists, card.exists {
+        let skipNight = app.buttons["planDeck.skipNight"]
+        if !tonight.exists, card.exists, skipNight.exists, night.label.hasPrefix(Date().formatted(.dateTime.weekday(.wide))) {
+            checkpoint(app, "leave tonight open")
+            skipNight.tap()
+            settle(0.8)
+        }
+        if tonight.waitForExistence(timeout: 2), card.exists {
             let before = night.label
             checkpoint(app, "swipe up for tonight")
             card.swipeUp(velocity: .fast)

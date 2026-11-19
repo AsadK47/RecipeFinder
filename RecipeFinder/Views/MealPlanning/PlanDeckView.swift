@@ -112,12 +112,16 @@ struct PlanDeckView: View {
                     exitEdge = isDraggingUp ? .top : value.translation.width < 0 ? .leading : .trailing
                 }
                 .onEnded { value in
-                    let width = value.translation.width, height = value.translation.height
-                    if isDraggingUp, height < -Self.swipeThreshold {
-                        planTonight()
-                    } else if abs(width) >= abs(height), width > Self.swipeThreshold {
+                    let width = value.translation.width
+                    if isDraggingUp {
+                        if value.translation.height < -Self.swipeThreshold {
+                            planTonight()
+                        } else {
+                            withAnimation(.appGentle) { drag = .zero }
+                        }
+                    } else if width > Self.swipeThreshold {
                         plan()
-                    } else if abs(width) >= abs(height), width < -Self.swipeThreshold {
+                    } else if width < -Self.swipeThreshold {
                         skip()
                     } else {
                         withAnimation(.appGentle) { drag = .zero }
