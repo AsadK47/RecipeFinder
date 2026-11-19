@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-19 (item pass: Plan — swipe to match slice 1 deck; fixed: VoiceOver reached the planner under the deck, dead-end closing copy, passed dish lost for the whole deck / "leave open" lost its dish, wrong exit side + double-tap planning an unseen night, 4 unguarded rules + seed-blind test, triple haptics, accessibility-size overflow, per-pair word sets)
+- ⚔️ [Perf] `hasEmptyDinners` / `weekHasPlannedMeals` fetch the week in `body` and read `Date()` (button state only refreshes on the next render, e.g. not at midnight) — both reviewers — alternative: cache the week's plans in `@State` on appear / plan change — cost if wrong: small (7 × week meals).
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] A dinner synced in from iCloud while the deck is open is replaced when that night is planned (`savePick` → `addMealPlan` replaces the slot) — one reviewer, verified — alternative: skip occupied nights at pick time — cost if wrong: rare silent swap.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Test] UI test can't tell a pick landed on the right day as a dinner (`savePick` read by both reviewers, correct) — next slice's seven-photo week makes it visible to a UI test.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-19 (item pass: Cooking flow slice 3b named timers; fixed: finished timer locked its step, no in-app signal, 3 untested alert paths, paused label, capsule token)
 - ⚔️ [Break] With timer notifications off (or denied) a finished timer is one haptic while the strip shows, nothing outside cooking mode (`CookingTimerStrip.swift`, `CookingTimers.swift` NotificationCookingTimerAlerts) — both reviewers — alternative: in-app sound, or "alerts off" on the pill — cost if wrong: overcooked rice.
   → Owner: Accept / Reject / Later
