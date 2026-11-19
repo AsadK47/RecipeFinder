@@ -226,7 +226,8 @@ are merged into a newer item or parked — never start them; their text stays as
   levels or quests: a short celebration (cook #N, streak, stars, "add your photo"), distinct haptic, confetti, Reduce
   Motion respected; nudges a photo for My Cookbook. *Measure:* share of cooks with a rating/photo. *Done when:* summary
   content logic tested, screenshot, CI green.
-- [ ] **Plan — swipe to match** (Phase 2 · Decide). Merges *Swipe to match dinners*, *Plan my week 1/3 + 2/3*,
+- [ ] **Plan — swipe to match** (Phase 2 · Decide; tester K. 2026-11-19 asked for an "Inspire me" swipe area — the same
+  deck also opens from an **Inspire me** button at the top of Recipes → Discover, matches go to Fancy it / tonight). Merges *Swipe to match dinners*, *Plan my week 1/3 + 2/3*,
   *"What's for dinner?" decider* and *Sunday planning nudge* (all below, kept as spec). Plan's home is the week as seven
   photos (tap = cook, hold = move); "Plan my week" opens full-screen cards, one per empty dinner — right/♥ plans it,
   left/✕ next card, up = tonight — drawn by the Fill-my-week rules (quick weeknights, variety, expiring items, busy
@@ -712,6 +713,10 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
 ## Parking lot (owner 2026-11-14 — ideas wait here; reviewed monthly with the owner)
+- **Friends' kitchen** (tester K., 2026-11-19: "community aspect of what friends are cooking") · Remember/Discover.
+  Privacy-first shape: no accounts or server — opt-in sharing with chosen friends via iCloud (CloudKit shared zone) or
+  share links: "Sam made your lasagne", see a friend's latest cooks, copy their recipe. Needs owner call (privacy
+  policy, new sync scope) after Phase 2. Today's step towards it: sharing a My Cookbook page.
 Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — why it might matter`. No loop step → it stays.
 - Swipe between tabs (Instagram-style) — loop step: none — owner idea 2026-11-15; clashes with sideways rows (Today, Recipes, Me) and the edge back-swipe; decide after the owner's week of use.
 - Play extras (Kitchen Bites, Cooking Path, quests, mascot, Spoons + shop, daily-streak rework) — loop step: Cook
