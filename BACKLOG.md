@@ -753,7 +753,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
-- 🟡 Quick snacks save difficulty "1" (`QuickSnackSheet.swift:216` → `RecipeModel` init `"\(difficulty)"`), so they
+- 🟡 — 🚧 builder agent 2026-11-19 — Quick snacks save difficulty "1" (`QuickSnackSheet.swift:216` → `RecipeModel` init `"\(difficulty)"`), so they
   show 2 bars and no difficulty filter finds them — save "Basic" (challenger, difficulty bars; verified).
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
