@@ -915,6 +915,61 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         next.tap()
     }
 
+    /// Plan — swipe to match: "Plan my week" deals one card per empty dinner; Plan it (button) and a right swipe each
+    /// plan the night and move to the next, Not this one deals another dish for the same night. Sorts last: it
+    /// plans dinners, which would fill the empty days earlier tests (Today's week strip) rely on.
+    @MainActor
+    func testZZZPlanMyWeek() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Plan", shot: nil)
+        let open = app.buttons["plan.planMyWeek"]
+        guard open.waitForExistence(timeout: 5) else {
+            throw XCTSkip("Every dinner left this week is already planned on this simulator.")
+        }
+        checkpoint(app, "plan my week")
+        open.tap()
+        let card = app.descendants(matching: .any).matching(identifier: "planDeck.card").firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 5), "Plan my week should deal a card.")
+        let night = app.staticTexts["planDeck.night"]
+        XCTAssertTrue(night.exists, "The deck should say which night it's planning.")
+        settle()
+        snap(app, "52-plan-deck")
+
+        // Not this one: another dish for the same night.
+        let firstNight = night.label
+        let firstCard = card.label
+        checkpoint(app, "skip")
+        app.buttons["planDeck.skip"].tap()
+        settle(0.8)
+        if card.exists {
+            XCTAssertEqual(night.label, firstNight, "Not this one should stay on the same night.")
+            XCTAssertNotEqual(card.label, firstCard, "Not this one should deal a different dish.")
+        }
+
+        // Plan it (button), then a right swipe: each plans the night and moves on.
+        let finished = app.staticTexts["planDeck.finished"]
+        for path in ["button", "swipe"] where card.exists {
+            let before = night.label
+            checkpoint(app, "plan by \(path)")
+            if path == "button" { app.buttons["planDeck.plan"].tap() } else { card.swipeRight(velocity: .fast) }
+            dismissBadgeSheet(app)
+            settle(0.8)
+            XCTAssertTrue(finished.exists || night.label != before, "Planning by \(path) should move to the next night.")
+        }
+
+        let close = finished.exists ? app.buttons["planDeck.done"] : app.buttons["planDeck.close"]
+        XCTAssertTrue(close.exists, "The deck should offer a way out.")
+        if finished.exists { snap(app, "53-plan-deck-done") }
+        close.tap()
+        XCTAssertTrue(open.waitForExistence(timeout: 5) || app.tabBars.firstMatch.exists,
+                      "Closing the deck should return to the planner.")
+        XCTAssertFalse(card.exists, "The deck should be closed.")
+    }
+
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
     /// The empty cookbook is 17-me on a fresh simulator. Named to sort after testZCaptureMadeIt for the same reason.
     @MainActor

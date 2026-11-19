@@ -115,6 +115,44 @@ extension MealPlanningView {
         weekShoppingFeedback = weekPlan.addedMessage
     }
 
+    // MARK: - Plan my week
+
+    /// This week's plans from today on leave at least one dinner open.
+    var hasEmptyDinners: Bool {
+        guard let start = currentWeekStart else { return false }
+        let plans = mealPlanningManager.mealPlansForWeek(starting: start).meals
+        return !PlanDeck.emptyDinnerDays(week: daysInCurrentWeek, plans: plans, today: Date()).isEmpty
+    }
+
+    func openPlanDeck() {
+        guard let start = currentWeekStart else { return }
+        let plans = mealPlanningManager.mealPlansForWeek(starting: start).meals
+        let expiring = kitchenManager.inventoryItems
+            .filter(\.isExpiringSoon)
+            .sorted { ($0.daysUntilExpiry ?? .max) < ($1.daysUntilExpiry ?? .max) }
+            .map(\.name)
+        planDeck = PlanDeck(
+            days: PlanDeck.emptyDinnerDays(week: daysInCurrentWeek, plans: plans, today: Date()),
+            recipes: recipes, plannedThisWeek: plans, expiringItemNames: expiring,
+            seed: UInt64.random(in: .min ... .max)
+        )
+        HapticManager.shared.light()
+    }
+
+    /// Saved as each card is planned, so closing part-way keeps what was picked.
+    func savePick(_ pick: PlanDeck.Pick) {
+        mealPlanningManager.addMealPlan(MealPlanModel(
+            recipeId: pick.recipe.id, recipeName: pick.recipe.name, date: pick.day,
+            mealTime: .dinner, servings: pick.recipe.currentServings
+        ))
+        HapticManager.shared.success()
+    }
+
+    func closePlanDeck() {
+        planDeck = nil
+        updateSelectedMealTimes(for: selectedDate)
+    }
+
     // MARK: - Week navigation
 
     func previousWeek() {

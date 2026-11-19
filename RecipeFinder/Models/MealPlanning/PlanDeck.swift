@@ -1,0 +1,213 @@
+import Foundation
+
+/// "Plan my week": one card per empty dinner, drawn by the Fill-my-week rules — quick on weeknights, longer ones at
+/// weekends, not the same cuisine two nights running, kitchen items that are expiring first, then favourites and
+/// well-rated dishes. ♥ plans the card for its night; ✕ shows another dish for the same night. A dish planned this
+/// week, picked or passed on here is never dealt again. Pure value type, seeded, so the deck is testable.
+struct PlanDeck {
+    struct Card: Equatable, Identifiable {
+        let day: Date
+        let recipe: RecipeModel
+        let reason: String
+        var id: String { "\(day.timeIntervalSinceReferenceDate)-\(recipe.id)" }
+    }
+
+    struct Pick: Equatable {
+        let day: Date
+        let recipe: RecipeModel
+    }
+
+    /// One dish the deck can deal, with what the rules need worked out once.
+    private struct Candidate {
+        let recipe: RecipeModel
+        let minutes: Int
+        let cuisine: String?
+        /// Expiring kitchen items this dish uses, in kitchen order.
+        let expiring: [String]
+    }
+
+    /// Longer than this on a weeknight counts against a dish.
+    static let longWeeknightMinutes = 45
+
+    /// The empty dinners being planned, in order.
+    let days: [Date]
+    private(set) var dayIndex = 0
+    private(set) var current: Card?
+    private(set) var picks: [Pick] = []
+    private let candidates: [Candidate]
+    private var dealt: Set<UUID>
+    /// Cuisine of each dinner already on the plan (or picked here), by start of day.
+    private var cuisineByDay: [Date: String]
+    private let calendar: Calendar
+
+    /// - Parameters:
+    ///   - days: the empty dinners to plan (see `emptyDinnerDays`).
+    ///   - plannedThisWeek: the week's existing plans — their dishes aren't dealt again and their cuisines count for
+    ///     variety.
+    ///   - expiringItemNames: kitchen items expiring soon, most urgent first.
+    init(
+        days: [Date],
+        recipes: [RecipeModel],
+        plannedThisWeek: [MealPlanModel],
+        expiringItemNames: [String],
+        seed: UInt64,
+        calendar: Calendar = .current
+    ) {
+        self.calendar = calendar
+        self.days = days.map { calendar.startOfDay(for: $0) }
+        let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        dealt = Set(plannedThisWeek.map(\.recipeId))
+        var cuisines: [Date: String] = [:]
+        for plan in plannedThisWeek where plan.mealTime == .dinner {
+            if let cuisine = byID[plan.recipeId].flatMap(Self.cuisineKey) {
+                cuisines[calendar.startOfDay(for: plan.date)] = cuisine
+            }
+        }
+        cuisineByDay = cuisines
+
+        let expiringTerms = expiringItemNames.map { ($0, KitchenRecipeMatcher.normalizedTerm($0)) }
+            .filter { !$0.1.isEmpty }
+        var generator = SeededGenerator(seed: seed)
+        candidates = Self.dinnerRecipes(recipes)
+            .sorted { $0.name < $1.name }
+            .shuffled(using: &generator)
+            .map { recipe in
+                // Normalising is regex work: skip it for the whole library when nothing is expiring.
+                let terms = expiringTerms.isEmpty
+                    ? [] : recipe.ingredients.map { KitchenRecipeMatcher.normalizedTerm($0.name) }
+                let uses = expiringTerms.filter { item in
+                    terms.contains { KitchenRecipeMatcher.ingredientMatches($0, item.1) }
+                }.map(\.0)
+                return Candidate(recipe: recipe, minutes: recipe.totalMinutes,
+                                 cuisine: Self.cuisineKey(recipe), expiring: uses)
+            }
+        current = deal()
+    }
+
+    /// Days from today to the end of `week` with no dinner planned.
+    static func emptyDinnerDays(
+        week: [Date], plans: [MealPlanModel], today: Date, calendar: Calendar = .current
+    ) -> [Date] {
+        let start = calendar.startOfDay(for: today)
+        return week
+            .map { calendar.startOfDay(for: $0) }
+            .filter { $0 >= start }
+            .filter { day in !plans.contains { $0.isSlot(day, .dinner, calendar: calendar) } }
+    }
+
+    /// Mains and soups; a library with neither offers everything (same rule as Today's dinner pick).
+    static func dinnerRecipes(_ recipes: [RecipeModel]) -> [RecipeModel] {
+        let dinner: Set<String> = ["main", "soup"]
+        let mains = recipes.filter { dinner.contains($0.category.trimmingCharacters(in: .whitespaces).lowercased()) }
+        return mains.isEmpty ? recipes : mains
+    }
+
+    var isFinished: Bool { current == nil }
+
+    /// "2 of 5" — the night being planned, counted from 1.
+    var position: (night: Int, of: Int) {
+        (min(dayIndex + 1, days.count), days.count)
+    }
+
+    /// The closing card's heading and line once every night has been dealt.
+    var finishedCopy: (title: String, message: String) {
+        if !picks.isEmpty {
+            let dinners = picks.count == 1 ? "1 dinner" : "\(picks.count) dinners"
+            return ("\(dinners) planned", "They're on your week. Tap one there to cook it.")
+        }
+        if days.isEmpty {
+            return ("Your week is planned", "Every dinner from today has a dish.")
+        }
+        return ("Your nights are open", "Add more recipes and the deck has more to choose from.")
+    }
+
+    /// Plans the current card's dish for its night and moves to the next night.
+    mutating func plan() {
+        guard let card = current else { return }
+        picks.append(Pick(day: card.day, recipe: card.recipe))
+        if let cuisine = Self.cuisineKey(card.recipe) { cuisineByDay[card.day] = cuisine }
+        dayIndex += 1
+        current = deal()
+    }
+
+    /// Passes on the current dish and deals another for the same night (or moves on when none is left).
+    mutating func skip() {
+        guard current != nil else { return }
+        current = deal()
+    }
+
+    /// Leaves the current night empty and moves to the next one.
+    mutating func skipNight() {
+        guard current != nil else { return }
+        dayIndex += 1
+        current = deal()
+    }
+
+    /// The best undealt dish for the current night; a night with nothing left is left empty.
+    private mutating func deal() -> Card? {
+        while dayIndex < days.count {
+            let day = days[dayIndex]
+            var best: (candidate: Candidate, score: Int)?
+            for candidate in candidates where !dealt.contains(candidate.recipe.id) {
+                let value = score(candidate, on: day)
+                if value > (best?.score ?? .min) { best = (candidate, value) }
+            }
+            if let best {
+                dealt.insert(best.candidate.recipe.id)
+                return Card(day: day, recipe: best.candidate.recipe, reason: reason(best.candidate, on: day))
+            }
+            dayIndex += 1
+        }
+        return nil
+    }
+
+    private func isWeekend(_ day: Date) -> Bool { calendar.isDateInWeekend(day) }
+
+    private func neighbourCuisines(of day: Date) -> [String] {
+        [-1, 1].compactMap { offset in
+            calendar.date(byAdding: .day, value: offset, to: day).flatMap { cuisineByDay[$0] }
+        }
+    }
+
+    private func score(_ candidate: Candidate, on day: Date) -> Int {
+        var total = 0
+        let quick = TodayFeed.quickMinutes(of: candidate.recipe) != nil
+        if isWeekend(day) {
+            if candidate.minutes > TodayFeed.quickLimitMinutes { total += 1 }
+        } else if quick {
+            total += 3
+        } else if candidate.minutes > Self.longWeeknightMinutes {
+            total -= 3
+        }
+        if let cuisine = candidate.cuisine, neighbourCuisines(of: day).contains(cuisine) { total -= 4 }
+        total += min(candidate.expiring.count, 2) * 2
+        if candidate.recipe.isFavorite { total += 1 }
+        if candidate.recipe.rating >= 4 { total += 1 }
+        return total
+    }
+
+    /// Why this dish, for this night — the strongest rule that picked it.
+    private func reason(_ candidate: Candidate, on day: Date) -> String {
+        if let item = candidate.expiring.first {
+            return "Uses your \(item.lowercased()) while it's fresh"
+        }
+        let minutes = candidate.minutes
+        if !isWeekend(day), TodayFeed.quickMinutes(of: candidate.recipe) != nil {
+            return "Quick for a weeknight · \(DurationFormatter.label(minutes: minutes))"
+        }
+        if isWeekend(day), minutes > TodayFeed.quickLimitMinutes {
+            return "A weekend cook · \(DurationFormatter.label(minutes: minutes))"
+        }
+        if candidate.recipe.isFavorite { return "One of your favourites" }
+        if candidate.recipe.rating >= 4 { return "You rated it \(candidate.recipe.rating) stars" }
+        if let cuisine = candidate.recipe.cuisine?.trimmingCharacters(in: .whitespaces), !cuisine.isEmpty {
+            return "A night of \(cuisine) food"
+        }
+        return "Something new for the week"
+    }
+
+    private static func cuisineKey(_ recipe: RecipeModel) -> String? {
+        let key = recipe.cuisine?.trimmingCharacters(in: .whitespaces).lowercased() ?? ""
+        return key.isEmpty ? nil : key
+    }
+}

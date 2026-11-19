@@ -20,6 +20,8 @@ struct MealPlanningView: View {
     @State var showAddWeekConfirm = false
     /// Non-nil while the meal-reminder time picker is presented.
     @State var reminderContext: ReminderContext?
+    /// Non-nil while "Plan my week" is dealing cards.
+    @State var planDeck: PlanDeck?
 
     let mealCalendar = MealPlanCalendar()
 
@@ -43,6 +45,12 @@ struct MealPlanningView: View {
                 ScrollView {
                     VStack(spacing: AppTheme.spacing20) {
                         weekStripView
+
+                        if hasEmptyDinners {
+                            PrimaryButton("Plan my week", systemImage: "rectangle.stack.fill", fillWidth: true,
+                                          action: openPlanDeck)
+                                .accessibilityIdentifier("plan.planMyWeek")
+                        }
 
                         if !pantryExpirySuggestions.isEmpty {
                             ExpiryRecipeSuggestionsSection(
@@ -77,7 +85,15 @@ struct MealPlanningView: View {
                     .padding(.bottom, AppTheme.spacing100)
                 }
             }
+
+            if let deck = Binding($planDeck) {
+                PlanDeckView(deck: deck, onPlan: savePick, onClose: closePlanDeck)
+                    .transition(.move(edge: .bottom))
+                    .zIndex(1)
+            }
         }
+        .toolbar(planDeck == nil ? .automatic : .hidden, for: .tabBar)
+        .animation(.appGentle, value: planDeck == nil)
         .appNavigationChrome()
         .animation(.appGentle, value: selectedMealTimes)
         .animation(.appGentle, value: pantryExpirySuggestions.count)
@@ -268,7 +284,7 @@ struct MealPlanningView: View {
         return mealPlanningManager.mealPlansForWeek(starting: start).meals.contains { !$0.isCompleted }
     }
 
-    private var daysInCurrentWeek: [Date] {
+    var daysInCurrentWeek: [Date] {
         mealCalendar.daysInWeek(containing: selectedDate)
     }
 }
