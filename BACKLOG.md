@@ -226,7 +226,7 @@ are merged into a newer item or parked — never start them; their text stays as
   levels or quests: a short celebration (cook #N, streak, stars, "add your photo"), distinct haptic, confetti, Reduce
   Motion respected; nudges a photo for My Cookbook. *Measure:* share of cooks with a rating/photo. *Done when:* summary
   content logic tested, screenshot, CI green.
-- [ ] **Plan — swipe to match** (Phase 2 · Decide). Merges *Swipe to match dinners*, *Plan my week 1/3 + 2/3*,
+- [ ] **Plan — swipe to match** (Phase 2 · Decide). — 🚧 builder agent 2026-11-19 (slice 2) Merges *Swipe to match dinners*, *Plan my week 1/3 + 2/3*,
   *"What's for dinner?" decider* and *Sunday planning nudge* (all below, kept as spec). Plan's home is the week as seven
   photos (tap = cook, hold = move); "Plan my week" opens full-screen cards, one per empty dinner — right/♥ plans it,
   left/✕ next card, up = tonight — drawn by the Fill-my-week rules (quick weeknights, variety, expiring items, busy
