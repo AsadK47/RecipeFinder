@@ -161,25 +161,39 @@ struct CookingFinishedCard: View {
     }
 }
 
-/// Under a step: the ingredients it uses, with amounts, so the cook needn't flip back to the list.
+/// Under a step: the ingredients it uses, so the cook needn't flip back to the list. Amounts are the recipe's,
+/// left off where the step sets its own ("1 tbsp oil", "the remaining oil").
 struct CookingStepIngredients: View {
+    let uses: [StepIngredientMatcher.Use]
     let ingredients: [Ingredient]
     let scaleFactor: Double
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
 
+    /// One line per use: "200 g butter", or just "Oil" when the step gives its own amount.
+    static func lines(for uses: [StepIngredientMatcher.Use], in ingredients: [Ingredient], scaleFactor: Double,
+                      system: MeasurementSystem) -> [String] {
+        uses.compactMap { use in
+            guard ingredients.indices.contains(use.index) else { return nil }
+            let ingredient = ingredients[use.index]
+            return use.stepGivesAmount
+                ? ingredient.displayName
+                : CookingIngredientChecklist.line(for: ingredient, scaleFactor: scaleFactor, system: system)
+        }
+    }
+
     var body: some View {
+        let lines = Self.lines(for: uses, in: ingredients, scaleFactor: scaleFactor, system: measurementSystem)
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            Text("For this step")
+            Text("Ingredients in this step")
                 .font(.subheadline.weight(.semibold))
                 .adaptiveSecondaryForeground()
-            ForEach(ingredients) { ingredient in
+            ForEach(lines.indices, id: \.self) { i in
                 HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing10) {
                     Circle()
                         .fill(.white.opacity(0.6))
                         .frame(width: 6, height: 6)
                         .accessibilityHidden(true)
-                    Text(CookingIngredientChecklist.line(for: ingredient, scaleFactor: scaleFactor,
-                                                         system: measurementSystem))
+                    Text(lines[i])
                         .font(.body)
                         .adaptiveForegroundColor()
                         .multilineTextAlignment(.leading)

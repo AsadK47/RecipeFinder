@@ -42,13 +42,18 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 Smell Batch D ✅ (7f4580c). Next: the next Queue item per BACKLOG "Next" line (feature after smell), then Smell Batch E.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey` — full name first
-  (claims its span), else the head word ("onion" for "red onion") unless generic (sauce/powder/juice/stock…). Precision
-  over recall: a wrong ingredient on a step misleads more than a missing one. Rejected: on-device AI (slow, not
-  testable), any-word matching ("red" → red pepper). Computed once in `onAppear` into `@State`, not in `body`.
-  **Pre-mortem:** (1) wrong ingredient shown (oil in "boil", olive oil on a sesame-oil step) → word-boundary, claim and
-  generic-head tests; (2) nothing shown for "the eggs"/"tomato" plurals → plural tests; (3) card pushes the step text /
-  Next off-screen on a small phone → it sits inside the step's ScrollView, screenshot 50.
+- **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey`, one longest-first
+  claim loop: full name (each side of an "or") → last two words ("soy sauce" for "light soy sauce") → head word
+  ("onion" for "red onion", unless generic: sauce/powder/stock…) or the meat before a cut ("chicken" for "chicken
+  breast"). Rejected matches: span claimed by a longer name ("sesame oil", "spring onions"), followed by a compound
+  word ("garlic powder", "pepper flakes", "tomato paste"), after "without"/"no", or a one-word match right after another
+  ingredient's name end ("garlic cloves" ≠ the spice). Amounts are the recipe's, left off when the step sets its own
+  ("1 tbsp oil", "remaining", "half"); heading "Ingredients in this step". Checked on all 332 bundled recipes with a
+  Python port (challenger found 64 + 20 false positives in v1; fixed). Rejected: on-device AI (slow, not testable),
+  any-word matching. Computed once in `onAppear` into `@State`. Known misses (accepted, precision first): "vanilla"
+  for "vanilla extract", "the onions" when two onion lines exist shows the plain one.
+  **Pre-mortem:** (1) wrong ingredient shown → claim/compound/negation/garlic-cloves tests + 2 real seed steps;
+  (2) plurals missed → plural table; (3) card pushes step/Next off-screen → inside the step ScrollView, screenshot 50.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

@@ -13,8 +13,8 @@ struct CookingModeView: View {
     @State private var isFinished = false
     @State private var completedItems: Set<Int> = []
     @State private var showTimerSheet = false
-    /// Ingredient indices each item uses — matched once per cook, not on every redraw.
-    @State private var stepIngredients: [[Int]] = []
+    /// Ingredients each item uses — matched once per cook, not on every redraw.
+    @State private var stepIngredients: [[StepIngredientMatcher.Use]] = []
     @Environment(\.recipeTimer) private var timerManager
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
@@ -32,9 +32,8 @@ struct CookingModeView: View {
     // Minutes extracted from the current step's text — drives the timer button.
     private var stepTimerMinutes: Int? { plan.timerMinutes(at: currentIndex) }
 
-    private var currentStepIngredients: [Ingredient] {
-        guard stepIngredients.indices.contains(currentIndex) else { return [] }
-        return stepIngredients[currentIndex].compactMap { recipe.ingredients.indices.contains($0) ? recipe.ingredients[$0] : nil }
+    private var currentStepIngredients: [StepIngredientMatcher.Use] {
+        stepIngredients.indices.contains(currentIndex) ? stepIngredients[currentIndex] : []
     }
 
     /// Records the cook (streak + badges, via `onFinish`) and leaves. Shared by the "Finish" button and by
@@ -97,7 +96,7 @@ struct CookingModeView: View {
             CookTimerView()
         }
         .onAppear {
-            stepIngredients = plan.ingredientIndices(from: recipe.ingredients)
+            stepIngredients = plan.ingredientUses(from: recipe.ingredients)
             UIApplication.shared.isIdleTimerDisabled = true
             CookingSession.shared.start(
                 recipeName: recipe.name,
@@ -158,7 +157,7 @@ struct CookingModeView: View {
 
                     let used = currentStepIngredients
                     if !used.isEmpty {
-                        CookingStepIngredients(ingredients: used, scaleFactor: recipe.scaleFactor)
+                        CookingStepIngredients(uses: used, ingredients: recipe.ingredients, scaleFactor: recipe.scaleFactor)
                     }
                 }
             }
