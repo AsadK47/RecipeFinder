@@ -124,10 +124,6 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
         recipe.tap()
         settle()
-        // Finish at the end opens Made it only for a recipe not yet cooked today (one cook a day).
-        let markCooked = app.buttons["recipe.markCooked"]
-        XCTAssertTrue(markCooked.waitForExistence(timeout: 10), "Recipe detail should show Made it.")
-        let cookedBefore = !markCooked.isEnabled
 
         let rows = app.buttons.matching(identifier: "recipe.ingredient.row")
         XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 5), "The recipe should list its ingredients.")
@@ -222,32 +218,6 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         move.tap()
         settle(1)
         XCTAssertTrue(timerPill.waitForExistence(timeout: 3), "The timer should stay visible on another step.")
-
-        // Cooking flow slice 4: the last step's Finish closes cooking mode straight into the Made it sheet —
-        // unless this recipe was already cooked today (state survives between runs), which shows the done screen.
-        for _ in 0..<40 where !next.label.hasPrefix("Finish") {
-            next.tap()
-            settle(0.5)
-        }
-        XCTAssertTrue(next.label.hasPrefix("Finish"), "Next should reach the last step's Finish.")
-        checkpoint(app, "cooking-finish")
-        next.tap()
-        let madeItDone = app.buttons["madeIt.done"]
-        let doneCard = app.descendants(matching: .any).matching(identifier: "cooking.finished").firstMatch
-        if cookedBefore {
-            XCTAssertTrue(doneCard.waitForExistence(timeout: 5), "A second cook today should show the done screen.")
-            app.buttons["cooking.done"].tap()
-        } else {
-            XCTAssertTrue(madeItDone.waitForExistence(timeout: 6), "Finish should open the Made it sheet.")
-            XCTAssertFalse(doneCard.exists, "Finish should close cooking mode, not stop on a done screen.")
-            settle(1)
-            snap(app, "52-cooking-made-it")
-            madeItDone.tap()
-            // A first cook can earn a badge, revealed once Made it closes.
-            dismissBadgeSheet(app)
-        }
-        XCTAssertTrue(app.buttons["recipe.markCooked"].waitForExistence(timeout: 5), "Should be back on the recipe.")
-        XCTAssertFalse(app.buttons["recipe.markCooked"].isEnabled, "Finishing should count today's cook.")
     }
 
     /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,
@@ -888,7 +858,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
     }
 
-    /// Made-it moment: the sheet after Mark as Cooked — dish picture, "First time making …", week count, photo nudge.
+    /// Made-it moment: cooking mode's last-step Finish closes straight into the sheet — dish picture, "First time
+    /// making …", week count, photo nudge. Finishing again the same day shows the done screen (one cook a day).
     /// Skipped (not failed) when an earlier run already cooked this recipe today, which disables the button.
     /// Named to sort last: the cook it records would otherwise show up in later shots (streak, Today, badges).
     @MainActor
@@ -904,13 +875,43 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         recipe.tap()
         let markCooked = app.buttons["recipe.markCooked"]
         guard markCooked.waitForExistence(timeout: 10), markCooked.isEnabled else { return }
-        // XCUITest can't scroll this SwiftUI page to the button on its own.
-        for _ in 0..<15 where !markCooked.isHittable { app.swipeUp(velocity: .slow) }
-        guard markCooked.isHittable else { return }
-        markCooked.tap()
-        XCTAssertTrue(app.buttons["madeIt.done"].waitForExistence(timeout: 5), "Mark as Cooked should open Made it.")
+
+        // Cooking flow slice 4: Next to the last step, then Finish closes cooking mode into Made it.
+        let madeItDone = app.buttons["madeIt.done"]
+        let doneCard = app.descendants(matching: .any).matching(identifier: "cooking.finished").firstMatch
+        finishCooking(app)
+        XCTAssertTrue(madeItDone.waitForExistence(timeout: 6), "Finish should open the Made it sheet.")
+        XCTAssertFalse(doneCard.exists, "Finish should close cooking mode, not stop on a done screen.")
         settle(4)   // let the confetti fall away
         snap(app, "41-made-it")
+        madeItDone.tap()
+        XCTAssertTrue(madeItDone.waitForNonExistence(timeout: 4), "Done should close the Made it sheet.")
+        dismissBadgeSheet(app)   // a first cook can earn a badge, revealed once Made it closes
+        XCTAssertFalse(markCooked.isEnabled, "Finishing cooking mode should count today's cook.")
+
+        // Cooked already today: Finish has no sheet to open, so cooking mode says so on its done screen.
+        finishCooking(app)
+        XCTAssertTrue(doneCard.waitForExistence(timeout: 5), "A second cook today should show the done screen.")
+        XCTAssertFalse(madeItDone.exists, "A second cook today shouldn't open Made it again.")
+        app.buttons["cooking.done"].tap()
+        XCTAssertTrue(markCooked.waitForExistence(timeout: 5), "Done should return to the recipe.")
+    }
+
+    /// From a recipe page: Start cooking, Next through every step, then Finish.
+    private func finishCooking(_ app: XCUIApplication) {
+        let start = app.buttons["Start Cooking Mode"]
+        checkpoint(app, "start cooking")
+        XCTAssertTrue(start.waitForExistence(timeout: 5), "The recipe should offer cooking mode.")
+        start.tap()
+        let next = app.buttons["cooking.next"]
+        XCTAssertTrue(next.waitForExistence(timeout: 5), "Cooking mode should show Next.")
+        for _ in 0..<40 where !next.label.hasPrefix("Finish") {
+            next.tap()
+            settle(0.5)
+        }
+        XCTAssertTrue(next.label.hasPrefix("Finish"), "Next should reach the last step's Finish.")
+        checkpoint(app, "cooking finish")
+        next.tap()
     }
 
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).

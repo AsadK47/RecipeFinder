@@ -47,7 +47,9 @@ Cooking flow slice 4 on `agent/cooking-made-it`: last step → Made it (verify `
   today's cooks" (old "logged to your cook history" was false there). `isFinished` (no resume save) split from
   `showDoneCard`. **Pre-mortem:** (1) sheet never appears after the cover closes → UI test asserts `madeIt.done`
   after Finish, screenshot 52; (2) resume place re-saved on dismiss → `isFinished` set before dismiss, resume UI
-  test; (3) second cook today closes silently → done-card branch in the UI test + `finishStep` unit test.
+  test; (3) second cook today closes silently → second Finish in `testZCaptureMadeIt` asserts the done card.
+  UI check lives in `testZCaptureMadeIt` (sorts last so its cook doesn't leak into other shots — challenger); no unit
+  test (thin glue; `recordingCook` once-a-day and `presentHeld` already tested).
 - **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey`, one longest-first
   claim loop: full name (each side of an "or") → last two words ("soy sauce" for "light soy sauce") → head word
   ("onion" for "red onion", unless generic: sauce/powder/stock…) or the meat before a cut ("chicken" for "chicken

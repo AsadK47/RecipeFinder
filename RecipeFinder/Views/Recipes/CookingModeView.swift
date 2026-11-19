@@ -53,12 +53,6 @@ struct CookingModeView: View {
         stepIngredients.indices.contains(currentIndex) ? stepIngredients[currentIndex] : []
     }
 
-    /// Where Finish leads: a logged cook closes straight into the Made it sheet; one already counted today shows
-    /// the done screen.
-    enum FinishStep: Equatable { case madeIt, alreadyCounted }
-
-    static func finishStep(cookLogged: Bool) -> FinishStep { cookLogged ? .madeIt : .alreadyCounted }
-
     /// Records the cook (streak + badges, via `onFinish`) and leaves. Shared by the "Finish" button and by
     /// "Done" when the user is already on the last step, so reaching the end credits the cook either way.
     private func finishCooking() {
@@ -66,10 +60,11 @@ struct CookingModeView: View {
         isFinished = true
         CookingResumeMemory.shared.forget(recipe.id)
         BadgeManager.shared.unlockBadge(.headChef)
-        guard let onFinish else { dismiss(); return }
-        switch Self.finishStep(cookLogged: onFinish()) {
-        case .madeIt: dismiss()
-        case .alreadyCounted: withAnimation(.appSpring) { showDoneCard = true }
+        // A logged cook closes straight into the caller's Made it sheet; one already counted today has no sheet.
+        if onFinish?() ?? true {
+            dismiss()
+        } else {
+            withAnimation(.appSpring) { showDoneCard = true }
         }
     }
 
