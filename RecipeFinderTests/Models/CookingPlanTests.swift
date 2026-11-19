@@ -75,4 +75,24 @@ struct CookingPlanTests {
         #expect(p.phaseLabel(at: 99) == ("", 0))
         #expect(p.positionInPhase(at: 99) == 0)
     }
+
+    // MARK: - Step timer (moved from CookingModeView)
+
+    @Test("Timer minutes come from pre-prep and step text, never the ingredient list")
+    func timerMinutesPerItem() {
+        let p = plan(prePrep: ["Soak for 2 hours"], steps: ["Bake 25 mins", "Serve"])
+        #expect(p.timerMinutes(at: 0) == nil)
+        #expect(p.timerMinutes(at: 1) == 120)
+        #expect(p.timerMinutes(at: 2) == 25)
+        #expect(p.timerMinutes(at: 3) == nil)
+        #expect(p.timerMinutes(at: 99) == nil)
+    }
+
+    // MARK: - Live Activity / session lines
+
+    @Test("Session lines lead with the gather prompt, then pre-prep and step text in order")
+    func sessionLines() {
+        let p = plan(prePrep: ["Soak rice"], steps: ["Boil", "Simmer"])
+        #expect(p.sessionLines == ["First, gather your ingredients.", "Soak rice", "Boil", "Simmer"])
+    }
 }
