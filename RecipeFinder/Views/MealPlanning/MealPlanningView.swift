@@ -88,13 +88,19 @@ struct MealPlanningView: View {
             // The deck is drawn over the planner, not presented, so keep VoiceOver from reaching what's under it.
             .accessibilityHidden(planDeck != nil)
 
-            if let deck = Binding($planDeck) {
-                PlanDeckView(deck: deck, onPlan: savePick, onClose: closePlanDeck)
+            if let shown = planDeck {
+                // Not `Binding($planDeck)`: that binding force-reads the optional, and the deck's removal animation
+                // reads it again after Close set it to nil (crashed). Writes after Close are dropped too, so a card
+                // change still in flight can't reopen the deck.
+                PlanDeckView(
+                    deck: Binding(get: { planDeck ?? shown }, set: { if planDeck != nil { planDeck = $0 } }),
+                    onPlan: savePick, onClose: closePlanDeck
+                )
                     .transition(.move(edge: .bottom))
                     .zIndex(1)
             }
         }
-        .toolbar(planDeck == nil ? .automatic : .hidden, for: .tabBar)
+        .toolbar(planDeck == nil ? .visible : .hidden, for: .tabBar)
         .animation(.appGentle, value: planDeck == nil)
         .appNavigationChrome()
         .animation(.appGentle, value: selectedMealTimes)
