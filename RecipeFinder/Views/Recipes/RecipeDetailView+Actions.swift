@@ -61,9 +61,11 @@ extension RecipeDetailView {
         addedIngredients.contains(ingredient.name)
     }
 
-    func recordCook() {
+    /// Logs a cook and queues the Made it sheet; false when this recipe was already cooked today.
+    @discardableResult
+    func recordCook() -> Bool {
         // One cook a day: Made it is disabled once cooked today, and finishing cooking mode again mustn't add another.
-        guard let cooked = recipe.recordingCook() else { return }
+        guard let cooked = recipe.recordingCook() else { return false }
         recipe = cooked
         Task { await PersistenceController.shared.recordCook(withId: recipe.id) }
         recipeStore.sync(recipe)
@@ -96,6 +98,7 @@ extension RecipeDetailView {
         } else {
             madeItPresenter.present(request)
         }
+        return true
     }
 
     private func addCookPhoto(_ image: UIImage) {

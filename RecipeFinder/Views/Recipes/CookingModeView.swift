@@ -3,14 +3,17 @@ import SwiftUI
 // Full-screen cooking mode: large text, screen stays awake, per-step timers.
 struct CookingModeView: View {
     let recipe: RecipeModel
-    /// Logs the cook; the caller follows up with its Made it sheet (rating + photo) once this cover dismisses.
-    var onFinish: (() -> Void)?
+    /// Logs the cook and says whether it counted; the caller then shows its Made it sheet (rating + photo) once
+    /// this cover dismisses. False = already cooked today (one cook a day), so there's no sheet to close into.
+    var onFinish: (() -> Bool)?
 
     // MARK: - State
 
     @State private var currentIndex: Int = 0
-    /// Set when the cook is logged — swaps the steps for a done screen instead of closing abruptly.
+    /// Set once Finish is tapped, so leaving doesn't save a place to resume.
     @State private var isFinished = false
+    /// Already cooked today: a short done screen instead of closing with no word.
+    @State private var showDoneCard = false
     @State private var completedItems: Set<Int> = []
     @State private var showTimerSheet = false
     /// Ingredients each item uses — matched once per cook, not on every redraw.
@@ -50,14 +53,24 @@ struct CookingModeView: View {
         stepIngredients.indices.contains(currentIndex) ? stepIngredients[currentIndex] : []
     }
 
+    /// Where Finish leads: a logged cook closes straight into the Made it sheet; one already counted today shows
+    /// the done screen.
+    enum FinishStep: Equatable { case madeIt, alreadyCounted }
+
+    static func finishStep(cookLogged: Bool) -> FinishStep { cookLogged ? .madeIt : .alreadyCounted }
+
     /// Records the cook (streak + badges, via `onFinish`) and leaves. Shared by the "Finish" button and by
     /// "Done" when the user is already on the last step, so reaching the end credits the cook either way.
     private func finishCooking() {
         guard !isFinished else { return }
+        isFinished = true
         CookingResumeMemory.shared.forget(recipe.id)
         BadgeManager.shared.unlockBadge(.headChef)
-        onFinish?()
-        withAnimation(.appSpring) { isFinished = true }
+        let logged = onFinish?() ?? false
+        switch Self.finishStep(cookLogged: logged) {
+        case .madeIt: dismiss()
+        case .alreadyCounted: withAnimation(.appSpring) { showDoneCard = true }
+        }
     }
 
     private func goBack() {
@@ -101,7 +114,7 @@ struct CookingModeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if isFinished {
+            if showDoneCard {
                 Spacer(minLength: 0)
                 CookingFinishedCard(recipeName: recipe.name) { dismiss() }
                 Spacer(minLength: 0)
@@ -121,7 +134,7 @@ struct CookingModeView: View {
                 // On the last step, Done counts as finishing — otherwise a user who cooked all the way
                 // through but tapped Done (not the green Finish) would silently lose streak/badge credit.
                 Button("Done") {
-                    if isFinished { dismiss() } else if isLast { finishCooking() } else { dismiss() }
+                    if showDoneCard { dismiss() } else if isLast { finishCooking() } else { dismiss() }
                 }
                     .font(.body.weight(.semibold))
                     .adaptiveForegroundColor()

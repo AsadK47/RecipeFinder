@@ -327,6 +327,12 @@ struct CookingTimersTests {
         #expect(CookingModeView.stepTimerTitle(minutes: 12, running: paused) == "Rice timer paused")
     }
 
+    @Test("Finish closes into Made it when the cook counts, else shows the done screen")
+    func finishStep() {
+        #expect(CookingModeView.finishStep(cookLogged: true) == .madeIt)
+        #expect(CookingModeView.finishStep(cookLogged: false) == .alreadyCounted)
+    }
+
     @Test("Stop removes the timer and its alert")
     func stop() throws {
         let alerts = FakeAlerts()

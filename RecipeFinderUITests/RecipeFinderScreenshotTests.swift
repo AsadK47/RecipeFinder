@@ -124,6 +124,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
         recipe.tap()
         settle()
+        // Finish at the end opens Made it only for a recipe not yet cooked today (one cook a day).
+        let markCooked = app.buttons["recipe.markCooked"]
+        XCTAssertTrue(markCooked.waitForExistence(timeout: 10), "Recipe detail should show Made it.")
+        let cookedBefore = !markCooked.isEnabled
 
         let rows = app.buttons.matching(identifier: "recipe.ingredient.row")
         XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 5), "The recipe should list its ingredients.")
@@ -218,6 +222,30 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         move.tap()
         settle(1)
         XCTAssertTrue(timerPill.waitForExistence(timeout: 3), "The timer should stay visible on another step.")
+
+        // Cooking flow slice 4: the last step's Finish closes cooking mode straight into the Made it sheet —
+        // unless this recipe was already cooked today (state survives between runs), which shows the done screen.
+        for _ in 0..<40 where !next.label.hasPrefix("Finish") {
+            next.tap()
+            settle(0.5)
+        }
+        XCTAssertTrue(next.label.hasPrefix("Finish"), "Next should reach the last step's Finish.")
+        checkpoint(app, "cooking-finish")
+        next.tap()
+        let madeItDone = app.buttons["madeIt.done"]
+        let doneCard = app.descendants(matching: .any).matching(identifier: "cooking.finished").firstMatch
+        if cookedBefore {
+            XCTAssertTrue(doneCard.waitForExistence(timeout: 5), "A second cook today should show the done screen.")
+            app.buttons["cooking.done"].tap()
+        } else {
+            XCTAssertTrue(madeItDone.waitForExistence(timeout: 6), "Finish should open the Made it sheet.")
+            XCTAssertFalse(doneCard.exists, "Finish should close cooking mode, not stop on a done screen.")
+            settle(1)
+            snap(app, "52-cooking-made-it")
+            madeItDone.tap()
+        }
+        XCTAssertTrue(app.buttons["recipe.markCooked"].waitForExistence(timeout: 5), "Should be back on the recipe.")
+        XCTAssertFalse(app.buttons["recipe.markCooked"].isEnabled, "Finishing should count today's cook.")
     }
 
     /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,

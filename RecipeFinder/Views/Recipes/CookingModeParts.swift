@@ -132,7 +132,7 @@ struct CookingNavigationRow: View {
     }
 }
 
-/// The end of the cook gets its own moment (peak-end) rather than the cover just vanishing.
+/// Finishing a recipe already cooked today: no Made it sheet to close into (one cook a day), so say so here.
 struct CookingFinishedCard: View {
     let recipeName: String
     let onDone: () -> Void
@@ -148,7 +148,7 @@ struct CookingFinishedCard: View {
                 Text("Nice cooking!")
                     .font(.title.weight(.bold))
                     .adaptiveForegroundColor()
-                Text("\(recipeName) is logged to your cook history.")
+                Text("\(recipeName) is already in today's cooks.")
                     .font(.body)
                     .adaptiveSecondaryForeground()
                     .multilineTextAlignment(.center)

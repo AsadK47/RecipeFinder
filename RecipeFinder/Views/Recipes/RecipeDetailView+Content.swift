@@ -280,7 +280,7 @@ extension RecipeDetailView {
                 .accessibilityLabel("Add all ingredients to groceries")
 
             PrimaryButton(cookedToday ? "Made" : "Made it", systemImage: "checkmark.circle", fillWidth: true,
-                          variant: .secondary, action: recordCook)
+                          variant: .secondary, action: { recordCook() })
                 .disabled(cookedToday)
                 .opacity(cookedToday ? AppTheme.glassLightOpacity : 1)
                 .accessibilityIdentifier("recipe.markCooked")
