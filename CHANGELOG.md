@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Cooking flow slice 2 step ingredients · 0e81fd8
+- For you: in cooking mode each step now shows the ingredients it uses with their amounts, so you can keep cooking without flipping back to the list.
+- Behind the build: the matching was tested on all 332 bundled recipes and tuned so "sesame oil" or "garlic powder" never shows up as plain oil or garlic.
+
 ## 2026-11-19 · Smell Batch D screen 3 · 7f4580c
 - For you: cooking mode works just as before — ingredient checklist, step timers and the "Nice cooking!" finish — on tidier code that's ready for the next round of cooking improvements.
 - Behind the build: the screen was split into small parts with step timers and checklist amounts pinned by tests first, then checked by two separate reviewers.

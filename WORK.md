@@ -33,13 +33,12 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
-- Cook: 🚧 **Cooking flow slice 2 — step ingredients** on `agent/step-ingredients` (builder 2026-11-19, took over stale
-  11-15 claim): `StepIngredientMatcher` (Models/Recipe) + `CookingPlan.ingredientIndices(from:)`, `CookingStepIngredients`
-  card under each step ("For this step", amounts like the checklist), `cooking.next` id; screenshot 50. Left after: resume
-  at the same step, several named timers that stay visible, last step → Made it (already via onFinish — verify).
+- Cook: 🚧 **Cooking flow** slice 2 step ingredients ✅ landed 0e81fd8 (builder 2026-11-19). Next slice: resume at the
+  same step, several named timers that stay visible, last step → Made it (verify onFinish), UI test stepping through.
+  Leftover branch agent/step-ingredients (auto-cleanup).
 
 ## Next action
-Smell Batch D ✅ (7f4580c). Next: the next Queue item per BACKLOG "Next" line (feature after smell), then Smell Batch E.
+Cooking flow slice 3 on `agent/cooking-resume`: persist the current step per recipe so leaving and reopening cooking mode resumes there (tests first), then named timers.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey`, one longest-first
