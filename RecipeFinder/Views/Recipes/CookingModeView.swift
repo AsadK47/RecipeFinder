@@ -34,7 +34,7 @@ struct CookingModeView: View {
     private var stepTimerMinutes: Int? { plan.timerMinutes(at: currentIndex) }
 
     /// One timer per step of this recipe: the step's button can't start a second copy while one is on.
-    private var stepTimerKey: String { "\(recipe.id.uuidString)#\(currentIndex)" }
+    private var stepTimerKey: String { CookingTimers.stepKey(recipeID: recipe.id, index: currentIndex) }
 
     private var stepTimerName: String {
         let (label, _) = stepLabelAndTotal
@@ -205,27 +205,33 @@ struct CookingModeView: View {
             }
 
             if let minutes = stepTimerMinutes {
-                let running = cookingTimers.timer(forKey: stepTimerKey)
-                Button {
-                    withAnimation(.appSnappy) {
-                        _ = cookingTimers.start(name: stepTimerName, minutes: minutes, key: stepTimerKey)
-                    }
-                    HapticManager.shared.success()
-                } label: {
-                    Label(running.map { "\($0.name) timer is on" } ?? "Start \(minutes)-minute timer",
-                          systemImage: running == nil ? "timer" : "checkmark")
-                        .font(.headline)
-                        .padding(.horizontal, AppTheme.spacing24)
-                        .padding(.vertical, AppTheme.spacing14)
-                        .frame(maxWidth: .infinity)
-                        .background(Capsule().fill(.ultraThinMaterial))
-                        .adaptiveForegroundColor()
+                // Ticks so the button frees up the moment the step's timer finishes.
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    stepTimerButton(minutes: minutes, running: cookingTimers.timer(forKey: stepTimerKey, now: context.date))
                 }
-                .buttonStyle(.plain)
-                .disabled(running != nil)
-                .accessibilityIdentifier("cooking.startTimer")
             }
         }
+    }
+
+    private func stepTimerButton(minutes: Int, running: CookingTimerBoard.Timer?) -> some View {
+        Button {
+            withAnimation(.appSnappy) {
+                _ = cookingTimers.start(name: stepTimerName, minutes: minutes, key: stepTimerKey)
+            }
+            HapticManager.shared.success()
+        } label: {
+            Label(running.map { "\($0.name) timer is on" } ?? "Start \(minutes)-minute timer",
+                  systemImage: running == nil ? "timer" : "checkmark")
+                .font(.headline)
+                .padding(.horizontal, AppTheme.spacing24)
+                .padding(.vertical, AppTheme.spacing14)
+                .frame(maxWidth: .infinity)
+                .background(Capsule().fill(.ultraThinMaterial))
+                .adaptiveForegroundColor()
+        }
+        .buttonStyle(.plain)
+        .disabled(running != nil)
+        .accessibilityIdentifier("cooking.startTimer")
     }
 
     private var stepHeader: some View {

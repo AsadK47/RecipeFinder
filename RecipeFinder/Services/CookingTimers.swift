@@ -25,7 +25,7 @@ struct NotificationCookingTimerAlerts: CookingTimerAlerting {
 protocol CookingTiming: AnyObject, Observable {
     var timers: [CookingTimerBoard.Timer] { get }
     @discardableResult func start(name: String, minutes: Int, key: String?) -> CookingTimerBoard.Timer?
-    func timer(forKey key: String) -> CookingTimerBoard.Timer?
+    func timer(forKey key: String, now: Date) -> CookingTimerBoard.Timer?
     func togglePause(_ id: UUID)
     func addMinute(_ id: UUID)
     func stop(_ id: UUID)
@@ -64,22 +64,29 @@ final class CookingTimers: CookingTiming {
 
     var timers: [CookingTimerBoard.Timer] { board.timers }
 
+    /// Pausing a finished timer changes nothing, so it must not re-arm or cancel anything either.
     static func alertID(_ id: UUID) -> String { "cooking-timer-\(id.uuidString)" }
 
     @discardableResult
     func start(name: String, minutes: Int, key: String?) -> CookingTimerBoard.Timer? {
-        if let key, let existing = board.timer(forKey: key) { return existing }
-        guard let timer = board.start(name: name, seconds: minutes * 60, key: key, now: now()) else { return nil }
+        let date = now()
+        if let key, let existing = board.timer(forKey: key, now: date) { return existing }
+        guard let timer = board.start(name: name, seconds: minutes * 60, key: key, now: date) else { return nil }
         scheduleAlert(for: timer)
         return timer
     }
 
-    func timer(forKey key: String) -> CookingTimerBoard.Timer? {
-        board.timer(forKey: key)
+    func timer(forKey key: String, now: Date) -> CookingTimerBoard.Timer? {
+        board.timer(forKey: key, now: now)
     }
 
+    /// One timer per step of a recipe — two recipes' "step 3" are different timers.
+    static func stepKey(recipeID: UUID, index: Int) -> String { "\(recipeID.uuidString)#\(index)" }
+
     func togglePause(_ id: UUID) {
-        guard let timer = board.togglePause(id, now: now()) else { return }
+        let date = now()
+        guard let before = board.timer(id), !before.isDone(at: date),
+              let timer = board.togglePause(id, now: date) else { return }
         if timer.isPaused { alerts.cancel(id: Self.alertID(id)) } else { scheduleAlert(for: timer) }
     }
 

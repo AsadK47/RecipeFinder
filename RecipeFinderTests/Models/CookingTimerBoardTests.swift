@@ -26,7 +26,35 @@ struct CookingTimerBoardTests {
         let again = board.start(name: "Rice", seconds: 720, key: "r#3", now: t0.addingTimeInterval(30))
         #expect(again?.id == first.id)
         #expect(board.timers.count == 1)
-        #expect(board.timer(forKey: "r#3")?.id == first.id)
+        #expect(board.timer(forKey: "r#3", now: t0)?.id == first.id)
+    }
+
+    @Test("A step whose timer finished can time again, replacing the finished one")
+    func finishedFreesStep() throws {
+        var board = CookingTimerBoard()
+        let first = try #require(board.start(name: "Rice", seconds: 60, key: "r#3", now: t0)).id
+        let later = t0.addingTimeInterval(120)
+        #expect(board.timer(forKey: "r#3", now: later) == nil)
+        let again = try #require(board.start(name: "Rice", seconds: 60, key: "r#3", now: later))
+        #expect(again.id != first)
+        #expect(board.timers.map(\.id) == [again.id])
+    }
+
+    @Test("A paused step timer still holds its step")
+    func pausedHoldsStep() throws {
+        var board = CookingTimerBoard()
+        let id = try #require(board.start(name: "Rice", seconds: 60, key: "r#3", now: t0)).id
+        board.togglePause(id, now: t0.addingTimeInterval(10))
+        #expect(board.timer(forKey: "r#3", now: t0.addingTimeInterval(500))?.id == id)
+    }
+
+    @Test("Done timers are the ones at zero")
+    func doneIDs() throws {
+        var board = CookingTimerBoard()
+        let short = try #require(board.start(name: "A", seconds: 10, key: nil, now: t0)).id
+        board.start(name: "B", seconds: 100, key: nil, now: t0)
+        #expect(CookingTimerBoard.doneIDs(board.timers, at: t0.addingTimeInterval(5)).isEmpty)
+        #expect(CookingTimerBoard.doneIDs(board.timers, at: t0.addingTimeInterval(10)) == [short])
     }
 
     @Test("A timer with no key can start any number of times")
@@ -99,7 +127,7 @@ struct CookingTimerBoardTests {
         board.start(name: "Sauce", seconds: 600, key: "r#4", now: t0)
         board.remove(rice)
         #expect(board.timers.map(\.name) == ["Sauce"])
-        #expect(board.timer(forKey: "r#3") == nil)
+        #expect(board.timer(forKey: "r#3", now: t0) == nil)
         #expect(board.start(name: "Rice", seconds: 600, key: "r#3", now: t0)?.id != rice)
     }
 
@@ -232,6 +260,38 @@ struct CookingTimersTests {
         #expect(alerts.scheduled.isEmpty)
     }
 
+    @Test("Pausing a finished timer neither cancels nor re-arms an alert")
+    func pauseFinished() throws {
+        let clock = Clock()
+        let alerts = FakeAlerts()
+        let timers = CookingTimers(now: { clock.date }, alerts: alerts)
+        let id = try #require(timers.start(name: "Rice", minutes: 1, key: nil)).id
+        clock.date += 120
+        alerts.scheduled = [:]
+        timers.togglePause(id)
+        #expect(alerts.cancelled.isEmpty)
+        #expect(alerts.scheduled.isEmpty)
+    }
+
+    @Test("+1 min on a finished timer sets a fresh one-minute alert")
+    func addMinuteFinished() throws {
+        let clock = Clock()
+        let alerts = FakeAlerts()
+        let timers = CookingTimers(now: { clock.date }, alerts: alerts)
+        let id = try #require(timers.start(name: "Rice", minutes: 1, key: nil)).id
+        clock.date += 120
+        timers.addMinute(id)
+        #expect(alerts.scheduled[CookingTimers.alertID(id)] == 60)
+    }
+
+    @Test("Step keys differ per recipe and per step")
+    func stepKeys() {
+        let a = UUID(), b = UUID()
+        #expect(CookingTimers.stepKey(recipeID: a, index: 3) != CookingTimers.stepKey(recipeID: b, index: 3))
+        #expect(CookingTimers.stepKey(recipeID: a, index: 3) != CookingTimers.stepKey(recipeID: a, index: 4))
+        #expect(CookingTimers.stepKey(recipeID: a, index: 3) == CookingTimers.stepKey(recipeID: a, index: 3))
+    }
+
     @Test("Stop removes the timer and its alert")
     func stop() throws {
         let alerts = FakeAlerts()
@@ -239,7 +299,7 @@ struct CookingTimersTests {
         let id = try #require(timers.start(name: "Rice", minutes: 10, key: "r#3")).id
         timers.stop(id)
         #expect(timers.timers.isEmpty)
-        #expect(timers.timer(forKey: "r#3") == nil)
+        #expect(timers.timer(forKey: "r#3", now: Clock().date) == nil)
         #expect(alerts.cancelled == [CookingTimers.alertID(id)])
     }
 

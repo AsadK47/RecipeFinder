@@ -208,7 +208,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         startTimer.tap()
         // Starting a timer asks for notification permission once.
         let allowPrompt = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Don’t Allow"]
-        if allowPrompt.waitForExistence(timeout: 3) { allowPrompt.tap() }
+        if allowPrompt.waitForExistence(timeout: 6) { allowPrompt.tap() }
         let timerPill = app.descendants(matching: .any).matching(identifier: "cooking.timer").firstMatch
         XCTAssertTrue(timerPill.waitForExistence(timeout: 3), "A started timer should show as a pill.")
         settle(1)

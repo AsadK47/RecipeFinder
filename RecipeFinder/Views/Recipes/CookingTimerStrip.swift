@@ -16,6 +16,10 @@ struct CookingTimerStrip: View {
                     }
                     .padding(.vertical, 2)
                 }
+                .onChange(of: CookingTimerBoard.doneIDs(cookingTimers.timers, at: context.date)) { old, new in
+                    // In-app signal too: the notification may be off or not allowed.
+                    if !new.subtracting(old).isEmpty { HapticManager.shared.celebrate() }
+                }
             }
             .padding(.bottom, AppTheme.spacing12)
             .transition(.opacity)

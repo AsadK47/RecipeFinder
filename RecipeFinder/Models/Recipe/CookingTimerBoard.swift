@@ -25,18 +25,26 @@ struct CookingTimerBoard: Equatable {
 
     private(set) var timers: [Timer] = []
 
-    /// Starts a timer, or returns the one `key` already has. Nil for a non-positive length.
+    /// Starts a timer, or returns the one `key` already has running; a finished one is replaced, so the step can
+    /// time again. Nil for a non-positive length.
     @discardableResult
     mutating func start(name: String, seconds: Int, key: String?, now: Date, id: UUID = UUID()) -> Timer? {
-        if let key, let existing = timer(forKey: key) { return existing }
+        if let key, let existing = timer(forKey: key, now: now) { return existing }
         guard seconds > 0 else { return nil }
+        if let key { timers.removeAll { $0.key == key } }
         let timer = Timer(id: id, name: name, key: key, endDate: now.addingTimeInterval(TimeInterval(seconds)), pausedRemaining: 0)
         timers.append(timer)
         return timer
     }
 
-    func timer(forKey key: String) -> Timer? {
-        timers.first { $0.key == key }
+    /// The step's timer while it still has time left (running or paused).
+    func timer(forKey key: String, now: Date) -> Timer? {
+        timers.first { $0.key == key && !$0.isDone(at: now) }
+    }
+
+    /// Timers that have reached zero — the strip buzzes when this set grows.
+    static func doneIDs(_ timers: [Timer], at now: Date) -> Set<UUID> {
+        Set(timers.filter { $0.isDone(at: now) }.map(\.id))
     }
 
     func timer(_ id: UUID) -> Timer? {
