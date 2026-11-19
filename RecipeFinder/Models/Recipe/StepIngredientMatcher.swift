@@ -62,14 +62,15 @@ enum StepIngredientMatcher {
                 ?? candidates.endIndex
             var tierClaims: [Range<String.Index>] = []
             for candidate in candidates[tierStart..<tierEnd] where found[candidate.index] == nil {
-                let hit = ranges(of: candidate.words, in: text).first { range in
+                // Every mention is claimed, so a second "spring onions" can't be read as the plain onion either.
+                let hits = ranges(of: candidate.words, in: text).filter { range in
                     !claimed.contains { $0.overlaps(range) }
                         && !compoundWords.contains(word(after: range, in: text) ?? "")
                         && !isNegatedOrCompound(range, in: text, phraseLength: candidate.words.count, nameEnds: nameEnds)
                 }
-                guard let hit else { continue }
-                found[candidate.index] = stepGivesAmount(before: hit, in: text)
-                tierClaims.append(hit)
+                guard let first = hits.first else { continue }
+                found[candidate.index] = stepGivesAmount(before: first, in: text)
+                tierClaims += hits
             }
             claimed += tierClaims
             tierStart = tierEnd
@@ -107,8 +108,11 @@ enum StepIngredientMatcher {
         return negations.contains(previous) || (phraseLength == 1 && nameEnds.contains(previous))
     }
 
+    /// Only words since the last "and"/"or"/"then" count: in "2 eggs and the butter" the 2 is the eggs'.
     private static func stepGivesAmount(before range: Range<String.Index>, in text: String) -> Bool {
-        wordsBefore(range, in: text).contains { word in
+        let words = wordsBefore(range, in: text)
+        let own = words.lastIndex { ["and", "or", "then"].contains($0) }.map { words[($0 + 1)...] } ?? words[...]
+        return own.contains { word in
             partialAmountWords.contains(word) || word.contains(where: { $0.isNumber || "½¼¾⅓⅔".contains($0) })
         }
     }

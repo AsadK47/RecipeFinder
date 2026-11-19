@@ -81,6 +81,8 @@ struct StepIngredientMatcherTests {
         ("Add the spring onions.", ["onion", "spring onions"], [1]),
         ("Stir in the garlic powder.", ["garlic", "garlic powder"], [1]),
         ("Mix the soy sauce and red pepper flakes.", ["red bell pepper", "light soy sauce"], [1]),
+        ("Fry the spring onions, then scatter over more spring onions.", ["onion", "spring onions"], [1]),
+        ("Drizzle with sesame oil and toss; finish with sesame oil.", ["olive oil", "sesame oil"], [1]),
     ])
     func longerNameWins(step: String, names: [String], expected: [Int]) {
         #expect(used(step, names) == expected)
@@ -138,6 +140,14 @@ struct StepIngredientMatcherTests {
         #expect(uses("Heat the oil.", ["oil"]) == [.init(index: 0, stepGivesAmount: false)])
         // A number in an earlier clause isn't this ingredient's amount.
         #expect(uses("Bake for 20 minutes, then add the oil.", ["oil"]) == [.init(index: 0, stepGivesAmount: false)])
+    }
+
+    @Test("Another ingredient's amount isn't this one's ('2 eggs and the butter')")
+    func neighbourAmount() {
+        #expect(uses("Add 2 eggs and the butter.", ["eggs", "butter"])
+            == [.init(index: 0, stepGivesAmount: true), .init(index: 1, stepGivesAmount: false)])
+        #expect(uses("Add half the butter and sugar.", ["butter", "sugar"])
+            == [.init(index: 0, stepGivesAmount: true), .init(index: 1, stepGivesAmount: false)])
     }
 
     // MARK: - Edges
