@@ -46,7 +46,7 @@ Cooking flow slice 3b on `agent/cooking-timers` (234cb52 pushed): check Build & 
   = new on-device data → owner). One timer per step (key recipe#index; button disabled while it exists, Stop/Clear
   frees it). Name = ingredient the step mentions first, last two words ("Soy sauce"), else "Step N". Strip of pills
   under the progress bar on every screen, tap → Pause / +1 min / Stop; ticks via `TimelineView`, no ticker. Done is
-  signalled by the scheduled notification (foreground banner + sound), no in-app haptic. Toolbar general timer
+  signalled by the scheduled notification (foreground banner + sound) plus one in-app haptic while the strip shows. Toolbar general timer
   (`RecipeTimerManager`) left as is. **Pre-mortem:** (1) timer vanishes on Next → UI test checks pill after moving;
   (2) pause/resume leaves a stale alert → CookingTimersTests pause/resume/+1/stop; (3) wrong/long name → naming
   tests + screenshot 51.

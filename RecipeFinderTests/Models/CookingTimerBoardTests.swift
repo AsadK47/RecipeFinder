@@ -314,6 +314,19 @@ struct CookingTimersTests {
         #expect(CookingTimers.stepKey(recipeID: a, index: 3) == CookingTimers.stepKey(recipeID: a, index: 3))
     }
 
+    @Test("The step button says start, on or paused")
+    func stepTimerTitle() throws {
+        var board = CookingTimerBoard()
+        let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+        let started = board.start(name: "Rice", seconds: 600, key: nil, now: t0)
+        let rice = try #require(started)
+        #expect(CookingModeView.stepTimerTitle(minutes: 12, running: nil) == "Start 12-minute timer")
+        #expect(CookingModeView.stepTimerTitle(minutes: 12, running: rice) == "Rice timer is on")
+        let pausedResult = board.togglePause(rice.id, now: t0)
+        let paused = try #require(pausedResult)
+        #expect(CookingModeView.stepTimerTitle(minutes: 12, running: paused) == "Rice timer paused")
+    }
+
     @Test("Stop removes the timer and its alert")
     func stop() throws {
         let alerts = FakeAlerts()

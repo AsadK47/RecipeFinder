@@ -215,23 +215,28 @@ struct CookingModeView: View {
 
     private func stepTimerButton(minutes: Int, running: CookingTimerBoard.Timer?) -> some View {
         Button {
+            // While the step's timer is on, the pill above is where it's paused or stopped.
+            guard running == nil else { return }
             withAnimation(.appSnappy) {
                 _ = cookingTimers.start(name: stepTimerName, minutes: minutes, key: stepTimerKey)
             }
             HapticManager.shared.success()
         } label: {
-            Label(running.map { "\($0.name) timer is on" } ?? "Start \(minutes)-minute timer",
-                  systemImage: running == nil ? "timer" : "checkmark")
+            Label(Self.stepTimerTitle(minutes: minutes, running: running), systemImage: running == nil ? "timer" : "checkmark")
                 .font(.headline)
                 .padding(.horizontal, AppTheme.spacing24)
                 .padding(.vertical, AppTheme.spacing14)
                 .frame(maxWidth: .infinity)
-                .background(Capsule().fill(.ultraThinMaterial))
                 .adaptiveForegroundColor()
+                .appCard(in: Capsule())
         }
         .buttonStyle(.plain)
-        .disabled(running != nil)
         .accessibilityIdentifier("cooking.startTimer")
+    }
+
+    static func stepTimerTitle(minutes: Int, running: CookingTimerBoard.Timer?) -> String {
+        guard let running else { return "Start \(minutes)-minute timer" }
+        return running.isPaused ? "\(running.name) timer paused" : "\(running.name) timer is on"
     }
 
     private var stepHeader: some View {
