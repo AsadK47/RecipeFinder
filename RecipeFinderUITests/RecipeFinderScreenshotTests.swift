@@ -243,6 +243,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             settle(1)
             snap(app, "52-cooking-made-it")
             madeItDone.tap()
+            // A first cook can earn a badge, revealed once Made it closes.
+            dismissBadgeSheet(app)
         }
         XCTAssertTrue(app.buttons["recipe.markCooked"].waitForExistence(timeout: 5), "Should be back on the recipe.")
         XCTAssertFalse(app.buttons["recipe.markCooked"].isEnabled, "Finishing should count today's cook.")

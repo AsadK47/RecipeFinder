@@ -66,8 +66,8 @@ struct CookingModeView: View {
         isFinished = true
         CookingResumeMemory.shared.forget(recipe.id)
         BadgeManager.shared.unlockBadge(.headChef)
-        let logged = onFinish?() ?? false
-        switch Self.finishStep(cookLogged: logged) {
+        guard let onFinish else { dismiss(); return }
+        switch Self.finishStep(cookLogged: onFinish()) {
         case .madeIt: dismiss()
         case .alreadyCounted: withAnimation(.appSpring) { showDoneCard = true }
         }
