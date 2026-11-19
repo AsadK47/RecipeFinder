@@ -266,7 +266,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         instructions: String,
         prepTime: String,
         category: String,
-        difficulty: Int,
+        difficulty: String,
         currentServings: Int,
         baseServings: Int,
         defaultServings: Int,
@@ -277,7 +277,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.id = UUID()
         self.name = name
         self.category = category
-        self.difficulty = "\(difficulty)"
+        self.difficulty = difficulty
         self.prepTime = prepTime
         self.cookingTime = "0 min"
         self.baseServings = baseServings

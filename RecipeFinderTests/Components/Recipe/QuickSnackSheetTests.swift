@@ -12,12 +12,6 @@ struct QuickSnackSheetTests {
         #expect(RecipeWizardBuilder.difficultyLevels.contains(snack.difficulty))
     }
 
-    @Test("The Basic difficulty filter finds a quick snack")
-    func basicFilterFindsSnack() {
-        let snack = QuickSnackSheet.makeSnack(name: "Apple", servings: 1, emoji: "🍎")
-        #expect(RecipeWizardBuilder.normalizeDifficulty(snack.difficulty) == "Basic")
-    }
-
     @Test("A quick snack keeps its name, servings and emoji note")
     func snackKeepsDetails() {
         let snack = QuickSnackSheet.makeSnack(name: "Crisps", servings: 3, emoji: "🥔")

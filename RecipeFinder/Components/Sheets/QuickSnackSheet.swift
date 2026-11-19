@@ -224,7 +224,7 @@ struct QuickSnackSheet: View {
             instructions: "Enjoy your \(name)!",
             prepTime: "0 min",
             category: "Snack",
-            difficulty: 1,
+            difficulty: "Basic",
             currentServings: servings,
             baseServings: servings,
             defaultServings: servings,
