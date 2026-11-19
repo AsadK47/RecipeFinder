@@ -37,13 +37,22 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
 - Plan: 🚧 **Plan — swipe to match** — slices 1 (23134c8) and 2 week photos (06094b2, builder 2026-11-19) landed.
-  Next slice: (3) up = tonight + matches feed Today. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
+  Slice 3 (up = tonight) on `agent/plan-deck-tonight` — waiting on Build & Test. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
 
 ## Next action
 Plan — swipe to match slice 3: in `PlanDeckView` a swipe up plans the card for tonight; deck matches feed Today's
 tonight pick. New branch `agent/plan-deck-tonight`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Plan deck up = tonight (slice 3):** up plans the card's dish for *tonight* (today's dinner), not "cook now" —
+  the deck plans, Today cooks; Today already leads with a planned dinner ("Planned for tonight"), so "matches feed
+  Today" needs no new Today code (pinned by `aTonightPickLeadsTodaysFeed`). Offered only while tonight is open and the
+  card is for a later night (on tonight's own card Plan it already does it — one control per outcome); that night then
+  gets another dish. Visible control "Have it tonight" + VoiceOver action, per "every gesture has a visible control".
+  Rejected: up replacing an already-planned tonight (silently drops the cook's choice). **Pre-mortem:** (1) up plans
+  twice / over a planned tonight → `upDoesNothingWhenTonightIsAlreadyPlanned`, `…OnceTonightIsPickedInTheDeck`;
+  (2) a diagonal drag up plans or skips the wrong way → mostly-vertical rule + UI swipeUp asserts same night;
+  (3) tonight pick not on Today → `aTonightPickLeadsTodaysFeed`.
 - **Plan week photos (slice 2):** photos sit *under* the week strip + day list for now (strip still picks a day for
   breakfast/lunch); trimming the strip waits for *Groceries writes itself* (deletes duplicated views). Hold = context
   menu (Cook / Move to <day> / Swap with <day> (dish) / Take off the plan), not drag-and-drop — a drag across a

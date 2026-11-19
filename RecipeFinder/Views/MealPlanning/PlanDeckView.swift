@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// "Plan my week": one big card per empty dinner. Swipe right or tap Plan it to plan the dish for that night; swipe
-/// left or tap Not this one for another dish. Each pick is saved as it's made, so closing part-way keeps them.
+/// left or tap Not this one for another dish; swipe up or tap Have it tonight to plan it for tonight while tonight is
+/// open (Today then leads with it). Each pick is saved as it's made, so closing part-way keeps them.
 /// Shown over the planner (not as a cover) so a badge earned by the first plan can still present on top.
 struct PlanDeckView: View {
     @Binding var deck: PlanDeck
@@ -9,7 +10,7 @@ struct PlanDeckView: View {
     let onClose: () -> Void
 
     @State private var drag: CGSize = .zero
-    /// Which way the last card left, so it flies off on the side it was sent.
+    /// Which way the last card left, so it flies off on the side it was sent (top for tonight).
     @State private var exitEdge: Edge = .trailing
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -102,18 +103,21 @@ struct PlanDeckView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .appCard(elevated: true)
         .overlay(alignment: .top) { swipeHint }
-        .offset(x: drag.width, y: drag.height * 0.2)
-        .rotationEffect(.degrees(reduceMotion ? 0 : Double(drag.width / 25)))
+        .offset(x: drag.width, y: isDraggingUp ? drag.height : drag.height * 0.2)
+        .rotationEffect(.degrees(reduceMotion || isDraggingUp ? 0 : Double(drag.width / 25)))
         .gesture(
             DragGesture()
                 .onChanged { value in
                     drag = value.translation
-                    exitEdge = value.translation.width < 0 ? .leading : .trailing
+                    exitEdge = isDraggingUp ? .top : value.translation.width < 0 ? .leading : .trailing
                 }
                 .onEnded { value in
-                    if value.translation.width > Self.swipeThreshold {
+                    let width = value.translation.width, height = value.translation.height
+                    if isDraggingUp, height < -Self.swipeThreshold {
+                        planTonight()
+                    } else if abs(width) >= abs(height), width > Self.swipeThreshold {
                         plan()
-                    } else if value.translation.width < -Self.swipeThreshold {
+                    } else if abs(width) >= abs(height), width < -Self.swipeThreshold {
                         skip()
                     } else {
                         withAnimation(.appGentle) { drag = .zero }
@@ -124,15 +128,25 @@ struct PlanDeckView: View {
         .accessibilityIdentifier("planDeck.card")
         .accessibilityAction(named: "Plan it") { plan() }
         .accessibilityAction(named: "Not this one") { skip() }
+        .accessibilityActions {
+            if deck.canPlanTonight { Button("Have it tonight", action: planTonight) }
+        }
     }
 
-    /// "Plan it" / "Not this one" fades in while dragging, so the cook sees what letting go will do.
+    /// A mostly-upward drag, and only while up can send the card to tonight — otherwise it stays a sideways card.
+    private var isDraggingUp: Bool {
+        deck.canPlanTonight && drag.height < 0 && abs(drag.height) > abs(drag.width)
+    }
+
+    /// "Plan it" / "Not this one" / "Tonight" fades in while dragging, so the cook sees what letting go will do.
     @ViewBuilder
     private var swipeHint: some View {
-        let progress = min(abs(drag.width) / Self.swipeThreshold, 1)
+        let up = isDraggingUp
+        let progress = min(abs(up ? drag.height : drag.width) / Self.swipeThreshold, 1)
         if progress > 0.15 {
-            let planning = drag.width > 0
-            Label(planning ? "Plan it" : "Not this one", systemImage: planning ? "heart.fill" : "xmark")
+            let planning = up || drag.width > 0
+            Label(up ? "Tonight" : planning ? "Plan it" : "Not this one",
+                  systemImage: up ? "moon.stars.fill" : planning ? "heart.fill" : "xmark")
                 .font(.headline)
                 .foregroundStyle(.white)
                 .padding(.horizontal, AppTheme.spacing16)
@@ -151,6 +165,11 @@ struct PlanDeckView: View {
                     .accessibilityIdentifier("planDeck.skip")
                 PrimaryButton("Plan it", systemImage: "heart.fill", fillWidth: true, action: plan)
                     .accessibilityIdentifier("planDeck.plan")
+            }
+            if deck.canPlanTonight {
+                PrimaryButton("Have it tonight", systemImage: "moon.stars.fill", fillWidth: true, variant: .secondary,
+                              action: planTonight)
+                    .accessibilityIdentifier("planDeck.tonight")
             }
             Button {
                 HapticManager.shared.light()
@@ -206,6 +225,18 @@ struct PlanDeckView: View {
 
     private func skip() {
         send(.leading) { $0.skip() }
+    }
+
+    private func planTonight() {
+        guard deck.canPlanTonight else {
+            withAnimation(.appGentle) { drag = .zero }
+            return
+        }
+        send(.top) { deck in
+            let before = deck.picks.count
+            deck.planTonight()
+            if let pick = deck.picks.dropFirst(before).first { onPlan(pick) }
+        }
     }
 
     /// Sets which way the card leaves, then changes the deck on the next main-actor turn: the leaving card takes its

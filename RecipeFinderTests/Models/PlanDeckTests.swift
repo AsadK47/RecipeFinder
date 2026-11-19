@@ -41,10 +41,11 @@ import Foundation
     }
 
     private func makeDeck(
-        days: [Date], recipes: [RecipeModel], planned: [MealPlanModel] = [], expiring: [String] = [], seed: UInt64 = 7
+        days: [Date], recipes: [RecipeModel], planned: [MealPlanModel] = [], expiring: [String] = [], seed: UInt64 = 7,
+        today: Date? = nil
     ) -> PlanDeck {
         PlanDeck(days: days, recipes: recipes, plannedThisWeek: planned, expiringItemNames: expiring,
-                 seed: seed, calendar: cal)
+                 seed: seed, today: today ?? day(0), calendar: cal)
     }
 
     // MARK: - Empty dinners
@@ -285,5 +286,74 @@ import Foundation
     @Test func finishedCopyForAFullWeekAndForNoPicks() {
         #expect(makeDeck(days: [], recipes: [recipe("Dish")]).finishedCopy.title == "Your week is planned")
         #expect(makeDeck(days: [day(1)], recipes: []).finishedCopy.title == "That's every dish for now")
+    }
+
+    // MARK: - Up = tonight
+
+    @Test func upOnALaterNightPlansTheDishForTonightAndDealsAgainForThatNight() {
+        let dishes = (0..<4).map { recipe("Dish \($0)") }
+        var deck = makeDeck(days: [day(0), day(2)], recipes: dishes, today: day(0))
+        deck.skipNight()
+        let card = deck.current
+        #expect(deck.canPlanTonight)
+        deck.planTonight()
+        #expect(deck.picks == [PlanDeck.Pick(day: day(0), recipe: card?.recipe ?? dishes[0])])
+        #expect(deck.current?.day == day(2))
+        #expect(deck.current?.recipe.id != card?.recipe.id)
+        #expect(!deck.canPlanTonight)
+    }
+
+    @Test func upOnTonightsCardPlansItLikePlanIt() {
+        let dishes = (0..<3).map { recipe("Dish \($0)") }
+        var deck = makeDeck(days: [day(0), day(1)], recipes: dishes, today: day(0))
+        let card = deck.current
+        #expect(!deck.canPlanTonight, "Plan it already plans tonight's card — no second control.")
+        deck.planTonight()
+        #expect(deck.picks == [PlanDeck.Pick(day: day(0), recipe: card?.recipe ?? dishes[0])])
+        #expect(deck.current?.day == day(1))
+    }
+
+    @Test func upDoesNothingWhenTonightIsAlreadyPlanned() {
+        let dishes = (0..<3).map { recipe("Dish \($0)") }
+        let planned = plan(dishes[0], on: day(0))
+        var deck = makeDeck(days: [day(1), day(2)], recipes: dishes, planned: [planned], today: day(0))
+        let card = deck.current
+        #expect(!deck.canPlanTonight)
+        deck.planTonight()
+        #expect(deck.picks.isEmpty)
+        #expect(deck.current == card)
+    }
+
+    @Test func upDoesNothingOnceTonightIsPickedInTheDeck() {
+        let dishes = (0..<4).map { recipe("Dish \($0)") }
+        var deck = makeDeck(days: [day(0), day(1), day(2)], recipes: dishes, today: day(0))
+        deck.plan()
+        #expect(!deck.canPlanTonight)
+        let card = deck.current
+        deck.planTonight()
+        #expect(deck.picks.count == 1)
+        #expect(deck.current == card)
+    }
+
+    @Test func upWhenTheLastDishGoesToTonightFinishesTheDeck() {
+        var deck = makeDeck(days: [day(0), day(3)], recipes: [recipe("Only")], today: day(0))
+        deck.skipNight()
+        deck.planTonight()
+        #expect(deck.picks.map(\.day) == [day(0)])
+        #expect(deck.isFinished)
+        #expect(deck.finishedCopy.title == "1 dinner planned")
+    }
+
+    @Test func aTonightPickLeadsTodaysFeed() {
+        let dishes = (0..<3).map { recipe("Dish \($0)") }
+        var deck = makeDeck(days: [day(0), day(2)], recipes: dishes, today: day(0))
+        deck.skipNight()
+        deck.planTonight()
+        let pick = deck.picks.first
+        let plans = deck.picks.map { plan($0.recipe, on: $0.day) }
+        let evening = cal.date(byAdding: .hour, value: 18, to: day(0)) ?? day(0)
+        let feed = TodayFeed.make(recipes: dishes, todaysPlans: plans, kitchenItemNames: [], now: evening, calendar: cal)
+        #expect(feed.hero?.recipe.id == pick?.recipe.id)
+        #expect(feed.hero?.reason == .planned(.dinner))
     }
 }

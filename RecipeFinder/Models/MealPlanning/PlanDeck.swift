@@ -4,7 +4,8 @@ import Foundation
 /// weekends, not the same cuisine two nights running, kitchen items that are expiring first, then favourites and
 /// well-rated dishes. ♥ plans the card for its night; ✕ shows another dish for the same night. A dish already on the
 /// week or picked here is never dealt again; one passed on comes back on a later night only once the fresh ones are
-/// gone, so a small library still fills the week. Pure value type, seeded, so the deck is testable.
+/// gone, so a small library still fills the week. Swiping up plans the card's dish for tonight instead, while tonight
+/// is still open. Pure value type, seeded, so the deck is testable.
 struct PlanDeck {
     struct Card: Equatable, Identifiable {
         let day: Date
@@ -44,6 +45,10 @@ struct PlanDeck {
     private var shownTonight: Set<UUID> = []
     /// Cuisine of each dinner already on the plan (or picked here), by start of day.
     private var cuisineByDay: [Date: String]
+    /// Start of today: the night "up" plans for.
+    private let tonight: Date
+    /// Tonight has no dinner yet — on the plan or picked here.
+    private var tonightOpen: Bool
     private let calendar: Calendar
 
     /// - Parameters:
@@ -57,10 +62,14 @@ struct PlanDeck {
         plannedThisWeek: [MealPlanModel],
         expiringItemNames: [String],
         seed: UInt64,
+        today: Date = Date(),
         calendar: Calendar = .current
     ) {
         self.calendar = calendar
         self.days = days.map { calendar.startOfDay(for: $0) }
+        tonight = calendar.startOfDay(for: today)
+        // `days` are the empty dinners, so tonight is open exactly when it's one of them.
+        tonightOpen = self.days.contains(tonight)
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         taken = Set(plannedThisWeek.map(\.recipeId))
         var cuisines: [Date: String] = [:]
@@ -111,6 +120,13 @@ struct PlanDeck {
 
     var isFinished: Bool { current == nil }
 
+    /// Up can send the card to tonight: tonight is still open and the card is for another night (on tonight's own
+    /// card, Plan it already does that).
+    var canPlanTonight: Bool {
+        guard tonightOpen, let card = current else { return false }
+        return card.day != tonight
+    }
+
     /// "2 of 5" — the night being planned, counted from 1.
     var position: (night: Int, of: Int) {
         (min(dayIndex + 1, days.count), days.count)
@@ -132,9 +148,24 @@ struct PlanDeck {
     mutating func plan() {
         guard let card = current else { return }
         picks.append(Pick(day: card.day, recipe: card.recipe))
-        taken.insert(card.recipe.id)
-        if let cuisine = Self.cuisineKey(card.recipe) { cuisineByDay[card.day] = cuisine }
+        record(card.recipe, on: card.day)
         nextNight()
+    }
+
+    /// Plans the current card's dish for tonight. On a later night's card that night gets another dish; on tonight's
+    /// own card it's Plan it. Does nothing once tonight has a dinner.
+    mutating func planTonight() {
+        guard tonightOpen, let card = current else { return }
+        guard card.day != tonight else { return plan() }
+        picks.append(Pick(day: tonight, recipe: card.recipe))
+        record(card.recipe, on: tonight)
+        current = deal()
+    }
+
+    private mutating func record(_ recipe: RecipeModel, on day: Date) {
+        taken.insert(recipe.id)
+        if let cuisine = Self.cuisineKey(recipe) { cuisineByDay[day] = cuisine }
+        if day == tonight { tonightOpen = false }
     }
 
     /// Passes on the current dish and deals another for the same night (or moves on when none is left).
