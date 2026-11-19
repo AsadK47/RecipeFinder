@@ -176,8 +176,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
         // Cooking flow slice 3: leaving mid-recipe and starting again picks up at the same step.
         // Done on the last step finishes the cook (and forgets the place), so step back off it first.
-        if next.label == "Finish" {
-            app.buttons["Back"].firstMatch.tap()
+        if next.label.hasPrefix("Finish") {
+            app.buttons["cooking.back"].tap()
             settle(1)
         }
         let position = app.staticTexts["cooking.stepPosition"]

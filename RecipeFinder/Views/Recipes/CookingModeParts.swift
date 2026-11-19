@@ -108,6 +108,7 @@ struct CookingNavigationRow: View {
                     .background(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12).fill(.ultraThinMaterial))
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("cooking.back")
             }
 
             Button(action: onNext) {
