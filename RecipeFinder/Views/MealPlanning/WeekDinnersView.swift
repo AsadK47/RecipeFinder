@@ -124,7 +124,8 @@ struct WeekDinnersView: View {
                         .font(.title2.weight(.semibold))
                         .adaptiveSecondaryForeground()
                 }
-                .frame(height: photoHeight)
+                // A missed night is history, not a call to action: half height so the nights ahead lead.
+                .frame(height: night.isPast ? photoHeight / 2 : photoHeight)
                 dayLabel(night)
                 Text(night.isPast ? "No dinner planned" : "Plan dinner")
                     .font(.subheadline)

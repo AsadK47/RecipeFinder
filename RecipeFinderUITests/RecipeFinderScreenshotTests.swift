@@ -983,7 +983,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertEqual(nights.count, 7, "Plan should show the week as seven nights.")
         let planned = nights.matching(NSPredicate(format: "label CONTAINS 'dinner:'"))
         XCTAssertTrue(planned.firstMatch.waitForExistence(timeout: 5), "A planned night should show its dinner.")
-        planned.firstMatch.swipeUp(velocity: .slow)
+        // Scroll until the whole planned photo clears the tab bar (isHittable is true at its first pixel).
+        let tabBarTop = app.tabBars.firstMatch.frame.minY
+        for _ in 0..<4 where planned.firstMatch.frame.maxY > tabBarTop - 8 {
+            app.swipeUp(velocity: .slow)
+        }
         settle()
         snap(app, "54-plan-week-dinners")
 
