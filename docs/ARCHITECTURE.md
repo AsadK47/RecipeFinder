@@ -40,7 +40,7 @@ doc links to them rather than repeating them:
 - **Environment seams.** Each manager is an `@Observable` class behind a protocol with an `EnvironmentKey`
   defaulting to `.shared`: `recipeStore: RecipeStoring`, `badges: BadgeManaging`, `profile: ProfileManaging`,
   `kitchen: KitchenInventoryManaging`, `mealPlanning: MealPlanningManaging`, `collections: CollectionManaging`,
-  `shopping: ShoppingListManaging`, `cookingStreak: CookingStreakTracking`, `recipeTimer: RecipeTiming`,
+  `shopping: ShoppingListManaging`, `cookingStreak: CookingStreakTracking`, `recipeTimer: RecipeTiming`, `cookingTimers: CookingTiming`,
   `madeItPresenter: MadeItPresenting` (current set: `grep -rn "extension EnvironmentValues" RecipeFinder`). Tests
   and previews override them with `.environment(\.key, fake)`.
 - **Store seams.** Managers take a `LocalStore` and a store protocol in `init` (e.g.
