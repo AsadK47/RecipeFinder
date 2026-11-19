@@ -343,6 +343,7 @@
 		F3D40554305635C00076834D /* PantryAlertsSectionContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40553305635C00076834D /* PantryAlertsSectionContent.swift */; };
 		F3D40556305636B40076834D /* SeedRecipeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40555305636B40076834D /* SeedRecipeProvider.swift */; };
 		F3D40558305637890076834D /* CookingModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40557305637890076834D /* CookingModeView.swift */; };
+		C0C1A2B3D4E5F60718293A4B /* CookingModeParts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C1A2B3D4E5F60718293A4C /* CookingModeParts.swift */; };
 		F3D4055A3056439C0076834D /* SeedRecipeProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D405593056439C0076834D /* SeedRecipeProviderTests.swift */; };
 		F3D4055C305643B40076834D /* PantryAlertsCategorisationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4055B305643B40076834D /* PantryAlertsCategorisationTests.swift */; };
 		F3D4055E30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4055D30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift */; };
@@ -953,6 +954,7 @@
 		F3D40553305635C00076834D /* PantryAlertsSectionContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryAlertsSectionContent.swift; sourceTree = "<group>"; };
 		F3D40555305636B40076834D /* SeedRecipeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedRecipeProvider.swift; sourceTree = "<group>"; };
 		F3D40557305637890076834D /* CookingModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingModeView.swift; sourceTree = "<group>"; };
+		C0C1A2B3D4E5F60718293A4C /* CookingModeParts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingModeParts.swift; sourceTree = "<group>"; };
 		F3D405593056439C0076834D /* SeedRecipeProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedRecipeProviderTests.swift; sourceTree = "<group>"; };
 		F3D4055B305643B40076834D /* PantryAlertsCategorisationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryAlertsCategorisationTests.swift; sourceTree = "<group>"; };
 		F3D4055D30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDietaryInfoPersistenceTests.swift; sourceTree = "<group>"; };
@@ -1875,6 +1877,7 @@
 				F95146FE11277BA49B4FCDC3 /* AmountEstimateReviewSheet.swift */,
 				F3E9D1D93045DCE8008BF231 /* RecipeDetailView+Content.swift */,
 				F3D40557305637890076834D /* CookingModeView.swift */,
+				C0C1A2B3D4E5F60718293A4C /* CookingModeParts.swift */,
 				F3D40571305995060076834D /* SubstituteSheetView.swift */,
 				F3FF62E5305C18800008B191 /* RecipeRefreshSheet.swift */,
 				F3FF62EB305C1F2A0008B191 /* MadeItSheet.swift */,
@@ -2979,6 +2982,7 @@
 				9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */,
 				F3B7D91930791F1E00991908 /* CookingSheet.swift in Sources */,
 				F3D40558305637890076834D /* CookingModeView.swift in Sources */,
+				C0C1A2B3D4E5F60718293A4B /* CookingModeParts.swift in Sources */,
 				F3E9D17A30444F85008BF231 /* RecipeDetailToolbar.swift in Sources */,
 				1316E385BBD8909E26F81B72 /* RecipeNutritionLabel.swift in Sources */,
 				F81613233E3B61B360DF3A22 /* ShopIngredientsSheet.swift in Sources */,

@@ -1,0 +1,160 @@
+import SwiftUI
+
+// Pieces of `CookingModeView`, split out so the screen reads as layout + state only.
+
+/// Thin bar across the top: how far through the cook you are.
+struct CookingProgressBar: View {
+    let progress: Double
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(.white.opacity(0.2))
+                    .frame(height: 4)
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(.white.opacity(0.85))
+                    .frame(width: geo.size.width * CGFloat(progress), height: 4)
+                    .animation(.appGentle, value: progress)
+            }
+        }
+        .frame(height: 4)
+        .padding(.top, AppTheme.spacing8)
+        .padding(.bottom, AppTheme.spacing16)
+    }
+}
+
+/// First screen of a cook: tap each ingredient off as you gather it.
+struct CookingIngredientChecklist: View {
+    let recipe: RecipeModel
+    @Binding var completed: Set<Int>
+    @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
+
+    /// Same amount text as the recipe screen (it used to differ: "13 g" vs "12½ g").
+    static func line(for ingredient: Ingredient, scaleFactor: Double, system: MeasurementSystem) -> String {
+        let amount = IngredientRowView.amount(for: ingredient, scaleFactor: scaleFactor, system: system)
+        let qty = [amount.quantity, amount.unit].compactMap { $0 }.joined(separator: " ")
+        return qty.isEmpty ? ingredient.displayName : "\(qty) \(ingredient.displayName)"
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                Text("Gather your ingredients")
+                    .font(.title2.weight(.bold))
+                    .adaptiveForegroundColor()
+                    .padding(.bottom, AppTheme.spacing8)
+
+                ForEach(recipe.ingredients.indices, id: \.self) { i in
+                    row(i)
+                }
+            }
+            .padding(.vertical, AppTheme.spacing8)
+        }
+    }
+
+    private func row(_ i: Int) -> some View {
+        let isChecked = completed.contains(i)
+        return Button {
+            withAnimation(.appSnappy) {
+                if isChecked { completed.remove(i) } else { completed.insert(i) }
+            }
+            HapticManager.shared.selection()
+        } label: {
+            HStack(spacing: AppTheme.spacing16) {
+                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(isChecked ? .green : .white.opacity(0.6))
+                    .frame(width: AppTheme.iconSize28)
+
+                Text(Self.line(for: recipe.ingredients[i], scaleFactor: recipe.scaleFactor, system: measurementSystem))
+                    .font(.body)
+                    .adaptiveForegroundColor()
+                    .strikethrough(isChecked, color: .secondary)
+                    .opacity(isChecked ? 0.5 : 1)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.vertical, AppTheme.spacing10)
+            .padding(.horizontal, AppTheme.spacing16)
+            .background(
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
+                    .fill(.white.opacity(isChecked ? 0.05 : 0.1))
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// Back / Next (or Finish on the last item) along the bottom.
+struct CookingNavigationRow: View {
+    let isFirst: Bool
+    let isLast: Bool
+    let onBack: () -> Void
+    let onNext: () -> Void
+
+    var body: some View {
+        HStack(spacing: AppTheme.spacing16) {
+            if !isFirst {
+                Button(action: onBack) {
+                    HStack(spacing: AppTheme.spacing8) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .font(.body.weight(.semibold))
+                    .adaptiveForegroundColor()
+                    .frame(maxWidth: .infinity, minHeight: 56)
+                    .background(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12).fill(.ultraThinMaterial))
+                }
+                .buttonStyle(.plain)
+            }
+
+            Button(action: onNext) {
+                HStack(spacing: AppTheme.spacing8) {
+                    Text(isLast ? "Finish" : "Next")
+                    Image(systemName: isLast ? "checkmark" : "chevron.right")
+                }
+                .font(.body.weight(.semibold))
+                .adaptiveForegroundColor()
+                .frame(maxWidth: .infinity, minHeight: 56)
+                .background(
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                        .fill(isLast ? Color.green.opacity(0.4) : AppTheme.accentColor.opacity(0.35))
+                )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.top, AppTheme.spacing16)
+    }
+}
+
+/// The end of the cook gets its own moment (peak-end) rather than the cover just vanishing.
+struct CookingFinishedCard: View {
+    let recipeName: String
+    let onDone: () -> Void
+
+    var body: some View {
+        VStack(spacing: AppTheme.spacing20) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 72))
+                .foregroundStyle(.green)
+                .accessibilityHidden(true)
+
+            VStack(spacing: AppTheme.spacing8) {
+                Text("Nice cooking!")
+                    .font(.title.weight(.bold))
+                    .adaptiveForegroundColor()
+                Text("\(recipeName) is logged to your cook history.")
+                    .font(.body)
+                    .adaptiveSecondaryForeground()
+                    .multilineTextAlignment(.center)
+            }
+
+            PrimaryButton("Done", systemImage: "checkmark", fillWidth: true, action: onDone)
+                .padding(.top, AppTheme.spacing8)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("cooking.finished")
+    }
+}
