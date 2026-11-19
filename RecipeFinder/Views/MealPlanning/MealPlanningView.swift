@@ -85,6 +85,8 @@ struct MealPlanningView: View {
                     .padding(.bottom, AppTheme.spacing100)
                 }
             }
+            // The deck is drawn over the planner, not presented, so keep VoiceOver from reaching what's under it.
+            .accessibilityHidden(planDeck != nil)
 
             if let deck = Binding($planDeck) {
                 PlanDeckView(deck: deck, onPlan: savePick, onClose: closePlanDeck)

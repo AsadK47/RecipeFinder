@@ -2,8 +2,9 @@ import Foundation
 
 /// "Plan my week": one card per empty dinner, drawn by the Fill-my-week rules — quick on weeknights, longer ones at
 /// weekends, not the same cuisine two nights running, kitchen items that are expiring first, then favourites and
-/// well-rated dishes. ♥ plans the card for its night; ✕ shows another dish for the same night. A dish planned this
-/// week, picked or passed on here is never dealt again. Pure value type, seeded, so the deck is testable.
+/// well-rated dishes. ♥ plans the card for its night; ✕ shows another dish for the same night. A dish already on the
+/// week or picked here is never dealt again; one passed on comes back on a later night only once the fresh ones are
+/// gone, so a small library still fills the week. Pure value type, seeded, so the deck is testable.
 struct PlanDeck {
     struct Card: Equatable, Identifiable {
         let day: Date
@@ -35,7 +36,12 @@ struct PlanDeck {
     private(set) var current: Card?
     private(set) var picks: [Pick] = []
     private let candidates: [Candidate]
-    private var dealt: Set<UUID>
+    /// On the week already or picked here: never dealt again.
+    private var taken: Set<UUID>
+    /// Passed on for some night: dealt again only behind every fresh dish.
+    private var passed: Set<UUID> = []
+    /// Already shown for the night being planned.
+    private var shownTonight: Set<UUID> = []
     /// Cuisine of each dinner already on the plan (or picked here), by start of day.
     private var cuisineByDay: [Date: String]
     private let calendar: Calendar
@@ -56,7 +62,7 @@ struct PlanDeck {
         self.calendar = calendar
         self.days = days.map { calendar.startOfDay(for: $0) }
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        dealt = Set(plannedThisWeek.map(\.recipeId))
+        taken = Set(plannedThisWeek.map(\.recipeId))
         var cuisines: [Date: String] = [:]
         for plan in plannedThisWeek where plan.mealTime == .dinner {
             if let cuisine = byID[plan.recipeId].flatMap(Self.cuisineKey) {
@@ -65,16 +71,17 @@ struct PlanDeck {
         }
         cuisineByDay = cuisines
 
-        let expiringTerms = expiringItemNames.map { ($0, KitchenRecipeMatcher.normalizedTerm($0)) }
-            .filter { !$0.1.isEmpty }
+        let expiringTerms = expiringItemNames.compactMap { name in
+            KitchenRecipeMatcher.matchTerm(name).map { (name, $0) }
+        }
         var generator = SeededGenerator(seed: seed)
         candidates = Self.dinnerRecipes(recipes)
             .sorted { $0.name < $1.name }
             .shuffled(using: &generator)
             .map { recipe in
                 // Normalising is regex work: skip it for the whole library when nothing is expiring.
-                let terms = expiringTerms.isEmpty
-                    ? [] : recipe.ingredients.map { KitchenRecipeMatcher.normalizedTerm($0.name) }
+                let terms: [KitchenRecipeMatcher.MatchTerm] = expiringTerms.isEmpty
+                    ? [] : recipe.ingredients.compactMap { KitchenRecipeMatcher.matchTerm($0.name) }
                 let uses = expiringTerms.filter { item in
                     terms.contains { KitchenRecipeMatcher.ingredientMatches($0, item.1) }
                 }.map(\.0)
@@ -118,45 +125,57 @@ struct PlanDeck {
         if days.isEmpty {
             return ("Your week is planned", "Every dinner from today has a dish.")
         }
-        return ("Your nights are open", "Add more recipes and the deck has more to choose from.")
+        return ("That's every dish for now", "Plan the rest from your week, or add recipes on Recipes for more to choose from.")
     }
 
     /// Plans the current card's dish for its night and moves to the next night.
     mutating func plan() {
         guard let card = current else { return }
         picks.append(Pick(day: card.day, recipe: card.recipe))
+        taken.insert(card.recipe.id)
         if let cuisine = Self.cuisineKey(card.recipe) { cuisineByDay[card.day] = cuisine }
-        dayIndex += 1
-        current = deal()
+        nextNight()
     }
 
     /// Passes on the current dish and deals another for the same night (or moves on when none is left).
     mutating func skip() {
-        guard current != nil else { return }
+        guard let card = current else { return }
+        passed.insert(card.recipe.id)
         current = deal()
     }
 
-    /// Leaves the current night empty and moves to the next one.
+    /// Leaves the current night empty and moves to the next one; its dish stays fresh for the nights after.
     mutating func skipNight() {
         guard current != nil else { return }
+        nextNight()
+    }
+
+    private mutating func nextNight() {
         dayIndex += 1
+        shownTonight = []
         current = deal()
     }
 
-    /// The best undealt dish for the current night; a night with nothing left is left empty.
+    /// The best dish not yet shown for the current night, fresh ones before passed ones; a night with nothing left
+    /// is left empty.
     private mutating func deal() -> Card? {
         while dayIndex < days.count {
             let day = days[dayIndex]
-            var best: (candidate: Candidate, score: Int)?
-            for candidate in candidates where !dealt.contains(candidate.recipe.id) {
+            var best: (candidate: Candidate, passed: Bool, score: Int)?
+            for candidate in candidates {
+                let id = candidate.recipe.id
+                guard !taken.contains(id), !shownTonight.contains(id) else { continue }
+                let wasPassed = passed.contains(id)
                 let value = score(candidate, on: day)
-                if value > (best?.score ?? .min) { best = (candidate, value) }
+                let beats = best.map { wasPassed == $0.passed ? value > $0.score : !wasPassed } ?? true
+                if beats { best = (candidate, wasPassed, value) }
             }
             if let best {
-                dealt.insert(best.candidate.recipe.id)
+                shownTonight.insert(best.candidate.recipe.id)
                 return Card(day: day, recipe: best.candidate.recipe, reason: reason(best.candidate, on: day))
             }
             dayIndex += 1
+            shownTonight = []
         }
         return nil
     }
@@ -165,7 +184,8 @@ struct PlanDeck {
 
     private func neighbourCuisines(of day: Date) -> [String] {
         [-1, 1].compactMap { offset in
-            calendar.date(byAdding: .day, value: offset, to: day).flatMap { cuisineByDay[$0] }
+            // Re-anchored: where DST starts at midnight, day + 1 isn't that day's start.
+            calendar.date(byAdding: .day, value: offset, to: day).flatMap { cuisineByDay[calendar.startOfDay(for: $0)] }
         }
     }
 

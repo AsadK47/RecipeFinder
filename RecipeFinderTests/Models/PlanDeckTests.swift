@@ -120,6 +120,51 @@ import Foundation
         #expect(makeDeck(days: [day(1)], recipes: [cake]).current?.recipe.name == "Cake")
     }
 
+    @Test func longCooksWaitBehindUntimedOnesOnWeeknights() {
+        let slow = recipe("Slow braise", minutes: 180, rating: 5)
+        let untimed = recipe("Untimed", minutes: 0)
+        #expect(makeDeck(days: [day(1)], recipes: [slow, untimed]).current?.recipe.name == "Untimed")
+    }
+
+    @Test(arguments: [UInt64(1), 2, 3, 4, 5])
+    func weekendsPreferTheLongerCookWhateverTheSeed(seed: UInt64) {
+        let dishes = [recipe("Slow braise", minutes: 180), recipe("Stir fry", minutes: 20)]
+        #expect(makeDeck(days: [day(5)], recipes: dishes, seed: seed).current?.recipe.name == "Slow braise")
+    }
+
+    @Test func varietyLooksAtTheNightAfterToo() {
+        let tuesday = recipe("Lasagne", cuisine: "Italian")
+        let risotto = recipe("Risotto", isFavorite: true, cuisine: "Italian")
+        let tacos = recipe("Tacos", cuisine: "Mexican")
+        let card = makeDeck(days: [day(0)], recipes: [tuesday, risotto, tacos],
+                            planned: [plan(tuesday, on: day(1))]).current
+        #expect(card?.recipe.name == "Tacos")
+    }
+
+    @Test func expiringItemsCountUpToTwo() {
+        let three = recipe("Three", ingredients: ["spinach", "leeks", "mushrooms"])
+        let two = recipe("Two", ingredients: ["spinach", "leeks"], isFavorite: true)
+        let card = makeDeck(days: [day(1)], recipes: [three, two], expiring: ["Spinach", "Leeks", "Mushrooms"]).current
+        #expect(card?.recipe.name == "Two")
+    }
+
+    @Test func favouritesComeFirst() {
+        let plain = recipe("Plain")
+        let loved = recipe("Loved", isFavorite: true)
+        let card = makeDeck(days: [day(1)], recipes: [plain, loved]).current
+        #expect(card?.recipe.name == "Loved")
+    }
+
+    @Test func untimedFavouriteSaysWhy() {
+        let card = makeDeck(days: [day(1)], recipes: [recipe("Loved", minutes: 0, isFavorite: true)]).current
+        #expect(card?.reason == "One of your favourites")
+    }
+
+    @Test func untimedDishOfACuisineSaysWhy() {
+        let card = makeDeck(days: [day(1)], recipes: [recipe("Tacos", minutes: 0, cuisine: "Mexican")]).current
+        #expect(card?.reason == "A night of Mexican food")
+    }
+
     @Test(arguments: [
         (1, 20, "Quick for a weeknight · "),
         (5, 90, "A weekend cook · ")
@@ -154,16 +199,30 @@ import Foundation
         #expect(deck.picks.isEmpty)
     }
 
-    @Test func noDishIsDealtTwice() {
+    @Test func noDishShowsTwiceInANightAndPicksNeverReturn() {
         let dishes = (0..<5).map { recipe("Dish \($0)") }
         var deck = makeDeck(days: (1...4).map(day), recipes: dishes)
-        var seen: [UUID] = []
-        while let card = deck.current {
-            seen.append(card.recipe.id)
-            if seen.count.isMultiple(of: 2) { deck.plan() } else { deck.skip() }
+        var shownByNight: [Date: [UUID]] = [:]
+        var turns = 0
+        while let card = deck.current, turns < 100 {
+            shownByNight[card.day, default: []].append(card.recipe.id)
+            turns += 1
+            if turns.isMultiple(of: 2) { deck.plan() } else { deck.skip() }
         }
-        #expect(seen.count == 5)
-        #expect(Set(seen).count == seen.count)
+        #expect(deck.isFinished)
+        #expect(shownByNight.values.allSatisfy { Set($0).count == $0.count })
+        let picked = deck.picks.map(\.recipe.id)
+        #expect(Set(picked).count == picked.count)
+        #expect(picked.count == 4)
+    }
+
+    @Test func aPassedDishWaitsBehindFreshOnes() {
+        let star = recipe("Star", rating: 5)
+        var deck = makeDeck(days: [day(1), day(2)], recipes: [star, recipe("Plain A"), recipe("Plain B")])
+        #expect(deck.current?.recipe.name == "Star")
+        deck.skip()
+        deck.plan()
+        #expect(deck.current?.recipe.name.hasPrefix("Plain") == true)
     }
 
     @Test func dishesAlreadyPlannedThisWeekAreNotDealt() {
@@ -173,18 +232,21 @@ import Foundation
         #expect(card?.recipe.name == "Other")
     }
 
-    @Test func runningOutOfDishesFinishesTheDeck() {
+    @Test func aPassedDishComesBackOnALaterNightWhenNothingElseIsLeft() {
         var deck = makeDeck(days: [day(1), day(2)], recipes: [recipe("Only")])
+        deck.skip()
+        #expect(deck.current?.day == day(2))
+        #expect(deck.current?.recipe.name == "Only")
         deck.skip()
         #expect(deck.isFinished)
         #expect(deck.picks.isEmpty)
     }
 
-    @Test func skipNightLeavesItEmpty() {
-        let dishes = (0..<3).map { recipe("Dish \($0)") }
-        var deck = makeDeck(days: [day(1), day(2)], recipes: dishes)
+    @Test func skipNightKeepsItsDishForTheNextNight() {
+        var deck = makeDeck(days: [day(1), day(2)], recipes: [recipe("Only")])
         deck.skipNight()
         #expect(deck.current?.day == day(2))
+        #expect(deck.current?.recipe.name == "Only")
         deck.plan()
         #expect(deck.picks.map(\.day) == [day(2)])
     }
@@ -204,6 +266,7 @@ import Foundation
         }
         #expect(order(42) == order(42))
         #expect(order(42).count == 7)
+        #expect(order(1) != order(2))
     }
 
     // MARK: - Closing card
@@ -221,6 +284,6 @@ import Foundation
 
     @Test func finishedCopyForAFullWeekAndForNoPicks() {
         #expect(makeDeck(days: [], recipes: [recipe("Dish")]).finishedCopy.title == "Your week is planned")
-        #expect(makeDeck(days: [day(1)], recipes: []).finishedCopy.title == "Your nights are open")
+        #expect(makeDeck(days: [day(1)], recipes: []).finishedCopy.title == "That's every dish for now")
     }
 }

@@ -936,6 +936,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(card.waitForExistence(timeout: 5), "Plan my week should deal a card.")
         let night = app.staticTexts["planDeck.night"]
         XCTAssertTrue(night.exists, "The deck should say which night it's planning.")
+        XCTAssertFalse(app.tabBars.firstMatch.isHittable, "The deck should cover the tab bar.")
         settle()
         snap(app, "52-plan-deck")
 
@@ -965,9 +966,9 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(close.exists, "The deck should offer a way out.")
         if finished.exists { snap(app, "53-plan-deck-done") }
         close.tap()
-        XCTAssertTrue(open.waitForExistence(timeout: 5) || app.tabBars.firstMatch.exists,
-                      "Closing the deck should return to the planner.")
-        XCTAssertFalse(card.exists, "The deck should be closed.")
+        expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: card)
+        waitForExpectations(timeout: 5)
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5), "Closing the deck should bring back the tabs.")
     }
 
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).

@@ -12,9 +12,12 @@ struct PlanDeckView: View {
     /// Which way the last card left, so it flies off on the side it was sent.
     @State private var exitEdge: Edge = .trailing
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private static let swipeThreshold: CGFloat = 110
-    private static let imageHeight: CGFloat = 300
+
+    /// Smaller at accessibility text sizes so the name, reason and buttons still fit on a small phone.
+    private var imageHeight: CGFloat { dynamicTypeSize.isAccessibilitySize ? 150 : 300 }
 
     var body: some View {
         ZStack {
@@ -39,6 +42,7 @@ struct PlanDeckView: View {
             .padding(.vertical, AppTheme.spacing16)
         }
         .accessibilityElement(children: .contain)
+        .accessibilityAddTraits(.isModal)
         .accessibilityIdentifier("planDeck")
     }
 
@@ -74,9 +78,9 @@ struct PlanDeckView: View {
 
     private func cardView(_ card: PlanDeck.Card) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            RecipeImageView(recipe: card.recipe, imageName: card.recipe.heroImageName, height: Self.imageHeight)
+            RecipeImageView(recipe: card.recipe, imageName: card.recipe.heroImageName, height: imageHeight)
                 .frame(maxWidth: .infinity)
-                .frame(height: Self.imageHeight)
+                .frame(height: imageHeight)
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
                 .accessibilityHidden(true)
             Text(card.recipe.name)
@@ -102,7 +106,10 @@ struct PlanDeckView: View {
         .rotationEffect(.degrees(reduceMotion ? 0 : Double(drag.width / 25)))
         .gesture(
             DragGesture()
-                .onChanged { drag = $0.translation }
+                .onChanged { value in
+                    drag = value.translation
+                    exitEdge = value.translation.width < 0 ? .leading : .trailing
+                }
                 .onEnded { value in
                     if value.translation.width > Self.swipeThreshold {
                         plan()
@@ -147,7 +154,7 @@ struct PlanDeckView: View {
             }
             Button {
                 HapticManager.shared.light()
-                send(.leading) { deck.skipNight() }
+                send(.leading) { $0.skipNight() }
             } label: {
                 Text("Leave \(card.day.formatted(.dateTime.weekday(.wide))) open")
                     .font(.subheadline.weight(.semibold))
@@ -190,21 +197,27 @@ struct PlanDeckView: View {
     }
 
     private func plan() {
-        guard let card = deck.current else { return }
-        onPlan(PlanDeck.Pick(day: card.day, recipe: card.recipe))
-        send(.trailing) { deck.plan() }
+        send(.trailing) { deck in
+            guard let card = deck.current else { return }
+            onPlan(PlanDeck.Pick(day: card.day, recipe: card.recipe))
+            deck.plan()
+        }
     }
 
     private func skip() {
-        HapticManager.shared.light()
-        send(.leading) { deck.skip() }
+        send(.leading) { $0.skip() }
     }
 
-    private func send(_ edge: Edge, _ change: () -> Void) {
+    /// Sets which way the card leaves, then changes the deck on the next main-actor turn: the leaving card takes its
+    /// transition from its last render, so the edge must land first. The change is dropped if the card moved on
+    /// meanwhile, so a quick double tap can't plan the next night with a dish the cook never saw.
+    private func send(_ edge: Edge, _ change: @escaping (inout PlanDeck) -> Void) {
+        guard let cardID = deck.current?.id else { return }
         exitEdge = edge
-        withAnimation(.appGentle) {
+        Task { @MainActor in
+            guard deck.current?.id == cardID else { return }
+            withAnimation(.appGentle) { change(&deck) }
             drag = .zero
-            change()
         }
     }
 }

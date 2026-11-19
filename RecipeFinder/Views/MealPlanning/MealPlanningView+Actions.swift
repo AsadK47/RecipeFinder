@@ -145,7 +145,6 @@ extension MealPlanningView {
             recipeId: pick.recipe.id, recipeName: pick.recipe.name, date: pick.day,
             mealTime: .dinner, servings: pick.recipe.currentServings
         ))
-        HapticManager.shared.success()
     }
 
     func closePlanDeck() {
