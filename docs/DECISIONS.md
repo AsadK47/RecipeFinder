@@ -5,6 +5,15 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Cooking flow slice 3b named timers** (landed 4d04ae3): pure `CookingTimerBoard` (time passed in) + `CookingTimers` store
+  (`@Environment(\.cookingTimers)`, alerts behind `CookingTimerAlerting`). App session only, like resume (persisting
+  = new on-device data → owner). One timer per step (key recipe#index; button does nothing while it runs or is paused, Stop/Clear
+  frees it). Name = ingredient the step mentions first, last two words ("Soy sauce"), else "Step N". Strip of pills
+  under the progress bar on every screen, tap → Pause / +1 min / Stop; ticks via `TimelineView`, no ticker. Done is
+  signalled by the scheduled notification (foreground banner + sound) plus one in-app haptic while the strip shows. Toolbar general timer
+  (`RecipeTimerManager`) left as is → Needs owner. Finished timer frees its step (start replaces it); paused holds it. **Pre-mortem:** (1) timer vanishes on Next → UI test checks pill after moving;
+  (2) pause/resume leaves a stale alert → CookingTimersTests pause/resume/+1/stop; (3) wrong/long name → naming
+  tests + screenshot 51.
 - **Cooking flow slice 3a resume** (landed 7a3d86e): in memory only (this app session) — persisting the place would be new on-device
   data not covered by Privacy §4.2 and not cleared by Reset (legal text = guardrail) → Needs owner question. Keyed by
   recipe id; valid only while the recipe's cooking lines + ingredient names match (edit → start over, ticks can't land

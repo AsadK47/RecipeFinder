@@ -33,23 +33,14 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
-- Cook: 🚧 **Cooking flow** slice 3a resume ✅ landed 7a3d86e (builder 2026-11-19, in memory; across relaunch →
-  Needs owner). Left: several named timers that stay visible on later steps, last step → Made it (verify onFinish).
-  Leftover branch agent/cooking-resume (auto-cleanup).
+- Cook: 🚧 **Cooking flow** slice 3a resume ✅ 7a3d86e, slice 3b named timers ✅ 4d04ae3 (builder 2026-11-19; toolbar
+  timer vs pills → Needs owner). Left: last step → Made it (verify onFinish), UI test stepping through.
+  Leftover branches agent/cooking-resume, agent/cooking-timers (auto-cleanup).
 
 ## Next action
-Cooking flow slice 3b on `agent/cooking-timers` (234cb52 pushed): check Build & Test + Screenshots (51-cooking-timers), fix, land.
+Cooking flow slice 4 on `agent/cooking-made-it`: last step → Made it (verify `onFinish` opens the Made it sheet; UI test steps through to Finish).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Cooking flow slice 3b (named timers)**: pure `CookingTimerBoard` (time passed in) + `CookingTimers` store
-  (`@Environment(\.cookingTimers)`, alerts behind `CookingTimerAlerting`). App session only, like resume (persisting
-  = new on-device data → owner). One timer per step (key recipe#index; button disabled while it exists, Stop/Clear
-  frees it). Name = ingredient the step mentions first, last two words ("Soy sauce"), else "Step N". Strip of pills
-  under the progress bar on every screen, tap → Pause / +1 min / Stop; ticks via `TimelineView`, no ticker. Done is
-  signalled by the scheduled notification (foreground banner + sound) plus one in-app haptic while the strip shows. Toolbar general timer
-  (`RecipeTimerManager`) left as is. **Pre-mortem:** (1) timer vanishes on Next → UI test checks pill after moving;
-  (2) pause/resume leaves a stale alert → CookingTimersTests pause/resume/+1/stop; (3) wrong/long name → naming
-  tests + screenshot 51.
 - **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey`, one longest-first
   claim loop: full name (each side of an "or") → last two words ("soy sauce" for "light soy sauce") → head word
   ("onion" for "red onion", unless generic: sauce/powder/stock…) or the meat before a cut ("chicken" for "chicken

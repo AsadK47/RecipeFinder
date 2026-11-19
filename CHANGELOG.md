@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Cooking flow slice 3b named timers · 4d04ae3
+- For you: run several timers at once in cooking mode — each step's timer appears as a named pill like "Rice 12:00" that stays in sight as you move through the steps, with pause, add a minute and stop a tap away.
+- Behind the build: the timer rules were built as a small tested model with time passed in, then checked by two separate reviewers who found six things to tighten before it landed.
+
 ## 2026-11-19 · Cooking flow slice 3a resume · 7a3d86e
 - For you: step away from cooking mode mid-recipe and come back — it opens at the step you left, with your ingredients still ticked.
 - Behind the build: a recipe edited in between starts from the top so you never land on the wrong step, checked by unit tests and a UI test that leaves and reopens.

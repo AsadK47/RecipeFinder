@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-19 (item pass: Cooking flow slice 3b named timers; fixed: finished timer locked its step, no in-app signal, 3 untested alert paths, paused label, capsule token)
+- ⚔️ [Break] With timer notifications off (or denied) a finished timer is one haptic while the strip shows, nothing outside cooking mode (`CookingTimerStrip.swift`, `CookingTimers.swift` NotificationCookingTimerAlerts) — both reviewers — alternative: in-app sound, or "alerts off" on the pill — cost if wrong: overcooked rice.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Simplify] Two timer systems in cooking mode (named pills vs toolbar `RecipeTimerManager`) — both reviewers — question in Needs owner.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-19 (item pass: Cooking flow slice 3a resume; fixed: UI test matched exact "Finish"/"Back" labels)
 - ⚔️ [Edge] Today "Cook this" restores against the navigation copy of the recipe before `.task` loads the saved one (`RecipeDetailView.swift:188-200`); if they differ the place is dropped and the cook starts from the top — accepted: safe failure (never a wrong step), rare.
 - ⚔️ [Tests] UI test compares only "N of M" (Pre-Prep 2 vs Step 2 would pass) and doesn't check ticks inside cooking mode — accepted: ticks + index restore are unit-tested; restore is one assignment of both. Also a one-frame ingredient list before the jump (restore in `onAppear`) — not seen in screenshots.
