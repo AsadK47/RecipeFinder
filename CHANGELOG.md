@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Plan — swipe to match slice 2 week photos · 06094b2
+- For you: Plan now shows your week as seven dinner photos — tap one to start cooking it, hold it to move it to another night or swap two nights, and tap an empty night to pick its dinner.
+- Behind the build: the move and swap rules are a small tested model, and two separate reviewers caught a swap that could push a dinner into the past before it landed.
+
 ## 2026-11-19 · Plan — swipe to match slice 1 deck · 23134c8
 - For you: tap Plan my week and swipe through big dinner cards, one for each open night — swipe right to plan it, left for another idea. Quick dishes come up on weeknights, longer cooks at the weekend, and anything using up what's in your kitchen comes first.
 - Behind the build: the picking rules are a small seeded model with 29 tests, and two separate reviewers found ten things to tighten, from VoiceOver focus to a quick double tap.

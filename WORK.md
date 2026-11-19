@@ -36,12 +36,12 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook: ✅ **Cooking flow** done — slice 4 last step → Made it landed c1cafb8 (builder 2026-11-19). Leftover branches
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
-- Plan: 🚧 **Plan — swipe to match** — slice 1 deck landed 23134c8. Slice 2 on `agent/plan-week-photos` (builder
-  2026-11-19): `WeekDinners` (pure, tests) + `WeekDinnersView` under "Plan my week"; MealPlanningView now owns a
-  NavigationStack so a photo pushes `RecipeDetailView(startsCooking: true)`; UI steps appended to `testZZZPlanMyWeek`.
+- Plan: 🚧 **Plan — swipe to match** — slices 1 (23134c8) and 2 week photos (06094b2, builder 2026-11-19) landed.
+  Next slice: (3) up = tonight + matches feed Today. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
 
 ## Next action
-Check Build & Test on `agent/plan-week-photos`, fix, run Screenshots (look at 54-plan-week-dinners), review, land.
+Plan — swipe to match slice 3: in `PlanDeckView` a swipe up plans the card for tonight; deck matches feed Today's
+tonight pick. New branch `agent/plan-deck-tonight`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Plan week photos (slice 2):** photos sit *under* the week strip + day list for now (strip still picks a day for

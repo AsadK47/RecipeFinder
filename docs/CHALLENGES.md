@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-19 (item pass: Plan — swipe to match slice 2 week photos; fixed: swap sent a dinner into the past, recurring dinner planned twice after a move, dead button for a deleted recipe, UI test counted nights mid-animation)
+- ⚔️ [Break] Repeating dinners can't be moved from the photos, and "Take off" on a repeating copy (day list, pre-existing) is refilled by `propagateRecurring` on the next appear — now more often, since coming back from cooking re-fires `onAppear` — both reviewers — alternative: a per-week skip marker or moving the series (model change → owner) — cost if wrong: a removed weekly dinner comes back.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Simplify] Recipe lookup differs: photos match by id then name (`WeekDinners`), the day list by id only (`getRecipe`) — challenger — one shared helper — cost if wrong: after a re-import the photo shows the dish, the list doesn't.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Two dinners in one slot (sync race) → photos and move take the first; a move then reveals the hidden one — challenger — cost if wrong: rare, confusing.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Perf] `weekNights` is computed in `body` (7 × recipe lookup); MealPlanningView is 327 lines — both reviewers / own count — cache on plan change, split the view — cost if wrong: small.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-19 (item pass: Plan — swipe to match slice 1 deck; fixed: VoiceOver reached the planner under the deck, dead-end closing copy, passed dish lost for the whole deck / "leave open" lost its dish, wrong exit side + double-tap planning an unseen night, 4 unguarded rules + seed-blind test, triple haptics, accessibility-size overflow, per-pair word sets)
 - ⚔️ [Perf] `hasEmptyDinners` / `weekHasPlannedMeals` fetch the week in `body` and read `Date()` (button state only refreshes on the next render, e.g. not at midnight) — both reviewers — alternative: cache the week's plans in `@State` on appear / plan change — cost if wrong: small (7 × week meals).
   → Owner: Accept / Reject / Later
