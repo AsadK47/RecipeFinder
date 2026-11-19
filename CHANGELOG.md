@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Cooking flow slice 4 last step → Made it · c1cafb8
+- For you: finish the last step in cooking mode and you go straight to your Made it moment — cook number, streak, rating and a photo, one tap from the end.
+- Behind the build: a UI test now cooks a recipe from the first step to Finish and checks the celebration opens, then finishes again to check a same-day repeat is handled kindly.
+
 ## 2026-11-19 · Cooking flow slice 3b named timers · 4d04ae3
 - For you: run several timers at once in cooking mode — each step's timer appears as a named pill like "Rice 12:00" that stays in sight as you move through the steps, with pause, add a minute and stop a tap away.
 - Behind the build: the timer rules were built as a small tested model with time passed in, then checked by two separate reviewers who found six things to tighten before it landed.

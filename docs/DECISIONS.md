@@ -5,6 +5,27 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Cooking flow slice 4 last step → Made it** (landed c1cafb8): Finish now closes cooking mode straight into the Made it sheet
+  (was: in-cover "Nice cooking!" card → Done → sheet — two celebrations, one extra tap). `onFinish` returns whether
+  the cook counted; already cooked today (one cook a day, no sheet) keeps the done card, reworded "already in
+  today's cooks" (old "logged to your cook history" was false there). `isFinished` (no resume save) split from
+  `showDoneCard`. **Pre-mortem:** (1) sheet never appears after the cover closes → UI test asserts `madeIt.done`
+  after Finish, screenshot 41; (2) resume place re-saved on dismiss → `isFinished` set before dismiss, resume UI
+  test; (3) second cook today closes silently → second Finish in `testZCaptureMadeIt` asserts the done card.
+  UI check lives in `testZCaptureMadeIt` (sorts last so its cook doesn't leak into other shots — challenger); no unit
+  test (thin glue; `recordingCook` once-a-day and `presentHeld` already tested).
+- **Cooking flow slice 2 step ingredients** (landed 0e81fd8): word matching on `IngredientNameFormatter.matchKey`, one longest-first
+  claim loop: full name (each side of an "or") → last two words ("soy sauce" for "light soy sauce") → head word
+  ("onion" for "red onion", unless generic: sauce/powder/stock…) or the meat before a cut ("chicken" for "chicken
+  breast"). Rejected matches: span claimed by a longer name ("sesame oil", "spring onions"), followed by a compound
+  word ("garlic powder", "pepper flakes", "tomato paste"), after "without"/"no", or a one-word match right after another
+  ingredient's name end ("garlic cloves" ≠ the spice). Amounts are the recipe's, left off when the step sets its own
+  ("1 tbsp oil", "remaining", "half"); heading "Ingredients in this step". Checked on all 332 bundled recipes with a
+  Python port (challenger found 64 + 20 false positives in v1; fixed). Rejected: on-device AI (slow, not testable),
+  any-word matching. Computed once in `onAppear` into `@State`. Known misses (accepted, precision first): "vanilla"
+  for "vanilla extract", "the onions" when two onion lines exist shows the plain one.
+  **Pre-mortem:** (1) wrong ingredient shown → claim/compound/negation/garlic-cloves tests + 2 real seed steps;
+  (2) plurals missed → plural table; (3) card pushes step/Next off-screen → inside the step ScrollView, screenshot 50.
 - **Cooking flow slice 3b named timers** (landed 4d04ae3): pure `CookingTimerBoard` (time passed in) + `CookingTimers` store
   (`@Environment(\.cookingTimers)`, alerts behind `CookingTimerAlerting`). App session only, like resume (persisting
   = new on-device data → owner). One timer per step (key recipe#index; button does nothing while it runs or is paused, Stop/Clear

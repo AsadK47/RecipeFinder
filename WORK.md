@@ -33,35 +33,13 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
-- Cook: 🚧 **Cooking flow** slice 3a resume ✅ 7a3d86e, slice 3b named timers ✅ 4d04ae3 (builder 2026-11-19; toolbar
-  timer vs pills → Needs owner). Left: last step → Made it (verify onFinish), UI test stepping through.
-  Leftover branches agent/cooking-resume, agent/cooking-timers (auto-cleanup).
+- Cook: ✅ **Cooking flow** done — slice 4 last step → Made it landed c1cafb8 (builder 2026-11-19). Leftover branches
+  agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
 ## Next action
-Cooking flow slice 4 on `agent/cooking-made-it`: last step → Made it (verify `onFinish` opens the Made it sheet; UI test steps through to Finish).
+Phase 1 is done (Cooking flow → Made-it moment → My Cookbook all ticked): take the next Roadmap item per BACKLOG "Next" line (Phase 2 · Plan — swipe to match), after checking Needs owner for the Cook-lane questions (toolbar timer vs pills).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Cooking flow slice 4 (last step → Made it)**: Finish now closes cooking mode straight into the Made it sheet
-  (was: in-cover "Nice cooking!" card → Done → sheet — two celebrations, one extra tap). `onFinish` returns whether
-  the cook counted; already cooked today (one cook a day, no sheet) keeps the done card, reworded "already in
-  today's cooks" (old "logged to your cook history" was false there). `isFinished` (no resume save) split from
-  `showDoneCard`. **Pre-mortem:** (1) sheet never appears after the cover closes → UI test asserts `madeIt.done`
-  after Finish, screenshot 52; (2) resume place re-saved on dismiss → `isFinished` set before dismiss, resume UI
-  test; (3) second cook today closes silently → second Finish in `testZCaptureMadeIt` asserts the done card.
-  UI check lives in `testZCaptureMadeIt` (sorts last so its cook doesn't leak into other shots — challenger); no unit
-  test (thin glue; `recordingCook` once-a-day and `presentHeld` already tested).
-- **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey`, one longest-first
-  claim loop: full name (each side of an "or") → last two words ("soy sauce" for "light soy sauce") → head word
-  ("onion" for "red onion", unless generic: sauce/powder/stock…) or the meat before a cut ("chicken" for "chicken
-  breast"). Rejected matches: span claimed by a longer name ("sesame oil", "spring onions"), followed by a compound
-  word ("garlic powder", "pepper flakes", "tomato paste"), after "without"/"no", or a one-word match right after another
-  ingredient's name end ("garlic cloves" ≠ the spice). Amounts are the recipe's, left off when the step sets its own
-  ("1 tbsp oil", "remaining", "half"); heading "Ingredients in this step". Checked on all 332 bundled recipes with a
-  Python port (challenger found 64 + 20 false positives in v1; fixed). Rejected: on-device AI (slow, not testable),
-  any-word matching. Computed once in `onAppear` into `@State`. Known misses (accepted, precision first): "vanilla"
-  for "vanilla extract", "the onions" when two onion lines exist shows the plain one.
-  **Pre-mortem:** (1) wrong ingredient shown → claim/compound/negation/garlic-cloves tests + 2 real seed steps;
-  (2) plurals missed → plural table; (3) card pushes step/Next off-screen → inside the step ScrollView, screenshot 50.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to
