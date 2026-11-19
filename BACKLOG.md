@@ -720,7 +720,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   category (Main, Dessert…) as a cuisine — in the Globetrotter badge and now Me's strip (pinned by
   `metrics_cuisineFallsBackToCategoryWhenCuisineMissing`); starter recipes have no cuisine. Count real cuisines only
   (both places; earned badges stay) — recommended / keep the fallback?
-- 🙋 ⚔️ 39 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
+- 🙋 ⚔️ 45 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
 - 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
 - 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
   `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
