@@ -898,6 +898,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
     }
 
     /// From a recipe page: Start cooking, Next through every step, then Finish.
+    @MainActor
     private func finishCooking(_ app: XCUIApplication) {
         let start = app.buttons["Start Cooking Mode"]
         checkpoint(app, "start cooking")
