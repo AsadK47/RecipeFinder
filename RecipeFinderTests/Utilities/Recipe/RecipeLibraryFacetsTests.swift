@@ -44,4 +44,19 @@ import Foundation
         #expect(RecipeLibraryFacets.difficulties == ["Basic", "Intermediate", "Expert"])
         #expect(RecipeLibraryFacets.difficulties == RecipeWizardBuilder.difficultyLevels)
     }
+
+    /// Active filter chips list chosen difficulties easiest first, whatever order the set holds them in.
+    @Test func chosenDifficultiesRunEasiestFirst() {
+        #expect(RecipeLibraryFacets.orderedDifficulties(["Expert", "Basic", "Intermediate"]) == ["Basic", "Intermediate", "Expert"])
+        #expect(RecipeLibraryFacets.orderedDifficulties(["Expert", "Basic"]) == ["Basic", "Expert"])
+    }
+
+    /// A difficulty the editor doesn't offer still gets a chip, after the known ones, so it can be removed.
+    @Test func unknownChosenDifficultiesFollowSorted() {
+        #expect(RecipeLibraryFacets.orderedDifficulties(["hard", "Basic", "Easy"]) == ["Basic", "Easy", "hard"])
+    }
+
+    @Test func noChosenDifficultiesGiveNoChips() {
+        #expect(RecipeLibraryFacets.orderedDifficulties([]).isEmpty)
+    }
 }

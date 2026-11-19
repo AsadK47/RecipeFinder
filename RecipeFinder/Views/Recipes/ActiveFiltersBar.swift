@@ -46,7 +46,7 @@ struct ActiveFiltersBar: View {
                     }
                 }
                 
-                ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
+                ForEach(RecipeLibraryFacets.orderedDifficulties(selectedDifficulties), id: \.self) { difficulty in
                     FilterChip(label: difficulty, icon: "chart.bar.fill") {
                         HapticManager.shared.light()
                         selectedDifficulties.remove(difficulty)

@@ -7,6 +7,11 @@ struct RecipeLibraryFacets: Equatable {
     /// The filter sheet's difficulty choices: the editor's levels, easiest first.
     static let difficulties = RecipeWizardBuilder.difficultyLevels
 
+    /// The chosen difficulties easiest first (the editor's order), then any others alphabetically.
+    static func orderedDifficulties(_ chosen: Set<String>) -> [String] {
+        difficulties.filter(chosen.contains) + chosen.subtracting(difficulties).sorted()
+    }
+
     var categories: [String] = []
     var tags: [String] = []
     var cuisines: [String] = []
