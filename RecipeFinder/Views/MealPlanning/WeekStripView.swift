@@ -31,6 +31,8 @@ struct WeekStripView: View {
                         AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(0.1))
                     ))
             }
+            .accessibilityLabel("Previous week")
+            .accessibilityIdentifier("plan.week.previous")
 
             Spacer()
 
@@ -49,6 +51,8 @@ struct WeekStripView: View {
                         AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(0.1))
                     ))
             }
+            .accessibilityLabel("Next week")
+            .accessibilityIdentifier("plan.week.next")
         }
     }
 

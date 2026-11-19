@@ -927,8 +927,14 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         dismissBadgeSheet(app)
         tab(app, "Plan", shot: nil)
         let open = app.buttons["plan.planMyWeek"]
+        // Earlier tests plan tonight and the next days, so late in the week this one can be full: plan next week.
+        if !open.waitForExistence(timeout: 5) {
+            let nextWeek = app.buttons["plan.week.next"]
+            XCTAssertTrue(nextWeek.exists, "The planner should offer the next week.")
+            nextWeek.tap()
+        }
         guard open.waitForExistence(timeout: 5) else {
-            throw XCTSkip("Every dinner left this week is already planned on this simulator.")
+            throw XCTSkip("Every dinner this week and next is already planned on this simulator.")
         }
         checkpoint(app, "plan my week")
         open.tap()
