@@ -82,7 +82,7 @@ import Foundation
 
     @Test func moveToAnEmptyNightChangesOnlyThatDinnersDay() {
         let pasta = plan(recipe("Pasta"), on: day(1, hour: 14))
-        let moved = WeekDinners.move(pasta, to: day(4), plans: [pasta], calendar: cal)
+        let moved = WeekDinners.move(pasta, to: day(4), plans: [pasta], today: day(0), calendar: cal)
         #expect(moved.count == 1)
         #expect(moved.first?.id == pasta.id)
         #expect(moved.first?.date == day(4, hour: 14))
@@ -91,7 +91,7 @@ import Foundation
     @Test func moveOntoAPlannedNightSwapsTheTwoDinners() {
         let pasta = plan(recipe("Pasta"), on: day(1, hour: 14))
         let curry = plan(recipe("Curry"), on: day(4, hour: 10))
-        let moved = WeekDinners.move(pasta, to: day(4), plans: [pasta, curry], calendar: cal)
+        let moved = WeekDinners.move(pasta, to: day(4), plans: [pasta, curry], today: day(0), calendar: cal)
         #expect(moved.count == 2)
         #expect(moved.first { $0.id == pasta.id }?.date == day(4, hour: 14))
         #expect(moved.first { $0.id == curry.id }?.date == day(1, hour: 10))
@@ -100,13 +100,13 @@ import Foundation
     @Test func moveIgnoresOtherMealsOnTheTargetNight() {
         let pasta = plan(recipe("Pasta"), on: day(1))
         let lunch = plan(recipe("Soup"), on: day(4), .lunch)
-        let moved = WeekDinners.move(pasta, to: day(4), plans: [pasta, lunch], calendar: cal)
+        let moved = WeekDinners.move(pasta, to: day(4), plans: [pasta, lunch], today: day(0), calendar: cal)
         #expect(moved.map { $0.id } == [pasta.id])
     }
 
     @Test func moveToTheSameNightChangesNothing() {
         let pasta = plan(recipe("Pasta"), on: day(1, hour: 14))
-        #expect(WeekDinners.move(pasta, to: day(1, hour: 20), plans: [pasta], calendar: cal).isEmpty)
+        #expect(WeekDinners.move(pasta, to: day(1, hour: 20), plans: [pasta], today: day(0), calendar: cal).isEmpty)
     }
 
     @Test func moveKeepsTheTimeAcrossAClockChange() {
@@ -116,7 +116,7 @@ import Foundation
         let saturday = london.date(from: DateComponents(year: 2026, month: 10, day: 24, hour: 18)) ?? Date()
         let monday = london.date(from: DateComponents(year: 2026, month: 10, day: 26)) ?? Date()
         let pasta = MealPlanModel(recipeId: UUID(), recipeName: "Pasta", date: saturday, mealTime: .dinner)
-        let moved = WeekDinners.move(pasta, to: monday, plans: [pasta], calendar: london)
+        let moved = WeekDinners.move(pasta, to: monday, plans: [pasta], today: saturday, calendar: london)
         let parts = moved.first.map { london.dateComponents([.day, .hour], from: $0.date) }
         #expect(parts?.day == 26)
         #expect(parts?.hour == 18)
@@ -138,5 +138,45 @@ import Foundation
                                         today: day(3), calendar: cal)
         let targets = WeekDinners.moveTargets(from: nights[0], in: nights)
         #expect(targets.map { $0.date } == [day(3), day(4), day(5), day(6)])
+    }
+
+    @Test func missedDinnerOnlyMovesOntoEmptyNights() {
+        let pasta = recipe("Pasta")
+        let curry = recipe("Curry")
+        let plans = [plan(pasta, on: day(0)), plan(curry, on: day(4))]
+        let nights = WeekDinners.nights(week: week, plans: plans, recipes: [pasta, curry], today: day(3), calendar: cal)
+        let targets = WeekDinners.moveTargets(from: nights[0], in: nights)
+        #expect(targets.map { $0.date } == [day(3), day(5), day(6)])
+    }
+
+    @Test func swappingAMissedDinnerWouldSendTheOtherIntoThePastSoNothingChanges() {
+        let pasta = plan(recipe("Pasta"), on: day(0))
+        let curry = plan(recipe("Curry"), on: day(4))
+        #expect(WeekDinners.move(pasta, to: day(4), plans: [pasta, curry], today: day(3), calendar: cal).isEmpty)
+    }
+
+    @Test func missedDinnerMovesForwardOntoAnEmptyNight() {
+        let pasta = plan(recipe("Pasta"), on: day(0, hour: 18))
+        let moved = WeekDinners.move(pasta, to: day(3), plans: [pasta], today: day(3), calendar: cal)
+        #expect(moved.first?.date == day(3, hour: 18))
+    }
+
+    @Test func nothingMovesIntoThePast() {
+        let pasta = plan(recipe("Pasta"), on: day(4))
+        #expect(WeekDinners.move(pasta, to: day(1), plans: [pasta], today: day(3), calendar: cal).isEmpty)
+    }
+
+    @Test func repeatingDinnersDontMoveOrGetSwapped() {
+        let pasta = recipe("Pasta")
+        let curry = recipe("Curry")
+        var weekly = plan(pasta, on: day(1))
+        weekly.isRecurring = true
+        let once = plan(curry, on: day(4))
+        let nights = WeekDinners.nights(week: week, plans: [weekly, once], recipes: [pasta, curry],
+                                        today: day(0), calendar: cal)
+        #expect(WeekDinners.moveTargets(from: nights[1], in: nights).isEmpty)
+        #expect(!WeekDinners.moveTargets(from: nights[4], in: nights).contains { $0.date == day(1) })
+        #expect(WeekDinners.move(weekly, to: day(5), plans: [weekly, once], today: day(0), calendar: cal).isEmpty)
+        #expect(WeekDinners.move(once, to: day(1), plans: [weekly, once], today: day(0), calendar: cal).isEmpty)
     }
 }

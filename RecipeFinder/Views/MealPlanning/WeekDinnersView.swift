@@ -71,8 +71,10 @@ struct WeekDinnersView: View {
         .contextMenu { moveMenu(night, plan: plan) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(Self.spokenDay(night)), dinner: \(plan.recipeName)")
-        .accessibilityHint(night.recipe == nil ? "Recipe not in your library" : "Opens cooking. Hold to move.")
-        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(night.recipe == nil
+                           ? "This recipe is no longer in your library. Use actions to move or remove it."
+                           : "Opens cooking. Use actions to move it.")
+        .accessibilityAddTraits(night.recipe == nil ? [] : .isButton)
         .accessibilityActions { moveMenu(night, plan: plan) }
     }
 
@@ -101,7 +103,12 @@ struct WeekDinnersView: View {
                 Label(Self.moveTitle(to: target), systemImage: target.plan == nil ? "arrow.right" : "arrow.left.arrow.right")
             }
         }
-        Button(role: .destructive) { onRemove(plan) } label: { Label("Take off the plan", systemImage: "trash") }
+        if plan.isRecurring {
+            // Moving or removing one copy of a weekly dinner would be refilled from the series (see WeekDinners).
+            Text("Repeats every \(plan.date.formatted(.dateTime.weekday(.wide))) — change it in the day's list")
+        } else {
+            Button(role: .destructive) { onRemove(plan) } label: { Label("Take off the plan", systemImage: "trash") }
+        }
     }
 
     private func emptyTile(_ night: WeekDinners.Night) -> some View {

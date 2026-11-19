@@ -173,7 +173,7 @@ extension MealPlanningView {
 
     /// Hold → move: the dinner takes the new night; a dinner already there swaps back to the old one.
     func moveDinner(_ dinner: MealPlanModel, to night: Date) {
-        let changed = WeekDinners.move(dinner, to: night, plans: currentWeekPlans)
+        let changed = WeekDinners.move(dinner, to: night, plans: currentWeekPlans, today: Date())
         guard !changed.isEmpty else { return }
         withAnimation(.appGentle) {
             for plan in changed { mealPlanningManager.updateMealPlan(plan) }
