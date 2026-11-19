@@ -74,7 +74,8 @@ struct CookingPlan: Equatable {
 
     /// Timer minutes for a pre-prep or step item; nil for the ingredient list or an out-of-range index.
     func timerMinutes(at index: Int) -> Int? {
-        guard items.indices.contains(index), !items[index].isIngredientList else { return nil }
+        // The ingredient list's displayText is "", which parses to nil.
+        guard items.indices.contains(index) else { return nil }
         return Self.timerMinutes(in: items[index].displayText)
     }
 

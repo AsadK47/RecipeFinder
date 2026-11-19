@@ -113,7 +113,8 @@ struct CookingNavigationRow: View {
             Button(action: onNext) {
                 HStack(spacing: AppTheme.spacing8) {
                     Text(isLast ? "Finish" : "Next")
-                    Image(systemName: isLast ? "checkmark" : "chevron.right")
+                    if !isLast { Image(systemName: "chevron.right") }
+                    if isLast  { Image(systemName: "checkmark") }
                 }
                 .font(.body.weight(.semibold))
                 .adaptiveForegroundColor()
