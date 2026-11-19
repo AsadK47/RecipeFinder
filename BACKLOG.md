@@ -212,7 +212,7 @@ are merged into a newer item or parked — never start them; their text stays as
   copies, 8 current screenshots. **✅ Slice 5a:** CHANGELOG.md = one "For you" + "Behind the build" entry per shipped change (22 backfilled from 14 Nov), old Log archive → `docs/LOG.md`, `tools/website-behind-the-build.py` (+ tests, `--check`), landing step 8 writes the entry. **Left:** (5b) website `behind-the-build.html` with `<!-- behind-the-build:start/end -->` markers, run weekly by the website session alongside whats-new, published after `privacy.html` is updated. **✅ Slice 7:** step 8 fixes stale docs in the landing commit; root CLAUDE.md CI + Domain
   lines corrected; ARCHITECTURE migration coverage (v9, v12–v16 tested) + SwiftUI-import grep. Note for the next Swift
   commit there: `PersistenceController.swift:100` / `CoreDataMigrationTests.swift:6-7` say "v6+"/"v6→current" while tests start at v9.
-- [ ] **Cooking flow** — 🚧 interactive session 2026-11-15 — (Phase 1 · Cook · owner 2026-11-14). Merges *Cooking mode upgrade* (below, kept as spec) with the
+- [ ] **Cooking flow** — 🚧 builder agent 2026-11-19 (took over stale 11-15 claim) — (Phase 1 · Cook · owner 2026-11-14). Merges *Cooking mode upgrade* (below, kept as spec) with the
   ticking redesign. Ingredients: an empty circle on every row; tap anywhere on the row to tick (haptic), ticked rows dim
   and slide into "Got it" at the bottom; amount editing moves to the edit pencil / long-press; all ticked → "All set —
   start cooking?". Cooking mode: one step per screen, a big visible **Next** (tap-right / swipe / "next" are bonuses),
