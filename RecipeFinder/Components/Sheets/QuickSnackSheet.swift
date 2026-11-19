@@ -207,7 +207,18 @@ struct QuickSnackSheet: View {
     private func addSnack() {
         let name = searchText.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
-        let recipe = RecipeModel(
+        let recipe = Self.makeSnack(name: name, servings: servings, emoji: selectedEmoji)
+        // Snacks are ephemeral: in-memory only so the planned meal resolves this session, never persisted to the library.
+        recipeStore.recipes.append(recipe)
+        onSnackAdded(recipe)
+        HapticManager.shared.success()
+        dismiss()
+    }
+
+    /// The in-memory snack recipe for `name`: no ingredients, one "Enjoy" step, Basic difficulty so it shows one bar
+    /// and the Basic filter finds it.
+    static func makeSnack(name: String, servings: Int, emoji: String) -> RecipeModel {
+        RecipeModel(
             name: name,
             ingredients: [],
             instructions: "Enjoy your \(name)!",
@@ -219,13 +230,8 @@ struct QuickSnackSheet: View {
             defaultServings: servings,
             isFavorite: false,
             imageName: nil,
-            notes: "\(selectedEmoji) Quick snack"
+            notes: "\(emoji) Quick snack"
         )
-        // Snacks are ephemeral: in-memory only so the planned meal resolves this session, never persisted to the library.
-        recipeStore.recipes.append(recipe)
-        onSnackAdded(recipe)
-        HapticManager.shared.success()
-        dismiss()
     }
 
     // MARK: - Emoji Detection
