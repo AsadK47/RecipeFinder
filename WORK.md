@@ -1,4 +1,4 @@
-# WORK.md — handoff (2026-11-18, builder agent)
+# WORK.md — handoff (2026-11-19, builder agent)
 
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
@@ -34,7 +34,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Difficulty bars ✅ (532ecc7). Next: Inbox 🟡 active filter chips difficulty order (`ActiveFiltersBar.swift:49`), then Inbox 🟡 quick-snack difficulty, then Smell Batch D screen 3 (CookingModeView, 392 lines).
+Filter chip difficulty order ✅ (9cac1cd). Next: Inbox 🟡 quick-snack difficulty (`QuickSnackSheet.swift:216` save "Basic"), then Smell Batch D screen 3 (CookingModeView, 392 lines).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Inbox 🟡 active filter chips difficulty order · 9cac1cd
+- For you: the filter chips above your recipes now show difficulty easiest first — Basic, Intermediate, Expert — matching the filter sheet.
+- Behind the build: the chips read the same shared list as the filter sheet and editor, with tests that every chosen difficulty keeps its chip in order.
+
 ## 2026-11-18 · Inbox 🟡 difficulty bars · 532ecc7
 - For you: the difficulty bars on recipe cards now match the level — one bar for Basic, two for Intermediate, three for Expert.
 - Behind the build: the bars now read the same three levels the editor and filters use, with a test that each level fills one more bar than the last.
