@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Inbox 🟡 quick snack difficulty · 0df3dc4
+- For you: quick snacks you add to your plan now show as Basic — one difficulty bar — and turn up when you filter for Basic.
+- Behind the build: a new test was seen failing on the old code before the fix, then the snack recipe was built in one tested place.
+
 ## 2026-11-19 · Inbox 🟡 active filter chips difficulty order · 9cac1cd
 - For you: the filter chips above your recipes now show difficulty easiest first — Basic, Intermediate, Expert — matching the filter sheet.
 - Behind the build: the chips read the same shared list as the filter sheet and editor, with tests that every chosen difficulty keeps its chip in order.

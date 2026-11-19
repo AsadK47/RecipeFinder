@@ -34,7 +34,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Filter chip difficulty order ✅ (9cac1cd). Next: Inbox 🟡 quick-snack difficulty (`QuickSnackSheet.swift:216` save "Basic"), then Smell Batch D screen 3 (CookingModeView, 392 lines).
+Quick snack difficulty ✅ (0df3dc4). Next: Smell Batch D screen 3 (CookingModeView, 392 lines).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
