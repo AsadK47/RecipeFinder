@@ -37,6 +37,12 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 Quick snack difficulty ✅ (0df3dc4). Next: Smell Batch D screen 3 (CookingModeView, 392 lines).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Smell Batch D screen 3 CookingModeView** (`agent/cooking-mode-split`): 392→201 + `CookingModeParts.swift`
+  (progress bar, ingredient checklist, nav row, finished card) as standalone structs, not `+Content` extensions —
+  the Cook lane's next slice rebuilds this screen and can swap parts one at a time. Timer regex + session lines →
+  `CookingPlan` (pure, tested); tests renamed from `CookingModeView.cookTimerMinutes` to `CookingPlan.timerMinutes`.
+  **Pre-mortem:** (1) Done/Finish stops crediting the cook → unchanged code path (`finishCooking`), `cooking.finished` in `RecipeFinderScreenshotTests`; (2) checklist amount text drifts
+  from the recipe screen → `CookingIngredientChecklist.line` tests; (3) Live Activity lines change → `sessionLines` test.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to
