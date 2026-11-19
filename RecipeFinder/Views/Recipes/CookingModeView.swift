@@ -40,6 +40,7 @@ struct CookingModeView: View {
     /// "Done" when the user is already on the last step, so reaching the end credits the cook either way.
     private func finishCooking() {
         guard !isFinished else { return }
+        CookingResumeMemory.shared.forget(recipe.id)
         BadgeManager.shared.unlockBadge(.headChef)
         onFinish?()
         withAnimation(.appSpring) { isFinished = true }
@@ -57,6 +58,29 @@ struct CookingModeView: View {
             withAnimation(.appSpring) { currentIndex += 1 }
             HapticManager.shared.selection()
         }
+    }
+
+    /// What a saved place is valid for: the cooking-mode lines plus ingredient names, so an edit resets it.
+    static func resumeContent(for recipe: RecipeModel) -> [String] {
+        let plan = CookingPlan(prePrep: recipe.prePrepInstructions, steps: recipe.instructions)
+        return plan.sessionLines + recipe.ingredients.map(\.name)
+    }
+
+    /// Picks up where this recipe was left earlier in this app session (step + ticked ingredients).
+    private func restorePlace() {
+        let content = Self.resumeContent(for: recipe)
+        guard let place = CookingResumeMemory.shared.place(for: recipe.id, content: content, itemCount: plan.count) else { return }
+        currentIndex = place.index
+        completedItems = place.checkedIngredients
+    }
+
+    private func rememberPlace() {
+        guard !isFinished else { return }
+        CookingResumeMemory.shared.remember(
+            .init(index: currentIndex, checkedIngredients: completedItems),
+            for: recipe.id,
+            content: Self.resumeContent(for: recipe)
+        )
     }
 
     // MARK: - Body
@@ -97,13 +121,16 @@ struct CookingModeView: View {
         }
         .onAppear {
             stepIngredients = plan.ingredientUses(from: recipe.ingredients)
+            restorePlace()
             UIApplication.shared.isIdleTimerDisabled = true
             CookingSession.shared.start(
                 recipeName: recipe.name,
                 items: plan.sessionLines
             )
+            CookingSession.shared.setIndex(currentIndex)
         }
         .onDisappear {
+            rememberPlace()
             UIApplication.shared.isIdleTimerDisabled = false
             CookingSession.shared.end()
         }
@@ -194,6 +221,7 @@ struct CookingModeView: View {
             Text("\(stepPositionInPhase) of \(total)")
                 .font(.subheadline.monospacedDigit())
                 .adaptiveSecondaryForeground()
+                .accessibilityIdentifier("cooking.stepPosition")
         }
     }
 

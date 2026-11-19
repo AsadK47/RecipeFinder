@@ -33,14 +33,21 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
-- Cook: 🚧 **Cooking flow** slice 2 step ingredients ✅ landed 0e81fd8 (builder 2026-11-19). Next slice: resume at the
-  same step, several named timers that stay visible, last step → Made it (verify onFinish), UI test stepping through.
-  Leftover branch agent/step-ingredients (auto-cleanup).
+- Cook: 🚧 **Cooking flow** slice 3a resume on `agent/cooking-resume` (builder 2026-11-19): `CookingResumeMemory`
+  (in memory, per recipe id, content fingerprint, 12h expiry) + `CookingModeView` restore/remember; UI test leaves
+  mid-recipe and reopens. Left after: several named timers, last step → Made it (verify onFinish).
 
 ## Next action
-Cooking flow slice 3 on `agent/cooking-resume`: persist the current step per recipe so leaving and reopening cooking mode resumes there (tests first), then named timers.
+Check Build & Test on `agent/cooking-resume`; green → Screenshots + challenger, land, then named timers.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Cooking flow slice 3a (resume)**: in memory only (this app session) — persisting the place would be new on-device
+  data not covered by Privacy §4.2 and not cleared by Reset (legal text = guardrail) → Needs owner question. Keyed by
+  recipe id; valid only while the recipe's cooking lines + ingredient names match (edit → start over, ticks can't land
+  on the wrong row); 12h expiry; leaving at index 0 with no ticks clears; Finish (or Done on last step) forgets.
+  Rejected: saving in `CookingSession` (Siri session ends on disappear), UserDefaults (above). **Pre-mortem:**
+  (1) reopens on a different step after an edit → `editedRecipe`; (2) finished cook reopens on the last step →
+  `forget` + finishCooking calls it; (3) restore doesn't reach the view → UI test leave/reopen compares position.
 - **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey`, one longest-first
   claim loop: full name (each side of an "or") → last two words ("soy sauce" for "light soy sauce") → head word
   ("onion" for "red onion", unless generic: sauce/powder/stock…) or the meat before a cut ("chicken" for "chicken

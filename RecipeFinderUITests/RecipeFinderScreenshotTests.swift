@@ -173,6 +173,24 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
         XCTAssertTrue(stepIngredients.waitForExistence(timeout: 3), "A step that names an ingredient should list it.")
         snap(app, "50-cooking-step-ingredients")
+
+        // Cooking flow slice 3: leaving mid-recipe and starting again picks up at the same step.
+        // Done on the last step finishes the cook (and forgets the place), so step back off it first.
+        if next.label == "Finish" {
+            app.buttons["Back"].firstMatch.tap()
+            settle(1)
+        }
+        let position = app.staticTexts["cooking.stepPosition"]
+        XCTAssertTrue(position.waitForExistence(timeout: 3), "A step should show its position.")
+        let leftAt = position.label
+        checkpoint(app, "cooking-leave")
+        app.buttons["cooking.done"].tap()
+        XCTAssertTrue(startCooking.waitForExistence(timeout: 5), "Leaving cooking mode should return to the recipe.")
+        settle(1)
+        startCooking.tap()
+        XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 5), "Start cooking should reopen cooking mode.")
+        XCTAssertTrue(position.waitForExistence(timeout: 3), "Reopening should resume on a step, not the ingredient list.")
+        XCTAssertEqual(position.label, leftAt, "Reopening should resume at the step the cook left.")
     }
 
     /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,
