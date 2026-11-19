@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-19 (item pass: Cooking flow slice 3a resume; fixed: UI test matched exact "Finish"/"Back" labels)
+- ⚔️ [Edge] Today "Cook this" restores against the navigation copy of the recipe before `.task` loads the saved one (`RecipeDetailView.swift:188-200`); if they differ the place is dropped and the cook starts from the top — accepted: safe failure (never a wrong step), rare.
+- ⚔️ [Tests] UI test compares only "N of M" (Pre-Prep 2 vs Step 2 would pass) and doesn't check ticks inside cooking mode — accepted: ticks + index restore are unit-tested; restore is one assignment of both. Also a one-frame ingredient list before the jump (restore in `onAppear`) — not seen in screenshots.
+
 ## 2026-11-19
 - ⚔️ [Strategy] Phase order is being honoured — it isn't: "Now — data you can trust" (Recently deleted, 4/4) has sat green on `agent/recently-deleted` waiting on the CloudKit schema deploy (WORK.md line 6), while the last 24h shipped five difficulty-cosmetics commits (`599cf903`, `532ecc7e`, `9cac1cd8`, `0df3dc41`, `66f7f577`) and a CookingModeView smell refactor (`45aa6dda`) — none moves "dinners cooked per week"; chip ordering in an *active-filters bar* serves no loop step — alternative: put the schema deploy at the top of Needs owner with a date, and make the Queue idle before more polish — cost if we're wrong: data-trust phase stalls indefinitely behind an owner step nobody is chasing, polish keeps compounding
   → Owner: Accept / Reject (why) / Later

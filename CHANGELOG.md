@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Cooking flow slice 3a resume · 7a3d86e
+- For you: step away from cooking mode mid-recipe and come back — it opens at the step you left, with your ingredients still ticked.
+- Behind the build: a recipe edited in between starts from the top so you never land on the wrong step, checked by unit tests and a UI test that leaves and reopens.
+
 ## 2026-11-19 · Cooking flow slice 2 step ingredients · 0e81fd8
 - For you: in cooking mode each step now shows the ingredients it uses with their amounts, so you can keep cooking without flipping back to the list.
 - Behind the build: the matching was tested on all 332 bundled recipes and tuned so "sesame oil" or "garlic powder" never shows up as plain oil or garlic.

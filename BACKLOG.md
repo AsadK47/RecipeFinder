@@ -218,8 +218,8 @@ are merged into a newer item or parked — never start them; their text stays as
   start cooking?". Cooking mode: one step per screen, a big visible **Next** (tap-right / swipe / "next" are bonuses),
   progress bar, each step shows the ingredients it uses with amounts, timers from step text that stay visible on later
   steps (several named timers per the upgrade item), resume at the same step after leaving, last step → Made it.
-  One-time pulse on the first circle; no hint text. **✅ Slice 2 step ingredients** (0e81fd8). **Left:** resume at the
-  same step, several named timers that stay visible on later steps, last step → Made it (verify onFinish), UI test
+  One-time pulse on the first circle; no hint text. **✅ Slice 2 step ingredients** (0e81fd8). **✅ Slice 3a resume**
+  (7a3d86e, in memory this app session; across relaunch → Needs owner). **Left:** several named timers that stay visible on later steps, last step → Made it (verify onFinish), UI test
   stepping through. *Measure:* cooks started that reach Made it. *Done when:*
   step↔ingredient matching, resume state and timers tested; UI test ticks a row and steps through; screenshots; CI green.
 - [x] **Made-it moment** ✅ e48fd5c — (Phase 1 · Cook→Remember). The simple core of Play 3/7 (`docs/PLAY.md` §7) without Spoons,
@@ -722,6 +722,9 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   category (Main, Dessert…) as a cuisine — in the Globetrotter badge and now Me's strip (pinned by
   `metrics_cuisineFallsBackToCategoryWhenCuisineMissing`); starter recipes have no cuisine. Count real cuisines only
   (both places; earned badges stay) — recommended / keep the fallback?
+- 🙋 **Cooking resume across relaunch** (builder 2026-11-19): cooking mode now resumes at the step you left while
+  the app stays open. Keeping it after the app is closed means storing "recipe + step" on the device — add a Privacy
+  §4.2 line ("where you are in a recipe you're cooking") and clear it on Reset? (yes / keep in-memory)
 - 🙋 ⚔️ 45 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
 - 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
 - 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
@@ -761,6 +764,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-19 · Cooking flow slice 3a resume · 0f5305d..7a3d86e · closing cooking mode mid-recipe and opening it again picks up at the same step with the same ingredients ticked (this app session, 12h; an edited recipe or Finish starts from the top); `CookingResumeMemory` + 10 tests, new files registered in pbxproj by hand (no XcodeWrite in cloud); UI test leaves on a step and reopens to the same "N of M". On phone: recipe → Cook → Next twice → Done → Cook → same step · review: challenger, 1 fixed (UI test matched "Finish"/"Back" exact labels → id + prefix), 2 → CHALLENGES; one reviewer + challenger (ordinary UI, PRODUCT.md) · CI green (Build & Test 44507879965, Screenshots 44509412306 incl. resume test) · looked at: 50-cooking-step-ingredients
 - 2026-11-19 · Cooking flow slice 2 step ingredients · b18e32b..0e81fd8 · each cooking-mode step shows "Ingredients in this step" with the recipe's amounts (left off when the step sets its own); `StepIngredientMatcher` longest-name-first claims, compound/negation guards, 214-line test suite; checked on all 332 bundled recipes via a Python port. On phone: open a recipe → Cook → Next to a step → the card lists only what that step uses · finished by a later builder run (earlier run pushed green, stopped before landing) · review: challenger (84 false positives in v1 → fixed) + own read of the last fix · looked at: 50-cooking-step-ingredients, 06-cooking-mode · CI green 44474957022, Screenshots 44474544030 (on e2ebcef; last commit matcher-only)
 - 2026-11-19 · Smell Batch D screen 3 (CookingModeView) — Batch D done · 705446b..7f4580c · refactor, nothing should change: cooking mode's progress bar, ingredient checklist, step timers, Back/Next/Finish, Done-on-last-step credit, Siri next/previous and the "Nice cooking!" screen work as before. View 392→201; new `CookingModeParts.swift` registered in pbxproj by hand (no XcodeWrite in cloud); `CookingModeView.cookTimerMinutes` → `CookingPlan.timerMinutes(in:)`. On phone: open a recipe → Cook → tick ingredients → Next to a step with "25 minutes" → Start timer → last step → Finish · review: deep reviewer + challenger, 3 fixed (both: checklist tests not main-actor → compile error; reviewer: Next/Finish icon identity changed, loose 200 g assert), 1 redundant guard dropped, push-CI has no Cook→Finish UI test (pre-existing, nightly screenshots reach it) · CI green (Build & Test 44459772691) · looked at: n/a — moved views identical, no screenshot change
 - 2026-11-19 · Inbox 🟡 quick snack difficulty · 66f7f57..0df3dc4 · quick snacks save "Basic" (were "1" → normalised to Intermediate, 2 bars); `RecipeModel` snack init takes a String, `QuickSnackSheet.makeSnack` extracted + tests (seen red on 66f7f57, run 44445665829). On phone: Plan → add a quick snack → it shows 1 difficulty bar and Recipes filter Basic finds it while in memory · review: challenger (no real issues; redundant test dropped, premise corrected: snacks matched Intermediate, not nothing) · looked at: none (no screen layout changed) · CI green 44447621379 · new test file registered in pbxproj by hand

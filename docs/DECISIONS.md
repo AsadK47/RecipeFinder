@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Cooking flow slice 3a resume** (landed 7a3d86e): in memory only (this app session) — persisting the place would be new on-device
+  data not covered by Privacy §4.2 and not cleared by Reset (legal text = guardrail) → Needs owner question. Keyed by
+  recipe id; valid only while the recipe's cooking lines + ingredient names match (edit → start over, ticks can't land
+  on the wrong row); 12h expiry; leaving at index 0 with no ticks clears; Finish (or Done on last step) forgets.
+  Rejected: saving in `CookingSession` (Siri session ends on disappear), UserDefaults (above). **Pre-mortem:**
+  (1) reopens on a different step after an edit → `editedRecipe`; (2) finished cook reopens on the last step →
+  `forget` + finishCooking calls it; (3) restore doesn't reach the view → UI test leave/reopen compares position.
 - **Smell Batch D screen 3 CookingModeView** (landed 7f4580c): 392→201 + `CookingModeParts.swift`
   (progress bar, ingredient checklist, nav row, finished card) as standalone structs, not `+Content` extensions —
   the Cook lane's next slice rebuilds this screen and can swap parts one at a time. Timer regex + session lines →
