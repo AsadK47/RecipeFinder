@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Plan — swipe to match slice 1 deck · 23134c8
+- For you: tap Plan my week and swipe through big dinner cards, one for each open night — swipe right to plan it, left for another idea. Quick dishes come up on weeknights, longer cooks at the weekend, and anything using up what's in your kitchen comes first.
+- Behind the build: the picking rules are a small seeded model with 29 tests, and two separate reviewers found ten things to tighten, from VoiceOver focus to a quick double tap.
+
 ## 2026-11-19 · Cooking flow slice 4 last step → Made it · c1cafb8
 - For you: finish the last step in cooking mode and you go straight to your Made it moment — cook number, streak, rating and a photo, one tap from the end.
 - Behind the build: a UI test now cooks a recipe from the first step to Finish and checks the celebration opens, then finishes again to check a same-day repeat is handled kindly.

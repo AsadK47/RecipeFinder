@@ -5,6 +5,19 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Plan — swipe to match, slice 1** (landed 23134c8): the deck is an overlay in MealPlanningView's ZStack, not a
+  fullScreenCover — the first plan unlocks the Meal Planner badge, whose reveal is a root cover and can't present over
+  another cover. Rules are scores, not filters, so a small library still fills the week (quick weeknight +3, long
+  weeknight −3, weekend long +1, cuisine next to a planned night −4, ≤2 expiring items +2 each, favourite +1, ≥4★ +1;
+  ties by seeded shuffle). Dinners = mains/soups, else everything (Today's rule). Passed-on dishes are remembered for this
+  deck only — remembering it 30 days means storing it (privacy text), so later slice. Main-ingredient variety skipped
+  (no reliable "main ingredient" field). **Pre-mortem:** (1) deck deals a dish already on the week → unit
+  `dishesAlreadyPlannedThisWeekAreNotDealt`; (2) a pick lands on the wrong day / meal → UI test checks the night moves
+  on + savePick uses pick.day and .dinner (reviewer to read); (3) badge reveal hides behind the deck or deck traps the
+  cook → UI test dismisses the badge and closes via Done/✕.
+  Added at review: a passed dish returns on a later night only behind every fresh one (a small library still fills
+  the week); "Leave <day> open" keeps its dish fresh; card changes run on the next main-actor turn so the exit edge
+  lands first and a double tap can't plan an unseen night; the overlay hides the planner from VoiceOver.
 - **Cooking flow slice 4 last step → Made it** (landed c1cafb8): Finish now closes cooking mode straight into the Made it sheet
   (was: in-cover "Nice cooking!" card → Done → sheet — two celebrations, one extra tap). `onFinish` returns whether
   the cook counted; already cooked today (one cook a day, no sheet) keeps the done card, reworded "already in

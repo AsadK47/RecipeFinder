@@ -36,25 +36,14 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook: ✅ **Cooking flow** done — slice 4 last step → Made it landed c1cafb8 (builder 2026-11-19). Leftover branches
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
-- Plan: 🚧 **Plan — swipe to match** slice 1 (builder 2026-11-19) on `agent/plan-deck`: "Plan my week" button on Plan →
-  full-screen deck (`PlanDeck` pure + `PlanDeckView` overlay), ♥/✕/leave-open + swipe, each pick saved as a dinner.
-  Left after: (2) week as seven photos home (tap = cook, hold = move), (3) up = tonight + matches feed Today,
-  (4) 30-day left-swipe memory (on-device store → Privacy §4.2 line), (5) opt-in Sunday nudge, (6) busy nights/lock/re-roll.
+- Plan: 🚧 **Plan — swipe to match** — slice 1 deck landed 23134c8 (builder 2026-11-19). Next slice: (2) the week as
+  seven photos on Plan (tap = cook, hold = move). Leftover branch agent/plan-deck (auto-cleanup).
 
 ## Next action
-Phase 1 is done (Cooking flow → Made-it moment → My Cookbook all ticked): take the next Roadmap item per BACKLOG "Next" line (Phase 2 · Plan — swipe to match), after checking Needs owner for the Cook-lane questions (toolbar timer vs pills).
+Plan — swipe to match slice 2: Plan's home shows the week as seven dinner photos (tap = cook, hold = move); start
+from `WeekStripView` / `MealPlanningView` on a new `agent/plan-week-photos` branch.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Plan — swipe to match, slice 1** (`agent/plan-deck`): the deck is an overlay in MealPlanningView's ZStack, not a
-  fullScreenCover — the first plan unlocks the Meal Planner badge, whose reveal is a root cover and can't present over
-  another cover. Rules are scores, not filters, so a small library still fills the week (quick weeknight +3, long
-  weeknight −3, weekend long +1, cuisine next to a planned night −4, ≤2 expiring items +2 each, favourite +1, ≥4★ +1;
-  ties by seeded shuffle). Dinners = mains/soups, else everything (Today's rule). A passed-on dish stays out for this
-  deck only — remembering it 30 days means storing it (privacy text), so later slice. Main-ingredient variety skipped
-  (no reliable "main ingredient" field). **Pre-mortem:** (1) deck deals a dish already on the week → unit
-  `dishesAlreadyPlannedThisWeekAreNotDealt`; (2) a pick lands on the wrong day / meal → UI test checks the night moves
-  on + savePick uses pick.day and .dinner (reviewer to read); (3) badge reveal hides behind the deck or deck traps the
-  cook → UI test dismisses the badge and closes via Done/✕.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to
