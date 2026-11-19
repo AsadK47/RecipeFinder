@@ -687,12 +687,13 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
 - [x] **Batch C — Duplicate Code: chip styling** — the 12×6 `Capsule().fill` chip was copied in 4 files (FilterChip,
   store picker, Clear All, Data cleared) → `.chipStyle(fill)` in `View+AppCard.swift` (e39fe71); other capsules differ
   on purpose.
-- [ ] **Batch D — Large Class: big screens** — 🚧 builder agent 2026-11-18 — `RecipeSearchView` (515), `CookingModeView`
+- [x] **Batch D — Large Class: big screens** — `RecipeSearchView` (515), `CookingModeView`
   (392): extract subviews + move logic into tested pure functions. One branch per screen. **✅ Screen 1
   (0de6457..d52b80d):** MealPlanningView 440→278 — `WeekGroceryPlan`, `MealPlanDayContent` (+ tests),
   `MealPlanningView+Actions.swift`. `RecipeImportView` no longer exists. **✅ Screen 2 (2e7db80..eaaccc2):**
   RecipeSearchView 515→191 (+Content 124, +Actions 138) — `SharedImportPlan`, `RecipeLibraryFacets` (+ tests), one
-  `filters` value for 11 filter states. Left: `CookingModeView`.
+  `filters` value for 11 filter states. **✅ Screen 3 (705446b..7f4580c):** CookingModeView 392→201 —
+  `CookingModeParts.swift` (progress bar, checklist, nav row, finished card), timer parsing + session lines → `CookingPlan`.
 - [ ] **Batch E — Large Class: `PersistenceController+RecipeWrites` (445)** → split by job (single writes / batch /
   merge-restore). Behaviour tests already cover it; refactor only.
 - [ ] **Batch F — Swallowed errors: 64 `try?`** — audit each; user-triggerable paths surface or log the error
@@ -758,6 +759,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-19 · Smell Batch D screen 3 (CookingModeView) — Batch D done · 705446b..7f4580c · refactor, nothing should change: cooking mode's progress bar, ingredient checklist, step timers, Back/Next/Finish, Done-on-last-step credit, Siri next/previous and the "Nice cooking!" screen work as before. View 392→201; new `CookingModeParts.swift` registered in pbxproj by hand (no XcodeWrite in cloud); `CookingModeView.cookTimerMinutes` → `CookingPlan.timerMinutes(in:)`. On phone: open a recipe → Cook → tick ingredients → Next to a step with "25 minutes" → Start timer → last step → Finish · review: deep reviewer + challenger, 3 fixed (both: checklist tests not main-actor → compile error; reviewer: Next/Finish icon identity changed, loose 200 g assert), 1 redundant guard dropped, push-CI has no Cook→Finish UI test (pre-existing, nightly screenshots reach it) · CI green (Build & Test 44459772691) · looked at: n/a — moved views identical, no screenshot change
 - 2026-11-19 · Inbox 🟡 quick snack difficulty · 66f7f57..0df3dc4 · quick snacks save "Basic" (were "1" → normalised to Intermediate, 2 bars); `RecipeModel` snack init takes a String, `QuickSnackSheet.makeSnack` extracted + tests (seen red on 66f7f57, run 44445665829). On phone: Plan → add a quick snack → it shows 1 difficulty bar and Recipes filter Basic finds it while in memory · review: challenger (no real issues; redundant test dropped, premise corrected: snacks matched Intermediate, not nothing) · looked at: none (no screen layout changed) · CI green 44447621379 · new test file registered in pbxproj by hand
 - 2026-11-19 · Inbox 🟡 active filter chips difficulty order · 9cac1cd · active filter chips list chosen difficulties Basic, Intermediate, Expert (was random Set order) via `RecipeLibraryFacets.orderedDifficulties`, unknown values after, sorted; tests pin order, unknowns kept, empty. On phone: Recipes → filter → pick Expert then Basic → chips read Basic, Expert · review: challenger 0 defects (low-risk UI order, one reviewer + challenger per PRODUCT.md) · CI green first try (Build & Test 44430352128) · looked at: n/a — no screenshot shows active chips
 - 2026-11-18 · Inbox 🟡 difficulty bars · 532ecc7 · Basic/Intermediate/Expert recipes now fill 1/2/3 bars (were all 2); imported easy/medium/hard unchanged. On phone: Recipes cards + a recipe's facts card — Basic shows 1 bar, Expert 3 · review: challenger 0 defects (edge labels like "Not too hard" not in data), 1 → Inbox 🟡 (quick-snack "1") · CI green first try (Build & Test 44413204163) · looked at: n/a — bar fill only, no screenshot run

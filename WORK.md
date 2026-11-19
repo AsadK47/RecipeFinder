@@ -19,8 +19,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
 - Smells: ✅ Batch A, B (stale, no code), C (e39fe71). 🚧 Batch D: ✅ screen 1 MealPlanningView (d52b80d), ✅ screen 2
-  RecipeSearchView (eaaccc2, builder 2026-11-18). Left: CookingModeView (392). Leftover branches
-  agent/meal-planning-split, agent/recipe-search-split (auto-cleanup). Top Smell (times → Int minutes) waits on Needs owner.
+  RecipeSearchView (eaaccc2), ✅ screen 3 CookingModeView (7f4580c, builder 2026-11-19) — Batch D done. Leftover branches
+  agent/meal-planning-split, agent/recipe-search-split, agent/cooking-mode-split (auto-cleanup). Top Smell (times → Int minutes) waits on Needs owner.
 
 - Tester feedback 1: ✅ slices 1 (3ed805c), 2 Badges from Today (7f8e5b1, builder 2026-11-17), 4. ✅ 3 foreign recipes
   (d7bf8f7, builder 2026-11-17). Left: slice 5 (Cook lane's). Leftover branch agent/foreign-recipes (auto-cleanup). Leftover branches agent/cuisine-chip,
@@ -34,15 +34,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
 ## Next action
-Quick snack difficulty ✅ (0df3dc4). Next: Smell Batch D screen 3 (CookingModeView, 392 lines).
+Smell Batch D ✅ (7f4580c). Next: the next Queue item per BACKLOG "Next" line (feature after smell), then Smell Batch E.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Smell Batch D screen 3 CookingModeView** (`agent/cooking-mode-split`): 392→201 + `CookingModeParts.swift`
-  (progress bar, ingredient checklist, nav row, finished card) as standalone structs, not `+Content` extensions —
-  the Cook lane's next slice rebuilds this screen and can swap parts one at a time. Timer regex + session lines →
-  `CookingPlan` (pure, tested); tests renamed from `CookingModeView.cookTimerMinutes` to `CookingPlan.timerMinutes`.
-  **Pre-mortem:** (1) Done/Finish stops crediting the cook → unchanged code path (`finishCooking`), `cooking.finished` in `RecipeFinderScreenshotTests`; (2) checklist amount text drifts
-  from the recipe screen → `CookingIngredientChecklist.line` tests; (3) Live Activity lines change → `sessionLines` test.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

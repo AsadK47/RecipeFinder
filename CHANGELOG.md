@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-19 · Smell Batch D screen 3 · 7f4580c
+- For you: cooking mode works just as before — ingredient checklist, step timers and the "Nice cooking!" finish — on tidier code that's ready for the next round of cooking improvements.
+- Behind the build: the screen was split into small parts with step timers and checklist amounts pinned by tests first, then checked by two separate reviewers.
+
 ## 2026-11-19 · Inbox 🟡 quick snack difficulty · 0df3dc4
 - For you: quick snacks you add to your plan now show as Basic — one difficulty bar — and turn up when you filter for Basic.
 - Behind the build: a new test was seen failing on the old code before the fix, then the snack recipe was built in one tested place.

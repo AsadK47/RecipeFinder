@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Smell Batch D screen 3 CookingModeView** (landed 7f4580c): 392→201 + `CookingModeParts.swift`
+  (progress bar, ingredient checklist, nav row, finished card) as standalone structs, not `+Content` extensions —
+  the Cook lane's next slice rebuilds this screen and can swap parts one at a time. Timer regex + session lines →
+  `CookingPlan` (pure, tested); tests renamed from `CookingModeView.cookTimerMinutes` to `CookingPlan.timerMinutes`.
+  **Pre-mortem:** (1) Done/Finish stops crediting the cook → unchanged code path (`finishCooking`), `cooking.finished` in `RecipeFinderScreenshotTests`; (2) checklist amount text drifts
+  from the recipe screen → `CookingIngredientChecklist.line` tests; (3) Live Activity lines change → `sessionLines` test.
 - **Difficulty order** (landed 599cf90): list lives next to `normalizeDifficulty` (the thing that produces
   those three labels) so the filter, editor and normaliser can't drift; filter sheet takes the editor's easiest-first
   order. Active-filter chips iterate a `Set` (order unstable) — left alone (WIP=1). **Pre-mortem:** (1) a filter no
