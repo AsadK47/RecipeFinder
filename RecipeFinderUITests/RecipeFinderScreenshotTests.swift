@@ -975,6 +975,37 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: card)
         waitForExpectations(timeout: 5)
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5), "Closing the deck should bring back the tabs.")
+
+        // The week as seven dinner photos: the nights just planned show their dish.
+        let nights = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'plan.dinner.'"))
+        XCTAssertEqual(nights.count, 7, "Plan should show the week as seven nights.")
+        let planned = nights.matching(NSPredicate(format: "label CONTAINS 'dinner:'"))
+        XCTAssertTrue(planned.firstMatch.waitForExistence(timeout: 5), "A planned night should show its dinner.")
+        planned.firstMatch.swipeUp(velocity: .slow)
+        settle()
+        snap(app, "54-plan-week-dinners")
+
+        // Hold = move: the held night's dinner moves (or swaps), so that night no longer shows the same dish.
+        let held = planned.firstMatch
+        let heldID = held.identifier
+        let heldLabel = held.label
+        checkpoint(app, "hold to move")
+        held.press(forDuration: 1.2)
+        let move = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Move to' OR label BEGINSWITH 'Swap with'"))
+            .firstMatch
+        XCTAssertTrue(move.waitForExistence(timeout: 5), "Holding a dinner should offer to move it.")
+        move.tap()
+        settle(0.8)
+        XCTAssertNotEqual(app.buttons[heldID].label, heldLabel, "Moving should take the dinner off its night.")
+
+        // Tap = cook: a planned night opens straight into cooking mode.
+        let toCook = planned.firstMatch
+        XCTAssertTrue(toCook.waitForExistence(timeout: 5), "A planned night should still be on the week.")
+        checkpoint(app, "tap to cook")
+        toCook.tap()
+        XCTAssertTrue(app.staticTexts["cooking.stepPosition"].waitForExistence(timeout: 10)
+                      || app.buttons["cooking.done"].waitForExistence(timeout: 5),
+                      "Tapping a dinner photo should open cooking mode.")
     }
 
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).

@@ -36,14 +36,22 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook: ✅ **Cooking flow** done — slice 4 last step → Made it landed c1cafb8 (builder 2026-11-19). Leftover branches
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
-- Plan: 🚧 **Plan — swipe to match** — slice 1 deck landed 23134c8 (builder 2026-11-19). Next slice: (2) the week as
-  seven photos on Plan (tap = cook, hold = move). Leftover branch agent/plan-deck (auto-cleanup).
+- Plan: 🚧 **Plan — swipe to match** — slice 1 deck landed 23134c8. Slice 2 on `agent/plan-week-photos` (builder
+  2026-11-19): `WeekDinners` (pure, tests) + `WeekDinnersView` under "Plan my week"; MealPlanningView now owns a
+  NavigationStack so a photo pushes `RecipeDetailView(startsCooking: true)`; UI steps appended to `testZZZPlanMyWeek`.
 
 ## Next action
-Plan — swipe to match slice 2: Plan's home shows the week as seven dinner photos (tap = cook, hold = move); start
-from `WeekStripView` / `MealPlanningView` on a new `agent/plan-week-photos` branch.
+Check Build & Test on `agent/plan-week-photos`, fix, run Screenshots (look at 54-plan-week-dinners), review, land.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Plan week photos (slice 2):** photos sit *under* the week strip + day list for now (strip still picks a day for
+  breakfast/lunch); trimming the strip waits for *Groceries writes itself* (deletes duplicated views). Hold = context
+  menu (Cook / Move to <day> / Swap with <day> (dish) / Take off the plan), not drag-and-drop — a drag across a
+  2-column grid inside a ScrollView fights scrolling. Moving onto a planned night swaps, so a night never has two
+  dinners; nothing moves into the past. Tap = push into cooking like Today's "Cook this" (needs a NavigationStack on
+  Plan, same pattern as Today). **Pre-mortem:** (1) swap leaves two dinners on one night → `moveOntoAPlannedNight…`;
+  (2) a move across the October clock change lands on the wrong day → `moveKeepsTheTimeAcrossAClockChange`;
+  (3) tap does nothing / doesn't reach cooking → UI test asserts `cooking.stepPosition`.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to

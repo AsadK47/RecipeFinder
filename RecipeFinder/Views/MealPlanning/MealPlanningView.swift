@@ -22,10 +22,23 @@ struct MealPlanningView: View {
     @State var reminderContext: ReminderContext?
     /// Non-nil while "Plan my week" is dealing cards.
     @State var planDeck: PlanDeck?
+    /// Set by tapping a dinner photo: pushes the recipe straight into cooking mode.
+    @State var cookingRecipe: RecipeModel?
 
     let mealCalendar = MealPlanCalendar()
 
     var body: some View {
+        // A stack of its own so a dinner photo can push its recipe into cooking (same as Today's "Cook this").
+        NavigationStack {
+            planner
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(item: $cookingRecipe) { recipe in
+                    RecipeDetailView(recipe: recipe, startsCooking: true)
+                }
+        }
+    }
+
+    private var planner: some View {
         ZStack {
             AppBackground()
 
@@ -51,6 +64,8 @@ struct MealPlanningView: View {
                                           action: openPlanDeck)
                                 .accessibilityIdentifier("plan.planMyWeek")
                         }
+
+                        weekDinnersSection
 
                         if !pantryExpirySuggestions.isEmpty {
                             ExpiryRecipeSuggestionsSection(
@@ -200,6 +215,16 @@ struct MealPlanningView: View {
             },
             onPreviousWeek: previousWeek,
             onNextWeek: nextWeek
+        )
+    }
+
+    private var weekDinnersSection: some View {
+        WeekDinnersView(
+            nights: weekNights,
+            onCook: { cookingRecipe = $0 },
+            onPlan: planDinner,
+            onMove: moveDinner,
+            onRemove: removeDinner
         )
     }
 

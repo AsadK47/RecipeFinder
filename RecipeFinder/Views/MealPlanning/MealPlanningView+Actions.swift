@@ -152,6 +152,42 @@ extension MealPlanningView {
         updateSelectedMealTimes(for: selectedDate)
     }
 
+    // MARK: - Week of dinners
+
+    /// Every plan in the shown week (all meal times).
+    var currentWeekPlans: [MealPlanModel] {
+        currentWeekStart.map { mealPlanningManager.mealPlansForWeek(starting: $0).meals } ?? []
+    }
+
+    /// The shown week as seven dinner photos.
+    var weekNights: [WeekDinners.Night] {
+        WeekDinners.nights(week: daysInCurrentWeek, plans: currentWeekPlans, recipes: recipes, today: Date())
+    }
+
+    /// An empty night's photo: picks that night and opens the recipe picker for its dinner.
+    func planDinner(on night: Date) {
+        selectedDate = night
+        updateSelectedMealTimes(for: night)
+        mealPlanSheet = .recipeSelection(.dinner)
+    }
+
+    /// Hold → move: the dinner takes the new night; a dinner already there swaps back to the old one.
+    func moveDinner(_ dinner: MealPlanModel, to night: Date) {
+        let changed = WeekDinners.move(dinner, to: night, plans: currentWeekPlans)
+        guard !changed.isEmpty else { return }
+        withAnimation(.appGentle) {
+            for plan in changed { mealPlanningManager.updateMealPlan(plan) }
+            updateSelectedMealTimes(for: selectedDate)
+        }
+    }
+
+    func removeDinner(_ dinner: MealPlanModel) {
+        withAnimation(.appGentle) {
+            removeMealPlan(for: dinner.date, mealTime: .dinner)
+            updateSelectedMealTimes(for: selectedDate)
+        }
+    }
+
     // MARK: - Week navigation
 
     func previousWeek() {
