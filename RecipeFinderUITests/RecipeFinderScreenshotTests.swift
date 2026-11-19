@@ -191,6 +191,33 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 5), "Start cooking should reopen cooking mode.")
         XCTAssertTrue(position.waitForExistence(timeout: 3), "Reopening should resume on a step, not the ingredient list.")
         XCTAssertEqual(position.label, leftAt, "Reopening should resume at the step the cook left.")
+
+        // Cooking flow slice 3b: a step's named timer stays in sight on the next step.
+        let startTimer = app.buttons["cooking.startTimer"]
+        let back = app.buttons["cooking.back"]
+        for _ in 0..<12 where !startTimer.exists && !next.label.hasPrefix("Finish") {
+            next.tap()
+            settle(1)
+        }
+        for _ in 0..<12 where !startTimer.exists && back.exists {
+            back.tap()
+            settle(1)
+        }
+        XCTAssertTrue(startTimer.waitForExistence(timeout: 3), "A step with a time in it should offer a timer.")
+        checkpoint(app, "cooking-start-timer")
+        startTimer.tap()
+        // Starting a timer asks for notification permission once.
+        let allowPrompt = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Don’t Allow"]
+        if allowPrompt.waitForExistence(timeout: 3) { allowPrompt.tap() }
+        let timerPill = app.descendants(matching: .any).matching(identifier: "cooking.timer").firstMatch
+        XCTAssertTrue(timerPill.waitForExistence(timeout: 3), "A started timer should show as a pill.")
+        settle(1)
+        snap(app, "51-cooking-timers")
+        let move = next.label.hasPrefix("Finish") ? back : next
+        checkpoint(app, "cooking-timer-next-step")
+        move.tap()
+        settle(1)
+        XCTAssertTrue(timerPill.waitForExistence(timeout: 3), "The timer should stay visible on another step.")
     }
 
     /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,

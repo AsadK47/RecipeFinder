@@ -16,6 +16,7 @@ struct CookingModeView: View {
     /// Ingredients each item uses — matched once per cook, not on every redraw.
     @State private var stepIngredients: [[StepIngredientMatcher.Use]] = []
     @Environment(\.recipeTimer) private var timerManager
+    @Environment(\.cookingTimers) private var cookingTimers
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
 
@@ -31,6 +32,19 @@ struct CookingModeView: View {
 
     // Minutes extracted from the current step's text — drives the timer button.
     private var stepTimerMinutes: Int? { plan.timerMinutes(at: currentIndex) }
+
+    /// One timer per step of this recipe: the step's button can't start a second copy while one is on.
+    private var stepTimerKey: String { "\(recipe.id.uuidString)#\(currentIndex)" }
+
+    private var stepTimerName: String {
+        let (label, _) = stepLabelAndTotal
+        return CookingTimerName.name(
+            for: current.displayText,
+            uses: currentStepIngredients,
+            ingredients: recipe.ingredients,
+            fallback: "\(label) \(stepPositionInPhase)"
+        )
+    }
 
     private var currentStepIngredients: [StepIngredientMatcher.Use] {
         stepIngredients.indices.contains(currentIndex) ? stepIngredients[currentIndex] : []
@@ -93,6 +107,7 @@ struct CookingModeView: View {
                 Spacer(minLength: 0)
             } else {
                 CookingProgressBar(progress: plan.progress(currentIndex))
+                CookingTimerStrip()
                 Spacer(minLength: 0)
                 contentCard
                 Spacer(minLength: 0)
@@ -190,15 +205,15 @@ struct CookingModeView: View {
             }
 
             if let minutes = stepTimerMinutes {
+                let running = cookingTimers.timer(forKey: stepTimerKey)
                 Button {
-                    // Don't clobber a timer already running from an earlier step.
-                    if !timerManager.isActive {
-                        timerManager.start(hours: 0, minutes: minutes, seconds: 0)
+                    withAnimation(.appSnappy) {
+                        _ = cookingTimers.start(name: stepTimerName, minutes: minutes, key: stepTimerKey)
                     }
-                    showTimerSheet = true
                     HapticManager.shared.success()
                 } label: {
-                    Label(timerManager.isActive ? "Timer running" : "Start \(minutes)-minute timer", systemImage: "timer")
+                    Label(running.map { "\($0.name) timer is on" } ?? "Start \(minutes)-minute timer",
+                          systemImage: running == nil ? "timer" : "checkmark")
                         .font(.headline)
                         .padding(.horizontal, AppTheme.spacing24)
                         .padding(.vertical, AppTheme.spacing14)
@@ -207,6 +222,8 @@ struct CookingModeView: View {
                         .adaptiveForegroundColor()
                 }
                 .buttonStyle(.plain)
+                .disabled(running != nil)
+                .accessibilityIdentifier("cooking.startTimer")
             }
         }
     }
