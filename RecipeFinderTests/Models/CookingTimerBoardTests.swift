@@ -22,7 +22,8 @@ struct CookingTimerBoardTests {
     @Test("The same step's button can't start a second copy")
     func oneTimerPerKey() throws {
         var board = CookingTimerBoard()
-        let first = try #require(board.start(name: "Rice", seconds: 720, key: "r#3", now: t0))
+        let firstResult = board.start(name: "Rice", seconds: 720, key: "r#3", now: t0)
+        let first = try #require(firstResult)
         let again = board.start(name: "Rice", seconds: 720, key: "r#3", now: t0.addingTimeInterval(30))
         #expect(again?.id == first.id)
         #expect(board.timers.count == 1)
@@ -32,10 +33,12 @@ struct CookingTimerBoardTests {
     @Test("A step whose timer finished can time again, replacing the finished one")
     func finishedFreesStep() throws {
         var board = CookingTimerBoard()
-        let first = try #require(board.start(name: "Rice", seconds: 60, key: "r#3", now: t0)).id
+        let firstResult = board.start(name: "Rice", seconds: 60, key: "r#3", now: t0)
+        let first = try #require(firstResult).id
         let later = t0.addingTimeInterval(120)
         #expect(board.timer(forKey: "r#3", now: later) == nil)
-        let again = try #require(board.start(name: "Rice", seconds: 60, key: "r#3", now: later))
+        let againResult = board.start(name: "Rice", seconds: 60, key: "r#3", now: later)
+        let again = try #require(againResult)
         #expect(again.id != first)
         #expect(board.timers.map(\.id) == [again.id])
     }
@@ -43,7 +46,8 @@ struct CookingTimerBoardTests {
     @Test("A paused step timer still holds its step")
     func pausedHoldsStep() throws {
         var board = CookingTimerBoard()
-        let id = try #require(board.start(name: "Rice", seconds: 60, key: "r#3", now: t0)).id
+        let idResult = board.start(name: "Rice", seconds: 60, key: "r#3", now: t0)
+        let id = try #require(idResult).id
         board.togglePause(id, now: t0.addingTimeInterval(10))
         #expect(board.timer(forKey: "r#3", now: t0.addingTimeInterval(500))?.id == id)
     }
@@ -51,7 +55,8 @@ struct CookingTimerBoardTests {
     @Test("Done timers are the ones at zero")
     func doneIDs() throws {
         var board = CookingTimerBoard()
-        let short = try #require(board.start(name: "A", seconds: 10, key: nil, now: t0)).id
+        let shortResult = board.start(name: "A", seconds: 10, key: nil, now: t0)
+        let short = try #require(shortResult).id
         board.start(name: "B", seconds: 100, key: nil, now: t0)
         #expect(CookingTimerBoard.doneIDs(board.timers, at: t0.addingTimeInterval(5)).isEmpty)
         #expect(CookingTimerBoard.doneIDs(board.timers, at: t0.addingTimeInterval(10)) == [short])
@@ -68,14 +73,16 @@ struct CookingTimerBoardTests {
     @Test("A zero-length timer isn't added", arguments: [0, -5])
     func zeroLength(seconds: Int) {
         var board = CookingTimerBoard()
-        #expect(board.start(name: "Rice", seconds: seconds, key: "k", now: t0) == nil)
+        let r1 = board.start(name: "Rice", seconds: seconds, key: "k", now: t0)
+        #expect(r1 == nil)
         #expect(board.timers.isEmpty)
     }
 
     @Test("Remaining rounds part-seconds up and stops at zero, which is done")
     func remainingAndDone() throws {
         var board = CookingTimerBoard()
-        let timer = try #require(board.start(name: "Rice", seconds: 10, key: nil, now: t0))
+        let timerResult = board.start(name: "Rice", seconds: 10, key: nil, now: t0)
+        let timer = try #require(timerResult)
         #expect(timer.remaining(at: t0.addingTimeInterval(0.4)) == 10)
         #expect(!timer.isDone(at: t0.addingTimeInterval(9.5)))
         #expect(timer.remaining(at: t0.addingTimeInterval(30)) == 0)
@@ -87,11 +94,14 @@ struct CookingTimerBoardTests {
     @Test("Pausing holds the time left; resuming counts on from there")
     func pauseAndResume() throws {
         var board = CookingTimerBoard()
-        let id = try #require(board.start(name: "Rice", seconds: 600, key: nil, now: t0)).id
-        let paused = try #require(board.togglePause(id, now: t0.addingTimeInterval(100)))
+        let idResult = board.start(name: "Rice", seconds: 600, key: nil, now: t0)
+        let id = try #require(idResult).id
+        let pausedResult = board.togglePause(id, now: t0.addingTimeInterval(100))
+        let paused = try #require(pausedResult)
         #expect(paused.isPaused)
         #expect(paused.remaining(at: t0.addingTimeInterval(400)) == 500)
-        let resumed = try #require(board.togglePause(id, now: t0.addingTimeInterval(400)))
+        let resumedResult = board.togglePause(id, now: t0.addingTimeInterval(400))
+        let resumed = try #require(resumedResult)
         #expect(!resumed.isPaused)
         #expect(resumed.remaining(at: t0.addingTimeInterval(500)) == 400)
     }
@@ -99,9 +109,11 @@ struct CookingTimerBoardTests {
     @Test("A finished timer can't be paused")
     func finishedStaysFinished() throws {
         var board = CookingTimerBoard()
-        let id = try #require(board.start(name: "Rice", seconds: 10, key: nil, now: t0)).id
+        let idResult = board.start(name: "Rice", seconds: 10, key: nil, now: t0)
+        let id = try #require(idResult).id
         let after = t0.addingTimeInterval(20)
-        let timer = try #require(board.togglePause(id, now: after))
+        let timerResult = board.togglePause(id, now: after)
+        let timer = try #require(timerResult)
         #expect(!timer.isPaused)
         #expect(timer.isDone(at: after))
     }
@@ -109,33 +121,43 @@ struct CookingTimerBoardTests {
     @Test("+1 min adds to a running, a paused and a finished timer")
     func addMinute() throws {
         var board = CookingTimerBoard()
-        let running = try #require(board.start(name: "A", seconds: 100, key: nil, now: t0)).id
-        let paused = try #require(board.start(name: "B", seconds: 100, key: nil, now: t0)).id
-        let finished = try #require(board.start(name: "C", seconds: 10, key: nil, now: t0)).id
+        let runningResult = board.start(name: "A", seconds: 100, key: nil, now: t0)
+        let running = try #require(runningResult).id
+        let pausedResult = board.start(name: "B", seconds: 100, key: nil, now: t0)
+        let paused = try #require(pausedResult).id
+        let finishedResult = board.start(name: "C", seconds: 10, key: nil, now: t0)
+        let finished = try #require(finishedResult).id
         board.togglePause(paused, now: t0.addingTimeInterval(40))
         let now = t0.addingTimeInterval(50)
-        #expect(board.add(seconds: 60, to: running, now: now)?.remaining(at: now) == 110)
-        #expect(board.add(seconds: 60, to: paused, now: now)?.remaining(at: now) == 120)
-        #expect(board.add(seconds: 60, to: finished, now: now)?.remaining(at: now) == 60)
+        let r2 = board.add(seconds: 60, to: running, now: now)
+        #expect(r2?.remaining(at: now) == 110)
+        let r3 = board.add(seconds: 60, to: paused, now: now)
+        #expect(r3?.remaining(at: now) == 120)
+        let r4 = board.add(seconds: 60, to: finished, now: now)
+        #expect(r4?.remaining(at: now) == 60)
         #expect(board.timer(paused)?.isPaused == true)
     }
 
     @Test("Stopping removes only that timer, and frees its step to start again")
     func stop() throws {
         var board = CookingTimerBoard()
-        let rice = try #require(board.start(name: "Rice", seconds: 600, key: "r#3", now: t0)).id
+        let riceResult = board.start(name: "Rice", seconds: 600, key: "r#3", now: t0)
+        let rice = try #require(riceResult).id
         board.start(name: "Sauce", seconds: 600, key: "r#4", now: t0)
         board.remove(rice)
         #expect(board.timers.map(\.name) == ["Sauce"])
         #expect(board.timer(forKey: "r#3", now: t0) == nil)
-        #expect(board.start(name: "Rice", seconds: 600, key: "r#3", now: t0)?.id != rice)
+        let r5 = board.start(name: "Rice", seconds: 600, key: "r#3", now: t0)
+        #expect(r5?.id != rice)
     }
 
     @Test("Unknown ids change nothing")
     func unknownID() {
         var board = CookingTimerBoard()
-        #expect(board.togglePause(UUID(), now: t0) == nil)
-        #expect(board.add(seconds: 60, to: UUID(), now: t0) == nil)
+        let r6 = board.togglePause(UUID(), now: t0)
+        #expect(r6 == nil)
+        let r7 = board.add(seconds: 60, to: UUID(), now: t0)
+        #expect(r7 == nil)
     }
 
     // MARK: - Display
