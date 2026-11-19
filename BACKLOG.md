@@ -755,7 +755,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   confirm on device / via MetricKit hang reports before closing.
 - 🟡 Quick snacks save difficulty "1" (`QuickSnackSheet.swift:216` → `RecipeModel` init `"\(difficulty)"`), so they
   show 2 bars and no difficulty filter finds them — save "Basic" (challenger, difficulty bars; verified).
-- 🟡 Active filter chips list difficulties in `Set` order (`ActiveFiltersBar.swift:49`) — list in
+- 🟡 Active filter chips list difficulties in `Set` order (`ActiveFiltersBar.swift:49`) — 🚧 builder agent 2026-11-19 — list in
   `RecipeWizardBuilder.difficultyLevels` order (challenger, difficulty order).
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
