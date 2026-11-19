@@ -125,6 +125,7 @@ struct CookingNavigationRow: View {
                 )
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("cooking.next")
         }
         .padding(.top, AppTheme.spacing16)
     }
@@ -157,5 +158,39 @@ struct CookingFinishedCard: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("cooking.finished")
+    }
+}
+
+/// Under a step: the ingredients it uses, with amounts, so the cook needn't flip back to the list.
+struct CookingStepIngredients: View {
+    let ingredients: [Ingredient]
+    let scaleFactor: Double
+    @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+            Text("For this step")
+                .font(.subheadline.weight(.semibold))
+                .adaptiveSecondaryForeground()
+            ForEach(ingredients) { ingredient in
+                HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing10) {
+                    Circle()
+                        .fill(.white.opacity(0.6))
+                        .frame(width: 6, height: 6)
+                        .accessibilityHidden(true)
+                    Text(CookingIngredientChecklist.line(for: ingredient, scaleFactor: scaleFactor,
+                                                         system: measurementSystem))
+                        .font(.body)
+                        .adaptiveForegroundColor()
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+        .padding(AppTheme.spacing16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16).fill(.white.opacity(0.08)))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("cooking.stepIngredients")
     }
 }

@@ -13,6 +13,8 @@ struct CookingModeView: View {
     @State private var isFinished = false
     @State private var completedItems: Set<Int> = []
     @State private var showTimerSheet = false
+    /// Ingredient indices each item uses — matched once per cook, not on every redraw.
+    @State private var stepIngredients: [[Int]] = []
     @Environment(\.recipeTimer) private var timerManager
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
@@ -29,6 +31,11 @@ struct CookingModeView: View {
 
     // Minutes extracted from the current step's text — drives the timer button.
     private var stepTimerMinutes: Int? { plan.timerMinutes(at: currentIndex) }
+
+    private var currentStepIngredients: [Ingredient] {
+        guard stepIngredients.indices.contains(currentIndex) else { return [] }
+        return stepIngredients[currentIndex].compactMap { recipe.ingredients.indices.contains($0) ? recipe.ingredients[$0] : nil }
+    }
 
     /// Records the cook (streak + badges, via `onFinish`) and leaves. Shared by the "Finish" button and by
     /// "Done" when the user is already on the last step, so reaching the end credits the cook either way.
@@ -90,6 +97,7 @@ struct CookingModeView: View {
             CookTimerView()
         }
         .onAppear {
+            stepIngredients = plan.ingredientIndices(from: recipe.ingredients)
             UIApplication.shared.isIdleTimerDisabled = true
             CookingSession.shared.start(
                 recipeName: recipe.name,
@@ -134,18 +142,25 @@ struct CookingModeView: View {
             stepHeader
 
             ScrollView {
-                Text(current.displayText)
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .adaptiveForegroundColor()
-                    .lineSpacing(6)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(AppTheme.spacing24)
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                            .fill(.ultraThinMaterial)
-                    )
+                VStack(spacing: AppTheme.spacing16) {
+                    Text(current.displayText)
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .adaptiveForegroundColor()
+                        .lineSpacing(6)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(AppTheme.spacing24)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                                .fill(.ultraThinMaterial)
+                        )
+
+                    let used = currentStepIngredients
+                    if !used.isEmpty {
+                        CookingStepIngredients(ingredients: used, scaleFactor: recipe.scaleFactor)
+                    }
+                }
             }
 
             if let minutes = stepTimerMinutes {

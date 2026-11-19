@@ -162,6 +162,17 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(startCooking.isHittable, "Start cooking should appear on screen, where the last rows were.")
         startCooking.tap()
         XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 5), "Start cooking should open cooking mode.")
+
+        // Cooking flow slice 2: step through until a step names an ingredient; it lists that ingredient with its amount.
+        let next = app.buttons["cooking.next"]
+        let stepIngredients = app.descendants(matching: .any).matching(identifier: "cooking.stepIngredients").firstMatch
+        for _ in 0..<8 where !stepIngredients.exists && next.exists {
+            checkpoint(app, "cooking-next")
+            next.tap()
+            settle(1)
+        }
+        XCTAssertTrue(stepIngredients.waitForExistence(timeout: 3), "A step that names an ingredient should list it.")
+        snap(app, "50-cooking-step-ingredients")
     }
 
     /// "Re-import from original" lives in the detail ⋯ menu and only shows for recipes that kept their import text,

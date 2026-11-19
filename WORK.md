@@ -33,10 +33,22 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Kitchen you can find: ✅ done — slice 2 landed f8960bb (Today "Your kitchen →" links + "In kitchen" tag → At home,
   builder 2026-11-17). Leftover branches agent/kitchen-at-home, -2, agent/kitchen-today-links (auto-cleanup).
 
+- Cook: 🚧 **Cooking flow slice 2 — step ingredients** on `agent/step-ingredients` (builder 2026-11-19, took over stale
+  11-15 claim): `StepIngredientMatcher` (Models/Recipe) + `CookingPlan.ingredientIndices(from:)`, `CookingStepIngredients`
+  card under each step ("For this step", amounts like the checklist), `cooking.next` id; screenshot 50. Left after: resume
+  at the same step, several named timers that stay visible, last step → Made it (already via onFinish — verify).
+
 ## Next action
 Smell Batch D ✅ (7f4580c). Next: the next Queue item per BACKLOG "Next" line (feature after smell), then Smell Batch E.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Cooking flow slice 2 (step ingredients)**: word matching on `IngredientNameFormatter.matchKey` — full name first
+  (claims its span), else the head word ("onion" for "red onion") unless generic (sauce/powder/juice/stock…). Precision
+  over recall: a wrong ingredient on a step misleads more than a missing one. Rejected: on-device AI (slow, not
+  testable), any-word matching ("red" → red pepper). Computed once in `onAppear` into `@State`, not in `body`.
+  **Pre-mortem:** (1) wrong ingredient shown (oil in "boil", olive oil on a sesame-oil step) → word-boundary, claim and
+  generic-head tests; (2) nothing shown for "the eggs"/"tomato" plurals → plural tests; (3) card pushes the step text /
+  Next off-screen on a small phone → it sits inside the step's ScrollView, screenshot 50.
 - **Docs refresh (5) CHANGELOG** : entries are per shipped *change*, not per build number — batch landing puts several
   items in one build and the number isn't known at landing. Item name + commit stay in the heading for the team but
   off the page. Parser is strict (stray line = error) so a typo can't silently drop an entry. Log archive moved to
