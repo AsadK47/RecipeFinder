@@ -243,7 +243,7 @@ are merged into a newer item or parked — never start them; their text stays as
   when the next Mon–Sun has no dinner (`SundayPlanNudge`); tap opens Plan on that week.
   **✅ Slice 6 (a395ab2..6f5d2eb):** "Busy night" on the deck card → quick dishes first for that night (shortest cook
   when nothing is quick); lock = planned nights never re-dealt, re-roll = ✕ (re-roll all: YAGNI).
-  **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; (4) 30-day memory of passed dishes (on-device store → Privacy §4.2 line, two reviewers).
+  **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; (4) 30-day memory of passed dishes (⏸ Needs owner — Privacy text change + challenger asks to drop it).
 - [ ] **Groceries writes itself** (Phase 2 · Get). Merges *Groceries + Kitchen* and *Plan my week 3/3* (below, kept as
   spec). Planning a week builds the list — merged and scaled, minus what's at home, in the order you usually tick
   (learned). "I'm in the shop" mode: huge rows, one-thumb ticks, screen awake; ticked = at home automatically (no
@@ -734,6 +734,9 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
+- 🙋 **Plan slice 4: 30-day memory of passed dishes — build or drop?** (builder 2026-11-20): it adds an on-device store
+  and a Privacy §4.2 line (legal text → your yes), and CHALLENGES 2026-11-20 recommends dropping it for *Groceries
+  writes itself* since the deck already resets passes per deck. Build it (approve the §4.2 line), or drop it and start Groceries?
 - 🙋 **Plan deck: what does swipe up do?** (builder 2026-11-19, swipe to match slice 3): the deck deals tonight's card
   first, so "up = tonight" can only show after the cook taps *Leave tonight open* (challenger: it nudges what they just
   declined). Pick one: (a) up on a later night **swaps** with an already-planned tonight (old dish moves to that night)
@@ -785,6 +788,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-20 · Plan — swipe to match slice 4 30-day memory · ⏸ moved to Needs owner (Privacy §4.2 line is legal text → owner yes; challenger recommends dropping it) · no code · builder stopped per protocol
 - 2026-11-20 · Inbox 🐞 testZZZPlanMyWeek busy-night query · 89fb7a4 · test-only: `planDeck.busy` (a Button with `.isToggle`) is queried as any element, value accepts "On" or "1"; nothing changes on device · review: challenger, 0 defects (one match, still fails when off) · CI green (dispatch Build & Test 44703905612, all 4 UI shards; testZZZPlanMyWeek passed) · looked at: n/a — no UI change
 - 2026-11-20 · Inbox 🐞 Sunday Planning denied · a6876c2..9a01bb5 · turning Sunday Planning on now waits for iOS's answer: allowed → scheduled as before; Don't Allow (or already denied) → the switch flips back off, VoiceOver announces it, and a note under the card ("Turn on notifications for RecipeFinder in Settings to get the Sunday nudge.", tap → iOS Settings) replaces the big banner until notifications are allowed; returning from iOS Settings refreshes it. `NotificationManager.requestPermission() async`. UI test extends `testCaptureNotificationSettings` (seen red on a6876c2, dispatch 44689186013: switch stayed "1") → green on 9a01bb5 (dispatch 44691497480). On phone: Settings › Notifications → Sunday Planning on → Don't Allow → switch goes off with the note; tap the note → iOS Settings · review: deep reviewer + challenger, 0 defects; 5 fixed (note stale after allowing in iOS Settings, duplicate banner+note, negative copy → positive, no VoiceOver announce, wrong test comment), 3 → CHALLENGES · CI green (Build & Test 44689515304; UI shards green except pre-existing `testZZZPlanMyWeek` → Inbox 🐞) · looked at: 57-notifications-sunday-denied (new, from xcresult), 55-notifications-sunday-planning
 - 2026-11-20 · Plan — swipe to match slice 6 busy nights · a395ab2..6f5d2eb · Plan my week card gains a "Busy night" button (accent when on): that night deals quick dishes first (shortest cook when none are quick; untimed counts as an hour), reason says why, the night stays the same, other nights unaffected; kept for this deck only (no stored setting → no Privacy change). `PlanDeck.setBusy`, 13 new unit tests; UI screenshot test 56-plan-deck-busy. On phone: Plan → Plan my week → Busy night → card fades to a ≤30-min dish → tap again → back to the usual pick · review: deep reviewer + challenger, 4 fixed (both: busy re-deal flew off the Plan-it side → fades; reviewer: passed dish beat a fresh quick one; challenger: 1-minute gap could tie → tuple ranking; copy made positive), 2 dismissed (fast Plan-then-Busy drops the plan — same guard as ✕, intended; large-text clipping — ViewThatFits stacks, screenshot fine) · 1 CI cycle lost (test expected "20 min", formatter says "20 minutes") · CI green (Build & Test 44675789215; Screenshots 44662222851 on a395ab2, before the fade fix — layout unchanged) · looked at: 56-plan-deck-busy (new), 52-plan-deck

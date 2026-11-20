@@ -47,8 +47,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/sunday-nudge-denied, agent/plan-busy-test (auto-cleanup).
 
 ## Next action
-Plan slice (4) 30-day memory on `agent/plan-deck-memory` (Privacy §4.2 line + two reviewers) — note CHALLENGES
-2026-11-20 asks the owner whether to drop it for Groceries writes itself.
+Owner answers Needs owner "Plan slice 4: build or drop?" (and slice 3 swipe-up). If drop → start *Groceries writes
+itself* slice 1 (plan → list) on `agent/groceries-from-plan`. Slice 4 is parked: its Privacy §4.2 line is legal text.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
