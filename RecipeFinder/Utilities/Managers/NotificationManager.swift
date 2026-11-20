@@ -194,7 +194,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.title = SundayPlanNudge.title
         content.body = SundayPlanNudge.body
         content.sound = .default
-        content.userInfo = ["type": NotificationKind.planNudge.rawValue]
+        var userInfo: [String: Any] = SundayPlanNudge.userInfo(firingAt: date)
+        userInfo["type"] = NotificationKind.planNudge.rawValue
+        content.userInfo = userInfo
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: Self.oneShotComponents(for: date), repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)

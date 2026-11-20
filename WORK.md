@@ -53,6 +53,12 @@ Notifications), one reviewer + challenger, then land. Slice 3 still waits on the
   drop the nudge for the week after. Re-synced on every plan load/save and when the app becomes active (one-shot, so
   it re-arms after firing). Tap opens Plan. Rejected: a repeating weekly trigger (can't skip planned weeks). Local
   notification + on-device bool → Privacy §6.2 ("meal reminders… only with your permission") already covers it.
+  "Next week" is Mon–Sun whatever `firstWeekday` is (UK app; a US Sun–Sat Plan week differs by one night — accepted).
+  When all 4 look-ahead weeks are planned nothing is pending until a plan changes or the app opens (one-shot; fine).
+  Sync makes one call — schedule (same id replaces) or cancel — never cancel-then-add (UN remove/add order isn't
+  promised; reviewer 1).
+  Tap opens Plan on the Monday after the nudge (userInfo `weekStart` → `ContentView.planWeekRequest` →
+  `MealPlanningView.showWeek(of:)`) — on a UK Sunday evening Plan otherwise shows the week ending tonight (challenger).
   **Pre-mortem:** (1) nudges a cook whose week is planned → `aDinnerNextWeekMoves…`, `aRepeatingDinnerMeansNoNudge`;
   (2) fires at the wrong hour across the October clock change → `firesAtSixLocalTimeOnTheClockChangeSunday`;
   (3) keeps firing after switching off / Reset → `switchingOffCancelsThePendingNudge` (Reset clears the rf. key, then

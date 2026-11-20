@@ -199,7 +199,11 @@ extension MealPlanningView {
     }
 
     private func moveWeek(by weeks: Int) {
-        selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: weeks, to: selectedDate) ?? selectedDate
+        showWeek(of: Calendar.current.date(byAdding: .weekOfYear, value: weeks, to: selectedDate) ?? selectedDate)
+    }
+
+    func showWeek(of date: Date) {
+        selectedDate = date
         if let start = currentWeekStart {
             mealPlanningManager.propagateRecurring(toWeekStarting: start)
         }

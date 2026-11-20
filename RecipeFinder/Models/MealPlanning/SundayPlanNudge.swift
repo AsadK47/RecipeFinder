@@ -12,7 +12,20 @@ enum SundayPlanNudge {
     static let lookAheadWeeks = 4
 
     static let title = "Plan next week's dinners?"
+    /// userInfo key carrying the Monday the nudge is about, so the tap opens Plan on that week, not the one ending tonight.
+    static let weekStartKey = "weekStart"
     static let body = "Next week is wide open — swipe through a few dinners on Plan and it's sorted in a minute."
+
+    /// The nudge's userInfo for one firing at `fire`: the Monday after it (seconds since 1970, plist-safe).
+    static func userInfo(firingAt fire: Date, calendar: Calendar = .current) -> [String: Double] {
+        let monday = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: fire)) ?? fire
+        return [weekStartKey: monday.timeIntervalSince1970]
+    }
+
+    /// The week a tapped nudge asks Plan to show; nil for any other notification.
+    static func weekStart(from userInfo: [AnyHashable: Any]?) -> Date? {
+        (userInfo?[weekStartKey] as? Double).map { Date(timeIntervalSince1970: $0) }
+    }
 
     /// The first Sunday 18:00 after `now` whose following Monday–Sunday has no dinner planned; nil when every week
     /// in the look-ahead already has one. A repeating dinner counts for every week from its date on (Plan fills the

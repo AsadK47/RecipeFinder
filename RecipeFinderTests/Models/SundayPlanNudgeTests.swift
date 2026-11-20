@@ -77,6 +77,17 @@ import Foundation
         #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nil)
     }
 
+    @Test func tapCarriesTheMondayAfterTheNudge() {
+        var info: [AnyHashable: Any] = ["type": NotificationKind.planNudge.rawValue]
+        for (key, value) in SundayPlanNudge.userInfo(firingAt: nov(22, 18), calendar: cal) { info[key] = value }
+        #expect(SundayPlanNudge.weekStart(from: info) == nov(23))
+    }
+
+    @Test func otherNotificationsCarryNoWeek() {
+        #expect(SundayPlanNudge.weekStart(from: ["type": "meal"]) == nil)
+        #expect(SundayPlanNudge.weekStart(from: nil) == nil)
+    }
+
     @Test func firesAtSixLocalTimeOnTheClockChangeSunday() throws {
         let london = Self.calendar("Europe/London")
         let saturday = try #require(london.date(from: DateComponents(year: 2026, month: 10, day: 24, hour: 12)))
@@ -136,12 +147,31 @@ final class FakePlanNudgeScheduler: PlanNudgeScheduling {
         #expect(nudges.cancelled.last == SundayPlanNudge.identifier)
     }
 
-    @Test func planningADinnerResyncsTheNudge() {
+    @Test func planningNextWeeksDinnerMovesTheNudgeAWeekOn() throws {
         storage.set(true, forKey: SundayPlanNudge.settingKey)
         let sut = makeManager()
-        let before = nudges.cancelled.count
-        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .dinner))
-        #expect(nudges.cancelled.count > before)
+        let first = try #require(SundayPlanNudge.fireDate(now: Date(), plans: []))
+        let monday = try #require(Calendar.current.date(byAdding: .day, value: 1, to: first))
+        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: monday, mealTime: .dinner))
+        #expect(nudges.scheduled.last?.date == Calendar.current.date(byAdding: .day, value: 7, to: first))
+    }
+
+    @Test func resetCancelsThePendingNudge() {
+        storage.set(true, forKey: SundayPlanNudge.settingKey)
+        let sut = makeManager()
+        let scheduledBefore = nudges.scheduled.count
+        storage.clearAll()
+        sut.removeAllMealPlans()
+        #expect(nudges.scheduled.count == scheduledBefore)
+        #expect(nudges.cancelled.last == SundayPlanNudge.identifier)
+    }
+
+    @Test func reloadingPlansResyncsTheNudge() {
+        let sut = makeManager()
+        #expect(nudges.scheduled.isEmpty)
+        storage.set(true, forKey: SundayPlanNudge.settingKey)
+        sut.reload()
+        #expect(nudges.scheduled.last?.id == SundayPlanNudge.identifier)
     }
 
     @Test func aRepeatingDinnerClearsThePendingNudge() {

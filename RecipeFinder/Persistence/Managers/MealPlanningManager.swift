@@ -373,11 +373,15 @@ final class MealPlanningManager: MealPlanningManaging {
     // MARK: - Sunday planning nudge
 
     /// Runs after every load and save, so planning (or a synced plan from another device) moves the nudge on.
+    /// One call either way: re-adding the same identifier replaces the pending nudge, and a remove followed by an add
+    /// isn't promised to run in order, so a cancel first could delete the fresh nudge.
     func syncPlanNudge() {
-        planNudges.cancelNotification(identifier: SundayPlanNudge.identifier)
-        guard storage.bool(forKey: SundayPlanNudge.settingKey),
-              let fire = SundayPlanNudge.fireDate(now: Date(), plans: mealPlans) else { return }
-        planNudges.schedulePlanNudge(at: fire, identifier: SundayPlanNudge.identifier)
+        if storage.bool(forKey: SundayPlanNudge.settingKey),
+           let fire = SundayPlanNudge.fireDate(now: Date(), plans: mealPlans) {
+            planNudges.schedulePlanNudge(at: fire, identifier: SundayPlanNudge.identifier)
+        } else {
+            planNudges.cancelNotification(identifier: SundayPlanNudge.identifier)
+        }
     }
 
     private func saveMealPlans() {

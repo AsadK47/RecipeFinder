@@ -26,6 +26,8 @@ struct MealPlanningView: View {
     @State var cookingRecipe: RecipeModel?
 
     let mealCalendar = MealPlanCalendar()
+    /// Set by a tapped Sunday nudge: show that day's week, then clear it.
+    var weekRequest: Binding<Date?> = .constant(nil)
 
     var body: some View {
         // A stack of its own so a dinner photo can push its recipe into cooking (same as Today's "Cook this").
@@ -137,6 +139,11 @@ struct MealPlanningView: View {
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
                 existing: [], selected: selectedMealTimes)
             updatePantryExpirySuggestions()
+        }
+        .onChange(of: weekRequest.wrappedValue, initial: true) { _, date in
+            guard let date else { return }
+            showWeek(of: date)
+            weekRequest.wrappedValue = nil
         }
         .onChange(of: selectedMealTimes) { _, newMealTimes in
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
