@@ -47,8 +47,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/sunday-nudge-denied, agent/plan-busy-test (auto-cleanup).
 
 ## Next action
-Owner to choose: **Today — the next meal** (owner feedback 2026-11-20, BACKLOG Today item) before or after *Groceries
-writes itself*. Until answered, the next builder run takes Groceries slice 1 (plan → list) on `agent/groceries-from-plan`.
+*Groceries writes itself* slice 1 (plan → list) on `agent/groceries-from-plan`. Owner 2026-11-20: Today — the next
+meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and

@@ -258,8 +258,8 @@ are merged into a newer item or parked — never start them; their text stays as
   *Measure:* recipes opened from discovery that get cooked. *Done when:* chapter ranking +
   paging tested, perf budget for 300+ recipes, screenshots (scrolled 3 screens), CI green.
 - [ ] **Today — decide tonight** (Phase 3 · Decide). **Owner feedback 2026-11-20:** "Today focuses on dinner and is not time aware;
-  feels slightly cluttered but also doesn't have enough; questioning its usability." Builder proposal (→ owner, order
-  vs Groceries): **Today — the next meal**: one hero for the next meal by the clock (breakfast/lunch/dinner, late
+  feels slightly cluttered but also doesn't have enough; questioning its usability." Builder proposal (owner 2026-11-20:
+  keep in backlog, roadmap order unchanged): **Today — the next meal**: one hero for the next meal by the clock (breakfast/lunch/dinner, late
   evening → tomorrow's breakfast; planned meal first, else a pick + reason; Cook this / Shuffle), a one-line day strip
   (Breakfast ✓ · Lunch: soup · Dinner: plan it), and one "do this now" nudge (defrost / use it up) replacing the
   prep-ahead + use-soon cards; the rest moves to Recipes → Discover or Plan. Trim Today to tonight's pick (big picture, reason, Cook this,
