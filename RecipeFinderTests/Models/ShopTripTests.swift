@@ -162,3 +162,54 @@ struct ScreenAwakeHoldTests {
         #expect(screen.idleTimerDisabled)
     }
 }
+
+@MainActor
+@Suite("KeepAwakeSetting")
+struct KeepAwakeSettingTests {
+    private final class FakeScreen {
+        var idleTimerDisabled = false
+    }
+
+    private func setting(_ screen: FakeScreen) -> KeepAwakeSetting {
+        KeepAwakeSetting(write: { screen.idleTimerDisabled = $0 })
+    }
+
+    @Test("Turning the switch on keeps the screen awake, turning it off lets it sleep")
+    func switchWritesItsValue() {
+        let screen = FakeScreen()
+        let keepAwake = setting(screen)
+
+        keepAwake.switched(on: true)
+        #expect(screen.idleTimerDisabled)
+        keepAwake.switched(on: false)
+        #expect(!screen.idleTimerDisabled)
+    }
+
+    @Test("Opening the app with the switch on keeps the screen awake")
+    func appActiveWithSwitchOn() {
+        let screen = FakeScreen()
+        setting(screen).appBecameActive(settingOn: true)
+        #expect(screen.idleTimerDisabled)
+    }
+
+    @Test("Opening the app with the switch off never undoes cooking or the shop keeping it awake")
+    func appActiveWithSwitchOffLeavesHoldsAlone() {
+        let screen = FakeScreen()
+        screen.idleTimerDisabled = true // cooking mode or the shop is holding it
+        setting(screen).appBecameActive(settingOn: false)
+        #expect(screen.idleTimerDisabled)
+    }
+
+    @Test("Leaving cooking or the shop keeps the screen awake when the switch is on")
+    func leavingAHoldKeepsTheSetting() {
+        let screen = FakeScreen()
+        let keepAwake = setting(screen)
+        let hold = ScreenAwakeHold(read: { screen.idleTimerDisabled }, write: { screen.idleTimerDisabled = $0 })
+
+        keepAwake.appBecameActive(settingOn: true)
+        hold.begin()
+        hold.end()
+
+        #expect(screen.idleTimerDisabled)
+    }
+}

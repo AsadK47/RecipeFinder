@@ -24,3 +24,19 @@ final class ScreenAwakeHold {
         self.before = nil
     }
 }
+
+/// Settings › Display "Keep Screen Awake", applied at the app root. Coming back to the app only ever turns it on:
+/// writing "off" there could land after cooking mode or the shop has switched it on. Off is written when the switch
+/// is turned off, from Settings, where neither of those screens is up.
+@MainActor
+struct KeepAwakeSetting {
+    let write: @MainActor (Bool) -> Void
+
+    func switched(on: Bool) {
+        write(on)
+    }
+
+    func appBecameActive(settingOn: Bool) {
+        if settingOn { write(true) }
+    }
+}

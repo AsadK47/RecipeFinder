@@ -22,6 +22,11 @@ struct CookingModeView: View {
     @Environment(\.cookingTimers) private var cookingTimers
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
+    /// Restores what the screen was on the way out, so Settings' Keep Screen Awake survives a cook.
+    @State private var awake = ScreenAwakeHold(
+        read: { UIApplication.shared.isIdleTimerDisabled },
+        write: { UIApplication.shared.isIdleTimerDisabled = $0 }
+    )
 
     // MARK: - Cooking items (ingredients + pre-prep + steps combined in order)
 
@@ -145,7 +150,7 @@ struct CookingModeView: View {
         .onAppear {
             stepIngredients = plan.ingredientUses(from: recipe.ingredients)
             restorePlace()
-            UIApplication.shared.isIdleTimerDisabled = true
+            awake.begin()
             CookingSession.shared.start(
                 recipeName: recipe.name,
                 items: plan.sessionLines
@@ -154,12 +159,12 @@ struct CookingModeView: View {
         }
         .onDisappear {
             rememberPlace()
-            UIApplication.shared.isIdleTimerDisabled = false
+            awake.end()
             CookingSession.shared.end()
         }
         // Restore idle timer if interrupted (call/PiP/alert) and onDisappear never fires.
         .onChange(of: scenePhase) { _, phase in
-            UIApplication.shared.isIdleTimerDisabled = (phase == .active)
+            if phase == .active { awake.begin() } else { awake.end() }
         }
         .onChange(of: currentIndex) { _, new in
             CookingSession.shared.setIndex(new)

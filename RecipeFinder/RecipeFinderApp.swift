@@ -194,6 +194,9 @@ struct AppRootView: View {
     let persistenceController = PersistenceController.shared
     @State private var showOnboarding = false
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
+    @AppStorage("keepScreenAwake") private var keepScreenAwake = false
+    @Environment(\.scenePhase) private var scenePhase
+    private let keepAwake = KeepAwakeSetting(write: { UIApplication.shared.isIdleTimerDisabled = $0 })
 
     private var preferredColorScheme: ColorScheme? {
         switch colorSchemePreference {
@@ -220,7 +223,14 @@ struct AppRootView: View {
                     .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
             }
         }
-        .onAppear(perform: evaluateOnboardingFlow)
+        .onAppear {
+            evaluateOnboardingFlow()
+            keepAwake.appBecameActive(settingOn: keepScreenAwake)
+        }
+        .onChange(of: keepScreenAwake) { _, isOn in keepAwake.switched(on: isOn) }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { keepAwake.appBecameActive(settingOn: keepScreenAwake) }
+        }
         .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: showOnboarding)
         .preferredColorScheme(preferredColorScheme)
     }

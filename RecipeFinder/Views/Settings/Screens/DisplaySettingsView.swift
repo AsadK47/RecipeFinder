@@ -14,7 +14,7 @@ struct DisplaySettingsView: View {
                         icon: "light.max",
                         iconColor: .yellow,
                         title: "Keep Screen Awake",
-                        subtitle: "Prevent screen from dimming while cooking",
+                        subtitle: "Keeps the screen on while RecipeFinder is open",
                         isOn: $keepScreenAwake
                     )
                 }
@@ -32,7 +32,7 @@ struct DisplaySettingsView: View {
                             .adaptiveForegroundColor()
                     }
 
-                    Text("When enabled, your screen will stay on while you're viewing recipes or using timers. This is helpful when cooking and you need to reference instructions without constantly touching your device.")
+                    Text("When on, your screen stays on whenever RecipeFinder is open, so a recipe stays readable while your hands are busy. Cooking mode and I'm in the shop keep the screen on for you either way.")
                         .font(.caption)
                         .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)
