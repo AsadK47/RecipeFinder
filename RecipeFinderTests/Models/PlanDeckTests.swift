@@ -269,6 +269,71 @@ import Foundation
         #expect(order(1) != order(2))
     }
 
+    // MARK: - Busy nights
+
+    @Test func busyNightDealsTheQuickDishEvenAtTheWeekend() {
+        var deck = makeDeck(days: [day(5)], recipes: [recipe("Slow braise", minutes: 180), recipe("Stir fry", minutes: 20)])
+        #expect(deck.current?.recipe.name == "Slow braise")
+        deck.setBusy(true)
+        #expect(deck.isCurrentNightBusy)
+        #expect(deck.current?.day == day(5))
+        #expect(deck.current?.recipe.name == "Stir fry")
+    }
+
+    @Test func busyNightSaysWhy() {
+        var deck = makeDeck(days: [day(5)], recipes: [recipe("Stir fry", minutes: 20)])
+        deck.setBusy(true)
+        #expect(deck.current?.reason == "Quick for a busy night · 20 min")
+    }
+
+    @Test func busyNightBeatsExpiringItemsAndFavourites() {
+        let slow = recipe("Chicken pie", minutes: 40, ingredients: ["chicken"], isFavorite: true, rating: 5)
+        var deck = makeDeck(days: [day(1)], recipes: [slow, recipe("Omelette", minutes: 10)], expiring: ["Chicken"])
+        #expect(deck.current?.recipe.name == "Chicken pie")
+        deck.setBusy(true)
+        #expect(deck.current?.recipe.name == "Omelette")
+    }
+
+    @Test func busyNightWithNothingQuickDealsTheShortestCook() {
+        var deck = makeDeck(days: [day(5)], recipes: [recipe("Roast", minutes: 180), recipe("Curry", minutes: 60)])
+        deck.setBusy(true)
+        #expect(deck.current?.recipe.name == "Curry")
+    }
+
+    @Test func notBusyAgainGoesBackToTheUsualPick() {
+        var deck = makeDeck(days: [day(5)], recipes: [recipe("Slow braise", minutes: 180), recipe("Stir fry", minutes: 20)])
+        deck.setBusy(true)
+        deck.setBusy(false)
+        #expect(!deck.isCurrentNightBusy)
+        #expect(deck.current?.recipe.name == "Slow braise")
+    }
+
+    @Test func busyCountsForThatNightOnly() {
+        let dishes = [recipe("Roast", minutes: 180), recipe("Stew", minutes: 150),
+                      recipe("Stir fry", minutes: 20), recipe("Salad", minutes: 10)]
+        var deck = makeDeck(days: [day(5), day(6)], recipes: dishes)
+        deck.setBusy(true)
+        deck.plan()
+        #expect(!deck.isCurrentNightBusy)
+        #expect(deck.current?.day == day(6))
+        #expect(deck.current.map { $0.recipe.totalMinutes > 30 } == true)
+    }
+
+    @Test func busyNeverDealsADishAlreadyPicked() {
+        var deck = makeDeck(days: [day(1), day(2)], recipes: [recipe("Stir fry", minutes: 20), recipe("Roast", minutes: 180)])
+        deck.plan()
+        deck.setBusy(true)
+        #expect(deck.current?.recipe.name == "Roast")
+        #expect(deck.current?.day == day(2))
+    }
+
+    @Test func busyOnAFinishedDeckDoesNothing() {
+        var deck = makeDeck(days: [], recipes: [recipe("Dish")])
+        deck.setBusy(true)
+        #expect(deck.isFinished)
+        #expect(!deck.isCurrentNightBusy)
+    }
+
     // MARK: - Closing card
 
     @Test func finishedCopyCountsThePlannedDinners() {

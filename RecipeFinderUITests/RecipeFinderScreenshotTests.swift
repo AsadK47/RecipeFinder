@@ -980,6 +980,19 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             XCTAssertNotEqual(card.label, firstCard, "Not this one should deal a different dish.")
         }
 
+        // Busy night: marks this night (quick dishes) and stays on it.
+        let busy = app.buttons["planDeck.busy"]
+        if card.exists {
+            let busyNight = night.label
+            checkpoint(app, "busy night")
+            XCTAssertTrue(busy.exists, "The deck should offer Busy night.")
+            busy.tap()
+            settle(0.8)
+            XCTAssertEqual(busy.value as? String, "On", "Busy night should show it's on.")
+            XCTAssertEqual(night.label, busyNight, "Busy night should stay on the same night.")
+            snap(app, "56-plan-deck-busy")
+        }
+
         // Plan it (button), then a right swipe: each plans the night and moves on.
         let finished = app.staticTexts["planDeck.finished"]
         for path in ["button", "swipe"] where card.exists {

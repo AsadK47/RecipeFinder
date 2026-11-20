@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// "Plan my week": one big card per empty dinner. Swipe right or tap Plan it to plan the dish for that night; swipe
-/// left or tap Not this one for another dish. Each pick is saved as it's made, so closing part-way keeps them.
+/// left or tap Not this one for another dish; Busy night deals quick dishes for that night. Each pick is saved as it's made, so closing part-way keeps them.
 /// Shown over the planner (not as a cover) so a badge earned by the first plan can still present on top.
 struct PlanDeckView: View {
     @Binding var deck: PlanDeck
@@ -124,6 +124,9 @@ struct PlanDeckView: View {
         .accessibilityIdentifier("planDeck.card")
         .accessibilityAction(named: "Plan it") { plan() }
         .accessibilityAction(named: "Not this one") { skip() }
+        .accessibilityAction(named: deck.isCurrentNightBusy ? "Not a busy night" : "Busy night") {
+            deck.setBusy(!deck.isCurrentNightBusy)
+        }
     }
 
     /// "Plan it" / "Not this one" fades in while dragging, so the cook sees what letting go will do.
@@ -152,17 +155,37 @@ struct PlanDeckView: View {
                 PrimaryButton("Plan it", systemImage: "heart.fill", fillWidth: true, action: plan)
                     .accessibilityIdentifier("planDeck.plan")
             }
-            Button {
-                HapticManager.shared.light()
-                send(.leading) { $0.skipNight() }
-            } label: {
-                Text("Leave \(card.day.formatted(.dateTime.weekday(.wide))) open")
-                    .font(.subheadline.weight(.semibold))
-                    .adaptiveSecondaryForeground()
-                    .frame(minHeight: 44)
+            // Side by side when they fit; stacked at large text sizes.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: AppTheme.spacing16) { busyToggle; leaveOpen(card) }
+                VStack(spacing: AppTheme.spacing8) { busyToggle; leaveOpen(card) }
             }
-            .accessibilityIdentifier("planDeck.skipNight")
         }
+    }
+
+    private func leaveOpen(_ card: PlanDeck.Card) -> some View {
+        Button {
+            HapticManager.shared.light()
+            send(.leading) { $0.skipNight() }
+        } label: {
+            Text("Leave \(card.day.formatted(.dateTime.weekday(.wide))) open")
+                .font(.subheadline.weight(.semibold))
+                .adaptiveSecondaryForeground()
+                .frame(minHeight: 44)
+        }
+        .accessibilityIdentifier("planDeck.skipNight")
+    }
+
+    /// Busy night: the deck deals quick dishes for this night. Accent-filled while on, so the cook sees it's marked.
+    private var busyToggle: some View {
+        let busy = deck.isCurrentNightBusy
+        return PrimaryButton("Busy night", systemImage: busy ? "bolt.fill" : "bolt",
+                             variant: busy ? .primary : .secondary) {
+            withAnimation(.appGentle) { deck.setBusy(!busy) }
+        }
+        .accessibilityValue(busy ? "On" : "Off")
+        .accessibilityHint("Deals quick dishes for this night")
+        .accessibilityIdentifier("planDeck.busy")
     }
 
     private var finished: some View {

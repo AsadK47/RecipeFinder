@@ -4,7 +4,8 @@ import Foundation
 /// weekends, not the same cuisine two nights running, kitchen items that are expiring first, then favourites and
 /// well-rated dishes. ♥ plans the card for its night; ✕ shows another dish for the same night. A dish already on the
 /// week or picked here is never dealt again; one passed on comes back on a later night only once the fresh ones are
-/// gone, so a small library still fills the week. Pure value type, seeded, so the deck is testable.
+/// gone, so a small library still fills the week. A night marked busy deals quick dishes first (the shortest cook
+/// when nothing is quick), whatever the day. Pure value type, seeded, so the deck is testable.
 struct PlanDeck {
     struct Card: Equatable, Identifiable {
         let day: Date
@@ -42,6 +43,8 @@ struct PlanDeck {
     private var passed: Set<UUID> = []
     /// Already shown for the night being planned.
     private var shownTonight: Set<UUID> = []
+    /// Nights the cook marked busy in this deck: quick dishes first.
+    private var busyDays: Set<Date> = []
     /// Cuisine of each dinner already on the plan (or picked here), by start of day.
     private var cuisineByDay: [Date: String]
     private let calendar: Calendar
@@ -144,6 +147,19 @@ struct PlanDeck {
         current = deal()
     }
 
+    var isCurrentNightBusy: Bool {
+        current.map { busyDays.contains($0.day) } ?? false
+    }
+
+    /// Marks the current night busy (or not) and deals the best dish for it again; dishes already shown or passed on
+    /// for this night stay behind, the card on screen can be dealt again.
+    mutating func setBusy(_ busy: Bool) {
+        guard let card = current, busy != busyDays.contains(card.day) else { return }
+        if busy { busyDays.insert(card.day) } else { busyDays.remove(card.day) }
+        shownTonight.remove(card.recipe.id)
+        current = deal()
+    }
+
     /// Leaves the current night empty and moves to the next one; its dish stays fresh for the nights after.
     mutating func skipNight() {
         guard current != nil else { return }
@@ -192,7 +208,11 @@ struct PlanDeck {
     private func score(_ candidate: Candidate, on day: Date) -> Int {
         var total = 0
         let quick = TodayFeed.quickMinutes(of: candidate.recipe) != nil
-        if isWeekend(day) {
+        if busyDays.contains(day) {
+            // Outweighs every other rule (they add up to ±6): quick first, then the shortest cook; an untimed dish
+            // counts as an hour so a known short cook comes before it.
+            total += quick ? 20 : -10 - (candidate.minutes > 0 ? candidate.minutes : 60)
+        } else if isWeekend(day) {
             if candidate.minutes > TodayFeed.quickLimitMinutes { total += 1 }
         } else if quick {
             total += 3
@@ -208,6 +228,11 @@ struct PlanDeck {
 
     /// Why this dish, for this night — the strongest rule that picked it.
     private func reason(_ candidate: Candidate, on day: Date) -> String {
+        if busyDays.contains(day), candidate.minutes > 0 {
+            let time = DurationFormatter.label(minutes: candidate.minutes)
+            return TodayFeed.quickMinutes(of: candidate.recipe) != nil
+                ? "Quick for a busy night · \(time)" : "The quickest left for a busy night · \(time)"
+        }
         if let item = candidate.expiring.first {
             return "Uses your \(item.lowercased()) while it's fresh"
         }
