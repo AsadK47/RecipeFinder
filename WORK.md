@@ -58,14 +58,17 @@ Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap pl
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Groceries writes itself slice 3 (aisle order):** owner OK 2026-11-20 for the new on-device data (Privacy §4.2/4.3).
-  Learned per shop ("" = no shop chosen), not globally — shops differ; a shop with nothing learned uses the usual
-  order (no fallback to the any-shop order: YAGNI). First tick per aisle counts; a one-aisle trip learns nothing.
-  Places on 0…1, moving 40% toward each trip, so one odd trip can't flip a habit, two do. Unlearned aisles keep
-  their usual 0…1 place so they slot in. Learned on leaving shop mode (Done or ✕), never mid-trip, so rows don't
-  reshuffle under the thumb. Stored in LocalStore (`rf.` → Reset clears; never synced). Store rename/delete carries
-  / forgets it. **Pre-mortem:** (1) order never applied → `tripFollowsLearnedOrder`, `learnedOrderPersists`;
-  (2) Reset leaves it → `resetForgets`; (3) one odd trip scrambles it → `oneOddTripDoesNotFlip`. View wiring
-  (onDisappear → learn) is thin glue, no UI test (a stable assertion needs categories the UI doesn't show).
+  Learned per shop ("" = no shop chosen); a shop with nothing learned uses the usual order. A trip's aisles **swap among
+  the places they already hold** (learned, else the usual order's 0…1 place) into the order walked; untouched aisles
+  keep theirs. Rejected after review round 1 (reviewer + challenger agreed): spreading each trip over 0…1 and blending
+  40% — a top-up trip through the last two aisles dragged them to the front, and blending two aisles toward each
+  other's places never crosses (challenger's maths). So the latest trip wins for the aisles it touched (no "one odd
+  trip" damping). Guards instead: first tick per aisle; one-aisle trip ignored; ticks spread < 60 s ignored
+  (checkout / unpacking at home); an untick drops its tick (`TripTicks`). Learned on leaving shop mode (Done or ✕),
+  never mid-trip. LocalStore `rf.` → Reset clears; never synced; shops gone from the list (iCloud delete) are pruned
+  on load. **Pre-mortem:** (1) order never applied → `tripFollowsLearnedOrder`, `learnedOrderPersists`; (2) Reset
+  leaves it → `resetForgets`; (3) a bad trip scrambles it → `topUpTripKeepsTheHabit`, `rushedTripLearnsNothing`,
+  `untickDropsTheTick`. View wiring is thin glue, no UI test (rows don't show their aisle).
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new

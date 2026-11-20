@@ -10,8 +10,8 @@ protocol ShoppingListManaging: AnyObject, Observable {
     var stores: [String] { get }
     /// The aisle order learned from shop-mode ticks, per store.
     var aisleOrder: AisleOrder { get }
-    /// Learns from one shop-mode trip: the categories of the items ticked, in the order they were ticked.
-    func learnAisleOrder(ticked categories: [String], store: String?)
+    /// Learns from one shop-mode trip's ticks, in the order they happened.
+    func learnAisleOrder(from ticks: [ShopTick], store: String?)
     func addItem(name: String, quantity: Int, unit: String, category: String?)
     func updateCategory(at index: Int, category: String)
     @discardableResult func addStore(_ name: String) -> Bool
@@ -135,6 +135,7 @@ final class ShoppingListManager: ShoppingListManaging {
         let saved = storesMirror.load()
         guard saved.isEmpty, neverSaved else {
             stores = saved
+            updateAisleOrder { $0.keepShops(saved) }
             return
         }
         var seeded: [String] = []
@@ -276,8 +277,8 @@ final class ShoppingListManager: ShoppingListManaging {
         })
     }
 
-    func learnAisleOrder(ticked categories: [String], store: String?) {
-        updateAisleOrder { $0.learn(ticked: categories, at: store) }
+    func learnAisleOrder(from ticks: [ShopTick], store: String?) {
+        updateAisleOrder { $0.learn(from: ticks, at: store) }
     }
 
     /// Saves the learned aisle order only when the change did something.

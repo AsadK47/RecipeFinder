@@ -1,34 +1,62 @@
 import Foundation
 
+/// One tick in shop mode: which row, its aisle, and when.
+struct ShopTick: Equatable {
+    let itemID: UUID
+    let category: String
+    let at: Date
+}
+
+/// A shop-mode trip's ticks in order. Unticking a row drops its tick, so a mis-tap teaches nothing.
+struct TripTicks: Equatable {
+    private(set) var ticks: [ShopTick] = []
+
+    /// Call before the row flips: ticking `item` (not yet checked) records it; unticking drops it.
+    mutating func toggled(_ item: ShoppingListModel, at date: Date) {
+        if item.isChecked {
+            ticks.removeAll { $0.itemID == item.id }
+        } else {
+            ticks.append(ShopTick(itemID: item.id, category: item.category, at: date))
+        }
+    }
+}
+
 /// The order a cook walks the aisles, learned from "I'm in the shop" ticks, per shop (Privacy Policy §4.2; owner OK
 /// 2026-11-20). Kept in `LocalStore` (`rf.` key → cleared by Reset, never synced) via `ShoppingListManager`.
 struct AisleOrder: Codable, Equatable {
     static let storageKey = "aisleOrder"
-    /// How far one trip moves a learned place: one odd trip (a detour, a closed aisle) doesn't undo a habit, two do.
-    static let learningRate = 0.4
+    /// Ticks spread over less than this weren't ticked aisle by aisle (at the checkout, unpacking at home), so the
+    /// trip teaches nothing.
+    static let minimumTripSeconds: TimeInterval = 60
     /// Trips with no shop chosen ("In the shop") learn under this key.
     private static let anyShop = ""
 
-    /// Per shop, each aisle's learned place from 0 (walked first) to 1 (walked last).
+    /// Per shop, each aisle's learned place on the usual order's 0 (first) … 1 (last) scale.
     private(set) var places: [String: [String: Double]]
 
     init(places: [String: [String: Double]] = [:]) {
         self.places = places
     }
 
-    /// Learns from one trip's ticks in the order they happened. Only the first tick in an aisle counts (doubling back
-    /// for one thing doesn't move it); a trip through one aisle says nothing about order, so it's ignored.
-    mutating func learn(ticked categories: [String], at shop: String?) {
+    /// Learns from one trip: the aisles it ticked swap among the places they already hold (learned, else usual) into
+    /// the order walked. Aisles the trip didn't touch keep their places, so a top-up trip through two aisles walked in
+    /// the usual order changes nothing. Only the first tick in an aisle counts; a one-aisle trip, or one ticked in a
+    /// rush, is ignored.
+    mutating func learn(from ticks: [ShopTick], at shop: String?) {
+        guard let first = ticks.first?.at, let last = ticks.last?.at,
+              last.timeIntervalSince(first) >= Self.minimumTripSeconds else { return }
+        learn(walked: ticks.map(\.category), at: shop)
+    }
+
+    /// The aisles in the order walked (repeats allowed), with no timing check.
+    mutating func learn(walked categories: [String], at shop: String?) {
         var walked: [String] = []
         for category in categories where !walked.contains(category) { walked.append(category) }
         guard walked.count > 1 else { return }
         let key = shop ?? Self.anyShop
         var learned = places[key] ?? [:]
-        let last = Double(walked.count - 1)
-        for (index, category) in walked.enumerated() {
-            let place = Double(index) / last
-            learned[category] = learned[category].map { $0 + (place - $0) * Self.learningRate } ?? place
-        }
+        let held = walked.map { learned[$0] ?? Self.usualPlace($0) }.sorted()
+        for (category, place) in zip(walked, held) { learned[category] = place }
         places[key] = learned
     }
 
@@ -49,6 +77,11 @@ struct AisleOrder: Codable, Equatable {
 
     mutating func forgetShop(_ shop: String) {
         places[shop] = nil
+    }
+
+    /// Drops what was learned for shops no longer on the list (deleted or renamed on another device via iCloud).
+    mutating func keepShops(_ shops: [String]) {
+        places = places.filter { $0.key == Self.anyShop || shops.contains($0.key) }
     }
 
     /// Where an aisle sits in the usual order, on the same 0…1 scale; a category of the cook's own goes last.

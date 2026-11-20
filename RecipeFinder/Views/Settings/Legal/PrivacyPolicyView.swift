@@ -48,7 +48,7 @@ struct PrivacyPolicyView: View {
                 LegalBulletPoint("Your app preferences and settings")
                 LegalBulletPoint("Your recent web searches, so you can repeat them")
                 LegalBulletPoint("The dishes you passed on in Plan my week, kept for 30 days so your next week's cards lead with something fresh")
-                LegalBulletPoint("The order you usually shop the aisles in at each shop, learned from your ticks in I'm in the shop, so your list follows your route")
+                LegalBulletPoint("The order you usually shop the aisles in, for each shop you choose and overall, learned from your ticks in I'm in the shop, so your list follows your route")
                 LegalBulletPoint("Copies of pictures from recipe websites, so imported recipes show their picture offline")
                 LegalBulletPoint("Up to three safety copies of your recipe database, made before an app update changes how it is stored, to help recover your recipes if an update goes wrong. Newer copies replace older ones after later updates, and they are kept out of device backups.")
                 LegalBulletPoint("If your recipe database can't be opened, a copy of it set aside so it can be recovered")

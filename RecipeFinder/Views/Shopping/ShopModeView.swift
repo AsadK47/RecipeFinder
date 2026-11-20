@@ -16,8 +16,8 @@ struct ShopModeView: View {
     @Environment(\.kitchen) private var kitchen
     @Environment(\.dismiss) private var dismiss
     @State private var trip = ShopTrip.empty
-    /// Categories of the rows ticked on this trip, in tick order — what the aisle order learns from on the way out.
-    @State private var tickedAisles: [String] = []
+    /// This trip's ticks, in order — what the aisle order learns from on the way out.
+    @State private var tripTicks = TripTicks()
     @State private var awake = ScreenAwakeHold(
         read: { UIApplication.shared.isIdleTimerDisabled },
         write: { UIApplication.shared.isIdleTimerDisabled = $0 }
@@ -54,7 +54,7 @@ struct ShopModeView: View {
         .onDisappear {
             awake.end()
             // Learned on the way out (Done or ✕), so the rows don't reshuffle mid-trip.
-            shopping.learnAisleOrder(ticked: tickedAisles, store: store)
+            shopping.learnAisleOrder(from: tripTicks.ticks, store: store)
         }
         .onChange(of: shopping.items) { _, items in
             trip = ShopTrip(items: items, store: store, aisleOrder: shopping.aisleOrder)
@@ -149,7 +149,7 @@ struct ShopModeView: View {
 
     private func toggle(_ item: ShoppingListModel) {
         guard let index = shopping.items.firstIndex(where: { $0.id == item.id }) else { return }
-        if !item.isChecked { tickedAisles.append(item.category) }
+        tripTicks.toggled(item, at: Date())
         shopping.toggleItem(at: index)
     }
 
