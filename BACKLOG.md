@@ -123,6 +123,7 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] 🐞 **Meal planning is buggy** (owner 2026-11-20, no specifics) — hunt and fix real Plan bugs (add/move/delete, dates/DST/week start, duplicates, completed, deleted recipes, sync, groceries twice, empty states); each fix with a test seen red first. Branch `agent/plan-bugs`. — 🚧 interactive session 2026-11-20
 - [x] **Build with Xcode 27 / iOS 27 SDK** — (owner yes 2026-11-18 to change the
   workflows; Apple ITMS-90725 on build 160: from April 2027 uploads must use the iOS 27 SDK; we build with 26.5).
   Select Xcode 27 in build.yml, testflight.yml and screenshots.yml (runner image's `/Applications/Xcode_27*.app`),
