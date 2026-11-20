@@ -43,11 +43,20 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   view swipe up + "Have it tonight", unit + UI tests, 2 review fixes) unmerged; rework per owner's (a)/(b)/(c).
   Open: `tonight` is fixed at deck open (midnight-open deck plans yesterday) — fix in the rework. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
 
+- Inbox 🐞: 🚧 **Sunday Planning denied** on `agent/sunday-nudge-denied` (a6876c2 UI test = red run 44689186013 dispatched;
+  c8d8e57 fix). Reviewer + challenger running. Then: green Build & Test + UI dispatch → land → tick Inbox → Log.
+
 ## Next action
 Plan: only (3) up = tonight (⏸ owner) and (4) 30-day memory of passed dishes left. Next: (4) on a new branch
 `agent/plan-deck-memory` — needs a Privacy §4.2 line + two reviewers (legal/data risk).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Sunday Planning denied (Inbox 🐞):** the switch schedules only after iOS answers yes; on no it flips back off and
+  a note (whole note opens iOS Settings) says why. Sync reads the stored switch, so toggling off mid-prompt stays off.
+  Reproduced by a UI test (unit test would be ceremonial: logic is view glue). Groceries Reminders has the same
+  ask-and-schedule-anyway path — not touched (WIP=1). **Pre-mortem:** (1) switch still on after Don't Allow → UI test
+  asserts value 0; (2) no reason shown → UI test finds the note; (3) granted path stops scheduling → existing
+  `SundayPlanNudgeTests` resync tests + reviewer read.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
