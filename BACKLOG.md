@@ -777,7 +777,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🐞 `RecipeFinder/Views/Settings/Screens/NotificationSettingsView.swift:90` — Sunday Planning switch stays On when iOS notification permission is denied (`requestPermission { _ in }` result ignored, `syncPlanNudge()` schedules anyway): nothing ever fires and nothing tells the cook — on denied, switch back off and show "Notifications are off for RecipeFinder — turn them on in Settings".
+- 🐞 `RecipeFinder/Views/Settings/Screens/NotificationSettingsView.swift:90` — Sunday Planning switch stays On when iOS notification permission is denied (`requestPermission { _ in }` result ignored, `syncPlanNudge()` schedules anyway): nothing ever fires and nothing tells the cook — on denied, switch back off and show "Notifications are off for RecipeFinder — turn them on in Settings". — 🚧 builder agent 2026-11-20
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
