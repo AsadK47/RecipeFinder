@@ -412,6 +412,29 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "37-data-management-sync")
     }
 
+    /// Plan slice 5: Settings › Notifications shows the opt-in "Sunday Planning" switch (off on a fresh install).
+    @MainActor
+    func testCaptureNotificationSettings() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Me"].tap()
+        checkpoint(app, "Me before the Settings gear")
+        app.buttons["me.settings"].tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
+        settle()
+        checkpoint(app, "before Notifications")
+        app.staticTexts["Notifications"].firstMatch.tap()
+        // Matched by label: a Toggle folds its text into the switch.
+        let sunday = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label CONTAINS[c] %@", "Sunday Planning")).firstMatch
+        for _ in 0..<3 where !sunday.exists { app.swipeUp() }
+        XCTAssertTrue(sunday.waitForExistence(timeout: 10), "Notifications should offer the Sunday Planning switch.")
+        settle()
+        snap(app, "55-notifications-sunday-planning")
+    }
+
     /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded
     /// via the DEBUG `-seed-tonight-plan` flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
     @MainActor
