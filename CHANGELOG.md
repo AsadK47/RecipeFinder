@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Groceries writes itself slice 1 plan → list · 257c72b
+- For you: plan a few dinners and Groceries offers everything they need in one tap — scaled to your servings, skipping what's at home or already on your list. When you're back from the shop, Put Checked Items Away moves what you bought to At home.
+- Behind the build: the shopping maths is a small tested model shared by Plan and Groceries, and two separate reviewers caught five things to fix first — like a big week of chicken that could never fit on one line.
+
 ## 2026-11-20 · Plan — swipe to match slice 4 30-day memory · 47a3e95
 - For you: Plan my week now remembers the dishes you pass on for a month, so next week's cards lead with something fresh — and a passed dish still turns up when it's the best one left.
 - Behind the build: the memory is a small tested model kept on your device and listed in the Privacy Policy, and two separate reviewers made it save each pass straight away and tidy up after 30 days.

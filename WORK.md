@@ -46,13 +46,11 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Inbox 🐞: ✅ Sunday Planning denied landed 9a01bb5, ✅ testZZZPlanMyWeek busy query landed 89fb7a4 (builder 2026-11-20).
   Leftover branches agent/sunday-nudge-denied, agent/plan-busy-test (auto-cleanup).
 
-- Get: 🚧 **Groceries writes itself** slice 1 (plan → list) on `agent/groceries-from-plan`: `WeekGroceryPlan` takes
-  the list (shortfall per name + unit, ticked counts), Groceries To buy shows a "From your plan" card / empty state
-  (`PlanGroceriesCard`, `KitchenShoppingView+Plan.swift`), Plan's Add Week tops up instead of doubling.
+- Get: 🚧 **Groceries writes itself** — ✅ slice 1 plan → list landed 257c72b (builder 2026-11-20). Leftover branch
+  agent/groceries-from-plan (auto-cleanup).
 
 ## Next action
-Check Build & Test + Screenshots (58-groceries-from-plan) for `agent/groceries-from-plan`, land. Then slice 2:
-"I'm in the shop" mode (huge rows, one-thumb ticks, screen awake) + ticking straight into At home.
+*Groceries writes itself* slice 2 on `agent/groceries-shop-mode`: "I'm in the shop" mode (huge rows, one-thumb ticks, screen awake) + ticking straight into At home.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
