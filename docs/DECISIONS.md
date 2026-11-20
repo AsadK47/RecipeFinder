@@ -5,6 +5,19 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Groceries writes itself slice 2 (shop mode)** (landed 1505253): a full-screen cover, not a toggle on the list — big rows need the
+  whole width and none of the row's steppers/menus (a mis-tap in the aisle would change a quantity). Whole row = one
+  tap target (≥76pt); a tick dims the row **in place** (aisle order = category, then name) — first build sank ticked
+  rows to an "In the basket" section, so the next row slid under the thumb (challenger). **Tick = at home** happens on
+  the one *Done* ("Done · put N away"), not on each tick: ticking straight into At home would need untick to remove
+  from At home, which can delete something that was already there before the shop. A Close (✕) leaves and keeps the
+  ticks (slice 1 already counts ticked as bought). Done acts on **this store's basket only**
+  (`ShoppingListManaging.putAway(_:into:)` + `clearChecked(ids:)`; both reviewers: the first build cleared other
+  stores' ticks while its label counted only this store's). The ⋯ dialog uses the same `putAway` with every tick.
+  Screen awake via `ScreenAwakeHold` (restores the earlier value). Settings' "Keep screen awake" is read nowhere — older
+  dead setting, noted for Inbox. No new stored data → no Privacy change. **Pre-mortem:** (1) screen stays awake after leaving →
+  `ScreenAwakeHold` tests; (2) Done loses items / staples vanish → `finishPutsTheBasketAway`; (3) tick doesn't
+  register or Done doesn't reach At home → UI step in `testZZZZGroceriesFromPlan`.
 - **Plan — swipe to match slice 4 30-day memory** (landed 47a3e95; owner "Do it" 2026-11-20, §4.2 line approved): `PlanDeckMemory` = `[recipe id:
   date passed]` in `LocalStore` key `planDeckPassed` (rf. → Reset clears it; not Core Data → never synced, no model
   change). Views reach it only through `MealPlanningManaging` (`recentlyPassedDinners` / `rememberPassedDinner`).

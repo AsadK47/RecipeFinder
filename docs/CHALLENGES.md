@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-20 (item pass: Groceries writes itself slice 2 I'm in the shop; fixed: Done cleared other stores' ticks (both reviewers), no way out but Done (now ✕ keeps ticks), ticked rows slid under the thumb (now tick in place))
+- ⚔️ [Spec] BACKLOG said "ticked = at home automatically (no Put-away step)"; shop mode puts away on Done — per-tick put-away would make untick delete what was At home before the shop — alternative: per-tick with a "was it here before" memory (new stored state) — cost if wrong: one extra tap per trip.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Time] Leaving with ✕ (or killing the app) keeps ticks; the next trip opens with them already "in the basket" and that Done puts them away late — alternative: offer "Put away last trip's N?" on open — cost if wrong: a confusing count on the next shop.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] No test notices if `ShopModeView` stops calling `awake.begin()` — the hold is unit-tested, the wiring isn't — alternative: a launch-arg hook the UI test can read — cost if wrong: the screen dims mid-aisle.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-20 (item pass: Groceries writes itself slice 1 plan → list; fixed: >999 g weeks stuck the card (both reviewers), top-up hid on a ticked line, unit synonyms double-counted, Clear checked → card re-asked the week (now Put away → At home), deleted item → card nagged (Not now))
 - ⚔️ [Break] The card refreshes on appear and on list/kitchen/recipe-count changes — an iCloud plan change while Groceries is open, a recipe's ingredients edited, or midnight passing leaves it stale until the tab is reopened (`KitchenShoppingView.swift` onChange set) — alternative: observe plans + scene phase — cost if wrong: a briefly stale count, fixed by any tab switch.
   → Owner: Accept / Reject / Later

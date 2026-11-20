@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Groceries writes itself slice 2 I'm in the shop · 1505253
+- For you: tap I'm in the shop on your groceries list for big, easy-to-tap rows in aisle order, with the screen staying on while you shop. Tap Done at the end and everything you ticked moves to At home.
+- Behind the build: the trip is a small tested model, and two separate reviewers made sure Done at one store leaves the other stores' ticks where they are.
+
 ## 2026-11-20 · Groceries writes itself slice 1 plan → list · 257c72b
 - For you: plan a few dinners and Groceries offers everything they need in one tap — scaled to your servings, skipping what's at home or already on your list. When you're back from the shop, Put Checked Items Away moves what you bought to At home.
 - Behind the build: the shopping maths is a small tested model shared by Plan and Groceries, and two separate reviewers caught five things to fix first — like a big week of chicken that could never fit on one line.
