@@ -37,32 +37,17 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
 - Plan: 🚧 **Plan — swipe to match** — slices 1 (23134c8) and 2 week photos (06094b2, builder 2026-11-19) landed.
+  ✅ Slice 5 Sunday nudge landed 6954ab2 (builder 2026-11-20). Leftover branch agent/plan-sunday-nudge (auto-cleanup).
   Slice 3 (up = tonight) ⏸ Needs owner — branch `agent/plan-deck-tonight` (e45d1ce: model `planTonight`/`canPlanTonight`,
   view swipe up + "Have it tonight", unit + UI tests, 2 review fixes) unmerged; rework per owner's (a)/(b)/(c).
   Open: `tonight` is fixed at deck open (midnight-open deck plans yesterday) — fix in the rework. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
 
 ## Next action
-Plan slice 5 Sunday nudge on `agent/plan-sunday-nudge`: wait for Build & Test green, run Screenshots (Settings ›
-Notifications), one reviewer + challenger, then land. Slice 3 still waits on the owner.
+Plan slice 3 waits on the owner (Needs owner "Plan deck: what does swipe up do?"). Next Plan slice that needs no
+answer: (6) busy nights / lock / re-roll on a new branch `agent/plan-busy-nights` ((4) 30-day memory needs a Privacy
+§4.2 line + two reviewers).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Plan Sunday nudge (slice 5):** opt-in switch in Settings › Notifications ("Sunday Planning", off by default),
-  stored as LocalStore key `rf.sundayPlanNudge` so the manager reads it through its injected store and Reset turns it
-  off. One one-shot notification at Sunday 18:00 when the following Mon–Sun has no *dinner* (breakfast/lunch don't
-  count; a repeating dinner covers every week from its date). Looks 4 Sundays ahead so a planned next week doesn't
-  drop the nudge for the week after. Re-synced on every plan load/save and when the app becomes active (one-shot, so
-  it re-arms after firing). Tap opens Plan. Rejected: a repeating weekly trigger (can't skip planned weeks). Local
-  notification + on-device bool → Privacy §6.2 ("meal reminders… only with your permission") already covers it.
-  "Next week" is Mon–Sun whatever `firstWeekday` is (UK app; a US Sun–Sat Plan week differs by one night — accepted).
-  When all 4 look-ahead weeks are planned nothing is pending until a plan changes or the app opens (one-shot; fine).
-  Sync makes one call — schedule (same id replaces) or cancel — never cancel-then-add (UN remove/add order isn't
-  promised; reviewer 1).
-  Tap opens Plan on the Monday after the nudge (userInfo `weekStart` → `ContentView.planWeekRequest` →
-  `MealPlanningView.showWeek(of:)`) — on a UK Sunday evening Plan otherwise shows the week ending tonight (challenger).
-  **Pre-mortem:** (1) nudges a cook whose week is planned → `aDinnerNextWeekMoves…`, `aRepeatingDinnerMeansNoNudge`;
-  (2) fires at the wrong hour across the October clock change → `firesAtSixLocalTimeOnTheClockChangeSunday`;
-  (3) keeps firing after switching off / Reset → `switchingOffCancelsThePendingNudge` (Reset clears the rf. key, then
-  `removeAllMealPlans` re-syncs → cancel).
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

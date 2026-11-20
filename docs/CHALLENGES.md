@@ -56,6 +56,13 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-20 (item pass: Plan — swipe to match slice 5 Sunday nudge; fixed: tap opened the week ending tonight, cancel-then-add race, two tests that couldn't fail, Reset/reload paths untested)
+- ⚔️ [Key assumption] One dinner = "planned" — one repeating "Friday pizza" silences the nudge for good, while the item's measure is weeks with ≥3 planned dinners (`SundayPlanNudge.fireDate`) — nudge when fewer than 3 dinners are planned — cost if we're wrong: the cooks who most need a nudge never get one.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] iCloud plans made on another device while this one is suspended don't re-sync the nudge, so it can fire for a week that's already planned; fixes itself next time the app opens — accepted (rare).
+- ⚔️ [Break] One-shot: a cook who doesn't open the app after the nudge fires gets no more nudges (arguably right for a lapsed cook); two opted-in devices each fire their own (setting is per device) — accepted.
+- ⚔️ [Break] "Next week" is Mon–Sun regardless of locale; a US Sun–Sat Plan week differs by one night — accepted (UK app).
+
 ## 2026-11-19 (item pass: Plan — swipe to match slice 2 week photos; fixed: swap sent a dinner into the past, recurring dinner planned twice after a move, dead button for a deleted recipe, UI test counted nights mid-animation)
 - ⚔️ [Break] Repeating dinners can't be moved from the photos, and "Take off" on a repeating copy (day list, pre-existing) is refilled by `propagateRecurring` on the next appear — now more often, since coming back from cooking re-fires `onAppear` — both reviewers — alternative: a per-week skip marker or moving the series (model change → owner) — cost if wrong: a removed weekly dinner comes back.
   → Owner: Accept / Reject / Later

@@ -5,6 +5,23 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Plan — swipe to match, slice 5 Sunday nudge** (landed 6954ab2): opt-in switch in Settings › Notifications ("Sunday Planning", off by default),
+  stored as LocalStore key `rf.sundayPlanNudge` so the manager reads it through its injected store and Reset turns it
+  off. One one-shot notification at Sunday 18:00 when the following Mon–Sun has no *dinner* (breakfast/lunch don't
+  count; a repeating dinner covers every week from its date). Looks 4 Sundays ahead so a planned next week doesn't
+  drop the nudge for the week after. Re-synced on every plan load/save and when the app becomes active (one-shot, so
+  it re-arms after firing). Tap opens Plan. Rejected: a repeating weekly trigger (can't skip planned weeks). Local
+  notification + on-device bool → Privacy §6.2 ("meal reminders… only with your permission") already covers it.
+  "Next week" is Mon–Sun whatever `firstWeekday` is (UK app; a US Sun–Sat Plan week differs by one night — accepted).
+  When all 4 look-ahead weeks are planned nothing is pending until a plan changes or the app opens (one-shot; fine).
+  Sync makes one call — schedule (same id replaces) or cancel — never cancel-then-add (UN remove/add order isn't
+  promised; reviewer 1).
+  Tap opens Plan on the Monday after the nudge (userInfo `weekStart` → `ContentView.planWeekRequest` →
+  `MealPlanningView.showWeek(of:)`) — on a UK Sunday evening Plan otherwise shows the week ending tonight (challenger).
+  **Pre-mortem:** (1) nudges a cook whose week is planned → `aDinnerNextWeekMoves…`, `aRepeatingDinnerMeansNoNudge`;
+  (2) fires at the wrong hour across the October clock change → `firesAtSixLocalTimeOnTheClockChangeSunday`;
+  (3) keeps firing after switching off / Reset → `switchingOffCancelsThePendingNudge` (Reset clears the rf. key, then
+  `removeAllMealPlans` re-syncs → cancel).
 - **Plan — swipe to match, slice 1** (landed 23134c8): the deck is an overlay in MealPlanningView's ZStack, not a
   fullScreenCover — the first plan unlocks the Meal Planner badge, whose reveal is a root cover and can't present over
   another cover. Rules are scores, not filters, so a small library still fills the week (quick weeknight +3, long

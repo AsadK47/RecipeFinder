@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Plan — swipe to match slice 5 Sunday nudge · 6954ab2
+- For you: turn on Sunday Planning in Settings › Notifications and, when next week's dinners are still open, a Sunday-evening nudge takes you straight to Plan on that week so you can sort it in a minute.
+- Behind the build: the when-to-nudge rule is a small tested model, clock change included, and two separate reviewers found four things to tighten — like the tap opening next week rather than the one ending tonight.
+
 ## 2026-11-19 · Plan — swipe to match slice 2 week photos · 06094b2
 - For you: Plan now shows your week as seven dinner photos — tap one to start cooking it, hold it to move it to another night or swap two nights, and tap an empty night to pick its dinner.
 - Behind the build: the move and swap rules are a small tested model, and two separate reviewers caught a swap that could push a dinner into the past before it landed.
