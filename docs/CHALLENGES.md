@@ -56,6 +56,18 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-20 (item pass: Groceries writes itself slice 1 plan → list; fixed: >999 g weeks stuck the card (both reviewers), top-up hid on a ticked line, unit synonyms double-counted, Clear checked → card re-asked the week (now Put away → At home), deleted item → card nagged (Not now))
+- ⚔️ [Break] The card refreshes on appear and on list/kitchen/recipe-count changes — an iCloud plan change while Groceries is open, a recipe's ingredients edited, or midnight passing leaves it stale until the tab is reopened (`KitchenShoppingView.swift` onChange set) — alternative: observe plans + scene phase — cost if wrong: a briefly stale count, fixed by any tab switch.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] Plan's "Add Week to Groceries" now tops up rather than doubling, but only the shared model is tested; removing `listItems:` from `MealPlanningView+Actions.prepareAddWeek` would stay green — alternative: retire Plan's button once Groceries owns the list (subtract), or a UI test — cost if wrong: Plan's button doubles again unnoticed.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Adding N items saves N times (`addItem` per line: Core Data replace + blob + N haptics) — pre-existing on Plan's path, now behind a one-tap card — alternative: a batch `addItems` — cost if wrong: a stutter on a 30-item week.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Simplify] Plan counts the shown week, Groceries the next 7 days from today (meals earlier today not yet cooked included) — the two can show different counts — alternative: one window once Plan's button is retired — cost if wrong: mild confusion.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] "Not now" lives in memory: a relaunch brings the card back for an item the cook deleted on purpose — alternative: a stored dismissal (new on-device data → Privacy line) or a swipe "I have this" → At home — cost if wrong: one extra tap per launch.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-20 (daily challenger — Plan slices 5–6, the roadmap order, the owner queue; methods 1, 2, 3 (STRIDE: nudge `userInfo` is local-only, no finding), 6, 7, 8)
 - ⚔️ [Strategy] Plan "swipe to match" is the right next thing while seven slices land in two days — it isn't: the loop's *Get* step (Groceries writes itself) is still unbuilt, and PRODUCT's dogfood gate ("a phase isn't done until the owner has used it for a week") has had no week: slices 1–2 (19 Nov), 5–6 (20 Nov), slice 4 (30-day memory of passed dishes + a Privacy §4.2 line + two reviewers) queued next (WORK.md Next action). A plan that doesn't produce a shopping list cooks no more dinners than one that does; "memory of passed dishes" is a new on-device store whose only benefit is a deck that already resets `passed` per deck (`PlanDeck.swift:52`) — "Would this make someone cook one more dinner, and how would we notice?" has no answer for slices 4–6 — stop Plan after slice 2/5, delete slice 4 from the Roadmap, start Groceries-from-plan, dogfood Plan for the week first — cost if we're wrong: a polished week-planner nobody's dinner is helped by, plus a privacy line we then have to maintain.
   → Owner: Accept / Reject (why) / Later

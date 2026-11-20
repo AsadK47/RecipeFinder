@@ -51,20 +51,24 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (`PlanGroceriesCard`, `KitchenShoppingView+Plan.swift`), Plan's Add Week tops up instead of doubling.
 
 ## Next action
-Check Build & Test + Screenshots (58-groceries-from-plan) for `agent/groceries-from-plan`, review, land. Then slice 2:
-ticked = at home (Clear checked moves bought items into At home, so the card doesn't re-ask after a shop).
+Check Build & Test + Screenshots (58-groceries-from-plan) for `agent/groceries-from-plan`, land. Then slice 2:
+"I'm in the shop" mode (huge rows, one-thumb ticks, screen awake) + ticking straight into At home.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
-  on-device data → Privacy text → owner): the card is derived — plan − at home − on the list (ticked counts as bought;
-  shortfall per name + canonical unit, same key as `addItem`'s merge). Known gap: after *Clear checked* the bought
-  items vanish and the card asks again → slice 2 (ticked = at home) closes it. Plan's Add Week kept (subtract later
-  once Groceries owns it). **Pre-mortem:** (1) adding twice doubles amounts → `addingTwiceNeverDoubles`;
-  (2) card never shows (plans/recipes not reaching Groceries) → UI test `testZZZZGroceriesFromPlan`; (3) a partial line
-  on the list blocks the rest → `topsUpWhatsShort`.
+  on-device data → Privacy text → owner): the card is derived — plan − at home − on the list (ticked = bought;
+  shortfall per normalised name + canonical unit, so "g"/"grams" are one line; capped at 999 = what a line holds).
+  Review round 1 (deep reviewer + challenger, both: >999 g weeks made the card stick; reviewer: top-up merged into a
+  ticked line and hid; reviewer: unit synonyms double-counted; challenger: Clear checked → card re-asks the whole week,
+  deleted item → card nags). Fixes: `addItem` on a ticked line starts a fresh unticked amount; "Clear Checked" became
+  **Put Checked Items Away** (ticked one-offs → At home via `KitchenInventoryManaging.putAway`, pulled forward from
+  slice 2); "Not now" hides the card in memory until the plan needs something new (`needsMore(than:)`, nothing
+  stored). Plan's Add Week kept (subtract later once Groceries owns it). **Pre-mortem:** (1) adding twice doubles
+  → `addingTwiceNeverDoubles`; (2) card never shows → UI `testZZZZGroceriesFromPlan`; (3) after a shop the card asks
+  again → `putAwayStopsThePlanAskingAgain`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
