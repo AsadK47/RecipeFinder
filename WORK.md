@@ -51,8 +51,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   ✅ Slice 2 shop mode landed 1505253 (builder 2026-11-20). Leftover branch agent/groceries-shop-mode (auto-cleanup).
 
 ## Next action
-*Groceries writes itself* slice 3 on `agent/groceries-aisle-order`: learn aisle order from shop-mode ticks (order
-categories by when they're usually ticked) and use it in `ShopTrip` + To buy.
+*Groceries writes itself* slice 3 (aisle order) ⏸ Needs owner (new on-device data → Privacy). Next run: slice 5 on
+`agent/groceries-delete-dupes` — delete duplicated Kitchen/Shopping views + Plan's Add Week button (net lines down);
+do slice 3 once the owner answers.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
