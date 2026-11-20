@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Plan — swipe to match slice 4 30-day memory · 47a3e95
+- For you: Plan my week now remembers the dishes you pass on for a month, so next week's cards lead with something fresh — and a passed dish still turns up when it's the best one left.
+- Behind the build: the memory is a small tested model kept on your device and listed in the Privacy Policy, and two separate reviewers made it save each pass straight away and tidy up after 30 days.
+
 ## 2026-11-20 · Inbox 🐞 Sunday Planning denied · 9a01bb5
 - For you: turn on Sunday Planning with notifications off for RecipeFinder and the switch now tells you straight away — it goes back off with a note that takes you to Settings, so it always shows what you'll really get.
 - Behind the build: a UI test taps Don't Allow and checks the switch and note; it was seen failing before the fix, and two separate reviewers checked the change.

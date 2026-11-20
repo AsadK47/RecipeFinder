@@ -243,7 +243,7 @@ are merged into a newer item or parked — never start them; their text stays as
   when the next Mon–Sun has no dinner (`SundayPlanNudge`); tap opens Plan on that week.
   **✅ Slice 6 (a395ab2..6f5d2eb):** "Busy night" on the deck card → quick dishes first for that night (shortest cook
   when nothing is quick); lock = planned nights never re-dealt, re-roll = ✕ (re-roll all: YAGNI).
-  **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; (4) 30-day memory of passed dishes — owner 2026-11-20: "Do it" (build it; Privacy §4.2 line approved) — 🚧 builder agent 2026-11-20.
+  **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; **✅ Slice 4 (41dfadf..47a3e95):** dishes passed on are remembered 30 days on the device (`PlanDeckMemory`, Privacy §4.2/4.3, owner OK 2026-11-20) and dealt behind fresh ones.
 - [ ] **Groceries writes itself** (Phase 2 · Get). Merges *Groceries + Kitchen* and *Plan my week 3/3* (below, kept as
   spec). Planning a week builds the list — merged and scaled, minus what's at home, in the order you usually tick
   (learned). "I'm in the shop" mode: huge rows, one-thumb ticks, screen awake; ticked = at home automatically (no
@@ -257,7 +257,12 @@ are merged into a newer item or parked — never start them; their text stays as
   reshuffles (new chapter order and layouts, never the same recipe twice in a row); no "seen everything" end state.
   *Measure:* recipes opened from discovery that get cooked. *Done when:* chapter ranking +
   paging tested, perf budget for 300+ recipes, screenshots (scrolled 3 screens), CI green.
-- [ ] **Today — decide tonight** (Phase 3 · Decide). Trim Today to tonight's pick (big picture, reason, Cook this,
+- [ ] **Today — decide tonight** (Phase 3 · Decide). **Owner feedback 2026-11-20:** "Today focuses on dinner and is not time aware;
+  feels slightly cluttered but also doesn't have enough; questioning its usability." Builder proposal (→ owner, order
+  vs Groceries): **Today — the next meal**: one hero for the next meal by the clock (breakfast/lunch/dinner, late
+  evening → tomorrow's breakfast; planned meal first, else a pick + reason; Cook this / Shuffle), a one-line day strip
+  (Breakfast ✓ · Lunch: soup · Dinner: plan it), and one "do this now" nudge (defrost / use it up) replacing the
+  prep-ahead + use-soon cards; the rest moves to Recipes → Discover or Plan. Trim Today to tonight's pick (big picture, reason, Cook this,
   Shuffle), the time line, and what to do now (prep-ahead, use-it-up); move browsing to Recipes; absorbs *Pictures 4/4*.
   *Measure:* Today → Cook this taps. *Done when:* screenshots (morning/evening, new user), CI green, net lines down.
 - [x] **Pictures 1/4 — Keep imported photos + nicer placeholders** (owner OK 2026-11-12:
@@ -785,6 +790,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-20 · Plan — swipe to match slice 4 30-day memory · 41dfadf..47a3e95 · a dish passed on (Not this one / swipe left) is remembered on this device for 30 days and dealt behind fresh dishes in later decks (still fills a night when nothing fresh is left); saved per pass via `MealPlanningManaging` (`rememberPassedDinner` / `recentlyPassedDinners`); planning it by any route forgets it; plan load (launch) trims passes older than 30 days; Reset clears it (`rf.planDeckPassed`). Privacy Policy §4.2/4.3 line + date 20 Nov 2026 (owner OK "Do it"); website `privacy.html` is the website session's. `PlanDeckMemory` + 21 tests; new files registered in pbxproj by hand (no XcodeWrite in cloud). On phone: Plan → Plan my week → Not this one on a dish → Close → reopen → that dish comes after fresh ones · review: deep reviewer + challenger, 5 fixed (both: passes kept past 30 days at rest; both: view reached LocalStore/untestable wiring; challenger: passes lost on kill, hand-planned dish stayed passed, a test that couldn't fail), 2 → CHALLENGES (favourite buried by one ✕ → owner) · CI green first try (Build & Test 44724527724) · looked at: n/a — no layout change (deck gained a callback; policy text only)
 - 2026-11-20 · Plan — swipe to match slice 4 30-day memory · ⏸ moved to Needs owner (Privacy §4.2 line is legal text → owner yes; challenger recommends dropping it) · no code · builder stopped per protocol
 - 2026-11-20 · Inbox 🐞 testZZZPlanMyWeek busy-night query · 89fb7a4 · test-only: `planDeck.busy` (a Button with `.isToggle`) is queried as any element, value accepts "On" or "1"; nothing changes on device · review: challenger, 0 defects (one match, still fails when off) · CI green (dispatch Build & Test 44703905612, all 4 UI shards; testZZZPlanMyWeek passed) · looked at: n/a — no UI change
 - 2026-11-20 · Inbox 🐞 Sunday Planning denied · a6876c2..9a01bb5 · turning Sunday Planning on now waits for iOS's answer: allowed → scheduled as before; Don't Allow (or already denied) → the switch flips back off, VoiceOver announces it, and a note under the card ("Turn on notifications for RecipeFinder in Settings to get the Sunday nudge.", tap → iOS Settings) replaces the big banner until notifications are allowed; returning from iOS Settings refreshes it. `NotificationManager.requestPermission() async`. UI test extends `testCaptureNotificationSettings` (seen red on a6876c2, dispatch 44689186013: switch stayed "1") → green on 9a01bb5 (dispatch 44691497480). On phone: Settings › Notifications → Sunday Planning on → Don't Allow → switch goes off with the note; tap the note → iOS Settings · review: deep reviewer + challenger, 0 defects; 5 fixed (note stale after allowing in iOS Settings, duplicate banner+note, negative copy → positive, no VoiceOver announce, wrong test comment), 3 → CHALLENGES · CI green (Build & Test 44689515304; UI shards green except pre-existing `testZZZPlanMyWeek` → Inbox 🐞) · looked at: 57-notifications-sunday-denied (new, from xcresult), 55-notifications-sunday-planning

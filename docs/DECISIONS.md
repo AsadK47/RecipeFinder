@@ -5,6 +5,17 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Plan — swipe to match slice 4 30-day memory** (landed 47a3e95; owner "Do it" 2026-11-20, §4.2 line approved): `PlanDeckMemory` = `[recipe id:
+  date passed]` in `LocalStore` key `planDeckPassed` (rf. → Reset clears it; not Core Data → never synced, no model
+  change). Views reach it only through `MealPlanningManaging` (`recentlyPassedDinners` / `rememberPassedDinner`).
+  Remembered passes start the next deck as `passed` (behind fresh, still fill a night). Each ✕ is saved as it's made
+  (like picks) so a killed app keeps it; re-passing restarts its 30 days; planning the dish by **any** route
+  (`addMealPlan`) forgets it; every plan load (launch) drops expired entries so "kept for 30 days" is true at rest
+  (both reviewers); future dates don't count. Busy / Leave open aren't passes. Rejected: saving on Close only (lost
+  on kill, challenger); a score penalty instead of the "behind fresh" tier (challenger: one ✕ buries a favourite for a
+  month) → CHALLENGES, kept the spec's tier rule. **Pre-mortem:** (1) a passed dish never returns, small library →
+  `…StillFillsANightWhenNothingFreshIsLeft`; (2) old passes never leave the device → `launchDropsPassesOlderThanThirtyDays`;
+  (3) Reset leaves it / policy claims more than code → `resetClearsTheMemory` + two reviewers on text vs code.
 - **Inbox 🐞 Sunday Planning denied** (landed 9a01bb5): the switch schedules only after iOS answers yes; on no it flips back off and
   a note (whole note opens iOS Settings) says why. Sync reads the stored switch, so toggling off mid-prompt stays off.
   Reproduced by a UI test (unit test would be ceremonial: logic is view glue). Groceries Reminders has the same

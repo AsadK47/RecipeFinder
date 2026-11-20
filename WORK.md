@@ -37,7 +37,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
 - Plan: 🚧 **Plan — swipe to match** — slices 1 (23134c8) and 2 week photos (06094b2, builder 2026-11-19) landed.
-  ✅ Slice 5 Sunday nudge landed 6954ab2, ✅ slice 6 busy nights landed 6f5d2eb (builder 2026-11-20). Leftover branches
+  ✅ Slice 5 Sunday nudge landed 6954ab2, ✅ slice 6 busy nights landed 6f5d2eb, ✅ slice 4 30-day memory landed 47a3e95 (builder 2026-11-20). Leftover branch agent/plan-deck-memory (auto-cleanup). Leftover branches
   agent/plan-sunday-nudge, agent/plan-busy-nights (auto-cleanup).
   Slice 3 (up = tonight) ⏸ Needs owner — branch `agent/plan-deck-tonight` (e45d1ce: model `planTonight`/`canPlanTonight`,
   view swipe up + "Have it tonight", unit + UI tests, 2 review fixes) unmerged; rework per owner's (a)/(b)/(c).
@@ -47,20 +47,10 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/sunday-nudge-denied, agent/plan-busy-test (auto-cleanup).
 
 ## Next action
-Plan slice 4 on `agent/plan-deck-memory`: CI green → two reviewers (privacy text vs code) + challenger → land.
+Owner to choose: **Today — the next meal** (owner feedback 2026-11-20, BACKLOG Today item) before or after *Groceries
+writes itself*. Until answered, the next builder run takes Groceries slice 1 (plan → list) on `agent/groceries-from-plan`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Plan slice 4 30-day memory** (owner "Do it" 2026-11-20, §4.2 line approved): `PlanDeckMemory` = `[recipe id:
-  date passed]` in `LocalStore` key `planDeckPassed` (rf. → Reset clears it; not Core Data → never synced, no model
-  change). Views reach it only through `MealPlanningManaging` (`recentlyPassedDinners` / `rememberPassedDinner`).
-  Remembered passes start the next deck as `passed` (behind fresh, still fill a night). Each ✕ is saved as it's made
-  (like picks) so a killed app keeps it; re-passing restarts its 30 days; planning the dish by **any** route
-  (`addMealPlan`) forgets it; every plan load (launch) drops expired entries so "kept for 30 days" is true at rest
-  (both reviewers); future dates don't count. Busy / Leave open aren't passes. Rejected: saving on Close only (lost
-  on kill, challenger); a score penalty instead of the "behind fresh" tier (challenger: one ✕ buries a favourite for a
-  month) → CHALLENGES, kept the spec's tier rule. **Pre-mortem:** (1) a passed dish never returns, small library →
-  `…StillFillsANightWhenNothingFreshIsLeft`; (2) old passes never leave the device → `launchDropsPassesOlderThanThirtyDays`;
-  (3) Reset leaves it / policy claims more than code → `resetClearsTheMemory` + two reviewers on text vs code.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
