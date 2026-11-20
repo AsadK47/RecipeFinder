@@ -40,6 +40,13 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         }
     }
     
+    /// The async form, for callers that act on the answer (a switch that must not stay on when iOS says no).
+    func requestPermission() async -> Bool {
+        await withCheckedContinuation { continuation in
+            requestPermission { continuation.resume(returning: $0) }
+        }
+    }
+
     /// Asks for permission in context (the system only prompts the first time; afterwards it returns the saved
     /// choice), then schedules. Replaces the old ask-on-every-launch prompt.
     private func addAskingPermissionFirst(_ request: UNNotificationRequest, failureLabel: String) {

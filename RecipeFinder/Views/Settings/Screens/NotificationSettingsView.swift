@@ -12,6 +12,8 @@ struct NotificationSettingsView: View {
 
     @State private var showingTimePicker = false
     @State private var notificationPermission: UNAuthorizationStatus = .notDetermined
+    /// Set when the cook turned Sunday Planning on and iOS said no, so the switch flips back with a reason.
+    @State private var sundayNudgeDenied = false
 
     /// Must use en_US_POSIX: with a 12/24-hour device override, a bare "HH:mm" formatter can emit unparseable "1:30 PM" strings, silently dropping the chosen time.
     static let reminderTimeFormatter: DateFormatter = {
@@ -66,6 +68,10 @@ struct NotificationSettingsView: View {
                         .accessibilityIdentifier("settings.sundayPlanNudge")
                     }
                 }
+
+                if sundayNudgeDenied {
+                    sundayNudgeDeniedNote
+                }
             }
 
             if shoppingListReminders {
@@ -88,8 +94,12 @@ struct NotificationSettingsView: View {
         .onChange(of: shoppingListReminders) { _, _ in syncGroceriesReminder() }
         .onChange(of: reminderTimeString) { _, _ in syncGroceriesReminder() }
         .onChange(of: sundayPlanNudge) { _, isOn in
-            if isOn { NotificationManager.shared.requestPermission { _ in } }
-            mealPlanning.syncPlanNudge()
+            guard isOn else {
+                mealPlanning.syncPlanNudge()
+                return
+            }
+            sundayNudgeDenied = false
+            Task { await confirmSundayNudge() }
         }
     }
 
@@ -114,11 +124,7 @@ struct NotificationSettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                Button(action: {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }) {
+                Button(action: openSystemSettings) {
                     HStack {
                         Image(systemName: "gear")
                         Text("Open Settings")
@@ -136,6 +142,42 @@ struct NotificationSettingsView: View {
             .padding(.horizontal, AppTheme.spacing20)
             .padding(.vertical, AppTheme.spacing16)
             .frame(maxWidth: .infinity)
+        }
+    }
+
+    /// Points the cook at iOS Settings after a denied Sunday Planning switch; the whole note is the button.
+    private var sundayNudgeDeniedNote: some View {
+        Button(action: openSystemSettings) {
+            Label("Notifications are off for RecipeFinder — turn them on in Settings to get the Sunday nudge.",
+                  systemImage: "bell.badge")
+                .font(.footnote)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .buttonStyle(.plain)
+        .adaptiveSecondaryForeground()
+        .padding(.horizontal, AppTheme.spacing8)
+        .accessibilityIdentifier("settings.sundayPlanNudge.denied")
+        .accessibilityHint("Opens Settings")
+    }
+
+    /// Schedules only once iOS allows notifications; otherwise the switch goes back off (its onChange cancels any
+    /// pending nudge) so it never claims a nudge iOS won't show. Syncing reads the stored switch, so a cook who
+    /// turned it off again while the prompt was up stays off.
+    private func confirmSundayNudge() async {
+        let granted = await NotificationManager.shared.requestPermission()
+        checkNotificationPermission()
+        if granted {
+            mealPlanning.syncPlanNudge()
+        } else {
+            sundayNudgeDenied = true
+            sundayPlanNudge = false
+        }
+    }
+
+    private func openSystemSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
         }
     }
 
