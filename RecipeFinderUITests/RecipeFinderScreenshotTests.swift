@@ -1091,6 +1091,39 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         dismissBadgeSheet(app)
         XCTAssertTrue(add.waitForNonExistence(timeout: 5), "Once added, the plan's card should go.")
         XCTAssertFalse(app.staticTexts["Your groceries list is empty"].exists, "The plan's items should be on the list.")
+
+        // Shop mode: big rows, tick one, Done puts it At home.
+        let shopMode = app.buttons["groceries.shopMode"]
+        checkpoint(app, "shop mode button")
+        XCTAssertTrue(shopMode.waitForExistence(timeout: 5), "To buy should offer shop mode.")
+        shopMode.tap()
+        let firstRow = app.buttons.matching(identifier: "shop.row").firstMatch
+        checkpoint(app, "shop mode rows")
+        XCTAssertTrue(firstRow.waitForExistence(timeout: 5), "Shop mode should list what's to buy.")
+        settle()
+        snap(app, "59-groceries-shop")
+        let name = firstRow.label
+        let progress = app.staticTexts["shop.progress"]
+        XCTAssertTrue(progress.waitForExistence(timeout: 5))
+        // Earlier tests on the shard may have left ticks, so compare with what was in the basket before.
+        let inBasket = { Int(progress.label.prefix { $0.isNumber }) ?? -1 }
+        let before = inBasket()
+        firstRow.tap()
+        dismissBadgeSheet(app)
+        let deadline = Date().addingTimeInterval(5)
+        while inBasket() != before + 1 && Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        XCTAssertEqual(inBasket(), before + 1, "Ticking a row should put it in the basket: \(progress.label)")
+        let done = app.buttons["shop.done"]
+        checkpoint(app, "shop done")
+        done.tap()
+        dismissBadgeSheet(app)
+        XCTAssertTrue(done.waitForNonExistence(timeout: 5), "Done should close shop mode.")
+        app.buttons["At home"].tap()
+        let atHome = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+        checkpoint(app, "put away at home")
+        XCTAssertTrue(atHome.waitForExistence(timeout: 5), "What was ticked in the shop should be At home: \(name)")
     }
 
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).

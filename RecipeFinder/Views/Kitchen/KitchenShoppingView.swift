@@ -21,6 +21,7 @@ struct KitchenShoppingView: View {
     @State private var showClearKitchen = false
     @State private var showManageStores = false
     @State private var assigningStore: GroceryStoreSelection?
+    @State private var shopMode: ShopModeRequest?
     /// What the next seven days of plans still need; refreshed on data change, not in `body`.
     @State var planNeeds = WeekGroceryPlan.empty
     /// What the cook said "Not now" to, for as long as the app runs (nothing stored).
@@ -113,8 +114,7 @@ struct KitchenShoppingView: View {
             if checkedCount > 0 {
                 // Bought = at home: ticked items move into At home, so the plan's card doesn't ask for them again.
                 Button("Put Checked Items Away (\(checkedCount))") {
-                    kitchen.putAway(ShoppingListManager.boughtToPutAway(shopping.items))
-                    shopping.clearCheckedItems()
+                    ShopTrip.putAwayBasket(shopping: shopping, kitchen: kitchen)
                 }
             }
             Button("Clear All Items (\(totalCount))", role: .destructive) { shopping.clearAllItems() }
@@ -129,6 +129,7 @@ struct KitchenShoppingView: View {
         .sheet(isPresented: $showKitchenQuickAdd) { KitchenQuickAddSheet() }
         .sheet(isPresented: $showManageStores) { GroceryStoresSheet() }
         .sheet(item: $assigningStore) { AssignStoreSheet(store: $0.name) }
+        .fullScreenCover(item: $shopMode) { ShopModeView(store: $0.store) }
     }
 
     @ViewBuilder
@@ -153,12 +154,25 @@ struct KitchenShoppingView: View {
     }
 
     private var shoppingList: some View {
-        List {
-            if planNeeds.needsMore(than: dismissedPlanNeeds) {
+        let showsPlanCard = planNeeds.needsMore(than: dismissedPlanNeeds)
+        return List {
+            if showsPlanCard {
                 PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds, onNotNow: { dismissedPlanNeeds = planNeeds })
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
+            }
+            if visibleItems.contains(where: { !$0.isChecked }) {
+                // The list's main job; secondary while the plan's card is asking, so there's one primary at a time.
+                PrimaryButton("I'm in the shop", systemImage: "cart", fillWidth: true,
+                              variant: showsPlanCard ? .secondary : .primary) {
+                    shopMode = ShopModeRequest(store: activeStore)
+                }
+                .accessibilityHint("Big rows to tick in the aisle; the screen stays on")
+                .accessibilityIdentifier("groceries.shopMode")
+                .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             }
             ShoppingProgressBar(
                 checkedCount: visibleItems.filter(\.isChecked).count,
