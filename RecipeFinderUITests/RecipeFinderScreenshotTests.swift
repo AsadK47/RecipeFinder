@@ -433,6 +433,21 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(sunday.waitForExistence(timeout: 10), "Notifications should offer the Sunday Planning switch.")
         settle()
         snap(app, "55-notifications-sunday-planning")
+
+        // Inbox 🐞: with notifications denied, turning Sunday Planning on switches it back off and says why, so the
+        // switch never promises a nudge iOS won't show. Every UI test answers the prompt "Don't Allow".
+        let toggle = app.switches["settings.sundayPlanNudge"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5), "The Sunday Planning row should be a switch.")
+        checkpoint(app, "before turning Sunday Planning on")
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        let dontAllow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Don’t Allow"]
+        if dontAllow.waitForExistence(timeout: 6) { dontAllow.tap() }
+        let off = expectation(for: NSPredicate(format: "value == '0'"), evaluatedWith: toggle)
+        wait(for: [off], timeout: 8)
+        let note = app.descendants(matching: .any)["settings.sundayPlanNudge.denied"]
+        XCTAssertTrue(note.waitForExistence(timeout: 5), "A denied nudge should say notifications are off.")
+        settle()
+        snap(app, "57-notifications-sunday-denied")
     }
 
     /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded
