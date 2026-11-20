@@ -115,3 +115,32 @@ struct TodayKeepBrowsingRow: View {
         .accessibilityIdentifier("today.keepBrowsing")
     }
 }
+
+/// "Plan the week" under Tonight (owner 2026-11-20: the swipe deck should be reachable from home). Shown while a night
+/// in the coming seven has no dinner; opens Plan my week's deck on Plan.
+struct TodayPlanWeekRow: View {
+    let onPlan: () -> Void
+
+    var body: some View {
+        Button(action: onPlan) {
+            HStack(spacing: AppTheme.spacing8) {
+                Image(systemName: "rectangle.stack.fill")
+                    .foregroundStyle(AppTheme.accentColor)
+                    .accessibilityHidden(true)
+                (Text("Plan the week").fontWeight(.semibold)
+                    + Text(" · swipe to pick dinners \(Image(systemName: "arrow.right"))").foregroundStyle(.secondary))
+                    .font(.subheadline)
+                    .adaptiveForegroundColor()
+                    .multilineTextAlignment(.leading)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, AppTheme.spacing4)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Plan the week, swipe to pick dinners")
+        .accessibilityHint("Opens Plan my week")
+        .accessibilityIdentifier("today.planWeek")
+    }
+}
