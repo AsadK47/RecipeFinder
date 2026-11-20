@@ -256,7 +256,7 @@ are merged into a newer item or parked — never start them; their text stays as
   Away** (bought one-offs → At home).
   **✅ Slice 2 (394cc1d..1505253):** "I'm in the shop" — full-screen big rows in aisle order, one tap ticks in place,
   screen awake, ✕ keeps the ticks, one **Done · put N away** moves this store's ticked one-offs At home (tick = at home
-  lands on Done, not per tick — see `docs/DECISIONS.md`). **Left:** (3) aisle order learned from ticks (⏸ Needs owner — new on-device data → Privacy), (4) "Still got the coriander?" asks, (5) delete duplicated
+  lands on Done, not per tick — see `docs/DECISIONS.md`). **Left:** (3) aisle order learned from ticks (owner OK 2026-11-20: Privacy §4.2/4.3 line, cleared on Reset) — 🚧 builder agent 2026-11-20, (4) "Still got the coriander?" asks, (5) delete duplicated
   Kitchen/Shopping views + Plan's Add Week button (net lines down).
 - [x] **Recipes — endless discovery** ✅ 2b6847f — (Phase 3 · Discover, pulled into Now by owner). The *Today feed* chapters (below, kept as spec; `docs/PLAY.md`
   §14) move here as how you browse below your library: "Because you loved…", "Under 30 minutes", "Uses what you have",
@@ -747,10 +747,6 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
-- 🙋 **Groceries aisle order = new data** (builder 2026-11-20, Groceries writes itself slice 3): learning the order you
-  tick aisles in means keeping a per-shop category order on the device (Privacy §4.2 isn't covering it). Add a §4.2/4.3
-  line ("the order you usually shop the aisles in, per shop"; cleared on Reset) + `privacy.html` — yes (recommended) /
-  no (keep the fixed category order)? Builder takes slice 5 (delete duplicated views) meanwhile.
 - 🙋 **Plan deck: what does swipe up do?** (builder 2026-11-19, swipe to match slice 3): the deck deals tonight's card
   first, so "up = tonight" can only show after the cook taps *Leave tonight open* (challenger: it nudges what they just
   declined). Pick one: (a) up on a later night **swaps** with an already-planned tonight (old dish moves to that night)
