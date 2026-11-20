@@ -25,6 +25,8 @@ struct ContentView: View {
     @State private var recipeBrowseRequest: RecipeBrowseRequest?
     /// A day whose week Plan should open on (the Sunday nudge's next week); Plan clears it once shown.
     @State private var planWeekRequest: Date?
+    /// Today's "Plan the week" row: Plan opens its deck, then clears this.
+    @State private var planDeckRequest = false
     /// True from opening the "+" sheet until it has fully dismissed: a badge earned by the import waits for it, since a
     /// second sheet presented over (or mid-dismissal of) another is silently dropped.
     @State private var addRecipeBusy = false
@@ -239,10 +241,11 @@ struct ContentView: View {
     private func tabRoot(_ tab: AppTab) -> some View {
         switch tab {
         case .today: TodayView(onOpen: { select($0) }, onOpenBadges: openTrophyShelf, onAddRecipe: openAddRecipe,
-                               onImportLink: importClipboardLink)
+                               onImportLink: importClipboardLink,
+                               onPlanWeek: { planDeckRequest = true; select(.plan) })
         case .recipes: RecipeSearchView(isLoading: store.isLoading, browseRequest: $recipeBrowseRequest,
                                            onAddRecipe: openAddRecipe)
-        case .plan: MealPlanningView(weekRequest: $planWeekRequest)
+        case .plan: MealPlanningView(weekRequest: $planWeekRequest, deckRequest: $planDeckRequest)
         case .groceries: KitchenShoppingView()
         case .me: MeView(openProfile: $showTrophyShelf, trophyShelfRequest: $trophyShelfRequest)
         }

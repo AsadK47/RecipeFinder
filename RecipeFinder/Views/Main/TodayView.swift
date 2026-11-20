@@ -14,6 +14,8 @@ struct TodayView: View {
     let onAddRecipe: () -> Void
     /// Imports a recipe from a link pasted on the clipboard card.
     let onImportLink: (URL) -> Void
+    /// Opens Plan with Plan my week's deck dealing.
+    var onPlanWeek: () -> Void = {}
 
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.mealPlanning) private var mealPlanning
@@ -225,6 +227,9 @@ struct TodayView: View {
                 recipesMode = .discover
                 discoverRequests &+= 1
                 onOpen(.recipes)
+            }
+            if snapshot.week.hasOpenDinner, !recipeStore.recipes.isEmpty {
+                TodayPlanWeekRow(onPlan: onPlanWeek)
             }
         } else if !feed.isNewUser {
             TodayShortcutCard(

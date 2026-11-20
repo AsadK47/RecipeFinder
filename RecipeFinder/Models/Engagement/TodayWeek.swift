@@ -20,6 +20,9 @@ struct TodayWeek: Equatable {
     /// A dinner to plan for tomorrow in one tap; nil when tomorrow's dinner is planned or nothing fits.
     let planTomorrow: RecipeModel?
 
+    /// A night in the coming seven with no dinner: Today then offers Plan my week's deck.
+    var hasOpenDinner: Bool { days.contains { !$0.mealTimes.contains(.dinner) } }
+
     /// The day "Plan tomorrow" plans for.
     var tomorrow: Date? { days.dropFirst().first?.date }
 

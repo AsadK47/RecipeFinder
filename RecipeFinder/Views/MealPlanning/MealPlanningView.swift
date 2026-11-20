@@ -32,6 +32,8 @@ struct MealPlanningView: View {
     let mealCalendar = MealPlanCalendar()
     /// Set by a tapped Sunday nudge: show that day's week, then clear it.
     var weekRequest: Binding<Date?> = .constant(nil)
+    /// Set by Today's "Plan the week": open the deck, then clear it.
+    var deckRequest: Binding<Bool> = .constant(false)
 
     var body: some View {
         // A stack of its own so a dinner photo can push its recipe (or, from Cook, cooking — like Today's "Cook this").
@@ -149,6 +151,11 @@ struct MealPlanningView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { rollOverToToday() }
+        }
+        .onChange(of: deckRequest.wrappedValue, initial: true) { _, requested in
+            guard requested else { return }
+            deckRequest.wrappedValue = false
+            if planDeck == nil { openPlanDeck() }
         }
         .onChange(of: weekRequest.wrappedValue, initial: true) { _, date in
             guard let date else { return }
