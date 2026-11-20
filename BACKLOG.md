@@ -230,7 +230,7 @@ are merged into a newer item or parked — never start them; their text stays as
 - [ ] **Plan — swipe to match** (Phase 2 · Decide; tester K. 2026-11-19 asked for an "Inspire me" swipe area — the same
   deck also opens from an **Inspire me** button at the top of Recipes → Discover, matches go to Fancy it / tonight). Merges *Swipe to match dinners*, *Plan my week 1/3 + 2/3*,
   *"What's for dinner?" decider* and *Sunday planning nudge* (all below, kept as spec). Plan's home is the week as seven
-  photos (tap = cook, hold = move); "Plan my week" opens full-screen cards, one per empty dinner — right/♥ plans it,
+  photos (tap = open, Cook button = cook, hold = cook / move); "Plan my week" opens full-screen cards, one per empty dinner — right/♥ plans it,
   left/✕ next card, up = tonight — drawn by the Fill-my-week rules (quick weeknights, variety, expiring items, busy
   nights); matches also feed Today. Opt-in Sunday nudge when next week is empty. *Measure:* weeks with ≥3 planned
   dinners. *Done when:* deck/fill/no-repeat rules tested (seeded), swipe + button paths UI-tested, screenshots, CI green.

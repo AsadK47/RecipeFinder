@@ -1,9 +1,11 @@
 import SwiftUI
 
-/// Plan's week as seven dinner photos. Tap a planned night to cook it; hold it to move it to another night (swapping
-/// with that night's dinner) or take it off. Tap an empty night from tonight on to plan its dinner.
+/// Plan's week as seven dinner photos. Tap a planned night to open its recipe; hold it to cook it, move it to another
+/// night (swapping with that night's dinner) or take it off. Tap an empty night from tonight on to plan its dinner.
 struct WeekDinnersView: View {
     let nights: [WeekDinners.Night]
+    /// Opens the recipe page (owner 2026-11-20: a tap is not a decision to cook now).
+    let onOpen: (RecipeModel) -> Void
     let onCook: (RecipeModel) -> Void
     let onPlan: (Date) -> Void
     let onMove: (MealPlanModel, Date) -> Void
@@ -50,7 +52,7 @@ struct WeekDinnersView: View {
         Button {
             guard let recipe = night.recipe else { return }
             HapticManager.shared.light()
-            onCook(recipe)
+            onOpen(recipe)
         } label: {
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 photo(night, plan: plan)
@@ -73,7 +75,7 @@ struct WeekDinnersView: View {
         .accessibilityLabel("\(Self.spokenDay(night)), dinner: \(plan.recipeName)")
         .accessibilityHint(night.recipe == nil
                            ? "This recipe is no longer in your library. Use actions to move or remove it."
-                           : "Opens cooking. Use actions to move it.")
+                           : "Opens the recipe. Use actions to cook or move it.")
         .accessibilityAddTraits(night.recipe == nil ? [] : .isButton)
         .accessibilityActions { moveMenu(night, plan: plan) }
     }
@@ -104,8 +106,12 @@ struct WeekDinnersView: View {
             }
         }
         if plan.isRecurring {
-            // Moving or removing one copy of a weekly dinner would be refilled from the series (see WeekDinners).
-            Text("Repeats every \(plan.date.formatted(.dateTime.weekday(.wide))) — change it in the day's list")
+            // Moving one copy of a weekly dinner would be refilled from the series (see WeekDinners); taking it off
+            // stops the series (MealPlanningManager), so that's allowed.
+            Text("Repeats every \(plan.date.formatted(.dateTime.weekday(.wide)))")
+            Button(role: .destructive) { onRemove(plan) } label: {
+                Label("Take off and stop repeating", systemImage: "trash")
+            }
         } else {
             Button(role: .destructive) { onRemove(plan) } label: { Label("Take off the plan", systemImage: "trash") }
         }

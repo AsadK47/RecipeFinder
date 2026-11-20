@@ -109,6 +109,28 @@ struct PlanDeck {
             .filter { day in !plans.contains { $0.isSlot(day, .dinner, calendar: calendar) } }
     }
 
+    /// The week Plan my week deals for: the shown week while it has an empty dinner from today, else the first week
+    /// after it (and after this one) that does, within `weeksAhead`. Nil when every dinner that far is planned.
+    /// Owner 2026-11-20: once the shown week was full the button vanished, so the deck "worked once, then never again".
+    static func weekToPlan(
+        showing shown: Date, plans: [MealPlanModel], today: Date, weeksAhead: Int = 4,
+        calendar: Calendar = .current
+    ) -> Date? {
+        let planner = MealPlanCalendar(calendar: calendar)
+        guard let shownStart = planner.weekRange(containing: shown)?.start,
+              let thisWeek = planner.weekRange(containing: today)?.start else { return nil }
+        var week = max(shownStart, thisWeek)
+        for _ in 0...weeksAhead {
+            if !emptyDinnerDays(week: planner.daysInWeek(containing: week), plans: plans, today: today,
+                                calendar: calendar).isEmpty {
+                return week
+            }
+            guard let next = calendar.date(byAdding: .weekOfYear, value: 1, to: week) else { return nil }
+            week = next
+        }
+        return nil
+    }
+
     /// Mains and soups; a library with neither offers everything (same rule as Today's dinner pick).
     static func dinnerRecipes(_ recipes: [RecipeModel]) -> [RecipeModel] {
         let dinner: Set<String> = ["main", "soup"]

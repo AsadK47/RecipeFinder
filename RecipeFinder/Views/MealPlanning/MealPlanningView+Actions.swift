@@ -18,6 +18,12 @@ extension MealPlanningView {
         }
     }
 
+    /// A dinner photo's recipe pushed onto Plan's stack: its page, or straight into cooking from the hold menu's Cook.
+    struct OpenedDinner: Hashable {
+        let recipe: RecipeModel
+        let startsCooking: Bool
+    }
+
     /// Identifiable payload driving the meal-reminder time-picker sheet.
     struct ReminderContext: Identifiable {
         let id = UUID()
@@ -45,7 +51,7 @@ extension MealPlanningView {
         guard let mealPlan = mealPlanningManager.mealPlan(for: date, mealTime: mealTime) else {
             return nil
         }
-        return recipes.first { $0.id == mealPlan.recipeId }
+        return mealPlan.recipe(in: recipes)
     }
 
     func removeMealPlan(for date: Date, mealTime: MealTime) {
@@ -58,6 +64,29 @@ extension MealPlanningView {
     func updateSelectedMealTimes(for date: Date) {
         let mealsForDate = mealPlanningManager.mealPlans(for: date)
         selectedMealTimes = Set(mealsForDate.map { $0.mealTime })
+    }
+
+    // MARK: - Clear past plans
+
+    var clearPastTitle: String {
+        let count = mealPlanningManager.pastPlanCount
+        return count == 1 ? "Clear 1 past plan?" : "Clear \(count) past plans?"
+    }
+
+    func askToClearPastPlans() {
+        guard mealPlanningManager.pastPlanCount > 0 else {
+            weekShoppingFeedback = "No past plans to clear"
+            return
+        }
+        showClearPastConfirm = true
+    }
+
+    func clearPastPlans() {
+        withAnimation(.appGentle) {
+            mealPlanningManager.clearOldMealPlans()
+            updateSelectedMealTimes(for: selectedDate)
+        }
+        HapticManager.shared.success()
     }
 
     // MARK: - Reminders
@@ -93,7 +122,8 @@ extension MealPlanningView {
     /// Computes what the week would add, skipping items already in the Kitchen, then asks for confirmation rather than bulk-dumping.
     func prepareAddWeek() {
         guard let start = currentWeekStart else { return }
-        let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes)
+        // From today: dinners already eaten earlier in the week aren't shopped for.
+        let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes, from: Date())
         let plan = WeekGroceryPlan(
             summary: summary,
             kitchenNames: kitchenManager.items.map(\.name) + kitchenManager.inventoryItems.map(\.name),
@@ -116,14 +146,34 @@ extension MealPlanningView {
 
     // MARK: - Plan my week
 
-    /// This week's plans from today on leave at least one dinner open.
-    var hasEmptyDinners: Bool {
-        guard let start = currentWeekStart else { return false }
-        let plans = mealPlanningManager.mealPlansForWeek(starting: start).meals
-        return !PlanDeck.emptyDinnerDays(week: daysInCurrentWeek, plans: plans, today: Date()).isEmpty
+    /// The week the deck plans (see `PlanDeck.weekToPlan`); nil hides the button.
+    var deckWeek: Date? {
+        let today = Date()
+        // Plans from this week's start on (past weeks never count); four weeks ahead is as far as the deck looks.
+        guard let thisWeek = mealCalendar.weekRange(containing: today)?.start,
+              let shown = currentWeekStart else { return nil }
+        let first = max(thisWeek, shown)
+        let plans = (0...4).flatMap { offset in
+            Calendar.current.date(byAdding: .weekOfYear, value: offset, to: first)
+                .map { mealPlanningManager.mealPlansForWeek(starting: $0).meals } ?? []
+        }
+        return PlanDeck.weekToPlan(showing: selectedDate, plans: plans, today: today)
+    }
+
+    /// "Plan my week" for the shown week, else names the week it will plan.
+    func deckTitle(for week: Date) -> String {
+        guard let shown = currentWeekStart, Calendar.current.isDate(week, inSameDayAs: shown) else {
+            return "Plan week of \(week.formatted(.dateTime.day().month(.abbreviated)))"
+        }
+        return "Plan my week"
     }
 
     func openPlanDeck() {
+        guard let week = deckWeek else { return }
+        if let shown = currentWeekStart, !Calendar.current.isDate(week, inSameDayAs: shown) {
+            // The shown week is planned (or past): move to the week being planned, so its dinners show under the deck.
+            showWeek(of: week)
+        }
         guard let start = currentWeekStart else { return }
         let plans = mealPlanningManager.mealPlansForWeek(starting: start).meals
         let expiring = kitchenManager.inventoryItems

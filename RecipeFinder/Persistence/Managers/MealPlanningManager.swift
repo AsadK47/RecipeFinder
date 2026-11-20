@@ -9,11 +9,15 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func toggleRecurring(_ mealPlan: MealPlanModel)
     func propagateRecurring(toWeekStarting startDate: Date)
     func clearOldMealPlans()
+    /// Plans Clear Past Plans would take off.
+    var pastPlanCount: Int { get }
     func mealPlan(for date: Date, mealTime: MealTime) -> MealPlanModel?
     func mealPlans(for date: Date) -> [MealPlanModel]
     func hasMealPlans(for date: Date) -> Bool
     func mealPlansForWeek(starting startDate: Date) -> WeeklyMealPlan
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary
+    /// The same, leaving out days before `earliest` (Plan's Add Week: meals already eaten aren't shopped for).
+    func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel], from earliest: Date) -> WeekShoppingSummary
     /// Re-reads the Sunday-nudge switch and plans, then schedules or cancels the one pending nudge.
     func syncPlanNudge()
     /// Dishes passed on in Plan my week in the last 30 days (`PlanDeckMemory`).
@@ -84,7 +88,12 @@ final class MealPlanningManager: MealPlanningManaging {
             blobKey: blobKey, storage: storage,
             fetch: { try store.fetchMealPlans() },
             replace: { try store.replaceMealPlans(with: $0) },
-            sync: .iCloudRules(storage: storage, store: store, id: { $0.id })
+            sync: .iCloudRules(
+                storage: storage, store: store, id: { $0.id },
+                // Two devices planning the same night (or both copying a weekly meal into it) make two rows with
+                // different ids; keep one per slot so groceries, Tonight and reminders count it once.
+                sameThing: .init(key: { AnyHashable(SlotKey($0)) }, rank: { $0.id.uuidString }, fold: { kept, _ in kept })
+            )
         )
     }
 
@@ -136,19 +145,32 @@ final class MealPlanningManager: MealPlanningManaging {
     }
     
     func removeMealPlan(_ mealPlan: MealPlanModel) {
-        cancelReminder(for: mealPlan)
-        mealPlans.removeAll { $0.id == mealPlan.id }
-        HapticManager.shared.light()
-        saveMealPlans()
+        remove { $0.id == mealPlan.id }
     }
-    
+
     func removeMealPlan(for date: Date, mealTime: MealTime) {
-        for plan in mealPlans where plan.isSlot(date, mealTime) {
-            cancelReminder(for: plan)
-        }
-        mealPlans.removeAll { $0.isSlot(date, mealTime) }
+        remove { $0.isSlot(date, mealTime) }
+    }
+
+    /// Removing a copy of a weekly meal also stops its series: otherwise the next copy refills the night from an
+    /// earlier week and the meal can never be taken off.
+    private func remove(where matches: (MealPlanModel) -> Bool) {
+        let removed = mealPlans.filter(matches)
+        for plan in removed { cancelReminder(for: plan) }
+        mealPlans.removeAll(where: matches)
+        for plan in removed where plan.isRecurring { stopSeries(of: plan) }
         HapticManager.shared.light()
         saveMealPlans()
+        syncSeriesReminders()
+    }
+
+    /// Every copy of `plan`'s weekly series becomes a one-off, so nothing copies it forward again.
+    private func stopSeries(of plan: MealPlanModel) {
+        let key = SeriesKey(plan, calendar: .current)
+        for index in mealPlans.indices
+        where mealPlans[index].isRecurring && SeriesKey(mealPlans[index], calendar: .current) == key {
+            mealPlans[index].isRecurring = false
+        }
     }
     
     func toggleCompletion(_ mealPlan: MealPlanModel) {
@@ -163,11 +185,17 @@ final class MealPlanningManager: MealPlanningManaging {
 
     func toggleRecurring(_ mealPlan: MealPlanModel) {
         guard let index = mealPlans.firstIndex(where: { $0.id == mealPlan.id }) else { return }
-        mealPlans[index].isRecurring.toggle()
+        if mealPlans[index].isRecurring {
+            // Stop Repeating on any week's copy ends the series, not just that copy.
+            stopSeries(of: mealPlans[index])
+        } else {
+            mealPlans[index].isRecurring = true
+        }
         HapticManager.shared.light()
         saveMealPlans()
-        // Recurrence flips the reminder between weekly-repeat and one-off.
+        // Recurrence flips reminders between weekly-repeat and one-off.
         syncReminder(for: mealPlans[index])
+        syncSeriesReminders()
     }
 
     /// Materialises the latest recurring template into each empty slot of the target week (stays recurring); idempotent.
@@ -180,8 +208,7 @@ final class MealPlanningManager: MealPlanningManaging {
         guard !templates.isEmpty else { return }
 
         // O(1) occupied-slot lookup instead of O(P) contains per slot.
-        struct SlotKey: Hashable { let day: Date; let mealTime: MealTime }
-        let occupiedSlots = Set(mealPlans.map { SlotKey(day: cal.startOfDay(for: $0.date), mealTime: $0.mealTime) })
+        let occupiedSlots = Set(mealPlans.map { SlotKey($0, calendar: cal) })
 
         // Template lookup by (weekday, mealTime) keeping the most recent, so inner loop is O(1).
         struct TemplateKey: Hashable { let weekday: Int; let mealTime: MealTime }
@@ -224,21 +251,67 @@ final class MealPlanningManager: MealPlanningManaging {
         guard !newEntries.isEmpty else { return }
         mealPlans.append(contentsOf: newEntries)
         saveMealPlans()
-        for entry in newEntries { syncReminder(for: entry) }
+        // The newest copy now carries the series' weekly reminder; the copies before it drop theirs.
+        syncSeriesReminders()
     }
 
+    /// Clear Past Plans: takes every plan before today off the planner (see `pastPlans`).
     func clearOldMealPlans() {
-        guard let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) else {
-            return
-        }
-        // Recurring entries are retained as templates; only past one-off meals are purged.
-        for plan in mealPlans where plan.date < oneWeekAgo && !plan.isRecurring {
-            cancelReminder(for: plan)
-        }
-        mealPlans.removeAll { $0.date < oneWeekAgo && !$0.isRecurring }
+        let past = Self.pastPlans(mealPlans, now: Date())
+        guard !past.isEmpty else { return }
+        for plan in mealPlans where past.contains(plan.id) { cancelReminder(for: plan) }
+        mealPlans.removeAll { past.contains($0.id) }
         saveMealPlans()
     }
-    
+
+    /// How many plans Clear Past Plans would take off, for its confirmation.
+    var pastPlanCount: Int { Self.pastPlans(mealPlans, now: Date()).count }
+
+    /// Plans on days before today: one-offs, and every copy of a weekly meal except the newest of its series (weekday +
+    /// meal time), which `propagateRecurring` copies forward. Cooking history lives on the recipe (`cookCount`,
+    /// `lastCookedAt`), so clearing a plan loses nothing cooked.
+    nonisolated static func pastPlans(_ plans: [MealPlanModel], now: Date, calendar: Calendar = .current) -> Set<UUID> {
+        let today = calendar.startOfDay(for: now)
+        let newestOfSeries = Set(newestRecurringCopies(plans, calendar: calendar))
+        return Set(plans.filter { $0.date < today && !newestOfSeries.contains($0.id) }.map(\.id))
+    }
+
+    /// The newest copy of each weekly series (weekday + meal time) — the one later weeks are copied from.
+    nonisolated static func newestRecurringCopies(_ plans: [MealPlanModel], calendar: Calendar = .current) -> [UUID] {
+        var newest: [SeriesKey: MealPlanModel] = [:]
+        for plan in plans where plan.isRecurring {
+            let key = SeriesKey(plan, calendar: calendar)
+            if newest[key].map({ plan.date > $0.date }) ?? true { newest[key] = plan }
+        }
+        return newest.values.map(\.id)
+    }
+
+    /// A planner slot: the day (start of day) and meal time — one dish each.
+    struct SlotKey: Hashable {
+        let day: Date
+        let mealTime: MealTime
+
+        init(day: Date, mealTime: MealTime) {
+            self.day = day
+            self.mealTime = mealTime
+        }
+
+        init(_ plan: MealPlanModel, calendar: Calendar = .current) {
+            self.init(day: calendar.startOfDay(for: plan.date), mealTime: plan.mealTime)
+        }
+    }
+
+    /// A weekly series: same weekday and meal time (how `propagateRecurring` matches templates).
+    struct SeriesKey: Hashable {
+        let weekday: Int
+        let mealTime: MealTime
+
+        init(_ plan: MealPlanModel, calendar: Calendar) {
+            weekday = calendar.component(.weekday, from: plan.date)
+            mealTime = plan.mealTime
+        }
+    }
+
     func mealPlan(for date: Date, mealTime: MealTime) -> MealPlanModel? {
         mealPlans.first { $0.isSlot(date, mealTime) }
     }
@@ -266,7 +339,12 @@ final class MealPlanningManager: MealPlanningManaging {
     
     /// Aggregates ingredients for the week's incomplete meals (merged by normalized name); recipes matched by id then name to survive re-imports.
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary {
-        let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted }
+        weekShoppingSummary(forWeekStarting: startDate, recipes: recipes, from: .distantPast)
+    }
+
+    func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel], from earliest: Date) -> WeekShoppingSummary {
+        let firstDay = Calendar.current.startOfDay(for: earliest)
+        let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted && $0.date >= firstDay }
 
         // Merge by (name, unit) so amounts in the same unit sum and different units stay separate — reusing the
         // same per-ingredient mapping the single-recipe "add to groceries" path uses, so both carry real amounts.
@@ -351,6 +429,10 @@ final class MealPlanningManager: MealPlanningManaging {
         let id = reminderId(for: plan)
         reminders.cancelNotification(identifier: id)
 
+        // A weekly series rings once a week: only its newest copy holds the repeating reminder (a weekly trigger
+        // ignores the date, so every copy holding one fired its own alert each week).
+        if plan.isRecurring, !Self.newestRecurringCopies(mealPlans).contains(plan.id) { return }
+
         guard !plan.isCompleted,
               let time = plan.reminderTime,
               let fireDate = Self.reminderFireDate(day: plan.date, time: time) else { return }
@@ -364,6 +446,11 @@ final class MealPlanningManager: MealPlanningManaging {
             identifier: id,
             repeatsWeekly: plan.isRecurring
         )
+    }
+
+    /// Re-syncs every weekly copy, so the series' reminder sits on its newest copy alone.
+    private func syncSeriesReminders() {
+        for plan in mealPlans where plan.isRecurring { syncReminder(for: plan) }
     }
 
     private func cancelReminder(for plan: MealPlanModel) {
@@ -396,10 +483,23 @@ final class MealPlanningManager: MealPlanningManaging {
     }
 
     private func loadMealPlans() {
+        let before = mealPlans
         mealPlans = mirror.load()
+        reconcileReminders(from: before)
         syncPlanNudge()
         // Runs at launch, so passes older than 30 days leave the device even if the deck is never opened again.
         PlanDeckMemory.update(in: storage, passed: [], planned: [], at: Date())
+    }
+
+    /// After a reload (iCloud brought another device's edits), plans deleted or folded away there lose their reminder
+    /// here, and changed ones are re-synced. Nothing to do on the first load: the reminders were set when planned.
+    private func reconcileReminders(from before: [MealPlanModel]) {
+        guard !before.isEmpty else { return }
+        let now = Dictionary(mealPlans.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        for plan in before where now[plan.id] == nil { cancelReminder(for: plan) }
+        let previous = Dictionary(before.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        for plan in mealPlans where previous[plan.id] != plan { syncReminder(for: plan) }
+        syncSeriesReminders()
     }
 
     // MARK: - Plan my week memory

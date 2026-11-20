@@ -468,7 +468,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   `DataResetter` seam the view calls would make it testable — same gap for collections/cook dates.
 - **Shared `viewContext`** save/rollback (same as 3a/3b).
 - **Recurring copies grow forever** (`clearOldMealPlans` keeps every recurring copy); each save now diffs all rows.
-  Pre-existing; cap/purge later.
+  Pre-existing; cap/purge later. *(2026-11-20: Clear Past Plans now keeps only each series' newest copy.)*
 - **Rows missing id/recipeId/date are skipped silently** — safe while the kept copy exists (it replaces them); log
   or count them before the blob is dropped.
 

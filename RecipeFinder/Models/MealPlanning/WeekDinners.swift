@@ -24,7 +24,7 @@ enum WeekDinners {
             return Night(
                 date: date,
                 plan: plan,
-                recipe: plan.flatMap { recipe(for: $0, in: recipes) },
+                recipe: plan.flatMap { $0.recipe(in: recipes) },
                 isToday: calendar.isDate(date, inSameDayAs: today),
                 isPast: calendar.startOfDay(for: date) < startOfToday
             )
@@ -62,12 +62,6 @@ enum WeekDinners {
     }
 
     // MARK: - Private
-
-    /// Matched by id, then by name so a re-imported recipe keeps its night (same rule as Add Week to Groceries).
-    private static func recipe(for plan: MealPlanModel, in recipes: [RecipeModel]) -> RecipeModel? {
-        recipes.first { $0.id == plan.recipeId }
-            ?? recipes.first { $0.name.caseInsensitiveCompare(plan.recipeName) == .orderedSame }
-    }
 
     /// `plan` on `day`'s date at its own clock time — by components, so a clock change can't slip it a day.
     private static func shifted(_ plan: MealPlanModel, to day: Date, calendar: Calendar) -> MealPlanModel? {

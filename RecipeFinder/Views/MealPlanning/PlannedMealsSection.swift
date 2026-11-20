@@ -51,13 +51,15 @@ struct PlannedMealsSection: View {
                 MealTimeCard(
                     mealTime: mealTime,
                     recipe: recipeFor(mealTime),
+                    plannedName: mealPlanFor(mealTime)?.recipeName,
                     isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
                     onRemove: { onRemove(mealTime) }
                 )
             }
             .buttonStyle(.plain)
             .contextMenu {
-                if recipeFor(mealTime) != nil {
+                // Every planned meal, even one whose recipe is gone, can stop repeating and have its reminder changed.
+                if mealPlanFor(mealTime) != nil {
                     let recurring = mealPlanFor(mealTime)?.isRecurring ?? false
                     Button(
                         recurring ? "Stop Repeating" : "Repeat Weekly",
@@ -94,6 +96,7 @@ struct PlannedMealsSection: View {
                     MealTimeCard(
                         mealTime: mealTime,
                         recipe: recipeFor(mealTime),
+                        plannedName: mealPlanFor(mealTime)?.recipeName,
                         isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
                         onRemove: {}
                     )
@@ -106,6 +109,8 @@ struct PlannedMealsSection: View {
                     .stroke(AppTheme.accentColor, lineWidth: 2)
             }
         }
+        .modifier(SwipeToRemove(isEnabled: mealPlanFor(mealTime) != nil) { onRemove(mealTime) })
+        .accessibilityIdentifier("plan.meal.\(mealTime.rawValue)")
         .animation(.easeInOut(duration: 0.2), value: dropTarget)
         // .draggable/.dropDestination manage drag+cancel state, so there's no manual flag to get stuck (the old greyed-out bug).
         .dropDestination(for: String.self) { items, _ in
@@ -152,5 +157,50 @@ enum MealTimeReorder {
         result.move(fromOffsets: IndexSet(integer: fromIndex),
                     toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
         return result
+    }
+}
+
+/// Swipe a planned meal left to take it off (owner 2026-11-20). The day list isn't a `List` (drag-to-reorder handle,
+/// frosted cards), so `swipeActions` isn't available: a horizontal drag slides the row, past `threshold` it's removed.
+/// Simultaneous, and only horizontal drags move the row, so the page still scrolls. The trash button stays for VoiceOver.
+private struct SwipeToRemove: ViewModifier {
+    let isEnabled: Bool
+    let onRemove: () -> Void
+
+    @State private var offset: CGFloat = 0
+    private let threshold: CGFloat = 120
+
+    func body(content: Content) -> some View {
+        content
+            .offset(x: offset)
+            .background(alignment: .trailing) {
+                if offset < 0 {
+                    Label("Remove", systemImage: "trash")
+                        .labelStyle(.iconOnly)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(width: max(-offset, 0), alignment: .center)
+                        .frame(maxHeight: .infinity)
+                        .background(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16).fill(AppTheme.destructiveFill))
+                        .opacity(min(-offset / threshold, 1))
+                        .accessibilityHidden(true)
+                }
+            }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 24)
+                    .onChanged { value in
+                        guard isEnabled, abs(value.translation.width) > abs(value.translation.height) * 1.5 else { return }
+                        offset = min(0, value.translation.width)
+                    }
+                    .onEnded { value in
+                        let remove = isEnabled && value.translation.width < -threshold
+                            && abs(value.translation.width) > abs(value.translation.height) * 1.5
+                        withAnimation(.appGentle) { offset = 0 }
+                        if remove {
+                            HapticManager.shared.medium()
+                            onRemove()
+                        }
+                    }
+            )
     }
 }

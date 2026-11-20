@@ -6,6 +6,9 @@ struct MealPlanningView: View {
     @Environment(\.mealPlanning) var mealPlanningManager
     @Environment(\.kitchen) var kitchenManager
     @State var selectedDate: Date = Date()
+    /// Today as of the last look, so coming back after midnight moves a planner left on "today" to the new day.
+    @State private var lastToday: Date = Date()
+    @Environment(\.scenePhase) private var scenePhase
     @State var showMealTimeSelector = false
     @State var selectedMealTimes: Set<MealTime> = []
     @State var mealPlanSheet: MealPlanSheet?
@@ -18,24 +21,25 @@ struct MealPlanningView: View {
     /// The week's items to buy (minus what's at home) and their copy, awaiting confirmation.
     @State var weekPlan = WeekGroceryPlan.empty
     @State var showAddWeekConfirm = false
+    @State var showClearPastConfirm = false
     /// Non-nil while the meal-reminder time picker is presented.
     @State var reminderContext: ReminderContext?
     /// Non-nil while "Plan my week" is dealing cards.
     @State var planDeck: PlanDeck?
-    /// Set by tapping a dinner photo: pushes the recipe straight into cooking mode.
-    @State var cookingRecipe: RecipeModel?
+    /// Set by a dinner photo: tap pushes its recipe page, the hold menu's Cook pushes it straight into cooking.
+    @State var openedDinner: OpenedDinner?
 
     let mealCalendar = MealPlanCalendar()
     /// Set by a tapped Sunday nudge: show that day's week, then clear it.
     var weekRequest: Binding<Date?> = .constant(nil)
 
     var body: some View {
-        // A stack of its own so a dinner photo can push its recipe into cooking (same as Today's "Cook this").
+        // A stack of its own so a dinner photo can push its recipe (or, from Cook, cooking — like Today's "Cook this").
         NavigationStack {
             planner
                 .toolbar(.hidden, for: .navigationBar)
-                .navigationDestination(item: $cookingRecipe) { recipe in
-                    RecipeDetailView(recipe: recipe, startsCooking: true)
+                .navigationDestination(item: $openedDinner) { dinner in
+                    RecipeDetailView(recipe: dinner.recipe, startsCooking: dinner.startsCooking)
                 }
         }
     }
@@ -50,19 +54,15 @@ struct MealPlanningView: View {
                         HapticManager.shared.light()
                         showMealTimeSelector = true
                     },
-                    onClearOldPlans: {
-                        selectedMealTimes.removeAll()
-                        mealPlanningManager.clearOldMealPlans()
-                        HapticManager.shared.light()
-                    }
+                    onClearOldPlans: askToClearPastPlans
                 )
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing20) {
                         weekStripView
 
-                        if hasEmptyDinners {
-                            PrimaryButton("Plan my week", systemImage: "rectangle.stack.fill", fillWidth: true,
+                        if let week = deckWeek {
+                            PrimaryButton(deckTitle(for: week), systemImage: "rectangle.stack.fill", fillWidth: true,
                                           action: openPlanDeck)
                                 .accessibilityIdentifier("plan.planMyWeek")
                         }
@@ -130,8 +130,15 @@ struct MealPlanningView: View {
         } message: {
             Text(weekPlan.confirmMessage)
         }
+        .confirmationDialog(clearPastTitle, isPresented: $showClearPastConfirm, titleVisibility: .visible) {
+            Button("Clear Past Plans", role: .destructive, action: clearPastPlans)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Takes them off your planner. Dishes you've cooked keep their history.")
+        }
         .toast($weekShoppingFeedback)
         .onAppear {
+            rollOverToToday()
             if let start = currentWeekStart {
                 mealPlanningManager.propagateRecurring(toWeekStarting: start)
             }
@@ -139,6 +146,9 @@ struct MealPlanningView: View {
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
                 existing: [], selected: selectedMealTimes)
             updatePantryExpirySuggestions()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { rollOverToToday() }
         }
         .onChange(of: weekRequest.wrappedValue, initial: true) { _, date in
             guard let date else { return }
@@ -228,7 +238,8 @@ struct MealPlanningView: View {
     private var weekDinnersSection: some View {
         WeekDinnersView(
             nights: weekNights,
-            onCook: { cookingRecipe = $0 },
+            onOpen: { openedDinner = OpenedDinner(recipe: $0, startsCooking: false) },
+            onCook: { openedDinner = OpenedDinner(recipe: $0, startsCooking: true) },
             onPlan: planDinner,
             onMove: moveDinner,
             onRemove: removeDinner
@@ -289,6 +300,14 @@ struct MealPlanningView: View {
         PrimaryButton("Add Week to Groceries", systemImage: "cart.badge.plus", fillWidth: true, action: prepareAddWeek)
     }
 
+    private func rollOverToToday() {
+        let now = Date()
+        if let today = mealCalendar.rolledOver(selected: selectedDate, lastToday: lastToday, now: now) {
+            showWeek(of: today)
+        }
+        lastToday = now
+    }
+
     // MARK: - Pantry suggestions
 
     private func updatePantryExpirySuggestions() {
@@ -321,7 +340,9 @@ struct MealPlanningView: View {
 
     private var weekHasPlannedMeals: Bool {
         guard let start = currentWeekStart else { return false }
-        return mealPlanningManager.mealPlansForWeek(starting: start).meals.contains { !$0.isCompleted }
+        // Only meals still ahead: a past week has nothing left to shop for.
+        let today = Calendar.current.startOfDay(for: Date())
+        return mealPlanningManager.mealPlansForWeek(starting: start).meals.contains { !$0.isCompleted && $0.date >= today }
     }
 
     var daysInCurrentWeek: [Date] {
