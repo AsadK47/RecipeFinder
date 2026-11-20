@@ -51,23 +51,16 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   ✅ Slice 2 shop mode landed 1505253 (builder 2026-11-20). Leftover branch agent/groceries-shop-mode (auto-cleanup).
   ✅ Slice 3 aisle order landed 9dda50b (builder 2026-11-20). Leftover branch agent/groceries-aisle-order (auto-cleanup).
 
-- Inbox 🟡 **Keep screen awake** (builder 2026-11-20): 🚧 `agent/keep-screen-awake` (22d3f0e) — switch wired at
-  AppRootView via `KeepAwakeSetting`; CookingModeView now a `ScreenAwakeHold`. Waiting on Build & Test + reviews.
+- Inbox 🟡 **Keep screen awake**: ✅ landed 7e70ceb (builder 2026-11-20). Leftover branch agent/keep-screen-awake (auto-cleanup).
 
 ## Next action
+Inbox first: 🟡 Shop mode scenePhase re-hold (small); 🟡 Reset keeps `@AppStorage` keys touches Privacy §4.3 → check wording before coding. Then:
 *Groceries writes itself* slice 5 on `agent/groceries-delete-dupes`: delete the duplicated Kitchen/Shopping views +
 Plan's Add Week button (net lines down); then slice 4 ("Still got the coriander?"). Website session: add the §4.2
 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Keep screen awake (Inbox 🟡):** wired, not removed — reading a recipe hands-busy outside cooking mode is the
-  switch's point. Root writes only "on" when the app comes back (an "off" there could race cooking/shop holds turning it
-  on); "off" is written when the switch flips, from Settings, where neither cover is up. Cooking mode moved to
-  `ScreenAwakeHold` so leaving a cook restores the setting instead of forcing off. No new stored data (key existed).
-  **Pre-mortem:** (1) leaving cooking turns the setting off → `leavingAHoldKeepsTheSetting`; (2) coming back with the
-  switch off kills cooking's keep-awake → `appActiveWithSwitchOffLeavesHoldsAlone`; (3) switch off leaves the screen
-  stuck on → `switchWritesItsValue`.
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new

@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Keep screen awake (Inbox 🟡)** (landed 7e70ceb): wired, not removed — reading a recipe hands-busy outside cooking mode is the
+  switch's point. Root writes only "on" when the app comes back (an "off" there could race cooking/shop holds turning it
+  on); "off" is written when the switch flips, from Settings, where neither cover is up. Cooking mode moved to
+  `ScreenAwakeHold` so leaving a cook restores the setting instead of forcing off. No new stored data (key existed).
+  **Pre-mortem:** (1) leaving cooking turns the setting off → `leavingAHoldKeepsTheSetting`; (2) coming back with the
+  switch off kills cooking's keep-awake → `appActiveWithSwitchOffLeavesHoldsAlone`; (3) switch off leaves the screen
+  stuck on → `switchWritesItsValue`.
 - **Groceries writes itself slice 3 (aisle order)** (landed 9dda50b): owner OK 2026-11-20 for the new on-device data (Privacy §4.2/4.3).
   Learned per shop ("" = no shop chosen); a shop with nothing learned uses the usual order. A trip's aisles **swap among
   the places they already hold** (learned, else the usual order's 0…1 place) into the order walked; untouched aisles
@@ -26,7 +33,7 @@ survives after the handoff is cleared. Read the entry for an area before "fixing
   ticks (slice 1 already counts ticked as bought). Done acts on **this store's basket only**
   (`ShoppingListManaging.putAway(_:into:)` + `clearChecked(ids:)`; both reviewers: the first build cleared other
   stores' ticks while its label counted only this store's). The ⋯ dialog uses the same `putAway` with every tick.
-  Screen awake via `ScreenAwakeHold` (restores the earlier value). Settings' "Keep screen awake" is read nowhere — older
+  Screen awake via `ScreenAwakeHold` (restores the earlier value). Settings' "Keep screen awake" was read nowhere (wired 7e70ceb) — older
   dead setting, noted for Inbox. No new stored data → no Privacy change. **Pre-mortem:** (1) screen stays awake after leaving →
   `ScreenAwakeHold` tests; (2) Done loses items / staples vanish → `finishPutsTheBasketAway`; (3) tick doesn't
   register or Done doesn't reach At home → UI step in `testZZZZGroceriesFromPlan`.

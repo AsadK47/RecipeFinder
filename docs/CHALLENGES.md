@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-20 (item pass: Inbox 🟡 Keep screen awake; fixed: none blocking — reviewer + challenger agree the ordering holds with one window and both modes as full-screen covers)
+- ⚔️ [Tests] We assume the wiring is covered — `KeepAwakeSettingTests` test the struct, but deleting AppRootView's `onChange` hooks or reverting CookingModeView to `isIdleTimerDisabled = false` fails no test (both reviewers); XCUITest can't read the idle timer — inject a screen seam into CookingModeView/AppRootView and unit-test the view's hooks, or accept — cost if we're wrong: the setting silently dies again.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] We assume nothing else resets `isIdleTimerDisabled` while active — `UIImagePickerController` is widely reported to reset it on close (unverified; MadeItSheet/CameraPicker), and scenePhase stays `.active` so the root doesn't re-apply — re-apply on picker dismiss, or check on device first — cost if we're wrong: screen dims after a photo until the app is next reopened.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] We assume the switch never changes while a hold is up — true today (Settings unreachable from the full-screen covers); a future shortcut/Reset path there would make `end()` restore a stale value — make `end()` honour the current setting if that ever changes — cost if we're wrong: screen stuck on with the switch off.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-20 (item pass: Groceries writes itself slice 3 aisle order; fixed: an untick still taught the order (both reviewers), a top-up trip through two aisles dragged them to the front + blending could never flip an order (both; now touched aisles swap among their places), checkout/unpacking ticks taught a reversed route (now < 60 s ignored), shops deleted on another device kept their order (now pruned on load), §4.2 "at each shop" missed no-shop trips)
 - ⚔️ [UX] To buy's sections follow the learned order too, with nothing on screen saying so — alternative: a small "In your shop order" caption, or shop mode only — cost if wrong: a cook wonders why sections moved.
   → Owner: Accept / Reject / Later

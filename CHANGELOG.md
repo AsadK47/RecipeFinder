@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Inbox 🟡 Keep screen awake · 7e70ceb
+- For you: turn on Keep Screen Awake in Settings › Display and your screen stays on whenever RecipeFinder is open, so a recipe stays readable while your hands are busy — and it stays on after you finish cooking mode too.
+- Behind the build: the switch is applied by a small tested model at the app's root, and a reviewer plus a challenger checked it can't fight cooking mode or the shop over the screen.
+
 ## 2026-11-20 · Groceries writes itself slice 3 aisle order · 9dda50b
 - For you: I'm in the shop now learns the way you walk each shop — after a trip, your list and shop rows come in the order you usually pick things up, so the next shop flows aisle by aisle.
 - Behind the build: the learning is a small tested model kept on your device and listed in the Privacy Policy, and two separate reviewers made sure a mis-tap, a quick top-up trip or ticking at the checkout can't scramble it.
