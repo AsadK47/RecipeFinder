@@ -801,7 +801,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   `resetToDefault` (DataManagementSettingsView) clears `LocalStore` keys only, while Privacy §4.3 says Reset clears
   your preferences (challenger 2026-11-20). Clear them on Reset (and let the screen sleep), or reword §4.3 → owner.
 - 🟡 Shop mode doesn't re-take its keep-awake hold when the app comes back (cooking does, `onChange(of: scenePhase)`)
-  — harmless with Settings' switch on; make the two consistent (reviewer 2026-11-20, low).
+  — harmless with Settings' switch on; make the two consistent (reviewer 2026-11-20, low). — 🚧 builder agent 2026-11-20
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
