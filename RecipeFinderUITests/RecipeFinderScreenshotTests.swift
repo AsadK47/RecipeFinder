@@ -1069,6 +1069,53 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                       "Tapping a dinner photo should open cooking mode.")
     }
 
+    /// Owner 2026-11-20: "the swipe planning works the first time, then never appears or works again". Opens the deck,
+    /// closes it, opens it again; then plans every night it deals and checks Plan still offers the deck afterwards.
+    /// Sorts after testZZZPlanMyWeek (both plan dinners).
+    @MainActor
+    func testZZZPlanMyWeekAgain() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Plan", shot: nil)
+        let open = app.buttons["plan.planMyWeek"]
+        let card = app.descendants(matching: .any).matching(identifier: "planDeck.card").firstMatch
+        let finished = app.staticTexts["planDeck.finished"]
+        let gone = NSPredicate(format: "exists == false")
+
+        for attempt in 1...2 {
+            checkpoint(app, "open deck \(attempt)")
+            XCTAssertTrue(open.waitForExistence(timeout: 5), "Plan should offer Plan my week (open \(attempt)).")
+            open.tap()
+            XCTAssertTrue(card.waitForExistence(timeout: 5) || finished.waitForExistence(timeout: 1),
+                          "Plan my week should open (open \(attempt)).")
+            app.buttons["planDeck.close"].tap()
+            expectation(for: gone, evaluatedWith: app.buttons["planDeck.close"])
+            waitForExpectations(timeout: 5)
+        }
+
+        // Plan every night the deck deals, then the deck should still be there for the next go.
+        checkpoint(app, "plan the whole deck")
+        XCTAssertTrue(open.waitForExistence(timeout: 5), "Plan should offer Plan my week before the full run.")
+        open.tap()
+        for _ in 0..<8 where card.waitForExistence(timeout: 3) {
+            app.buttons["planDeck.plan"].tap()
+            dismissBadgeSheet(app)
+            settle(0.8)
+        }
+        XCTAssertTrue(finished.waitForExistence(timeout: 5), "Planning every night should finish the deck.")
+        app.buttons["planDeck.done"].tap()
+        expectation(for: gone, evaluatedWith: app.buttons["planDeck.close"])
+        waitForExpectations(timeout: 5)
+
+        checkpoint(app, "open after a full week")
+        XCTAssertTrue(open.waitForExistence(timeout: 5), "Plan should still offer the deck once the week is planned.")
+        open.tap()
+        XCTAssertTrue(card.waitForExistence(timeout: 5), "The deck should deal again after a full week.")
+    }
+
     /// Groceries writes itself, slice 1: with dinners planned, To buy offers what the plan still needs in one tap,
     /// and once added the card goes (adding again would double nothing). Sorts after testZZZPlanMyWeek, so the
     /// planned week reaches Groceries; `-seed-tonight-plan` also plans tonight on a shard that ran nothing before.
