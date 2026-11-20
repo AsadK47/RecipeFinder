@@ -35,6 +35,8 @@ struct WeekDinnersView: View {
 
     private func cell(_ index: Int) -> some View {
         tile(nights[index])
+            // A past night is dimmed whole (owner 2026-11-20); it holds a dinner only if it was cooked.
+            .opacity(nights[index].isPast ? 0.55 : 1)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .accessibilityIdentifier("plan.dinner.\(index)")
     }
@@ -92,7 +94,6 @@ struct WeekDinnersView: View {
         .frame(maxWidth: .infinity)
         .frame(height: photoHeight)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
-        .opacity(night.isPast ? 0.6 : 1)
     }
 
     @ViewBuilder
