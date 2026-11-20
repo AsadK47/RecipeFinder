@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Inbox 🐞 Sunday Planning denied · 9a01bb5
+- For you: turn on Sunday Planning with notifications off for RecipeFinder and the switch now tells you straight away — it goes back off with a note that takes you to Settings, so it always shows what you'll really get.
+- Behind the build: a UI test taps Don't Allow and checks the switch and note; it was seen failing before the fix, and two separate reviewers checked the change.
+
 ## 2026-11-20 · Plan — swipe to match slice 6 busy nights · 6f5d2eb
 - For you: tap Busy night on a Plan my week card and that night's ideas switch to quick dishes — the shortest cooks come up first, and the rest of your week keeps its usual picks.
 - Behind the build: the busy-night ranking is a small seeded model with 13 new tests, and two separate reviewers tightened the ordering and made the card fade rather than look like it was planned.

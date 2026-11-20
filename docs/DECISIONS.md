@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Inbox 🐞 Sunday Planning denied** (landed 9a01bb5): the switch schedules only after iOS answers yes; on no it flips back off and
+  a note (whole note opens iOS Settings) says why. Sync reads the stored switch, so toggling off mid-prompt stays off.
+  Reproduced by a UI test (unit test would be ceremonial: logic is view glue). Groceries Reminders has the same
+  ask-and-schedule-anyway path — not touched (WIP=1). **Pre-mortem:** (1) switch still on after Don't Allow → UI test
+  asserts value 0; (2) no reason shown → UI test finds the note; (3) granted path stops scheduling → existing
+  `SundayPlanNudgeTests` resync tests + reviewer read.
 - **Plan — swipe to match, slice 6 busy nights** (landed 6f5d2eb): a "Busy night" toggle on the deck card, kept for this
   deck only (no stored weekday → no Privacy line; remembering busy weekdays/calendar → Needs owner already). Busy =
   quick (≤30 min) first, then shortest cook (untimed counts as an hour), outweighing every other rule, even at the
