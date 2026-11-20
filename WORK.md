@@ -46,11 +46,25 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Inbox 🐞: ✅ Sunday Planning denied landed 9a01bb5, ✅ testZZZPlanMyWeek busy query landed 89fb7a4 (builder 2026-11-20).
   Leftover branches agent/sunday-nudge-denied, agent/plan-busy-test (auto-cleanup).
 
+- Get: 🚧 **Groceries writes itself** slice 1 (plan → list) on `agent/groceries-from-plan`: `WeekGroceryPlan` takes
+  the list (shortfall per name + unit, ticked counts), Groceries To buy shows a "From your plan" card / empty state
+  (`PlanGroceriesCard`, `KitchenShoppingView+Plan.swift`), Plan's Add Week tops up instead of doubling.
+
 ## Next action
-*Groceries writes itself* slice 1 (plan → list) on `agent/groceries-from-plan`. Owner 2026-11-20: Today — the next
-meal stays in the backlog at its roadmap place (Phase 3), no reorder.
+Check Build & Test + Screenshots (58-groceries-from-plan) for `agent/groceries-from-plan`, review, land. Then slice 2:
+ticked = at home (Clear checked moves bought items into At home, so the card doesn't re-ask after a shop).
+Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
+  the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
+  next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
+  on-device data → Privacy text → owner): the card is derived — plan − at home − on the list (ticked counts as bought;
+  shortfall per name + canonical unit, same key as `addItem`'s merge). Known gap: after *Clear checked* the bought
+  items vanish and the card asks again → slice 2 (ticked = at home) closes it. Plan's Add Week kept (subtract later
+  once Groceries owns it). **Pre-mortem:** (1) adding twice doubles amounts → `addingTwiceNeverDoubles`;
+  (2) card never shows (plans/recipes not reaching Groceries) → UI test `testZZZZGroceriesFromPlan`; (3) a partial line
+  on the list blocks the rest → `topsUpWhatsShort`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

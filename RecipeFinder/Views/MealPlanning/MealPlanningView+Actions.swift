@@ -96,7 +96,8 @@ extension MealPlanningView {
         let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes)
         let plan = WeekGroceryPlan(
             summary: summary,
-            kitchenNames: kitchenManager.items.map(\.name) + kitchenManager.inventoryItems.map(\.name)
+            kitchenNames: kitchenManager.items.map(\.name) + kitchenManager.inventoryItems.map(\.name),
+            listItems: ShoppingListManager.shared.items
         )
         weekPlan = plan
 
@@ -108,9 +109,7 @@ extension MealPlanningView {
     }
 
     func confirmAddWeek() {
-        for item in weekPlan.candidates {
-            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
-        }
+        weekPlan.add(to: ShoppingListManager.shared)
         HapticManager.shared.success()
         weekShoppingFeedback = weekPlan.addedMessage
     }

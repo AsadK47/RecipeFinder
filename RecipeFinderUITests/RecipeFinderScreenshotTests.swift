@@ -1069,6 +1069,30 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                       "Tapping a dinner photo should open cooking mode.")
     }
 
+    /// Groceries writes itself, slice 1: with dinners planned, To buy offers what the plan still needs in one tap,
+    /// and once added the card goes (adding again would double nothing). Sorts after testZZZPlanMyWeek, so the
+    /// planned week reaches Groceries; `-seed-tonight-plan` also plans tonight on a shard that ran nothing before.
+    @MainActor
+    func testZZZZGroceriesFromPlan() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-tonight-plan"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Groceries", shot: nil)
+        let toBuy = app.buttons["To buy"]
+        if toBuy.waitForExistence(timeout: 5) { toBuy.tap() }
+        let add = app.buttons["groceries.fromPlan.add"]
+        checkpoint(app, "from your plan")
+        XCTAssertTrue(add.waitForExistence(timeout: 10), "Groceries should offer what the planned meals still need.")
+        settle()
+        snap(app, "58-groceries-from-plan")
+        add.tap()
+        dismissBadgeSheet(app)
+        XCTAssertTrue(add.waitForNonExistence(timeout: 5), "Once added, the plan's card should go.")
+        XCTAssertFalse(app.staticTexts["Your groceries list is empty"].exists, "The plan's items should be on the list.")
+    }
+
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
     /// The empty cookbook is 17-me on a fresh simulator. Named to sort after testZCaptureMadeIt for the same reason.
     @MainActor

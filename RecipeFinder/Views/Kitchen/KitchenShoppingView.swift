@@ -3,8 +3,10 @@ import SwiftUI
 
 /// "Groceries" tab: a To buy | At home switch over the shopping list and the kitchen (remembered between launches).
 struct KitchenShoppingView: View {
-    @Environment(\.shopping) private var shopping
-    @Environment(\.kitchen) private var kitchen
+    @Environment(\.shopping) var shopping
+    @Environment(\.kitchen) var kitchen
+    @Environment(\.mealPlanning) var mealPlanning
+    @Environment(\.recipeStore) var recipeStore
     @AppStorage(GroceriesMode.modeKey) private var mode: GroceriesMode = GroceriesMode.defaultMode
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
@@ -19,6 +21,8 @@ struct KitchenShoppingView: View {
     @State private var showClearKitchen = false
     @State private var showManageStores = false
     @State private var assigningStore: GroceryStoreSelection?
+    /// What the next seven days of plans still need; refreshed on data change, not in `body`.
+    @State var planNeeds = WeekGroceryPlan.empty
     /// Last store filter, remembered between launches; "" means All.
     @AppStorage("groceriesStoreFilter") private var storeFilter = ""
 
@@ -90,6 +94,11 @@ struct KitchenShoppingView: View {
             }
             .appNavigationChrome()
         }
+        .onAppear(perform: refreshPlanNeeds)
+        .onChange(of: shopping.items) { refreshPlanNeeds() }
+        .onChange(of: kitchen.items) { refreshPlanNeeds() }
+        .onChange(of: kitchen.inventoryItems) { refreshPlanNeeds() }
+        .onChange(of: recipeStore.recipes.count) { refreshPlanNeeds() }
         .confettiCannon(trigger: $confettiTrigger, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
         .onChange(of: checkedCount) { oldValue, newValue in
             // Only celebrate when a check completes the list — `newValue > oldValue` avoids firing when deleting a checked item drops the count onto totalCount.
@@ -139,6 +148,12 @@ struct KitchenShoppingView: View {
 
     private var shoppingList: some View {
         List {
+            if !planNeeds.candidates.isEmpty {
+                PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            }
             ShoppingProgressBar(
                 checkedCount: visibleItems.filter(\.isChecked).count,
                 totalCount: visibleItems.count
@@ -162,11 +177,16 @@ struct KitchenShoppingView: View {
 
     private var emptyState: some View {
         ScrollView {
-            EmptyStateView(
-                icon: "cart.circle.fill",
-                title: "Your groceries list is empty",
-                message: "Search above to add items to your list."
-            )
+            if planNeeds.candidates.isEmpty {
+                EmptyStateView(
+                    icon: "cart.circle.fill",
+                    title: "Your groceries list is empty",
+                    message: "Search above to add items to your list."
+                )
+            } else {
+                PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds)
+                    .padding(.horizontal, AppTheme.cardHorizontalPadding)
+            }
         }
     }
 
