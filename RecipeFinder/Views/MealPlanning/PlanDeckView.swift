@@ -67,6 +67,9 @@ struct PlanDeckView: View {
                 }
             }
             Spacer(minLength: 0)
+            if let card = deck.current {
+                leaveOpen(card)
+            }
             Button(action: onClose) {
                 Image(systemName: "xmark")
                     .font(.headline)
@@ -150,40 +153,38 @@ struct PlanDeckView: View {
         }
     }
 
+    /// One centred row in the usual order (owner 2026-11-20): ✕ Not this one · ⚡ Busy (small) · ♥ Plan it (largest).
     private func controls(for card: PlanDeck.Card) -> some View {
-        VStack(spacing: AppTheme.spacing12) {
-            HStack(spacing: AppTheme.spacing12) {
-                PrimaryButton("Not this one", systemImage: "xmark", fillWidth: true, variant: .secondary, action: skip)
-                    .accessibilityIdentifier("planDeck.skip")
-                PrimaryButton("Plan it", systemImage: "heart.fill", fillWidth: true, action: plan)
-                    .accessibilityIdentifier("planDeck.plan")
-            }
-            // Side by side when they fit; stacked at large text sizes.
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: AppTheme.spacing16) { busyToggle; leaveOpen(card) }
-                VStack(spacing: AppTheme.spacing8) { busyToggle; leaveOpen(card) }
-            }
+        HStack(alignment: .top, spacing: AppTheme.spacing24) {
+            DeckControl(title: "Not this one", systemImage: "xmark", diameter: 64, style: .secondary, action: skip)
+                .accessibilityIdentifier("planDeck.skip")
+            busyToggle
+            DeckControl(title: "Plan it", systemImage: "heart.fill", diameter: 76, style: .primary, action: plan)
+                .accessibilityIdentifier("planDeck.plan")
         }
+        .frame(maxWidth: .infinity)
     }
 
+    /// Secondary, so it sits in the header: leaves this night empty and moves on.
     private func leaveOpen(_ card: PlanDeck.Card) -> some View {
         Button {
             HapticManager.shared.light()
             send(.leading) { $0.skipNight() }
         } label: {
-            Text("Leave \(card.day.formatted(.dateTime.weekday(.wide))) open")
+            Text("Skip \(card.day.formatted(.dateTime.weekday(.abbreviated)))")
                 .font(.subheadline.weight(.semibold))
                 .adaptiveSecondaryForeground()
                 .frame(minHeight: 44)
         }
+        .accessibilityLabel("Leave \(card.day.formatted(.dateTime.weekday(.wide))) open")
         .accessibilityIdentifier("planDeck.skipNight")
     }
 
     /// Busy night: the deck deals quick dishes for this night. Accent-filled while on, so the cook sees it's marked.
     private var busyToggle: some View {
         let busy = deck.isCurrentNightBusy
-        return PrimaryButton("Busy night", systemImage: busy ? "bolt.fill" : "bolt",
-                             variant: busy ? .primary : .secondary) {
+        return DeckControl(title: "Busy night", systemImage: busy ? "bolt.fill" : "bolt", diameter: 52,
+                           style: busy ? .primary : .secondary) {
             toggleBusy()
         }
         .accessibilityValue(busy ? "On" : "Off")
@@ -255,5 +256,46 @@ struct PlanDeckView: View {
             withAnimation(.appGentle) { change(&deck) }
             drag = .zero
         }
+    }
+}
+
+/// A round deck button with its label underneath; 44pt+ at every size.
+private struct DeckControl: View {
+    enum Style { case primary, secondary }
+
+    let title: String
+    let systemImage: String
+    let diameter: CGFloat
+    let style: Style
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: AppTheme.spacing6) {
+                Image(systemName: systemImage)
+                    .font(.system(size: diameter * 0.36, weight: .bold))
+                    .foregroundStyle(style == .primary ? Color.white : AppTheme.textColor(opacity: 1))
+                    .frame(width: diameter, height: diameter)
+                    .background {
+                        if style == .primary {
+                            Circle().fill(AppTheme.accentColor)
+                        } else {
+                            Circle().fill(.clear).appCard(in: Circle())
+                        }
+                    }
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .adaptiveForegroundColor()
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(minWidth: 72)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityAddTraits(.isButton)
     }
 }
