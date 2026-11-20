@@ -46,8 +46,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Inbox 🐞: ✅ Sunday Planning denied landed 9a01bb5 (builder 2026-11-20). Leftover branch agent/sunday-nudge-denied (auto-cleanup).
 
 ## Next action
-Inbox first: 🐞 `testZZZPlanMyWeek` busy-night query (nightly red until fixed) on `agent/plan-busy-test` — change the
-test query to `descendants(matching: .any)["planDeck.busy"]`, dispatch Build & Test UI shards, land. Then Plan slice (4)
+Inbox first: 🐞 `testZZZPlanMyWeek` busy-night query — `agent/plan-busy-test` (89fb7a4) pushed, Build & Test
+dispatched (UI shards); when green + challenger done, fast-forward main and log. Then Plan slice (4)
 30-day memory on `agent/plan-deck-memory` (Privacy §4.2 line + two reviewers) — note CHALLENGES 2026-11-20 asks the owner
 whether to drop it for Groceries writes itself.
 
