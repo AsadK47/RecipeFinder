@@ -307,10 +307,11 @@ struct DataManagementSettingsView: View {
 
         URLSessionHTMLFetcher.clearSharedSessionData()
 
-        // Appearance settings are app-wide (global @AppStorage) — restore defaults.
-        let defaults = UserDefaults.standard
+        // Settings live under global @AppStorage keys — restore defaults (Privacy §4.3). Observers react: the root
+        // lets the screen sleep again, and the daily groceries reminder is cancelled with its switch.
         ThemeStore.shared.theme = .teal
-        defaults.set("metric", forKey: "measurementSystem")
+        LocalStore.shared.clearPreferences()
+        NotificationManager.shared.syncGroceriesReminder(isOn: false, time: "10:00")
 
         // Seed flags were cleared above, so this re-seeds the starters + bundled collection a fresh install gets and
         // refreshes the visible list (previously the list kept showing the deleted recipes).

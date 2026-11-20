@@ -129,4 +129,22 @@ final class LocalStore: @unchecked Sendable {
     /// The cook's data kept under global `@AppStorage` keys outside the namespace (renaming would lose it); Reset
     /// clears these too so nothing is left behind.
     static let unprefixedUserDataKeys: Set<String> = [RecentWebSearches.storageKey]
+
+    /// Settings and screen choices kept under global `@AppStorage` keys outside the namespace. Privacy §4.3 says
+    /// Reset clears your preferences, so Reset removes these and each screen falls back to its default. The theme
+    /// (`ThemeStore`) and the iCloud sync choice (`SyncPreference`, namespaced) are handled by Reset itself.
+    static let unprefixedPreferenceKeys: Set<String> = [
+        "appearanceMode", "preferredColorScheme", "keepScreenAwake", "measurementSystem", "webSearchEngine",
+        "timerNotifications", "shoppingListReminders", "reminderTime", "skipRecipeDeleteConfirmation",
+        "groceriesStoreFilter", GroceriesMode.modeKey, RecipeBrowse.modeKey, "today.eatAt",
+        "hasTickedIngredient", "ingredientPulseCount", "hasSeenAddRecipeTip"
+    ]
+
+    /// Removes `unprefixedPreferenceKeys` (Reset). Separate from `clearAll` so clearing the cook's data never
+    /// touches settings by accident.
+    func clearPreferences() {
+        for key in Self.unprefixedPreferenceKeys {
+            userDefaults.removeObject(forKey: key)
+        }
+    }
 }
