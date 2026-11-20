@@ -56,7 +56,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (+confirm, `pastPlans`), tap = open recipe (`OpenedDinner`), weekly series stop on remove/Stop Repeating, one weekly
   reminder per series, synced twins fold per slot, reload reconciles reminders, Add Week from today, ghost meals
   removable (`MealTimeCard.plannedName`, `MealPlanModel.recipe(in:)`), midnight rollover. UI red needs a
-  workflow_dispatch run (push runs unit tests only).
+  workflow_dispatch run (push runs unit tests only). **Red seen** in run 44793854832: all 11 new unit tests failed
+  on unfixed code (ClearPastPlans ×5, PlanBugHunt ×6). Fixes pushed d61b50c.
 
 ## Next action
 *Groceries writes itself* slice 5 on `agent/groceries-delete-dupes`: delete the duplicated Kitchen/Shopping views +
