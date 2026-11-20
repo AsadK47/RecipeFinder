@@ -156,23 +156,16 @@ import Foundation
 
     // MARK: - clearPreferences (Reset, Privacy §4.3)
 
-    @Test func clearPreferences_restoresEverySettingToItsDefault() throws {
-        let defaults = try freshDefaults()
-        let store = LocalStore(userDefaults: defaults)
-        defaults.set(true, forKey: "keepScreenAwake")
-        defaults.set(2, forKey: "preferredColorScheme")
-        defaults.set("imperial", forKey: "measurementSystem")
-        defaults.set(true, forKey: "shoppingListReminders")
-        defaults.set("07:30", forKey: "reminderTime")
-        defaults.set(true, forKey: "skipRecipeDeleteConfirmation")
-        defaults.set("Tesco", forKey: "groceriesStoreFilter")
-
-        store.clearPreferences()
-
-        for key in ["keepScreenAwake", "preferredColorScheme", "measurementSystem", "shoppingListReminders",
-                    "reminderTime", "skipRecipeDeleteConfirmation", "groceriesStoreFilter"] {
-            #expect(defaults.object(forKey: key) == nil, "\(key) survived Reset")
-        }
+    /// Pinned literally so dropping a key from the list fails here. Kept through Reset on purpose (screen state, not
+    /// preferences): `today.handledClipboardChange` (stops one clipboard link being offered twice) and
+    /// `recipes.discoverRequests` (a counter that only triggers a scroll).
+    @Test func clearPreferences_listsEverySetting() {
+        #expect(LocalStore.unprefixedPreferenceKeys == [
+            "appearanceMode", "preferredColorScheme", "keepScreenAwake", "measurementSystem", "webSearchEngine",
+            "timerNotifications", "shoppingListReminders", "reminderTime", "skipRecipeDeleteConfirmation",
+            "groceriesStoreFilter", "groceries.mode", "recipes.mode", "today.eatAt",
+            "hasTickedIngredient", "ingredientPulseCount", "hasSeenAddRecipeTip"
+        ])
     }
 
     @Test func clearPreferences_coversEveryListedKey_andLeavesTheRest() throws {
