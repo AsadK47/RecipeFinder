@@ -84,6 +84,20 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
             ?? recipes.first { $0.name.caseInsensitiveCompare(recipeName) == .orderedSame }
     }
 
+    /// Cooked on its day: marked when Made it is recorded (`markCooked`), or its recipe's last cook fell on that day
+    /// (cooks recorded before plans were marked).
+    func wasCooked(in recipes: [RecipeModel], calendar: Calendar = .current) -> Bool {
+        if isCompleted { return true }
+        guard let cookedAt = recipe(in: recipes)?.lastCookedAt else { return false }
+        return calendar.isDate(cookedAt, inSameDayAs: date)
+    }
+
+    /// Plan shows a past day only as what was cooked (owner 2026-11-20: "don't show expired plans unless cooked");
+    /// today and later always show.
+    func isShown(now: Date, recipes: [RecipeModel], calendar: Calendar = .current) -> Bool {
+        date >= calendar.startOfDay(for: now) || wasCooked(in: recipes, calendar: calendar)
+    }
+
     var isPast: Bool {
         date < Date()
     }

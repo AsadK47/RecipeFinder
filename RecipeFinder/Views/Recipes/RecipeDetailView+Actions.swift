@@ -69,6 +69,7 @@ extension RecipeDetailView {
         recipe = cooked
         Task { await PersistenceController.shared.recordCook(withId: recipe.id) }
         recipeStore.sync(recipe)
+        mealPlanning.markCooked(recipeID: recipe.id, on: Date())
 
         // Cooking is the rewarded action: the Made it sheet plays the haptic and confetti for every cook, once it's
         // on screen — fired here, they landed behind cooking mode's closing cover.

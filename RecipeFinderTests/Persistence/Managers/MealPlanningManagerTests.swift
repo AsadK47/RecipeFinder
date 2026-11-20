@@ -613,9 +613,9 @@ struct ClearPastPlansTests {
 
     @Test func pastCountMatchesWhatClears() {
         let sut = makeManager([plan("A", on: day(-1)), plan("B", on: day(-20), .lunch), plan("C", on: day(2))])
-        #expect(sut.pastPlanCount == 2)
+        #expect(sut.pastPlanCount(keepingCookedIn: []) == 2)
         sut.clearOldMealPlans()
-        #expect(sut.pastPlanCount == 0)
+        #expect(sut.pastPlanCount(keepingCookedIn: []) == 0)
     }
 
     @Test func weeklyDinnerKeepsOnlyItsNewestCopy() {
@@ -634,6 +634,14 @@ struct ClearPastPlansTests {
         ])
         sut.clearOldMealPlans()
         #expect(sut.mealPlans.map(\.date) == [day(0)])
+    }
+
+    @Test func cookedPastDinnersStay() {
+        var cooked = plan("Cooked", on: day(-2))
+        cooked.isCompleted = true
+        let sut = makeManager([cooked, plan("Skipped", on: day(-2), .lunch)])
+        sut.clearPastMealPlans(keepingCookedIn: [])
+        #expect(sut.mealPlans.map(\.recipeName) == ["Cooked"])
     }
 
     @Test func clearedPlansStayGoneAfterReload() {
@@ -750,5 +758,15 @@ struct PlanBugHuntTests {
         sut.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: day(1), mealTime: .lunch, servings: 2))
         let summary = sut.weekShoppingSummary(forWeekStarting: day(-1), recipes: [recipe], from: Date())
         #expect(summary.mealsCovered == 1)
+    }
+
+    @Test func madeItMarksThatDaysPlanCooked() {
+        let sut = makeManager()
+        let recipeID = UUID()
+        sut.addMealPlan(MealPlanModel(recipeId: recipeID, recipeName: "Dal", date: day(0), mealTime: .dinner))
+        sut.addMealPlan(MealPlanModel(recipeId: recipeID, recipeName: "Dal", date: day(2), mealTime: .dinner))
+        sut.markCooked(recipeID: recipeID, on: Date())
+        #expect(sut.mealPlan(for: day(0), mealTime: .dinner)?.isCompleted == true)
+        #expect(sut.mealPlan(for: day(2), mealTime: .dinner)?.isCompleted == false)
     }
 }

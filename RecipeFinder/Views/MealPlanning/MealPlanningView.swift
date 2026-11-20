@@ -134,7 +134,7 @@ struct MealPlanningView: View {
             Button("Clear Past Plans", role: .destructive, action: clearPastPlans)
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Takes them off your planner. Dishes you've cooked keep their history.")
+            Text("Takes plans you didn't cook off your planner. Dinners you cooked stay in your week.")
         }
         .toast($weekShoppingFeedback)
         .onAppear {
@@ -221,7 +221,7 @@ struct MealPlanningView: View {
             selectedDate: selectedDate,
             monthYearString: monthYearString,
             mealTimesFor: { date in
-                mealPlanningManager.mealPlans(for: date).map { $0.mealTime }
+                shownPlans(for: date).map { $0.mealTime }
             },
             onSelectDate: { date in
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -334,7 +334,7 @@ struct MealPlanningView: View {
 
     private var dayContent: MealPlanDayContent {
         MealPlanDayContent.make(hasSelectedMeals: !selectedMealTimes.isEmpty,
-                                hasPlans: mealPlanningManager.hasMealPlans(for: selectedDate),
+                                hasPlans: !shownPlans(for: selectedDate).isEmpty,
                                 date: selectedDate, now: Date())
     }
 
