@@ -997,14 +997,17 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         }
 
         // Busy night: marks this night (quick dishes) and stays on it.
-        let busy = app.buttons["planDeck.busy"]
+        // `.isToggle` surfaces it as a switch, not a button, so query any element type.
+        let busy = app.descendants(matching: .any).matching(identifier: "planDeck.busy").firstMatch
         if card.exists {
             let busyNight = night.label
             checkpoint(app, "busy night")
             XCTAssertTrue(busy.exists, "The deck should offer Busy night.")
             busy.tap()
             settle(0.8)
-            XCTAssertEqual(busy.value as? String, "On", "Busy night should show it's on.")
+            // A switch may report its value as "1" rather than the accessibilityValue text.
+            let busyValue = busy.value as? String
+            XCTAssertTrue(busyValue == "On" || busyValue == "1", "Busy night should show it's on (value \(busyValue ?? "nil")).")
             XCTAssertEqual(night.label, busyNight, "Busy night should stay on the same night.")
             XCTAssertTrue(card.label.contains("busy night"), "The card should say it's picked for a busy night.")
             snap(app, "56-plan-deck-busy")
