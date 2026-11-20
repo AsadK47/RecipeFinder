@@ -52,13 +52,15 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   ✅ Slice 3 aisle order landed 9dda50b (builder 2026-11-20). Leftover branch agent/groceries-aisle-order (auto-cleanup).
 
 - Inbox 🟡 **Keep screen awake**: ✅ landed 7e70ceb (builder 2026-11-20). Leftover branch agent/keep-screen-awake (auto-cleanup).
-- 🐞 **Meal planning is buggy** (owner 2026-11-20): branch `agent/plan-bugs`. Red tests 39486e5, 6a612dd, 5c6f3b1;
+- 🐞 **Meal planning is buggy** (owner 2026-11-20): branch `agent/plan-bugs-2`. Red tests 39486e5, 6a612dd, 5c6f3b1;
   fixes in the working tree / next commit: deck reachable after a full week (`PlanDeck.weekToPlan`), Clear Past Plans
   (+confirm, `pastPlans`), tap = open recipe (`OpenedDinner`), weekly series stop on remove/Stop Repeating, one weekly
   reminder per series, synced twins fold per slot, reload reconciles reminders, Add Week from today, ghost meals
   removable (`MealTimeCard.plannedName`, `MealPlanModel.recipe(in:)`), midnight rollover. UI red needs a
   workflow_dispatch run (push runs unit tests only). **Red seen** in run 44793854832: all 11 new unit tests failed
-  on unfixed code (ClearPastPlans ×5, PlanBugHunt ×6). Fixes pushed d61b50c.
+  on unfixed code (ClearPastPlans ×5, PlanBugHunt ×6). Fixes pushed d61b50c. UI red seen in run 44799638976 on
+  6a612dd (agent/plan-bugs-ui-red): testZZZPlanMyWeek (tap → cooking) and testZZZPlanMyWeekAgain failed. Rebased on
+  main → continued on `agent/plan-bugs-2` (force-push blocked).
 
 ## Next action
 Inbox first: 🟡 Shop mode scenePhase re-hold (small); 🟡 Reset keeps `@AppStorage` keys touches Privacy §4.3 → check wording before coding. Then:
