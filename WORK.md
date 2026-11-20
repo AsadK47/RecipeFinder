@@ -51,12 +51,21 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   ✅ Slice 2 shop mode landed 1505253 (builder 2026-11-20). Leftover branch agent/groceries-shop-mode (auto-cleanup).
 
 ## Next action
-*Groceries writes itself* slice 3 (aisle order) ⏸ Needs owner (new on-device data → Privacy). Next run: slice 5 on
-`agent/groceries-delete-dupes` — delete duplicated Kitchen/Shopping views + Plan's Add Week button (net lines down);
-do slice 3 once the owner answers.
+*Groceries writes itself* slice 3 on `agent/groceries-aisle-order` (74025007): wait for Build & Test, act on the two
+reviews, Screenshots look at 59-groceries-shop, land, Log + CHANGELOG + move Decisions. Website session: add the
+§4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`. Then slice 5.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Groceries writes itself slice 3 (aisle order):** owner OK 2026-11-20 for the new on-device data (Privacy §4.2/4.3).
+  Learned per shop ("" = no shop chosen), not globally — shops differ; a shop with nothing learned uses the usual
+  order (no fallback to the any-shop order: YAGNI). First tick per aisle counts; a one-aisle trip learns nothing.
+  Places on 0…1, moving 40% toward each trip, so one odd trip can't flip a habit, two do. Unlearned aisles keep
+  their usual 0…1 place so they slot in. Learned on leaving shop mode (Done or ✕), never mid-trip, so rows don't
+  reshuffle under the thumb. Stored in LocalStore (`rf.` → Reset clears; never synced). Store rename/delete carries
+  / forgets it. **Pre-mortem:** (1) order never applied → `tripFollowsLearnedOrder`, `learnedOrderPersists`;
+  (2) Reset leaves it → `resetForgets`; (3) one odd trip scrambles it → `oneOddTripDoesNotFlip`. View wiring
+  (onDisappear → learn) is thin glue, no UI test (a stable assertion needs categories the UI doesn't show).
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
