@@ -14,6 +14,8 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func hasMealPlans(for date: Date) -> Bool
     func mealPlansForWeek(starting startDate: Date) -> WeeklyMealPlan
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary
+    /// Re-reads the Sunday-nudge switch and plans, then schedules or cancels the one pending nudge.
+    func syncPlanNudge()
 }
 
 private struct MealPlanningManagingKey: EnvironmentKey {
@@ -42,6 +44,8 @@ final class MealPlanningManager: MealPlanningManaging {
     @ObservationIgnored private let mirror: MirroredSnapshot<MealPlanModel>
     @ObservationIgnored private let badgeManager: BadgeManager
     @ObservationIgnored private let reminders: any MealReminderScheduling
+    @ObservationIgnored private let planNudges: any PlanNudgeScheduling
+    @ObservationIgnored private let storage: LocalStore
 
     static let blobKey = "mealPlansStorage"
 
@@ -51,6 +55,8 @@ final class MealPlanningManager: MealPlanningManaging {
         )
         self.badgeManager = .shared
         self.reminders = NotificationManager.shared
+        self.planNudges = NotificationManager.shared
+        self.storage = .shared
         loadMealPlans()
     }
 
@@ -58,11 +64,14 @@ final class MealPlanningManager: MealPlanningManaging {
         storage: LocalStore,
         mealPlanStore: any MealPlanStoring,
         badgeManager: BadgeManager = .shared,
-        reminders: any MealReminderScheduling = NotificationManager.shared
+        reminders: any MealReminderScheduling = NotificationManager.shared,
+        planNudges: any PlanNudgeScheduling = NotificationManager.shared
     ) {
         self.mirror = MealPlanningManager.makeMirror(storage: storage, store: mealPlanStore)
         self.badgeManager = badgeManager
         self.reminders = reminders
+        self.planNudges = planNudges
+        self.storage = storage
         loadMealPlans()
     }
 
@@ -361,11 +370,23 @@ final class MealPlanningManager: MealPlanningManaging {
         return calendar.date(bySettingHour: t.hour ?? 0, minute: t.minute ?? 0, second: 0, of: day)
     }
 
+    // MARK: - Sunday planning nudge
+
+    /// Runs after every load and save, so planning (or a synced plan from another device) moves the nudge on.
+    func syncPlanNudge() {
+        planNudges.cancelNotification(identifier: SundayPlanNudge.identifier)
+        guard storage.bool(forKey: SundayPlanNudge.settingKey),
+              let fire = SundayPlanNudge.fireDate(now: Date(), plans: mealPlans) else { return }
+        planNudges.schedulePlanNudge(at: fire, identifier: SundayPlanNudge.identifier)
+    }
+
     private func saveMealPlans() {
         mirror.save(mealPlans)
+        syncPlanNudge()
     }
 
     private func loadMealPlans() {
         mealPlans = mirror.load()
+        syncPlanNudge()
     }
 }

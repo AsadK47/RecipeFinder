@@ -18,3 +18,12 @@ protocol MealReminderScheduling: AnyObject {
 }
 
 extension NotificationManager: MealReminderScheduling {}
+
+/// Seam for the opt-in Sunday planning nudge (`SundayPlanNudge`), so `MealPlanningManager` can be asserted in tests.
+protocol PlanNudgeScheduling: AnyObject {
+    /// Schedules (or replaces, when the identifier is reused) the one-shot nudge at `date`.
+    func schedulePlanNudge(at date: Date, identifier: String)
+    func cancelNotification(identifier: String)
+}
+
+extension NotificationManager: PlanNudgeScheduling {}

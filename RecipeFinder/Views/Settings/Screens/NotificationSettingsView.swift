@@ -6,6 +6,9 @@ struct NotificationSettingsView: View {
     @AppStorage("timerNotifications") private var timerNotifications = true
     @AppStorage("shoppingListReminders") private var shoppingListReminders = false
     @AppStorage("reminderTime") private var reminderTimeString = "10:00"
+    /// Namespaced like LocalStore's keys, so `MealPlanningManager` reads it and Reset turns it off.
+    @AppStorage(LocalStore.keyPrefix + SundayPlanNudge.settingKey) private var sundayPlanNudge = false
+    @Environment(\.mealPlanning) private var mealPlanning
 
     @State private var showingTimePicker = false
     @State private var notificationPermission: UNAuthorizationStatus = .notDetermined
@@ -50,6 +53,17 @@ struct NotificationSettingsView: View {
                             subtitle: "Remind me to pick up groceries",
                             isOn: $shoppingListReminders
                         )
+
+                        SettingsRowDivider()
+
+                        SettingsToggleRow(
+                            icon: "calendar.badge.clock",
+                            iconColor: .purple,
+                            title: "Sunday Planning",
+                            subtitle: "A Sunday-evening nudge when next week's dinners are still open",
+                            isOn: $sundayPlanNudge
+                        )
+                        .accessibilityIdentifier("settings.sundayPlanNudge")
                     }
                 }
             }
@@ -73,6 +87,10 @@ struct NotificationSettingsView: View {
         }
         .onChange(of: shoppingListReminders) { _, _ in syncGroceriesReminder() }
         .onChange(of: reminderTimeString) { _, _ in syncGroceriesReminder() }
+        .onChange(of: sundayPlanNudge) { _, isOn in
+            if isOn { NotificationManager.shared.requestPermission { _ in } }
+            mealPlanning.syncPlanNudge()
+        }
     }
 
     private var permissionBanner: some View {

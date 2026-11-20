@@ -12,6 +12,8 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.badges) private var badgeManager
     @Environment(\.madeItPresenter) private var madeItPresenter
+    @Environment(\.mealPlanning) private var mealPlanning
+    @Environment(\.scenePhase) private var scenePhase
     /// Set by "View all badges"; the Me tab opens once the badge reveal has fully closed.
     @State private var openMeAfterBadge = false
     /// Asks Me to open Profile, where the trophy shelf lives; Me clears it once it has.
@@ -47,6 +49,10 @@ struct ContentView: View {
             if store.recipes.isEmpty {
                 store.load()
             }
+        }
+        // The Sunday nudge is one-shot: coming back re-arms it for the next empty week (after the last one fired).
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { mealPlanning.syncPlanNudge() }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openToday)) { select(AppTab.destination(for: $0.name)) }
         .onReceive(NotificationCenter.default.publisher(for: .openRecipes)) {

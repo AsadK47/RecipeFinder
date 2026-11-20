@@ -198,11 +198,13 @@
 		F36AED7D304346D400935A3C /* MealPlanCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED7C304346D400935A3C /* MealPlanCalendar.swift */; };
 		57A4DFFD68742C7D6ABD0DFC /* PlanDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F330DA5AB339890497B3D39 /* PlanDeck.swift */; };
 		064E05419FC988855C41F492 /* WeekDinners.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9993621BB9B9FDEC5C4A652 /* WeekDinners.swift */; };
+		A9D2F1A5433AB3B54FCC13BE /* SundayPlanNudge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */; };
 		0E0FA5F1E0AF65426E294F2D /* MealPlanDayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */; };
 		7B1235F49C0CEA88C7EF1600 /* WeekGroceryPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */; };
 		F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */; };
 		0C0EA7D8FD4FEDF95DD7B69B /* PlanDeckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */; };
 		84042A9626ADFEDEEA2F48E6 /* WeekDinnersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD2E38E056C45A712145FE0 /* WeekDinnersTests.swift */; };
+		E75BC52EC57ED724A6299E74 /* SundayPlanNudgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */; };
 		5B6964EE19E6FD52230E763C /* MealPlanDayContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */; };
 		B05380AF12499D9BF681C736 /* WeekGroceryPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D56B9B410B5B753F50CA04 /* WeekGroceryPlanTests.swift */; };
 		F3AD2EBE3061940600274E33 /* View+AppCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EBD3061940600274E33 /* View+AppCard.swift */; };
@@ -820,11 +822,13 @@
 		F36AED7C304346D400935A3C /* MealPlanCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanCalendar.swift; sourceTree = "<group>"; };
 		3F330DA5AB339890497B3D39 /* PlanDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeck.swift; sourceTree = "<group>"; };
 		A9993621BB9B9FDEC5C4A652 /* WeekDinners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDinners.swift; sourceTree = "<group>"; };
+		D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayPlanNudge.swift; sourceTree = "<group>"; };
 		1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanDayContent.swift; sourceTree = "<group>"; };
 		CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGroceryPlan.swift; sourceTree = "<group>"; };
 		F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanCalendarTests.swift; sourceTree = "<group>"; };
 		4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeckTests.swift; sourceTree = "<group>"; };
 		2AD2E38E056C45A712145FE0 /* WeekDinnersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDinnersTests.swift; sourceTree = "<group>"; };
+		3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayPlanNudgeTests.swift; sourceTree = "<group>"; };
 		ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanDayContentTests.swift; sourceTree = "<group>"; };
 		90D56B9B410B5B753F50CA04 /* WeekGroceryPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGroceryPlanTests.swift; sourceTree = "<group>"; };
 		F3AD2EBA3061884B00274E33 /* RecipeModel 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 11.xcdatamodel"; sourceTree = "<group>"; };
@@ -1445,6 +1449,7 @@
 				F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */,
 				4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */,
 				2AD2E38E056C45A712145FE0 /* WeekDinnersTests.swift */,
+				3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */,
 				ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */,
 				90D56B9B410B5B753F50CA04 /* WeekGroceryPlanTests.swift */,
 				F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */,
@@ -2179,6 +2184,7 @@
 				F36AED7C304346D400935A3C /* MealPlanCalendar.swift */,
 				3F330DA5AB339890497B3D39 /* PlanDeck.swift */,
 				A9993621BB9B9FDEC5C4A652 /* WeekDinners.swift */,
+				D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */,
 				1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */,
 				CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */,
 			);
@@ -3021,6 +3027,7 @@
 				F36AED7D304346D400935A3C /* MealPlanCalendar.swift in Sources */,
 				57A4DFFD68742C7D6ABD0DFC /* PlanDeck.swift in Sources */,
 				064E05419FC988855C41F492 /* WeekDinners.swift in Sources */,
+				A9D2F1A5433AB3B54FCC13BE /* SundayPlanNudge.swift in Sources */,
 				0E0FA5F1E0AF65426E294F2D /* MealPlanDayContent.swift in Sources */,
 				7B1235F49C0CEA88C7EF1600 /* WeekGroceryPlan.swift in Sources */,
 				F3AEF8DB309B80FC00A9C5E0 /* ThemeStore.swift in Sources */,
@@ -3169,6 +3176,7 @@
 				F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */,
 				0C0EA7D8FD4FEDF95DD7B69B /* PlanDeckTests.swift in Sources */,
 				84042A9626ADFEDEEA2F48E6 /* WeekDinnersTests.swift in Sources */,
+				E75BC52EC57ED724A6299E74 /* SundayPlanNudgeTests.swift in Sources */,
 				5B6964EE19E6FD52230E763C /* MealPlanDayContentTests.swift in Sources */,
 				B05380AF12499D9BF681C736 /* WeekGroceryPlanTests.swift in Sources */,
 				F3AEF8A7309A3B0000A9C5E0 /* BundledRecipeCatalogTests.swift in Sources */,

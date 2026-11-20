@@ -11,6 +11,7 @@ enum NotificationKind: String {
     case streak
     case dailyReminder = "daily-reminder"
     case groceriesReminder = "groceries-reminder"
+    case planNudge = "plan-nudge"
 }
 
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
@@ -187,6 +188,19 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         addAskingPermissionFirst(request, failureLabel: "streak reminder")
     }
 
+    /// The opt-in Sunday planning nudge (`SundayPlanNudge`); a tap opens Plan.
+    func schedulePlanNudge(at date: Date, identifier: String) {
+        let content = UNMutableNotificationContent()
+        content.title = SundayPlanNudge.title
+        content.body = SundayPlanNudge.body
+        content.sound = .default
+        content.userInfo = ["type": NotificationKind.planNudge.rawValue]
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: Self.oneShotComponents(for: date), repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        add(request, failureLabel: "Sunday plan nudge")
+    }
+
     @discardableResult
     func scheduleDailyCookingReminder(
         hour: Int,
@@ -358,7 +372,7 @@ extension NotificationManager {
                 userInfo: userInfo
             )
             
-        case .meal:
+        case .meal, .planNudge:
             NotificationCenter.default.post(
                 name: .openMealPlan,
                 object: nil,

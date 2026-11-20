@@ -1,0 +1,158 @@
+import Testing
+import Foundation
+@testable import RecipeFinder
+
+/// The opt-in Sunday planning nudge: when it fires (`SundayPlanNudge.fireDate`) and how `MealPlanningManager` keeps
+/// the one pending notification in step with the switch and the plans. Fixed UTC calendar, week of Mon 16 Nov 2026.
+@Suite struct SundayPlanNudgeTests {
+
+    private static func calendar(_ zone: String) -> Calendar {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(identifier: zone) ?? .current
+        return cal
+    }
+
+    private let cal = SundayPlanNudgeTests.calendar("UTC")
+
+    /// `day` November 2026 at `hour`:`minute` (UTC). 22 and 29 Nov are Sundays.
+    private func nov(_ day: Int, _ hour: Int = 0, _ minute: Int = 0) -> Date {
+        cal.date(from: DateComponents(year: 2026, month: 11, day: day, hour: hour, minute: minute)) ?? Date()
+    }
+
+    private func dinner(on date: Date, _ mealTime: MealTime = .dinner, recurring: Bool = false) -> MealPlanModel {
+        MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: date, mealTime: mealTime, isRecurring: recurring)
+    }
+
+    @Test func emptyPlanFiresThisComingSundayEvening() {
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: [], calendar: cal) == nov(22, 18))
+    }
+
+    @Test func sundayBeforeSixFiresTheSameEvening() {
+        #expect(SundayPlanNudge.fireDate(now: nov(22, 17, 59), plans: [], calendar: cal) == nov(22, 18))
+    }
+
+    @Test func sundayAfterSixWaitsForNextSunday() {
+        #expect(SundayPlanNudge.fireDate(now: nov(22, 18), plans: [], calendar: cal) == nov(29, 18))
+    }
+
+    @Test func aDinnerNextWeekMovesTheNudgeToTheFollowingSunday() {
+        let plans = [dinner(on: nov(25, 19))]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(29, 18))
+    }
+
+    @Test(arguments: [MealTime.breakfast, .lunch, .snack])
+    func otherMealsDoNotCountAsPlanned(_ mealTime: MealTime) {
+        let plans = [dinner(on: nov(25), mealTime)]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(22, 18))
+    }
+
+    @Test func sundaysOwnDinnerIsNotNextWeek() {
+        let plans = [dinner(on: nov(22, 19))]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(22, 18))
+    }
+
+    @Test func nextWeeksSundayDinnerCountsForNextWeek() {
+        let plans = [dinner(on: nov(29, 19))]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(29, 18))
+    }
+
+    @Test func aRepeatingDinnerMeansNoNudge() {
+        let plans = [dinner(on: nov(10), recurring: true)]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nil)
+    }
+
+    @Test func aRepeatingDinnerStartingLaterCoversOnlyFromItsWeek() {
+        let plans = [dinner(on: nov(30), recurring: true)]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(22, 18))
+    }
+
+    @Test func skipsPlannedWeeksToTheFirstEmptyOne() {
+        let plans = [dinner(on: nov(24)), dinner(on: nov(30))]
+        let sixthOfDecember = cal.date(from: DateComponents(year: 2026, month: 12, day: 6, hour: 18))
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == sixthOfDecember)
+    }
+
+    @Test func everyWeekPlannedAheadMeansNoNudge() {
+        let plans = (0..<SundayPlanNudge.lookAheadWeeks).map { dinner(on: nov(23).addingTimeInterval(Double($0) * 7 * 86_400)) }
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nil)
+    }
+
+    @Test func firesAtSixLocalTimeOnTheClockChangeSunday() throws {
+        let london = Self.calendar("Europe/London")
+        let saturday = try #require(london.date(from: DateComponents(year: 2026, month: 10, day: 24, hour: 12)))
+        let fire = try #require(SundayPlanNudge.fireDate(now: saturday, plans: [], calendar: london))
+        let parts = london.dateComponents([.month, .day, .hour, .minute], from: fire)
+        #expect(parts == DateComponents(month: 10, day: 25, hour: 18, minute: 0))
+    }
+}
+
+/// Records what `MealPlanningManager` asks of the nudge seam.
+final class FakePlanNudgeScheduler: PlanNudgeScheduling {
+    private(set) var scheduled: [(date: Date, id: String)] = []
+    private(set) var cancelled: [String] = []
+
+    func schedulePlanNudge(at date: Date, identifier: String) { scheduled.append((date, identifier)) }
+    func cancelNotification(identifier: String) { cancelled.append(identifier) }
+}
+
+@MainActor
+@Suite struct SundayPlanNudgeSchedulingTests {
+    private let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
+    private let nudges = FakePlanNudgeScheduler()
+
+    private func makeManager() -> MealPlanningManager {
+        MealPlanningManager(
+            storage: storage, mealPlanStore: InMemoryMealPlanStore(),
+            reminders: FakeMealReminderScheduler(), planNudges: nudges
+        )
+    }
+
+    @Test func switchedOffSchedulesNothing() {
+        let sut = makeManager()
+        sut.syncPlanNudge()
+        #expect(nudges.scheduled.isEmpty)
+        #expect(nudges.cancelled.last == SundayPlanNudge.identifier)
+    }
+
+    @Test func switchedOnWithAnEmptyPlanSchedulesASundayEvening() throws {
+        storage.set(true, forKey: SundayPlanNudge.settingKey)
+        let sut = makeManager()
+        sut.syncPlanNudge()
+        let last = try #require(nudges.scheduled.last)
+        #expect(last.id == SundayPlanNudge.identifier)
+        #expect(last.date > Date())
+        #expect(Calendar.current.component(.weekday, from: last.date) == 1)
+        #expect(Calendar.current.component(.hour, from: last.date) == SundayPlanNudge.hour)
+    }
+
+    @Test func switchingOffCancelsThePendingNudge() {
+        storage.set(true, forKey: SundayPlanNudge.settingKey)
+        let sut = makeManager()
+        sut.syncPlanNudge()
+        let scheduledBefore = nudges.scheduled.count
+        storage.set(false, forKey: SundayPlanNudge.settingKey)
+        sut.syncPlanNudge()
+        #expect(nudges.scheduled.count == scheduledBefore)
+        #expect(nudges.cancelled.last == SundayPlanNudge.identifier)
+    }
+
+    @Test func planningADinnerResyncsTheNudge() {
+        storage.set(true, forKey: SundayPlanNudge.settingKey)
+        let sut = makeManager()
+        let before = nudges.cancelled.count
+        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .dinner))
+        #expect(nudges.cancelled.count > before)
+    }
+
+    @Test func aRepeatingDinnerClearsThePendingNudge() {
+        storage.set(true, forKey: SundayPlanNudge.settingKey)
+        let sut = makeManager()
+        sut.addMealPlan(MealPlanModel(
+            recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .dinner, isRecurring: true
+        ))
+        let scheduledBefore = nudges.scheduled.count
+        sut.syncPlanNudge()
+        #expect(nudges.scheduled.count == scheduledBefore)
+        #expect(nudges.cancelled.last == SundayPlanNudge.identifier)
+    }
+}

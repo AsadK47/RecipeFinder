@@ -42,10 +42,21 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Open: `tonight` is fixed at deck open (midnight-open deck plans yesterday) — fix in the rework. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
 
 ## Next action
-Plan slice 3 waits on the owner (Needs owner "Plan deck: what does swipe up do?"). Meanwhile take Plan slice (5)
-opt-in Sunday nudge — needs no answer — on a new branch `agent/plan-sunday-nudge`.
+Plan slice 5 Sunday nudge on `agent/plan-sunday-nudge`: wait for Build & Test green, run Screenshots (Settings ›
+Notifications), one reviewer + challenger, then land. Slice 3 still waits on the owner.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Plan Sunday nudge (slice 5):** opt-in switch in Settings › Notifications ("Sunday Planning", off by default),
+  stored as LocalStore key `rf.sundayPlanNudge` so the manager reads it through its injected store and Reset turns it
+  off. One one-shot notification at Sunday 18:00 when the following Mon–Sun has no *dinner* (breakfast/lunch don't
+  count; a repeating dinner covers every week from its date). Looks 4 Sundays ahead so a planned next week doesn't
+  drop the nudge for the week after. Re-synced on every plan load/save and when the app becomes active (one-shot, so
+  it re-arms after firing). Tap opens Plan. Rejected: a repeating weekly trigger (can't skip planned weeks). Local
+  notification + on-device bool → Privacy §6.2 ("meal reminders… only with your permission") already covers it.
+  **Pre-mortem:** (1) nudges a cook whose week is planned → `aDinnerNextWeekMoves…`, `aRepeatingDinnerMeansNoNudge`;
+  (2) fires at the wrong hour across the October clock change → `firesAtSixLocalTimeOnTheClockChangeSunday`;
+  (3) keeps firing after switching off / Reset → `switchingOffCancelsThePendingNudge` (Reset clears the rf. key, then
+  `removeAllMealPlans` re-syncs → cancel).
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
