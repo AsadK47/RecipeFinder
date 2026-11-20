@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// "Plan my week": one big card per empty dinner. Swipe right or tap Plan it to plan the dish for that night; swipe
-/// left or tap Not this one for another dish; Busy night deals quick dishes for that night. Each pick is saved as it's made, so closing part-way keeps them.
+/// left or tap Not this one for another dish; Busy night deals quick dishes for that night. Each pick is saved as it's
+/// made, so closing part-way keeps them.
 /// Shown over the planner (not as a cover) so a badge earned by the first plan can still present on top.
 struct PlanDeckView: View {
     @Binding var deck: PlanDeck
@@ -9,8 +10,8 @@ struct PlanDeckView: View {
     let onClose: () -> Void
 
     @State private var drag: CGSize = .zero
-    /// Which way the last card left, so it flies off on the side it was sent.
-    @State private var exitEdge: Edge = .trailing
+    /// Which way the last card left, so it flies off on the side it was sent; nil (a busy-night re-deal) fades it.
+    @State private var exitEdge: Edge? = .trailing
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -125,7 +126,7 @@ struct PlanDeckView: View {
         .accessibilityAction(named: "Plan it") { plan() }
         .accessibilityAction(named: "Not this one") { skip() }
         .accessibilityAction(named: deck.isCurrentNightBusy ? "Not a busy night" : "Busy night") {
-            deck.setBusy(!deck.isCurrentNightBusy)
+            toggleBusy()
         }
     }
 
@@ -181,7 +182,7 @@ struct PlanDeckView: View {
         let busy = deck.isCurrentNightBusy
         return PrimaryButton("Busy night", systemImage: busy ? "bolt.fill" : "bolt",
                              variant: busy ? .primary : .secondary) {
-            withAnimation(.appGentle) { deck.setBusy(!busy) }
+            toggleBusy()
         }
         .accessibilityValue(busy ? "On" : "Off")
         .accessibilityAddTraits(.isToggle)
@@ -217,7 +218,7 @@ struct PlanDeckView: View {
         reduceMotion
             ? .opacity
             : .asymmetric(insertion: .scale(scale: 0.92).combined(with: .opacity),
-                          removal: .move(edge: exitEdge).combined(with: .opacity))
+                          removal: exitEdge.map { AnyTransition.move(edge: $0).combined(with: .opacity) } ?? .opacity)
     }
 
     private func plan() {
@@ -232,10 +233,15 @@ struct PlanDeckView: View {
         send(.leading) { $0.skip() }
     }
 
+    /// A re-deal for the same night fades, so it never looks like the dish was planned or passed on.
+    private func toggleBusy() {
+        send(nil) { $0.setBusy(!$0.isCurrentNightBusy) }
+    }
+
     /// Sets which way the card leaves, then changes the deck on the next main-actor turn: the leaving card takes its
     /// transition from its last render, so the edge must land first. The change is dropped if the card moved on
     /// meanwhile, so a quick double tap can't plan the next night with a dish the cook never saw.
-    private func send(_ edge: Edge, _ change: @escaping (inout PlanDeck) -> Void) {
+    private func send(_ edge: Edge?, _ change: @escaping (inout PlanDeck) -> Void) {
         guard let cardID = deck.current?.id else { return }
         exitEdge = edge
         Task { @MainActor in

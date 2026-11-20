@@ -339,6 +339,26 @@ import Foundation
         #expect(deck.current?.recipe.name == "Stir fry")
     }
 
+    @Test func busyNightStillDealsAFreshQuickDishBeforeOnePassedOn() {
+        let dishes = [recipe("Stir fry", minutes: 20, isFavorite: true, rating: 5), recipe("Omelette", minutes: 15),
+                      recipe("Salad", minutes: 10), recipe("Roast", minutes: 180)]
+        var deck = makeDeck(days: [day(1), day(2)], recipes: dishes)
+        #expect(deck.current?.recipe.name == "Stir fry")
+        deck.skip()
+        deck.plan()
+        #expect(deck.current?.day == day(2))
+        deck.setBusy(true)
+        #expect(deck.current?.recipe.name != "Stir fry")
+        #expect(deck.current.map { $0.recipe.totalMinutes <= 30 } == true)
+    }
+
+    @Test func busyNightDealsTheShorterCookEvenWhenTheLongerOneHasEveryOtherRule() {
+        let longer = recipe("Chicken pie", minutes: 41, ingredients: ["chicken"], isFavorite: true, rating: 5)
+        var deck = makeDeck(days: [day(1)], recipes: [longer, recipe("Curry", minutes: 40)], expiring: ["Chicken"])
+        deck.setBusy(true)
+        #expect(deck.current?.recipe.name == "Curry")
+    }
+
     @Test func busyNightWithNothingQuickSaysItIsTheShortestLeft() {
         var deck = makeDeck(days: [day(5)], recipes: [recipe("Curry", minutes: 60)])
         deck.setBusy(true)
@@ -352,7 +372,7 @@ import Foundation
         #expect(deck.current?.recipe.name == "Curry")
         deck.skip()
         #expect(deck.current?.recipe.name == "Mystery stew")
-        #expect(deck.current?.reason == "No cook time listed — check it suits a busy night")
+        #expect(deck.current?.reason == "Check the cook time suits a busy night")
     }
 
     @Test func busyOnAFinishedDeckDoesNothing() {

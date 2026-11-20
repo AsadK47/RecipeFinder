@@ -177,16 +177,15 @@ struct PlanDeck {
     private mutating func deal() -> Card? {
         while dayIndex < days.count {
             let day = days[dayIndex]
-            // A busy night ranks by time alone: a quick dish passed on earlier beats a fresh long cook.
+            // A busy night ranks by time first: a quick dish passed on earlier beats a fresh long cook, but among
+            // equally quick ones fresh still comes first.
             let busy = busyDays.contains(day)
-            var best: (candidate: Candidate, passed: Bool, score: Int)?
+            var best: (candidate: Candidate, rank: (Int, Int, Int))?  // (time, fresh, score)
             for candidate in candidates {
                 let id = candidate.recipe.id
                 guard !taken.contains(id), !shownTonight.contains(id) else { continue }
-                let wasPassed = !busy && passed.contains(id)
-                let value = score(candidate, on: day)
-                let beats = best.map { wasPassed == $0.passed ? value > $0.score : !wasPassed } ?? true
-                if beats { best = (candidate, wasPassed, value) }
+                let rank = (busy ? busyTimeRank(candidate) : 0, passed.contains(id) ? 0 : 1, score(candidate, on: day))
+                if best.map({ rank > $0.rank }) ?? true { best = (candidate, rank) }
             }
             if let best {
                 shownTonight.insert(best.candidate.recipe.id)
@@ -207,13 +206,17 @@ struct PlanDeck {
         }
     }
 
+    /// Busy nights: every quick dish ranks equal and above the rest, then the shorter cook; untimed counts as an hour.
+    private func busyTimeRank(_ candidate: Candidate) -> Int {
+        guard TodayFeed.quickMinutes(of: candidate.recipe) == nil else { return 0 }
+        return -(candidate.minutes > 0 ? candidate.minutes : 60)
+    }
+
     private func score(_ candidate: Candidate, on day: Date) -> Int {
         var total = 0
         let quick = TodayFeed.quickMinutes(of: candidate.recipe) != nil
         if busyDays.contains(day) {
-            // Outweighs every other rule (they add up to ±6): quick first, then the shortest cook — a minute is worth
-            // 10, so the others only break ties. An untimed dish counts as an hour.
-            total += quick ? 20 : -10 * (1 + (candidate.minutes > 0 ? candidate.minutes : 60))
+            // Time already ranked first (busyTimeRank); the rules below only break ties.
         } else if isWeekend(day) {
             if candidate.minutes > TodayFeed.quickLimitMinutes { total += 1 }
         } else if quick {
@@ -231,7 +234,7 @@ struct PlanDeck {
     /// Why this dish, for this night — the strongest rule that picked it.
     private func reason(_ candidate: Candidate, on day: Date) -> String {
         if busyDays.contains(day) {
-            guard candidate.minutes > 0 else { return "No cook time listed — check it suits a busy night" }
+            guard candidate.minutes > 0 else { return "Check the cook time suits a busy night" }
             let time = DurationFormatter.label(minutes: candidate.minutes)
             return TodayFeed.quickMinutes(of: candidate.recipe) != nil
                 ? "Quick for a busy night · \(time)" : "Shortest cook left for a busy night · \(time)"
