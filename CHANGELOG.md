@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Inbox 🟡 Shop mode keep-awake re-hold · ac8a211
+- For you: I'm in the shop keeps your screen on after you check a message or lock the phone mid-trip, and your Keep Screen Awake setting stays as you set it when you leave.
+- Behind the build: cooking and the shop now share one small tested model for holding the screen awake, and a reviewer and a challenger both caught the same edge case before it landed.
+
 ## 2026-11-20 · 🐞 Meal planning is buggy · 0acb4fd
 - For you: Plan my week is always one tap away — on Plan and from Today — and moves on to next week once this one is planned. Clear Past Plans and a swipe tidy your week, past days show what you cooked, tapping a dinner opens its recipe, and weekly meals now stop cleanly with one friendly reminder a week.
 - Behind the build: two separate bug hunts, a deep review and a challenger found fifteen fixes, and every bug got a test that was seen failing before it was fixed.

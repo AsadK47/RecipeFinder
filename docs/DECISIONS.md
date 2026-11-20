@@ -5,6 +5,10 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Shop mode keep-awake re-hold** (landed ac8a211): the hold keeps its pre-open value across app switches (both reviewers: re-reading on return could switch off Settings' Keep Screen Awake). one shared `ScreenAwakeHold.sceneChanged(isActive:)` instead of copying cooking's
+  if/else into the shop (DRY; tested). **Pre-mortem:** (1) hold not restored after background → screen never sleeps
+  → `sceneRoundTripReholds`; (2) repeated phase flips lose the original value → `sceneChangesKeepTheOriginal`;
+  (3) cooking regresses through the shared method → existing cooking UI tests + same tests (wiring not visible to XCUITest).
 - **Plan bug hunt (owner "meal planning is buggy")** (landed 0acb4fd): two reviewers; acted on what both found + owner
   specifics. Weekly meals: removing a copy or Stop Repeating **stops the whole series** (no "skip one week" marker —
   that would be new stored data → Privacy/model change → owner). Weekly reminder lives on the series' newest copy only

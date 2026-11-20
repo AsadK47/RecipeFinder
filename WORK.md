@@ -55,21 +55,14 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - 🐞 **Meal planning is buggy**: ✅ landed 0acb4fd (interactive session 2026-11-20). Skip-one-week → Needs owner.
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
-- Inbox 🟡 **Shop mode keep-awake re-hold**: 🚧 branch `agent/shop-awake-scene` (458fb27) — `ScreenAwakeHold.sceneChanged(isActive:)`
-  used by cooking + shop; waiting on Build & Test.
-
 ## Next action
-Inbox first: 🟡 Shop mode scenePhase re-hold (small); 🟡 Reset keeps `@AppStorage` keys touches Privacy §4.3 → check wording before coding. Then:
+Inbox first: 🟡 Reset keeps `@AppStorage` keys touches Privacy §4.3 → check wording before coding. Then:
 *Groceries writes itself* slice 5 on `agent/groceries-delete-dupes`: delete the duplicated Kitchen/Shopping views +
 Plan's Add Week button (net lines down); then slice 4 ("Still got the coriander?"). Website session: add the §4.2
 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Shop mode keep-awake re-hold:** one shared `ScreenAwakeHold.sceneChanged(isActive:)` instead of copying cooking's
-  if/else into the shop (DRY; tested). **Pre-mortem:** (1) hold not restored after background → screen never sleeps
-  → `sceneRoundTripReholds`; (2) repeated phase flips lose the original value → `repeatedSceneChangesRestoreOriginal`;
-  (3) cooking regresses through the shared method → existing cooking UI tests + same tests (wiring not visible to XCUITest).
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
