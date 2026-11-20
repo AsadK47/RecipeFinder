@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · 🐞 Meal planning is buggy · 0acb4fd
+- For you: Plan my week is always one tap away — on Plan and from Today — and moves on to next week once this one is planned. Clear Past Plans and a swipe tidy your week, past days show what you cooked, tapping a dinner opens its recipe, and weekly meals now stop cleanly with one friendly reminder a week.
+- Behind the build: two separate bug hunts, a deep review and a challenger found fifteen fixes, and every bug got a test that was seen failing before it was fixed.
+
 ## 2026-11-20 · Inbox 🟡 Keep screen awake · 7e70ceb
 - For you: turn on Keep Screen Awake in Settings › Display and your screen stays on whenever RecipeFinder is open, so a recipe stays readable while your hands are busy — and it stays on after you finish cooking mode too.
 - Behind the build: the switch is applied by a small tested model at the app's root, and a reviewer plus a challenger checked it can't fight cooking mode or the shop over the screen.

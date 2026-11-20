@@ -5,6 +5,18 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Plan bug hunt (owner "meal planning is buggy")** (landed 0acb4fd): two reviewers; acted on what both found + owner
+  specifics. Weekly meals: removing a copy or Stop Repeating **stops the whole series** (no "skip one week" marker —
+  that would be new stored data → Privacy/model change → owner). Weekly reminder lives on the series' newest copy only
+  (weekly trigger ignores the date). Clear Past Plans keeps each series' newest copy (it's the template); cook history
+  is `RecipeModel.cookCount/lastCookedAt`, untouched by plans (nothing ever set `isCompleted`). Deck "worked once":
+  the button hid once the shown week was full → now names the next open week (`weekToPlan`, ≤4 weeks ahead). Swipe-to-
+  remove: custom `SwipeToRemove` on the day list's card (VStack in a ScrollView, no List swipeActions; ≡ handle keeps
+  its reorder drag). Removing a weekly meal asks first (it ends the repeat) — skip-one-week needs a stored marker →
+  Needs owner. Add Week counts from today (`from:`), not the week's first day —
+  kept the old API for Groceries' card. Parked (one reviewer, low/risky): time-zone shift of midnight-dated plans
+  (needs a stored-date change), future-dated weekly reminder firing early, rename leaves old plan name, Sunday nudge
+  week with Sunday-first locale, top-up of a ticked grocery line.
 - **Keep screen awake (Inbox 🟡)** (landed 7e70ceb): wired, not removed — reading a recipe hands-busy outside cooking mode is the
   switch's point. Root writes only "on" when the app comes back (an "off" there could race cooking/shop holds turning it
   on); "off" is written when the switch flips, from Settings, where neither cover is up. Cooking mode moved to

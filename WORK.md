@@ -52,15 +52,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   ✅ Slice 3 aisle order landed 9dda50b (builder 2026-11-20). Leftover branch agent/groceries-aisle-order (auto-cleanup).
 
 - Inbox 🟡 **Keep screen awake**: ✅ landed 7e70ceb (builder 2026-11-20). Leftover branch agent/keep-screen-awake (auto-cleanup).
-- 🐞 **Meal planning is buggy** (owner 2026-11-20): branch `agent/plan-bugs-2`. Red tests 39486e5, 6a612dd, 5c6f3b1;
-  fixes in the working tree / next commit: deck reachable after a full week (`PlanDeck.weekToPlan`), Clear Past Plans
-  (+confirm, `pastPlans`), tap = open recipe (`OpenedDinner`), weekly series stop on remove/Stop Repeating, one weekly
-  reminder per series, synced twins fold per slot, reload reconciles reminders, Add Week from today, ghost meals
-  removable (`MealTimeCard.plannedName`, `MealPlanModel.recipe(in:)`), midnight rollover. UI red needs a
-  workflow_dispatch run (push runs unit tests only). **Red seen** in run 44793854832: all 11 new unit tests failed
-  on unfixed code (ClearPastPlans ×5, PlanBugHunt ×6). Fixes pushed d61b50c. UI red seen in run 44799638976 on
-  6a612dd (agent/plan-bugs-ui-red): testZZZPlanMyWeek (tap → cooking) and testZZZPlanMyWeekAgain failed. Rebased on
-  main → continued on `agent/plan-bugs-2` (force-push blocked).
+- 🐞 **Meal planning is buggy**: ✅ landed 0acb4fd (interactive session 2026-11-20). Skip-one-week → Needs owner.
+  Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
 ## Next action
 Inbox first: 🟡 Shop mode scenePhase re-hold (small); 🟡 Reset keeps `@AppStorage` keys touches Privacy §4.3 → check wording before coding. Then:
@@ -70,18 +63,6 @@ aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.htm
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Plan bug hunt (owner "meal planning is buggy" 2026-11-20):** two reviewers; acted on what both found + owner
-  specifics. Weekly meals: removing a copy or Stop Repeating **stops the whole series** (no "skip one week" marker —
-  that would be new stored data → Privacy/model change → owner). Weekly reminder lives on the series' newest copy only
-  (weekly trigger ignores the date). Clear Past Plans keeps each series' newest copy (it's the template); cook history
-  is `RecipeModel.cookCount/lastCookedAt`, untouched by plans (nothing ever set `isCompleted`). Deck "worked once":
-  the button hid once the shown week was full → now names the next open week (`weekToPlan`, ≤4 weeks ahead). Swipe-to-
-  remove: custom `SwipeToRemove` on the day list's card (VStack in a ScrollView, no List swipeActions; ≡ handle keeps
-  its reorder drag). Removing a weekly meal asks first (it ends the repeat) — skip-one-week needs a stored marker →
-  Needs owner. Add Week counts from today (`from:`), not the week's first day —
-  kept the old API for Groceries' card. Parked (one reviewer, low/risky): time-zone shift of midnight-dated plans
-  (needs a stored-date change), future-dated weekly reminder firing early, rename leaves old plan name, Sunday nudge
-  week with Sunday-first locale, top-up of a ticked grocery line.
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
