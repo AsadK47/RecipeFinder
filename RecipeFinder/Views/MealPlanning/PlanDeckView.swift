@@ -184,6 +184,7 @@ struct PlanDeckView: View {
             withAnimation(.appGentle) { deck.setBusy(!busy) }
         }
         .accessibilityValue(busy ? "On" : "Off")
+        .accessibilityAddTraits(.isToggle)
         .accessibilityHint("Deals quick dishes for this night")
         .accessibilityIdentifier("planDeck.busy")
     }

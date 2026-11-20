@@ -990,6 +990,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             settle(0.8)
             XCTAssertEqual(busy.value as? String, "On", "Busy night should show it's on.")
             XCTAssertEqual(night.label, busyNight, "Busy night should stay on the same night.")
+            XCTAssertTrue(card.label.contains("busy night"), "The card should say it's picked for a busy night.")
             snap(app, "56-plan-deck-busy")
         }
 

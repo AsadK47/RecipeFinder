@@ -327,6 +327,34 @@ import Foundation
         #expect(deck.current?.day == day(2))
     }
 
+    @Test func aQuickDishPassedOnEarlierBeatsAFreshLongCookOnABusyNight() {
+        let dishes = [recipe("Stir fry", minutes: 20), recipe("Stew", minutes: 150), recipe("Roast", minutes: 180)]
+        var deck = makeDeck(days: [day(1), day(2)], recipes: dishes)
+        #expect(deck.current?.recipe.name == "Stir fry")
+        deck.skip()
+        deck.plan()
+        #expect(deck.current?.day == day(2))
+        #expect(deck.current?.recipe.name != "Stir fry")
+        deck.setBusy(true)
+        #expect(deck.current?.recipe.name == "Stir fry")
+    }
+
+    @Test func busyNightWithNothingQuickSaysItIsTheShortestLeft() {
+        var deck = makeDeck(days: [day(5)], recipes: [recipe("Curry", minutes: 60)])
+        deck.setBusy(true)
+        #expect(deck.current?.reason.hasPrefix("Shortest cook left for a busy night · ") == true)
+    }
+
+    @Test func busyNightPutsAnUntimedDishBehindAShortCookAndSaysSo() {
+        let untimed = recipe("Mystery stew", minutes: 0)
+        var deck = makeDeck(days: [day(5)], recipes: [untimed, recipe("Curry", minutes: 50)])
+        deck.setBusy(true)
+        #expect(deck.current?.recipe.name == "Curry")
+        deck.skip()
+        #expect(deck.current?.recipe.name == "Mystery stew")
+        #expect(deck.current?.reason == "No cook time listed — check it suits a busy night")
+    }
+
     @Test func busyOnAFinishedDeckDoesNothing() {
         var deck = makeDeck(days: [], recipes: [recipe("Dish")])
         deck.setBusy(true)
