@@ -42,8 +42,6 @@ struct PlanDeck {
     private var taken: Set<UUID>
     /// Passed on for some night (here or in a recent deck): dealt again only behind every fresh dish.
     private var passed: Set<UUID>
-    /// Passed on in this deck — what `PlanDeckMemory` records when it closes.
-    private(set) var passedHere: Set<UUID> = []
     /// Already shown for the night being planned.
     private var shownTonight: Set<UUID> = []
     /// Nights the cook marked busy in this deck: quick dishes first.
@@ -150,7 +148,6 @@ struct PlanDeck {
     mutating func skip() {
         guard let card = current else { return }
         passed.insert(card.recipe.id)
-        passedHere.insert(card.recipe.id)
         current = deal()
     }
 

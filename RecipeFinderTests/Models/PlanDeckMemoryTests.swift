@@ -96,10 +96,57 @@ import Foundation
         #expect(PlanDeckMemory.load(from: storage).passedOn.isEmpty)
     }
 
-    @Test func closingADeckRemembersItsPassesAndForgetsItsPicks() {
+    @Test func updateRemembersPassesAndForgetsPlans() {
         let storage = makeStorage()
         PlanDeckMemory(passedOn: [b: daysAgo(5)]).save(to: storage)
         PlanDeckMemory.update(in: storage, passed: [a], planned: [b], at: now, calendar: cal)
         #expect(PlanDeckMemory.load(from: storage).passedOn == [a: now])
+    }
+
+    @Test func updateWithNothingToChangeWritesNothing() {
+        let storage = makeStorage()
+        PlanDeckMemory.update(in: storage, passed: [], planned: [], at: now, calendar: cal)
+        #expect(storage.data(forKey: PlanDeckMemory.storageKey) == nil)
+    }
+}
+
+/// The manager is the only route views take to the memory: a pass is saved as it's made, planning a dish by any route
+/// forgets it, and loading plans (launch) drops passes older than 30 days.
+@MainActor
+@Suite struct PlanDeckMemoryManagerTests {
+    private let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
+    private let recipeID = UUID()
+
+    private func makeManager() -> MealPlanningManager {
+        MealPlanningManager(
+            storage: storage, mealPlanStore: InMemoryMealPlanStore(),
+            reminders: FakeMealReminderScheduler(), planNudges: FakePlanNudgeScheduler()
+        )
+    }
+
+    @Test func aPassedDinnerIsRecentlyPassed() {
+        let sut = makeManager()
+        sut.rememberPassedDinner(recipeID)
+        #expect(sut.recentlyPassedDinners() == [recipeID])
+    }
+
+    @Test func planningAPassedDishForgetsItsPass() {
+        let sut = makeManager()
+        sut.rememberPassedDinner(recipeID)
+        sut.addMealPlan(MealPlanModel(recipeId: recipeID, recipeName: "Dish", date: Date(), mealTime: .lunch))
+        #expect(sut.recentlyPassedDinners().isEmpty)
+    }
+
+    @Test func launchDropsPassesOlderThanThirtyDays() {
+        let old = Calendar.current.date(byAdding: .day, value: -31, to: Date()) ?? Date()
+        PlanDeckMemory(passedOn: [recipeID: old]).save(to: storage)
+        _ = makeManager()
+        #expect(PlanDeckMemory.load(from: storage).passedOn.isEmpty)
+    }
+
+    @Test func launchKeepsRecentPasses() {
+        let recent = Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+        PlanDeckMemory(passedOn: [recipeID: recent]).save(to: storage)
+        #expect(makeManager().recentlyPassedDinners() == [recipeID])
     }
 }

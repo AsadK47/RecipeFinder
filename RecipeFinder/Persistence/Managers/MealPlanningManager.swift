@@ -16,6 +16,10 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary
     /// Re-reads the Sunday-nudge switch and plans, then schedules or cancels the one pending nudge.
     func syncPlanNudge()
+    /// Dishes passed on in Plan my week in the last 30 days (`PlanDeckMemory`).
+    func recentlyPassedDinners() -> Set<UUID>
+    /// Remembers a dish passed on in Plan my week for 30 days.
+    func rememberPassedDinner(_ recipeID: UUID)
 }
 
 private struct MealPlanningManagingKey: EnvironmentKey {
@@ -106,6 +110,8 @@ final class MealPlanningManager: MealPlanningManaging {
     }
 
     func addMealPlan(_ mealPlan: MealPlanModel) {
+        // Planned by any route (deck, picker, Today): the dish is wanted again, so its pass is forgotten.
+        PlanDeckMemory.update(in: storage, passed: [], planned: [mealPlan.recipeId], at: Date())
         if let existingIndex = mealPlans.firstIndex(where: { $0.isSlot(mealPlan.date, mealPlan.mealTime) }) {
             // The replaced occupant has a different id, so cancel its reminder before it's overwritten.
             cancelReminder(for: mealPlans[existingIndex])
@@ -392,5 +398,17 @@ final class MealPlanningManager: MealPlanningManaging {
     private func loadMealPlans() {
         mealPlans = mirror.load()
         syncPlanNudge()
+        // Runs at launch, so passes older than 30 days leave the device even if the deck is never opened again.
+        PlanDeckMemory.update(in: storage, passed: [], planned: [], at: Date())
+    }
+
+    // MARK: - Plan my week memory
+
+    func recentlyPassedDinners() -> Set<UUID> {
+        PlanDeckMemory.load(from: storage).recentlyPassed(at: Date())
+    }
+
+    func rememberPassedDinner(_ recipeID: UUID) {
+        PlanDeckMemory.update(in: storage, passed: [recipeID], planned: [], at: Date())
     }
 }

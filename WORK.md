@@ -52,13 +52,15 @@ Plan slice 4 on `agent/plan-deck-memory`: CI green → two reviewers (privacy te
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Plan slice 4 30-day memory** (owner "Do it" 2026-11-20, §4.2 line approved): `PlanDeckMemory` = `[recipe id:
   date passed]` in `LocalStore` key `planDeckPassed` (rf. → Reset clears it; not Core Data → never synced, no model
-  change). Remembered passes start the next deck as `passed` (behind fresh, still fill a night). Only passes made
-  *in this deck* (`passedHere`) are dated, so a carried-over one still expires after 30 days; planning a dish forgets
-  it; future dates don't count (wrong clock can't pin a dish). Saved on Close — the deck's only exit; a killed app
-  loses that deck's passes (accepted: losing them only makes the next deck less fresh). Busy / Leave open aren't
-  passes. **Pre-mortem:** (1) a passed dish never returns, small library → `…StillFillsANightWhenNothingFreshIsLeft`;
-  (2) regular deck use keeps refreshing old passes forever → `aDishOnlyCarriedOverFromAnEarlierDeckKeepsItsDate`;
-  (3) Reset leaves it behind / policy claims more than code → `resetClearsTheMemory` + two reviewers on text vs code.
+  change). Views reach it only through `MealPlanningManaging` (`recentlyPassedDinners` / `rememberPassedDinner`).
+  Remembered passes start the next deck as `passed` (behind fresh, still fill a night). Each ✕ is saved as it's made
+  (like picks) so a killed app keeps it; re-passing restarts its 30 days; planning the dish by **any** route
+  (`addMealPlan`) forgets it; every plan load (launch) drops expired entries so "kept for 30 days" is true at rest
+  (both reviewers); future dates don't count. Busy / Leave open aren't passes. Rejected: saving on Close only (lost
+  on kill, challenger); a score penalty instead of the "behind fresh" tier (challenger: one ✕ buries a favourite for a
+  month) → CHALLENGES, kept the spec's tier rule. **Pre-mortem:** (1) a passed dish never returns, small library →
+  `…StillFillsANightWhenNothingFreshIsLeft`; (2) old passes never leave the device → `launchDropsPassesOlderThanThirtyDays`;
+  (3) Reset leaves it / policy claims more than code → `resetClearsTheMemory` + two reviewers on text vs code.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

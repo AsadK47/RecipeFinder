@@ -134,7 +134,7 @@ extension MealPlanningView {
         planDeck = PlanDeck(
             days: PlanDeck.emptyDinnerDays(week: daysInCurrentWeek, plans: plans, today: Date()),
             recipes: recipes, plannedThisWeek: plans, expiringItemNames: expiring,
-            recentlyPassed: PlanDeckMemory.load(from: .shared).recentlyPassed(at: Date()),
+            recentlyPassed: mealPlanningManager.recentlyPassedDinners(),
             seed: UInt64.random(in: .min ... .max)
         )
         HapticManager.shared.light()
@@ -148,11 +148,12 @@ extension MealPlanningView {
         ))
     }
 
+    /// Saved as each card is passed on, like picks, so a closed or killed app keeps it.
+    func rememberPass(_ recipe: RecipeModel) {
+        mealPlanningManager.rememberPassedDinner(recipe.id)
+    }
+
     func closePlanDeck() {
-        if let deck = planDeck {
-            PlanDeckMemory.update(in: .shared, passed: deck.passedHere,
-                                  planned: Set(deck.picks.map(\.recipe.id)), at: Date())
-        }
         planDeck = nil
         updateSelectedMealTimes(for: selectedDate)
     }

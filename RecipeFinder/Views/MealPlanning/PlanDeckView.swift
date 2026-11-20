@@ -7,6 +7,8 @@ import SwiftUI
 struct PlanDeckView: View {
     @Binding var deck: PlanDeck
     let onPlan: (PlanDeck.Pick) -> Void
+    /// A dish passed on with Not this one / swipe left (Busy night and Leave open aren't passes).
+    let onPass: (RecipeModel) -> Void
     let onClose: () -> Void
 
     @State private var drag: CGSize = .zero
@@ -230,7 +232,11 @@ struct PlanDeckView: View {
     }
 
     private func skip() {
-        send(.leading) { $0.skip() }
+        send(.leading) { deck in
+            guard let card = deck.current else { return }
+            onPass(card.recipe)
+            deck.skip()
+        }
     }
 
     /// A re-deal for the same night fades, so it never looks like the dish was planned or passed on.

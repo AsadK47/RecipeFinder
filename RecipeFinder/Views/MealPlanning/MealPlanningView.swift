@@ -111,7 +111,7 @@ struct MealPlanningView: View {
                 // change still in flight can't reopen the deck.
                 PlanDeckView(
                     deck: Binding(get: { planDeck ?? shown }, set: { if planDeck != nil { planDeck = $0 } }),
-                    onPlan: savePick, onClose: closePlanDeck
+                    onPlan: savePick, onPass: rememberPass, onClose: closePlanDeck
                 )
                     .transition(.move(edge: .bottom))
                     .zIndex(1)

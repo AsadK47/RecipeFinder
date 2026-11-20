@@ -415,21 +415,4 @@ import Foundation
         let deck = makeDeck(days: [day(1)], recipes: [only], recentlyPassed: [only.id])
         #expect(deck.current?.recipe.name == "Only")
     }
-
-    @Test func passedHereHoldsOnlyDishesPassedInThisDeck() {
-        let earlier = recipe("Earlier")
-        let first = recipe("First", rating: 5)
-        let second = recipe("Second")
-        var deck = makeDeck(days: [day(1)], recipes: [earlier, first, second], recentlyPassed: [earlier.id])
-        #expect(deck.current?.recipe.name == "First")
-        deck.skip()
-        #expect(deck.passedHere == [first.id])
-    }
-
-    @Test func busyNightAndSkipNightDoNotCountAsPassing() {
-        var deck = makeDeck(days: [day(1), day(2)], recipes: [recipe("Slow", minutes: 90), recipe("Quick", minutes: 15)])
-        deck.setBusy(true)
-        deck.skipNight()
-        #expect(deck.passedHere.isEmpty)
-    }
 }
