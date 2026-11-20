@@ -1060,13 +1060,14 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         settle(0.8)
         XCTAssertNotEqual(app.descendants(matching: .any)[heldID].label, heldLabel, "Moving should take the dinner off its night.")
 
-        // Tap = cook: a planned night opens straight into cooking mode.
-        let toCook = planned.firstMatch
-        XCTAssertTrue(toCook.waitForExistence(timeout: 5), "A planned night should still be on the week.")
-        checkpoint(app, "tap to cook")
-        toCook.tap()
-        XCTAssertTrue(app.buttons["cooking.done"].waitForExistence(timeout: 10),
-                      "Tapping a dinner photo should open cooking mode.")
+        // Tap = open (owner 2026-11-20): a planned night opens its recipe, not cooking mode; Cook is the hold menu's.
+        let toOpen = planned.firstMatch
+        XCTAssertTrue(toOpen.waitForExistence(timeout: 5), "A planned night should still be on the week.")
+        checkpoint(app, "tap to open")
+        toOpen.tap()
+        XCTAssertTrue(app.buttons["Start Cooking Mode"].waitForExistence(timeout: 10),
+                      "Tapping a dinner photo should open its recipe.")
+        XCTAssertFalse(app.buttons["cooking.done"].exists, "Tapping a dinner photo shouldn't start cooking.")
     }
 
     /// Owner 2026-11-20: "the swipe planning works the first time, then never appears or works again". Opens the deck,
