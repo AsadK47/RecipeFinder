@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-20 (item pass: Groceries writes itself slice 3 aisle order; fixed: an untick still taught the order (both reviewers), a top-up trip through two aisles dragged them to the front + blending could never flip an order (both; now touched aisles swap among their places), checkout/unpacking ticks taught a reversed route (now < 60 s ignored), shops deleted on another device kept their order (now pruned on load), §4.2 "at each shop" missed no-shop trips)
+- ⚔️ [UX] To buy's sections follow the learned order too, with nothing on screen saying so — alternative: a small "In your shop order" caption, or shop mode only — cost if wrong: a cook wonders why sections moved.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Data] A store renamed on another device starts its order afresh on this one (only a local rename carries it) — cost if wrong: one trip to relearn.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] No test fails if ShopModeView stops calling `learnAisleOrder` (rows don't show their aisle, so a UI test can't assert order) — cost if wrong: learning silently off until someone notices.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Spec] The latest trip wins for the aisles it touched (no damping for one odd detour) — chosen because blending can't flip an order — cost if wrong: one detour reorders until the next normal trip.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-20 (item pass: Groceries writes itself slice 2 I'm in the shop; fixed: Done cleared other stores' ticks (both reviewers), no way out but Done (now ✕ keeps ticks), ticked rows slid under the thumb (now tick in place))
 - ⚔️ [Spec] BACKLOG said "ticked = at home automatically (no Put-away step)"; shop mode puts away on Done — per-tick put-away would make untick delete what was At home before the shop — alternative: per-tick with a "was it here before" memory (new stored state) — cost if wrong: one extra tap per trip.
   → Owner: Accept / Reject / Later

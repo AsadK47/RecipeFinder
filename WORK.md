@@ -49,26 +49,15 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Get: 🚧 **Groceries writes itself** — ✅ slice 1 plan → list landed 257c72b (builder 2026-11-20). Leftover branch
   agent/groceries-from-plan (auto-cleanup).
   ✅ Slice 2 shop mode landed 1505253 (builder 2026-11-20). Leftover branch agent/groceries-shop-mode (auto-cleanup).
+  ✅ Slice 3 aisle order landed 9dda50b (builder 2026-11-20). Leftover branch agent/groceries-aisle-order (auto-cleanup).
 
 ## Next action
-*Groceries writes itself* slice 3 on `agent/groceries-aisle-order` (74025007): wait for Build & Test, act on the two
-reviews, Screenshots look at 59-groceries-shop, land, Log + CHANGELOG + move Decisions. Website session: add the
-§4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`. Then slice 5.
+*Groceries writes itself* slice 5 on `agent/groceries-delete-dupes`: delete the duplicated Kitchen/Shopping views +
+Plan's Add Week button (net lines down); then slice 4 ("Still got the coriander?"). Website session: add the §4.2
+aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Groceries writes itself slice 3 (aisle order):** owner OK 2026-11-20 for the new on-device data (Privacy §4.2/4.3).
-  Learned per shop ("" = no shop chosen); a shop with nothing learned uses the usual order. A trip's aisles **swap among
-  the places they already hold** (learned, else the usual order's 0…1 place) into the order walked; untouched aisles
-  keep theirs. Rejected after review round 1 (reviewer + challenger agreed): spreading each trip over 0…1 and blending
-  40% — a top-up trip through the last two aisles dragged them to the front, and blending two aisles toward each
-  other's places never crosses (challenger's maths). So the latest trip wins for the aisles it touched (no "one odd
-  trip" damping). Guards instead: first tick per aisle; one-aisle trip ignored; ticks spread < 60 s ignored
-  (checkout / unpacking at home); an untick drops its tick (`TripTicks`). Learned on leaving shop mode (Done or ✕),
-  never mid-trip. LocalStore `rf.` → Reset clears; never synced; shops gone from the list (iCloud delete) are pruned
-  on load. **Pre-mortem:** (1) order never applied → `tripFollowsLearnedOrder`, `learnedOrderPersists`; (2) Reset
-  leaves it → `resetForgets`; (3) a bad trip scrambles it → `topUpTripKeepsTheHabit`, `rushedTripLearnsNothing`,
-  `untickDropsTheTick`. View wiring is thin glue, no UI test (rows don't show their aisle).
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new

@@ -5,6 +5,18 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Groceries writes itself slice 3 (aisle order)** (landed 9dda50b): owner OK 2026-11-20 for the new on-device data (Privacy §4.2/4.3).
+  Learned per shop ("" = no shop chosen); a shop with nothing learned uses the usual order. A trip's aisles **swap among
+  the places they already hold** (learned, else the usual order's 0…1 place) into the order walked; untouched aisles
+  keep theirs. Rejected after review round 1 (reviewer + challenger agreed): spreading each trip over 0…1 and blending
+  40% — a top-up trip through the last two aisles dragged them to the front, and blending two aisles toward each
+  other's places never crosses (challenger's maths). So the latest trip wins for the aisles it touched (no "one odd
+  trip" damping). Guards instead: first tick per aisle; one-aisle trip ignored; ticks spread < 60 s ignored
+  (checkout / unpacking at home); an untick drops its tick (`TripTicks`). Learned on leaving shop mode (Done or ✕),
+  never mid-trip. LocalStore `rf.` → Reset clears; never synced; shops gone from the list (iCloud delete) are pruned
+  on load. **Pre-mortem:** (1) order never applied → `tripFollowsLearnedOrder`, `learnedOrderPersists`; (2) Reset
+  leaves it → `resetForgets`; (3) a bad trip scrambles it → `topUpTripKeepsTheHabit`, `rushedTripLearnsNothing`,
+  `untickDropsTheTick`. View wiring is thin glue, no UI test (rows don't show their aisle).
 - **Groceries writes itself slice 2 (shop mode)** (landed 1505253): a full-screen cover, not a toggle on the list — big rows need the
   whole width and none of the row's steppers/menus (a mis-tap in the aisle would change a quantity). Whole row = one
   tap target (≥76pt); a tick dims the row **in place** (aisle order = category, then name) — first build sank ticked
