@@ -25,9 +25,11 @@ final class ScreenAwakeHold {
     }
 
     /// Re-takes the hold when the app comes back (a call, the lock screen or another app can drop it) and lets go
-    /// while it's away, so the screens holding it behave the same.
+    /// while it's away. Keeps the value from before the screen opened: re-reading it on the way back could catch a
+    /// value iOS reset while the app was away and switch off Settings' Keep Screen Awake when the screen closes.
     func sceneChanged(isActive: Bool) {
-        if isActive { begin() } else { end() }
+        guard let before else { return }
+        write(isActive ? true : before)
     }
 }
 
