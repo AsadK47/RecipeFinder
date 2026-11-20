@@ -7,8 +7,8 @@ struct ShopModeRequest: Identifiable {
     let store: String?
 }
 
-/// "I'm in the shop": the list as big one-thumb rows in aisle order, the screen kept awake, and one Done that puts
-/// the basket At home.
+/// "I'm in the shop": the list as big one-thumb rows in aisle order (a tick dims the row in place), the screen kept
+/// awake, and one Done that puts this store's basket At home. Close leaves and keeps the ticks.
 struct ShopModeView: View {
     let store: String?
 
@@ -29,16 +29,8 @@ struct ShopModeView: View {
                 ScrollView {
                     LazyVStack(spacing: AppTheme.spacing10) {
                         if trip.isDone { allInBasket }
-                        ForEach(trip.toGet) { row($0) }
-                        if !trip.inBasket.isEmpty {
-                            Text("In the basket")
-                                .font(.headline)
-                                .adaptiveForegroundColor()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, AppTheme.spacing12)
-                                .accessibilityAddTraits(.isHeader)
-                            ForEach(trip.inBasket) { row($0) }
-                        }
+                        if trip.total == 0 { nothingToGet }
+                        ForEach(trip.rows) { row($0) }
                     }
                     .padding(.horizontal, AppTheme.cardHorizontalPadding)
                     .padding(.bottom, AppTheme.spacing20)
@@ -63,10 +55,24 @@ struct ShopModeView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            Text(store.map { "In \($0)" } ?? "In the shop")
-                .font(.title2.weight(.bold))
-                .adaptiveForegroundColor()
-                .accessibilityAddTraits(.isHeader)
+            HStack {
+                Text(store.map { "In \($0)" } ?? "In the shop")
+                    .font(.title2.weight(.bold))
+                    .adaptiveForegroundColor()
+                    .accessibilityAddTraits(.isHeader)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.headline)
+                        .adaptiveForegroundColor()
+                        .frame(width: 44, height: 44)
+                        .appCard(in: Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Close")
+                .accessibilityHint("Your ticks stay on the list")
+                .accessibilityIdentifier("shop.close")
+            }
             ProgressView(value: Double(trip.inBasket.count), total: Double(max(trip.total, 1)))
                 .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor))
                 .accessibilityHidden(true)
@@ -90,6 +96,14 @@ struct ShopModeView: View {
         }
         .padding()
         .appCard()
+    }
+
+    private var nothingToGet: some View {
+        Text("Nothing on the list here")
+            .font(.headline)
+            .adaptiveSecondaryForeground()
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, AppTheme.spacing20)
     }
 
     private func row(_ item: ShoppingListModel) -> some View {
@@ -131,7 +145,7 @@ struct ShopModeView: View {
     }
 
     private func finish() {
-        ShopTrip.putAwayBasket(shopping: shopping, kitchen: kitchen)
+        shopping.putAway(trip.basketIDs, into: kitchen)
         dismiss()
     }
 }

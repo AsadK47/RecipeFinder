@@ -6,15 +6,19 @@ struct ShopTrip: Equatable {
 
     let toGet: [ShoppingListModel]
     let inBasket: [ShoppingListModel]
+    private let order: [ShoppingListModel]
     /// Ticked one-offs, which Done moves At home (staples stay on the list for next time).
     private let goingAway: Int
 
     /// `store` nil = every item; otherwise items set to another store stay off the trip, as on To buy.
     init(items: [ShoppingListModel], store: String?) {
-        let visible = ShoppingListGrouping.grouped(items.filter { $0.isAvailable(at: store) }).flatMap { $0.value }
+        // Aisle order by category, then name — not grouped()'s unticked-first, which moved a row as it was ticked.
+        let visible = ShoppingListGrouping.grouped(items.filter { $0.isAvailable(at: store) })
+            .flatMap { $0.value.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending } }
+        order = visible
         toGet = visible.filter { !$0.isChecked }
         inBasket = visible.filter { $0.isChecked }
-        goingAway = ShoppingListManager.boughtToPutAway(inBasket).count
+        goingAway = inBasket.filter { !$0.isRecurring }.count
     }
 
     var total: Int { toGet.count + inBasket.count }
@@ -27,11 +31,9 @@ struct ShopTrip: Equatable {
         item.unit.isEmpty ? "\(item.quantity)" : "\(item.quantity) \(item.unit)"
     }
 
-    /// Bought = at home: ticked one-offs move At home and leave the list; staples stay, unticked, for next time.
-    /// So the plan's card doesn't ask for them again.
-    @MainActor
-    static func putAwayBasket(shopping: any ShoppingListManaging, kitchen: any KitchenInventoryManaging) {
-        kitchen.putAway(ShoppingListManager.boughtToPutAway(shopping.items))
-        shopping.clearCheckedItems()
-    }
+    /// The basket's ids — what Done puts away (this store's ticks only).
+    var basketIDs: Set<UUID> { Set(inBasket.map { $0.id }) }
+
+    /// Rows in aisle order with ticked ones left where they were, so a row never slides under the thumb.
+    var rows: [ShoppingListModel] { order }
 }

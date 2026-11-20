@@ -1120,10 +1120,15 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         done.tap()
         dismissBadgeSheet(app)
         XCTAssertTrue(done.waitForNonExistence(timeout: 5), "Done should close shop mode.")
+        // At home is a lazy list that earlier tests may have filled, so ask its search rather than scroll for the row.
         app.buttons["At home"].tap()
-        let atHome = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+        let search = app.textFields["groceries.search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap()
+        search.typeText(name)
         checkpoint(app, "put away at home")
-        XCTAssertTrue(atHome.waitForExistence(timeout: 5), "What was ticked in the shop should be At home: \(name)")
+        XCTAssertTrue(app.buttons["Already in kitchen"].firstMatch.waitForExistence(timeout: 5),
+                      "What was ticked in the shop should be At home: \(name)")
     }
 
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).

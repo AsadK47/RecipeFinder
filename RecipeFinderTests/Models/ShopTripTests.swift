@@ -14,11 +14,22 @@ struct ShopTripTests {
     func splitsToGetAndBasket() {
         let items = [item("Milk", "Dairy & Eggs"), item("Onion", "Produce", checked: true), item("Apples", "Produce")]
         let trip = ShopTrip(items: items, store: nil)
-        let expectedOrder = ShoppingListGrouping.grouped(items).flatMap { $0.value }.filter { !$0.isChecked }.map { $0.name }
+        let aisles = ShoppingListGrouping.grouped(items).map { $0.key }
 
-        #expect(trip.toGet.map { $0.name } == expectedOrder)
+        #expect(trip.toGet.map { $0.name } == trip.rows.filter { !$0.isChecked }.map { $0.name })
         #expect(Set(trip.toGet.map { $0.name }) == ["Milk", "Apples"])
         #expect(trip.inBasket.map { $0.name } == ["Onion"])
+        #expect(trip.rows.map { $0.category }.reduce(into: [String]()) { if $0.last != $1 { $0.append($1) } } == aisles)
+    }
+
+    @Test("Ticking a row leaves it where it was, so the next row doesn't slide under the thumb")
+    func tickKeepsRowInPlace() {
+        let before = [item("Onion", "Produce"), item("Apples", "Produce"), item("Carrots", "Produce")]
+        var after = before
+        after[0].isChecked = true
+
+        #expect(ShopTrip(items: before, store: nil).rows.map { $0.name } == ["Apples", "Carrots", "Onion"])
+        #expect(ShopTrip(items: after, store: nil).rows.map { $0.name } == ["Apples", "Carrots", "Onion"])
     }
 
     @Test("In a store, items set to another store stay off the trip")
@@ -62,6 +73,29 @@ struct ShopTripTests {
         #expect(ShopTrip.amount(item("Lemon", "Produce", quantity: 2)) == "2")
     }
 
+    @MainActor @Test("Done in one store puts away only that store's basket; other stores' ticks stay ticked")
+    func finishInAStoreLeavesOtherStores() {
+        let defaults = UserDefaults(suiteName: UUID().uuidString) ?? .standard
+        let shopping = ShoppingListManager(storage: LocalStore(userDefaults: defaults), shoppingListStore: InMemoryShoppingListStore())
+        let kitchen = KitchenInventoryManager(storage: LocalStore(userDefaults: defaults), kitchenStore: InMemoryKitchenStore())
+        shopping.addItem(name: "Bread")
+        shopping.addItem(name: "Rice")
+        func index(_ name: String) -> Int { shopping.items.firstIndex { $0.name == name } ?? Int.max }
+        let breadID = shopping.items[index("Bread")].id
+        shopping.setStore("Corner shop", assigned: true, forItemIDs: [breadID])
+        shopping.toggleItem(at: index("Bread"))
+        shopping.toggleItem(at: index("Rice"))
+        let trip = ShopTrip(items: shopping.items, store: "Market")
+
+        shopping.putAway(trip.basketIDs, into: kitchen)
+
+        #expect(trip.doneTitle == "Done · put 1 away")
+        #expect(kitchen.hasItem("rice"))
+        #expect(!kitchen.hasItem("bread"))
+        #expect(shopping.items.map { $0.name } == ["Bread"])
+        #expect(shopping.items.first?.isChecked == true)
+    }
+
     @MainActor @Test("Done puts the basket At home and off the list; staples and what's still to get stay")
     func finishPutsTheBasketAway() {
         let defaults = UserDefaults(suiteName: UUID().uuidString) ?? .standard
@@ -76,7 +110,7 @@ struct ShopTripTests {
         shopping.toggleItem(at: index("Milk"))
         #expect(shopping.items.count == 3)
 
-        ShopTrip.putAwayBasket(shopping: shopping, kitchen: kitchen)
+        shopping.putAway(ShopTrip(items: shopping.items, store: nil).basketIDs, into: kitchen)
 
         #expect(kitchen.hasItem("onion"))
         #expect(!kitchen.hasItem("milk"))

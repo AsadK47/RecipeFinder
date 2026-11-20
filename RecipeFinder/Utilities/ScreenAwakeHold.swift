@@ -1,7 +1,7 @@
 import Foundation
 
-/// Keeps the screen awake while a screen is up (the shop, the hob) and restores what it was after — so the
-/// Settings "Keep screen awake" choice survives leaving.
+/// Keeps the screen awake while a screen is up (the shop) and restores what it was after, rather than forcing it
+/// off — leaving can't switch off a keep-awake something else turned on.
 @MainActor
 final class ScreenAwakeHold {
     private let read: @MainActor () -> Bool

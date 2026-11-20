@@ -114,7 +114,7 @@ struct KitchenShoppingView: View {
             if checkedCount > 0 {
                 // Bought = at home: ticked items move into At home, so the plan's card doesn't ask for them again.
                 Button("Put Checked Items Away (\(checkedCount))") {
-                    ShopTrip.putAwayBasket(shopping: shopping, kitchen: kitchen)
+                    shopping.putAway(Set(shopping.items.filter(\.isChecked).map(\.id)), into: kitchen)
                 }
             }
             Button("Clear All Items (\(totalCount))", role: .destructive) { shopping.clearAllItems() }

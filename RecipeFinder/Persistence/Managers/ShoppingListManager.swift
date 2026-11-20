@@ -19,12 +19,22 @@ protocol ShoppingListManaging: AnyObject, Observable {
     func toggleRecurring(at index: Int)
     func deleteItem(at index: Int)
     func clearCheckedItems()
+    /// Clears these ticked items only (one-offs leave, staples untick) — a shop at one store leaves other stores' ticks.
+    func clearChecked(ids: Set<UUID>)
     func clearAllItems()
 }
 
 extension ShoppingListManaging {
     /// Mirrors `addItem`'s default args (a protocol requirement can't carry them) so call sites keep writing `addItem(name:)`.
     func addItem(name: String) { addItem(name: name, quantity: 1, unit: "", category: nil) }
+
+    /// Bought = at home: these ticked one-offs move At home and leave the list; staples stay, unticked, for next time —
+    /// so the plan's card doesn't ask for them again. Unticked ids are ignored.
+    func putAway(_ ids: Set<UUID>, into kitchen: any KitchenInventoryManaging) {
+        let bought = items.filter { ids.contains($0.id) && $0.isChecked }
+        kitchen.putAway(ShoppingListManager.boughtToPutAway(bought))
+        clearChecked(ids: Set(bought.map(\.id)))
+    }
 }
 
 private struct ShoppingListManagingKey: EnvironmentKey {
@@ -318,8 +328,13 @@ final class ShoppingListManager: ShoppingListManaging {
     }
 
     func clearCheckedItems() {
+        clearChecked(ids: Set(getItems().filter(\.isChecked).map(\.id)))
+    }
+
+    func clearChecked(ids: Set<UUID>) {
+        guard !ids.isEmpty else { return }
         let items = getItems().compactMap { item -> ShoppingListModel? in
-            guard item.isChecked else { return item }
+            guard item.isChecked, ids.contains(item.id) else { return item }
             // Staples are unchecked and kept; one-time items are removed.
             if item.isRecurring { var u = item; u.isChecked = false; return u }
             return nil

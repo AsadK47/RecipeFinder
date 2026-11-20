@@ -58,12 +58,15 @@ Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap pl
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 - **Groceries writes itself slice 2 (shop mode):** a full-screen cover, not a toggle on the list — big rows need the
   whole width and none of the row's steppers/menus (a mis-tap in the aisle would change a quantity). Whole row = one
-  tap target (≥76pt), ticked rows drop to "In the basket" below (tap again to untick). **Tick = at home** happens on
+  tap target (≥76pt); a tick dims the row **in place** (aisle order = category, then name) — first build sank ticked
+  rows to an "In the basket" section, so the next row slid under the thumb (challenger). **Tick = at home** happens on
   the one *Done* ("Done · put N away"), not on each tick: ticking straight into At home would need untick to remove
-  from At home, which can delete something that was already there before the shop. Leaving mid-shop keeps the ticks
-  (slice 1 already counts ticked as bought). Same put-away as the ⋯ dialog (`ShopTrip.putAwayBasket`, one home).
-  Screen awake via `ScreenAwakeHold`, which restores the earlier value (Settings' keep-awake survives). Store filter
-  carries in. No new stored data → no Privacy change. **Pre-mortem:** (1) screen stays awake after leaving →
+  from At home, which can delete something that was already there before the shop. A Close (✕) leaves and keeps the
+  ticks (slice 1 already counts ticked as bought). Done acts on **this store's basket only**
+  (`ShoppingListManaging.putAway(_:into:)` + `clearChecked(ids:)`; both reviewers: the first build cleared other
+  stores' ticks while its label counted only this store's). The ⋯ dialog uses the same `putAway` with every tick.
+  Screen awake via `ScreenAwakeHold` (restores the earlier value). Settings' "Keep screen awake" is read nowhere — older
+  dead setting, noted for Inbox. No new stored data → no Privacy change. **Pre-mortem:** (1) screen stays awake after leaving →
   `ScreenAwakeHold` tests; (2) Done loses items / staples vanish → `finishPutsTheBasketAway`; (3) tick doesn't
   register or Done doesn't reach At home → UI step in `testZZZZGroceriesFromPlan`.
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
