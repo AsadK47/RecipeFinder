@@ -10,10 +10,11 @@ struct ShopTrip: Equatable {
     /// Ticked one-offs, which Done moves At home (staples stay on the list for next time).
     private let goingAway: Int
 
-    /// `store` nil = every item; otherwise items set to another store stay off the trip, as on To buy.
-    init(items: [ShoppingListModel], store: String?) {
+    /// `store` nil = every item; otherwise items set to another store stay off the trip, as on To buy. Aisles follow
+    /// the order learned at this store (`aisleOrder`).
+    init(items: [ShoppingListModel], store: String?, aisleOrder: AisleOrder = AisleOrder()) {
         // Aisle order by category, then name — not grouped()'s unticked-first, which moved a row as it was ticked.
-        let visible = ShoppingListGrouping.grouped(items.filter { $0.isAvailable(at: store) })
+        let visible = ShoppingListGrouping.grouped(items.filter { $0.isAvailable(at: store) }, aisleOrder: aisleOrder, store: store)
             .flatMap { $0.value.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending } }
         order = visible
         toGet = visible.filter { !$0.isChecked }

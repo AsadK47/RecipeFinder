@@ -19,7 +19,9 @@ struct ShoppingSectionsView: View {
     }
 
     private var groupedItems: [(key: String, value: [ShoppingListModel])] {
-        ShoppingListGrouping.grouped(manager.items.filter { $0.isAvailable(at: store) })
+        ShoppingListGrouping.grouped(
+            manager.items.filter { $0.isAvailable(at: store) }, aisleOrder: manager.aisleOrder, store: store
+        )
     }
 
     var body: some View {

@@ -8,6 +8,10 @@ protocol ShoppingListManaging: AnyObject, Observable {
     var items: [ShoppingListModel] { get }
     /// The user's own stores, in the order they added them.
     var stores: [String] { get }
+    /// The aisle order learned from shop-mode ticks, per store.
+    var aisleOrder: AisleOrder { get }
+    /// Learns from one shop-mode trip: the categories of the items ticked, in the order they were ticked.
+    func learnAisleOrder(ticked categories: [String], store: String?)
     func addItem(name: String, quantity: Int, unit: String, category: String?)
     func updateCategory(at index: Int, category: String)
     @discardableResult func addStore(_ name: String) -> Bool
@@ -68,6 +72,7 @@ final class ShoppingListManager: ShoppingListManaging {
 
     private(set) var items: [ShoppingListModel] = []
     private(set) var stores: [String] = []
+    private(set) var aisleOrder = AisleOrder()
 
     private convenience init() {
         self.init(storage: .shared, shoppingListStore: CoreDataShoppingListStore(persistence: .shared), badgeManager: .shared)
@@ -93,6 +98,7 @@ final class ShoppingListManager: ShoppingListManaging {
             replace: { try shoppingListStore.replaceStores(with: $0) },
             sync: .iCloudRules(storage: storage, store: shoppingListStore, id: { $0 })
         )
+        aisleOrder = AisleOrder.load(from: storage)
         loadItems()
     }
 
@@ -104,6 +110,8 @@ final class ShoppingListManager: ShoppingListManaging {
     func removeAllShoppingData() {
         itemsMirror.removeAll()
         storesMirror.removeAll()
+        storage.set(nil as Data?, forKey: AisleOrder.storageKey)
+        aisleOrder = AisleOrder()
         loadItems()
     }
 
@@ -248,6 +256,7 @@ final class ShoppingListManager: ShoppingListManaging {
         var renamed = stores
         renamed[index] = valid
         saveStores(renamed)
+        updateAisleOrder { $0.renameShop(store, to: valid) }
         saveItems(items.map { item in
             var updated = item
             updated.stores = item.stores.map { $0 == store ? valid : $0 }
@@ -259,11 +268,25 @@ final class ShoppingListManager: ShoppingListManaging {
     /// Removes a store; its items stay on the list, untagged from it.
     func deleteStore(_ store: String) {
         saveStores(stores.filter { $0 != store })
+        updateAisleOrder { $0.forgetShop(store) }
         saveItems(items.map { item in
             var updated = item
             updated.stores.removeAll { $0 == store }
             return updated
         })
+    }
+
+    func learnAisleOrder(ticked categories: [String], store: String?) {
+        updateAisleOrder { $0.learn(ticked: categories, at: store) }
+    }
+
+    /// Saves the learned aisle order only when the change did something.
+    private func updateAisleOrder(_ change: (inout AisleOrder) -> Void) {
+        var updated = aisleOrder
+        change(&updated)
+        guard updated != aisleOrder else { return }
+        aisleOrder = updated
+        updated.save(to: storage)
     }
 
     /// Tags (or untags) every item in `ids` with `store` in one save.

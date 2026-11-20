@@ -168,7 +168,7 @@ struct KitchenShoppingView: View {
                               variant: showsPlanCard ? .secondary : .primary) {
                     shopMode = ShopModeRequest(store: activeStore)
                 }
-                .accessibilityHint("Big rows to tick in the aisle; the screen stays on")
+                .accessibilityHint("Big rows to tick, in the order you usually shop; the screen stays on")
                 .accessibilityIdentifier("groceries.shopMode")
                 .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
                 .listRowSeparator(.hidden)

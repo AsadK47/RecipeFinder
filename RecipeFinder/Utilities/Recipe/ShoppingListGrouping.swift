@@ -8,8 +8,19 @@ enum ShoppingListGrouping {
         uniqueKeysWithValues: CategoryClassifier.categoryOrder.enumerated().map { ($1, $0) }
     )
 
-    /// Groups `items` by category, unchecked before checked within each, groups ordered by `CategoryClassifier.categoryOrder` (alphabetical fallback).
-    static func grouped(_ items: [ShoppingListModel]) -> [(key: String, value: [ShoppingListModel])] {
+    /// Groups `items` by category, unchecked before checked within each, groups in the aisle order learned for `store`
+    /// (`AisleOrder`), else `CategoryClassifier.categoryOrder` (alphabetical fallback).
+    static func grouped(
+        _ items: [ShoppingListModel], aisleOrder: AisleOrder = AisleOrder(), store: String? = nil
+    ) -> [(key: String, value: [ShoppingListModel])] {
+        let usual = usualOrder(items)
+        let arranged = aisleOrder.arranged(usual.map(\.key), at: store)
+        guard arranged != usual.map(\.key) else { return usual }
+        let groups = Dictionary(uniqueKeysWithValues: usual.map { ($0.key, $0.value) })
+        return arranged.map { (key: $0, value: groups[$0] ?? []) }
+    }
+
+    private static func usualOrder(_ items: [ShoppingListModel]) -> [(key: String, value: [ShoppingListModel])] {
         Dictionary(grouping: items, by: { $0.category })
             .map { (key: $0.key, value: $0.value.sorted { !$0.isChecked && $1.isChecked }) }
             .sorted { first, second in
