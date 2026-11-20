@@ -104,8 +104,10 @@ struct MealPlanningView: View {
                     .padding(.bottom, AppTheme.spacing100)
                 }
             }
-            // The deck is drawn over the planner, not presented, so keep VoiceOver from reaching what's under it.
+            // The deck is drawn over the planner, not presented, so keep VoiceOver from reaching what's under it; the
+            // planner fades out under it so only the card and its controls show (owner 2026-11-20: "background noise").
             .accessibilityHidden(planDeck != nil)
+            .opacity(planDeck == nil ? 1 : 0)
 
             if let shown = planDeck {
                 // Not `Binding($planDeck)`: that binding force-reads the optional, and the deck's removal animation
