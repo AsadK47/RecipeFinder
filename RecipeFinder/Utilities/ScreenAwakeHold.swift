@@ -23,6 +23,12 @@ final class ScreenAwakeHold {
         write(before)
         self.before = nil
     }
+
+    /// Re-takes the hold when the app comes back (a call, the lock screen or another app can drop it) and lets go
+    /// while it's away, so the screens holding it behave the same.
+    func sceneChanged(isActive: Bool) {
+        if isActive { begin() } else { end() }
+    }
 }
 
 /// Settings › Display "Keep Screen Awake", applied at the app root. Coming back to the app only ever turns it on:

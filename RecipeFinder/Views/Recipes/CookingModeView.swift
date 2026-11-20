@@ -164,7 +164,7 @@ struct CookingModeView: View {
         }
         // Restore idle timer if interrupted (call/PiP/alert) and onDisappear never fires.
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { awake.begin() } else { awake.end() }
+            awake.sceneChanged(isActive: phase == .active)
         }
         .onChange(of: currentIndex) { _, new in
             CookingSession.shared.setIndex(new)

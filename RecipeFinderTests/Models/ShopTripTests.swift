@@ -155,6 +155,36 @@ struct ScreenAwakeHoldTests {
         #expect(!screen.idleTimerDisabled)
     }
 
+    @Test("Leaving the app restores the screen; coming back holds it awake again", arguments: [false, true])
+    func sceneRoundTripReholds(before: Bool) {
+        let screen = FakeScreen(before)
+        let awake = hold(screen)
+        awake.begin()
+
+        awake.sceneChanged(isActive: false)
+        #expect(screen.idleTimerDisabled == before)
+        screen.idleTimerDisabled = false // iOS may reset it while the app is away
+        awake.sceneChanged(isActive: true)
+        #expect(screen.idleTimerDisabled)
+        awake.end()
+        #expect(!screen.idleTimerDisabled)
+    }
+
+    @Test("Coming back after the screen closed and reopened twice still restores the original")
+    func repeatedSceneChangesRestoreOriginal() {
+        let screen = FakeScreen(false)
+        let awake = hold(screen)
+        awake.begin()
+
+        awake.sceneChanged(isActive: true)
+        awake.sceneChanged(isActive: false)
+        awake.sceneChanged(isActive: false)
+        awake.sceneChanged(isActive: true)
+        awake.end()
+
+        #expect(!screen.idleTimerDisabled)
+    }
+
     @Test("Letting go without holding changes nothing")
     func endWithoutBeginDoesNothing() {
         let screen = FakeScreen(true)

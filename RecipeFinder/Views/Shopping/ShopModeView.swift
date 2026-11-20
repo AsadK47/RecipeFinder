@@ -15,6 +15,7 @@ struct ShopModeView: View {
     @Environment(\.shopping) private var shopping
     @Environment(\.kitchen) private var kitchen
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var trip = ShopTrip.empty
     /// This trip's ticks, in order — what the aisle order learns from on the way out.
     @State private var tripTicks = TripTicks()
@@ -50,6 +51,10 @@ struct ShopModeView: View {
         .onAppear {
             trip = ShopTrip(items: shopping.items, store: store, aisleOrder: shopping.aisleOrder)
             awake.begin()
+        }
+        // Same as cooking: coming back to the app re-takes the hold, leaving restores the screen.
+        .onChange(of: scenePhase) { _, phase in
+            awake.sceneChanged(isActive: phase == .active)
         }
         .onDisappear {
             awake.end()
