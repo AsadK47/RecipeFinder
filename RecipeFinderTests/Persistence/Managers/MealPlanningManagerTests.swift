@@ -573,3 +573,66 @@ struct WeekShoppingSummaryServingsTests {
         #expect(beef?.quantity == 200)
     }
 }
+
+/// Owner 2026-11-20: "can't clear old plans" — Clear Past Plans takes every plan before today off the week. Cooking
+/// history lives on the recipe (`cookCount`, `lastCookedAt`), so clearing a plan loses nothing cooked.
+@MainActor
+@Suite("Clear past plans")
+struct ClearPastPlansTests {
+    private let calendar = Calendar.current
+
+    private func makeManager(_ plans: [MealPlanModel]) -> MealPlanningManager {
+        makeManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard),
+                    store: InMemoryMealPlanStore(plans))
+    }
+
+    private func makeManager(storage: LocalStore, store: InMemoryMealPlanStore) -> MealPlanningManager {
+        MealPlanningManager(storage: storage, mealPlanStore: store,
+                            reminders: FakeMealReminderScheduler(), planNudges: FakePlanNudgeScheduler())
+    }
+
+    private func day(_ offset: Int) -> Date {
+        calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: Date())) ?? Date()
+    }
+
+    private func plan(_ name: String, on date: Date, _ mealTime: MealTime = .dinner, recurring: Bool = false) -> MealPlanModel {
+        MealPlanModel(recipeId: UUID(), recipeName: name, date: date, mealTime: mealTime, isRecurring: recurring)
+    }
+
+    @Test func yesterdaysPlanIsCleared() {
+        let sut = makeManager([plan("Yesterday", on: day(-1)), plan("Three days ago", on: day(-3), .lunch)])
+        sut.clearOldMealPlans()
+        #expect(sut.mealPlans.isEmpty)
+    }
+
+    @Test func todayAndLaterStay() {
+        let sut = makeManager([plan("Tonight", on: day(0)), plan("Tomorrow", on: day(1)), plan("Gone", on: day(-1))])
+        sut.clearOldMealPlans()
+        #expect(Set(sut.mealPlans.map(\.recipeName)) == ["Tonight", "Tomorrow"])
+    }
+
+    @Test func weeklyDinnerKeepsOnlyItsNewestCopy() {
+        let sut = makeManager([
+            plan("Pasta", on: day(-14), recurring: true),
+            plan("Pasta", on: day(-7), recurring: true),
+        ])
+        sut.clearOldMealPlans()
+        #expect(sut.mealPlans.map(\.date) == [day(-7)])
+    }
+
+    @Test func weeklyDinnerWithACopyAheadClearsEveryPastCopy() {
+        let sut = makeManager([
+            plan("Pasta", on: day(-7), recurring: true),
+            plan("Pasta", on: day(0), recurring: true),
+        ])
+        sut.clearOldMealPlans()
+        #expect(sut.mealPlans.map(\.date) == [day(0)])
+    }
+
+    @Test func clearedPlansStayGoneAfterReload() {
+        let store = InMemoryMealPlanStore([plan("Yesterday", on: day(-1))])
+        let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
+        makeManager(storage: storage, store: store).clearOldMealPlans()
+        #expect(makeManager(storage: storage, store: store).mealPlans.isEmpty)
+    }
+}
