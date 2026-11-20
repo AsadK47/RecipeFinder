@@ -283,7 +283,7 @@ import Foundation
     @Test func busyNightSaysWhy() {
         var deck = makeDeck(days: [day(5)], recipes: [recipe("Stir fry", minutes: 20)])
         deck.setBusy(true)
-        #expect(deck.current?.reason == "Quick for a busy night · 20 min")
+        #expect(deck.current?.reason == "Quick for a busy night · " + DurationFormatter.label(minutes: 20))
     }
 
     @Test func busyNightBeatsExpiringItemsAndFavourites() {
