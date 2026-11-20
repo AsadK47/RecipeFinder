@@ -9,8 +9,12 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func toggleRecurring(_ mealPlan: MealPlanModel)
     func propagateRecurring(toWeekStarting startDate: Date)
     func clearOldMealPlans()
+    /// Marks the plans for `recipeID` on `day` cooked (Made it), so a past day keeps showing them as done.
+    func markCooked(recipeID: UUID, on day: Date)
+    /// Clear Past Plans: past plans go, except dinners cooked on their day (looked up in `recipes`).
+    func clearPastMealPlans(keepingCookedIn recipes: [RecipeModel])
     /// Plans Clear Past Plans would take off.
-    var pastPlanCount: Int { get }
+    func pastPlanCount(keepingCookedIn recipes: [RecipeModel]) -> Int
     func mealPlan(for date: Date, mealTime: MealTime) -> MealPlanModel?
     func mealPlans(for date: Date) -> [MealPlanModel]
     func hasMealPlans(for date: Date) -> Bool
@@ -183,6 +187,19 @@ final class MealPlanningManager: MealPlanningManaging {
         }
     }
 
+    func markCooked(recipeID: UUID, on day: Date) {
+        var changed: [MealPlanModel] = []
+        for index in mealPlans.indices
+        where mealPlans[index].recipeId == recipeID && mealPlans[index].isOn(day) && !mealPlans[index].isCompleted {
+            mealPlans[index].isCompleted = true
+            changed.append(mealPlans[index])
+        }
+        guard !changed.isEmpty else { return }
+        saveMealPlans()
+        // Cooked: no reminder to cook it.
+        for plan in changed { syncReminder(for: plan) }
+    }
+
     func toggleRecurring(_ mealPlan: MealPlanModel) {
         guard let index = mealPlans.firstIndex(where: { $0.id == mealPlan.id }) else { return }
         if mealPlans[index].isRecurring {
@@ -255,9 +272,13 @@ final class MealPlanningManager: MealPlanningManaging {
         syncSeriesReminders()
     }
 
-    /// Clear Past Plans: takes every plan before today off the planner (see `pastPlans`).
     func clearOldMealPlans() {
-        let past = Self.pastPlans(mealPlans, now: Date())
+        clearPastMealPlans(keepingCookedIn: [])
+    }
+
+    /// Clear Past Plans: takes plans before today off the planner (see `pastPlans`).
+    func clearPastMealPlans(keepingCookedIn recipes: [RecipeModel]) {
+        let past = Self.pastPlans(mealPlans, now: Date(), recipes: recipes)
         guard !past.isEmpty else { return }
         for plan in mealPlans where past.contains(plan.id) { cancelReminder(for: plan) }
         mealPlans.removeAll { past.contains($0.id) }
@@ -265,15 +286,21 @@ final class MealPlanningManager: MealPlanningManaging {
     }
 
     /// How many plans Clear Past Plans would take off, for its confirmation.
-    var pastPlanCount: Int { Self.pastPlans(mealPlans, now: Date()).count }
+    func pastPlanCount(keepingCookedIn recipes: [RecipeModel]) -> Int {
+        Self.pastPlans(mealPlans, now: Date(), recipes: recipes).count
+    }
 
     /// Plans on days before today: one-offs, and every copy of a weekly meal except the newest of its series (weekday +
-    /// meal time), which `propagateRecurring` copies forward. Cooking history lives on the recipe (`cookCount`,
-    /// `lastCookedAt`), so clearing a plan loses nothing cooked.
-    nonisolated static func pastPlans(_ plans: [MealPlanModel], now: Date, calendar: Calendar = .current) -> Set<UUID> {
+    /// meal time), which `propagateRecurring` copies forward. Dinners cooked on their day stay as the week's history
+    /// (`MealPlanModel.wasCooked`); cook counts live on the recipe, so nothing cooked is lost either way.
+    nonisolated static func pastPlans(
+        _ plans: [MealPlanModel], now: Date, recipes: [RecipeModel] = [], calendar: Calendar = .current
+    ) -> Set<UUID> {
         let today = calendar.startOfDay(for: now)
         let newestOfSeries = Set(newestRecurringCopies(plans, calendar: calendar))
-        return Set(plans.filter { $0.date < today && !newestOfSeries.contains($0.id) }.map(\.id))
+        return Set(plans.filter {
+            $0.date < today && !newestOfSeries.contains($0.id) && !$0.wasCooked(in: recipes, calendar: calendar)
+        }.map(\.id))
     }
 
     /// The newest copy of each weekly series (weekday + meal time) — the one later weeks are copied from.

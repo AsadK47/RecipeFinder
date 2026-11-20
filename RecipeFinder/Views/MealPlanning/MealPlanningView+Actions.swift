@@ -62,19 +62,19 @@ extension MealPlanningView {
     }
 
     func updateSelectedMealTimes(for date: Date) {
-        let mealsForDate = mealPlanningManager.mealPlans(for: date)
+        let mealsForDate = shownPlans(for: date)
         selectedMealTimes = Set(mealsForDate.map { $0.mealTime })
     }
 
     // MARK: - Clear past plans
 
     var clearPastTitle: String {
-        let count = mealPlanningManager.pastPlanCount
+        let count = mealPlanningManager.pastPlanCount(keepingCookedIn: recipes)
         return count == 1 ? "Clear 1 past plan?" : "Clear \(count) past plans?"
     }
 
     func askToClearPastPlans() {
-        guard mealPlanningManager.pastPlanCount > 0 else {
+        guard mealPlanningManager.pastPlanCount(keepingCookedIn: recipes) > 0 else {
             weekShoppingFeedback = "No past plans to clear"
             return
         }
@@ -83,7 +83,7 @@ extension MealPlanningView {
 
     func clearPastPlans() {
         withAnimation(.appGentle) {
-            mealPlanningManager.clearOldMealPlans()
+            mealPlanningManager.clearPastMealPlans(keepingCookedIn: recipes)
             updateSelectedMealTimes(for: selectedDate)
         }
         HapticManager.shared.success()
@@ -214,9 +214,19 @@ extension MealPlanningView {
         currentWeekStart.map { mealPlanningManager.mealPlansForWeek(starting: $0).meals } ?? []
     }
 
+    /// A day's plans as Plan shows them: past days only what was cooked (`MealPlanModel.isShown`).
+    func shownPlans(for date: Date) -> [MealPlanModel] {
+        let now = Date()
+        return mealPlanningManager.mealPlans(for: date).filter { $0.isShown(now: now, recipes: recipes) }
+    }
+
     /// The shown week as seven dinner photos.
     var weekNights: [WeekDinners.Night] {
-        WeekDinners.nights(week: daysInCurrentWeek, plans: currentWeekPlans, recipes: recipes, today: Date())
+        let now = Date()
+        // A past night shows its dinner only if it was cooked; an uncooked one is just a dimmed, empty night.
+        return WeekDinners.nights(week: daysInCurrentWeek,
+                                  plans: currentWeekPlans.filter { $0.isShown(now: now, recipes: recipes) },
+                                  recipes: recipes, today: now)
     }
 
     /// An empty night's photo: picks that night and opens the recipe picker for its dinner.

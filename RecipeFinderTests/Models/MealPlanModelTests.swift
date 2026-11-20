@@ -174,3 +174,48 @@ struct MealPlanRecipeLookupTests {
         #expect(plan.recipe(in: [recipe("Dal")]) == nil)
     }
 }
+
+/// Owner 2026-11-20: past days show a plan only if that dish was cooked; today and later are unaffected.
+@Suite("Past plans show only when cooked")
+struct MealPlanShownTests {
+    private let cal: Calendar = {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(identifier: "UTC") ?? .current
+        return cal
+    }()
+
+    private func at(_ day: Int, _ hour: Int = 0) -> Date {
+        cal.date(from: DateComponents(year: 2026, month: 11, day: day, hour: hour)) ?? Date()
+    }
+
+    private func recipe(cookedAt: Date?) -> RecipeModel {
+        RecipeModel(name: "Dal", category: "Main", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+                    baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: "",
+                    lastCookedAt: cookedAt)
+    }
+
+    private func plan(_ recipe: RecipeModel, on date: Date, completed: Bool = false) -> MealPlanModel {
+        MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: date, mealTime: .dinner, isCompleted: completed)
+    }
+
+    @Test func aPastPlanCookedThatDayShows() {
+        let dal = recipe(cookedAt: at(18, 19))
+        #expect(plan(dal, on: at(18)).isShown(now: at(20, 9), recipes: [dal], calendar: cal))
+    }
+
+    @Test func aPastPlanMarkedCookedShows() {
+        let dal = recipe(cookedAt: nil)
+        #expect(plan(dal, on: at(18), completed: true).isShown(now: at(20, 9), recipes: [dal], calendar: cal))
+    }
+
+    @Test func aPastPlanNotCookedIsHidden() {
+        let dal = recipe(cookedAt: at(19, 19))  // cooked, but the day after its plan
+        #expect(!plan(dal, on: at(18)).isShown(now: at(20, 9), recipes: [dal], calendar: cal))
+    }
+
+    @Test func todayAndLaterShowUncooked() {
+        let dal = recipe(cookedAt: nil)
+        #expect(plan(dal, on: at(20)).isShown(now: at(20, 22), recipes: [dal], calendar: cal))
+        #expect(plan(dal, on: at(23)).isShown(now: at(20, 22), recipes: [dal], calendar: cal))
+    }
+}

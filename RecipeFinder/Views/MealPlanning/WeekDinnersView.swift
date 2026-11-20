@@ -157,6 +157,13 @@ struct WeekDinnersView: View {
             Text(night.date.formatted(.dateTime.weekday(.abbreviated).day()))
                 .font(.caption.weight(.semibold))
                 .adaptiveSecondaryForeground()
+            if night.isPast, night.plan != nil {
+                // Plan shows a past night's dinner only once cooked (MealPlanModel.isShown).
+                Label("Cooked", systemImage: "checkmark.circle.fill")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(AppTheme.accentColor)
+                    .labelStyle(.titleAndIcon)
+            }
             if night.isToday {
                 Text("Tonight")
                     .font(.caption2.weight(.bold))
