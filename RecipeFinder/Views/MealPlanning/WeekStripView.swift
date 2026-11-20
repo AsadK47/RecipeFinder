@@ -83,6 +83,10 @@ private struct WeekDayCell: View {
         return ["S", "M", "T", "W", "T", "F", "S"][weekday - 1]
     }
 
+    private var isPastDay: Bool {
+        Calendar.current.startOfDay(for: date) < Calendar.current.startOfDay(for: Date())
+    }
+
     private var dayNumber: String {
         "\(Calendar.current.component(.day, from: date))"
     }
@@ -136,6 +140,8 @@ private struct WeekDayCell: View {
                 .frame(height: 5)
             }
             .frame(maxWidth: .infinity)
+            // Past days are dimmed (owner 2026-11-20) so the week still reads in full but the days ahead lead.
+            .opacity(isPastDay && !isSelected ? 0.45 : 1)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
