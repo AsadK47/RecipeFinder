@@ -1115,6 +1115,19 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(open.waitForExistence(timeout: 5), "Plan should still offer the deck once the week is planned.")
         open.tap()
         XCTAssertTrue(card.waitForExistence(timeout: 5), "The deck should deal again after a full week.")
+        app.buttons["planDeck.close"].tap()
+        expectation(for: gone, evaluatedWith: app.buttons["planDeck.close"])
+        waitForExpectations(timeout: 5)
+
+        // Swipe a planned meal left to take it off (owner 2026-11-20: "can't clear old plans").
+        let dinner = app.descendants(matching: .any)["plan.meal.Dinner"]
+        for _ in 0..<4 where dinner.exists && !dinner.isHittable { app.swipeUp(velocity: .slow) }
+        if dinner.waitForExistence(timeout: 3) {
+            checkpoint(app, "swipe to remove")
+            dinner.swipeLeft(velocity: .fast)
+            expectation(for: gone, evaluatedWith: dinner)
+            waitForExpectations(timeout: 5)
+        }
     }
 
     /// Groceries writes itself, slice 1: with dinners planned, To buy offers what the plan still needs in one tap,

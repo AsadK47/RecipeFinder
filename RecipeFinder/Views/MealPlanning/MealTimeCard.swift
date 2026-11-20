@@ -4,7 +4,12 @@ import Kingfisher
 struct MealTimeCard: View {
     let mealTime: MealTime
     let recipe: RecipeModel?
+    /// The plan's stored dish name: shown when its recipe is gone (deleted, or a Quick Snack after a relaunch), so the
+    /// meal still reads as planned and can be removed.
+    var plannedName: String? = nil
     var isRecurring: Bool = false
+
+    private var dishName: String? { recipe?.name ?? plannedName }
     var onRemove: (() -> Void)? = nil
 
     var body: some View {
@@ -30,12 +35,12 @@ struct MealTimeCard: View {
                 }
                 .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
 
-                if let recipe = recipe {
+                if let dishName {
                     HStack(spacing: AppTheme.spacing6) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption2)
                             .foregroundStyle(.green)
-                        Text(recipe.name)
+                        Text(dishName)
                             .font(.caption)
                             .lineLimit(1)
                         if isRecurring {
@@ -59,7 +64,7 @@ struct MealTimeCard: View {
             Spacer()
 
             HStack(spacing: AppTheme.spacing8) {
-                if let onRemove, recipe != nil {
+                if let onRemove, dishName != nil {
                     Button(action: onRemove) {
                         Image(systemName: "trash")
                             .font(.system(size: AppTheme.fontSize14, weight: .semibold))
@@ -67,7 +72,7 @@ struct MealTimeCard: View {
                     }
                     .buttonStyle(.plain)
                 }
-                if recipe == nil {
+                if dishName == nil {
                     Image(systemName: "chevron.right")
                         .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                         .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)

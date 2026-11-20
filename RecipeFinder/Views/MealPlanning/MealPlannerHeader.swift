@@ -15,7 +15,7 @@ struct MealPlannerHeader: View {
                 Divider()
 
                 Button(role: .destructive, action: onClearOldPlans) {
-                    Label("Clear Old Plans", systemImage: "trash")
+                    Label("Clear Past Plans", systemImage: "trash")
                 }
             }
         }

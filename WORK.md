@@ -51,6 +51,13 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   ✅ Slice 2 shop mode landed 1505253 (builder 2026-11-20). Leftover branch agent/groceries-shop-mode (auto-cleanup).
   ✅ Slice 3 aisle order landed 9dda50b (builder 2026-11-20). Leftover branch agent/groceries-aisle-order (auto-cleanup).
 
+- 🐞 **Meal planning is buggy** (owner 2026-11-20): branch `agent/plan-bugs`. Red tests 39486e5, 6a612dd, 5c6f3b1;
+  fixes in the working tree / next commit: deck reachable after a full week (`PlanDeck.weekToPlan`), Clear Past Plans
+  (+confirm, `pastPlans`), tap = open recipe (`OpenedDinner`), weekly series stop on remove/Stop Repeating, one weekly
+  reminder per series, synced twins fold per slot, reload reconciles reminders, Add Week from today, ghost meals
+  removable (`MealTimeCard.plannedName`, `MealPlanModel.recipe(in:)`), midnight rollover. UI red needs a
+  workflow_dispatch run (push runs unit tests only).
+
 ## Next action
 *Groceries writes itself* slice 5 on `agent/groceries-delete-dupes`: delete the duplicated Kitchen/Shopping views +
 Plan's Add Week button (net lines down); then slice 4 ("Still got the coriander?"). Website session: add the §4.2
@@ -58,6 +65,17 @@ aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.htm
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Plan bug hunt (owner "meal planning is buggy" 2026-11-20):** two reviewers; acted on what both found + owner
+  specifics. Weekly meals: removing a copy or Stop Repeating **stops the whole series** (no "skip one week" marker —
+  that would be new stored data → Privacy/model change → owner). Weekly reminder lives on the series' newest copy only
+  (weekly trigger ignores the date). Clear Past Plans keeps each series' newest copy (it's the template); cook history
+  is `RecipeModel.cookCount/lastCookedAt`, untouched by plans (nothing ever set `isCompleted`). Deck "worked once":
+  the button hid once the shown week was full → now names the next open week (`weekToPlan`, ≤4 weeks ahead). Swipe-to-
+  delete not added: the day list is a VStack in a ScrollView with a drag handle (no List swipeActions); trash button +
+  hold menu now work for every plan incl. ghosts. Add Week counts from today (`from:`), not the week's first day —
+  kept the old API for Groceries' card. Parked (one reviewer, low/risky): time-zone shift of midnight-dated plans
+  (needs a stored-date change), future-dated weekly reminder firing early, rename leaves old plan name, Sunday nudge
+  week with Sunday-first locale, top-up of a ticked grocery line.
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
@@ -79,7 +97,7 @@ Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap pl
   breakfast/lunch); trimming the strip waits for *Groceries writes itself* (deletes duplicated views). Hold = context
   menu (Cook / Move to <day> / Swap with <day> (dish) / Take off the plan), not drag-and-drop — a drag across a
   2-column grid inside a ScrollView fights scrolling. Moving onto a planned night swaps, so a night never has two
-  dinners; nothing moves into the past. Tap = push into cooking like Today's "Cook this" (needs a NavigationStack on
+  dinners; nothing moves into the past. Tap = open the recipe (owner 2026-11-20; was push into cooking), hold menu Cook = cooking like Today's "Cook this" (needs a NavigationStack on
   Plan, same pattern as Today). **Pre-mortem:** (1) swap leaves two dinners on one night → `moveOntoAPlannedNight…`;
   (2) a move across the October clock change lands on the wrong day → `moveKeepsTheTimeAcrossAClockChange`;
   (3) tap does nothing / doesn't reach cooking → UI test asserts `cooking.stepPosition`.

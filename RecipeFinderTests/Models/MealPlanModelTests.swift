@@ -1,4 +1,5 @@
 import XCTest
+import Testing
 @testable import RecipeFinder
 
 final class MealPlanModelTests: XCTestCase {
@@ -144,5 +145,32 @@ final class MealPlanModelTests: XCTestCase {
 
     private func daysFromNow(_ days: Int) -> Date {
         Calendar.current.date(byAdding: .day, value: days, to: Date())!
+    }
+}
+
+/// Plan bug hunt 2026-11-20: the day list matched a plan's recipe by id only, so a re-imported recipe showed as an
+/// empty "Tap to add recipe" slot while This week's dinners (by id, then name) showed its photo.
+@Suite("Plan → recipe lookup")
+struct MealPlanRecipeLookupTests {
+    private func recipe(_ name: String) -> RecipeModel {
+        RecipeModel(name: name, category: "Main", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+                    baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: [], notes: "")
+    }
+
+    @Test func findsTheRecipeById() {
+        let dal = recipe("Dal")
+        let plan = MealPlanModel(recipeId: dal.id, recipeName: "Old name", date: Date(), mealTime: .dinner)
+        #expect(plan.recipe(in: [recipe("Old name"), dal])?.id == dal.id)
+    }
+
+    @Test func aReimportedRecipeIsFoundByName() {
+        let reimported = recipe("Chicken Curry")
+        let plan = MealPlanModel(recipeId: UUID(), recipeName: "chicken curry", date: Date(), mealTime: .dinner)
+        #expect(plan.recipe(in: [reimported])?.id == reimported.id)
+    }
+
+    @Test func aDeletedRecipeIsNil() {
+        let plan = MealPlanModel(recipeId: UUID(), recipeName: "Popcorn", date: Date(), mealTime: .snack)
+        #expect(plan.recipe(in: [recipe("Dal")]) == nil)
     }
 }

@@ -64,4 +64,12 @@ struct MealPlanCalendar {
         }
         return (week.start, end)
     }
+
+    /// After midnight (Plan left open, or back from the background), a planner still showing the old today moves to the
+    /// new today, so "Add meal" can't plan yesterday. A day the cook picked themselves stays put. Nil: no change.
+    func rolledOver(selected: Date, lastToday: Date, now: Date) -> Date? {
+        guard !calendar.isDate(lastToday, inSameDayAs: now),
+              calendar.isDate(selected, inSameDayAs: lastToday) else { return nil }
+        return now
+    }
 }

@@ -611,6 +611,13 @@ struct ClearPastPlansTests {
         #expect(Set(sut.mealPlans.map(\.recipeName)) == ["Tonight", "Tomorrow"])
     }
 
+    @Test func pastCountMatchesWhatClears() {
+        let sut = makeManager([plan("A", on: day(-1)), plan("B", on: day(-20), .lunch), plan("C", on: day(2))])
+        #expect(sut.pastPlanCount == 2)
+        sut.clearOldMealPlans()
+        #expect(sut.pastPlanCount == 0)
+    }
+
     @Test func weeklyDinnerKeepsOnlyItsNewestCopy() {
         let sut = makeManager([
             plan("Pasta", on: day(-14), recurring: true),
@@ -730,5 +737,18 @@ struct PlanBugHuntTests {
         store.plans.removeAll()   // deleted on the other device
         sut.reload()
         #expect(!liveReminders.contains("meal-\(plan.id.uuidString)"))
+    }
+
+    @Test func addWeekFromTodayLeavesOutMealsAlreadyPast() {
+        let recipe = RecipeModel(
+            name: "Dal", category: "Main", difficulty: "Basic", prepTime: "5 min", cookingTime: "20 min",
+            baseServings: 2, ingredients: [Ingredient(baseQuantity: 200, unit: "g", name: "lentils")],
+            prePrepInstructions: [], instructions: [], notes: ""
+        )
+        let sut = makeManager()
+        sut.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: day(-1), mealTime: .dinner, servings: 2))
+        sut.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: day(1), mealTime: .lunch, servings: 2))
+        let summary = sut.weekShoppingSummary(forWeekStarting: day(-1), recipes: [recipe], from: Date())
+        #expect(summary.mealsCovered == 1)
     }
 }

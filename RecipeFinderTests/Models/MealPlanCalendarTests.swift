@@ -79,3 +79,29 @@ struct MealPlanCalendarTests {
         #expect(grid.suffix(trailing).allSatisfy { $0 == nil })
     }
 }
+
+/// Plan bug hunt 2026-11-20: Plan left open past midnight kept "today" on yesterday, so Add meal planned the day gone.
+@Suite("MealPlanCalendar midnight rollover")
+struct MealPlanRolloverTests {
+    private let sut: MealPlanCalendar = {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(identifier: "UTC") ?? .current
+        return MealPlanCalendar(calendar: cal)
+    }()
+
+    private func at(_ day: Int, _ hour: Int) -> Date {
+        sut.calendar.date(from: DateComponents(year: 2026, month: 11, day: day, hour: hour)) ?? Date()
+    }
+
+    @Test func todayLeftOpenMovesToTheNewDay() {
+        #expect(sut.rolledOver(selected: at(20, 9), lastToday: at(20, 22), now: at(21, 7)) == at(21, 7))
+    }
+
+    @Test func aDayTheCookPickedStays() {
+        #expect(sut.rolledOver(selected: at(24, 0), lastToday: at(20, 22), now: at(21, 7)) == nil)
+    }
+
+    @Test func sameDayChangesNothing() {
+        #expect(sut.rolledOver(selected: at(20, 9), lastToday: at(20, 8), now: at(20, 23)) == nil)
+    }
+}

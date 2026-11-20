@@ -416,3 +416,40 @@ import Foundation
         #expect(deck.current?.recipe.name == "Only")
     }
 }
+
+/// Owner 2026-11-20: "the swipe planning works the first time, then never appears again" — the button hid once the
+/// shown week's dinners were planned. `weekToPlan` keeps the deck reachable for the next week with an open night.
+@Suite struct PlanDeckWeekToPlanTests {
+    private let cal: Calendar = {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(identifier: "UTC") ?? .current
+        cal.firstWeekday = 2  // Monday
+        return cal
+    }()
+
+    /// Monday 16 Nov 2026 + `offset` days.
+    private func day(_ offset: Int) -> Date {
+        let monday = cal.date(from: DateComponents(year: 2026, month: 11, day: 16)) ?? Date()
+        return cal.date(byAdding: .day, value: offset, to: monday) ?? monday
+    }
+
+    private func dinners(_ offsets: ClosedRange<Int>) -> [MealPlanModel] {
+        offsets.map { MealPlanModel(recipeId: UUID(), recipeName: "Dish \($0)", date: day($0), mealTime: .dinner) }
+    }
+
+    @Test func aWeekWithAnOpenNightIsPlanned() {
+        #expect(PlanDeck.weekToPlan(showing: day(2), plans: dinners(2...5), today: day(2), calendar: cal) == day(0))
+    }
+
+    @Test func aPlannedWeekMovesTheDeckToNextWeek() {
+        #expect(PlanDeck.weekToPlan(showing: day(2), plans: dinners(2...6), today: day(2), calendar: cal) == day(7))
+    }
+
+    @Test func aPastWeekPlansFromThisWeek() {
+        #expect(PlanDeck.weekToPlan(showing: day(-7), plans: [], today: day(2), calendar: cal) == day(0))
+    }
+
+    @Test func everyNightAMonthAheadPlannedHidesTheDeck() {
+        #expect(PlanDeck.weekToPlan(showing: day(2), plans: dinners(2...34), today: day(2), weeksAhead: 4, calendar: cal) == nil)
+    }
+}

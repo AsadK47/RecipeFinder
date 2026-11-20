@@ -78,6 +78,12 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         mealTime == slotMealTime && isOn(day, calendar: calendar)
     }
     
+    /// The dish behind this plan: by id, then by name, so a re-imported recipe (new id, same name) keeps its plans.
+    func recipe(in recipes: [RecipeModel]) -> RecipeModel? {
+        recipes.first { $0.id == recipeId }
+            ?? recipes.first { $0.name.caseInsensitiveCompare(recipeName) == .orderedSame }
+    }
+
     var isPast: Bool {
         date < Date()
     }
