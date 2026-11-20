@@ -17,11 +17,10 @@ struct TodayWeek: Equatable {
     }
 
     let days: [Day]
+    /// A night in the coming seven with no dinner (weekly dinners count): Today then offers Plan my week's deck.
+    var hasOpenDinner = false
     /// A dinner to plan for tomorrow in one tap; nil when tomorrow's dinner is planned or nothing fits.
     let planTomorrow: RecipeModel?
-
-    /// A night in the coming seven with no dinner: Today then offers Plan my week's deck.
-    var hasOpenDinner: Bool { days.contains { !$0.mealTimes.contains(.dinner) } }
 
     /// The day "Plan tomorrow" plans for.
     var tomorrow: Date? { days.dropFirst().first?.date }
@@ -58,7 +57,8 @@ struct TodayWeek: Equatable {
             taken: tonightIDs.union(plansInWeek(plans, days: days, calendar: calendar).map(\.recipeId)),
             cookedSince: calendar.date(byAdding: .day, value: -recentCookDays, to: today) ?? today
         )
-        return TodayWeek(days: days, planTomorrow: pick)
+        let open = days.contains { !MealPlanModel.hasDinner(on: $0.date, plans: plans, calendar: calendar) }
+        return TodayWeek(days: days, hasOpenDinner: open, planTomorrow: pick)
     }
 
     private static func plansInWeek(_ plans: [MealPlanModel], days: [Day], calendar: Calendar) -> [MealPlanModel] {

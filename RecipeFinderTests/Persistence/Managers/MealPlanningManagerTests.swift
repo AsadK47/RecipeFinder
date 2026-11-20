@@ -769,4 +769,64 @@ struct PlanBugHuntTests {
         #expect(sut.mealPlan(for: day(0), mealTime: .dinner)?.isCompleted == true)
         #expect(sut.mealPlan(for: day(2), mealTime: .dinner)?.isCompleted == false)
     }
+
+    // MARK: Review round 1 (challenger + deep reviewer)
+
+    @Test func madeItKeepsTheWeeklyReminderRinging() throws {
+        let sut = makeManager()
+        weeklyDinner(sut, reminder: clock(19))
+        let tonight = try #require(sut.mealPlan(for: day(0), mealTime: .dinner))
+        sut.markCooked(recipeID: tonight.recipeId, on: Date())
+        #expect(liveReminders.count == 1)
+    }
+
+    @Test func stoppingASeriesTakesItsLaterCopiesOff() throws {
+        let sut = makeManager()
+        weeklyDinner(sut)
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: day(7)))
+        let thisWeek = try #require(sut.mealPlan(for: day(0), mealTime: .dinner))
+        sut.toggleRecurring(thisWeek)
+        #expect(sut.mealPlan(for: day(7), mealTime: .dinner) == nil)
+        #expect(sut.mealPlan(for: day(0), mealTime: .dinner) != nil)
+    }
+
+    @Test func changingAWeeklyReminderOnAnEarlierCopyMovesTheSeriesReminder() throws {
+        let sut = makeManager()
+        weeklyDinner(sut, reminder: clock(19))
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: day(7)))
+        var thisWeek = try #require(sut.mealPlan(for: day(0), mealTime: .dinner))
+        thisWeek.reminderTime = clock(18)
+        sut.updateMealPlan(thisWeek)
+        let live = try #require(liveReminders.first)
+        #expect(liveReminders.count == 1)
+        let ringing = try #require(reminders.scheduled.last { $0.id == live })
+        #expect(calendar.component(.hour, from: ringing.date) == 18)
+    }
+
+    @Test func aTwinTheCookPickedBeatsAnAutomaticWeeklyCopy() {
+        let picked = MealPlanModel(recipeId: UUID(), recipeName: "Curry", date: day(7), mealTime: .dinner,
+                                   createdDate: day(-3))
+        let copied = MealPlanModel(recipeId: UUID(), recipeName: "Pasta", date: day(7), mealTime: .dinner,
+                                   isRecurring: true, createdDate: day(0))
+        #expect(MealPlanningManager.foldRank(picked) < MealPlanningManager.foldRank(copied))
+    }
+
+    @Test func aFoldedTwinKeepsTheCookedMarkAndReminder() {
+        let kept = MealPlanModel(recipeId: UUID(), recipeName: "Curry", date: day(-1), mealTime: .dinner)
+        let other = MealPlanModel(recipeId: UUID(), recipeName: "Curry", date: day(-1), mealTime: .dinner,
+                                  isCompleted: true, reminderTime: clock(18))
+        let folded = MealPlanningManager.foldTwins(kept, [other])
+        #expect(folded.isCompleted)
+        #expect(folded.reminderTime == clock(18))
+        #expect(folded.id == kept.id)
+    }
+
+    @Test func aWeeklyDinnerCountsAsPlannedOnAWeekNotYetFilled() {
+        let weekly = MealPlanModel(recipeId: UUID(), recipeName: "Pasta", date: day(-7), mealTime: .dinner,
+                                   isRecurring: true)
+        #expect(MealPlanModel.hasDinner(on: day(7), plans: [weekly]))
+        #expect(!MealPlanModel.hasDinner(on: day(8), plans: [weekly]))
+        #expect(!MealPlanModel.hasDinner(on: day(7), plans: [MealPlanModel(
+            recipeId: UUID(), recipeName: "Once", date: day(-7), mealTime: .dinner)]))
+    }
 }

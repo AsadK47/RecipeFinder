@@ -57,6 +57,8 @@ struct PlannedMealsSection: View {
                 )
             }
             .buttonStyle(.plain)
+            // On the card only: the ≡ handle beside it keeps its drag for reordering.
+            .modifier(SwipeToRemove(isEnabled: mealPlanFor(mealTime) != nil) { onRemove(mealTime) })
             .contextMenu {
                 // Every planned meal, even one whose recipe is gone, can stop repeating and have its reminder changed.
                 if mealPlanFor(mealTime) != nil {
@@ -109,7 +111,6 @@ struct PlannedMealsSection: View {
                     .stroke(AppTheme.accentColor, lineWidth: 2)
             }
         }
-        .modifier(SwipeToRemove(isEnabled: mealPlanFor(mealTime) != nil) { onRemove(mealTime) })
         .accessibilityIdentifier("plan.meal.\(mealTime.rawValue)")
         .animation(.easeInOut(duration: 0.2), value: dropTarget)
         // .draggable/.dropDestination manage drag+cancel state, so there's no manual flag to get stuck (the old greyed-out bug).
@@ -167,12 +168,19 @@ private struct SwipeToRemove: ViewModifier {
     let isEnabled: Bool
     let onRemove: () -> Void
 
-    @State private var offset: CGFloat = 0
+    /// Resets by itself when the drag ends or is cancelled (e.g. the reorder handle takes over), so a row can't stick
+    /// half-open.
+    @GestureState private var offset: CGFloat = 0
     private let threshold: CGFloat = 120
+
+    private static func isHorizontal(_ translation: CGSize) -> Bool {
+        abs(translation.width) > abs(translation.height) * 1.5
+    }
 
     func body(content: Content) -> some View {
         content
             .offset(x: offset)
+            .animation(.appGentle, value: offset)
             .background(alignment: .trailing) {
                 if offset < 0 {
                     Label("Remove", systemImage: "trash")
@@ -188,18 +196,15 @@ private struct SwipeToRemove: ViewModifier {
             }
             .simultaneousGesture(
                 DragGesture(minimumDistance: 24)
-                    .onChanged { value in
-                        guard isEnabled, abs(value.translation.width) > abs(value.translation.height) * 1.5 else { return }
-                        offset = min(0, value.translation.width)
+                    .updating($offset) { value, state, _ in
+                        guard isEnabled, Self.isHorizontal(value.translation) else { return }
+                        state = min(0, value.translation.width)
                     }
                     .onEnded { value in
-                        let remove = isEnabled && value.translation.width < -threshold
-                            && abs(value.translation.width) > abs(value.translation.height) * 1.5
-                        withAnimation(.appGentle) { offset = 0 }
-                        if remove {
-                            HapticManager.shared.medium()
-                            onRemove()
-                        }
+                        guard isEnabled, value.translation.width < -threshold, Self.isHorizontal(value.translation)
+                        else { return }
+                        HapticManager.shared.medium()
+                        onRemove()
                     }
             )
     }

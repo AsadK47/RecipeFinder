@@ -19,6 +19,8 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func mealPlans(for date: Date) -> [MealPlanModel]
     func hasMealPlans(for date: Date) -> Bool
     func mealPlansForWeek(starting startDate: Date) -> WeeklyMealPlan
+    /// Every weekly copy (the series later weeks are filled from).
+    var recurringMealPlans: [MealPlanModel] { get }
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary
     /// The same, leaving out days before `earliest` (Plan's Add Week: meals already eaten aren't shopped for).
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel], from earliest: Date) -> WeekShoppingSummary
@@ -96,9 +98,29 @@ final class MealPlanningManager: MealPlanningManaging {
                 storage: storage, store: store, id: { $0.id },
                 // Two devices planning the same night (or both copying a weekly meal into it) make two rows with
                 // different ids; keep one per slot so groceries, Tonight and reminders count it once.
-                sameThing: .init(key: { AnyHashable(SlotKey($0)) }, rank: { $0.id.uuidString }, fold: { kept, _ in kept })
+                sameThing: .init(key: { AnyHashable(SlotKey($0)) },
+                                 rank: MealPlanningManager.foldRank, fold: MealPlanningManager.foldTwins)
             )
         )
+    }
+
+    /// Same-slot twins: a dish the cook picked beats a weekly copy made automatically, a cooked one beats an uncooked
+    /// one, then the most recently planned wins; the id breaks ties. Identical on every device, as `SameThing.rank`
+    /// requires: lowest rank is kept.
+    nonisolated static func foldRank(_ plan: MealPlanModel) -> String {
+        let newestFirst = Int64(1e13) - Int64(plan.createdDate.timeIntervalSince1970 * 1000)
+        return (plan.isRecurring ? "1" : "0") + (plan.isCompleted ? "0" : "1")
+            + String(format: "%014lld-", max(newestFirst, 0)) + plan.id.uuidString
+    }
+
+    /// The kept twin stays cooked, weekly or reminded if either was, so a merge never hides a cooked night or drops
+    /// a reminder (earliest reminder time, so the order rows arrive in doesn't matter).
+    nonisolated static func foldTwins(_ kept: MealPlanModel, _ others: [MealPlanModel]) -> MealPlanModel {
+        var merged = kept
+        merged.isCompleted = ([kept] + others).contains(where: \.isCompleted)
+        merged.isRecurring = ([kept] + others).contains(where: \.isRecurring)
+        merged.reminderTime = kept.reminderTime ?? others.compactMap(\.reminderTime).min()
+        return merged
     }
 
     /// Erase & Reset: removes every plan. If the store can't delete now, the next launch finishes it.
@@ -136,15 +158,27 @@ final class MealPlanningManager: MealPlanningManaging {
         HapticManager.shared.medium()
         saveMealPlans()
         syncReminder(for: mealPlan)
+        // Replacing a series' newest copy hands its weekly reminder back to the copy before it.
+        syncSeriesReminders()
         badgeManager.unlockBadge(.mealPlanner)
     }
     
     func updateMealPlan(_ mealPlan: MealPlanModel) {
         if let index = mealPlans.firstIndex(where: { $0.id == mealPlan.id }) {
+            let reminderChanged = mealPlans[index].reminderTime != mealPlan.reminderTime
             mealPlans[index] = mealPlan
+            if mealPlan.isRecurring, reminderChanged {
+                // A weekly meal's reminder belongs to the series (its newest copy rings), so every copy takes it.
+                let key = SeriesKey(mealPlan, calendar: .current)
+                for other in mealPlans.indices
+                where mealPlans[other].isRecurring && SeriesKey(mealPlans[other], calendar: .current) == key {
+                    mealPlans[other].reminderTime = mealPlan.reminderTime
+                }
+            }
             HapticManager.shared.light()
             saveMealPlans()
             syncReminder(for: mealPlan)
+            syncSeriesReminders()
         }
     }
     
@@ -168,11 +202,15 @@ final class MealPlanningManager: MealPlanningManaging {
         syncSeriesReminders()
     }
 
-    /// Every copy of `plan`'s weekly series becomes a one-off, so nothing copies it forward again.
+    /// Every copy of `plan`'s weekly series becomes a one-off, so nothing copies it forward again; copies already made
+    /// for later weeks (by `propagateRecurring`, never picked by the cook) go, so a stopped meal doesn't turn up again.
     private func stopSeries(of plan: MealPlanModel) {
         let key = SeriesKey(plan, calendar: .current)
-        for index in mealPlans.indices
-        where mealPlans[index].isRecurring && SeriesKey(mealPlans[index], calendar: .current) == key {
+        let inSeries = { (other: MealPlanModel) in other.isRecurring && SeriesKey(other, calendar: .current) == key }
+        let later = mealPlans.filter { inSeries($0) && $0.date > plan.date && $0.id != plan.id }
+        for copy in later { cancelReminder(for: copy) }
+        mealPlans.removeAll { copy in later.contains { $0.id == copy.id } }
+        for index in mealPlans.indices where inSeries(mealPlans[index]) {
             mealPlans[index].isRecurring = false
         }
     }
@@ -424,6 +462,8 @@ final class MealPlanningManager: MealPlanningManaging {
         return result
     }
 
+    var recurringMealPlans: [MealPlanModel] { mealPlans.filter(\.isRecurring) }
+
     var todaysMealPlans: [MealPlanModel] {
         mealPlans(for: Date())
     }
@@ -460,7 +500,9 @@ final class MealPlanningManager: MealPlanningManaging {
         // ignores the date, so every copy holding one fired its own alert each week).
         if plan.isRecurring, !Self.newestRecurringCopies(mealPlans).contains(plan.id) { return }
 
-        guard !plan.isCompleted,
+        // A cooked one-off needs no nudge; a weekly series keeps ringing for the weeks ahead even once this copy is
+        // cooked (its later copies may not exist yet).
+        guard plan.isRecurring || !plan.isCompleted,
               let time = plan.reminderTime,
               let fireDate = Self.reminderFireDate(day: plan.date, time: time) else { return }
         // A one-off whose moment has passed is pointless; a weekly repeat still fires on its next weekday.

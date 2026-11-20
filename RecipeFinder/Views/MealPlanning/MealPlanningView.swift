@@ -22,6 +22,8 @@ struct MealPlanningView: View {
     @State var weekPlan = WeekGroceryPlan.empty
     @State var showAddWeekConfirm = false
     @State var showClearPastConfirm = false
+    /// A weekly meal the cook is taking off: confirm first, since it ends the repeat.
+    @State var pendingWeeklyRemoval: MealPlanModel?
     /// Non-nil while the meal-reminder time picker is presented.
     @State var reminderContext: ReminderContext?
     /// Non-nil while "Plan my week" is dealing cards.
@@ -139,6 +141,22 @@ struct MealPlanningView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Takes plans you didn't cook off your planner. Dinners you cooked stay in your week.")
+        }
+        .confirmationDialog(
+            "Stop repeating \(pendingWeeklyRemoval?.recipeName ?? "this meal")?",
+            isPresented: Binding(get: { pendingWeeklyRemoval != nil }, set: { if !$0 { pendingWeeklyRemoval = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button("Take Off and Stop Repeating", role: .destructive) {
+                if let plan = pendingWeeklyRemoval {
+                    withAnimation { removeMealPlan(for: plan.date, mealTime: plan.mealTime) }
+                    HapticManager.shared.success()
+                }
+                pendingWeeklyRemoval = nil
+            }
+            Button("Keep It", role: .cancel) { pendingWeeklyRemoval = nil }
+        } message: {
+            Text("It's planned every \(pendingWeeklyRemoval?.date.formatted(.dateTime.weekday(.wide)) ?? "week").")
         }
         .toast($weekShoppingFeedback)
         .onAppear {
@@ -266,6 +284,10 @@ struct MealPlanningView: View {
                 HapticManager.shared.light()
             },
             onRemove: { mealTime in
+                if let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime), plan.isRecurring {
+                    pendingWeeklyRemoval = plan
+                    return
+                }
                 withAnimation {
                     removeMealPlan(for: selectedDate, mealTime: mealTime)
                 }

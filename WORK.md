@@ -74,8 +74,9 @@ Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap pl
   (weekly trigger ignores the date). Clear Past Plans keeps each series' newest copy (it's the template); cook history
   is `RecipeModel.cookCount/lastCookedAt`, untouched by plans (nothing ever set `isCompleted`). Deck "worked once":
   the button hid once the shown week was full → now names the next open week (`weekToPlan`, ≤4 weeks ahead). Swipe-to-
-  delete not added: the day list is a VStack in a ScrollView with a drag handle (no List swipeActions); trash button +
-  hold menu now work for every plan incl. ghosts. Add Week counts from today (`from:`), not the week's first day —
+  remove: custom `SwipeToRemove` on the day list's card (VStack in a ScrollView, no List swipeActions; ≡ handle keeps
+  its reorder drag). Removing a weekly meal asks first (it ends the repeat) — skip-one-week needs a stored marker →
+  Needs owner. Add Week counts from today (`from:`), not the week's first day —
   kept the old API for Groceries' card. Parked (one reviewer, low/risky): time-zone shift of midnight-dated plans
   (needs a stored-date change), future-dated weekly reminder firing early, rename leaves old plan name, Sunday nudge
   week with Sunday-first locale, top-up of a ticked grocery line.

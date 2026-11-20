@@ -106,7 +106,7 @@ struct PlanDeck {
         return week
             .map { calendar.startOfDay(for: $0) }
             .filter { $0 >= start }
-            .filter { day in !plans.contains { $0.isSlot(day, .dinner, calendar: calendar) } }
+            .filter { day in !MealPlanModel.hasDinner(on: day, plans: plans, calendar: calendar) }
     }
 
     /// The week Plan my week deals for: the shown week while it has an empty dinner from today, else the first week

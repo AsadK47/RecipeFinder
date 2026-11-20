@@ -157,7 +157,9 @@ extension MealPlanningView {
             Calendar.current.date(byAdding: .weekOfYear, value: offset, to: first)
                 .map { mealPlanningManager.mealPlansForWeek(starting: $0).meals } ?? []
         }
-        return PlanDeck.weekToPlan(showing: selectedDate, plans: plans, today: today)
+        // Weekly dinners count for weeks not yet filled with their copies, so the deck never opens on a full week.
+        return PlanDeck.weekToPlan(showing: selectedDate, plans: plans + mealPlanningManager.recurringMealPlans,
+                                   today: today)
     }
 
     /// "Plan my week" for the shown week, else names the week it will plan.

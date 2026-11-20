@@ -78,6 +78,18 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         mealTime == slotMealTime && isOn(day, calendar: calendar)
     }
     
+    /// A night's dinner is taken: planned, or a weekly dinner on that weekday from an earlier week will be copied in
+    /// (`propagateRecurring` fills a week only when it's shown, so a week ahead can look open when it isn't).
+    static func hasDinner(on day: Date, plans: [MealPlanModel], calendar: Calendar = .current) -> Bool {
+        let weekday = calendar.component(.weekday, from: day)
+        let start = calendar.startOfDay(for: day)
+        return plans.contains { plan in
+            guard plan.mealTime == .dinner else { return false }
+            if plan.isOn(day, calendar: calendar) { return true }
+            return plan.isRecurring && plan.date < start && calendar.component(.weekday, from: plan.date) == weekday
+        }
+    }
+
     /// The dish behind this plan: by id, then by name, so a re-imported recipe (new id, same name) keeps its plans.
     func recipe(in recipes: [RecipeModel]) -> RecipeModel? {
         recipes.first { $0.id == recipeId }
