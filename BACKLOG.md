@@ -243,7 +243,7 @@ are merged into a newer item or parked — never start them; their text stays as
   when the next Mon–Sun has no dinner (`SundayPlanNudge`); tap opens Plan on that week.
   **✅ Slice 6 (a395ab2..6f5d2eb):** "Busy night" on the deck card → quick dishes first for that night (shortest cook
   when nothing is quick); lock = planned nights never re-dealt, re-roll = ✕ (re-roll all: YAGNI).
-  **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; (4) 30-day memory of passed dishes (⏸ Needs owner — Privacy text change + challenger asks to drop it).
+  **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; (4) 30-day memory of passed dishes — owner 2026-11-20: "Do it" (build it; Privacy §4.2 line approved) — 🚧 builder agent 2026-11-20.
 - [ ] **Groceries writes itself** (Phase 2 · Get). Merges *Groceries + Kitchen* and *Plan my week 3/3* (below, kept as
   spec). Planning a week builds the list — merged and scaled, minus what's at home, in the order you usually tick
   (learned). "I'm in the shop" mode: huge rows, one-thumb ticks, screen awake; ticked = at home automatically (no
@@ -734,9 +734,6 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
-- 🙋 **Plan slice 4: 30-day memory of passed dishes — build or drop?** (builder 2026-11-20): it adds an on-device store
-  and a Privacy §4.2 line (legal text → your yes), and CHALLENGES 2026-11-20 recommends dropping it for *Groceries
-  writes itself* since the deck already resets passes per deck. Build it (approve the §4.2 line), or drop it and start Groceries?
 - 🙋 **Plan deck: what does swipe up do?** (builder 2026-11-19, swipe to match slice 3): the deck deals tonight's card
   first, so "up = tonight" can only show after the cook taps *Leave tonight open* (challenger: it nudges what they just
   declined). Pick one: (a) up on a later night **swaps** with an already-planned tonight (old dish moves to that night)
