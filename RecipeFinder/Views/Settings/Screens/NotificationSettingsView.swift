@@ -9,6 +9,7 @@ struct NotificationSettingsView: View {
     /// Namespaced like LocalStore's keys, so `MealPlanningManager` reads it and Reset turns it off.
     @AppStorage(LocalStore.keyPrefix + SundayPlanNudge.settingKey) private var sundayPlanNudge = false
     @Environment(\.mealPlanning) private var mealPlanning
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var showingTimePicker = false
     @State private var notificationPermission: UNAuthorizationStatus = .notDetermined
@@ -29,7 +30,7 @@ struct NotificationSettingsView: View {
 
     var body: some View {
         SettingsScreen("Notifications") {
-            if notificationPermission != .authorized {
+            if notificationPermission != .authorized && !showsSundayNudgeDeniedNote {
                 permissionBanner
             }
 
@@ -69,7 +70,7 @@ struct NotificationSettingsView: View {
                     }
                 }
 
-                if sundayNudgeDenied {
+                if showsSundayNudgeDeniedNote {
                     sundayNudgeDeniedNote
                 }
             }
@@ -90,6 +91,10 @@ struct NotificationSettingsView: View {
         }
         .onAppear {
             checkNotificationPermission()
+        }
+        // Back from iOS Settings: a newly allowed app drops the banner and the note.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { checkNotificationPermission() }
         }
         .onChange(of: shoppingListReminders) { _, _ in syncGroceriesReminder() }
         .onChange(of: reminderTimeString) { _, _ in syncGroceriesReminder() }
@@ -145,11 +150,17 @@ struct NotificationSettingsView: View {
         }
     }
 
+    private static let sundayNudgeDeniedText = "Turn on notifications for RecipeFinder in Settings to get the Sunday nudge."
+
+    /// Shown in place of the top banner, next to the switch that just flipped back, until notifications are allowed.
+    private var showsSundayNudgeDeniedNote: Bool {
+        sundayNudgeDenied && notificationPermission != .authorized
+    }
+
     /// Points the cook at iOS Settings after a denied Sunday Planning switch; the whole note is the button.
     private var sundayNudgeDeniedNote: some View {
         Button(action: openSystemSettings) {
-            Label("Notifications are off for RecipeFinder — turn them on in Settings to get the Sunday nudge.",
-                  systemImage: "bell.badge")
+            Label(Self.sundayNudgeDeniedText, systemImage: "bell.slash")
                 .font(.footnote)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -162,16 +173,17 @@ struct NotificationSettingsView: View {
     }
 
     /// Schedules only once iOS allows notifications; otherwise the switch goes back off (its onChange cancels any
-    /// pending nudge) so it never claims a nudge iOS won't show. Syncing reads the stored switch, so a cook who
-    /// turned it off again while the prompt was up stays off.
+    /// pending nudge) so it never claims a nudge iOS won't show. Syncing reads the stored switch, so a switch turned
+    /// off before the answer arrived stays off and shows no note.
     private func confirmSundayNudge() async {
         let granted = await NotificationManager.shared.requestPermission()
         checkNotificationPermission()
         if granted {
             mealPlanning.syncPlanNudge()
-        } else {
+        } else if sundayPlanNudge {
             sundayNudgeDenied = true
             sundayPlanNudge = false
+            AccessibilityNotification.Announcement("Sunday Planning is off. " + Self.sundayNudgeDeniedText).post()
         }
     }
 

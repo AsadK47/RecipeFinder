@@ -435,7 +435,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "55-notifications-sunday-planning")
 
         // Inbox 🐞: with notifications denied, turning Sunday Planning on switches it back off and says why, so the
-        // switch never promises a nudge iOS won't show. Every UI test answers the prompt "Don't Allow".
+        // switch never promises a nudge iOS won't show. Needs a fresh install (CI reinstalls): this test and the
+        // others that meet the prompt answer "Don't Allow"; a simulator where Allow was tapped keeps the switch on.
         let toggle = app.switches["settings.sundayPlanNudge"]
         XCTAssertTrue(toggle.waitForExistence(timeout: 5), "The Sunday Planning row should be a switch.")
         checkpoint(app, "before turning Sunday Planning on")
