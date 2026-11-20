@@ -796,7 +796,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
-- 🟡 Settings › Display "Keep screen awake" (`@AppStorage("keepScreenAwake")`) is read nowhere — the switch does
+- 🟡 Settings › Display "Keep screen awake" (`@AppStorage("keepScreenAwake")`) is read nowhere — 🚧 builder agent 2026-11-20 — — the switch does
   nothing (found by the shop-mode challenger 2026-11-20). Wire it (e.g. `ScreenAwakeHold` at the app root) or remove it.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
