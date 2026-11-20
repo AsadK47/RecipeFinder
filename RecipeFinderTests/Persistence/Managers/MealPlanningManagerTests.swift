@@ -636,3 +636,99 @@ struct ClearPastPlansTests {
         #expect(makeManager(storage: storage, store: store).mealPlans.isEmpty)
     }
 }
+
+/// Plan bug hunt 2026-11-20 (two reviewers agreed on each): weekly meals, their reminders, synced twins and Add Week.
+@MainActor
+@Suite("Plan bug hunt")
+struct PlanBugHuntTests {
+    private let calendar = Calendar.current
+    private let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
+    private let reminders = FakeMealReminderScheduler()
+
+    private func makeManager(_ store: InMemoryMealPlanStore = InMemoryMealPlanStore()) -> MealPlanningManager {
+        MealPlanningManager(
+            storage: storage, mealPlanStore: store,
+            badgeManager: BadgeManager(storage: storage, badgeStore: InMemoryEarnedBadgeStore()),
+            reminders: reminders, planNudges: FakePlanNudgeScheduler()
+        )
+    }
+
+    private func day(_ offset: Int) -> Date {
+        calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: Date())) ?? Date()
+    }
+
+    private func weekStart(containing date: Date) -> Date {
+        calendar.dateInterval(of: .weekOfYear, for: date)?.start ?? date
+    }
+
+    private func clock(_ hour: Int) -> Date {
+        calendar.date(bySettingHour: hour, minute: 0, second: 0, of: Date()) ?? Date()
+    }
+
+    /// A weekly dinner started two weeks ago and copied into last week and this week.
+    private func weeklyDinner(_ sut: MealPlanningManager, reminder: Date? = nil) {
+        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Pasta", date: day(-14), mealTime: .dinner,
+                                      isRecurring: true, reminderTime: reminder))
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: day(-7)))
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: day(0)))
+    }
+
+    /// Ids whose last call was a schedule: `syncReminder` always cancels first, so equal counts mean it's pending.
+    private var liveReminders: Set<String> {
+        Set(reminders.scheduled.map(\.id).filter { id in
+            reminders.scheduled.filter { $0.id == id }.count == reminders.cancelled.filter { $0 == id }.count
+        })
+    }
+
+    @Test func aRemovedWeeklyCopyStaysGone() {
+        let sut = makeManager()
+        weeklyDinner(sut)
+        sut.removeMealPlan(for: day(0), mealTime: .dinner)
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: day(0)))
+        #expect(sut.mealPlan(for: day(0), mealTime: .dinner) == nil)
+    }
+
+    @Test func stopRepeatingOnAnyCopyEndsTheSeries() throws {
+        let sut = makeManager()
+        weeklyDinner(sut)
+        let thisWeek = try #require(sut.mealPlan(for: day(0), mealTime: .dinner))
+        sut.toggleRecurring(thisWeek)
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: day(7)))
+        #expect(sut.mealPlan(for: day(7), mealTime: .dinner) == nil)
+    }
+
+    @Test func aWeeklySeriesHasOneLiveReminder() {
+        let sut = makeManager()
+        weeklyDinner(sut, reminder: clock(19))
+        #expect(liveReminders.count == 1)
+    }
+
+    @Test func removingAWeeklyDinnerLeavesNoReminder() {
+        let sut = makeManager()
+        weeklyDinner(sut, reminder: clock(19))
+        sut.removeMealPlan(for: day(0), mealTime: .dinner)
+        #expect(liveReminders.isEmpty)
+    }
+
+    @Test func twoDevicesPlanningOneNightKeepOneDinner() {
+        let store = InMemoryMealPlanStore()
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = makeManager(store)
+        sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Mine", date: day(1), mealTime: .dinner))
+        // The other device's dinner for the same night arrives through iCloud.
+        store.plans.append(MealPlanModel(recipeId: UUID(), recipeName: "Theirs", date: day(1), mealTime: .dinner))
+        sut.reload()
+        #expect(sut.mealPlans(for: day(1)).count == 1)
+    }
+
+    @Test func aPlanDeletedOnAnotherDeviceCancelsItsReminder() {
+        let store = InMemoryMealPlanStore()
+        storage.set(true, forKey: SyncPreference.key)
+        let sut = makeManager(store)
+        let plan = MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: day(2), mealTime: .dinner, reminderTime: clock(18))
+        sut.addMealPlan(plan)
+        store.plans.removeAll()   // deleted on the other device
+        sut.reload()
+        #expect(!liveReminders.contains("meal-\(plan.id.uuidString)"))
+    }
+}
