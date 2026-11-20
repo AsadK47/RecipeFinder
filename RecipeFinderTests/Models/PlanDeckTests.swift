@@ -41,10 +41,11 @@ import Foundation
     }
 
     private func makeDeck(
-        days: [Date], recipes: [RecipeModel], planned: [MealPlanModel] = [], expiring: [String] = [], seed: UInt64 = 7
+        days: [Date], recipes: [RecipeModel], planned: [MealPlanModel] = [], expiring: [String] = [],
+        recentlyPassed: Set<UUID> = [], seed: UInt64 = 7
     ) -> PlanDeck {
         PlanDeck(days: days, recipes: recipes, plannedThisWeek: planned, expiringItemNames: expiring,
-                 seed: seed, calendar: cal)
+                 recentlyPassed: recentlyPassed, seed: seed, calendar: cal)
     }
 
     // MARK: - Empty dinners
@@ -398,5 +399,37 @@ import Foundation
     @Test func finishedCopyForAFullWeekAndForNoPicks() {
         #expect(makeDeck(days: [], recipes: [recipe("Dish")]).finishedCopy.title == "Your week is planned")
         #expect(makeDeck(days: [day(1)], recipes: []).finishedCopy.title == "That's every dish for now")
+    }
+
+    // MARK: - 30-day memory (slice 4)
+
+    @Test func aDishPassedInAnEarlierDeckIsDealtBehindFreshOnes() {
+        let passedBefore = recipe("Passed before", isFavorite: true, rating: 5)
+        let fresh = recipe("Fresh")
+        let deck = makeDeck(days: [day(1)], recipes: [passedBefore, fresh], recentlyPassed: [passedBefore.id])
+        #expect(deck.current?.recipe.name == "Fresh")
+    }
+
+    @Test func aDishPassedInAnEarlierDeckStillFillsANightWhenNothingFreshIsLeft() {
+        let only = recipe("Only")
+        let deck = makeDeck(days: [day(1)], recipes: [only], recentlyPassed: [only.id])
+        #expect(deck.current?.recipe.name == "Only")
+    }
+
+    @Test func passedHereHoldsOnlyDishesPassedInThisDeck() {
+        let earlier = recipe("Earlier")
+        let first = recipe("First", rating: 5)
+        let second = recipe("Second")
+        var deck = makeDeck(days: [day(1)], recipes: [earlier, first, second], recentlyPassed: [earlier.id])
+        #expect(deck.current?.recipe.name == "First")
+        deck.skip()
+        #expect(deck.passedHere == [first.id])
+    }
+
+    @Test func busyNightAndSkipNightDoNotCountAsPassing() {
+        var deck = makeDeck(days: [day(1), day(2)], recipes: [recipe("Slow", minutes: 90), recipe("Quick", minutes: 15)])
+        deck.setBusy(true)
+        deck.skipNight()
+        #expect(deck.passedHere.isEmpty)
     }
 }

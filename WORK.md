@@ -6,7 +6,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
 - Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - CI (CI lane, owner TOP): landed f343fa5 + d775cf6 (prepare action, cached booted simulator, 4 UI shards, coverage.yml). Jobs 7:40–10; wall time hurt by runner queueing (Needs owner) and unit-job variance. Next: sample the test host during the ~60s XCTest stall (`xcrun simctl spawn $SIM spindump` or `sample` on RecipeFinder) on agent/ci-10min, then 3 consecutive pushes ≤10 → tick.
-- Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4, §5.1–5.3, §7.1 + date 15 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
+- Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4 (4.2/4.3 gained the Plan my week line 20 Nov), §5.1–5.3, §7.1 + date 20 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
 
 - Inbox 🟡 Reset store copies: ⏸ parked in Needs owner (data-loss risk on `.corrupt-*`, 2 reviewers agree); branch `agent/reset-store-copies` (87f5737) unmerged, Decisions on that branch's WORK.md — rework per owner's answer.
 - Remember: ✅ **My Cookbook** done — slice 3 (share a page) landed 0adbf0b (builder 2026-11-16); notes / "who it was
@@ -47,10 +47,18 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/sunday-nudge-denied, agent/plan-busy-test (auto-cleanup).
 
 ## Next action
-Owner answers Needs owner "Plan slice 4: build or drop?" (and slice 3 swipe-up). If drop → start *Groceries writes
-itself* slice 1 (plan → list) on `agent/groceries-from-plan`. Slice 4 is parked: its Privacy §4.2 line is legal text.
+Plan slice 4 on `agent/plan-deck-memory`: CI green → two reviewers (privacy text vs code) + challenger → land.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Plan slice 4 30-day memory** (owner "Do it" 2026-11-20, §4.2 line approved): `PlanDeckMemory` = `[recipe id:
+  date passed]` in `LocalStore` key `planDeckPassed` (rf. → Reset clears it; not Core Data → never synced, no model
+  change). Remembered passes start the next deck as `passed` (behind fresh, still fill a night). Only passes made
+  *in this deck* (`passedHere`) are dated, so a carried-over one still expires after 30 days; planning a dish forgets
+  it; future dates don't count (wrong clock can't pin a dish). Saved on Close — the deck's only exit; a killed app
+  loses that deck's passes (accepted: losing them only makes the next deck less fresh). Busy / Leave open aren't
+  passes. **Pre-mortem:** (1) a passed dish never returns, small library → `…StillFillsANightWhenNothingFreshIsLeft`;
+  (2) regular deck use keeps refreshing old passes forever → `aDishOnlyCarriedOverFromAnEarlierDeckKeepsItsDate`;
+  (3) Reset leaves it behind / policy claims more than code → `resetClearsTheMemory` + two reviewers on text vs code.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

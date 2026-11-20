@@ -4,7 +4,8 @@ import Foundation
 /// weekends, not the same cuisine two nights running, kitchen items that are expiring first, then favourites and
 /// well-rated dishes. ♥ plans the card for its night; ✕ shows another dish for the same night. A dish already on the
 /// week or picked here is never dealt again; one passed on comes back on a later night only once the fresh ones are
-/// gone, so a small library still fills the week. A night marked busy deals quick dishes first (the shortest cook
+/// gone, so a small library still fills the week; one passed in an earlier deck (`PlanDeckMemory`, 30 days) starts out
+/// passed. A night marked busy deals quick dishes first (the shortest cook
 /// when nothing is quick), whatever the day. Pure value type, seeded, so the deck is testable.
 struct PlanDeck {
     struct Card: Equatable, Identifiable {
@@ -39,8 +40,10 @@ struct PlanDeck {
     private let candidates: [Candidate]
     /// On the week already or picked here: never dealt again.
     private var taken: Set<UUID>
-    /// Passed on for some night: dealt again only behind every fresh dish.
-    private var passed: Set<UUID> = []
+    /// Passed on for some night (here or in a recent deck): dealt again only behind every fresh dish.
+    private var passed: Set<UUID>
+    /// Passed on in this deck — what `PlanDeckMemory` records when it closes.
+    private(set) var passedHere: Set<UUID> = []
     /// Already shown for the night being planned.
     private var shownTonight: Set<UUID> = []
     /// Nights the cook marked busy in this deck: quick dishes first.
@@ -54,11 +57,13 @@ struct PlanDeck {
     ///   - plannedThisWeek: the week's existing plans — their dishes aren't dealt again and their cuisines count for
     ///     variety.
     ///   - expiringItemNames: kitchen items expiring soon, most urgent first.
+    ///   - recentlyPassed: dishes passed on in a recent deck (`PlanDeckMemory`): dealt behind fresh ones.
     init(
         days: [Date],
         recipes: [RecipeModel],
         plannedThisWeek: [MealPlanModel],
         expiringItemNames: [String],
+        recentlyPassed: Set<UUID> = [],
         seed: UInt64,
         calendar: Calendar = .current
     ) {
@@ -66,6 +71,7 @@ struct PlanDeck {
         self.days = days.map { calendar.startOfDay(for: $0) }
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         taken = Set(plannedThisWeek.map(\.recipeId))
+        passed = recentlyPassed
         var cuisines: [Date: String] = [:]
         for plan in plannedThisWeek where plan.mealTime == .dinner {
             if let cuisine = byID[plan.recipeId].flatMap(Self.cuisineKey) {
@@ -144,6 +150,7 @@ struct PlanDeck {
     mutating func skip() {
         guard let card = current else { return }
         passed.insert(card.recipe.id)
+        passedHere.insert(card.recipe.id)
         current = deal()
     }
 

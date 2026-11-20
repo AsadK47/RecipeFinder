@@ -134,6 +134,7 @@ extension MealPlanningView {
         planDeck = PlanDeck(
             days: PlanDeck.emptyDinnerDays(week: daysInCurrentWeek, plans: plans, today: Date()),
             recipes: recipes, plannedThisWeek: plans, expiringItemNames: expiring,
+            recentlyPassed: PlanDeckMemory.load(from: .shared).recentlyPassed(at: Date()),
             seed: UInt64.random(in: .min ... .max)
         )
         HapticManager.shared.light()
@@ -148,6 +149,10 @@ extension MealPlanningView {
     }
 
     func closePlanDeck() {
+        if let deck = planDeck {
+            PlanDeckMemory.update(in: .shared, passed: deck.passedHere,
+                                  planned: Set(deck.picks.map(\.recipe.id)), at: Date())
+        }
         planDeck = nil
         updateSelectedMealTimes(for: selectedDate)
     }

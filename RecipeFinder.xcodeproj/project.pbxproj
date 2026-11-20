@@ -197,12 +197,14 @@
 		F36AED7B3043431C00935A3C /* RecipeSearchHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED7A3043431C00935A3C /* RecipeSearchHeader.swift */; };
 		F36AED7D304346D400935A3C /* MealPlanCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED7C304346D400935A3C /* MealPlanCalendar.swift */; };
 		57A4DFFD68742C7D6ABD0DFC /* PlanDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F330DA5AB339890497B3D39 /* PlanDeck.swift */; };
+		2C1EF359ADB54B9FB8C4DF78 /* PlanDeckMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CE01DCCAB54DF28A8CC137 /* PlanDeckMemory.swift */; };
 		064E05419FC988855C41F492 /* WeekDinners.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9993621BB9B9FDEC5C4A652 /* WeekDinners.swift */; };
 		A9D2F1A5433AB3B54FCC13BE /* SundayPlanNudge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */; };
 		0E0FA5F1E0AF65426E294F2D /* MealPlanDayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */; };
 		7B1235F49C0CEA88C7EF1600 /* WeekGroceryPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */; };
 		F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */; };
 		0C0EA7D8FD4FEDF95DD7B69B /* PlanDeckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */; };
+		7DC34FAD135E41199256751E /* PlanDeckMemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E7ED5464364E9BBFB2E29F /* PlanDeckMemoryTests.swift */; };
 		84042A9626ADFEDEEA2F48E6 /* WeekDinnersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD2E38E056C45A712145FE0 /* WeekDinnersTests.swift */; };
 		E75BC52EC57ED724A6299E74 /* SundayPlanNudgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */; };
 		5B6964EE19E6FD52230E763C /* MealPlanDayContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */; };
@@ -821,12 +823,14 @@
 		F36AED7A3043431C00935A3C /* RecipeSearchHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchHeader.swift; sourceTree = "<group>"; };
 		F36AED7C304346D400935A3C /* MealPlanCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanCalendar.swift; sourceTree = "<group>"; };
 		3F330DA5AB339890497B3D39 /* PlanDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeck.swift; sourceTree = "<group>"; };
+		90CE01DCCAB54DF28A8CC137 /* PlanDeckMemory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeckMemory.swift; sourceTree = "<group>"; };
 		A9993621BB9B9FDEC5C4A652 /* WeekDinners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDinners.swift; sourceTree = "<group>"; };
 		D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayPlanNudge.swift; sourceTree = "<group>"; };
 		1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanDayContent.swift; sourceTree = "<group>"; };
 		CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGroceryPlan.swift; sourceTree = "<group>"; };
 		F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanCalendarTests.swift; sourceTree = "<group>"; };
 		4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeckTests.swift; sourceTree = "<group>"; };
+		78E7ED5464364E9BBFB2E29F /* PlanDeckMemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeckMemoryTests.swift; sourceTree = "<group>"; };
 		2AD2E38E056C45A712145FE0 /* WeekDinnersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDinnersTests.swift; sourceTree = "<group>"; };
 		3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayPlanNudgeTests.swift; sourceTree = "<group>"; };
 		ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanDayContentTests.swift; sourceTree = "<group>"; };
@@ -1448,6 +1452,7 @@
 				9E97EECC300D0E0600D35FAB /* EditableStepTests.swift */,
 				F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */,
 				4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */,
+				78E7ED5464364E9BBFB2E29F /* PlanDeckMemoryTests.swift */,
 				2AD2E38E056C45A712145FE0 /* WeekDinnersTests.swift */,
 				3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */,
 				ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */,
@@ -2183,6 +2188,7 @@
 				9EA779252EB5725D0028F064 /* MealPlanModel.swift */,
 				F36AED7C304346D400935A3C /* MealPlanCalendar.swift */,
 				3F330DA5AB339890497B3D39 /* PlanDeck.swift */,
+				90CE01DCCAB54DF28A8CC137 /* PlanDeckMemory.swift */,
 				A9993621BB9B9FDEC5C4A652 /* WeekDinners.swift */,
 				D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */,
 				1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */,
@@ -3026,6 +3032,7 @@
 				A8DBDC0D7BF37CF88696FE18 /* BadgeMedallion.swift in Sources */,
 				F36AED7D304346D400935A3C /* MealPlanCalendar.swift in Sources */,
 				57A4DFFD68742C7D6ABD0DFC /* PlanDeck.swift in Sources */,
+				2C1EF359ADB54B9FB8C4DF78 /* PlanDeckMemory.swift in Sources */,
 				064E05419FC988855C41F492 /* WeekDinners.swift in Sources */,
 				A9D2F1A5433AB3B54FCC13BE /* SundayPlanNudge.swift in Sources */,
 				0E0FA5F1E0AF65426E294F2D /* MealPlanDayContent.swift in Sources */,
@@ -3175,6 +3182,7 @@
 				F3E9D29A30500069008BF231 /* PersistenceRecoveryTests.swift in Sources */,
 				F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */,
 				0C0EA7D8FD4FEDF95DD7B69B /* PlanDeckTests.swift in Sources */,
+				7DC34FAD135E41199256751E /* PlanDeckMemoryTests.swift in Sources */,
 				84042A9626ADFEDEEA2F48E6 /* WeekDinnersTests.swift in Sources */,
 				E75BC52EC57ED724A6299E74 /* SundayPlanNudgeTests.swift in Sources */,
 				5B6964EE19E6FD52230E763C /* MealPlanDayContentTests.swift in Sources */,
