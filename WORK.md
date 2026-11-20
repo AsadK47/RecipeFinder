@@ -37,25 +37,17 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   agent/cooking-resume, agent/cooking-timers, agent/cooking-made-it (auto-cleanup).
 
 - Plan: 🚧 **Plan — swipe to match** — slices 1 (23134c8) and 2 week photos (06094b2, builder 2026-11-19) landed.
-  ✅ Slice 5 Sunday nudge landed 6954ab2 (builder 2026-11-20). Leftover branch agent/plan-sunday-nudge (auto-cleanup).
+  ✅ Slice 5 Sunday nudge landed 6954ab2, ✅ slice 6 busy nights landed 6f5d2eb (builder 2026-11-20). Leftover branches
+  agent/plan-sunday-nudge, agent/plan-busy-nights (auto-cleanup).
   Slice 3 (up = tonight) ⏸ Needs owner — branch `agent/plan-deck-tonight` (e45d1ce: model `planTonight`/`canPlanTonight`,
   view swipe up + "Have it tonight", unit + UI tests, 2 review fixes) unmerged; rework per owner's (a)/(b)/(c).
   Open: `tonight` is fixed at deck open (midnight-open deck plans yesterday) — fix in the rework. Leftover branches agent/plan-deck, agent/plan-week-photos (auto-cleanup).
 
 ## Next action
-Plan slice 6 busy nights on `agent/plan-busy-nights`: check its Build & Test + Screenshots runs (56-plan-deck-busy),
-review + challenger, then land. After it: (4) 30-day memory needs a Privacy §4.2 line + two reviewers.
+Plan: only (3) up = tonight (⏸ owner) and (4) 30-day memory of passed dishes left. Next: (4) on a new branch
+`agent/plan-deck-memory` — needs a Privacy §4.2 line + two reviewers (legal/data risk).
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Plan busy nights (slice 6, `agent/plan-busy-nights`):** a "Busy night" toggle on the deck card, kept for this
-  deck only (no stored weekday → no Privacy line; remembering busy weekdays/calendar → Needs owner already). Busy =
-  quick (≤30 min) first, then shortest cook (untimed counts as an hour), outweighing every other rule, even at the
-  weekend. Lock / re-roll: covered by the deck itself — planned nights are never re-dealt (lock), ✕ deals another dish
-  (re-roll one); "re-roll all" has no meaning without a one-tap fill, so not built (YAGNI). **Pre-mortem:** (1) busy
-  still shows a long dish → `busyNightDealsTheQuickDishEvenAtTheWeekend`, `…BeatsExpiringItemsAndFavourites`;
-  (2) toggling moves to another night / deals a picked dish → `busyNeverDealsADishAlreadyPicked`, UI test checks
-  night unchanged; (3) busy leaks to the next night → `busyCountsForThatNightOnly`; toggle clipped at large text →
-  ViewThatFits + screenshot 56-plan-deck-busy.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-20 · Plan — swipe to match slice 6 busy nights · 6f5d2eb
+- For you: tap Busy night on a Plan my week card and that night's ideas switch to quick dishes — the shortest cooks come up first, and the rest of your week keeps its usual picks.
+- Behind the build: the busy-night ranking is a small seeded model with 13 new tests, and two separate reviewers tightened the ordering and made the card fade rather than look like it was planned.
+
 ## 2026-11-20 · Plan — swipe to match slice 5 Sunday nudge · 6954ab2
 - For you: turn on Sunday Planning in Settings › Notifications and, when next week's dinners are still open, a Sunday-evening nudge takes you straight to Plan on that week so you can sort it in a minute.
 - Behind the build: the when-to-nudge rule is a small tested model, clock change included, and two separate reviewers found four things to tighten — like the tap opening next week rather than the one ending tonight.

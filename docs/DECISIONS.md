@@ -5,6 +5,16 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Plan — swipe to match, slice 6 busy nights** (landed 6f5d2eb): a "Busy night" toggle on the deck card, kept for this
+  deck only (no stored weekday → no Privacy line; remembering busy weekdays/calendar → Needs owner already). Busy =
+  quick (≤30 min) first, then shortest cook (untimed counts as an hour), outweighing every other rule, even at the
+  weekend. Ranked as a tuple (time, fresh-before-passed, score) — not one weighted score, which let a 1-minute gap
+  tie and dropped fresh-first among quick dishes (both reviewers). A busy re-deal fades, not flies off a side. Lock / re-roll: covered by the deck itself — planned nights are never re-dealt (lock), ✕ deals another dish
+  (re-roll one); "re-roll all" has no meaning without a one-tap fill, so not built (YAGNI). **Pre-mortem:** (1) busy
+  still shows a long dish → `busyNightDealsTheQuickDishEvenAtTheWeekend`, `…BeatsExpiringItemsAndFavourites`;
+  (2) toggling moves to another night / deals a picked dish → `busyNeverDealsADishAlreadyPicked`, UI test checks
+  night unchanged; (3) busy leaks to the next night → `busyCountsForThatNightOnly`; toggle clipped at large text →
+  ViewThatFits + screenshot 56-plan-deck-busy.
 - **Plan — swipe to match, slice 5 Sunday nudge** (landed 6954ab2): opt-in switch in Settings › Notifications ("Sunday Planning", off by default),
   stored as LocalStore key `rf.sundayPlanNudge` so the manager reads it through its injected store and Reset turns it
   off. One one-shot notification at Sunday 18:00 when the following Mon–Sun has no *dinner* (breakfast/lunch don't
