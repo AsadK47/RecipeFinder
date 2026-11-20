@@ -193,8 +193,14 @@ final class ShoppingListManager: ShoppingListManaging {
                 && UnitConversion.canonicalUnit($0.unit) == UnitConversion.canonicalUnit(trimmedUnit)
         }) {
             logger.debug("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
-            let newQuantity = items[existingIndex].quantity + quantity
-            items[existingIndex].quantity = min(newQuantity, 999)
+            if items[existingIndex].isChecked {
+                // A ticked line is already bought: what's added now is to buy, so it starts a fresh unticked amount.
+                items[existingIndex].isChecked = false
+                items[existingIndex].isCompleted = false
+                items[existingIndex].quantity = quantity
+            } else {
+                items[existingIndex].quantity = min(items[existingIndex].quantity + quantity, 999)
+            }
             saveItems(items)
             HapticManager.shared.light()
             return
@@ -306,6 +312,11 @@ final class ShoppingListManager: ShoppingListManaging {
         saveItems(items)
     }
     
+    /// What *Put away* moves At home: ticked one-off items (staples stay on the list for next time).
+    nonisolated static func boughtToPutAway(_ items: [ShoppingListModel]) -> [String] {
+        items.filter { $0.isChecked && !$0.isRecurring }.map(\.name)
+    }
+
     func clearCheckedItems() {
         let items = getItems().compactMap { item -> ShoppingListModel? in
             guard item.isChecked else { return item }

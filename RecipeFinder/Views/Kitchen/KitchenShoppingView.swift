@@ -23,6 +23,8 @@ struct KitchenShoppingView: View {
     @State private var assigningStore: GroceryStoreSelection?
     /// What the next seven days of plans still need; refreshed on data change, not in `body`.
     @State var planNeeds = WeekGroceryPlan.empty
+    /// What the cook said "Not now" to, for as long as the app runs (nothing stored).
+    @State private var dismissedPlanNeeds: WeekGroceryPlan?
     /// Last store filter, remembered between launches; "" means All.
     @AppStorage("groceriesStoreFilter") private var storeFilter = ""
 
@@ -109,7 +111,11 @@ struct KitchenShoppingView: View {
         }
         .confirmationDialog("Clear Groceries", isPresented: $showClearShopping, titleVisibility: .visible) {
             if checkedCount > 0 {
-                Button("Clear Checked Items (\(checkedCount))", role: .destructive) { shopping.clearCheckedItems() }
+                // Bought = at home: ticked items move into At home, so the plan's card doesn't ask for them again.
+                Button("Put Checked Items Away (\(checkedCount))") {
+                    kitchen.putAway(ShoppingListManager.boughtToPutAway(shopping.items))
+                    shopping.clearCheckedItems()
+                }
             }
             Button("Clear All Items (\(totalCount))", role: .destructive) { shopping.clearAllItems() }
             Button("Cancel", role: .cancel) {}
@@ -148,8 +154,8 @@ struct KitchenShoppingView: View {
 
     private var shoppingList: some View {
         List {
-            if !planNeeds.candidates.isEmpty {
-                PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds)
+            if planNeeds.needsMore(than: dismissedPlanNeeds) {
+                PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds, onNotNow: { dismissedPlanNeeds = planNeeds })
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
@@ -177,14 +183,14 @@ struct KitchenShoppingView: View {
 
     private var emptyState: some View {
         ScrollView {
-            if planNeeds.candidates.isEmpty {
+            if !planNeeds.needsMore(than: dismissedPlanNeeds) {
                 EmptyStateView(
                     icon: "cart.circle.fill",
                     title: "Your groceries list is empty",
                     message: "Search above to add items to your list."
                 )
             } else {
-                PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds)
+                PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds, onNotNow: { dismissedPlanNeeds = planNeeds })
                     .padding(.horizontal, AppTheme.cardHorizontalPadding)
             }
         }

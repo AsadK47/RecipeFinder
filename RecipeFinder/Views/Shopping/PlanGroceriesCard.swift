@@ -1,10 +1,11 @@
 import SwiftUI
 
 /// Groceries' "From your plan" card: what the next seven days of planned meals still need from the shop, added in
-/// one tap. It disappears once the list (or the kitchen) covers the plan.
+/// one tap. It goes once the list (or the kitchen) covers the plan, or on Not now until the plan needs more.
 struct PlanGroceriesCard: View {
     let plan: WeekGroceryPlan
     let onAdd: () -> Void
+    let onNotNow: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -22,8 +23,13 @@ struct PlanGroceriesCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .accessibilityElement(children: .combine)
-            PrimaryButton(plan.addButtonTitle, systemImage: "cart.badge.plus", fillWidth: true, action: onAdd)
-                .accessibilityIdentifier("groceries.fromPlan.add")
+            HStack(spacing: AppTheme.spacing8) {
+                PrimaryButton(plan.addButtonTitle, systemImage: "cart.badge.plus", fillWidth: true, action: onAdd)
+                    .accessibilityIdentifier("groceries.fromPlan.add")
+                PrimaryButton("Not now", variant: .secondary, action: onNotNow)
+                    .fixedSize()
+                    .accessibilityIdentifier("groceries.fromPlan.notNow")
+            }
         }
         .padding()
         .appCard()

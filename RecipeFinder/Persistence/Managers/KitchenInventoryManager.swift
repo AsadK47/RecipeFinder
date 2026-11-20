@@ -9,6 +9,8 @@ protocol KitchenInventoryManaging: AnyObject, Observable {
     var inventoryItems: [KitchenInventoryModel] { get }
     func groupedItems() -> [(category: String, items: [KitchenItem])]
     func toggleItem(_ name: String, category: String?)
+    /// Bought groceries go At home: adds each name not already there, in one save.
+    func putAway(_ names: [String])
     func removeItem(_ item: KitchenItem)
     func removeInventoryItem(_ item: KitchenInventoryModel)
     func clearAll()
@@ -287,6 +289,17 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 		saveItems(updatedItems)
 	}
     
+	func putAway(_ names: [String]) {
+		var updated = items
+		for name in names {
+			let trimmed = name.trimmed
+			guard !trimmed.isEmpty, !updated.contains(where: { $0.name.nameKey == trimmed.nameKey }) else { continue }
+			updated.append(KitchenItem(name: trimmed, category: CategoryClassifier.normalizedCategory(nil, for: trimmed)))
+		}
+		guard updated.count != items.count else { return }
+		saveItems(updated)
+	}
+
 	func toggleItem(_ name: String, category: String? = nil) {
 		if let index = items.firstIndex(where: { $0.name.nameKey == name.nameKey }) {
 			var updatedItems = items

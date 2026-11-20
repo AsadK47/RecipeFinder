@@ -150,6 +150,95 @@ struct WeekGroceryPlanTests {
         #expect(many.cardDetail == "2 items for 3 planned meals · 1 at home")
     }
 
+    @Test("Unit spellings of one thing are one line, so the list's amount is counted once")
+    func unitSynonymsAreOneLine() {
+        let summary = WeekShoppingSummary(items: [line("flour", 200, "g"), line("flour", 100, "grams")],
+                                          mealsCovered: 2, missingRecipeNames: [])
+        let plan = WeekGroceryPlan(summary: summary, kitchenNames: [], listItems: [listItem("Flour", 200, "g")])
+
+        #expect(plan.candidates == [line("flour", 100, "g")])
+    }
+
+    @Test("A week needing more than a line can hold asks for the most a line holds, once")
+    func bigWeeksCapAtWhatALineHolds() {
+        let summary = WeekShoppingSummary(items: [line("chicken", 1500, "g")], mealsCovered: 3, missingRecipeNames: [])
+
+        let empty = WeekGroceryPlan(summary: summary, kitchenNames: [], listItems: [])
+        #expect(empty.candidates == [line("chicken", WeekGroceryPlan.maxQuantity, "g")])
+
+        let full = WeekGroceryPlan(summary: summary, kitchenNames: [], listItems: [listItem("chicken", 999, "g")])
+        #expect(full.candidates.isEmpty)
+    }
+
+    @Test("After Not now, the card comes back only when the plan needs something new")
+    func notNowHoldsUntilThePlanNeedsMore() {
+        let twoThings = WeekShoppingSummary(items: [line("onion", 1), line("rice", 1)], mealsCovered: 2, missingRecipeNames: [])
+        let dismissed = WeekGroceryPlan(summary: twoThings, kitchenNames: [], listItems: [])
+        #expect(dismissed.needsMore(than: nil))
+        #expect(!dismissed.needsMore(than: dismissed))
+
+        // Fewer of the same things (e.g. rice added by hand) → still hidden.
+        let fewer = WeekGroceryPlan(summary: twoThings, kitchenNames: [], listItems: [listItem("rice", 1)])
+        #expect(!fewer.needsMore(than: dismissed))
+
+        // A newly planned dinner needs something else → the card is back.
+        let more = WeekShoppingSummary(items: [line("onion", 1), line("rice", 1), line("lime", 1)], mealsCovered: 3, missingRecipeNames: [])
+        #expect(WeekGroceryPlan(summary: more, kitchenNames: [], listItems: []).needsMore(than: dismissed))
+        #expect(!WeekGroceryPlan.empty.needsMore(than: nil))
+    }
+
+    @MainActor @Test("A top-up for a ticked line puts what's still missing back on To buy")
+    func topUpOfATickedLineIsToBuy() {
+        let shopping = makeShopping()
+        shopping.addItem(name: "Onion", quantity: 1, unit: "", category: nil)
+        shopping.toggleItem(at: 0)
+        let summary = WeekShoppingSummary(items: [line("onion", 3)], mealsCovered: 1, missingRecipeNames: [])
+
+        WeekGroceryPlan(summary: summary, kitchenNames: [], listItems: shopping.items).add(to: shopping)
+
+        #expect(shopping.items.count == 1)
+        #expect(shopping.items.first?.quantity == 2)
+        #expect(shopping.items.first?.isChecked == false)
+    }
+
+    @Test("Put away moves ticked one-off items, not staples or what's still to buy")
+    func putAwayPicksTickedOneOffs() {
+        let items = [
+            listItem("Onion", 1, checked: true),
+            listItem("Rice", 1),
+            ShoppingListModel(name: "Milk", isChecked: true, isRecurring: true),
+        ]
+        #expect(ShoppingListManager.boughtToPutAway(items) == ["Onion"])
+    }
+
+    @MainActor @Test("After a shop is put away, the plan doesn't ask for it again")
+    func putAwayStopsThePlanAskingAgain() {
+        let shopping = makeShopping()
+        let kitchen = KitchenInventoryManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard),
+                                              kitchenStore: InMemoryKitchenStore())
+        let summary = WeekShoppingSummary(items: [line("onion", 2)], mealsCovered: 1, missingRecipeNames: [])
+        WeekGroceryPlan(summary: summary, kitchenNames: [], listItems: shopping.items).add(to: shopping)
+        shopping.toggleItem(at: 0)
+
+        kitchen.putAway(ShoppingListManager.boughtToPutAway(shopping.items))
+        shopping.clearCheckedItems()
+        let after = WeekGroceryPlan(summary: summary, kitchenNames: kitchen.items.map(\.name), listItems: shopping.items)
+
+        #expect(shopping.items.isEmpty)
+        #expect(kitchen.hasItem("onion"))
+        #expect(after.candidates.isEmpty)
+    }
+
+    @MainActor @Test("Put away skips what's already at home and blank names")
+    func putAwaySkipsDuplicates() {
+        let kitchen = KitchenInventoryManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard),
+                                              kitchenStore: InMemoryKitchenStore())
+        kitchen.putAway(["Onion"])
+        kitchen.putAway(["onion ", "  ", "Rice"])
+
+        #expect(kitchen.items.map { $0.name }.sorted() == ["Onion", "Rice"])
+    }
+
     @MainActor
     private func makeShopping() -> ShoppingListManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString) ?? .standard

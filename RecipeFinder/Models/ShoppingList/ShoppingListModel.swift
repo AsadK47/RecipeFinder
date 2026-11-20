@@ -59,11 +59,6 @@ struct ShoppingListModel: Identifiable, Codable, Hashable {
 extension ShoppingListModel {
     /// Same name and unit is one item — the rule `addItem` merges by, so two devices adding "Eggs" agree with it.
     var sameItemKey: String {
-        Self.sameItemKey(name: name, unit: unit)
-    }
-
-    /// The `sameItemKey` a line with this name and unit would have, before it's on the list.
-    static func sameItemKey(name: String, unit: String) -> String {
         "\(name.nameKey)|\(UnitConversion.canonicalUnit(unit))"
     }
 
