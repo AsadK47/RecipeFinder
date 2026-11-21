@@ -712,6 +712,25 @@ struct PlanBugHuntTests {
         #expect(sut.mealPlan(for: day(7), mealTime: .dinner) == nil)
     }
 
+    /// Reviewer 2026-11-21: a later copy sitting *before* the tapped one (iCloud / restore order) shifted the index,
+    /// so Stop Repeating read past the end of the array and crashed.
+    @Test func stopRepeatingWithALaterCopyListedFirstKeepsThisWeeksMeal() throws {
+        let sut = makeManager()
+        let recipe = UUID()
+        let nextWeek = MealPlanModel(recipeId: recipe, recipeName: "Pasta", date: day(7), mealTime: .dinner,
+                                     isRecurring: true, reminderTime: clock(19))
+        sut.addMealPlan(nextWeek)
+        sut.addMealPlan(MealPlanModel(recipeId: recipe, recipeName: "Pasta", date: day(0), mealTime: .dinner,
+                                      isRecurring: true, reminderTime: clock(19)))
+        let thisWeek = try #require(sut.mealPlan(for: day(0), mealTime: .dinner))
+        sut.toggleRecurring(thisWeek)
+        let kept = try #require(sut.mealPlan(for: day(0), mealTime: .dinner))
+        #expect(!kept.isRecurring)
+        #expect(sut.mealPlan(for: day(7), mealTime: .dinner) == nil)
+        // The removed copy's weekly reminder goes with it.
+        #expect(!liveReminders.contains("meal-\(nextWeek.id.uuidString)"))
+    }
+
     @Test func aWeeklySeriesHasOneLiveReminder() {
         let sut = makeManager()
         weeklyDinner(sut, reminder: clock(19))
