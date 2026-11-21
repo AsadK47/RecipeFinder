@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Groceries writes itself slice 5 delete duplicates · 39bf095
+- For you: To buy and At home now share one tidy aisle header, so folding an aisle looks and works the same on both sides, and shopping for your plan lives in one place — the From your plan card in Groceries.
+- Behind the build: two copies of the same screen piece became one, the app got about 150 lines smaller, and a reviewer and a challenger checked nothing a cook uses went missing.
+
 ## 2026-11-21 · Inbox 🟡 Reset clears preferences · 216eb49
 - For you: Reset App to Default now gives you a true fresh start — your settings return to their defaults too, while your colour theme and iCloud sync choice stay as you set them.
 - Behind the build: a new test reads the app's own code and fails if a future setting would be missed by Reset, and a reviewer plus a challenger checked it against the Privacy Policy.

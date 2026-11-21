@@ -50,6 +50,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   agent/groceries-from-plan (auto-cleanup).
   ✅ Slice 2 shop mode landed 1505253 (builder 2026-11-20). Leftover branch agent/groceries-shop-mode (auto-cleanup).
   ✅ Slice 3 aisle order landed 9dda50b (builder 2026-11-20). Leftover branch agent/groceries-aisle-order (auto-cleanup).
+  ✅ Slice 5 delete duplicates landed 39bf095 (builder 2026-11-21). Leftover branches agent/groceries-delete-dupes, -2
+  (auto-cleanup). Left: slice 4 ("Still got the coriander?") — then tick the item.
 
 - Inbox 🟡 **Keep screen awake**: ✅ landed 7e70ceb (builder 2026-11-20). Leftover branch agent/keep-screen-awake (auto-cleanup).
 - 🐞 **Meal planning is buggy**: ✅ landed 0acb4fd (interactive session 2026-11-20). Skip-one-week → Needs owner.
@@ -57,8 +59,8 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 
 ## Next action
 Inbox first if any new 🐞/🟡. Then:
-*Groceries writes itself* slice 5 on `agent/groceries-delete-dupes`: delete the duplicated Kitchen/Shopping views +
-Plan's Add Week button (net lines down); then slice 4 ("Still got the coriander?"). Website session: add the §4.2
+*Groceries writes itself* slice 4 ("Still got the coriander?") on `agent/groceries-still-got`: read the item spec and
+docs/PRODUCT.md first; pre-mortem in Decisions before code. Website session: add the §4.2
 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
@@ -73,7 +75,7 @@ Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap pl
   deleted item → card nags). Fixes: `addItem` on a ticked line starts a fresh unticked amount; "Clear Checked" became
   **Put Checked Items Away** (ticked one-offs → At home via `KitchenInventoryManaging.putAway`, pulled forward from
   slice 2); "Not now" hides the card in memory until the plan needs something new (`needsMore(than:)`, nothing
-  stored). Plan's Add Week kept (subtract later once Groceries owns it). **Pre-mortem:** (1) adding twice doubles
+  stored). Plan's Add Week deleted in slice 5 (Groceries owns plan → list). **Pre-mortem:** (1) adding twice doubles
   → `addingTwiceNeverDoubles`; (2) card never shows → UI `testZZZZGroceriesFromPlan`; (3) after a shop the card asks
   again → `putAwayStopsThePlanAskingAgain`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and

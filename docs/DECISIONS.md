@@ -5,6 +5,14 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Groceries writes itself slice 5 — delete duplicates** (landed 39bf095): merged only what was truly the same — the
+  aisle header (To buy shows left/total, At home a count, so the count is passed in). The two rows stay separate:
+  To buy's has tick, stores, pin and a 999 cap, At home's a 1–99 stepper — one row with flags would be harder to read
+  than two. Plan's Add Week deleted, not moved to a ⋯ item: Groceries' card already does plan → list from today;
+  challenger's gap (no week choice beyond today + 6, no way back after Not now) → CHALLENGES for the owner rather than
+  rebuilding the button. **Pre-mortem:** (1) header toggles the wrong set → `tapCollapsesThenExpandsItsCategoryOnly`;
+  (2) To buy's chevron wrong again → `chevronPointsUpOpenAndDownCollapsed` (inspects the view); (3) Groceries shops for
+  meals already eaten after folding `from:` → `shoppingFromTodayLeavesOutMealsAlreadyPast`.
 - **Reset clears preferences** (landed 216eb49): code follows §4.3 rather than rewording it (Reset = full erasure, owner 2026-11-16).
   Hand list of unprefixed keys, not "remove every non-`rf.` key" — standard defaults also hold Apple/SDK keys.
   Kept: `today.handledClipboardChange`, `recipes.discoverRequests` (screen plumbing). **Pre-mortem:** (1) a key
