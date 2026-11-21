@@ -56,6 +56,22 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21 (item pass: Theme palette slice 2a accessibility — fixed: 12 views hard-coded white on accent fills, ~2:1 on the light Dark + Increase Contrast accent (both reviewers) → `AppTheme.onAccent`, `IconBadge(glyph:)`; AX picker test read lazy grid cells before scrolling + stopped under the tab bar (reviewer) → scrolls each swatch clear of the tab bar; scaled swatch truncated "Raspberry" → capped at 48pt; `contrast:` default hid a dropped argument → required)
+- ⚔️ [Look] Dark + Increase Contrast turns accent buttons light with **black** text — white at 7:1 would sink the accent into the dark base (~2.7:1); iOS tints go lighter too but system buttons keep white — alternative: mid accent with white ~3:1 (large text only) — cost if we're wrong: looks off-brand for that setting.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] `PasteButton` (Today, Import) is `.tint(accent)` and draws its own label: if it stays white on the Dark HC accent it is ~2:1 and `UIPasteControl` may refuse an illegible button — **check on device** (Dark + Increase Contrast → Today paste).
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Accent-tinted toggles (`SettingsComponents`, `FilterSheet`, `RecipeRefreshSheet`) put a white knob on a light track in Dark HC (~2:1), as iOS's own green does; On/Off Labels covers it.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Increase Contrast accents: Light Saffron/Honey ΔE OK 0.054, Dark Tomato/Saffron 0.059 (standard bar 0.06; HC test ≥0.05) — sRGB can't hold their chroma at L 0.42; names beside swatches.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Pre-existing: nav titles are `UIColor.white` in every mode (`RecipeFinderApp`) on the bare Light gradient (~1.9:1; ~1.6:1 with the HC lift) — fix in a polish pass (adaptive title colour).
+  → Owner: Accept / Reject / Later
+- ⚔️ [Simplify] The Reduce Transparency branch in `.appCard` may duplicate iOS's own opaque material fallback, and ~15 direct `.ultraThinMaterial` sites keep the system look — device check; delete `solidCard` or route those sites through `.appCard`.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Tests] No test fails if `AppBackground` stops reading `colorSchemeContrast` or `.appCard` drops its Reduce Transparency branch (view wiring, no UI capture under either setting — iOS can't toggle them from a launch argument).
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-21 (item pass: Theme palette slice 1 — fixed: black text on the new deeper accents was 3.5–4.1:1 on 12 buttons/toasts/ticks → `AppTheme.onAccent` (white, ≥4.6:1); Dark accent icons were ~2:1 on the Dark gradient's top → Dark gradients deepened (L 0.28→0.15), tested ≥3:1 on every stop; accent wiring per mode tested via trait resolution; UI shots force Light/Dark via `-ui-light`/`-ui-dark` and every `-ui-testing` run resets theme + appearance)
 - ⚔️ [Break] Light accents are told apart from the Light gradient by hue — they measure 1.8–3.2:1 against its stops (old teal: 1.0–2.0, so no regression); 3:1 would need near-white gradients (L ≥0.83) — alternative: pastel Light gradients, or keep accent off the bare gradient (cards / filled pills only, DesignSystem rule) — cost if we're wrong: accent-only icons on the gradient are faint in Light.
   → Owner: Accept / Reject / Later
