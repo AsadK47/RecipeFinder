@@ -9,8 +9,11 @@ protocol KitchenInventoryManaging: AnyObject, Observable {
     var inventoryItems: [KitchenInventoryModel] { get }
     func groupedItems() -> [(category: String, items: [KitchenItem])]
     func toggleItem(_ name: String, category: String?)
-    /// Bought groceries go At home: adds each name not already there, in one save.
+    /// Bought groceries go At home: adds each name not already there, in one save; one already there counts as
+    /// bought today (so "Still got the coriander?" doesn't ask about what was just bought).
     func putAway(_ names: [String])
+    /// The cook said it's still there: it counts as put away today.
+    func stillHave(_ item: KitchenItem)
     func removeItem(_ item: KitchenItem)
     func removeInventoryItem(_ item: KitchenInventoryModel)
     func clearAll()
@@ -290,13 +293,26 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
     
 	func putAway(_ names: [String]) {
+		let now = Date()
 		var updated = items
 		for name in names {
 			let trimmed = name.trimmed
-			guard !trimmed.isEmpty, !updated.contains(where: { $0.name.nameKey == trimmed.nameKey }) else { continue }
-			updated.append(KitchenItem(name: trimmed, category: CategoryClassifier.normalizedCategory(nil, for: trimmed)))
+			guard !trimmed.isEmpty else { continue }
+			if let index = updated.firstIndex(where: { $0.name.nameKey == trimmed.nameKey }) {
+				updated[index].dateAdded = now
+			} else {
+				updated.append(KitchenItem(name: trimmed, category: CategoryClassifier.normalizedCategory(nil, for: trimmed),
+				                           dateAdded: now))
+			}
 		}
-		guard updated.count != items.count else { return }
+		guard updated != items else { return }
+		saveItems(updated)
+	}
+
+	func stillHave(_ item: KitchenItem) {
+		guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+		var updated = items
+		updated[index].dateAdded = Date()
 		saveItems(updated)
 	}
 

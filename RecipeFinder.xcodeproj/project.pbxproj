@@ -204,6 +204,7 @@
 		A9D2F1A5433AB3B54FCC13BE /* SundayPlanNudge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */; };
 		0E0FA5F1E0AF65426E294F2D /* MealPlanDayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */; };
 		7B1235F49C0CEA88C7EF1600 /* WeekGroceryPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */; };
+		50729EB62AC7E85A63E60DAE /* StillGotCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AC5DB73EFC293B92356A60 /* StillGotCheck.swift */; };
 		F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */; };
 		0C0EA7D8FD4FEDF95DD7B69B /* PlanDeckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */; };
 		7DC34FAD135E41199256751E /* PlanDeckMemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E7ED5464364E9BBFB2E29F /* PlanDeckMemoryTests.swift */; };
@@ -211,6 +212,7 @@
 		E75BC52EC57ED724A6299E74 /* SundayPlanNudgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */; };
 		5B6964EE19E6FD52230E763C /* MealPlanDayContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */; };
 		B05380AF12499D9BF681C736 /* WeekGroceryPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D56B9B410B5B753F50CA04 /* WeekGroceryPlanTests.swift */; };
+		E1665CD586ED6474780B941D /* StillGotCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36350BF1D74262178ED6DBFE /* StillGotCheckTests.swift */; };
 		A7C0F1A12F1B4E2000C4B002 /* ShopTripTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C0F1A12F1B4E2000C4B001 /* ShopTripTests.swift */; };
 		A7C0F1A12F1B4E2000C5B002 /* AisleOrderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C0F1A12F1B4E2000C5B001 /* AisleOrderTests.swift */; };
 		F3AD2EBE3061940600274E33 /* View+AppCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EBD3061940600274E33 /* View+AppCard.swift */; };
@@ -432,6 +434,7 @@
 		F3E9D16830444DA5008BF231 /* GroceryCategoryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D16730444DA5008BF231 /* GroceryCategoryHeader.swift */; };
 		F3E9D16A30444E1C008BF231 /* ShoppingProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D16930444E1C008BF231 /* ShoppingProgressBar.swift */; };
 		A7C0F1A12F1B4E2000A1B002 /* PlanGroceriesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C0F1A12F1B4E2000A1B001 /* PlanGroceriesCard.swift */; };
+		2E3D9E2CEF2C5F8A40315567 /* StillGotCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6810DBCE46DDA56D1F7568A1 /* StillGotCard.swift */; };
 		A7C0F1A12F1B4E2000C3B002 /* ShopModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C0F1A12F1B4E2000C3B001 /* ShopModeView.swift */; };
 		898E384F50FCC09ABA5DC9FD /* GroceryStoreViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7645821A8814EE558B96CA09 /* GroceryStoreViews.swift */; };
 		F3E9D17430444F55008BF231 /* RecipeNotesFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D17330444F55008BF231 /* RecipeNotesFormatter.swift */; };
@@ -839,6 +842,7 @@
 		D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayPlanNudge.swift; sourceTree = "<group>"; };
 		1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanDayContent.swift; sourceTree = "<group>"; };
 		CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGroceryPlan.swift; sourceTree = "<group>"; };
+		E0AC5DB73EFC293B92356A60 /* StillGotCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillGotCheck.swift; sourceTree = "<group>"; };
 		F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanCalendarTests.swift; sourceTree = "<group>"; };
 		4BD714E01F387D28B1DF96B9 /* PlanDeckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeckTests.swift; sourceTree = "<group>"; };
 		78E7ED5464364E9BBFB2E29F /* PlanDeckMemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDeckMemoryTests.swift; sourceTree = "<group>"; };
@@ -846,6 +850,7 @@
 		3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayPlanNudgeTests.swift; sourceTree = "<group>"; };
 		ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanDayContentTests.swift; sourceTree = "<group>"; };
 		90D56B9B410B5B753F50CA04 /* WeekGroceryPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekGroceryPlanTests.swift; sourceTree = "<group>"; };
+		36350BF1D74262178ED6DBFE /* StillGotCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillGotCheckTests.swift; sourceTree = "<group>"; };
 		A7C0F1A12F1B4E2000C4B001 /* ShopTripTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopTripTests.swift; sourceTree = "<group>"; };
 		A7C0F1A12F1B4E2000C5B001 /* AisleOrderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AisleOrderTests.swift; sourceTree = "<group>"; };
 		F3AD2EBA3061884B00274E33 /* RecipeModel 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 11.xcdatamodel"; sourceTree = "<group>"; };
@@ -1067,6 +1072,7 @@
 		F3E9D16730444DA5008BF231 /* GroceryCategoryHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryCategoryHeader.swift; sourceTree = "<group>"; };
 		F3E9D16930444E1C008BF231 /* ShoppingProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingProgressBar.swift; sourceTree = "<group>"; };
 		A7C0F1A12F1B4E2000A1B001 /* PlanGroceriesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PlanGroceriesCard.swift"; sourceTree = "<group>"; };
+		6810DBCE46DDA56D1F7568A1 /* StillGotCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StillGotCard.swift"; sourceTree = "<group>"; };
 		A7C0F1A12F1B4E2000C3B001 /* ShopModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShopModeView.swift"; sourceTree = "<group>"; };
 		7645821A8814EE558B96CA09 /* GroceryStoreViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryStoreViews.swift; sourceTree = "<group>"; };
 		F3E9D17330444F55008BF231 /* RecipeNotesFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeNotesFormatter.swift; sourceTree = "<group>"; };
@@ -1477,6 +1483,7 @@
 				3D22511695D60AB7605C3E09 /* SundayPlanNudgeTests.swift */,
 				ECCA1F2F5CE16CAB2F7AC0F0 /* MealPlanDayContentTests.swift */,
 				90D56B9B410B5B753F50CA04 /* WeekGroceryPlanTests.swift */,
+				36350BF1D74262178ED6DBFE /* StillGotCheckTests.swift */,
 				A7C0F1A12F1B4E2000C4B001 /* ShopTripTests.swift */,
 				A7C0F1A12F1B4E2000C5B001 /* AisleOrderTests.swift */,
 				F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */,
@@ -1976,6 +1983,7 @@
 				F3E9D16730444DA5008BF231 /* GroceryCategoryHeader.swift */,
 				F3E9D16930444E1C008BF231 /* ShoppingProgressBar.swift */,
 				A7C0F1A12F1B4E2000A1B001 /* PlanGroceriesCard.swift */,
+				6810DBCE46DDA56D1F7568A1 /* StillGotCard.swift */,
 				A7C0F1A12F1B4E2000C3B001 /* ShopModeView.swift */,
 				7645821A8814EE558B96CA09 /* GroceryStoreViews.swift */,
 			);
@@ -2219,6 +2227,7 @@
 				D9C4C00DCC6E4C36EF59B4D5 /* SundayPlanNudge.swift */,
 				1E032F56E9EA23A08E64F0E2 /* MealPlanDayContent.swift */,
 				CB1D5FC8CE467CED0C2471E0 /* WeekGroceryPlan.swift */,
+				E0AC5DB73EFC293B92356A60 /* StillGotCheck.swift */,
 			);
 			path = MealPlanning;
 			sourceTree = "<group>";
@@ -2851,6 +2860,7 @@
 				F3AEF8C7309B569600A9C5E0 /* LocalStore.swift in Sources */,
 				F3E9D16A30444E1C008BF231 /* ShoppingProgressBar.swift in Sources */,
 				A7C0F1A12F1B4E2000A1B002 /* PlanGroceriesCard.swift in Sources */,
+				2E3D9E2CEF2C5F8A40315567 /* StillGotCard.swift in Sources */,
 				A7C0F1A12F1B4E2000C3B002 /* ShopModeView.swift in Sources */,
 				898E384F50FCC09ABA5DC9FD /* GroceryStoreViews.swift in Sources */,
 				F3D4054C305620510076834D /* NutritionInfo.swift in Sources */,
@@ -3070,6 +3080,7 @@
 				A9D2F1A5433AB3B54FCC13BE /* SundayPlanNudge.swift in Sources */,
 				0E0FA5F1E0AF65426E294F2D /* MealPlanDayContent.swift in Sources */,
 				7B1235F49C0CEA88C7EF1600 /* WeekGroceryPlan.swift in Sources */,
+				50729EB62AC7E85A63E60DAE /* StillGotCheck.swift in Sources */,
 				F3AEF8DB309B80FC00A9C5E0 /* ThemeStore.swift in Sources */,
 				9E6C2C3E2FB4778E0083A08B /* ChefTypeCard.swift in Sources */,
 				F3E9D266304B71CA008BF231 /* GroceriesHeader.swift in Sources */,
@@ -3220,6 +3231,7 @@
 				E75BC52EC57ED724A6299E74 /* SundayPlanNudgeTests.swift in Sources */,
 				5B6964EE19E6FD52230E763C /* MealPlanDayContentTests.swift in Sources */,
 				B05380AF12499D9BF681C736 /* WeekGroceryPlanTests.swift in Sources */,
+				E1665CD586ED6474780B941D /* StillGotCheckTests.swift in Sources */,
 				A7C0F1A12F1B4E2000C4B002 /* ShopTripTests.swift in Sources */,
 				A7C0F1A12F1B4E2000C5B002 /* AisleOrderTests.swift in Sources */,
 				F3AEF8A7309A3B0000A9C5E0 /* BundledRecipeCatalogTests.swift in Sources */,

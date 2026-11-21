@@ -24,6 +24,8 @@ struct KitchenShoppingView: View {
     @State private var shopMode: ShopModeRequest?
     /// What the next seven days of plans still need; refreshed on data change, not in `body`.
     @State var planNeeds = WeekGroceryPlan.empty
+    /// "Still got the coriander?" questions for what the plan counts on At home; refreshed with `planNeeds`.
+    @State var stillGot = StillGotCheck.empty
     /// What the cook said "Not now" to, for as long as the app runs (nothing stored).
     @State private var dismissedPlanNeeds: WeekGroceryPlan?
     /// Last store filter, remembered between launches; "" means All.
@@ -156,6 +158,12 @@ struct KitchenShoppingView: View {
     private var shoppingList: some View {
         let showsPlanCard = planNeeds.needsMore(than: dismissedPlanNeeds)
         return List {
+            if stillGot.first != nil {
+                stillGotCard
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            }
             if showsPlanCard {
                 PlanGroceriesCard(plan: planNeeds, onAdd: addPlanNeeds, onNotNow: { dismissedPlanNeeds = planNeeds })
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
@@ -197,6 +205,9 @@ struct KitchenShoppingView: View {
 
     private var emptyState: some View {
         ScrollView {
+            stillGotCard
+                .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                .padding(.bottom, AppTheme.spacing12)
             if !planNeeds.needsMore(than: dismissedPlanNeeds) {
                 EmptyStateView(
                     icon: "cart.circle.fill",

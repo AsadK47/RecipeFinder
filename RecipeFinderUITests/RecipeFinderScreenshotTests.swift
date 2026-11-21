@@ -1208,6 +1208,34 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                       "What was ticked in the shop should be At home: \(name)")
     }
 
+    /// Groceries writes itself, slice 4: something the plan counts on has been At home three weeks
+    /// (`-seed-still-got`), so To buy asks "Still got the …?"; "No, add it" settles that question in one tap.
+    @MainActor
+    func testZZZZZGroceriesStillGot() {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-seed-tonight-plan", "-seed-still-got"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        dismissBadgeSheet(app)
+        tab(app, "Groceries", shot: nil)
+        let toBuy = app.buttons["To buy"]
+        if toBuy.waitForExistence(timeout: 5) { toBuy.tap() }
+        let no = app.buttons["groceries.stillGot.no"]
+        checkpoint(app, "still got question")
+        XCTAssertTrue(no.waitForExistence(timeout: 10), "Groceries should ask about an old perishable the plan needs.")
+        let question = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label BEGINSWITH 'Still got the'")).firstMatch
+        XCTAssertTrue(question.waitForExistence(timeout: 5), "The card should say what it's asking about.")
+        let asked = question.label
+        settle()
+        snap(app, "60-groceries-still-got")
+        no.tap()
+        dismissBadgeSheet(app)
+        let same = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", asked)).firstMatch
+        checkpoint(app, "still got answered")
+        XCTAssertTrue(same.waitForNonExistence(timeout: 5), "Answering should settle that question: \(asked)")
+    }
+
     /// Me's hero above My Cookbook: one page (the cook testZCaptureMadeIt just recorded), then many (`-seed-cookbook`).
     /// The empty cookbook is 17-me on a fresh simulator. Named to sort after testZCaptureMadeIt for the same reason.
     @MainActor
