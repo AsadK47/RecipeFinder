@@ -468,6 +468,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let prepAhead = app.buttons.matching(identifier: "today.nudge").firstMatch
         XCTAssertTrue(prepAhead.waitForExistence(timeout: 5), "Today should nudge tomorrow's prep-ahead dinner.")
         XCTAssertTrue(prepAhead.label.contains("tonight for tomorrow's dinner"), "The nudge should say when to prep.")
+        XCTAssertFalse(app.buttons["today.nudge.openKitchen"].exists, "Prep ahead isn't from the kitchen, so no kitchen link.")
         settle()
         snap(app, "18-today-planned")
 
@@ -544,7 +545,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
     }
 
     /// Today+ 2/3: "Use it up" pairs kitchen items going off soon with a recipe (DEBUG `-seed-use-soon` adds spinach
-    /// for tomorrow and lemons in three days). Sorts after `testCaptureTodayTimes`.
+    /// for today and lemons in three days). Sorts after `testCaptureTodayTimes`.
     @MainActor
     func testCaptureTodayUseSoon() {
         let app = XCUIApplication()

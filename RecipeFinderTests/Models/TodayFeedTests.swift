@@ -395,6 +395,27 @@ import Foundation
         #expect(TodayNudge.pick(prepAhead: [prep("Tikka")], useSoon: [spinach]) == .useSoon(spinach))
     }
 
+    @Test func onceTheDaysMealsAreOverTomorrowsPrepBeatsSomethingGoingOffToday() {
+        let tikka = prep("Tikka")
+        let spinach = useSoon("Spinach", daysLeft: 0)
+        #expect(TodayNudge.pick(prepAhead: [tikka], useSoon: [spinach], dayIsOver: true) == .prepAhead(tikka))
+        #expect(TodayNudge.pick(prepAhead: [], useSoon: [spinach], dayIsOver: true) == .useSoon(spinach))
+    }
+
+    @Test func at10pmTheFeedNudgesTomorrowsPrepOverTodaysSpinach() {
+        let late = cal.date(bySettingHour: 22, minute: 0, second: 0, of: now) ?? now
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: late) ?? late
+        let tikka = recipe("Tikka", steps: ["Marinate the chicken overnight.", "Grill."])
+        let saag = recipe("Saag", ingredients: ["spinach"])
+        let spinach = KitchenInventoryModel(name: "Spinach", category: .produce, quantity: 1, unit: "", expiryDate: late)
+        let result = TodayFeed.make(
+            recipes: [tikka, saag], todaysPlans: [], kitchenItemNames: [],
+            tomorrowsPlans: [plan(tikka, .dinner, on: tomorrow)], inventoryItems: [spinach], now: late, calendar: cal
+        )
+        #expect(result.nextMeal.isTomorrow)
+        #expect(result.nudge?.recipe == tikka)
+    }
+
     @Test func tomorrowsPrepBeatsSomethingGoingOffLater() {
         let tikka = prep("Tikka")
         #expect(TodayNudge.pick(prepAhead: [tikka], useSoon: [useSoon("Lemons", daysLeft: 1)]) == .prepAhead(tikka))

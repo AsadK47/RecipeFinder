@@ -10,8 +10,10 @@ enum TodayNudge: Equatable {
 
     /// The one to show, most pressing first: something going off today (it's wasted by tomorrow), then tomorrow's
     /// prep (miss it tonight and the plan the cook made can't happen), then whatever goes off soonest.
-    static func pick(prepAhead: [PrepAheadNudge], useSoon: [UseSoonPair]) -> TodayNudge? {
-        if let today = useSoon.first(where: { $0.daysLeft < 1 }) { return .useSoon(today) }
+    /// Once today's meals are over (`dayIsOver`: Today has moved on to tomorrow) there's no meal left to use today's
+    /// item in, but a marinade can still go on, so prep comes first.
+    static func pick(prepAhead: [PrepAheadNudge], useSoon: [UseSoonPair], dayIsOver: Bool = false) -> TodayNudge? {
+        if !dayIsOver, let today = useSoon.first(where: { $0.daysLeft < 1 }) { return .useSoon(today) }
         if let prep = prepAhead.first { return .prepAhead(prep) }
         return useSoon.first.map(TodayNudge.useSoon)
     }

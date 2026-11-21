@@ -123,7 +123,8 @@ struct TodayFeed: Equatable {
                 prepAhead: PrepAhead.nudges(recipes: recipes, tomorrowsPlans: tomorrowsPlans),
                 useSoon: UseSoon.pairs(
                     items: inventoryItems, recipes: recipes, kitchenItemNames: kitchenItemNames, now: now, calendar: calendar
-                )
+                ),
+                dayIsOver: nextMeal.isTomorrow
             )
         )
     }

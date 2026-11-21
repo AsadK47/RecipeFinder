@@ -231,6 +231,10 @@ final class RecipeStore: RecipeStoring {
         if planner.mealPlan(for: now, mealTime: .dinner) == nil, let recipe = sorted.first {
             planner.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: now, mealTime: .dinner))
         }
+        // `-seed-use-soon`'s spinach goes off today, which outranks the prep-ahead nudge this seed is for — on a
+        // reused simulator it would still be there.
+        let kitchen = KitchenInventoryManager.shared
+        for spinach in kitchen.inventoryItems where spinach.name == "Spinach" { kitchen.removeInventoryItem(spinach) }
         if let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now),
            planner.mealPlan(for: tomorrow, mealTime: .dinner) == nil,
            let recipe = sorted.first(where: { PrepAhead.cue(for: $0) != nil }) {
