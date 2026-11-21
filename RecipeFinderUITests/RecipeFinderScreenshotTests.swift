@@ -451,6 +451,40 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "57-notifications-sunday-denied")
     }
 
+    /// Theme palette: every theme's picker and Today, in Light and Dark (`-preferredColorScheme` rides the argument
+    /// domain, so the run never changes the simulator's own setting). Ends back on Teal so later shots keep the default.
+    @MainActor
+    func testCaptureThemes() {
+        let themes = ["Tomato", "Saffron", "Honey", "Herb", "Teal", "Blueberry", "Plum", "Raspberry"]
+        for (mode, value) in [("light", "1"), ("dark", "2")] {
+            let app = XCUIApplication()
+            app.launchArguments += ["-ui-testing", "-preferredColorScheme", value]
+            app.launch()
+            XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+            app.tabBars.buttons["Me"].tap()
+            checkpoint(app, "Me before the Settings gear (\(mode))")
+            app.buttons["me.settings"].tap()
+            XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
+            app.staticTexts["Appearance & Theme"].firstMatch.tap()
+            for theme in themes {
+                let swatch = app.buttons["theme.\(theme)"]
+                for _ in 0..<3 where !swatch.isHittable { app.swipeUp() }
+                XCTAssertTrue(swatch.waitForExistence(timeout: 5), "The picker should offer \(theme).")
+                checkpoint(app, "before picking \(theme) (\(mode))")
+                swatch.tap()
+                XCTAssertTrue(swatch.isSelected, "\(theme) should read as selected.")
+                settle(0.8)
+                snap(app, "61-theme-\(theme.lowercased())-\(mode)")
+                app.tabBars.buttons["Today"].tap()
+                settle(0.8)
+                snap(app, "62-today-\(theme.lowercased())-\(mode)")
+                app.tabBars.buttons["Me"].tap()
+            }
+            app.buttons["theme.Teal"].tap()
+            app.terminate()
+        }
+    }
+
     /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded
     /// via the DEBUG `-seed-tonight-plan` flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
     @MainActor

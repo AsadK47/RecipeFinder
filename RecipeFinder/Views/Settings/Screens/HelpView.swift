@@ -109,7 +109,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "paintpalette",
                             title: "Customize Appearance",
-                            description: "Choose from 8 beautiful themes and frosted or solid card styles in Settings > Appearance."
+                            description: "Pick a color theme, from Tomato to Blueberry, and Light or Dark mode in Settings > Appearance & Theme."
                         )
 
                         HelpItem(
@@ -179,7 +179,7 @@ struct HelpView: View {
 
                         FAQItem(
                             question: "How do I change the app theme?",
-                            answer: "Go to Settings > Appearance & Theme to choose from 8 beautiful color themes and card styles."
+                            answer: "Go to Settings > Appearance & Theme and tap a color — each one tints the whole app, in Light and Dark."
                         )
 
                         FAQItem(

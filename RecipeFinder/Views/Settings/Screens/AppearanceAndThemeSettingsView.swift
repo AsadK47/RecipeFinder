@@ -93,6 +93,7 @@ struct AppearanceAndThemeSettingsView: View {
             .cornerRadius(AppTheme.cornerRadius12)
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityIdentifier("theme.\(theme.rawValue)")
         .accessibilityAddTraits(ThemeStore.shared.theme == theme ? .isSelected : [])
     }
 }

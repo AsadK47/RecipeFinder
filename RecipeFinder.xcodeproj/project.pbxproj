@@ -246,7 +246,9 @@
 		F3AEF8D5309B572300A9C5E0 /* ManagerRelaunchPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8D4309B572300A9C5E0 /* ManagerRelaunchPersistenceTests.swift */; };
 		F3AEF8D7309B754900A9C5E0 /* BundledRecipeRenderAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8D6309B754900A9C5E0 /* BundledRecipeRenderAuditTests.swift */; };
 		F3AEF8D9309B80F800A9C5E0 /* ThemeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8D8309B80F800A9C5E0 /* ThemeStoreTests.swift */; };
+		11595163AC8463C264A923E3 /* ThemePaletteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE43E903C1936A6AA8640C9 /* ThemePaletteTests.swift */; };
 		F3AEF8DB309B80FC00A9C5E0 /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8DA309B80FC00A9C5E0 /* ThemeStore.swift */; };
+		BB52B39557A19B695CF8976F /* ThemePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9296875D1A95FD1EFC6F6BC4 /* ThemePalette.swift */; };
 		F3AEF8DD309B851C00A9C5E0 /* String+Trimming.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8DC309B851C00A9C5E0 /* String+Trimming.swift */; };
 		F3AEF8E9309B85F300A9C5E0 /* View+AppNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8E8309B85F300A9C5E0 /* View+AppNavigation.swift */; };
 		F3AEF8EB309B890700A9C5E0 /* SheetScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8EA309B890700A9C5E0 /* SheetScaffold.swift */; };
@@ -897,7 +899,9 @@
 		F3AEF8D4309B572300A9C5E0 /* ManagerRelaunchPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerRelaunchPersistenceTests.swift; sourceTree = "<group>"; };
 		F3AEF8D6309B754900A9C5E0 /* BundledRecipeRenderAuditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundledRecipeRenderAuditTests.swift; sourceTree = "<group>"; };
 		F3AEF8D8309B80F800A9C5E0 /* ThemeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStoreTests.swift; sourceTree = "<group>"; };
+		BAE43E903C1936A6AA8640C9 /* ThemePaletteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePaletteTests.swift; sourceTree = "<group>"; };
 		F3AEF8DA309B80FC00A9C5E0 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
+		9296875D1A95FD1EFC6F6BC4 /* ThemePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePalette.swift; sourceTree = "<group>"; };
 		F3AEF8DC309B851C00A9C5E0 /* String+Trimming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Trimming.swift"; sourceTree = "<group>"; };
 		F3AEF8E8309B85F300A9C5E0 /* View+AppNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AppNavigation.swift"; sourceTree = "<group>"; };
 		F3AEF8EA309B890700A9C5E0 /* SheetScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetScaffold.swift; sourceTree = "<group>"; };
@@ -1375,6 +1379,7 @@
 				F3AD2EBD3061940600274E33 /* View+AppCard.swift */,
 				F3AD2EF030657D2100274E33 /* View+AppInputField.swift */,
 				F3AEF8DA309B80FC00A9C5E0 /* ThemeStore.swift */,
+				9296875D1A95FD1EFC6F6BC4 /* ThemePalette.swift */,
 				F3AEF8E8309B85F300A9C5E0 /* View+AppNavigation.swift */,
 				F3AEF8F8309C93AD00A9C5E0 /* View+ErrorAlert.swift */,
 			);
@@ -1574,6 +1579,7 @@
 				F36AED663043343300935A3C /* MemoCacheTests.swift */,
 				0BE1B609FDD03B4A9E59FB6D /* BindingIsPresentTests.swift */,
 				F3AEF8D8309B80F800A9C5E0 /* ThemeStoreTests.swift */,
+				BAE43E903C1936A6AA8640C9 /* ThemePaletteTests.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -3105,6 +3111,7 @@
 				7B1235F49C0CEA88C7EF1600 /* WeekGroceryPlan.swift in Sources */,
 				50729EB62AC7E85A63E60DAE /* StillGotCheck.swift in Sources */,
 				F3AEF8DB309B80FC00A9C5E0 /* ThemeStore.swift in Sources */,
+				BB52B39557A19B695CF8976F /* ThemePalette.swift in Sources */,
 				9E6C2C3E2FB4778E0083A08B /* ChefTypeCard.swift in Sources */,
 				F3E9D266304B71CA008BF231 /* GroceriesHeader.swift in Sources */,
 				F3B837DB3055F15B0003AEF8 /* CollectionDetailView.swift in Sources */,
@@ -3324,6 +3331,7 @@
 				6C319C12DC83BDD9640DD87E /* BadgeShelfTests.swift in Sources */,
 				24ADC38522964170692A2A6B /* BadgeRevealTests.swift in Sources */,
 				F3AEF8D9309B80F800A9C5E0 /* ThemeStoreTests.swift in Sources */,
+				11595163AC8463C264A923E3 /* ThemePaletteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

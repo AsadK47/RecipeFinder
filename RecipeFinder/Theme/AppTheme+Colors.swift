@@ -52,19 +52,16 @@ extension AppTheme {
         })
     }
 
+    /// The theme's accent: a deeper variant in Light, a lighter one in Dark — white text on it stays ≥4.5:1 in both.
+    /// Built once per theme: `accentColor` is read from many `body`s, and one instance per theme keeps it `==` itself.
     static func accentColor(for theme: ThemeType) -> Color {
-        switch theme {
-        case .teal:     return tealBrightLight
-        case .purple:   return purpleRich
-        case .red:      return redCrimson
-        case .orange:   return orangeBright
-        case .yellow:   return yellowBright
-        case .green:    return greenVibrant
-        case .pink:     return pinkHot
-        case .gold:     return goldRich
-        }
+        accentColors[theme] ?? Color.accentColor
     }
-    
+
+    private static let accentColors: [ThemeType: Color] = Dictionary(uniqueKeysWithValues: ThemeType.allCases.map { theme in
+        (theme, adaptive(light: Color(theme.swatch.accentLight), dark: Color(theme.swatch.accentDark)))
+    })
+
     /// The user's chosen theme colour (was hard-coded teal, so 22 call sites ignored the picker).
     @MainActor
     static var accentColor: Color {
