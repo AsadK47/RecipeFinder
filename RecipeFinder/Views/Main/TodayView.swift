@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Today tab: greeting + streak, a "Tonight" hero (planned meal, else kitchen match, else a quick recipe) that Shuffle
-/// steps through, with a time-aware "Start by" line (tap it to change when dinner is), a "This week" strip with a
+/// Today tab: greeting + streak, a hero for the next meal by the clock (planned meal, else kitchen match, else a quick
+/// recipe; late evening → tomorrow's breakfast) that Shuffle steps through, with a time-aware "Start by" line for
+/// dinner (tap it to change when dinner is), a one-line day strip (Breakfast ✓ · Lunch: Soup · Dinner: plan it), a "This week" strip with a
 /// one-tap "Plan tomorrow" and your cooking progress (streak, cooks this week, next badge). Browsing lives on Recipes →
 /// Discover ("Keep browsing →"), so Today stays short: one card for tonight, the theme accent on "Cook this" alone.
 struct TodayView: View {
@@ -26,7 +27,12 @@ struct TodayView: View {
     /// Pushes the recipe with cooking mode already up, so finishing lands on its detail (Made it, rating).
     private struct CookRoute: Hashable { let recipeID: UUID }
     /// A day whose dinner is being picked from the week strip.
-    private struct PlanningDay: Identifiable { let date: Date; var id: Date { date } }
+    /// A meal being picked from the day strip or the week strip.
+    private struct PlanningDay: Identifiable {
+        let date: Date
+        var mealTime: MealTime = .dinner
+        var id: String { "\(date.timeIntervalSinceReferenceDate)-\(mealTime.rawValue)" }
+    }
 
     @State private var path = NavigationPath()
     // Computed on data change, not in body (matching ingredients across every recipe isn't free).
@@ -34,7 +40,7 @@ struct TodayView: View {
     @State private var showsCookingSheet = false
     @State private var planningDay: PlanningDay?
     /// Picked in the sheet, planned once it has closed (a badge sheet can't show over one mid-dismissal).
-    @State private var pendingPlan: (recipe: RecipeModel, date: Date)?
+    @State private var pendingPlan: (recipe: RecipeModel, date: Date, mealTime: MealTime)?
     /// The recipe Shuffle is showing (by id, so a refresh never swaps the card by position); nil = the hero.
     @State private var tonightRecipeID: UUID?
     @State private var showsClipboardCard = false
@@ -129,8 +135,8 @@ struct TodayView: View {
             Text("Copy the recipe's web address, then tap Paste again.")
         }
         .sheet(item: $planningDay, onDismiss: planPicked) { day in
-            RecipeSelectionSheet(mealTime: .dinner) { recipe in
-                pendingPlan = (recipe, day.date)
+            RecipeSelectionSheet(mealTime: day.mealTime) { recipe in
+                pendingPlan = (recipe, day.date, day.mealTime)
                 planningDay = nil
             }
         }
@@ -156,14 +162,14 @@ struct TodayView: View {
         )
     }
 
-    /// Plans dinner unless one appeared since the strip was built (another path, a recurring copy) — never replaces it.
-    private func planDinner(_ recipe: RecipeModel, on date: Date) {
-        guard mealPlanning.mealPlan(for: date, mealTime: .dinner) == nil else {
+    /// Plans the meal unless one appeared since the strip was built (another path, a recurring copy) — never replaces it.
+    private func planMeal(_ recipe: RecipeModel, on date: Date, mealTime: MealTime = .dinner) {
+        guard mealPlanning.mealPlan(for: date, mealTime: mealTime) == nil else {
             refresh()
             return
         }
         mealPlanning.addMealPlan(MealPlanModel(
-            recipeId: recipe.id, recipeName: recipe.name, date: date, mealTime: .dinner, servings: recipe.currentServings
+            recipeId: recipe.id, recipeName: recipe.name, date: date, mealTime: mealTime, servings: recipe.currentServings
         ))
         HapticManager.shared.success()
         refresh()
@@ -172,7 +178,7 @@ struct TodayView: View {
     private func planPicked() {
         guard let pendingPlan else { return }
         self.pendingPlan = nil
-        planDinner(pendingPlan.recipe, on: pendingPlan.date)
+        planMeal(pendingPlan.recipe, on: pendingPlan.date, mealTime: pendingPlan.mealTime)
     }
 
     private func probeClipboard() async {
@@ -207,13 +213,17 @@ struct TodayView: View {
         }
 
         let shown = feed.tonightPick(showing: tonightRecipeID)
+        let forDinner = feed.nextMeal.isTonight
         if let hero = shown {
             TodayHeroCard(
                 hero: hero,
+                title: feed.nextMeal.title,
+                caption: feed.caption(for: hero),
                 timing: TonightTiming.line(
                     hero: hero, minuteOfDay: TonightTiming.minuteOfDay(Self.now()),
-                    eatAt: TonightTiming.eatAt(stored: storedEatAt)
+                    eatAt: TonightTiming.eatAt(stored: storedEatAt), forDinner: forDinner
                 ),
+                asksEatTime: TonightTiming.asksEatTime(for: hero, forDinner: forDinner),
                 eatAt: Binding(
                     get: { TonightTiming.eatAt(stored: storedEatAt) },
                     set: { storedEatAt = $0 }
@@ -235,6 +245,19 @@ struct TodayView: View {
             TodayKeepBrowsingRow(lead: "Looking for ideas?", onBrowse: browse)
         }
 
+        TodayDayStripCard(
+            strip: snapshot.day,
+            onPlan: { time in
+                if recipeStore.recipes.isEmpty { onAddRecipe() } else {
+                    planningDay = PlanningDay(date: snapshot.day.date, mealTime: time)
+                }
+            },
+            onOpen: { id in
+                HapticManager.shared.light()
+                path.append(id)
+            }
+        )
+
         ForEach(feed.prepAhead, id: \.recipe.id) { nudge in
             TodayPrepAheadRow(nudge: nudge) { open(nudge.recipe) }
         }
@@ -251,7 +274,7 @@ struct TodayView: View {
                 if recipeStore.recipes.isEmpty { onAddRecipe() } else { planningDay = PlanningDay(date: date) }
             },
             onPlanTomorrow: { recipe in
-                if let tomorrow = week.tomorrow { planDinner(recipe, on: tomorrow) }
+                if let tomorrow = week.tomorrow { planMeal(recipe, on: tomorrow) }
             },
             onOpenPlan: { onOpen(.plan) }
         )

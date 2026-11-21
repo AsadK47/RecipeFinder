@@ -59,15 +59,30 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
 - Today: 🚧 **Today — decide tonight** — ✅ slice 1 browsing off Today landed 22a48d0 (builder 2026-11-21; leftover
-  branch agent/today-trim-shelves, auto-cleanup). Left: next-meal hero (late evening → tomorrow's breakfast) + one-line
-  day strip + one "do this now" nudge merging prep-ahead + use-soon; then screenshots morning/evening/new user.
+  branch agent/today-trim-shelves, auto-cleanup). 🚧 Slice 2 next-meal hero + day strip on `agent/today-next-meal`
+  (builder 2026-11-21): `TodayFeed.NextMeal` + `TodayDayStrip` (`Models/Engagement/TodayMealDay.swift`),
+  `TodayDayStripCard`, tests `TodayMealDayTests`. Left after it: one "do this now" nudge merging prep-ahead + use-soon
+  (cuts lines — item's "net lines down"); then screenshots morning/evening/new user.
 
 ## Next action
-Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Today — decide tonight
-slice 2 (next-meal hero + day strip, `TodayFeed.MealSlot` already picks by clock); read docs/PRODUCT.md first. Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
+Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: finish Today slice 2 on
+`agent/today-next-meal` (CI, screenshots 24/25/27-today-*, reviewer + challenger, land), then slice 3 "do this now" nudge. Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
 to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Today — decide tonight, slice 2 (next meal):** the hero is for the next meal by the clock — breakfast 5–11,
+  lunch 11–4, dinner 4–9, then tomorrow's breakfast (small hours = that day's breakfast). Tonight's planned dinner, if
+  still open, keeps the card past 9pm (a late dinner is still dinner); a cooked planned dinner moves the card on from
+  4pm. Plans order: next meal, later meals, then earlier still-open ones (a missed breakfast never leads at 1pm).
+  Suggestions say their meal ("For breakfast · Ready in 15 minutes"); "Start by…"/"Dinner at" only for tonight's
+  dinner (a breakfast idea at 8am said "Start by 6:40 to eat at 7" — the owner's "not time aware"). Day strip: one
+  card, three tappable meals (open → pick a recipe for that meal; planned/cooked → open it; passed unplanned → dimmed
+  "—"). Rejected: a new `MealSlot` case for "tomorrow" (it drives category filters; the day is a separate fact).
+  TodayFeedTests' `now` pinned to 6pm (it used the real clock, so meal-aware ordering would depend on CI time).
+  **Pre-mortem:** (1) 9:30pm with dinner not cooked yet flips to breakfast → `anOpenPlannedDinnerKeepsTheEveningOnTonight`
+  + UI 21:00 evening-line assertion; (2) morning pick still shows dinner timing → `breakfastAndLunchIdeasGetNoDinnerClock`;
+  (3) strip plans the wrong day/meal late at night → `lateEveningShowsTomorrowWithNothingPassed` (date = tomorrow) +
+  `PlanningDay.mealTime` passed to the sheet and `planMeal`.
 - **Today — decide tonight, slice 1 (trim):** browsing leaves Today because Discover already deals the same picks
   (`DiscoveryPool` cookAgain = recent + `RecipeRediscovery`, usesWhatYouHave, newToYou), and "Keep browsing →" sits
   under tonight's card. `TrySomethingNew` deleted rather than moved: Discover's *New to you* covers never-cooked.

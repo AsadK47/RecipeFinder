@@ -11,10 +11,14 @@ enum TonightTiming {
     static func eatAt(stored: Int) -> Int {
         eatTimeChoices.contains(stored) ? stored : defaultEatAt
     }
-    /// Whether the card offers "Dinner at": every pick except a planned lunch/breakfast/snack (not counted from dinner).
-    static func asksEatTime(for hero: TodayFeed.Hero) -> Bool {
-        if case .planned(let meal) = hero.reason { return meal == .dinner }
-        return true
+    /// Whether the card offers "Dinner at": a planned dinner tonight, or a suggestion while the next meal is tonight's
+    /// dinner — not a planned lunch/breakfast/snack, tomorrow's plans or a breakfast/lunch idea (not counted from dinner).
+    static func asksEatTime(for hero: TodayFeed.Hero, forDinner: Bool = true) -> Bool {
+        switch hero.reason {
+        case .planned(let meal): meal == .dinner
+        case .plannedTomorrow: false
+        case .kitchenMatch, .quick: forDinner
+        }
     }
     private static let eveningStartsAt = 18 * 60
     /// After this, an evening line is too late to be useful.
@@ -30,9 +34,13 @@ enum TonightTiming {
     ///   *this* recipe — "Start now to eat by 7:40", or for a long one "Takes 1 hr 10 min · Shuffle for something quicker".
     ///   (A library-wide count like "12 under 30 min" read as gibberish to the owner — it named nothing to act on.)
     /// - A planned lunch/breakfast/snack before evening: nothing (its time isn't dinner's).
+    /// - `forDinner` false (the next meal is breakfast, lunch or tomorrow): only a planned dinner tonight gets a line.
     /// Nil when there's nothing useful to say (no time on the recipe, too late, nothing quick).
-    static func line(hero: TodayFeed.Hero?, minuteOfDay now: Int, eatAt: Int = defaultEatAt) -> String? {
+    static func line(
+        hero: TodayFeed.Hero?, minuteOfDay now: Int, eatAt: Int = defaultEatAt, forDinner: Bool = true
+    ) -> String? {
         let isPlannedDinner = hero?.reason == .planned(.dinner)
+        if !forDinner, !isPlannedDinner { return nil }
         let quickLine = hero.flatMap { eveningLine(minutes: $0.recipe.totalMinutes, now: now) }
         // A late dinner (9pm) keeps its "Start by" line past 6pm: quick ideas start an hour before eating at the earliest.
         let isEvening = now >= max(eveningStartsAt, eatAt - 60)
@@ -41,6 +49,7 @@ enum TonightTiming {
         guard let hero else { return nil }
         // "Start by … to eat at 7" is about dinner; a planned lunch or snack isn't counted back from it.
         if case .planned(let meal) = hero.reason, meal != .dinner { return nil }
+        if case .plannedTomorrow = hero.reason { return nil }
 
         if (morningStartsAt..<noon).contains(now), isPlannedDinner, let cue = PrepAhead.cue(for: hero.recipe) {
             return "\(cue) this morning for tonight"

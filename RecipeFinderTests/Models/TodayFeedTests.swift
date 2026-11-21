@@ -6,7 +6,9 @@ import Foundation
 @Suite struct TodayFeedTests {
 
     private let cal = Calendar.current
-    private let now = Date()
+    /// 6pm today: the next meal is tonight's dinner (Today follows the clock, so a real `Date()` made these tests
+    /// depend on when CI ran — AGENT_LESSONS 15).
+    private let now = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: Date()) ?? Date()
 
     private func daysAgo(_ n: Int) -> Date {
         cal.date(byAdding: .day, value: -n, to: now) ?? now
@@ -208,10 +210,12 @@ import Foundation
 
     @Test func theSuggestionHoldsStillWithinAMeal() {
         let library = (1...12).map { recipe("Dish \($0)") }
-        #expect(feed(library, at: at(18)).hero?.recipe == feed(library, at: at(21)).hero?.recipe)
+        #expect(feed(library, at: at(18)).hero?.recipe == feed(library, at: at(20)).hero?.recipe)
     }
 
-    @Test(arguments: [(4, TodayFeed.MealSlot.dinner), (5, .breakfast), (10, .breakfast), (11, .lunch), (15, .lunch), (16, .dinner), (23, .dinner)])
+    // Late evening and the small hours look ahead to breakfast (slice 2, "late evening → tomorrow's breakfast").
+    @Test(arguments: [(4, TodayFeed.MealSlot.breakfast), (5, .breakfast), (10, .breakfast), (11, .lunch), (15, .lunch),
+                      (16, .dinner), (20, .dinner), (21, .breakfast), (23, .breakfast)])
     func mealSlotFollowsTheClock(hour: Int, expected: TodayFeed.MealSlot) {
         #expect(TodayFeed.MealSlot(at: at(hour), calendar: cal) == expected)
     }
@@ -243,6 +247,8 @@ import Foundation
     @Test(arguments: [
         (TodayFeed.HeroReason.planned(.dinner), "Planned for tonight"),
         (.planned(.lunch), "Planned for lunch"),
+        (.plannedTomorrow(.breakfast), "Planned for tomorrow's breakfast"),
+        (.plannedTomorrow(.dinner), "Planned for tomorrow night"),
         (.kitchenMatch(have: 8, total: 10), "You have 8/10 ingredients"),
         (.quick(minutes: 25), "Ready in 25 minutes"),
     ])

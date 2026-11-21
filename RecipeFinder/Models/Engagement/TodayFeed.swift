@@ -1,11 +1,14 @@
 import Foundation
 
-/// What the Today tab shows: a "Tonight" hero plus what to do now, picked from the user's recipes, today's plan and their kitchen.
+/// What the Today tab shows: a hero for the next meal by the clock (late evening → tomorrow's breakfast) plus what to
+/// do now, picked from the user's recipes, that meal day's plan and their kitchen.
 /// Pure so the selection rules are testable; the view computes it once per data change.
 struct TodayFeed: Equatable {
     /// Why the hero recipe was chosen — drives its caption.
     enum HeroReason: Equatable {
         case planned(MealTime)
+        /// Planned for tomorrow — the next meal once tonight is over (see `NextMeal`).
+        case plannedTomorrow(MealTime)
         case kitchenMatch(have: Int, total: Int)
         /// A recipe that's on the table in `minutes` (≤ `TodayFeed.quickLimitMinutes`).
         case quick(minutes: Int)
@@ -14,6 +17,8 @@ struct TodayFeed: Equatable {
             switch self {
             case .planned(.dinner): "Planned for tonight"
             case .planned(let time): "Planned for \(time.rawValue.lowercased())"
+            case .plannedTomorrow(.dinner): "Planned for tomorrow night"
+            case .plannedTomorrow(let time): "Planned for tomorrow's \(time.rawValue.lowercased())"
             case .kitchenMatch(let have, let total): "You have \(have)/\(total) ingredients"
             case .quick(let minutes): "Ready in \(DurationFormatter.label(minutes: minutes))"
             }
@@ -31,6 +36,8 @@ struct TodayFeed: Equatable {
         let total: Int
     }
 
+    /// The meal the hero is for.
+    let nextMeal: NextMeal
     let hero: Hero?
     /// Other picks for tonight that Shuffle steps through after the hero (other plans, kitchen matches, quick recipes).
     let alternatives: [Hero]
@@ -47,6 +54,15 @@ struct TodayFeed: Equatable {
 
     static let shelfLimit = 10
     static let quickLimitMinutes = 30
+
+    /// What the card says about `hero`: a plan names its meal already; a suggestion says which meal it's for
+    /// ("For breakfast · Ready in 10 minutes"), so a morning pick never reads as tonight's dinner.
+    func caption(for hero: Hero) -> String {
+        switch hero.reason {
+        case .planned, .plannedTomorrow: hero.reason.caption
+        case .kitchenMatch, .quick: "\(nextMeal.forLabel) · \(hero.reason.caption)"
+        }
+    }
 
     /// The hero first, then its alternatives — what Shuffle cycles through.
     var tonightOptions: [Hero] { (hero.map { [$0] } ?? []) + alternatives }
@@ -77,9 +93,11 @@ struct TodayFeed: Equatable {
     ) -> TodayFeed {
         let matches = kitchenMatches(recipes: recipes, kitchenItemNames: kitchenItemNames)
         let isNewUser = recipes.allSatisfy { $0.isSampleRecipe && $0.cookCount == 0 }
+        let nextMeal = NextMeal.at(now, todaysPlans: todaysPlans, calendar: calendar)
+        let mealDay = nextMeal.isTomorrow ? (calendar.date(byAdding: .day, value: 1, to: now) ?? now) : now
         let options = tonightOptions(
-            recipes: recipes, plans: todaysPlans, matches: matches, quickCanLead: !isNewUser,
-            slot: MealSlot(at: now, calendar: calendar), dayKey: dayKey(now, calendar: calendar)
+            recipes: recipes, plans: nextMeal.isTomorrow ? tomorrowsPlans : todaysPlans, matches: matches,
+            quickCanLead: !isNewUser, nextMeal: nextMeal, dayKey: dayKey(mealDay, calendar: calendar)
         )
 
         let starters = isNewUser
@@ -87,6 +105,7 @@ struct TodayFeed: Equatable {
             : []
 
         return TodayFeed(
+            nextMeal: nextMeal,
             hero: options.first,
             alternatives: Array(options.dropFirst()),
             quickCount: recipes.filter { quickMinutes(of: $0) != nil }.count,
@@ -99,21 +118,26 @@ struct TodayFeed: Equatable {
         )
     }
 
-    /// Tonight's picks, best first: today's open plans (dinner, then the rest in meal order), then kitchen matches,
+    /// The next meal's picks, best first: that day's open plans (the next meal's, then later meals, then earlier ones
+    /// still open — each in meal order; snacks after dinner), then kitchen matches,
     /// then quick recipes (favourites and your own first). One entry per recipe, uncapped: Shuffle steps through every
     /// suitable pick (a cap of 4 made it loop the same few — owner 2026-11-17).
     /// Suggestions never repeat the last recipe cooked; a plan always shows (the cook chose it). A new user's Today
     /// leads with importing + Starters, so a quick pick can only follow a plan or kitchen match there, not lead.
     private static func tonightOptions(
         recipes: [RecipeModel], plans: [MealPlanModel], matches: [KitchenMatch], quickCanLead: Bool,
-        slot: MealSlot, dayKey: String
+        nextMeal: NextMeal, dayKey: String
     ) -> [Hero] {
+        let slot = nextMeal.slot
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let open = plans.filter { !$0.isCompleted }
-        let orderedPlans = open.filter { $0.mealTime == .dinner }
-            + open.filter { $0.mealTime != .dinner }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
+        let next = nextMeal.mealTime.sortOrder
+        let orderedPlans = open.filter { $0.mealTime.sortOrder >= next }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
+            + open.filter { $0.mealTime.sortOrder < next }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
         let planned = orderedPlans.compactMap { plan in
-            byID[plan.recipeId].map { Hero(recipe: $0, reason: .planned(plan.mealTime)) }
+            byID[plan.recipeId].map {
+                Hero(recipe: $0, reason: nextMeal.isTomorrow ? .plannedTomorrow(plan.mealTime) : .planned(plan.mealTime))
+            }
         }
 
         let lastCookedID = recipes
@@ -158,7 +182,8 @@ struct TodayFeed: Equatable {
         return "\(parts.year ?? 0)-\(parts.month ?? 0)-\(parts.day ?? 0)"
     }
 
-    /// Which meal Today is suggesting for, by the clock: breakfast 5–11am, lunch 11am–4pm, otherwise dinner.
+    /// Which meal Today is suggesting for, by the clock: breakfast 5–11am, lunch 11am–4pm, dinner 4–9pm; late
+    /// evening and the small hours look ahead to breakfast (owner 2026-11-20: "Today … is not time aware").
     enum MealSlot: String {
         case breakfast, lunch, dinner
 
@@ -166,7 +191,16 @@ struct TodayFeed: Equatable {
             switch calendar.component(.hour, from: date) {
             case 5..<11: self = .breakfast
             case 11..<16: self = .lunch
-            default: self = .dinner
+            case 16..<NextMeal.lateEveningHour: self = .dinner
+            default: self = .breakfast
+            }
+        }
+
+        var mealTime: MealTime {
+            switch self {
+            case .breakfast: .breakfast
+            case .lunch: .lunch
+            case .dinner: .dinner
             }
         }
 

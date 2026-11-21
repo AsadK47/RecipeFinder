@@ -139,6 +139,25 @@ import Foundation
         #expect(!TonightTiming.asksEatTime(for: .init(recipe: recipe(), reason: .planned(.lunch))))
     }
 
+    @Test func breakfastAndLunchIdeasGetNoDinnerClock() {
+        let idea = TodayFeed.Hero(recipe: recipe(), reason: .quick(minutes: 20))
+        #expect(TonightTiming.line(hero: idea, minuteOfDay: at(8), forDinner: false) == nil)
+        #expect(!TonightTiming.asksEatTime(for: idea, forDinner: false))
+    }
+
+    @Test func aPlannedDinnerKeepsItsLineWhenTheNextMealIsBreakfast() {
+        // 8am, no breakfast planned: tonight's planned dinner leads, and its morning cue still helps.
+        #expect(TonightTiming.line(hero: planned(recipe()), minuteOfDay: at(9), forDinner: false) == "Start by 6:20 to eat at 7")
+        #expect(TonightTiming.asksEatTime(for: planned(recipe()), forDinner: false))
+    }
+
+    @Test func tomorrowsPlansGetNoDinnerClock() {
+        let tomorrow = TodayFeed.Hero(recipe: recipe(), reason: .plannedTomorrow(.dinner))
+        #expect(TonightTiming.line(hero: tomorrow, minuteOfDay: at(21, 30), forDinner: false) == nil)
+        #expect(TonightTiming.line(hero: tomorrow, minuteOfDay: at(15)) == nil)
+        #expect(!TonightTiming.asksEatTime(for: tomorrow))
+    }
+
     @Test func aLateDinnerKeepsItsStartLineUntilAnHourBefore() {
         let hero = TodayFeed.Hero(recipe: recipe(), reason: .kitchenMatch(have: 3, total: 4))
         #expect(TonightTiming.line(hero: hero, minuteOfDay: at(18, 30), eatAt: at(21)) == "Start by 8:20 to eat at 9")

@@ -4,6 +4,8 @@ import Foundation
 /// parts (tomorrow's plans, the week's plans, Tonight's picks left out of "Plan tomorrow") is testable without the view.
 struct TodaySnapshot: Equatable {
     let feed: TodayFeed
+    /// The next meal's day, one line.
+    let day: TodayDayStrip
     let week: TodayWeek
     let progress: TodayProgress
 
@@ -19,11 +21,13 @@ struct TodaySnapshot: Equatable {
         calendar: Calendar = .current
     ) -> TodaySnapshot {
         let tomorrow = calendar.date(byAdding: .day, value: 1, to: now) ?? now
+        let todaysPlans = plansOn(now)
+        let tomorrowsPlans = tomorrow == now ? [] : plansOn(tomorrow)
         let feed = TodayFeed.make(
             recipes: recipes,
-            todaysPlans: plansOn(now),
+            todaysPlans: todaysPlans,
             kitchenItemNames: kitchenItemNames,
-            tomorrowsPlans: tomorrow == now ? [] : plansOn(tomorrow),
+            tomorrowsPlans: tomorrowsPlans,
             inventoryItems: inventoryItems,
             now: now,
             calendar: calendar
@@ -31,8 +35,13 @@ struct TodaySnapshot: Equatable {
         let weekPlans = (0..<TodayWeek.dayCount).flatMap { offset in
             calendar.date(byAdding: .day, value: offset, to: now).map(plansOn) ?? []
         }
+        let isTomorrow = feed.nextMeal.isTomorrow
         return TodaySnapshot(
             feed: feed,
+            day: TodayDayStrip.make(
+                plans: isTomorrow ? tomorrowsPlans : todaysPlans, nextMeal: feed.nextMeal,
+                day: isTomorrow ? tomorrow : now, calendar: calendar
+            ),
             week: TodayWeek.make(
                 recipes: recipes, plans: weekPlans,
                 tonightIDs: Set(feed.tonightOptions.map(\.recipe.id)), now: now, calendar: calendar

@@ -6,8 +6,14 @@ import UIKit
 /// nested in a button's label never fires).
 struct TodayHeroCard: View {
     let hero: TodayFeed.Hero
+    /// The meal it's for ("Tonight", "Breakfast", "Tomorrow's breakfast") — VoiceOver hears it first.
+    let title: String
+    /// Why it was picked, naming the meal for a suggestion (`TodayFeed.caption(for:)`).
+    let caption: String
     /// Time-aware hint ("Start by 5:40 to eat at 7"), when there's one.
     let timing: String?
+    /// Whether the "Dinner at" pill shows (`TonightTiming.asksEatTime`).
+    let asksEatTime: Bool
     /// When dinner is eaten (minutes since midnight), picked from the "Dinner at" pill.
     @Binding var eatAt: Int
     /// Nil when there's nothing else to shuffle to.
@@ -26,7 +32,7 @@ struct TodayHeroCard: View {
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing6) {
-                        Label(hero.reason.caption, systemImage: icon)
+                        Label(caption, systemImage: icon)
                             .font(.caption.weight(.semibold))
                             .adaptiveSecondaryForeground()
                         Text(hero.recipe.name)
@@ -93,7 +99,7 @@ struct TodayHeroCard: View {
     private var secondaryActions: some View {
         // Its own control (not inside the open button, where it wouldn't fire), shown even when there's no
         // timing line, so a passed eat time can always be changed back.
-        if TonightTiming.asksEatTime(for: hero) {
+        if asksEatTime {
             Menu {
                 Picker("Dinner at", selection: $eatAt) {
                     ForEach(TonightTiming.eatTimeChoices, id: \.self) { minute in
@@ -131,12 +137,12 @@ struct TodayHeroCard: View {
     }
 
     private var accessibilityText: String {
-        ["Tonight: \(hero.recipe.name)", hero.reason.caption, timing].compactMap { $0 }.joined(separator: ". ")
+        ["\(title): \(hero.recipe.name)", caption, timing].compactMap { $0 }.joined(separator: ". ")
     }
 
     private var icon: String {
         switch hero.reason {
-        case .planned(let time): time.icon
+        case .planned(let time), .plannedTomorrow(let time): time.icon
         case .kitchenMatch: "refrigerator.fill"
         case .quick: "bolt.fill"
         }
