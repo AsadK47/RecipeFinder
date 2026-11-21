@@ -769,7 +769,7 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   RecipeSearchView 515→191 (+Content 124, +Actions 138) — `SharedImportPlan`, `RecipeLibraryFacets` (+ tests), one
   `filters` value for 11 filter states. **✅ Screen 3 (705446b..7f4580c):** CookingModeView 392→201 —
   `CookingModeParts.swift` (progress bar, checklist, nav row, finished card), timer parsing + session lines → `CookingPlan`.
-- [ ] **Batch E — Large Class: `PersistenceController+RecipeWrites` (445)** → split by job (single writes / batch /
+- [ ] **Batch E — Large Class: `PersistenceController+RecipeWrites` (445)** — 🚧 builder agent 2026-11-21 → split by job (single writes / batch /
   merge-restore). Behaviour tests already cover it; refactor only.
 - [ ] **Batch F — Swallowed errors: 64 `try?`** — audit each; user-triggerable paths surface or log the error
   (CLAUDE.md error rule). Data-only/optional reads may stay. Group by folder.
