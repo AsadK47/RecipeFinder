@@ -63,7 +63,9 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Plan-vs-suggestion ordering → Needs owner.
 
 - Theme: 🚧 **Theme palette by colour theory** — ✅ slice 1 landed a45fecd (builder 2026-11-21; leftover branch
-  agent/theme-palette, auto-cleanup). Slice 2 (accessibility) left — spec in the BACKLOG item.
+  agent/theme-palette, auto-cleanup). 🚧 Slice 2a on `agent/theme-a11y` (e71608b, builder 2026-11-21): Increase
+  Contrast palette + onAccent, Reduce Transparency solid cards, AX-size/VoiceOver picker, shot 63-theme-picker-ax.
+  CVD separation (slice 2b) → Needs owner (numbers in Decisions).
 
 ## Next action
 Inbox first if any new 🐞/🟡. Next: Theme palette slice 2 (accessibility: Increase Contrast, Reduce Transparency, CVD
@@ -71,6 +73,17 @@ test, AX picker) on a new `agent/theme-a11y` branch; top Smell still waits on Ne
 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Theme slice 2a (accessibility):** Increase Contrast = Light accent L 0.42 (white ≥7.9:1), Light gradient +0.06 L
+  (black ≥7.9:1, HC accent ≥3.4:1 on it — standard is 1.8), Dark accent L 0.78 with **black** `onAccent` (≥9.8:1).
+  Rejected: white-on-Dark-HC accent — 7:1 needs Y ≤0.10, which sinks into the #121214 base (≈2.7:1); iOS's own Dark
+  high-contrast colours go lighter too. HC variants derived with `OKLCH.withLightness` (chroma eased into gamut), not 32
+  hand-typed numbers. Reduce Transparency: `.appCard` only (other materials adapt via iOS). **CVD (2b) parked:** at one
+  shared lightness, Tomato/Saffron/Honey collapse under deuteranopia (min ΔE OK 0.005 Light / 0.011 Dark); a random
+  search within ±12° hue, gamut and contrast bounds tops out at 0.035–0.044 and only by greying Herb (c 0.04) or
+  Raspberry (c 0.075). Names sit beside every swatch, so WCAG 1.4.1 holds. **Pre-mortem:** (1) black text lands on a
+  non-accent fill in Dark HC → all 12 `onAccent` sites checked on accent fills + reviewer; (2) HC accent clips or
+  fails 7:1 → HC contrast + gamut tests per theme; (3) picker unreadable/VoiceOver says "Checkmark" at AX sizes → UI
+  capture asserts labels + selection, shot 63.
 - **Theme palette (slice 1, landed a45fecd):** text on accent fills is white (`AppTheme.onAccent`) — 12 sites used
   adaptive black, which failed on the deeper accents; Dark gradients deepened to L 0.28→0.15 so Dark accents are ≥3:1
   on every stop (they were ~2:1). Themes defined in OKLCH, not sRGB, so accents share one perceived lightness per mode
