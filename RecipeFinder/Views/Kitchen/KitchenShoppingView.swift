@@ -26,6 +26,8 @@ struct KitchenShoppingView: View {
     @State var planNeeds = WeekGroceryPlan.empty
     /// "Still got the coriander?" questions for what the plan counts on At home; refreshed with `planNeeds`.
     @State var stillGot = StillGotCheck.empty
+    /// Questions the cook said "Ask me later" to, for as long as the app runs (nothing stored).
+    @State var skippedStillGot: Set<UUID> = []
     /// What the cook said "Not now" to, for as long as the app runs (nothing stored).
     @State private var dismissedPlanNeeds: WeekGroceryPlan?
     /// Last store filter, remembered between launches; "" means All.
@@ -158,7 +160,7 @@ struct KitchenShoppingView: View {
     private var shoppingList: some View {
         let showsPlanCard = planNeeds.needsMore(than: dismissedPlanNeeds)
         return List {
-            if stillGot.first != nil {
+            if stillGot.first(skipping: skippedStillGot) != nil {
                 stillGotCard
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
                     .listRowSeparator(.hidden)

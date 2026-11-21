@@ -79,8 +79,8 @@ struct StillGotCheckTests {
     ])
     func keepsForItsOwnTime(category: String, days: Int) {
         #expect(StillGotCheck.keepsDays(category: category) == days)
-        #expect(check([need("thing")], [atHome("Thing", category, daysAgo: days)]).questions.isEmpty)
-        #expect(check([need("thing")], [atHome("Thing", category, daysAgo: days + 1)]).questions.count == 1)
+        #expect(check([need("spinach")], [atHome("Spinach", category, daysAgo: days)]).questions.isEmpty)
+        #expect(check([need("spinach")], [atHome("Spinach", category, daysAgo: days + 1)]).questions.count == 1)
     }
 
     @Test("Staple categories never ask", arguments: ["Grains & Pasta", "Frozen", "Canned & Jarred", "Other", "Sweeteners"])
@@ -107,13 +107,35 @@ struct StillGotCheckTests {
         #expect(result.first?.detail == detail)
     }
 
-    @Test("An item from before put-away dates were kept counts as old, not as days since 2001")
-    func undatedItemsAreOld() {
+    @Test("An item from before put-away dates were kept isn't asked about: unknown isn't old")
+    func undatedItemsAreNotAsked() {
         let item = KitchenItem(name: "Basil", category: "Herbs & Fresh Spices",
                                dateAdded: Date(timeIntervalSinceReferenceDate: 0))
-        let result = check([need("basil")], [item])
 
-        #expect(result.first?.detail == "At home for over a month")
+        #expect(check([need("basil")], [item]).questions.isEmpty)
+    }
+
+    @Test("Coriander counts as a fresh herb, though the aisle files it with the spice")
+    func corianderIsAFreshHerb() {
+        let category = CategoryClassifier.normalizedCategory(nil, for: "Coriander")
+        let result = check([need("coriander")], [atHome("Coriander", category, daysAgo: 9)])
+
+        #expect(result.first?.title == "Still got the coriander?")
+    }
+
+    @Test("Foods that keep for weeks aren't asked about", arguments: [
+        "Onions", "Red onion", "Garlic", "Potatoes", "Eggs", "Butter", "Parmesan", "Bacon", "Chorizo", "Lemons",
+    ])
+    func longKeepersArentAsked(name: String) {
+        let category = CategoryClassifier.normalizedCategory(nil, for: name)
+        #expect(StillGotCheck.keepsDays(name: name, category: category) == nil)
+        #expect(check([need(name)], [atHome(name, category, daysAgo: 20)]).questions.isEmpty)
+    }
+
+    @Test("Everyday perishables are asked about, with the real aisle", arguments: ["Spinach", "Milk", "Chicken breast", "Basil"])
+    func everydayPerishablesAreAsked(name: String) {
+        let category = CategoryClassifier.normalizedCategory(nil, for: name)
+        #expect(check([need(name)], [atHome(name, category, daysAgo: 20)]).questions.count == 1, "\(name) → \(category)")
     }
 
     @Test("Carries every line the plan needs for that ingredient")
@@ -124,6 +146,28 @@ struct StillGotCheckTests {
         #expect(result.first?.needs == [need("milk", 200, "ml"), need("milk", 1, "pint")])
     }
 
+    @Test("Isn't asked when tracked inventory also has it At home")
+    func trackedInventorySkipsTheQuestion() {
+        let result = StillGotCheck(summary: summary([need("coriander")]),
+                                   kitchenItems: [atHome("Coriander", "Herbs & Fresh Spices", daysAgo: 9)],
+                                   inventoryNames: ["coriander"], now: now, calendar: calendar)
+
+        #expect(result.questions.isEmpty)
+    }
+
+    @Test("Ask me later skips to the next question, and back to none")
+    func askMeLaterSkips() throws {
+        let result = check([need("coriander"), need("milk")], [
+            atHome("Coriander", "Herbs & Fresh Spices", daysAgo: 11),
+            atHome("Milk", "Dairy & Eggs", daysAgo: 12),
+        ])
+        let coriander = try #require(result.first)
+
+        #expect(result.first(skipping: []) == coriander)
+        #expect(result.first(skipping: [coriander.id])?.item.name == "Milk")
+        #expect(result.first(skipping: Set(result.questions.map(\.id))) == nil)
+    }
+
     // MARK: - Answering
 
     @MainActor
@@ -132,7 +176,7 @@ struct StillGotCheckTests {
         return ShoppingListManager(storage: LocalStore(userDefaults: defaults), shoppingListStore: InMemoryShoppingListStore())
     }
 
-    private var longAgo: Date { Date(timeIntervalSinceReferenceDate: 0) }
+    private var longAgo: Date { Date(timeIntervalSinceNow: -20 * 86_400) }
 
     /// A kitchen whose store already holds `items` (put away whenever their `dateAdded` says).
     @MainActor

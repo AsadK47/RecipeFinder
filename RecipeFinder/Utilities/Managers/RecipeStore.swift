@@ -50,6 +50,7 @@ final class RecipeStore: RecipeStoring {
     @ObservationIgnored var photoSync: Task<Void, Never>?
     /// Bumped on each load so a slow earlier fetch can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
+    @ObservationIgnored private var didSeedStillGot = false
 
     init(
         persistence: PersistenceController = .shared,
@@ -238,14 +239,17 @@ final class RecipeStore: RecipeStoring {
     }
 
     /// UI-test hook (`-seed-still-got`): the first perishable the next week's plan needs goes At home three weeks ago,
-    /// so Groceries asks "Still got the …?". Replaced each launch so the answer from the last run doesn't stick.
+    /// so Groceries asks "Still got the …?". Replaced once per launch (not per reload, which would re-ask mid-test) so
+    /// the answer from the last run doesn't stick.
     private func seedUITestStillGotIfRequested(from library: [RecipeModel]) {
-        guard ProcessInfo.processInfo.arguments.contains("-seed-still-got") else { return }
+        guard ProcessInfo.processInfo.arguments.contains("-seed-still-got"), !didSeedStillGot else { return }
         let kitchen = KitchenInventoryManager.shared
         let summary = MealPlanningManager.shared.weekShoppingSummary(forWeekStarting: Date(), recipes: library)
-        guard let need = summary.items.first(where: {
-            StillGotCheck.keepsDays(category: CategoryClassifier.normalizedCategory(nil, for: $0.name)) != nil
+        guard let need = summary.items.first(where: { need in
+            StillGotCheck.keepsDays(name: need.name, category: CategoryClassifier.normalizedCategory(nil, for: need.name)) != nil
+                && !kitchen.inventoryItems.contains { $0.name.nameKey == need.name.nameKey }
         }), let longAgo = Calendar.current.date(byAdding: .day, value: -21, to: Date()) else { return }
+        didSeedStillGot = true
         for stale in kitchen.items where stale.name.nameKey == need.name.nameKey { kitchen.removeItem(stale) }
         kitchen.merge(items: [KitchenItem(name: need.name, category: CategoryClassifier.normalizedCategory(nil, for: need.name),
                                           dateAdded: longAgo)],

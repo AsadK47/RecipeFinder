@@ -42,20 +42,32 @@ struct StillGotCheck: Equatable {
 
     var first: Question? { questions.first }
 
+    /// The question to show, skipping what the cook said "Ask me later" to this session.
+    func first(skipping skipped: Set<UUID>) -> Question? {
+        questions.first { !skipped.contains($0.id) }
+    }
+
     static let empty = StillGotCheck(questions: [])
 
     private init(questions: [Question]) {
         self.questions = questions
     }
 
-    init(summary: WeekShoppingSummary, kitchenItems: [KitchenItem], now: Date, calendar: Calendar = .current) {
+    /// `inventoryNames`: tracked inventory (with its own expiry dates) also counts as At home, so a name there isn't
+    /// asked about — "No" couldn't take it off.
+    init(summary: WeekShoppingSummary, kitchenItems: [KitchenItem], inventoryNames: [String] = [], now: Date,
+         calendar: Calendar = .current) {
+        let tracked = Set(inventoryNames.map { IngredientNormalizer.normalize($0) })
         var needsByName: [String: [WeekShoppingSummary.Item]] = [:]
         for need in summary.items {
             needsByName[IngredientNormalizer.normalize(need.name), default: []].append(need)
         }
         let today = calendar.startOfDay(for: now)
         let asked: [(question: Question, overdue: Int)] = kitchenItems.compactMap { item in
-            guard let keeps = Self.keepsDays(category: item.category),
+            // Undated (stored before put-away dates were kept): unknown isn't old, so it isn't asked.
+            guard item.dateAdded > Self.undated,
+                  let keeps = Self.keepsDays(name: item.name, category: item.category),
+                  !tracked.contains(IngredientNormalizer.normalize(item.name)),
                   let needs = needsByName[IngredientNormalizer.normalize(item.name)] else { return nil }
             let added = calendar.startOfDay(for: item.dateAdded)
             let days = calendar.dateComponents([.day], from: added, to: today).day ?? 0
@@ -65,6 +77,29 @@ struct StillGotCheck: Equatable {
         questions = asked
             .sorted { $0.overdue != $1.overdue ? $0.overdue > $1.overdue : $0.question.item.name < $1.question.item.name }
             .map(\.question)
+    }
+
+    /// What `KitchenItem` decodes a missing put-away date as.
+    private static let undated = Date(timeIntervalSinceReferenceDate: 0)
+
+    /// Fresh herbs the classifier files with the dried spice of the same name (its "coriander" is the seed).
+    private static let freshHerbNames: Set<String> = ["coriander", "fresh coriander", "coriander leaves", "coriander leaf"]
+
+    /// Perishable-category foods that keep for weeks (cured, hard, roots and bulbs) — asking about them would nag.
+    private static let longKeeperWords: Set<String> = [
+        "onion", "onions", "garlic", "potato", "potatoes", "shallot", "shallots", "ginger",
+        "egg", "eggs", "butter", "parmesan", "pecorino", "cheddar", "ghee",
+        "bacon", "chorizo", "salami", "pepperoni", "prosciutto", "pancetta", "guanciale", "ham", "gammon",
+        "lemon", "lemons", "lime", "limes", "apple", "apples", "carrot", "carrots",
+    ]
+
+    /// Roughly how many days this food keeps once it's home (fridge, not freezer); nil = keeps for weeks, never asked.
+    static func keepsDays(name: String, category: String) -> Int? {
+        let lowered = name.trimmed.lowercased()
+        if freshHerbNames.contains(lowered) { return keepsDays(category: "Herbs & Fresh Spices") }
+        let words = lowered.split { !$0.isLetter }.map(String.init)
+        if words.contains(where: longKeeperWords.contains) { return nil }
+        return keepsDays(category: category)
     }
 
     /// Roughly how many days a kind of food keeps once it's home (fridge, not freezer); nil = a staple, never asked.

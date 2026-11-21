@@ -73,8 +73,10 @@ Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap pl
   for it onto the list via `WeekGroceryPlan` (never doubles); **Yes** = `stillHave` stamps `dateAdded` today. Uses
   the existing synced `KitchenItem.dateAdded` — nothing new stored → no Privacy change. `putAway` of a name already
   At home now refreshes its date (bought again = fresh; else it'd ask about what was just bought). Undated legacy
-  items (2001) read "over a month" and ask once. Rejected: a "Not now" (Yes/No both settle in one tap; YAGNI), asking
-  about inventory expiry items (separate legacy list, already has Use-it-up). **Pre-mortem:** (1) asks about something
+  items (2001) aren't asked (unknown isn't old — challenger: else a burst after upgrade). Name overrides beat the
+  aisle: coriander is a fresh herb (classifier files it as the spice), onion/garlic/eggs/butter/hard cheese/cured
+  meat/citrus never ask. ✕ "Ask me later" hides a question in memory (challenger: in the shop the cook can't check,
+  and Yes would re-create the silent miss). A name also in tracked inventory isn't asked ("No" couldn't remove it). **Pre-mortem:** (1) asks about something
   just bought → `putAwayAgainRefreshesTheDate`; (2) No doubles the list → `noNeverDoubles`; (3) card never shows →
   UI `testZZZZZGroceriesStillGot` (`-seed-still-got`) + screenshot 60-groceries-still-got.
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind

@@ -12,7 +12,8 @@ extension KitchenShoppingView {
             kitchenNames: kitchen.items.map(\.name) + kitchen.inventoryItems.map(\.name),
             listItems: shopping.items
         )
-        stillGot = StillGotCheck(summary: summary, kitchenItems: kitchen.items, now: now)
+        stillGot = StillGotCheck(summary: summary, kitchenItems: kitchen.items,
+                                 inventoryNames: kitchen.inventoryItems.map(\.name), now: now)
     }
 
     func addPlanNeeds() {
@@ -23,17 +24,16 @@ extension KitchenShoppingView {
     /// "Still got the coriander?" — the longest-overdue question, if any.
     @ViewBuilder
     var stillGotCard: some View {
-        if let question = stillGot.first {
+        if let question = stillGot.first(skipping: skippedStillGot) {
             StillGotCard(
                 question: question,
                 onYes: {
                     question.answerYes(kitchen: kitchen)
                     HapticManager.shared.light()
                 },
-                onNo: {
-                    question.answerNo(kitchen: kitchen, shopping: shopping)
-                    HapticManager.shared.success()
-                }
+                // Taking it off At home plays the kitchen's own haptic.
+                onNo: { question.answerNo(kitchen: kitchen, shopping: shopping) },
+                onLater: { skippedStillGot.insert(question.id) }
             )
         }
     }

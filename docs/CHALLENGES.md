@@ -60,6 +60,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Delete] Plan's "Add Week to Groceries" is gone (Groceries writes itself slice 5), so the only plan → list path is Groceries' card, which covers today + 6 days (`KitchenShoppingView+Plan.swift:9`) — a Thursday shop for next Mon–Sun gets Thu–Wed, nothing reaches two weeks out, and after "Not now" there is no manual way to bring the card back (challenger) — alternative: a week choice on the card ("This week / Next week"), or "Shop for this week" in Plan's ⋯ menu; refresh the card on plan changes — cost if wrong: weekly shoppers lose a path they had.
   → Owner: Accept / Reject / Later
 
+## 2026-11-21 (item pass: Groceries writes itself slice 4 "Still got the coriander?"; fixed: coriander filed as a dried spice so never asked, onions/eggs/butter/cured meat nagging, no honest way out in the shop → "Ask me later", undated legacy items bursting questions → not asked, inventory copy made "No" a lie → skipped, card id swallowing button ids, reload re-seeding mid-UI-test, double haptic)
+- Not fixed (challenger nit): two spellings At home ("Coriander" + "fresh coriander") ask twice, and "No" on one leaves the other so the plan still trusts it — rare; revisit if TestFlight reports it.
+- Not fixed (challenger risk): frozen meat/mince isn't known to be frozen (KitchenItem has no location), so it's asked every 3 days after a "Yes" — Yes could trust an item ~3× longer; wait for dogfood.
+- Not fixed (challenger): the long-keeper word list (onion, eggs, butter, cured meats, citrus…) is hand-picked, not per-food shelf life — a better source is the food catalog gaining a keeps-for field.
+
 ## 2026-11-21 (item pass: Inbox 🟡 Reset clears preferences; fixed: list-pin test couldn't catch a new key → source scan of `@AppStorage` keys, Help FAQ didn't mention settings)
 - Not fixed (speculative, challenger): links queued in the share extension's App Group inbox (`SharedImportInbox`) aren't cleared by Reset — if §4.1 counts them, §4.3 over-promises. → check §4.1 wording on the next Reset item.
 
