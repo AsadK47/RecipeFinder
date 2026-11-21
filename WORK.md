@@ -51,47 +51,20 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   ✅ Slice 2 shop mode landed 1505253 (builder 2026-11-20). Leftover branch agent/groceries-shop-mode (auto-cleanup).
   ✅ Slice 3 aisle order landed 9dda50b (builder 2026-11-20). Leftover branch agent/groceries-aisle-order (auto-cleanup).
   ✅ Slice 5 delete duplicates landed 39bf095 (builder 2026-11-21). Leftover branches agent/groceries-delete-dupes, -2
-  (auto-cleanup). 🚧 Slice 4 ("Still got the coriander?") on `agent/groceries-still-got` (builder 2026-11-21) — then tick the item.
+  (auto-cleanup). ✅ Slice 4 "Still got the coriander?" landed 3f81c28 (builder 2026-11-21) — **item done** ✅.
+  Leftover branch agent/groceries-still-got (auto-cleanup).
 
 - Inbox 🟡 **Keep screen awake**: ✅ landed 7e70ceb (builder 2026-11-20). Leftover branch agent/keep-screen-awake (auto-cleanup).
 - 🐞 **Meal planning is buggy**: ✅ landed 0acb4fd (interactive session 2026-11-20). Skip-one-week → Needs owner.
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
 ## Next action
-Inbox first if any new 🐞/🟡. Then:
-*Groceries writes itself* slice 4 ("Still got the coriander?") on `agent/groceries-still-got`: read the item spec and
-docs/PRODUCT.md first; pre-mortem in Decisions before code. Website session: add the §4.2
-aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`.
-Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
+Inbox first if any new 🐞/🟡. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Phase 3 per
+BACKLOG Roadmap (Today trimmed to deciding tonight / "the next meal" at its roadmap place, owner 2026-11-20); read
+docs/PRODUCT.md first. Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
+to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Groceries writes itself slice 4 ("Still got the coriander?")** (`agent/groceries-still-got`): asks only about
-  At home *perishables the next 7 days' plan needs* that have been home longer than they keep (`StillGotCheck`:
-  meat/fish 3 d, bakery 4, fresh herbs 5, produce 7, dairy 10; staples never) — the plan subtracts At home, so a stale
-  bunch of coriander silently kept it off the list. One question at a time, longest overdue first, on To buy above the
-  plan card (both buttons secondary: the plan card keeps the one primary). **No** = off At home + the plan's lines
-  for it onto the list via `WeekGroceryPlan` (never doubles); **Yes** = `stillHave` stamps `dateAdded` today. Uses
-  the existing synced `KitchenItem.dateAdded` — nothing new stored → no Privacy change. `putAway` of a name already
-  At home now refreshes its date (bought again = fresh; else it'd ask about what was just bought). Undated legacy
-  items (2001) aren't asked (unknown isn't old — challenger: else a burst after upgrade). Name overrides beat the
-  aisle: coriander is a fresh herb (classifier files it as the spice), onion/garlic/eggs/butter/hard cheese/cured
-  meat/citrus never ask. ✕ "Ask me later" hides a question in memory (challenger: in the shop the cook can't check,
-  and Yes would re-create the silent miss). A name also in tracked inventory isn't asked ("No" couldn't remove it). **Pre-mortem:** (1) asks about something
-  just bought → `putAwayAgainRefreshesTheDate`; (2) No doubles the list → `noNeverDoubles`; (3) card never shows →
-  UI `testZZZZZGroceriesStillGot` (`-seed-still-got`) + screenshot 60-groceries-still-got.
-- **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
-  the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
-  next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
-  on-device data → Privacy text → owner): the card is derived — plan − at home − on the list (ticked = bought;
-  shortfall per normalised name + canonical unit, so "g"/"grams" are one line; capped at 999 = what a line holds).
-  Review round 1 (deep reviewer + challenger, both: >999 g weeks made the card stick; reviewer: top-up merged into a
-  ticked line and hid; reviewer: unit synonyms double-counted; challenger: Clear checked → card re-asks the whole week,
-  deleted item → card nags). Fixes: `addItem` on a ticked line starts a fresh unticked amount; "Clear Checked" became
-  **Put Checked Items Away** (ticked one-offs → At home via `KitchenInventoryManaging.putAway`, pulled forward from
-  slice 2); "Not now" hides the card in memory until the plan needs something new (`needsMore(than:)`, nothing
-  stored). Plan's Add Week deleted in slice 5 (Groceries owns plan → list). **Pre-mortem:** (1) adding twice doubles
-  → `addingTwiceNeverDoubles`; (2) card never shows → UI `testZZZZGroceriesFromPlan`; (3) after a shop the card asks
-  again → `putAwayStopsThePlanAskingAgain`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

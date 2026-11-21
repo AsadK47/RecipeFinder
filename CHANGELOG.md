@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Groceries writes itself slice 4 still got the coriander · 3f81c28
+- For you: Groceries now checks in on fresh food your plan is counting on — "Still got the coriander?" — so herbs, milk or chicken that have been at home a while make it onto your list when you need them. One tap answers, and the ✕ asks you later.
+- Behind the build: a small tested model decides what's worth asking about, and a reviewer and a challenger made sure it asks about fresh coriander, leaves onions, eggs and butter in peace, and never doubles your list.
+
 ## 2026-11-21 · Groceries writes itself slice 5 delete duplicates · 39bf095
 - For you: To buy and At home now share one tidy aisle header, so folding an aisle looks and works the same on both sides, and shopping for your plan lives in one place — the From your plan card in Groceries.
 - Behind the build: two copies of the same screen piece became one, the app got about 150 lines smaller, and a reviewer and a challenger checked nothing a cook uses went missing.

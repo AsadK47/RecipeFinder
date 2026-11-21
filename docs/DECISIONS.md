@@ -5,6 +5,33 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Groceries writes itself slice 4 ("Still got the coriander?")** (landed 3f81c28): asks only about
+  At home *perishables the next 7 days' plan needs* that have been home longer than they keep (`StillGotCheck`:
+  meat/fish 3 d, bakery 4, fresh herbs 5, produce 7, dairy 10; staples never) — the plan subtracts At home, so a stale
+  bunch of coriander silently kept it off the list. One question at a time, longest overdue first, on To buy above the
+  plan card (both buttons secondary: the plan card keeps the one primary). **No** = off At home + the plan's lines
+  for it onto the list via `WeekGroceryPlan` (never doubles); **Yes** = `stillHave` stamps `dateAdded` today. Uses
+  the existing synced `KitchenItem.dateAdded` — nothing new stored → no Privacy change. `putAway` of a name already
+  At home now refreshes its date (bought again = fresh; else it'd ask about what was just bought). Undated legacy
+  items (2001) aren't asked (unknown isn't old — challenger: else a burst after upgrade). Name overrides beat the
+  aisle: coriander is a fresh herb (classifier files it as the spice), onion/garlic/eggs/butter/hard cheese/cured
+  meat/citrus never ask. ✕ "Ask me later" hides a question in memory (challenger: in the shop the cook can't check,
+  and Yes would re-create the silent miss). A name also in tracked inventory isn't asked ("No" couldn't remove it). **Pre-mortem:** (1) asks about something
+  just bought → `putAwayAgainRefreshesTheDate`; (2) No doubles the list → `noNeverDoubles`; (3) card never shows →
+  UI `testZZZZZGroceriesStillGot` (`-seed-still-got`) + screenshot 60-groceries-still-got.
+- **Groceries writes itself slice 1 (plan → list)** (landed 257c72b): a one-tap card, not a silent auto-write — writing the list behind
+  the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
+  next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
+  on-device data → Privacy text → owner): the card is derived — plan − at home − on the list (ticked = bought;
+  shortfall per normalised name + canonical unit, so "g"/"grams" are one line; capped at 999 = what a line holds).
+  Review round 1 (deep reviewer + challenger, both: >999 g weeks made the card stick; reviewer: top-up merged into a
+  ticked line and hid; reviewer: unit synonyms double-counted; challenger: Clear checked → card re-asks the whole week,
+  deleted item → card nags). Fixes: `addItem` on a ticked line starts a fresh unticked amount; "Clear Checked" became
+  **Put Checked Items Away** (ticked one-offs → At home via `KitchenInventoryManaging.putAway`, pulled forward from
+  slice 2); "Not now" hides the card in memory until the plan needs something new (`needsMore(than:)`, nothing
+  stored). Plan's Add Week deleted in slice 5 (Groceries owns plan → list). **Pre-mortem:** (1) adding twice doubles
+  → `addingTwiceNeverDoubles`; (2) card never shows → UI `testZZZZGroceriesFromPlan`; (3) after a shop the card asks
+  again → `putAwayStopsThePlanAskingAgain`.
 - **Groceries writes itself slice 5 — delete duplicates** (landed 39bf095): merged only what was truly the same — the
   aisle header (To buy shows left/total, At home a count, so the count is passed in). The two rows stay separate:
   To buy's has tick, stores, pin and a 999 cap, At home's a 1–99 stepper — one row with flags would be harder to read
