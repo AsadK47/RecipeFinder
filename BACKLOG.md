@@ -123,21 +123,16 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Theme palette by colour theory** — 🚧 builder agent 2026-11-21 — (owner 2026-11-21: "use colour theory to determine best colours"). Audit
-  (`AppTheme+Palette/Colors/Gradients`): Teal (173°) vs Green (160°) and Yellow (50°) vs Gold (46°) are near-duplicates,
-  so 8 themes read as 6; no blue at all; gradients drift off-family (Green ends blue, Pink → purple → blue, Purple ends
-  turquoise = clashing complement, Gold → silver → black = muddy); accents fail contrast in light mode (white text on
-  Yellow 1.4:1, Gold 2.1, Orange 2.3, Teal/Green 2.5; WCAG needs 4.5 text / 3 UI) and Red is 1.9:1 on dark. Fix:
-  8 hues spread ~45° round the wheel, food-named — Tomato ~5°, Saffron ~30°, Honey ~48° (Yellow+Gold merge),
-  Herb ~140°, Teal ~175° (default), Blueberry ~220°, Plum ~285°, Raspberry ~335°; each with light/dark accent variants
-  tuned (OKLCH, equal perceived lightness) to ≥4.5:1 for text and ≥3:1 for fills in both modes; gradients analogous only
-  (±25° of the theme hue, lightness steps). Saved themes migrate (Gold→Honey, Yellow→Honey, Green→Herb, Red→Tomato,
-  Orange→Saffron, Purple→Plum, Pink→Raspberry). **Accessibility (owner 2026-11-21):** honour *Increase Contrast*
-  (deeper accents, ≥7:1 text) and *Reduce Transparency* (solid cards instead of frosted); check the 8 swatches stay
-  tellable apart under protanopia/deuteranopia/tritanopia simulation and show the theme name + checkmark (never colour
-  alone); Dynamic Type up to AX sizes on the theme picker; VoiceOver reads each swatch's name and selection.
-  *Done when:* contrast table test passes for every theme/mode (incl. Increase Contrast),
-  screenshots of all 8 in light + dark, one reviewer + challenger, CI green.
+- [ ] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours").
+  ✅ **Slice 1 landed** 1a5ba5a..a45fecd (builder 2026-11-21): 8 OKLCH food hues (Tomato, Saffron, Honey, Herb, Teal,
+  Blueberry, Plum, Raspberry) in `Theme/ThemePalette.swift`, Light/Dark accents ≥4.5:1 under white text
+  (`AppTheme.onAccent` on every accent fill), analogous gradients (±25°), Dark accent ≥3:1 on every Dark gradient stop,
+  saved themes migrate (Gold/Yellow→Honey…), contrast table in `ThemePaletteTests`, shots 61-theme-*/62-today-*.
+  **Slice 2 left (accessibility):** honour *Increase Contrast* (deeper accents, ≥7:1 text) and *Reduce Transparency*
+  (solid cards instead of frosted); keep the 8 swatches tellable apart under protanopia/deuteranopia/tritanopia
+  simulation (deuteranopia: Saffron/Honey ΔE 0.005 now — CHALLENGES 21 Nov) with a test; Dynamic Type up to AX sizes
+  on the theme picker; VoiceOver reads each swatch's name and selection. *Done when:* contrast table incl. Increase
+  Contrast passes, CVD test passes, AX-size picker screenshot, one reviewer + challenger, CI green.
 - [ ] **Import torture tests** (owner 2026-11-21: "build recipes ourselves … testing the import"). Agents author
   original test recipes (no copied text) as fixtures with expected results, each failing case → a fix, per the
   repro-first rule. Cover: (1) **CSV** — header variants/order, quoted multi-line cells, UTF-8 BOM, `;` separators and
@@ -845,6 +840,7 @@ _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 
 ## Log
+- 2026-11-21 · Theme palette by colour theory slice 1 (palette) · 1a5ba5a..a45fecd · 8 food-named themes replace Teal/Purple/Red/Orange/Yellow/Green/Pink/Gold; accents deeper with white text on every accent button/toast/tick; Dark gradients deeper; saved themes carry over (Gold/Yellow → Honey). On phone: Me → ⚙︎ → Appearance & Theme, tap each colour in Light and Dark; check your old theme survived the update · review: reviewer + challenger (white-on-accent on 12 sites, Dark accent ≥3:1 on gradient, UI-run theme/appearance reset, 4 test gaps fixed; 4 → CHALLENGES) · looked at: 61-theme-raspberry-light, 61-theme-blueberry-dark, 62-today-teal-light/-dark, 62-today-honey-light · new files ThemePalette.swift + ThemePaletteTests.swift registered in pbxproj by hand
 - 2026-11-21 · Today — decide tonight slice 3 (one "do this now" nudge) · 663ed23..86d5811 · Prep-ahead rows + the 3-row Use it up card become one nudge: going off today → tomorrow's prep (prep first once Today has moved on to tomorrow) → soonest going off; "Your kitchen →" on Use it up only. **Item done** ✅. On phone: Kitchen → add spinach expiring today → Today shows "Use it up · Spinach: use by today"; plan a marinade recipe for tomorrow → "Prep ahead" · review: reviewer (0 compile defects; 3 confirmed fixed: UI seeds clash on a reused sim, kitchen-link absence untested, stale comment) + challenger (1 real fixed: 10pm spinach hid tonight's marinade; 6 → CHALLENGES), ARCHITECTURE map updated · new file TodayNudge.swift registered in pbxproj by hand, TodayUseSoonCard.swift → TodayNudgeCard.swift · CI: 1 red (type-checker gave up on a ternary in TodayView → AGENT_LESSONS 29), then green (Build & Test 44926873894, Screenshots 44926882520) · looked at: 18-today-planned, 27-today-evening, 29-today-use-soon, 47-today-kitchen-at-home · leftover branch agent/today-nudge (auto-cleanup)
 - 2026-11-21 · Today — decide tonight slice 2 (next-meal hero + day strip) · e981126..cd999ad · Hero follows the clock: breakfast 5–11, lunch 11–4, dinner 4–9, then tomorrow's breakfast (an open planned dinner keeps tonight); one card below lists Breakfast · Lunch · Dinner, tap an open meal to plan it. On phone: open Today at 8am, 1pm and after 9pm · review: reviewer + challenger (2 agreed/verified fixed: picking over a ticked plan with a deleted recipe did nothing; any recipe cooked after 4pm counted as dinner → mains/soups only), ARCHITECTURE map updated, 6 → CHALLENGES · new files TodayMealDay.swift, TodayDayStripCard.swift, TodayMealDayTests.swift registered in pbxproj by hand · CI green (Build & Test 44915083065, Screenshots 44914858349) · looked at: 16-today, 20-today-new-user, 24-today-morning, 27-today-evening · branch rebased to agent/today-next-meal-2 (force-push refused); leftovers agent/today-next-meal, -2 (auto-cleanup)
 - 2026-11-21 · Today — decide tonight slice 1 (browsing off Today) · 1ed9de3..22a48d0 · Today loses Cook again / Fits your kitchen / Rediscover shelves and the weekly "Try something new" card — Discover already deals Cook it again, Uses what you have, New to you; new users keep Starters; a returning cook with no pick tonight gets "Looking for ideas? Keep browsing →" under Plan tonight. Net −250 lines (`TrySomethingNew`, `TodayTryNewCard`, `TodayFeed.Shelves` deleted). On phone: Today ends at Your cooking; tap Keep browsing → Recipes Discover · review: reviewer (0 defects, 5 stale comments) + challenger (1 real: no-pick Today had no recipe and no Discover link → fixed), 9 stale docs/comments fixed, 4 → CHALLENGES · CI green (Build & Test 44886081634, Screenshots 44887351302) · looked at: 16-today, 20-today-new-user, 32-today-progress · leftover branch agent/today-trim-shelves (auto-cleanup)

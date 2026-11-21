@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Theme palette by colour theory slice 1 · a45fecd
+- For you: Eight new colour themes named after food — Tomato, Saffron, Honey, Herb, Teal, Blueberry, Plum and Raspberry — spread round the colour wheel, with buttons that stay easy to read in Light and Dark. Your current theme carries over to its closest new colour.
+- Behind the build: every colour was worked out with colour theory and checked by a contrast test for each theme in both modes, and a reviewer and a challenger caught buttons that needed white text before it shipped.
+
 ## 2026-11-21 · Today — decide tonight slice 3 one do-this-now nudge · 86d5811
 - For you: Today now shows one thing to do next — start tomorrow's marinade tonight, or use up the spinach before it goes off — with the recipe a tap away, so Today stays calm and to the point.
 - Behind the build: the choice of what comes first is a small tested model, and a reviewer and a challenger shaped it — late in the evening, tomorrow's prep now comes before food you can no longer cook today.

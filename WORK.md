@@ -62,23 +62,23 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/today-trim-shelves, agent/today-next-meal, -2, agent/today-nudge (auto-cleanup).
   Plan-vs-suggestion ordering → Needs owner.
 
-- Theme: 🚧 **Theme palette by colour theory** slice 1 on `agent/theme-palette` — 8 OKLCH food hues
-  (`Theme/ThemePalette.swift`), light/dark accents, analogous gradients, saved-name migration, contrast-table tests,
-  `testCaptureThemes` shots (61-theme-*, 62-today-*). Slice 2 left: Increase Contrast (≥7:1), Reduce Transparency,
-  CVD simulation check, AX Dynamic Type + VoiceOver on the picker.
+- Theme: 🚧 **Theme palette by colour theory** — ✅ slice 1 landed a45fecd (builder 2026-11-21; leftover branch
+  agent/theme-palette, auto-cleanup). Slice 2 (accessibility) left — spec in the BACKLOG item.
 
 ## Next action
-Inbox first if any new 🐞/🟡. Today — decide tonight done → Phase 3 built. Next: top Smell (after a merged Queue item),
-else the next "Between phases" item per BACKLOG Roadmap. Website session: add the §4.2 aisle-order bullet + §4.3 clause
+Inbox first if any new 🐞/🟡. Next: Theme palette slice 2 (accessibility: Increase Contrast, Reduce Transparency, CVD
+test, AX picker) on a new `agent/theme-a11y` branch; top Smell still waits on Needs owner. Website session: add the §4.2 aisle-order bullet + §4.3 clause
 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Theme palette (slice 1):** themes defined in OKLCH, not sRGB, so accents share one perceived lightness per mode
+- **Theme palette (slice 1, landed a45fecd):** text on accent fills is white (`AppTheme.onAccent`) — 12 sites used
+  adaptive black, which failed on the deeper accents; Dark gradients deepened to L 0.28→0.15 so Dark accents are ≥3:1
+  on every stop (they were ~2:1). Themes defined in OKLCH, not sRGB, so accents share one perceived lightness per mode
   (L 0.52 light / ~0.56 dark) and gradients step lightness on one hue family (±20°). Accent luminance is pinned to the
   window where white text is ≥4.5:1 *and* the dark accent is ≥3:1 on the dark base — so accents are deeper than before
   (Honey reads as amber, not lemon: yellow can't carry white text). Light gradients went lighter (L 0.82→0.66) so black
-  text is ≥4.5:1 on every stop (old teal end was ~4:1). Accent vs the mid-tone gradient is told apart by hue/chroma, not
-  luminance — measured against white / the dark base instead. Gold+Yellow merge into Honey; old names map in
+  text is ≥4.5:1 on every stop (old teal end was ~4:1). Light accent vs the Light gradient is 1.8–3.2:1 (old teal
+  1.0–2.0) — 3:1 would need near-white gradients; recorded in CHALLENGES. Gold+Yellow merge into Honey; old names map in
   `ThemeType(storedValue:)` and ThemeStore writes the new name back. Hue degrees in the item are HSL; code uses OKLCH
   hues (Tomato 30 … Raspberry 358). **Pre-mortem:** (1) a saved theme resets to Teal on update → `oldNamesMigrate` +
   `migratesOldName`; (2) an accent fails contrast / clips out of gamut → per-theme contrast + gamut tests;
