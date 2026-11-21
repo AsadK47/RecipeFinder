@@ -246,8 +246,10 @@ final class MealPlanningManager: MealPlanningManaging {
         }
         HapticManager.shared.light()
         saveMealPlans()
+        // Looked up again: stopSeries removed later copies, which may have sat before this one and shifted `index`.
+        guard let toggled = mealPlans.first(where: { $0.id == mealPlan.id }) else { return }
         // Recurrence flips reminders between weekly-repeat and one-off.
-        syncReminder(for: mealPlans[index])
+        syncReminder(for: toggled)
         syncSeriesReminders()
     }
 
