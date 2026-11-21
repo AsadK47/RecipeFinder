@@ -280,8 +280,7 @@ struct TodayView: View {
         }
 
         if let nudge = feed.nudge {
-            TodayNudgeCard(nudge: nudge, onOpen: { open(nudge.recipe) },
-                           onOpenKitchen: nudge.linksToKitchen ? openKitchen : nil)
+            TodayNudgeCard(nudge: nudge, onOpen: { open(nudge.recipe) }, onOpenKitchen: openKitchen)
         }
 
         let week = snapshot.week

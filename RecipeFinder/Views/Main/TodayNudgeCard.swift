@@ -5,12 +5,12 @@ import SwiftUI
 struct TodayNudgeCard: View {
     let nudge: TodayNudge
     let onOpen: () -> Void
-    /// Opens Groceries on At home, where the expiring items live.
-    var onOpenKitchen: (() -> Void)?
+    /// Opens Groceries on At home, where the expiring items live; shown only for a nudge from the kitchen.
+    let onOpenKitchen: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            TodaySectionHeader(title: nudge.title, id: "nudge", onOpenKitchen: onOpenKitchen)
+            TodaySectionHeader(title: nudge.title, id: "nudge", onOpenKitchen: nudge.linksToKitchen ? onOpenKitchen : nil)
 
             Button(action: onOpen) {
                 HStack(spacing: AppTheme.spacing12) {
