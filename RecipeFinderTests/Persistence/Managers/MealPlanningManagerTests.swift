@@ -652,7 +652,7 @@ struct ClearPastPlansTests {
     }
 }
 
-/// Plan bug hunt 2026-11-20 (two reviewers agreed on each): weekly meals, their reminders, synced twins and Add Week.
+/// Plan bug hunt 2026-11-20 (two reviewers agreed on each): weekly meals, their reminders, synced twins and shopping from today.
 @MainActor
 @Suite("Plan bug hunt")
 struct PlanBugHuntTests {
@@ -747,7 +747,8 @@ struct PlanBugHuntTests {
         #expect(!liveReminders.contains("meal-\(plan.id.uuidString)"))
     }
 
-    @Test func addWeekFromTodayLeavesOutMealsAlreadyPast() {
+    /// Groceries' "From your plan" starts the seven days at now, so meals already eaten aren't shopped for.
+    @Test func shoppingFromTodayLeavesOutMealsAlreadyPast() {
         let recipe = RecipeModel(
             name: "Dal", category: "Main", difficulty: "Basic", prepTime: "5 min", cookingTime: "20 min",
             baseServings: 2, ingredients: [Ingredient(baseQuantity: 200, unit: "g", name: "lentils")],
@@ -756,7 +757,7 @@ struct PlanBugHuntTests {
         let sut = makeManager()
         sut.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: day(-1), mealTime: .dinner, servings: 2))
         sut.addMealPlan(MealPlanModel(recipeId: recipe.id, recipeName: recipe.name, date: day(1), mealTime: .lunch, servings: 2))
-        let summary = sut.weekShoppingSummary(forWeekStarting: day(-1), recipes: [recipe], from: Date())
+        let summary = sut.weekShoppingSummary(forWeekStarting: Date(), recipes: [recipe])
         #expect(summary.mealsCovered == 1)
     }
 

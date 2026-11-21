@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21
+- ⚔️ [Delete] Plan's "Add Week to Groceries" is gone (Groceries writes itself slice 5), so the only plan → list path is Groceries' card, which covers today + 6 days (`KitchenShoppingView+Plan.swift:9`) — a Thursday shop for next Mon–Sun gets Thu–Wed, nothing reaches two weeks out, and after "Not now" there is no manual way to bring the card back (challenger) — alternative: a week choice on the card ("This week / Next week"), or "Shop for this week" in Plan's ⋯ menu; refresh the card on plan changes — cost if wrong: weekly shoppers lose a path they had.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-21 (item pass: Inbox 🟡 Reset clears preferences; fixed: list-pin test couldn't catch a new key → source scan of `@AppStorage` keys, Help FAQ didn't mention settings)
 - Not fixed (speculative, challenger): links queued in the share extension's App Group inbox (`SharedImportInbox`) aren't cleared by Reset — if §4.1 counts them, §4.3 over-promises. → check §4.1 wording on the next Reset item.
 
@@ -89,7 +93,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 ## 2026-11-20 (item pass: Groceries writes itself slice 1 plan → list; fixed: >999 g weeks stuck the card (both reviewers), top-up hid on a ticked line, unit synonyms double-counted, Clear checked → card re-asked the week (now Put away → At home), deleted item → card nagged (Not now))
 - ⚔️ [Break] The card refreshes on appear and on list/kitchen/recipe-count changes — an iCloud plan change while Groceries is open, a recipe's ingredients edited, or midnight passing leaves it stale until the tab is reopened (`KitchenShoppingView.swift` onChange set) — alternative: observe plans + scene phase — cost if wrong: a briefly stale count, fixed by any tab switch.
   → Owner: Accept / Reject / Later
-- ⚔️ [Tests] Plan's "Add Week to Groceries" now tops up rather than doubling, but only the shared model is tested; removing `listItems:` from `MealPlanningView+Actions.prepareAddWeek` would stay green — alternative: retire Plan's button once Groceries owns the list (subtract), or a UI test — cost if wrong: Plan's button doubles again unnoticed.
+- ⚔️ [Tests] Plan's "Add Week to Groceries" now tops up rather than doubling, but only the shared model is tested; removing `listItems:` from `MealPlanningView+Actions.prepareAddWeek` would stay green — alternative: retire Plan's button once Groceries owns the list (subtract), or a UI test — cost if wrong: Plan's button doubles again unnoticed. → Resolved 2026-11-21 (Groceries writes itself slice 5): Plan's Add Week button and its code are deleted; Groceries' "From your plan" card is the one path.
   → Owner: Accept / Reject / Later
 - ⚔️ [Break] Adding N items saves N times (`addItem` per line: Core Data replace + blob + N haptics) — pre-existing on Plan's path, now behind a one-tap card — alternative: a batch `addItems` — cost if wrong: a stutter on a 30-item week.
   → Owner: Accept / Reject / Later
@@ -141,7 +145,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner: Accept / Reject / Later
 
 ## 2026-11-19 (item pass: Plan — swipe to match slice 1 deck; fixed: VoiceOver reached the planner under the deck, dead-end closing copy, passed dish lost for the whole deck / "leave open" lost its dish, wrong exit side + double-tap planning an unseen night, 4 unguarded rules + seed-blind test, triple haptics, accessibility-size overflow, per-pair word sets)
-- ⚔️ [Perf] `hasEmptyDinners` / `weekHasPlannedMeals` fetch the week in `body` and read `Date()` (button state only refreshes on the next render, e.g. not at midnight) — both reviewers — alternative: cache the week's plans in `@State` on appear / plan change — cost if wrong: small (7 × week meals).
+- ⚔️ [Perf] `hasEmptyDinners` / `weekHasPlannedMeals` fetch the week in `body` and read `Date()` (button state only refreshes on the next render, e.g. not at midnight) — both reviewers — alternative: cache the week's plans in `@State` on appear / plan change — cost if wrong: small (7 × week meals). → Partly resolved 2026-11-21: `weekHasPlannedMeals` deleted with Plan's Add Week.
   → Owner: Accept / Reject / Later
 - ⚔️ [Break] A dinner synced in from iCloud while the deck is open is replaced when that night is planned (`savePick` → `addMealPlan` replaces the slot) — one reviewer, verified — alternative: skip occupied nights at pick time — cost if wrong: rare silent swap.
   → Owner: Accept / Reject / Later
@@ -184,7 +188,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - Not fixed (future risk, documented on the property): `filters` carries kitchen/collection fields that mean nothing there; a later direct `filters.activeCount` would miss the collection chip.
 
 ## 2026-11-18 (item pass: Smell Batch D screen 1 — MealPlanningView split; fixed: clock-change day and 24h edge untested, stale comment; reviewer 0 defects)
-- ⚔️ Tests — the view-to-pure-type wiring (Add Week button/message from `WeekGroceryPlan`, `confirmAddWeek` iterating `candidates`, `dayContent` switch) has no push-CI test; only screenshot 02-plan and nightly UI tests reach it — same gap as Batch A slice 4 — cost if wrong: wrong count or empty state on Plan.
+- ⚔️ Tests — the view-to-pure-type wiring (Add Week button/message from `WeekGroceryPlan`, `confirmAddWeek` iterating `candidates`, `dayContent` switch) has no push-CI test; only screenshot 02-plan and nightly UI tests reach it — same gap as Batch A slice 4 — cost if wrong: wrong count or empty state on Plan. → Resolved 2026-11-21 (Groceries writes itself slice 5): Plan's Add Week button and its code are deleted; Groceries' "From your plan" card is the one path.
   → Owner: Accept / Reject / Later
 - Not fixed (kept on purpose, refactor not fix): Plan's "yesterday" empty state is anything within the last 24 hours, not the calendar day; `hasMealPlans(for:)` now runs on every render instead of short-circuiting (small scan, grows with uncleared recurring copies).
 

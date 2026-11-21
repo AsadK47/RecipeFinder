@@ -7,8 +7,8 @@ import ViewInspector
 @MainActor
 @Suite struct GroceryCategoryHeaderTests {
 
-    /// Holds the collapsed set the header writes to, so a tap's effect can be read back.
-    private final class Box { var collapsed: Set<String> = [] }
+    /// Holds the collapsed set the header writes to, so a tap's effect can be read back; single-threaded under `@MainActor`.
+    private final class Box: @unchecked Sendable { var collapsed: Set<String> = [] }
 
     private func header(_ box: Box, count: String = "(2)") -> GroceryCategoryHeader {
         GroceryCategoryHeader(
@@ -34,9 +34,13 @@ import ViewInspector
     }
 
     /// To buy's header showed a down chevron both ways (a down arrow, then an up arrow turned half round).
-    @Test func chevronPointsDifferentlyCollapsedAndOpen() {
-        #expect(GroceryCategoryHeader.chevronDegrees(isCollapsed: true)
-                != GroceryCategoryHeader.chevronDegrees(isCollapsed: false))
+    @Test func chevronPointsUpOpenAndDownCollapsed() throws {
+        let box = Box()
+        let open = try header(box).inspect().find(ViewType.Image.self) { try $0.actualImage().name() == "chevron.up" }
+        #expect(try open.rotation().angle.degrees == 0)
+        box.collapsed = ["Produce"]
+        let shut = try header(box).inspect().find(ViewType.Image.self) { try $0.actualImage().name() == "chevron.up" }
+        #expect(try shut.rotation().angle.degrees == 180)
     }
 
     @Test func remainingCountReadsLeftOverTotal() {

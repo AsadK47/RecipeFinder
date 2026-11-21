@@ -22,8 +22,6 @@ protocol MealPlanningManaging: AnyObject, Observable {
     /// Every weekly copy (the series later weeks are filled from).
     var recurringMealPlans: [MealPlanModel] { get }
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary
-    /// The same, leaving out days before `earliest` (meals already eaten aren't shopped for).
-    func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel], from earliest: Date) -> WeekShoppingSummary
     /// Re-reads the Sunday-nudge switch and plans, then schedules or cancels the one pending nudge.
     func syncPlanNudge()
     /// Dishes passed on in Plan my week in the last 30 days (`PlanDeckMemory`).
@@ -404,12 +402,7 @@ final class MealPlanningManager: MealPlanningManaging {
     
     /// Aggregates ingredients for the week's incomplete meals (merged by normalized name); recipes matched by id then name to survive re-imports.
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary {
-        weekShoppingSummary(forWeekStarting: startDate, recipes: recipes, from: .distantPast)
-    }
-
-    func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel], from earliest: Date) -> WeekShoppingSummary {
-        let firstDay = Calendar.current.startOfDay(for: earliest)
-        let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted && $0.date >= firstDay }
+        let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted }
 
         // Merge by (name, unit) so amounts in the same unit sum and different units stay separate — reusing the
         // same per-ingredient mapping the single-recipe "add to groceries" path uses, so both carry real amounts.
