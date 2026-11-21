@@ -186,7 +186,8 @@ struct TodayView: View {
     /// it. A plan whose recipe is gone has nothing to cook, so the strip offers the meal and picking one replaces it.
     private func planMeal(_ recipe: RecipeModel, on date: Date, mealTime: MealTime = .dinner) {
         if let existing = mealPlanning.mealPlan(for: date, mealTime: mealTime) {
-            guard existing.recipe(in: recipeStore.recipes) == nil, !existing.isCompleted else {
+            // A ticked plan whose recipe is gone shows as open too, so picking replaces it rather than doing nothing.
+            guard existing.recipe(in: recipeStore.recipes) == nil else {
                 refresh()
                 return
             }

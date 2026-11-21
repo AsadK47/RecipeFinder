@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21 (item pass: Today — decide tonight slice 2, next-meal hero + day strip — fixed: any recipe cooked after 4pm (a dessert, tomorrow's oats) counted as dinner → mains/soups only; picking from the strip did nothing over a ticked plan whose recipe was deleted → replaces it; ARCHITECTURE Today map)
+- ⚔️ [Flow] Any plan outranks a suggestion for the next meal: 8am with only dinner planned → hero "Tonight: Curry"; 10pm with only tomorrow's dinner → "Tomorrow night" while the strip highlights breakfast — cost if wrong: owner still reads Today as not time-aware.
+- ⚔️ [Data] `wasCooked` matches any cook of that recipe that day, so leftovers of last night's curry for lunch tick tonight's curry plan — cost if wrong: a planned dinner leaves Today at 4pm.
+- ⚔️ [Flow] Late evening, the day strip's "Tomorrow · Dinner: plan it" and the week strip's "Plan tomorrow" offer the same decision — cost if wrong: Today less calm; fold in slice 3.
+- ⚔️ [Data] Day strip leaves out snacks while the hero can lead with an open snack plan — cost if wrong: hero and strip disagree.
+- ⚔️ [Flow] From 9pm with no dinner plan the "Dinner at" pill is gone, so a late eater can't move dinner to 10pm from Today then — cost if wrong: one extra trip to set it earlier.
+- ⚔️ [Tests] `refreshOnMealBoundaries`, `.onChange(of: storedEatAt)` and `planMeal`'s replace branch are view glue with no tests — cost if wrong: stale Today after midnight unseen until TestFlight.
+
 ## 2026-11-21 (item pass: Today — decide tonight slice 1, browsing off Today — fixed: a returning cook with no pick tonight was left with no recipe and no way to Discover → "Looking for ideas? Keep browsing →" under Plan tonight; 9 stale comments/docs)
 - ⚔️ [Flow] The weekly never-cooked pick is gone, not moved: Discover's *New to you* isn't ranked own-before-samples, reshuffles each launch and sits ~10th chapter — rank own uncooked first, or add them to Tonight's Shuffle — cost if wrong: saved-to-cook-someday recipes lose their steady nudge (watch Today → Cook this).
   → Owner:

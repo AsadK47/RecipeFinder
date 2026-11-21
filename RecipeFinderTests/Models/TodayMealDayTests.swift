@@ -80,6 +80,10 @@ import Foundation
         // A lunch cooked at 1pm isn't dinner.
         let soup = recipe("Soup", lastCookedAt: at(13))
         #expect(next(at(19), recipes: [soup]) == .tonight)
+        // A dessert or breakfast made in the evening isn't dinner.
+        let brownie = recipe("Brownie", category: "Dessert", lastCookedAt: at(17))
+        let oats = recipe("Overnight oats", category: "Breakfast", lastCookedAt: at(18))
+        #expect(next(at(19), recipes: [brownie, oats]) == .tonight)
         // Yesterday evening's cook doesn't count today.
         let stew = recipe("Stew", lastCookedAt: at(19, dayOffset: -1))
         #expect(next(at(19), recipes: [stew]) == .tonight)

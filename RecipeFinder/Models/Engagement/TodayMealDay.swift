@@ -24,9 +24,11 @@ extension TodayFeed {
                 $0.mealTime == .dinner && ($0.isCompleted || $0.recipe(in: recipes) != nil)
             }
             let dinnerOpen = dinners.contains { !$0.wasCooked(in: recipes, calendar: calendar) }
-            // Something cooked since 4pm without a plan (Cook this on a suggestion) is tonight's dinner too.
+            // A main or soup cooked since 4pm without a plan (Cook this on a suggestion) is tonight's dinner too; a
+            // dessert or tomorrow's oats isn't.
             let cookedThisEvening = recipes.contains { recipe in
-                guard let cookedAt = recipe.lastCookedAt, calendar.isDate(cookedAt, inSameDayAs: date) else { return false }
+                guard MealSlot.dinner.categories.contains(recipe.category.lowercased()),
+                      let cookedAt = recipe.lastCookedAt, calendar.isDate(cookedAt, inSameDayAs: date) else { return false }
                 return TonightTiming.minuteOfDay(cookedAt, calendar: calendar) >= dinnerStartsAt
             }
             // Tonight's dinner already cooked: nothing left today, so look ahead.
