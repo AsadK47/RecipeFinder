@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Inbox 🟡 Reset clears preferences · 216eb49
+- For you: Reset App to Default now gives you a true fresh start — your settings return to their defaults too, while your colour theme and iCloud sync choice stay as you set them.
+- Behind the build: a new test reads the app's own code and fails if a future setting would be missed by Reset, and a reviewer plus a challenger checked it against the Privacy Policy.
+
 ## 2026-11-20 · Inbox 🟡 Shop mode keep-awake re-hold · ac8a211
 - For you: I'm in the shop keeps your screen on after you check a message or lock the phone mid-trip, and your Keep Screen Awake setting stays as you set it when you leave.
 - Behind the build: cooking and the shop now share one small tested model for holding the screen awake, and a reviewer and a challenger both caught the same edge case before it landed.

@@ -132,7 +132,8 @@ runs on the kept copy. `CookingStreakManager` uses the older one-shot `LegacyBlo
 ### Reset / erase rules
 
 - Settings → Reset (`DataManagementSettingsView.resetToDefault`): `PersistenceController.deleteAllRecipes()` batch-
-  deletes photo rows then recipes; `LocalStore.clearAll(keeping: SyncPreference.keptThroughReset)`; photo files are
+  deletes photo rows then recipes; `LocalStore.clearAll(keeping: SyncPreference.keptThroughReset)` + `clearPreferences()` (global `@AppStorage`
+  settings; `LocalStoreTests` scans the source so a new key must join a Reset list); photo files are
   deleted only if the recipes really went; `RecipeStore.load()` re-seeds; then each manager's `removeAll…` runs.
 - `MirroredSnapshot.removeAll()` records `wipePending.<key>`, retried on each `load()` until the store is emptied, so a
   failed delete never brings data back.

@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Reset clears preferences** (landed 216eb49): code follows §4.3 rather than rewording it (Reset = full erasure, owner 2026-11-16).
+  Hand list of unprefixed keys, not "remove every non-`rf.` key" — standard defaults also hold Apple/SDK keys.
+  Kept: `today.handledClipboardChange`, `recipes.discoverRequests` (screen plumbing). **Pre-mortem:** (1) a key
+  dropped from the list → literal pin test; (2) clear misses a key → `coversEveryListedKey`; (3) theme/sync choice
+  wiped → same test asserts they survive.
 - **Shop mode keep-awake re-hold** (landed ac8a211): the hold keeps its pre-open value across app switches (both reviewers: re-reading on return could switch off Settings' Keep Screen Awake). one shared `ScreenAwakeHold.sceneChanged(isActive:)` instead of copying cooking's
   if/else into the shop (DRY; tested). **Pre-mortem:** (1) hold not restored after background → screen never sleeps
   → `sceneRoundTripReholds`; (2) repeated phase flips lose the original value → `sceneChangesKeepTheOriginal`;

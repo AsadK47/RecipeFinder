@@ -56,6 +56,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21 (item pass: Inbox 🟡 Reset clears preferences; fixed: list-pin test couldn't catch a new key → source scan of `@AppStorage` keys, Help FAQ didn't mention settings)
+- Not fixed (speculative, challenger): links queued in the share extension's App Group inbox (`SharedImportInbox`) aren't cleared by Reset — if §4.1 counts them, §4.3 over-promises. → check §4.1 wording on the next Reset item.
+
 ## 2026-11-20 (item pass: Inbox 🟡 Keep screen awake; fixed: none blocking — reviewer + challenger agree the ordering holds with one window and both modes as full-screen covers)
 - ⚔️ [Tests] We assume the wiring is covered — `KeepAwakeSettingTests` test the struct, but deleting AppRootView's `onChange` hooks or reverting CookingModeView to `isIdleTimerDisabled = false` fails no test (both reviewers); XCUITest can't read the idle timer — inject a screen seam into CookingModeView/AppRootView and unit-test the view's hooks, or accept — cost if we're wrong: the setting silently dies again. Same gap for ShopModeView's new `onChange(of: scenePhase)` (challenger 2026-11-20).
 - ⚔️ [Assumption] We assume iOS can drop `isIdleTimerDisabled` while the app is away (`ScreenAwakeHold.sceneChanged`) — unverified; check on a device whether it survives lock/unlock; if it does, the re-hold only matters for the visible inactive case — cost if we're wrong: harmless extra writes (challenger 2026-11-20).
