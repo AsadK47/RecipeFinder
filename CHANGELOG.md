@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Today — decide tonight slice 1 browsing on Recipes · 22a48d0
+- For you: Today stays focused on what to cook tonight, and Recipes → Discover is where to browse more — Keep browsing takes you straight there, even on nights with no pick ready.
+- Behind the build: about 250 lines came out of Today, and a reviewer and a challenger checked that everything it showed still has a home in Discover.
+
 ## 2026-11-21 · Smell Batch E recipe-writes split · 46d6749
 - For you: everything works as before — this build tidies how recipes are saved behind the scenes, making room for upcoming features to land smoothly.
 - Behind the build: one long file became three focused ones with every line of code carried over unchanged, checked line by line by a reviewer and a challenger.
