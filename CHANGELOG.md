@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Theme palette slice 2a accessibility · b3d81b7
+- For you: The app now follows Increase Contrast with stronger colours and crisper buttons in Light and Dark, shows solid cards when Reduce Transparency is on, and the colour picker reads clearly at the largest text sizes and in VoiceOver.
+- Behind the build: every contrast level is checked by a test for each theme, and a reviewer and a challenger found twelve buttons that needed to follow the new colours before it shipped.
+
 ## 2026-11-21 · Theme palette by colour theory slice 1 · a45fecd
 - For you: Eight new colour themes named after food — Tomato, Saffron, Honey, Herb, Teal, Blueberry, Plum and Raspberry — spread round the colour wheel, with buttons that stay easy to read in Light and Dark. Your current theme carries over to its closest new colour.
 - Behind the build: every colour was worked out with colour theory and checked by a contrast test for each theme in both modes, and a reviewer and a challenger caught buttons that needed white text before it shipped.

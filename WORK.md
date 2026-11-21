@@ -63,13 +63,12 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Plan-vs-suggestion ordering → Needs owner.
 
 - Theme: 🚧 **Theme palette by colour theory** — ✅ slice 1 landed a45fecd (builder 2026-11-21; leftover branch
-  agent/theme-palette, auto-cleanup). 🚧 Slice 2a on `agent/theme-a11y` (e71608b, builder 2026-11-21): Increase
-  Contrast palette + onAccent, Reduce Transparency solid cards, AX-size/VoiceOver picker, shot 63-theme-picker-ax.
-  CVD separation (slice 2b) → Needs owner (numbers in Decisions).
+  agent/theme-palette, auto-cleanup). ✅ Slice 2a landed b3d81b7 (builder 2026-11-21; leftover branch agent/theme-a11y,
+  auto-cleanup). Slice 2b (CVD) ⏸ Needs owner — item stays open.
 
 ## Next action
-Inbox first if any new 🐞/🟡. Next: Theme palette slice 2 (accessibility: Increase Contrast, Reduce Transparency, CVD
-test, AX picker) on a new `agent/theme-a11y` branch; top Smell still waits on Needs owner. Website session: add the §4.2 aisle-order bullet + §4.3 clause
+Inbox first: review 2026-11-21 added 3 🐞 — start with `MealPlanningManager.toggleRecurring` index crash (:250) on
+`agent/stop-repeating-crash` (red test with the later copy inserted first). Theme 2b waits on Needs owner. Website session: add the §4.2 aisle-order bullet + §4.3 clause
 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands

@@ -12,14 +12,14 @@ inputs **blend** into the glass via translucent fills, not solid fills.
 ## Tokens — use these, never hand-roll a surface
 | Token | Use for | Definition |
 |---|---|---|
-| `.appCard()` | any card / tile / section container; `elevated: true` for stand-alone cards (drop shadow); `.appCard(in: Circle())` / `Capsule()` for icon buttons and pills | `Theme/View+AppCard.swift` — `.ultraThinMaterial`. The only card surface (no Solid style; `GlassCard` removed). |
+| `.appCard()` | any card / tile / section container; `elevated: true` for stand-alone cards (drop shadow); `.appCard(in: Circle())` / `Capsule()` for icon buttons and pills | `Theme/View+AppCard.swift` — `.ultraThinMaterial`; solid `AppTheme.solidCard` under Reduce Transparency. The only card surface (`GlassCard` removed). |
 | `.appInputField()` | any text field / menu-style input on a card | `Theme/View+AppInputField.swift` — translucent `white.opacity(dividerOpacity)` fill + a 0.5pt `dividerColor` hairline border, radius 12. Pair with `.textFieldStyle(.plain)`. |
 | `.shimmering(active:)` | loading skeleton sweep | `Components/Recipe/Shimmer.swift` |
 | `AppBackground()` | every screen backdrop (`ZStack { AppBackground(); content }`); sheets use `.sheetScaffold(title)` + `.sheetDismissButton()` (`Components/Sheets/SheetScaffold.swift`) instead | `Theme/ThemeStore.swift` — themed gradient, ignores safe area |
 | `AppTheme.accentColor` | the user's theme colour (Light/Dark variants) | reads `ThemeStore.shared` (single source; Observation re-renders readers on change). Palette in `Theme/ThemePalette.swift` (OKLCH); `ThemePaletteTests` is the contrast table — change numbers there, not by eye |
-| `AppTheme.onAccent` | text / icons on an accent fill (buttons, toasts, ticks, initials) | `Theme/AppTheme+Colors.swift` — white; every accent is solved for white ≥4.5:1, black fails (~3.5:1) |
+| `AppTheme.onAccent` | text / icons on an accent fill (buttons, toasts, ticks, initials) | `Theme/AppTheme+Colors.swift` — white, black under Dark + Increase Contrast (light accents); never hard-code `.white` on an accent fill |
 | `PrimaryButton` | CTA capsules; `size: .compact` for inline pills (caption, 12/6 padding); `variant: .secondary` for lesser actions (frosted `.appCard(in: Capsule())`, adaptive text) | `Components/Buttons/PrimaryButton.swift` |
-| `IconBadge` | SF Symbol in a circle — `.tinted` (tint @ 0.15 behind tint icon) or `.solid` (tint fill, white icon); never hand-build `ZStack { Circle(); Image }` | `Components/Layout/IconBadge.swift` |
+| `IconBadge` | SF Symbol in a circle — `.tinted` (tint @ 0.15 behind tint icon) or `.solid` (tint fill, white icon — `glyph: AppTheme.onAccent` on an accent tint); never hand-build `ZStack { Circle(); Image }` | `Components/Layout/IconBadge.swift` |
 | `CollectionDot` | a collection's 28pt colour dot with white glyph | `Components/Layout/IconBadge.swift` — wraps `IconBadge(.solid)` |
 | `AppTheme.destructiveFill` | destructive CTA fill (e.g. "Remove Recipe"); always pair with `.foregroundStyle(.white)` | `Theme/AppTheme+Palette.swift` — fixed deep red, white text ≥4.5:1 in both modes |
 | `.importHighlight(_:)` / `ImportQualityBanner` | flag wizard sections an import couldn't read (fixed orange 2pt outline; reads on every gradient) | `Views/Recipes/Wizard/ImportQualityBanner.swift` |
@@ -44,6 +44,9 @@ inputs **blend** into the glass via translucent fills, not solid fills.
   (segmented pickers) look left-aligned. See the Details section.
 
 ## Lessons (dated — newest first)
+- **2026-11-21 — Increase Contrast flips Dark accents light.** Under Increase Contrast Light accents go deeper
+  (white ≥7:1) and Dark accents go *lighter* with black text — so a hard-coded `.white` on an accent fill read ~2:1
+  on 12 views. Accent fills always pair with `AppTheme.onAccent`.
 - **2026-11-21 — Themes are solved, not picked.** Eight food-named hues ~45° apart in OKLCH; accents share one
   perceived lightness per mode, deep enough for white text; gradients stay ±25° of the hue. Dark gradients are deep
   (L 0.28→0.15) so accent icons/ticks still stand out ≥3:1 on them. Text on an accent fill is `AppTheme.onAccent`,
