@@ -146,7 +146,7 @@ import Foundation
     }
 
     @Test func aPlannedDinnerKeepsItsLineWhenTheNextMealIsBreakfast() {
-        // 8am, no breakfast planned: tonight's planned dinner leads, and its morning cue still helps.
+        // 9am, no breakfast planned: tonight's planned dinner leads and keeps its start-by line.
         #expect(TonightTiming.line(hero: planned(recipe()), minuteOfDay: at(9), forDinner: false) == "Start by 6:20 to eat at 7")
         #expect(TonightTiming.asksEatTime(for: planned(recipe()), forDinner: false))
     }

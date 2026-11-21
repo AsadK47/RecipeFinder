@@ -40,7 +40,7 @@ struct TodayDayStripCard: View {
             }
             .buttonStyle(.plain)
             .disabled(meal.state == .passed)
-            .accessibilityLabel(strip.isTomorrow ? "Tomorrow's \(meal.text)" : meal.text)
+            .accessibilityLabel(strip.isTomorrow ? "Tomorrow's \(meal.spokenText)" : meal.spokenText)
             .accessibilityHint(hint(meal))
             .accessibilityIdentifier("today.day.\(meal.time.rawValue.lowercased())")
         }

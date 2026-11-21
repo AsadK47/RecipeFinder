@@ -497,7 +497,9 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             let strip = app.descendants(matching: .any).matching(identifier: "today.day").firstMatch
             XCTAssertTrue(strip.waitForExistence(timeout: 5), "Today should show the day strip at \(time).")
             if time == "08:30" {
-                XCTAssertTrue(app.buttons["today.day.breakfast"].exists, "Breakfast should be open to plan at 8:30.")
+                let breakfast = app.buttons["today.day.breakfast"]
+                XCTAssertTrue(breakfast.isEnabled && breakfast.label.contains("nothing planned yet"),
+                              "Breakfast should be open to plan at 8:30: \(breakfast.label)")
             }
             settle()
             snap(app, shot)

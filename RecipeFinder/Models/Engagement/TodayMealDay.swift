@@ -1,9 +1,10 @@
 import Foundation
 
 extension TodayFeed {
-    /// The meal Today's hero is for. From 9pm — or from 4pm once tonight's planned dinner is cooked — it's tomorrow's
-    /// breakfast, unless tonight's planned dinner is still open, which keeps the card until it's cooked or the day
-    /// ends (the cook chose it; a late dinner is still dinner).
+    /// The meal Today's hero is for. From late evening (9pm, or half an hour after a later "Dinner at") — or from 4pm
+    /// once tonight's planned dinner is cooked — it's tomorrow's breakfast, unless tonight's planned dinner is still
+    /// open, which keeps the card until it's cooked or the day ends (the cook chose it; a late dinner is still dinner).
+    /// "Cooked" is `MealPlanModel.wasCooked` — ticked, or its recipe was cooked that day without Made it.
     struct NextMeal: Equatable {
         let slot: MealSlot
         /// The meal falls on tomorrow's date (late evening). In the small hours the date has already moved on, so
@@ -13,17 +14,32 @@ extension TodayFeed {
         static let lateEveningHour = 21
         static let tonight = NextMeal(slot: .dinner, isTomorrow: false)
 
-        static func at(_ date: Date, todaysPlans: [MealPlanModel], calendar: Calendar) -> NextMeal {
-            let slot = MealSlot(at: date, calendar: calendar)
-            let hour = calendar.component(.hour, from: date)
+        static func at(
+            _ date: Date, todaysPlans: [MealPlanModel], recipes: [RecipeModel] = [],
+            eatAt: Int = TonightTiming.defaultEatAt, calendar: Calendar
+        ) -> NextMeal {
+            let minute = TonightTiming.minuteOfDay(date, calendar: calendar)
             let dinners = todaysPlans.filter { $0.mealTime == .dinner }
-            let dinnerOpen = dinners.contains { !$0.isCompleted }
+            let dinnerOpen = dinners.contains { !$0.wasCooked(in: recipes, calendar: calendar) }
             // Tonight's planned dinner already cooked: nothing left today, so look ahead.
             let dinnerDone = !dinners.isEmpty && !dinnerOpen
             let tomorrow = NextMeal(slot: .breakfast, isTomorrow: true)
-            if hour >= lateEveningHour { return dinnerOpen ? .tonight : tomorrow }
-            if slot == .dinner, dinnerDone { return tomorrow }
-            return NextMeal(slot: slot, isTomorrow: false)
+            if minute >= lateEvening(eatAt: eatAt) { return dinnerOpen ? .tonight : tomorrow }
+            if minute >= dinnerStartsAt { return dinnerDone ? tomorrow : .tonight }
+            return NextMeal(slot: MealSlot(at: date, calendar: calendar), isTomorrow: false)
+        }
+
+        private static let dinnerStartsAt = 16 * 60
+
+        /// Minutes since midnight when the evening is over: 9pm, or half an hour after a later dinner time.
+        static func lateEvening(eatAt: Int) -> Int { max(lateEveningHour * 60, eatAt + 30) }
+
+        /// Changes exactly when the next meal can change by the clock (meal boundaries, late evening, midnight) —
+        /// Today compares it each minute and rebuilds only when it moves, so an open app never goes stale.
+        static func clockPhase(at date: Date, eatAt: Int, calendar: Calendar) -> String {
+            let minute = TonightTiming.minuteOfDay(date, calendar: calendar)
+            let late = minute >= lateEvening(eatAt: eatAt)
+            return "\(TodayFeed.dayKey(date, calendar: calendar))|\(MealSlot(at: date, calendar: calendar).rawValue)|\(late)"
         }
 
         var mealTime: MealTime { slot.mealTime }
@@ -37,10 +53,12 @@ extension TodayFeed {
             return slot == .dinner ? "For tonight" : "For \(mealTime.rawValue.lowercased())"
         }
 
-        /// "Tonight", "Lunch", "Tomorrow's breakfast" — what VoiceOver hears before the recipe name.
-        var title: String {
-            if isTomorrow { return "Tomorrow's \(mealTime.rawValue.lowercased())" }
-            return slot == .dinner ? "Tonight" : mealTime.rawValue
+        /// "Tonight", "Lunch", "Tomorrow's breakfast".
+        var title: String { Self.title(mealTime, isTomorrow: isTomorrow) }
+
+        static func title(_ meal: MealTime, isTomorrow: Bool) -> String {
+            if isTomorrow { return meal == .dinner ? "Tomorrow night" : "Tomorrow's \(meal.rawValue.lowercased())" }
+            return meal == .dinner ? "Tonight" : meal.rawValue
         }
     }
 }
@@ -75,6 +93,16 @@ struct TodayDayStrip: Equatable {
             case .passed: "\(time.rawValue) —"
             }
         }
+
+        /// What VoiceOver says (✓ and — read as symbol names).
+        var spokenText: String {
+            switch state {
+            case .done(let name): "\(time.rawValue), cooked: \(name)"
+            case .planned(let name): "\(time.rawValue): \(name)"
+            case .open: "\(time.rawValue), nothing planned yet"
+            case .passed: "\(time.rawValue), nothing planned"
+            }
+        }
     }
 
     /// Start of the day shown.
@@ -84,20 +112,23 @@ struct TodayDayStrip: Equatable {
 
     static let mealTimes: [MealTime] = [.breakfast, .lunch, .dinner]
 
-    /// - Parameter plans: the plans on the day the next meal falls on.
+    /// - Parameter plans: the plans on the day the next meal falls on. A plan whose recipe is gone (deleted, not
+    ///   re-imported under its name) doesn't count — tapping it would open nothing.
     static func make(
-        plans: [MealPlanModel], nextMeal: TodayFeed.NextMeal, day: Date, calendar: Calendar
+        plans: [MealPlanModel], recipes: [RecipeModel], nextMeal: TodayFeed.NextMeal, day: Date, calendar: Calendar
     ) -> TodayDayStrip {
         let next = nextMeal.mealTime.sortOrder
         let meals = mealTimes.map { time -> Meal in
-            let atTime = plans.filter { $0.mealTime == time }
-            // An open plan is what's still to cook; a ticked one only shows when nothing else is planned.
-            if let open = atTime.first(where: { !$0.isCompleted }) {
-                return Meal(time: time, state: .planned(open.recipeName), recipeID: open.recipeId,
+            let atTime = plans.filter { $0.mealTime == time }.compactMap { plan in
+                plan.recipe(in: recipes).map { (plan: plan, recipe: $0) }
+            }
+            // An open plan is what's still to cook; a cooked one only shows when nothing else is planned.
+            if let open = atTime.first(where: { !$0.plan.wasCooked(in: recipes, calendar: calendar) }) {
+                return Meal(time: time, state: .planned(open.recipe.name), recipeID: open.recipe.id,
                             isNext: time == nextMeal.mealTime)
             }
             if let done = atTime.first {
-                return Meal(time: time, state: .done(done.recipeName), recipeID: done.recipeId,
+                return Meal(time: time, state: .done(done.recipe.name), recipeID: done.recipe.id,
                             isNext: time == nextMeal.mealTime)
             }
             let isPast = !nextMeal.isTomorrow && time.sortOrder < next
@@ -106,7 +137,7 @@ struct TodayDayStrip: Equatable {
         return TodayDayStrip(date: calendar.startOfDay(for: day), isTomorrow: nextMeal.isTomorrow, meals: meals)
     }
 
-    /// "Breakfast ✓. Lunch: Soup. Dinner: plan it" — the strip read as one line.
+    /// "Breakfast ✓. Lunch: Soup. Dinner: plan it" — the strip as one line (tests; the card labels each meal).
     var summary: String {
         let line = meals.map(\.text).joined(separator: ". ")
         return isTomorrow ? "Tomorrow. \(line)" : line

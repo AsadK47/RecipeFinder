@@ -19,10 +19,13 @@ import Foundation
         return cal.date(bySettingHour: hour, minute: minute, second: 0, of: day) ?? day
     }
 
-    private func recipe(_ name: String, category: String = "Main", prepTime: String = "5 min") -> RecipeModel {
+    private func recipe(
+        _ name: String, category: String = "Main", prepTime: String = "5 min", lastCookedAt: Date? = nil
+    ) -> RecipeModel {
         RecipeModel(
             name: name, category: category, difficulty: "Basic", prepTime: prepTime, cookingTime: "10 min",
-            baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: ["Cook"], notes: ""
+            baseServings: 2, ingredients: [], prePrepInstructions: [], instructions: ["Cook"], notes: "",
+            cookCount: lastCookedAt == nil ? 0 : 1, lastCookedAt: lastCookedAt
         )
     }
 
@@ -41,8 +44,10 @@ import Foundation
         )
     }
 
-    private func next(_ date: Date, _ plans: [MealPlanModel] = []) -> TodayFeed.NextMeal {
-        .at(date, todaysPlans: plans, calendar: cal)
+    private func next(
+        _ date: Date, _ plans: [MealPlanModel] = [], recipes: [RecipeModel] = [], eatAt: Int = TonightTiming.defaultEatAt
+    ) -> TodayFeed.NextMeal {
+        .at(date, todaysPlans: plans, recipes: recipes, eatAt: eatAt, calendar: cal)
     }
 
     // MARK: Next meal
@@ -71,7 +76,37 @@ import Foundation
         #expect(next(at(12), [plan(curry, .dinner, done: true)]) == TodayFeed.NextMeal(slot: .lunch, isTomorrow: false))
     }
 
+    @Test func aLaterDinnerTimeKeepsTheEveningOnTonight() {
+        // Dinner at 10pm (the latest choice): tonight until 10:30, then tomorrow.
+        #expect(next(at(21, 45), eatAt: 22 * 60) == .tonight)
+        #expect(next(at(22, 30), eatAt: 22 * 60) == TodayFeed.NextMeal(slot: .breakfast, isTomorrow: true))
+    }
+
+    @Test func aDinnerCookedWithoutMadeItCountsAsDone() {
+        // The planned recipe's last cook was today, but the plan was never ticked.
+        let curry = recipe("Curry", lastCookedAt: at(19))
+        #expect(next(at(21, 30), [plan(curry, .dinner)], recipes: [curry]).isTomorrow)
+    }
+
+    @Test func theClockPhaseMovesAtMealBoundariesOnly() {
+        let phase = { (date: Date) in TodayFeed.NextMeal.clockPhase(at: date, eatAt: TonightTiming.defaultEatAt, calendar: cal) }
+        #expect(phase(at(12)) == phase(at(15, 59)))
+        #expect(phase(at(15, 59)) != phase(at(16)))
+        #expect(phase(at(20, 59)) != phase(at(21)))
+        #expect(phase(at(23, 59)) != phase(at(0, 0, dayOffset: 1)))
+    }
+
     // MARK: Hero
+
+    @Test func theHeroIsTitledByItsPlansOwnMeal() throws {
+        // 8am with only dinner planned: the card (and VoiceOver) says tonight, not breakfast.
+        let curry = recipe("Curry")
+        let result = feed([curry], today: [plan(curry, .dinner)], at: at(8))
+        let hero = try #require(result.hero)
+        #expect(result.title(for: hero) == "Tonight")
+        #expect(result.title(for: TodayFeed.Hero(recipe: curry, reason: .plannedTomorrow(.dinner))) == "Tomorrow night")
+        #expect(result.title(for: TodayFeed.Hero(recipe: curry, reason: .quick(minutes: 15))) == "Breakfast")
+    }
 
     @Test func aPlannedBreakfastLeadsInTheMorning() {
         let porridge = recipe("Porridge", category: "Breakfast"), curry = recipe("Curry")
@@ -122,7 +157,7 @@ import Foundation
     @Test func theStripShowsDonePlannedOpenAndPassedMeals() {
         let porridge = recipe("Porridge"), curry = recipe("Curry")
         let strip = TodayDayStrip.make(
-            plans: [plan(porridge, .breakfast, done: true), plan(curry, .dinner)],
+            plans: [plan(porridge, .breakfast, done: true), plan(curry, .dinner)], recipes: [porridge, curry],
             nextMeal: next(at(13)), day: at(13), calendar: cal
         )
         #expect(strip.meals.map(\.text) == ["Breakfast ✓", "Lunch: plan it", "Dinner: Curry"])
@@ -132,18 +167,40 @@ import Foundation
     }
 
     @Test func anUnplannedMealThatsGoneBySaysSo() {
-        let strip = TodayDayStrip.make(plans: [], nextMeal: next(at(19)), day: at(19), calendar: cal)
+        let strip = TodayDayStrip.make(plans: [], recipes: [], nextMeal: next(at(19)), day: at(19), calendar: cal)
         #expect(strip.meals.map(\.state) == [.passed, .passed, .open])
         #expect(strip.summary == "Breakfast —. Lunch —. Dinner: plan it")
+        #expect(strip.meals.map(\.spokenText) == [
+            "Breakfast, nothing planned", "Lunch, nothing planned", "Dinner, nothing planned yet",
+        ])
     }
 
     @Test func anOpenPlanWinsOverATickedOneAtTheSameMeal() {
         let toast = recipe("Toast"), eggs = recipe("Eggs")
         let strip = TodayDayStrip.make(
-            plans: [plan(toast, .breakfast, done: true), plan(eggs, .breakfast)],
+            plans: [plan(toast, .breakfast, done: true), plan(eggs, .breakfast)], recipes: [toast, eggs],
             nextMeal: next(at(8)), day: at(8), calendar: cal
         )
         #expect(strip.meals.first?.state == .planned("Eggs"))
+        #expect(strip.meals.first?.spokenText == "Breakfast: Eggs")
+    }
+
+    @Test func aPlanWhoseRecipeIsGoneLeavesTheMealOpen() {
+        let gone = recipe("Gone")
+        let strip = TodayDayStrip.make(
+            plans: [plan(gone, .dinner)], recipes: [], nextMeal: next(at(17)), day: at(17), calendar: cal
+        )
+        #expect(strip.meals.last?.state == .open)
+        #expect(strip.meals.last?.recipeID == nil)
+    }
+
+    @Test func aMealCookedWithoutMadeItShowsAsDone() {
+        let porridge = recipe("Porridge", lastCookedAt: at(8))
+        let strip = TodayDayStrip.make(
+            plans: [plan(porridge, .breakfast)], recipes: [porridge], nextMeal: next(at(13)), day: at(13), calendar: cal
+        )
+        #expect(strip.meals.first?.state == .done("Porridge"))
+        #expect(strip.meals.first?.spokenText == "Breakfast, cooked: Porridge")
     }
 
     @Test func lateEveningShowsTomorrowWithNothingPassed() {

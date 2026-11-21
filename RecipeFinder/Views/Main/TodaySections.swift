@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Today's "Tonight" card: the hero recipe's photo, why it was picked and when to start. Tapping the card opens the
+/// Today's next-meal card: the hero recipe's photo, why it was picked and, for dinner, when to start. Tapping the card opens the
 /// recipe; "Cook this" goes straight into cooking mode; Shuffle steps to the next pick (separate buttons — a button
 /// nested in a button's label never fires).
 struct TodayHeroCard: View {
@@ -131,7 +131,7 @@ struct TodayHeroCard: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Shuffle")
-            .accessibilityHint("Shows another idea for tonight")
+            .accessibilityHint("Shows another idea")
             .accessibilityIdentifier("today.hero.shuffle")
         }
     }

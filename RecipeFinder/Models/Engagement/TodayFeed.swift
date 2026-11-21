@@ -39,7 +39,7 @@ struct TodayFeed: Equatable {
     /// The meal the hero is for.
     let nextMeal: NextMeal
     let hero: Hero?
-    /// Other picks for tonight that Shuffle steps through after the hero (other plans, kitchen matches, quick recipes).
+    /// Other picks for the next meal that Shuffle steps through after the hero (other plans, kitchen matches, quick recipes).
     let alternatives: [Hero]
     /// How many recipes are ready in `quickLimitMinutes` or less (guards the same rule the quick picks use).
     let quickCount: Int
@@ -57,6 +57,15 @@ struct TodayFeed: Equatable {
 
     /// What the card says about `hero`: a plan names its meal already; a suggestion says which meal it's for
     /// ("For breakfast · Ready in 10 minutes"), so a morning pick never reads as tonight's dinner.
+    /// The meal `hero` is for: a plan's own meal (a dinner plan can lead at 8am), else the next meal.
+    func title(for hero: Hero) -> String {
+        switch hero.reason {
+        case .planned(let meal): NextMeal.title(meal, isTomorrow: false)
+        case .plannedTomorrow(let meal): NextMeal.title(meal, isTomorrow: true)
+        case .kitchenMatch, .quick: nextMeal.title
+        }
+    }
+
     func caption(for hero: Hero) -> String {
         switch hero.reason {
         case .planned, .plannedTomorrow: hero.reason.caption
@@ -88,16 +97,17 @@ struct TodayFeed: Equatable {
         kitchenItemNames: [String],
         tomorrowsPlans: [MealPlanModel] = [],
         inventoryItems: [KitchenInventoryModel] = [],
+        eatAt: Int = TonightTiming.defaultEatAt,
         now: Date = Date(),
         calendar: Calendar = .current
     ) -> TodayFeed {
         let matches = kitchenMatches(recipes: recipes, kitchenItemNames: kitchenItemNames)
         let isNewUser = recipes.allSatisfy { $0.isSampleRecipe && $0.cookCount == 0 }
-        let nextMeal = NextMeal.at(now, todaysPlans: todaysPlans, calendar: calendar)
+        let nextMeal = NextMeal.at(now, todaysPlans: todaysPlans, recipes: recipes, eatAt: eatAt, calendar: calendar)
         let mealDay = nextMeal.isTomorrow ? (calendar.date(byAdding: .day, value: 1, to: now) ?? now) : now
         let options = tonightOptions(
             recipes: recipes, plans: nextMeal.isTomorrow ? tomorrowsPlans : todaysPlans, matches: matches,
-            quickCanLead: !isNewUser, nextMeal: nextMeal, dayKey: dayKey(mealDay, calendar: calendar)
+            quickCanLead: !isNewUser, nextMeal: nextMeal, dayKey: dayKey(mealDay, calendar: calendar), calendar: calendar
         )
 
         let starters = isNewUser
@@ -126,11 +136,12 @@ struct TodayFeed: Equatable {
     /// leads with importing + Starters, so a quick pick can only follow a plan or kitchen match there, not lead.
     private static func tonightOptions(
         recipes: [RecipeModel], plans: [MealPlanModel], matches: [KitchenMatch], quickCanLead: Bool,
-        nextMeal: NextMeal, dayKey: String
+        nextMeal: NextMeal, dayKey: String, calendar: Calendar
     ) -> [Hero] {
         let slot = nextMeal.slot
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        let open = plans.filter { !$0.isCompleted }
+        // Cooked without Made it (its recipe's last cook is that day) counts as done too, matching Plan.
+        let open = plans.filter { !$0.wasCooked(in: recipes, calendar: calendar) }
         let next = nextMeal.mealTime.sortOrder
         let orderedPlans = open.filter { $0.mealTime.sortOrder >= next }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
             + open.filter { $0.mealTime.sortOrder < next }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }

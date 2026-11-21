@@ -122,6 +122,7 @@ struct TodayView: View {
             refresh()
         }
         .task { await probeClipboard() }
+        .task { await refreshOnMealBoundaries() }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
             // Back after midnight: "today" and "tomorrow" move on, so Plan it never dates a plan from yesterday's view.
@@ -145,6 +146,24 @@ struct TodayView: View {
         .onChange(of: cookingStreak.streak) { _, _ in refresh() }
         .onChange(of: kitchen.items) { _, _ in refresh() }
         .onChange(of: kitchen.inventoryItems) { _, _ in refresh() }
+        .onChange(of: storedEatAt) { _, _ in refresh() }
+    }
+
+    /// The next meal moves with the clock (11am, 4pm, late evening, midnight), so an app left open rebuilds when it
+    /// does — otherwise the strip could plan "today" for yesterday after midnight.
+    private func refreshOnMealBoundaries() async {
+        let phase = { TodayFeed.NextMeal.clockPhase(
+            at: Self.now(), eatAt: TonightTiming.eatAt(stored: storedEatAt), calendar: .current
+        ) }
+        var last = phase()
+        while !Task.isCancelled {
+            do { try await Task.sleep(for: .seconds(60)) } catch { return }
+            let current = phase()
+            if current != last {
+                last = current
+                refresh()
+            }
+        }
     }
 
     private func refresh() {
@@ -158,6 +177,7 @@ struct TodayView: View {
             inventoryItems: kitchen.inventoryItems,
             streak: cookingStreak.streak,
             unlockedBadgeIDs: Set(badges.getAllBadges(recipeCount: 0).filter(\.isUnlocked).map(\.id)),
+            eatAt: TonightTiming.eatAt(stored: storedEatAt),
             now: now
         )
     }
@@ -217,7 +237,7 @@ struct TodayView: View {
         if let hero = shown {
             TodayHeroCard(
                 hero: hero,
-                title: feed.nextMeal.title,
+                title: feed.title(for: hero),
                 caption: feed.caption(for: hero),
                 timing: TonightTiming.line(
                     hero: hero, minuteOfDay: TonightTiming.minuteOfDay(Self.now()),
@@ -245,18 +265,14 @@ struct TodayView: View {
             TodayKeepBrowsingRow(lead: "Looking for ideas?", onBrowse: browse)
         }
 
-        TodayDayStripCard(
-            strip: snapshot.day,
-            onPlan: { time in
-                if recipeStore.recipes.isEmpty { onAddRecipe() } else {
-                    planningDay = PlanningDay(date: snapshot.day.date, mealTime: time)
-                }
-            },
-            onOpen: { id in
-                HapticManager.shared.light()
-                path.append(id)
-            }
-        )
+        // A new user's Today stays on adding a first recipe + Starters; the strip arrives with their own recipes or a plan.
+        if !feed.isNewUser || snapshot.day.meals.contains(where: { $0.recipeID != nil }) {
+            TodayDayStripCard(
+                strip: snapshot.day,
+                onPlan: { time in planningDay = PlanningDay(date: snapshot.day.date, mealTime: time) },
+                onOpen: openRecipe
+            )
+        }
 
         ForEach(feed.prepAhead, id: \.recipe.id) { nudge in
             TodayPrepAheadRow(nudge: nudge) { open(nudge.recipe) }
@@ -300,9 +316,11 @@ struct TodayView: View {
         onOpen(.recipes)
     }
 
-    private func open(_ recipe: RecipeModel) {
+    private func open(_ recipe: RecipeModel) { openRecipe(recipe.id) }
+
+    private func openRecipe(_ id: UUID) {
         HapticManager.shared.light()
-        path.append(recipe.id)
+        path.append(id)
     }
 
     /// The tab root stores the side and switches tab, as it does for an expiry reminder.

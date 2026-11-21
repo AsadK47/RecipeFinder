@@ -17,6 +17,7 @@ struct TodaySnapshot: Equatable {
         inventoryItems: [KitchenInventoryModel],
         streak: CookingStreak,
         unlockedBadgeIDs: Set<String>,
+        eatAt: Int = TonightTiming.defaultEatAt,
         now: Date,
         calendar: Calendar = .current
     ) -> TodaySnapshot {
@@ -29,6 +30,7 @@ struct TodaySnapshot: Equatable {
             kitchenItemNames: kitchenItemNames,
             tomorrowsPlans: tomorrowsPlans,
             inventoryItems: inventoryItems,
+            eatAt: eatAt,
             now: now,
             calendar: calendar
         )
@@ -39,7 +41,7 @@ struct TodaySnapshot: Equatable {
         return TodaySnapshot(
             feed: feed,
             day: TodayDayStrip.make(
-                plans: isTomorrow ? tomorrowsPlans : todaysPlans, nextMeal: feed.nextMeal,
+                plans: isTomorrow ? tomorrowsPlans : todaysPlans, recipes: recipes, nextMeal: feed.nextMeal,
                 day: isTomorrow ? tomorrow : now, calendar: calendar
             ),
             week: TodayWeek.make(
