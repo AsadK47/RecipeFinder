@@ -32,9 +32,10 @@ final class ThemeStore {
 /// Full-screen themed gradient behind every screen and sheet.
 struct AppBackground: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        AppTheme.backgroundGradient(for: ThemeStore.shared.theme, colorScheme: colorScheme)
+        AppTheme.backgroundGradient(for: ThemeStore.shared.theme, colorScheme: colorScheme, contrast: contrast)
             .ignoresSafeArea()
     }
 }

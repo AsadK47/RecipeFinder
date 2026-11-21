@@ -42,6 +42,25 @@ struct OKLCH: Equatable, Sendable {
         )
     }
 
+    /// True when the colour shows on screen unclipped (every linear sRGB component within 0…1).
+    var isInGamut: Bool {
+        let rgb = linearRGB
+        return [rgb.r, rgb.g, rgb.b].allSatisfy { $0 >= -1e-9 && $0 <= 1 + 1e-9 }
+    }
+
+    /// The same hue at another lightness, with chroma eased down only as far as needed to stay inside sRGB.
+    func withLightness(_ lightness: Double) -> OKLCH {
+        let target = OKLCH(l: lightness, c: c, h: h)
+        if target.isInGamut { return target }
+        var low = 0.0
+        var high = c
+        for _ in 0..<32 {
+            let mid = (low + high) / 2
+            if OKLCH(l: lightness, c: mid, h: h).isInGamut { low = mid } else { high = mid }
+        }
+        return OKLCH(l: lightness, c: low, h: h)
+    }
+
     /// Perceived difference to another colour (Euclidean distance in Oklab).
     func distance(to other: OKLCH) -> Double {
         let (l1, a1, b1) = lab
@@ -89,6 +108,30 @@ struct ThemeSwatch: Equatable, Sendable {
     let accentDark: OKLCH
     let gradientLight: [OKLCH]
     let gradientDark: [OKLCH]
+}
+
+/// Increase Contrast (Settings → Accessibility → Display & Text Size). Light: a deeper accent carries white text at
+/// ≥7:1 and the gradient lifts so black text is ≥7:1. Dark: the accent goes *lighter* and carries black text
+/// (`AppTheme.onAccent`) at ≥7:1 — a Dark accent deep enough for white at 7:1 would sink into the dark base (<3:1),
+/// so this follows iOS's own Dark high-contrast colours. Dark gradients already carry white text far above 7:1.
+extension ThemeSwatch {
+    static let highContrastAccentLightness = (light: 0.42, dark: 0.78)
+    static let highContrastGradientLift = 0.06
+
+    func accent(dark: Bool, highContrast: Bool) -> OKLCH {
+        switch (dark, highContrast) {
+        case (false, false): return accentLight
+        case (true, false): return accentDark
+        case (false, true): return accentLight.withLightness(Self.highContrastAccentLightness.light)
+        case (true, true): return accentDark.withLightness(Self.highContrastAccentLightness.dark)
+        }
+    }
+
+    func gradient(dark: Bool, highContrast: Bool) -> [OKLCH] {
+        if dark { return gradientDark }
+        guard highContrast else { return gradientLight }
+        return gradientLight.map { $0.withLightness($0.l + Self.highContrastGradientLift) }
+    }
 }
 
 extension AppTheme.ThemeType {

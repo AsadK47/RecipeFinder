@@ -30,6 +30,9 @@ extension AppTheme {
     /// Chip / secondary-button fill. Dark keeps the original white wash; light needs a dark wash, as white vanished on the light gradient.
     static let subtleFill = adaptive(light: .black.opacity(0.06), dark: .white.opacity(cardDarkOpacity))
 
+    /// Opaque card surface for Reduce Transparency (white in Light, iOS's raised grey in Dark).
+    static let solidCard = Color(uiColor: .secondarySystemGroupedBackground)
+
     /// Hairlines, dividers, outlines and grabbers — the stronger partner of `subtleFill`.
     static let subtleStroke = adaptive(light: .black.opacity(0.12), dark: .white.opacity(shadowDarkOpacity))
 
@@ -52,10 +55,20 @@ extension AppTheme {
         })
     }
 
-    /// The theme's accent: a deeper variant in Light, a lighter one in Dark — white text on it stays ≥4.5:1 in both.
-    /// Text and icons on an accent fill (buttons, toasts, ticks, avatars). Every theme's accent is solved for white
-    /// (≥4.5:1 in both modes); black on the deeper accents falls to ~3.5:1.
-    static let onAccent = Color.white
+    /// Trait-resolved colour with Increase Contrast variants (`accessibilityContrast == .high`).
+    static func adaptive(light: Color, dark: Color, highContrastLight: Color, highContrastDark: Color) -> Color {
+        Color(UIColor { traits in
+            let high = traits.accessibilityContrast == .high
+            if traits.userInterfaceStyle == .dark {
+                return UIColor(high ? highContrastDark : dark)
+            }
+            return UIColor(high ? highContrastLight : light)
+        })
+    }
+
+    /// Text and icons on an accent fill (buttons, toasts, ticks, avatars). White on every accent (≥4.5:1, ≥7:1 under
+    /// Increase Contrast in Light); black on Dark + Increase Contrast, whose accents go light (see `ThemeSwatch`).
+    static let onAccent = adaptive(light: .white, dark: .white, highContrastLight: .white, highContrastDark: .black)
 
     /// Built once per theme: `accentColor` is read from many `body`s, and one instance per theme keeps it `==` itself.
     static func accentColor(for theme: ThemeType) -> Color {
@@ -63,7 +76,13 @@ extension AppTheme {
     }
 
     private static let accentColors: [ThemeType: Color] = Dictionary(uniqueKeysWithValues: ThemeType.allCases.map { theme in
-        (theme, adaptive(light: Color(theme.swatch.accentLight), dark: Color(theme.swatch.accentDark)))
+        let swatch = theme.swatch
+        return (theme, adaptive(
+            light: Color(swatch.accent(dark: false, highContrast: false)),
+            dark: Color(swatch.accent(dark: true, highContrast: false)),
+            highContrastLight: Color(swatch.accent(dark: false, highContrast: true)),
+            highContrastDark: Color(swatch.accent(dark: true, highContrast: true))
+        ))
     })
 
     /// The user's chosen theme colour (was hard-coded teal, so 22 call sites ignored the picker).

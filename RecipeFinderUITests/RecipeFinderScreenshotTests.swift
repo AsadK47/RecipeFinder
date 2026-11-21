@@ -485,6 +485,34 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             }
             app.terminate()
         }
+
+        // Theme slice 2: at the largest accessibility text size the picker goes to one column and VoiceOver reads
+        // each swatch by its name (no "Checkmark"), with the chosen one marked selected.
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing", "-UIPreferredContentSizeCategoryName",
+                                "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
+        app.tabBars.buttons["Me"].tap()
+        checkpoint(app, "Me before the Settings gear (AX size)")
+        let gear = app.buttons["me.settings"]
+        XCTAssertTrue(gear.waitForExistence(timeout: 5), "Me should show the Settings gear at AX sizes.")
+        gear.tap()
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
+        let appearance = app.staticTexts["Appearance & Theme"].firstMatch
+        for _ in 0..<6 where !appearance.isHittable { app.swipeUp() }
+        checkpoint(app, "before Appearance & Theme (AX size)")
+        appearance.tap()
+        let teal = app.buttons["theme.Teal"]
+        XCTAssertTrue(teal.waitForExistence(timeout: 5), "Appearance should show the picker at AX sizes.")
+        for theme in themes {
+            XCTAssertEqual(app.buttons["theme.\(theme)"].label, theme, "VoiceOver should read the swatch's name.")
+        }
+        XCTAssertTrue(teal.isSelected, "The default theme should read as selected.")
+        for _ in 0..<4 where !teal.isHittable { app.swipeUp() }
+        settle(0.8)
+        snap(app, "63-theme-picker-ax")
+        app.terminate()
     }
 
     /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded

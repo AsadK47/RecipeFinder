@@ -151,6 +151,98 @@ struct ThemePaletteTests {
         }
     }
 
+    // MARK: Increase Contrast
+
+    private func resolved(_ colour: Color, dark: Bool, highContrast: Bool) -> SRGB {
+        let traits = UITraitCollection(traitsFrom: [
+            UITraitCollection(userInterfaceStyle: dark ? .dark : .light),
+            UITraitCollection(accessibilityContrast: highContrast ? .high : .normal)
+        ])
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        UIColor(colour).resolvedColor(with: traits).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return SRGB(r: Double(red), g: Double(green), b: Double(blue))
+    }
+
+    private func close(_ a: SRGB, _ b: SRGB) -> Bool {
+        abs(a.r - b.r) < 0.01 && abs(a.g - b.g) < 0.01 && abs(a.b - b.b) < 0.01
+    }
+
+    @Test("Increase Contrast: white text on the Light accent is at least 7:1", arguments: themes)
+    func highContrastLightAccentCarriesWhiteText(theme: AppTheme.ThemeType) {
+        #expect(theme.swatch.accent(dark: false, highContrast: true).srgb.contrast(with: .white) >= 7)
+    }
+
+    @Test("Increase Contrast: black text on the Dark accent is at least 7:1", arguments: themes)
+    func highContrastDarkAccentCarriesBlackText(theme: AppTheme.ThemeType) {
+        #expect(theme.swatch.accent(dark: true, highContrast: true).srgb.contrast(with: .black) >= 7)
+    }
+
+    @Test("Increase Contrast: the Dark accent stands out from the dark base and every gradient stop (≥4.5:1)",
+          arguments: themes)
+    func highContrastDarkAccentStandsOut(theme: AppTheme.ThemeType) {
+        let accent = theme.swatch.accent(dark: true, highContrast: true).srgb
+        #expect(accent.contrast(with: Self.darkBase) >= 4.5)
+        #expect(theme.swatch.gradient(dark: true, highContrast: true).allSatisfy { accent.contrast(with: $0.srgb) >= 4.5 })
+    }
+
+    @Test("Increase Contrast: black text reads on every Light gradient stop at 7:1, white on every Dark one",
+          arguments: themes)
+    func highContrastGradientsCarryText(theme: AppTheme.ThemeType) {
+        #expect(theme.swatch.gradient(dark: false, highContrast: true).allSatisfy { $0.srgb.contrast(with: .black) >= 7 })
+        #expect(theme.swatch.gradient(dark: true, highContrast: true).allSatisfy { $0.srgb.contrast(with: .white) >= 7 })
+    }
+
+    @Test("Increase Contrast: the Light accent stands out from every Light gradient stop (≥3:1)", arguments: themes)
+    func highContrastLightAccentStandsOutOnGradient(theme: AppTheme.ThemeType) {
+        let accent = theme.swatch.accent(dark: false, highContrast: true).srgb
+        #expect(theme.swatch.gradient(dark: false, highContrast: true).allSatisfy { accent.contrast(with: $0.srgb) >= 3 })
+    }
+
+    @Test("Increase Contrast keeps each theme's hue and stays inside sRGB", arguments: themes)
+    func highContrastKeepsHueInGamut(theme: AppTheme.ThemeType) {
+        let swatch = theme.swatch
+        let colours = [swatch.accent(dark: false, highContrast: true), swatch.accent(dark: true, highContrast: true)]
+            + swatch.gradient(dark: false, highContrast: true)
+        #expect(colours.allSatisfy(inGamut))
+        #expect(colours.prefix(2).allSatisfy { hueDistance($0.h, swatch.hue) <= 5 })
+    }
+
+    @Test("Standard contrast returns the palette unchanged", arguments: themes)
+    func standardContrastIsThePalette(theme: AppTheme.ThemeType) {
+        let swatch = theme.swatch
+        #expect(swatch.accent(dark: false, highContrast: false) == swatch.accentLight)
+        #expect(swatch.accent(dark: true, highContrast: false) == swatch.accentDark)
+        #expect(swatch.gradient(dark: false, highContrast: false) == swatch.gradientLight)
+        #expect(swatch.gradient(dark: true, highContrast: false) == swatch.gradientDark)
+    }
+
+    @Test("The app's accent switches to the Increase Contrast variant in both modes", arguments: themes)
+    func accentResolvesUnderIncreaseContrast(theme: AppTheme.ThemeType) {
+        let accent = AppTheme.accentColor(for: theme)
+        for dark in [false, true] {
+            let expected = theme.swatch.accent(dark: dark, highContrast: true).srgb
+            #expect(close(resolved(accent, dark: dark, highContrast: true), expected), "\(theme) dark: \(dark)")
+        }
+    }
+
+    @Test("Text on accents is white, except black on Dark + Increase Contrast")
+    func onAccentFollowsContrast() {
+        #expect(close(resolved(AppTheme.onAccent, dark: false, highContrast: false), .white))
+        #expect(close(resolved(AppTheme.onAccent, dark: true, highContrast: false), .white))
+        #expect(close(resolved(AppTheme.onAccent, dark: false, highContrast: true), .white))
+        #expect(close(resolved(AppTheme.onAccent, dark: true, highContrast: true), .black))
+    }
+
+    @Test("Changing lightness keeps the hue and eases chroma only as far as sRGB needs")
+    func withLightnessFitsGamut() {
+        let vivid = OKLCH(l: 0.52, c: 0.169, h: 30)
+        let light = vivid.withLightness(0.95)
+        #expect(light.l == 0.95 && light.h == 30)
+        #expect(light.isInGamut && light.c < vivid.c && light.c > 0)
+        #expect(!OKLCH(l: 0.95, c: light.c + 0.005, h: 30).isInGamut)
+        #expect(vivid.withLightness(0.52) == vivid)
+    }
+
     // MARK: Saved themes
 
     @Test("Themes saved under the old names map to the new palette", arguments: [

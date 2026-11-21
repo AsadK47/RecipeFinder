@@ -24,11 +24,13 @@ extension View {
 private struct AppCardModifier<S: Shape>: ViewModifier {
     let shape: S
     let elevated: Bool
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
     func body(content: Content) -> some View {
         content.background {
             shape
-                .fill(.ultraThinMaterial)
+                // Reduce Transparency: a solid card, so the gradient never shows through behind text.
+                .fill(reduceTransparency ? AnyShapeStyle(AppTheme.solidCard) : AnyShapeStyle(.ultraThinMaterial))
                 .shadow(
                     color: elevated
                         ? AppTheme.adaptive(light: .black.opacity(0.15), dark: .black.opacity(0.3))

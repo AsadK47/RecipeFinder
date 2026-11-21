@@ -3,6 +3,13 @@ import SwiftUI
 /// Accent color picker, appearance mode override, and extras.
 struct AppearanceAndThemeSettingsView: View {
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .subheadline) private var swatchSize: CGFloat = AppTheme.iconSize32
+
+    /// Two columns squeeze names like "Raspberry" at accessibility text sizes, so they get one.
+    private var swatchColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible()), count: dynamicTypeSize.isAccessibilitySize ? 1 : 2)
+    }
 
     private let appearanceModes = ["System", "Light", "Dark"]
 
@@ -41,7 +48,7 @@ struct AppearanceAndThemeSettingsView: View {
                             .adaptiveSecondaryForeground()
                             .fixedSize(horizontal: false, vertical: true)
 
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
+                        LazyVGrid(columns: swatchColumns, spacing: AppTheme.spacing12) {
                             ForEach(AppTheme.ThemeType.allCases) { theme in
                                 themeSwatch(theme)
                             }
@@ -68,7 +75,7 @@ struct AppearanceAndThemeSettingsView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Circle()
                     .fill(AppTheme.accentColor(for: theme))
-                    .frame(width: AppTheme.iconSize32, height: 32)
+                    .frame(width: swatchSize, height: swatchSize)
                     .overlay(
                         Circle()
                             .strokeBorder(ThemeStore.shared.theme == theme ? Color.white : Color.clear, lineWidth: 2)
@@ -77,7 +84,7 @@ struct AppearanceAndThemeSettingsView: View {
                 Text(theme.rawValue)
                     .font(.subheadline)
                     .adaptiveForegroundColor()
-                    .lineLimit(1)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
                     .minimumScaleFactor(0.8)   // the selected checkmark used to squeeze names like "Raspberry" onto two lines
 
                 Spacer(minLength: AppTheme.spacing4)
@@ -93,6 +100,9 @@ struct AppearanceAndThemeSettingsView: View {
             .cornerRadius(AppTheme.cornerRadius12)
         }
         .buttonStyle(PlainButtonStyle())
+        // VoiceOver reads the name (and "Selected" from the trait), not "Tomato, Checkmark".
+        .accessibilityLabel(theme.rawValue)
+        .accessibilityHint("Changes the app's colour.")
         .accessibilityIdentifier("theme.\(theme.rawValue)")
         .accessibilityAddTraits(ThemeStore.shared.theme == theme ? .isSelected : [])
     }
