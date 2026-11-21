@@ -287,7 +287,7 @@ are merged into a newer item or parked — never start them; their text stays as
   **✅ Slice 6 (a395ab2..6f5d2eb):** "Busy night" on the deck card → quick dishes first for that night (shortest cook
   when nothing is quick); lock = planned nights never re-dealt, re-roll = ✕ (re-roll all: YAGNI).
   **Left:** (3) up = tonight (⏸ Needs owner; branch `agent/plan-deck-tonight` e45d1ce) — matches already feed Today via plans; **✅ Slice 4 (41dfadf..47a3e95):** dishes passed on are remembered 30 days on the device (`PlanDeckMemory`, Privacy §4.2/4.3, owner OK 2026-11-20) and dealt behind fresh ones.
-- [ ] **Groceries writes itself** (Phase 2 · Get). Merges *Groceries + Kitchen* and *Plan my week 3/3* (below, kept as
+- [ ] **Groceries writes itself** (Phase 2 · Get). — 🚧 builder agent 2026-11-21 Merges *Groceries + Kitchen* and *Plan my week 3/3* (below, kept as
   spec). Planning a week builds the list — merged and scaled, minus what's at home, in the order you usually tick
   (learned). "I'm in the shop" mode: huge rows, one-thumb ticks, screen awake; ticked = at home automatically (no
   Put-away step); asks only when it matters ("Still got the coriander?"). Delete the duplicated Kitchen/Shopping views.
