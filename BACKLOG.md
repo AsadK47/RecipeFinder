@@ -132,7 +132,11 @@ are merged into a newer item or parked — never start them; their text stays as
   Herb ~140°, Teal ~175° (default), Blueberry ~220°, Plum ~285°, Raspberry ~335°; each with light/dark accent variants
   tuned (OKLCH, equal perceived lightness) to ≥4.5:1 for text and ≥3:1 for fills in both modes; gradients analogous only
   (±25° of the theme hue, lightness steps). Saved themes migrate (Gold→Honey, Yellow→Honey, Green→Herb, Red→Tomato,
-  Orange→Saffron, Purple→Plum, Pink→Raspberry). *Done when:* contrast table test passes for every theme/mode,
+  Orange→Saffron, Purple→Plum, Pink→Raspberry). **Accessibility (owner 2026-11-21):** honour *Increase Contrast*
+  (deeper accents, ≥7:1 text) and *Reduce Transparency* (solid cards instead of frosted); check the 8 swatches stay
+  tellable apart under protanopia/deuteranopia/tritanopia simulation and show the theme name + checkmark (never colour
+  alone); Dynamic Type up to AX sizes on the theme picker; VoiceOver reads each swatch's name and selection.
+  *Done when:* contrast table test passes for every theme/mode (incl. Increase Contrast),
   screenshots of all 8 in light + dark, one reviewer + challenger, CI green.
 - [ ] **Import torture tests** (owner 2026-11-21: "build recipes ourselves … testing the import"). Agents author
   original test recipes (no copied text) as fixtures with expected results, each failing case → a fix, per the
