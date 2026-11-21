@@ -96,7 +96,7 @@ doc links to them rather than repeating them:
 
 ### Lists stored beside recipes
 
-Recipes are read/written directly through `PersistenceController+RecipeFetch` / `+RecipeWrites`. Every other list
+Recipes are read/written directly through `PersistenceController+RecipeFetch` / `+RecipeWrites` (single writes) / `+RecipeBatchWrites` (seed, merge-restore), with the field mapping in `+RecipeSaveParameters`. Every other list
 goes through **`MirroredSnapshot<Value>`**: rows live in Core Data entities, and a JSON "kept copy" of the whole
 list stays in `LocalStore` as a fallback. The kept copy is written first; if the store can't be read the manager
 runs on the kept copy. `CookingStreakManager` uses the older one-shot `LegacyBlobMigration` instead.

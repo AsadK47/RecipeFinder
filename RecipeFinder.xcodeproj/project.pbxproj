@@ -469,6 +469,8 @@
 		F3E9D1B430457BC0008BF231 /* OnboardingSlide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B330457BC0008BF231 /* OnboardingSlide.swift */; };
 		F3E9D1B630457BEA008BF231 /* OnboardingSlideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B530457BEA008BF231 /* OnboardingSlideView.swift */; };
 		F3E9D1B830457DC8008BF231 /* PersistenceController+RecipeWrites.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */; };
+		A1E5B0022F1C4D7E00AA0001 /* PersistenceController+RecipeSaveParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E5B0012F1C4D7E00AA0001 /* PersistenceController+RecipeSaveParameters.swift */; };
+		A1E5B0042F1C4D7E00AA0001 /* PersistenceController+RecipeBatchWrites.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E5B0032F1C4D7E00AA0001 /* PersistenceController+RecipeBatchWrites.swift */; };
 		F3E9D1BA30457DDB008BF231 /* PersistenceController+RecipeFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */; };
 		F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */; };
 		0941BE84B024D313914B4BB7 /* StoreBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E52FE5FD03F62A0470F865 /* StoreBackup.swift */; };
@@ -1107,6 +1109,8 @@
 		F3E9D1B330457BC0008BF231 /* OnboardingSlide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSlide.swift; sourceTree = "<group>"; };
 		F3E9D1B530457BEA008BF231 /* OnboardingSlideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSlideView.swift; sourceTree = "<group>"; };
 		F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeWrites.swift"; sourceTree = "<group>"; };
+		A1E5B0012F1C4D7E00AA0001 /* PersistenceController+RecipeSaveParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeSaveParameters.swift"; sourceTree = "<group>"; };
+		A1E5B0032F1C4D7E00AA0001 /* PersistenceController+RecipeBatchWrites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeBatchWrites.swift"; sourceTree = "<group>"; };
 		F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeFetch.swift"; sourceTree = "<group>"; };
 		F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+Database.swift"; sourceTree = "<group>"; };
 		06E52FE5FD03F62A0470F865 /* StoreBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackup.swift; sourceTree = "<group>"; };
@@ -1805,6 +1809,8 @@
 			children = (
 				9E6DEA972EF5F053001E7B24 /* PersistenceController.swift */,
 				F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */,
+				A1E5B0012F1C4D7E00AA0001 /* PersistenceController+RecipeSaveParameters.swift */,
+				A1E5B0032F1C4D7E00AA0001 /* PersistenceController+RecipeBatchWrites.swift */,
 				F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */,
 				F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */,
 				06E52FE5FD03F62A0470F865 /* StoreBackup.swift */,
@@ -2813,6 +2819,8 @@
 				F3E9D24730483575008BF231 /* FoundationModelsRecipeInterpreter.swift in Sources */,
 				9E6DEAA62EF5F053001E7B24 /* KitchenInventoryManager.swift in Sources */,
 				F3E9D1B830457DC8008BF231 /* PersistenceController+RecipeWrites.swift in Sources */,
+				A1E5B0022F1C4D7E00AA0001 /* PersistenceController+RecipeSaveParameters.swift in Sources */,
+				A1E5B0042F1C4D7E00AA0001 /* PersistenceController+RecipeBatchWrites.swift in Sources */,
 				C98FF8885555176F1C4CE4C4 /* RecipeWebSearchView.swift in Sources */,
 				F3D40560305852870076834D /* BadgeRevealView.swift in Sources */,
 				F3E9D1CA3045D78D008BF231 /* RecipeFormatters.swift in Sources */,

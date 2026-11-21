@@ -1,111 +1,9 @@
 import CoreData
 import Foundation
 
-/// Recipe create/update/delete/favorite operations.
+/// Single-recipe create/update/delete/favorite/cook/rating writes, plus the background content refresh.
 extension PersistenceController {
 
-    struct RecipeSaveParameters {
-        let id: UUID?
-        let name: String
-        let category: String
-        let difficulty: String
-        let prepTime: String
-        let cookingTime: String
-        let baseServings: Int
-        let currentServings: Int
-        let ingredients: [Ingredient]
-        let prePrepInstructions: [String]
-        let instructions: [String]
-        let notes: String
-        let imageName: String
-        let isFavorite: Bool
-        let isSampleRecipe: Bool
-        let dietaryInfo: DietaryInfo
-        let tags: [String]
-        let cookCount: Int
-        let lastCookedAt: Date?
-        let rating: Int
-        let cuisine: String?
-        let photoNames: [String]
-        let sourceText: String?
-
-        init(
-            id: UUID? = nil,
-            name: String,
-            category: String,
-            difficulty: String,
-            prepTime: String,
-            cookingTime: String,
-            baseServings: Int,
-            currentServings: Int,
-            ingredients: [Ingredient],
-            prePrepInstructions: [String],
-            instructions: [String],
-            notes: String,
-            imageName: String,
-            isFavorite: Bool,
-            isSampleRecipe: Bool = false,
-            dietaryInfo: DietaryInfo = DietaryInfo(),
-            tags: [String] = [],
-            cookCount: Int = 0,
-            lastCookedAt: Date? = nil,
-            rating: Int = 0,
-            cuisine: String? = nil,
-            photoNames: [String] = [],
-            sourceText: String? = nil
-        ) {
-            self.id = id
-            self.name = name
-            self.category = category
-            self.difficulty = difficulty
-            self.prepTime = prepTime
-            self.cookingTime = cookingTime
-            self.baseServings = baseServings
-            self.currentServings = currentServings
-            self.ingredients = ingredients
-            self.prePrepInstructions = prePrepInstructions
-            self.instructions = instructions
-            self.notes = notes
-            self.imageName = imageName
-            self.isFavorite = isFavorite
-            self.isSampleRecipe = isSampleRecipe
-            self.dietaryInfo = dietaryInfo
-            self.tags = tags
-            self.cookCount = cookCount
-            self.lastCookedAt = lastCookedAt
-            self.rating = rating
-            self.cuisine = cuisine
-            self.photoNames = photoNames
-            self.sourceText = sourceText
-        }
-
-        init(from recipe: RecipeModel) {
-            self.id = recipe.id
-            self.name = recipe.name
-            self.category = recipe.category
-            self.difficulty = recipe.difficulty
-            self.prepTime = recipe.prepTime
-            self.cookingTime = recipe.cookingTime
-            self.baseServings = recipe.baseServings
-            self.currentServings = recipe.currentServings
-            self.ingredients = recipe.ingredients
-            self.prePrepInstructions = recipe.prePrepInstructions
-            self.instructions = recipe.instructions
-            self.notes = recipe.notes
-            self.imageName = recipe.imageName ?? ""
-            self.isFavorite = recipe.isFavorite
-            self.isSampleRecipe = recipe.isSampleRecipe
-            self.dietaryInfo = recipe.dietaryInfo
-            self.tags = recipe.tags
-            self.cookCount = recipe.cookCount
-            self.lastCookedAt = recipe.lastCookedAt
-            self.rating = recipe.rating
-            self.cuisine = recipe.cuisine
-            self.photoNames = recipe.photoNames
-            self.sourceText = recipe.sourceText
-        }
-    }
-    
     @discardableResult
     func saveRecipe(parameters: RecipeSaveParameters) -> Bool {
         guard ensureStoreIsReady() else { return false }
@@ -129,74 +27,6 @@ extension PersistenceController {
         } catch {
             persistenceLogger.error("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
             return false
-        }
-    }
-
-    /// Maps `RecipeSaveParameters` onto a fresh managed object; shared by `saveRecipe` and `seedRecipes` so the field list has one home. Returns false only if ingredients can't be encoded.
-    nonisolated static func populate(
-        _ recipe: NSManagedObject,
-        from parameters: RecipeSaveParameters
-    ) -> Bool {
-        guard let ingredientData = try? JSONEncoder().encode(parameters.ingredients) else {
-            persistenceLogger.error("❌ Failed to encode ingredients for recipe: \(parameters.name)")
-            return false
-        }
-
-        recipe.setValue(parameters.id ?? UUID(), forKey: RecipeKey.id)
-        recipe.setValue(parameters.name, forKey: RecipeKey.name)
-        recipe.setValue(parameters.category, forKey: RecipeKey.category)
-        recipe.setValue(parameters.difficulty, forKey: RecipeKey.difficulty)
-        recipe.setValue(parameters.prepTime, forKey: RecipeKey.prepTime)
-        recipe.setValue(parameters.cookingTime, forKey: RecipeKey.cookingTime)
-        recipe.setValue(parameters.baseServings, forKey: RecipeKey.baseServings)
-        recipe.setValue(parameters.currentServings, forKey: RecipeKey.currentServings)
-        recipe.setValue(ingredientData, forKey: RecipeKey.ingredients)
-        recipe.setValue(parameters.prePrepInstructions, forKey: RecipeKey.prePrepInstructions)
-        recipe.setValue(parameters.instructions, forKey: RecipeKey.instructions)
-        recipe.setValue(parameters.notes, forKey: RecipeKey.notes)
-        recipe.setValue(parameters.imageName, forKey: RecipeKey.imageName)
-        recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
-        recipe.setValue(parameters.isSampleRecipe, forKey: RecipeKey.isSampleRecipe)
-        recipe.setValue(parameters.tags as NSArray, forKey: RecipeKey.tags)
-        recipe.setValue(parameters.cookCount, forKey: RecipeKey.cookCount)
-        recipe.setValue(parameters.lastCookedAt, forKey: RecipeKey.lastCookedAt)
-        recipe.setValue(parameters.rating, forKey: RecipeKey.rating)
-        recipe.setValue(parameters.cuisine, forKey: RecipeKey.cuisine)
-        recipe.setValue(parameters.photoNames as NSArray, forKey: RecipeKey.photoNames)
-        recipe.setValue(parameters.sourceText, forKey: RecipeKey.sourceText)
-        if let dietaryData = try? JSONEncoder().encode(parameters.dietaryInfo) {
-            recipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
-        }
-        return true
-    }
-
-    /// Bulk-inserts starter recipes on a background context in one save so first launch doesn't freeze; skips
-    /// per-recipe count/badge work by design. Returns `true` only if the save succeeded, so the caller can
-    /// clear the "seeded" flag and retry next launch rather than strand the user with an empty library.
-    @discardableResult
-    func seedRecipes(_ models: [RecipeModel]) async -> Bool {
-        guard ensureStoreIsReady() else { return false }
-        let container = self.container
-        return await withCheckedContinuation { continuation in
-            container.performBackgroundTask { context in
-                guard let entity = NSEntityDescription.entity(forEntityName: Entity.recipe, in: context) else {
-                    persistenceLogger.error("❌ Failed to find Recipe entity while seeding")
-                    continuation.resume(returning: false)
-                    return
-                }
-                for model in models {
-                    let object = NSManagedObject(entity: entity, insertInto: context)
-                    _ = Self.populate(object, from: RecipeSaveParameters(from: model))
-                }
-                do {
-                    try context.save()
-                    persistenceLogger.debug("✅ Seeded \(models.count) starter recipes")
-                    continuation.resume(returning: true)
-                } catch {
-                    persistenceLogger.error("❌ Failed to seed starter recipes: \(error.localizedDescription)")
-                    continuation.resume(returning: false)
-                }
-            }
         }
     }
 
@@ -251,31 +81,6 @@ extension PersistenceController {
         }
     }
     
-    /// Non-destructive restore: saves only new recipes per `BackupMerge.mergedRecipes` (dedupes by id AND normalized name so re-imports don't duplicate).
-    func mergeRecipes(_ incoming: [RecipeModel]) {
-        let existing = fetchRecipes()
-        let added = BackupMerge.mergedRecipesWithAdditions(existing: existing, incoming: incoming).added
-        let shipped = Dictionary(
-            (SeedRecipeProvider.recipes + BundledRecipeCatalog.load()).map { ($0.id, $0) },
-            uniquingKeysWith: { first, _ in first }
-        )
-        let restored = BackupMerge.restoredUserState(existing: existing, incoming: incoming) { stored in
-            guard stored.isSampleRecipe, let fresh = shipped[stored.id] else { return false }
-            return BundledRecipeCatalog.hasSameContent(stored, fresh)
-        }
-        // Suppress milestone-badge celebrations during restore: crossing count thresholds here would pop a parade of
-        // sheets for a library the user already had. Badges still persist, mirroring how `BadgeManager.merge` silences
-        // the explicitly-restored badges (BackupService.restore calls that straight after this).
-        BadgeManager.shared.isBulkImporting = true
-        defer { BadgeManager.shared.isBulkImporting = false }
-        for recipe in added {
-            saveRecipeModel(recipe)
-        }
-        for recipe in restored {
-            updateRecipe(recipe, includingCookHistory: true)
-        }
-    }
-
     func deleteRecipe(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
         
