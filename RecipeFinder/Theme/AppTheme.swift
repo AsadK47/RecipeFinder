@@ -22,10 +22,10 @@ enum AppTheme {
             switch self {
             case .tomato: return "flame.fill"
             case .saffron: return "sparkles"
-            case .honey: return "drop.fill"
+            case .honey: return "hexagon.fill"
             case .herb: return "leaf.fill"
             case .teal: return "water.waves"
-            case .blueberry: return "circle.hexagongrid.fill"
+            case .blueberry: return "circle.grid.2x2.fill"
             case .plum: return "moon.fill"
             case .raspberry: return "heart.fill"
             }
