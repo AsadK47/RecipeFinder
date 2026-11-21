@@ -257,6 +257,19 @@ struct ThemePaletteTests {
         #expect(vivid.withLightness(0.52) == vivid)
     }
 
+    // MARK: Colour-blind cue
+
+    @Test("Every theme has its own symbol, so swatches differ by shape as well as colour")
+    func symbolsAreDistinct() {
+        let symbols = Self.themes.map(\.symbol)
+        #expect(Set(symbols).count == symbols.count)
+    }
+
+    @Test("Each theme's symbol exists in SF Symbols", arguments: themes)
+    func symbolExists(theme: AppTheme.ThemeType) {
+        #expect(UIImage(systemName: theme.symbol) != nil, "\(theme): \(theme.symbol)")
+    }
+
     // MARK: Saved themes
 
     @Test("Themes saved under the old names map to the new palette", arguments: [

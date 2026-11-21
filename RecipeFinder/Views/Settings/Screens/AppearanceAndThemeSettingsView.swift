@@ -81,6 +81,11 @@ struct AppearanceAndThemeSettingsView: View {
                         Circle()
                             .strokeBorder(ThemeStore.shared.theme == theme ? AppTheme.onAccent : Color.clear, lineWidth: 2)
                     )
+                    .overlay(
+                        Image(systemName: theme.symbol)
+                            .font(.system(size: min(swatchSize, AppTheme.iconSize48) * 0.45, weight: .semibold))
+                            .foregroundStyle(AppTheme.onAccent)
+                    )
 
                 Text(theme.rawValue)
                     .font(.subheadline)

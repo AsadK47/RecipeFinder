@@ -15,6 +15,22 @@ enum AppTheme {
 
         var id: String { rawValue }
 
+        /// Shown on the picker swatch so themes are told apart by shape too: under colour blindness Tomato, Saffron and
+        /// Honey (deuteranopia) and Herb/Teal (tritanopia) look almost alike, and no in-contrast palette fixes that
+        /// (owner 2026-11-21).
+        var symbol: String {
+            switch self {
+            case .tomato: return "flame.fill"
+            case .saffron: return "sparkles"
+            case .honey: return "drop.fill"
+            case .herb: return "leaf.fill"
+            case .teal: return "water.waves"
+            case .blueberry: return "circle.hexagongrid.fill"
+            case .plum: return "moon.fill"
+            case .raspberry: return "heart.fill"
+            }
+        }
+
         /// Reads a saved choice, including the names used before the colour-theory palette (Nov 2026), so nobody's
         /// theme resets on update. Yellow and Gold were near-duplicates and both become Honey.
         init?(storedValue: String) {
