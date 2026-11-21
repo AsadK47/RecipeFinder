@@ -18,7 +18,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (docs-only). Only (5b) left — website session adds `behind-the-build.html` with markers and runs the script weekly
   with whats-new, after `privacy.html` updates; then tick. Leftover branch agent/docs-refresh-5 (auto-cleanup).
 
-- Smells: ✅ Batch A, B (stale, no code), C (e39fe71). 🚧 Batch D: ✅ screen 1 MealPlanningView (d52b80d), ✅ screen 2
+- Smells: ✅ Batch E recipe-writes split (46d6749, builder 2026-11-21; leftover branch agent/recipe-writes-split, auto-cleanup). ✅ Batch A, B (stale, no code), C (e39fe71). 🚧 Batch D: ✅ screen 1 MealPlanningView (d52b80d), ✅ screen 2
   RecipeSearchView (eaaccc2), ✅ screen 3 CookingModeView (7f4580c, builder 2026-11-19) — Batch D done. Leftover branches
   agent/meal-planning-split, agent/recipe-search-split, agent/cooking-mode-split (auto-cleanup). Top Smell (times → Int minutes) waits on Needs owner.
 
@@ -59,7 +59,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
 ## Next action
-Inbox first if any new 🐞/🟡. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Phase 3 per
+Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Phase 3 per
 BACKLOG Roadmap (Today trimmed to deciding tonight / "the next meal" at its roadmap place, owner 2026-11-20); read
 docs/PRODUCT.md first. Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
 to `privacy.html`.

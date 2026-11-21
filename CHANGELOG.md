@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Smell Batch E recipe-writes split · 46d6749
+- For you: everything works as before — this build tidies how recipes are saved behind the scenes, making room for upcoming features to land smoothly.
+- Behind the build: one long file became three focused ones with every line of code carried over unchanged, checked line by line by a reviewer and a challenger.
+
 ## 2026-11-21 · Groceries writes itself slice 4 still got the coriander · 3f81c28
 - For you: Groceries now checks in on fresh food your plan is counting on — "Still got the coriander?" — so herbs, milk or chicken that have been at home a while make it onto your list when you need them. One tap answers, and the ✕ asks you later.
 - Behind the build: a small tested model decides what's worth asking about, and a reviewer and a challenger made sure it asks about fresh coriander, leaves onions, eggs and butter in peace, and never doubles your list.

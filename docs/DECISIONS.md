@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Smell Batch E recipe-writes split** (landed 46d6749): split by job — single writes stay in `+RecipeWrites`,
+  field mapping in `+RecipeSaveParameters`, seed + merge-restore in `+RecipeBatchWrites`. `updateRecipesInBackground`
+  deliberately stays in `+RecipeWrites` until `agent/recently-deleted` lands (that green branch edits it; moving it
+  would turn a one-line hunk into a move conflict). Pure move, verified by sorted-line diff; dead-init deletion and
+  `updateRecipe` reusing `populate` left as separate CHALLENGES items (WIP=1, behaviour-preserving smell).
 - **Groceries writes itself slice 4 ("Still got the coriander?")** (landed 3f81c28): asks only about
   At home *perishables the next 7 days' plan needs* that have been home longer than they keep (`StillGotCheck`:
   meat/fish 3 d, bakery 4, fresh herbs 5, produce 7, dairy 10; staples never) — the plan subtracts At home, so a stale
