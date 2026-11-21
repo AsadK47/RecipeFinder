@@ -603,8 +603,8 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
-    /// Today's "Your cooking" row (streak, cooks this week, next badge) and the weekly "Try something new" pick;
-    /// tapping the row opens the Cooking sheet.
+    /// Today's "Your cooking" row (streak, cooks this week, next badge); tapping it opens the Cooking sheet. Browsing
+    /// shelves live on Recipes → Discover now (Today — decide tonight), so none sit under it.
     @MainActor
     func testCaptureTodayProgress() {
         let app = XCUIApplication()
@@ -620,6 +620,9 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         for _ in 0..<12 where progress.frame.maxY > tabBarTop - 16 {
             window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
                 .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+        }
+        for id in ["today.tryNew", "today.shelf.cookAgain", "today.shelf.kitchen", "today.shelf.rediscover"] {
+            XCTAssertFalse(app.descendants(matching: .any)[id].exists, "Browsing moved to Recipes → Discover: \(id)")
         }
         XCTAssertTrue(progress.label.contains("week streak"), "Progress should read the streak: \(progress.label)")
         XCTAssertTrue(progress.label.contains("this week"), "Progress should read cooks this week: \(progress.label)")

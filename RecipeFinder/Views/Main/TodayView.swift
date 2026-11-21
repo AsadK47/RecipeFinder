@@ -2,9 +2,8 @@ import SwiftUI
 
 /// Today tab: greeting + streak, a "Tonight" hero (planned meal, else kitchen match, else a quick recipe) that Shuffle
 /// steps through, with a time-aware "Start by" line (tap it to change when dinner is), a "This week" strip with a
-/// one-tap "Plan tomorrow", your cooking progress (streak, cooks this week, next badge), a weekly never-cooked pick,
-/// and shelves of recipes to cook.
-/// Kept calm on purpose: one card for tonight, plain photo shelves below, the theme accent on "Cook this" alone.
+/// one-tap "Plan tomorrow" and your cooking progress (streak, cooks this week, next badge). Browsing lives on Recipes →
+/// Discover ("Keep browsing →"), so Today stays short: one card for tonight, the theme accent on "Cook this" alone.
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
     let onOpen: (AppTab) -> Void
@@ -261,27 +260,9 @@ struct TodayView: View {
 
         TodayProgressCard(progress: snapshot.progress, onOpen: { showsCookingSheet = true }, onOpenBadges: onOpenBadges)
 
-        // Shelves and the weekly pick leave out the recipe on the card, so a shuffled-to dish isn't repeated below it.
-        let shownID = shown?.recipe.id
-        if let tryNew = snapshot.tryNew, tryNew.id != shownID {
-            TodayTryNewCard(recipe: tryNew, onOpen: open)
-        }
-
         if feed.isNewUser, !feed.starters.isEmpty {
             TodayShelf(title: "Starters to try", id: "starters",
                        items: feed.starters.map { ($0, $0.hasTotalTime ? $0.totalTime : nil) }, onOpen: open)
-        }
-        let shelves = feed.shelves(excluding: [shownID, snapshot.tryNew?.id])
-        if !shelves.cookAgain.isEmpty {
-            TodayShelf(title: "Cook again", id: "cookAgain", items: shelves.cookAgain.map { ($0, nil) }, onOpen: open)
-        }
-        if !shelves.kitchenMatches.isEmpty {
-            TodayShelf(title: "Fits your kitchen", id: "kitchen",
-                       items: shelves.kitchenMatches.map { ($0.recipe, "You have \($0.have)/\($0.total)") }, onOpen: open,
-                       onOpenKitchen: openKitchen)
-        }
-        if !shelves.rediscover.isEmpty {
-            TodayShelf(title: "Rediscover", id: "rediscover", items: shelves.rediscover.map { ($0, nil) }, onOpen: open)
         }
     }
 

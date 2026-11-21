@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Today tab selection: Tonight hero, shelves and the new-user state.
+/// Today tab selection: Tonight hero, Shuffle, what to do now and the new-user state.
 @Suite struct TodayFeedTests {
 
     private let cal = Calendar.current
@@ -242,37 +242,14 @@ import Foundation
         #expect(reason.caption == expected)
     }
 
-    // MARK: Shelves
+    // MARK: Kitchen matches
 
-    @Test func kitchenShelfNeedsHalfTheIngredientsAndSkipsTheHero() {
+    @Test func kitchenMatchesNeedHalfTheIngredientsBestCoverageFirst() {
         let best = recipe("Toast", ingredients: ["bread", "butter"])
         let half = recipe("Sandwich", ingredients: ["bread", "ham"])
         let tooFew = recipe("Stew", ingredients: ["bread", "beef", "carrot"])
-        let result = feed([best, half, tooFew], kitchen: ["bread", "butter"])
-        #expect(result.hero?.recipe == best)
-        #expect(result.fitsYourKitchen == [.init(recipe: half, have: 1, total: 2)])
-    }
-
-    @Test func cookAgainIsRecentCooksNewestFirst() {
-        // Slow recipes, so none becomes a quick Tonight pick (the hero is left off the shelves).
-        let older = recipe("Chilli", cookCount: 1, lastCookedAt: daysAgo(10), prepTime: "1 hr")
-        let newest = recipe("Tacos", cookCount: 2, lastCookedAt: daysAgo(1), prepTime: "1 hr")
-        let cold = recipe("Lasagne", cookCount: 3, lastCookedAt: daysAgo(40), prepTime: "1 hr")
-        let result = feed([older, cold, newest])
-        #expect(result.cookAgain == [newest, older])
-        #expect(result.rediscover == [cold])
-    }
-
-    @Test func plannedHeroIsLeftOffTheShelves() {
-        let tacos = recipe("Tacos", cookCount: 2, lastCookedAt: daysAgo(1))
-        let result = feed([tacos], plans: [plan(tacos, .dinner)])
-        #expect(result.hero?.recipe == tacos)
-        #expect(result.cookAgain.isEmpty)
-    }
-
-    @Test func shelvesAreCapped() {
-        let recipes = (0..<15).map { recipe("R\($0)", cookCount: 1, lastCookedAt: daysAgo($0 % 5)) }
-        #expect(feed(recipes).cookAgain.count == TodayFeed.shelfLimit)
+        let matches = TodayFeed.kitchenMatches(recipes: [tooFew, half, best], kitchenItemNames: ["bread", "butter"])
+        #expect(matches == [.init(recipe: best, have: 2, total: 2), .init(recipe: half, have: 1, total: 2)])
     }
 
     // MARK: New user

@@ -1,6 +1,6 @@
 import Foundation
 
-/// What the Today tab shows: a "Tonight" hero plus shelves, picked from the user's recipes, today's plan and their kitchen.
+/// What the Today tab shows: a "Tonight" hero plus what to do now, picked from the user's recipes, today's plan and their kitchen.
 /// Pure so the selection rules are testable; the view computes it once per data change.
 struct TodayFeed: Equatable {
     /// Why the hero recipe was chosen — drives its caption.
@@ -36,12 +36,6 @@ struct TodayFeed: Equatable {
     let alternatives: [Hero]
     /// How many recipes are ready in `quickLimitMinutes` or less (guards the same rule the quick picks use).
     let quickCount: Int
-    /// Cooked recently (within `thresholdDays`), newest first.
-    let cookAgain: [RecipeModel]
-    /// Recipes the kitchen covers at least half of, best coverage first.
-    let fitsYourKitchen: [KitchenMatch]
-    /// Cooked before but gone cold, most loved first.
-    let rediscover: [RecipeModel]
     /// Nothing of the user's own yet (only samples, never cooked) — Today leads with importing a first recipe.
     let isNewUser: Bool
     /// Sample recipes to try, shown to new users.
@@ -79,8 +73,7 @@ struct TodayFeed: Equatable {
         tomorrowsPlans: [MealPlanModel] = [],
         inventoryItems: [KitchenInventoryModel] = [],
         now: Date = Date(),
-        calendar: Calendar = .current,
-        thresholdDays: Int = 21
+        calendar: Calendar = .current
     ) -> TodayFeed {
         let matches = kitchenMatches(recipes: recipes, kitchenItemNames: kitchenItemNames)
         let isNewUser = recipes.allSatisfy { $0.isSampleRecipe && $0.cookCount == 0 }
@@ -88,31 +81,15 @@ struct TodayFeed: Equatable {
             recipes: recipes, plans: todaysPlans, matches: matches, quickCanLead: !isNewUser,
             slot: MealSlot(at: now, calendar: calendar), dayKey: dayKey(now, calendar: calendar)
         )
-        let hero = options.first
-        let heroID = hero?.recipe.id
-
-        let cutoff = calendar.date(byAdding: .day, value: -thresholdDays, to: now) ?? now
-        let cookAgain = recipes
-            .filter { recipe in
-                guard recipe.id != heroID, let last = recipe.lastCookedAt else { return false }
-                return last >= cutoff
-            }
-            .sorted { ($0.lastCookedAt ?? .distantPast) > ($1.lastCookedAt ?? .distantPast) }
-
-        let rediscover = RecipeRediscovery.ranked(from: recipes, now: now, calendar: calendar, thresholdDays: thresholdDays)
-            .filter { $0.id != heroID }
 
         let starters = isNewUser
             ? recipes.filter(\.isSampleRecipe).sorted { $0.name < $1.name }
             : []
 
         return TodayFeed(
-            hero: hero,
+            hero: options.first,
             alternatives: Array(options.dropFirst()),
             quickCount: recipes.filter { quickMinutes(of: $0) != nil }.count,
-            cookAgain: Array(cookAgain.prefix(shelfLimit)),
-            fitsYourKitchen: Array(matches.filter { $0.recipe.id != heroID }.prefix(shelfLimit)),
-            rediscover: Array(rediscover.prefix(shelfLimit)),
             isNewUser: isNewUser,
             starters: Array(starters.prefix(shelfLimit)),
             prepAhead: PrepAhead.nudges(recipes: recipes, tomorrowsPlans: tomorrowsPlans),

@@ -65,37 +65,3 @@ struct TodayProgress: Equatable {
 struct TrophyShelfRequest: Equatable {
     let badgeID: String?
 }
-
-/// "Try something new": one recipe you've never cooked, the same all week, a different one next week.
-enum TrySomethingNew {
-    /// Your own uncooked recipes come before samples (you saved them to cook them). Within that pool each recipe
-    /// gets a stable score from the week + its id, and the lowest wins — so the pick holds all week, across launches
-    /// and list orders, and adding a recipe only changes it if the new one happens to score lower.
-    static func pick(recipes: [RecipeModel], now: Date = Date(), calendar: Calendar = .current) -> RecipeModel? {
-        let uncooked = recipes.filter { $0.cookCount == 0 && $0.lastCookedAt == nil }
-        let own = uncooked.filter { !$0.isSampleRecipe }
-        let pool = own.isEmpty ? uncooked : own
-        let week = weekKey(now, calendar: calendar)
-        return pool.min { a, b in
-            let left = score(week, a.id), right = score(week, b.id)
-            return left != right ? left < right : a.id.uuidString < b.id.uuidString
-        }
-    }
-
-    /// The week's start as "yyyy-mm-dd" (numbers, not a formatted string, so locale can't change it).
-    static func weekKey(_ date: Date, calendar: Calendar) -> String {
-        let start = calendar.dateInterval(of: .weekOfYear, for: date)?.start ?? calendar.startOfDay(for: date)
-        let parts = calendar.dateComponents([.year, .month, .day], from: start)
-        return "\(parts.year ?? 0)-\(parts.month ?? 0)-\(parts.day ?? 0)"
-    }
-
-    /// FNV-1a: Swift's `hashValue` is seeded per launch, which would reshuffle the pick every time the app opens.
-    private static func score(_ week: String, _ id: UUID) -> UInt64 {
-        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
-        for byte in "\(week)|\(id.uuidString)".utf8 {
-            hash ^= UInt64(byte)
-            hash = hash &* 0x0000_0100_0000_01b3
-        }
-        return hash
-    }
-}

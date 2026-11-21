@@ -149,12 +149,10 @@ struct TodayShelf: View {
     let id: String
     let items: [(recipe: RecipeModel, caption: String?)]
     let onOpen: (RecipeModel) -> Void
-    /// Set on shelves the kitchen powers: a "Your kitchen →" link to Groceries' At home.
-    var onOpenKitchen: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            TodaySectionHeader(title: title, id: "shelf.\(id)", onOpenKitchen: onOpenKitchen)
+            TodaySectionHeader(title: title, id: "shelf.\(id)")
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: AppTheme.spacing12) {
@@ -171,7 +169,7 @@ struct TodayShelf: View {
 
     private func tile(_ recipe: RecipeModel, caption: String?) -> some View {
         Button { onOpen(recipe) } label: {
-            // No card per tile: photos on the background keep the shelves calm under the Tonight card.
+            // No card per tile: photos on the background keep the shelf calm under the Tonight card.
             VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                 RecipeImageView(recipe: recipe, imageName: recipe.heroImageName, height: 120)
                     .frame(width: 160, height: 120)
