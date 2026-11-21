@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Plan's actions — saving/removing meals, reminders, week navigation and "Add Week to Groceries" — split from
-// MealPlanningView (Smell Batch D). The groceries maths and copy are pure and tested (`WeekGroceryPlan`).
+// Plan's actions — saving/removing meals, reminders and week navigation — split from
+// MealPlanningView (Smell Batch D). Shopping for the plan lives in Groceries (`PlanGroceriesCard`).
 extension MealPlanningView {
     /// One Identifiable target for the recipe-picker / quick-snack sheets so content rebuilds from the value
     /// (`.sheet(item:)`) instead of reading a `currentMealTime` set in the same action — which rendered the
@@ -115,33 +115,6 @@ extension MealPlanningView {
         plan.reminderTime = nil
         mealPlanningManager.updateMealPlan(plan)
         HapticManager.shared.light()
-    }
-
-    // MARK: - Week to Groceries
-
-    /// Computes what the week would add, skipping items already in the Kitchen, then asks for confirmation rather than bulk-dumping.
-    func prepareAddWeek() {
-        guard let start = currentWeekStart else { return }
-        // From today: dinners already eaten earlier in the week aren't shopped for.
-        let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes, from: Date())
-        let plan = WeekGroceryPlan(
-            summary: summary,
-            kitchenNames: kitchenManager.items.map(\.name) + kitchenManager.inventoryItems.map(\.name),
-            listItems: ShoppingListManager.shared.items
-        )
-        weekPlan = plan
-
-        if let message = plan.nothingToAddMessage {
-            weekShoppingFeedback = message
-            return
-        }
-        showAddWeekConfirm = true
-    }
-
-    func confirmAddWeek() {
-        weekPlan.add(to: ShoppingListManager.shared)
-        HapticManager.shared.success()
-        weekShoppingFeedback = weekPlan.addedMessage
     }
 
     // MARK: - Plan my week

@@ -41,19 +41,8 @@ struct ShoppingSectionsView: View {
                     ))
             }
         } header: {
-            ShoppingCategoryHeader(
-                category: category,
-                items: items,
-                isCollapsed: collapsedCategories.contains(category),
-                onToggle: {
-                    withAnimation(.appSpring) {
-                        if collapsedCategories.contains(category) {
-                            collapsedCategories.remove(category)
-                        } else {
-                            collapsedCategories.insert(category)
-                        }
-                    }
-                }
+            GroceryCategoryHeader(
+                category: category, count: GroceryCategoryHeader.remainingCount(items), collapsed: $collapsedCategories
             )
         }
     }

@@ -2,7 +2,7 @@ import Foundation
 
 /// What the plan still needs from the shop: the week's shopping summary minus what's at home and what's already on
 /// the list (a line already on it counts toward the amount, so adding twice never doubles it), plus the copy for
-/// Plan's "Add Week to Groceries" and Groceries' "From your plan" card. Pure — split from `MealPlanningView`.
+/// Groceries' "From your plan" card. Pure.
 struct WeekGroceryPlan: Equatable {
     /// Items still to buy, in the summary's order; `quantity` is what's missing after what's on the list.
     let candidates: [WeekShoppingSummary.Item]
@@ -10,8 +10,6 @@ struct WeekGroceryPlan: Equatable {
     let skippedInKitchen: Int
     /// Things to buy (name + unit) the list already covers in full.
     let skippedOnList: Int
-    private let summaryHadItems: Bool
-    private let hasMissingRecipes: Bool
 
     static let empty = WeekGroceryPlan(
         summary: WeekShoppingSummary(items: [], mealsCovered: 0, missingRecipeNames: []), kitchenNames: [])
@@ -47,8 +45,6 @@ struct WeekGroceryPlan: Equatable {
         mealsCovered = summary.mealsCovered
         skippedInKitchen = summary.items.count - toBuy.count
         skippedOnList = order.count - candidates.count
-        summaryHadItems = !summary.items.isEmpty
-        hasMissingRecipes = !summary.missingRecipeNames.isEmpty
         candidateKeys = Set(candidates.map { Self.key(name: $0.name, unit: $0.unit) })
     }
 
@@ -69,41 +65,8 @@ struct WeekGroceryPlan: Equatable {
         return !candidateKeys.isSubset(of: dismissed.candidateKeys)
     }
 
-    /// The toast to show instead of the confirm dialog when nothing would be added; nil when there is.
-    var nothingToAddMessage: String? {
-        guard candidates.isEmpty else { return nil }
-        if summaryHadItems {
-            switch (skippedOnList > 0, skippedInKitchen > 0) {
-            case (true, true): return "Everything for your plan is on your list or at home"
-            case (true, false): return "Everything for your plan is on your list"
-            default: return "You already have everything in your kitchen"
-            }
-        }
-        return hasMissingRecipes ? "Couldn't find this week's recipes" : "No planned meals to shop for"
-    }
-
     var addButtonTitle: String {
         "Add \(Self.items(candidates.count))"
-    }
-
-    var confirmMessage: String {
-        var parts = ["From \(mealsCovered) planned meal\(mealsCovered == 1 ? "" : "s")."]
-        if skippedInKitchen > 0 {
-            parts.append("\(skippedInKitchen) already in your kitchen will be skipped.")
-        }
-        if skippedOnList > 0 {
-            parts.append("\(skippedOnList) already on your list.")
-        }
-        return parts.joined(separator: " ")
-    }
-
-    /// The toast after the items were added.
-    var addedMessage: String {
-        var message = "Added \(Self.items(candidates.count)) from \(mealsCovered) meal\(mealsCovered == 1 ? "" : "s")"
-        if skippedInKitchen > 0 {
-            message += " · \(skippedInKitchen) already in kitchen"
-        }
-        return message
     }
 
     /// The line under Groceries' "From your plan" card title.

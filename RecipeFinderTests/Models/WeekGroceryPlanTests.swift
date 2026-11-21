@@ -20,7 +20,6 @@ struct WeekGroceryPlanTests {
         #expect(plan.candidates.map(\.name) == ["Onion", "Chicken"])
         #expect(plan.skippedInKitchen == 1)
         #expect(plan.mealsCovered == 2)
-        #expect(plan.nothingToAddMessage == nil)
     }
 
     @Test("Kitchen names match after normalising, not exact text")
@@ -31,42 +30,13 @@ struct WeekGroceryPlanTests {
         #expect(plan.skippedInKitchen == 1)
     }
 
-    @Test("Nothing planned says so")
-    func nothingPlanned() {
-        #expect(WeekGroceryPlan(summary: summary([], meals: 0), kitchenNames: []).nothingToAddMessage
-            == "No planned meals to shop for")
-    }
-
-    @Test("Planned recipes that were deleted say they couldn't be found")
-    func missingRecipes() {
-        let plan = WeekGroceryPlan(summary: summary([], meals: 0, missing: ["Gone"]), kitchenNames: [])
-        #expect(plan.nothingToAddMessage == "Couldn't find this week's recipes")
-    }
-
-    @Test("Everything at home says so, even when recipes are missing")
-    func everythingAtHome() {
-        let plan = WeekGroceryPlan(summary: summary(["Rice"], missing: ["Gone"]), kitchenNames: ["Rice"])
-        #expect(plan.nothingToAddMessage == "You already have everything in your kitchen")
-    }
-
-    @Test("Confirm button and message count items and meals, singular and plural")
-    func confirmCopy() {
+    @Test("Add button counts items, singular and plural")
+    func addButtonCopy() {
         let one = WeekGroceryPlan(summary: summary(["Onion"], meals: 1), kitchenNames: [])
         #expect(one.addButtonTitle == "Add 1 item")
-        #expect(one.confirmMessage == "From 1 planned meal.")
 
         let many = WeekGroceryPlan(summary: summary(["Onion", "Rice", "Egg"], meals: 3), kitchenNames: ["egg"])
         #expect(many.addButtonTitle == "Add 2 items")
-        #expect(many.confirmMessage == "From 3 planned meals. 1 already in your kitchen will be skipped.")
-    }
-
-    @Test("Added toast counts items, meals and skipped ones")
-    func addedCopy() {
-        let one = WeekGroceryPlan(summary: summary(["Onion"], meals: 1), kitchenNames: [])
-        #expect(one.addedMessage == "Added 1 item from 1 meal")
-
-        let many = WeekGroceryPlan(summary: summary(["Onion", "Rice", "Egg"], meals: 3), kitchenNames: ["egg"])
-        #expect(many.addedMessage == "Added 2 items from 3 meals · 1 already in kitchen")
     }
 
     // MARK: - What's already on the list (Groceries writes itself, slice 1)
@@ -119,26 +89,6 @@ struct WeekGroceryPlanTests {
         let plan = WeekGroceryPlan(summary: summary, kitchenNames: [], listItems: [listItem("Egg", 2), listItem("egg", 3)])
 
         #expect(plan.candidates == [line("egg", 1)])
-    }
-
-    @Test("Nothing left to add says where it all is", arguments: [
-        (["onion"], ["rice"], "Everything for your plan is on your list or at home"),
-        ([], ["onion", "rice"], "Everything for your plan is on your list"),
-        (["onion", "rice"], [], "You already have everything in your kitchen"),
-    ])
-    func nothingLeftMessage(atHome: [String], onList: [String], message: String) {
-        let summary = WeekShoppingSummary(items: [line("onion", 1), line("rice", 1)], mealsCovered: 2, missingRecipeNames: [])
-        let plan = WeekGroceryPlan(summary: summary, kitchenNames: atHome, listItems: onList.map { listItem($0, 1) })
-
-        #expect(plan.nothingToAddMessage == message)
-    }
-
-    @Test("Confirm message says what's already on the list")
-    func confirmCountsListItems() {
-        let summary = WeekShoppingSummary(items: [line("onion", 1), line("rice", 1), line("egg", 1)], mealsCovered: 2, missingRecipeNames: [])
-        let plan = WeekGroceryPlan(summary: summary, kitchenNames: ["egg"], listItems: [listItem("rice", 1)])
-
-        #expect(plan.confirmMessage == "From 2 planned meals. 1 already in your kitchen will be skipped. 1 already on your list.")
     }
 
     @Test("Card detail counts items, meals and what's at home")
@@ -263,6 +213,5 @@ struct WeekGroceryPlanTests {
     @Test("Empty plan has nothing to add")
     func emptyPlan() {
         #expect(WeekGroceryPlan.empty.candidates.isEmpty)
-        #expect(WeekGroceryPlan.empty.nothingToAddMessage == "No planned meals to shop for")
     }
 }

@@ -199,7 +199,7 @@ struct WeeklyMealPlan: Identifiable {
 }
 
 /// Aggregated weekly shopping needs; ingredient lines are normalized and merged by name + unit, carrying the
-/// real summed quantity and unit (not a meal count) so "add week to groceries" keeps amounts like the per-recipe path.
+/// real summed quantity and unit (not a meal count) so Groceries' "From your plan" keeps amounts like the per-recipe path.
 struct WeekShoppingSummary: Equatable {
     struct Item: Equatable {
         let name: String

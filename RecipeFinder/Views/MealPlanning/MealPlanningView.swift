@@ -18,9 +18,6 @@ struct MealPlanningView: View {
     @State private var pantryExpirySuggestions: [PantryExpirySuggestions.Match] = []
     /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
     @State private var pendingSuggestedRecipe: RecipeModel?
-    /// The week's items to buy (minus what's at home) and their copy, awaiting confirmation.
-    @State var weekPlan = WeekGroceryPlan.empty
-    @State var showAddWeekConfirm = false
     @State var showClearPastConfirm = false
     /// A weekly meal the cook is taking off: confirm first, since it ends the repeat.
     @State var pendingWeeklyRemoval: MealPlanModel?
@@ -96,10 +93,6 @@ struct MealPlanningView: View {
                             emptyStateView
                                 .transition(.opacity)
                         }
-
-                        if weekHasPlannedMeals {
-                            weekShoppingSection
-                        }
                     }
                     .padding(.top, AppTheme.spacing16)
                     .padding(.horizontal, AppTheme.spacing20)
@@ -128,14 +121,6 @@ struct MealPlanningView: View {
         .appNavigationChrome()
         .animation(.appGentle, value: selectedMealTimes)
         .animation(.appGentle, value: pantryExpirySuggestions.count)
-        .confirmationDialog("Add to Groceries", isPresented: $showAddWeekConfirm, titleVisibility: .visible) {
-            Button(weekPlan.addButtonTitle) {
-                confirmAddWeek()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text(weekPlan.confirmMessage)
-        }
         .confirmationDialog(clearPastTitle, isPresented: $showClearPastConfirm, titleVisibility: .visible) {
             Button("Clear Past Plans", role: .destructive, action: clearPastPlans)
             Button("Cancel", role: .cancel) {}
@@ -327,10 +312,6 @@ struct MealPlanningView: View {
         )
     }
 
-    private var weekShoppingSection: some View {
-        PrimaryButton("Add Week to Groceries", systemImage: "cart.badge.plus", fillWidth: true, action: prepareAddWeek)
-    }
-
     private func rollOverToToday() {
         let now = Date()
         if let today = mealCalendar.rolledOver(selected: selectedDate, lastToday: lastToday, now: now) {
@@ -367,13 +348,6 @@ struct MealPlanningView: View {
         MealPlanDayContent.make(hasSelectedMeals: !selectedMealTimes.isEmpty,
                                 hasPlans: !shownPlans(for: selectedDate).isEmpty,
                                 date: selectedDate, now: Date())
-    }
-
-    private var weekHasPlannedMeals: Bool {
-        guard let start = currentWeekStart else { return false }
-        // Only meals still ahead: a past week has nothing left to shop for.
-        let today = Calendar.current.startOfDay(for: Date())
-        return mealPlanningManager.mealPlansForWeek(starting: start).meals.contains { !$0.isCompleted && $0.date >= today }
     }
 
     var daysInCurrentWeek: [Date] {

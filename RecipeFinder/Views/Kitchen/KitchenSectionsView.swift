@@ -51,50 +51,10 @@ struct KitchenSectionsView: View {
                     }
                 }
             } header: {
-                categoryHeader(category: group.category, items: group.items)
+                GroceryCategoryHeader(
+                    category: group.category, count: "(\(group.items.count))", collapsed: $collapsedCategories
+                )
             }
         }
-    }
-
-    @ViewBuilder
-    private func categoryHeader(category: String, items: [KitchenItem]) -> some View {
-        Button(action: {
-            withAnimation(.appSpring) {
-                if collapsedCategories.contains(category) {
-                    collapsedCategories.remove(category)
-                } else {
-                    collapsedCategories.insert(category)
-                }
-            }
-        }) {
-            HStack(spacing: AppTheme.spacing12) {
-                Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                    .font(.body)
-                    .foregroundStyle(CategoryClassifier.categoryColor(for: category))
-                    .frame(width: AppTheme.iconSize28)
-                Text(category)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .adaptiveForegroundColor()
-                Text("(\(items.count))")
-                    .font(.footnote)
-                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
-                Spacer()
-                Image(systemName: "chevron.up")
-                    .font(.caption)
-                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
-                    .rotationEffect(.degrees(collapsedCategories.contains(category) ? 180 : 0))
-            }
-            .padding(.horizontal, AppTheme.spacing16)
-            .padding(.vertical, AppTheme.spacing8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .appCard(cornerRadius: AppTheme.cornerRadius12)
-            .padding(.horizontal, AppTheme.spacing16)
-            .padding(.top, AppTheme.spacing2)
-        }
-        .buttonStyle(.plain)
-        .textCase(nil)
-        .listRowInsets(EdgeInsets())
-        .headerProminence(.standard)
     }
 }

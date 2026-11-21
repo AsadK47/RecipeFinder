@@ -22,7 +22,7 @@ protocol MealPlanningManaging: AnyObject, Observable {
     /// Every weekly copy (the series later weeks are filled from).
     var recurringMealPlans: [MealPlanModel] { get }
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary
-    /// The same, leaving out days before `earliest` (Plan's Add Week: meals already eaten aren't shopped for).
+    /// The same, leaving out days before `earliest` (meals already eaten aren't shopped for).
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel], from earliest: Date) -> WeekShoppingSummary
     /// Re-reads the Sunday-nudge switch and plans, then schedules or cancels the one pending nudge.
     func syncPlanNudge()
