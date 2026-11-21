@@ -168,7 +168,7 @@ import Foundation
         ])
     }
 
-    @Test func clearPreferences_coversEveryListedKey_andLeavesTheRest() throws {
+    @MainActor @Test func clearPreferences_coversEveryListedKey_andLeavesTheRest() throws {
         let defaults = try freshDefaults()
         let store = LocalStore(userDefaults: defaults)
         for key in LocalStore.unprefixedPreferenceKeys { defaults.set("x", forKey: key) }
