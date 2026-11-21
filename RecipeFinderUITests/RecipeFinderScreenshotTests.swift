@@ -451,14 +451,14 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         snap(app, "57-notifications-sunday-denied")
     }
 
-    /// Theme palette: every theme's picker and Today, in Light and Dark (`-preferredColorScheme` rides the argument
-    /// domain, so the run never changes the simulator's own setting). `-ui-testing` resets the theme to Teal on each launch.
+    /// Theme palette: every theme's picker and Today, in Light and Dark (DEBUG `-ui-light` / `-ui-dark`). `-ui-testing`
+    /// resets the theme to Teal and the appearance to System on each launch, so later tests keep the defaults.
     @MainActor
     func testCaptureThemes() {
         let themes = ["Tomato", "Saffron", "Honey", "Herb", "Teal", "Blueberry", "Plum", "Raspberry"]
-        for (mode, value) in [("light", "1"), ("dark", "2")] {
+        for mode in ["light", "dark"] {
             let app = XCUIApplication()
-            app.launchArguments += ["-ui-testing", "-preferredColorScheme", value]
+            app.launchArguments += ["-ui-testing", "-ui-\(mode)"]
             app.launch()
             XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
             app.tabBars.buttons["Me"].tap()

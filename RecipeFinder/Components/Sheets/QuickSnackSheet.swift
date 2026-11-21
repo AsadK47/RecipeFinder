@@ -190,7 +190,7 @@ struct QuickSnackSheet: View {
                             .padding(.vertical, AppTheme.spacing14)
                             .background(AppTheme.accentColor
                                 .opacity(canAdd ? 1 : 0.4))
-                            .adaptiveForegroundColor()
+                            .foregroundStyle(AppTheme.onAccent)
                             .cornerRadius(AppTheme.cornerRadius12)
                     }
                     .disabled(!canAdd)

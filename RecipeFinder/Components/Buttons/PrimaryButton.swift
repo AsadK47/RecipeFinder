@@ -37,7 +37,7 @@ struct PrimaryButton: View {
             surface(
                 label
                     .font(size == .compact ? .caption.weight(.semibold) : .subheadline.weight(.semibold))
-                    .adaptiveForegroundColor()
+                    .foregroundStyle(variant == .primary ? AppTheme.onAccent : AppTheme.textColor())
                     .padding(.horizontal, size == .compact ? AppTheme.spacing12 : AppTheme.spacing20)
                     .padding(.vertical, size == .compact ? AppTheme.spacing6 : AppTheme.spacing12)
                     .frame(maxWidth: fillWidth ? .infinity : nil)

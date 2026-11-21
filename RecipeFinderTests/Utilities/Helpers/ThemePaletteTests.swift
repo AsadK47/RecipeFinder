@@ -138,6 +138,12 @@ struct ThemePaletteTests {
         #expect(theme.swatch.gradientDark.allSatisfy { $0.srgb.contrast(with: .white) >= 4.5 })
     }
 
+    @Test("In Dark, accent icons and ticks stand out from every gradient stop (≥3:1)", arguments: themes)
+    func darkAccentStandsOutOnGradient(theme: AppTheme.ThemeType) {
+        let accent = theme.swatch.accentDark.srgb
+        #expect(theme.swatch.gradientDark.allSatisfy { accent.contrast(with: $0.srgb) >= 3 })
+    }
+
     @Test("Gradients step lightness one way, light to dark", arguments: themes)
     func gradientsStepLightness(theme: AppTheme.ThemeType) {
         for stops in [theme.swatch.gradientLight, theme.swatch.gradientDark] {

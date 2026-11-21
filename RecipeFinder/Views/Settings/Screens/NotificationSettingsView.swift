@@ -135,7 +135,7 @@ struct NotificationSettingsView: View {
                         Text("Open Settings")
                     }
                     .font(.headline)
-                    .adaptiveForegroundColor()
+                    .foregroundStyle(AppTheme.onAccent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, AppTheme.spacing14)
                     .background(AppTheme.accentColor)

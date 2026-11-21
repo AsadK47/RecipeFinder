@@ -40,8 +40,11 @@ struct RecipeFinderApp: App {
                 UserDefaults.standard.set(mode.rawValue, forKey: RecipeBrowse.modeKey)
                 // Groceries' To buy | At home is remembered too; every run starts on the shopping list.
                 UserDefaults.standard.set(GroceriesMode.toBuy.rawValue, forKey: GroceriesMode.modeKey)
-                // The theme picker's shots change the theme; every run starts on the default so later shots match.
+                // The theme shots change theme and appearance; every run starts on the defaults (or the asked-for mode).
                 UserDefaults.standard.set(AppTheme.ThemeType.teal.rawValue, forKey: ThemeStore.storageKey)
+                let args = ProcessInfo.processInfo.arguments
+                UserDefaults.standard.set(args.contains("-ui-dark") ? 2 : args.contains("-ui-light") ? 1 : 0,
+                                          forKey: "preferredColorScheme")
             }
             if ProcessInfo.processInfo.arguments.contains("-show-badge-reveal") {
                 BadgeManager.shared.showRevealForUITesting(.headChef)

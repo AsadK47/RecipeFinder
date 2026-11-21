@@ -37,10 +37,10 @@ private struct ToastLabel: View {
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: icon)
-                .adaptiveForegroundColor()
+                .foregroundStyle(AppTheme.onAccent)
             Text(text)
                 .font(.subheadline)
-                .adaptiveForegroundColor()
+                .foregroundStyle(AppTheme.onAccent)
         }
         .padding(.horizontal, AppTheme.spacing20)
         .padding(.vertical, AppTheme.spacing12)

@@ -80,8 +80,9 @@ struct SRGB: Equatable, Sendable {
     }
 }
 
-/// One theme's colours. Accents carry white text (≥4.5:1) and stand out from the mode's base surface (≥3:1);
-/// gradients stay within ±25° of the theme hue and keep the mode's text colour ≥4.5:1 on every stop.
+/// One theme's colours. Accents carry white text (`AppTheme.onAccent`, ≥4.5:1) and stand out from the mode's base
+/// surface (≥3:1) — in Dark from every gradient stop too, which is why Dark gradients are deep; gradients stay within
+/// ±25° of the theme hue and keep the mode's text colour ≥4.5:1 on every stop.
 struct ThemeSwatch: Equatable, Sendable {
     let hue: Double
     let accentLight: OKLCH
@@ -101,7 +102,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.169, h: 30),
                 accentDark: .init(l: 0.570, c: 0.149, h: 30),
                 gradientLight: [.init(l: 0.82, c: 0.102, h: 10), .init(l: 0.74, c: 0.139, h: 30), .init(l: 0.66, c: 0.139, h: 50)],
-                gradientDark: [.init(l: 0.40, c: 0.089, h: 10), .init(l: 0.31, c: 0.089, h: 30), .init(l: 0.22, c: 0.057, h: 50), .init(l: 0.18, c: 0.010, h: 50)]
+                gradientDark: [.init(l: 0.28, c: 0.079, h: 10), .init(l: 0.23, c: 0.069, h: 30), .init(l: 0.18, c: 0.047, h: 50), .init(l: 0.15, c: 0.010, h: 50)]
             )
         case .saffron:
             return ThemeSwatch(
@@ -109,7 +110,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.127, h: 55),
                 accentDark: .init(l: 0.570, c: 0.140, h: 55),
                 gradientLight: [.init(l: 0.82, c: 0.101, h: 35), .init(l: 0.74, c: 0.139, h: 55), .init(l: 0.66, c: 0.138, h: 75)],
-                gradientDark: [.init(l: 0.40, c: 0.089, h: 35), .init(l: 0.31, c: 0.076, h: 55), .init(l: 0.22, c: 0.046, h: 75), .init(l: 0.18, c: 0.010, h: 75)]
+                gradientDark: [.init(l: 0.28, c: 0.079, h: 35), .init(l: 0.23, c: 0.056, h: 55), .init(l: 0.18, c: 0.037, h: 75), .init(l: 0.15, c: 0.010, h: 75)]
             )
         case .honey:
             return ThemeSwatch(
@@ -117,7 +118,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.105, h: 85),
                 accentDark: .init(l: 0.565, c: 0.114, h: 85),
                 gradientLight: [.init(l: 0.82, c: 0.131, h: 65), .init(l: 0.74, c: 0.139, h: 85), .init(l: 0.66, c: 0.139, h: 105)],
-                gradientDark: [.init(l: 0.40, c: 0.088, h: 65), .init(l: 0.31, c: 0.062, h: 85), .init(l: 0.22, c: 0.046, h: 105), .init(l: 0.18, c: 0.010, h: 105)]
+                gradientDark: [.init(l: 0.28, c: 0.062, h: 65), .init(l: 0.23, c: 0.046, h: 85), .init(l: 0.18, c: 0.038, h: 105), .init(l: 0.15, c: 0.010, h: 105)]
             )
         case .herb:
             return ThemeSwatch(
@@ -125,7 +126,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.149, h: 148),
                 accentDark: .init(l: 0.545, c: 0.149, h: 148),
                 gradientLight: [.init(l: 0.82, c: 0.139, h: 128), .init(l: 0.74, c: 0.139, h: 148), .init(l: 0.66, c: 0.132, h: 168)],
-                gradientDark: [.init(l: 0.40, c: 0.089, h: 128), .init(l: 0.31, c: 0.089, h: 148), .init(l: 0.22, c: 0.043, h: 168), .init(l: 0.18, c: 0.010, h: 168)]
+                gradientDark: [.init(l: 0.28, c: 0.072, h: 128), .init(l: 0.23, c: 0.066, h: 148), .init(l: 0.18, c: 0.036, h: 168), .init(l: 0.15, c: 0.010, h: 168)]
             )
         case .teal:
             return ThemeSwatch(
@@ -133,7 +134,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.090, h: 185),
                 accentDark: .init(l: 0.550, c: 0.095, h: 185),
                 gradientLight: [.init(l: 0.82, c: 0.139, h: 165), .init(l: 0.74, c: 0.129, h: 185), .init(l: 0.66, c: 0.111, h: 205)],
-                gradientDark: [.init(l: 0.40, c: 0.083, h: 165), .init(l: 0.31, c: 0.053, h: 185), .init(l: 0.22, c: 0.036, h: 205), .init(l: 0.18, c: 0.010, h: 205)]
+                gradientDark: [.init(l: 0.28, c: 0.058, h: 165), .init(l: 0.23, c: 0.039, h: 185), .init(l: 0.18, c: 0.030, h: 205), .init(l: 0.15, c: 0.010, h: 205)]
             )
         case .blueberry:
             return ThemeSwatch(
@@ -141,7 +142,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.169, h: 262),
                 accentDark: .init(l: 0.565, c: 0.149, h: 262),
                 gradientLight: [.init(l: 0.82, c: 0.098, h: 242), .init(l: 0.74, c: 0.132, h: 262), .init(l: 0.66, c: 0.139, h: 282)],
-                gradientDark: [.init(l: 0.40, c: 0.089, h: 242), .init(l: 0.31, c: 0.089, h: 262), .init(l: 0.22, c: 0.089, h: 282), .init(l: 0.18, c: 0.010, h: 282)]
+                gradientDark: [.init(l: 0.28, c: 0.065, h: 242), .init(l: 0.23, c: 0.069, h: 262), .init(l: 0.18, c: 0.049, h: 282), .init(l: 0.15, c: 0.010, h: 282)]
             )
         case .plum:
             return ThemeSwatch(
@@ -149,7 +150,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.169, h: 315),
                 accentDark: .init(l: 0.570, c: 0.149, h: 315),
                 gradientLight: [.init(l: 0.82, c: 0.099, h: 295), .init(l: 0.74, c: 0.139, h: 315), .init(l: 0.66, c: 0.139, h: 335)],
-                gradientDark: [.init(l: 0.40, c: 0.089, h: 295), .init(l: 0.31, c: 0.089, h: 315), .init(l: 0.22, c: 0.089, h: 335), .init(l: 0.18, c: 0.010, h: 335)]
+                gradientDark: [.init(l: 0.28, c: 0.079, h: 295), .init(l: 0.23, c: 0.069, h: 315), .init(l: 0.18, c: 0.049, h: 335), .init(l: 0.15, c: 0.010, h: 335)]
             )
         case .raspberry:
             return ThemeSwatch(
@@ -157,7 +158,7 @@ extension AppTheme.ThemeType {
                 accentLight: .init(l: 0.520, c: 0.169, h: 358),
                 accentDark: .init(l: 0.570, c: 0.149, h: 358),
                 gradientLight: [.init(l: 0.82, c: 0.139, h: 338), .init(l: 0.74, c: 0.139, h: 358), .init(l: 0.66, c: 0.139, h: 18)],
-                gradientDark: [.init(l: 0.40, c: 0.089, h: 338), .init(l: 0.31, c: 0.089, h: 358), .init(l: 0.22, c: 0.087, h: 18), .init(l: 0.18, c: 0.010, h: 18)]
+                gradientDark: [.init(l: 0.28, c: 0.079, h: 338), .init(l: 0.23, c: 0.069, h: 358), .init(l: 0.18, c: 0.049, h: 18), .init(l: 0.15, c: 0.010, h: 18)]
             )
         }
     }

@@ -61,7 +61,7 @@ struct ShoppingListItemRow: View {
                         if item.isChecked {
                             Image(systemName: "checkmark")
                                 .font(.system(size: AppTheme.fontSize14, weight: .bold))
-                                .adaptiveForegroundColor()
+                                .foregroundStyle(AppTheme.onAccent)
                                 .frame(width: 28, height: AppTheme.height28)
                                 .background(Circle().fill(AppTheme.accentColor))
                         }

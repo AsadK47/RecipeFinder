@@ -175,7 +175,7 @@ struct SettingsTabView: View {
                 .overlay {
                     Text(profileManager.initials)
                         .font(.system(size: AppTheme.fontSize22, weight: .semibold))
-                        .foregroundStyle(AppTheme.adaptive(light: Color.black, dark: Color.white))
+                        .foregroundStyle(AppTheme.onAccent)
                 }
         }
     }

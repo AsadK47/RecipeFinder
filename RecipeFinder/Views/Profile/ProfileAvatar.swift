@@ -25,7 +25,7 @@ struct ProfileAvatar: View {
                             
                             Text(initials)
                                 .font(.system(size: AppTheme.fontSize42, weight: .bold))
-                                .adaptiveForegroundColor()
+                                .foregroundStyle(AppTheme.onAccent)
                         }
                     }
                     

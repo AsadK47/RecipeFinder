@@ -110,7 +110,7 @@ struct CookTimerView: View {
             }) {
                 Label(timerManager.isActive ? "Restart Timer" : "Start Timer", systemImage: "play.fill")
                     .fontWeight(.semibold)
-                    .adaptiveForegroundColor()
+                    .foregroundStyle(AppTheme.onAccent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, AppTheme.spacing14)
                     .background(AppTheme.accentColor)

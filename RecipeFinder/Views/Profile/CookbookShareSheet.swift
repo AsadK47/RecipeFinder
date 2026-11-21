@@ -34,7 +34,7 @@ struct CookbookShareSheet: View {
                 ) {
                     Label("Share", systemImage: "square.and.arrow.up")
                         .font(.subheadline.weight(.semibold))
-                        .adaptiveForegroundColor()
+                        .foregroundStyle(AppTheme.onAccent)
                         .padding(.horizontal, AppTheme.spacing20)
                         .padding(.vertical, AppTheme.spacing12)
                         .background(Capsule().fill(AppTheme.accentColor))

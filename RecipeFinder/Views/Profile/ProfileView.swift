@@ -71,7 +71,7 @@ struct ProfileView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(AppTheme.accentColor)
-                                .adaptiveForegroundColor()
+                                .foregroundStyle(AppTheme.onAccent)
                                 .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .opacity(showSuccessFeedback ? 0.6 : 1)

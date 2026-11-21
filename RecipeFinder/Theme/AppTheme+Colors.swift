@@ -53,6 +53,10 @@ extension AppTheme {
     }
 
     /// The theme's accent: a deeper variant in Light, a lighter one in Dark — white text on it stays ≥4.5:1 in both.
+    /// Text and icons on an accent fill (buttons, toasts, ticks, avatars). Every theme's accent is solved for white
+    /// (≥4.5:1 in both modes); black on the deeper accents falls to ~3.5:1.
+    static let onAccent = Color.white
+
     /// Built once per theme: `accentColor` is read from many `body`s, and one instance per theme keeps it `==` itself.
     static func accentColor(for theme: ThemeType) -> Color {
         accentColors[theme] ?? Color.accentColor

@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21 (item pass: Theme palette slice 1 — fixed: black text on the new deeper accents was 3.5–4.1:1 on 12 buttons/toasts/ticks → `AppTheme.onAccent` (white, ≥4.6:1); Dark accent icons were ~2:1 on the Dark gradient's top → Dark gradients deepened (L 0.28→0.15), tested ≥3:1 on every stop; accent wiring per mode tested via trait resolution; UI shots force Light/Dark via `-ui-light`/`-ui-dark` and every `-ui-testing` run resets theme + appearance)
+- ⚔️ [Break] Light accents are told apart from the Light gradient by hue — they measure 1.8–3.2:1 against its stops (old teal: 1.0–2.0, so no regression); 3:1 would need near-white gradients (L ≥0.83) — alternative: pastel Light gradients, or keep accent off the bare gradient (cards / filled pills only, DesignSystem rule) — cost if we're wrong: accent-only icons on the gradient are faint in Light.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Break] Colour-blind: deuteranopia makes Saffron vs Honey ΔE OK 0.005–0.011 and Tomato vs Honey 0.011; tritanopia Herb vs Teal 0.013 (Machado matrices) — the picker shows name + checkmark, so no one is blocked; slice 2 adds the CVD check (and may nudge Honey's hue) — cost if we're wrong: two swatches look identical to ~5% of men.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Look] Honey Light is #846305 and Saffron #9f5104 — white text forces deep tones, so they may read mustard/brown rather than honey/saffron; owner taste call from the 61/62 shots.
+  → Owner: Accept / Reject / Later
+- ⚔️ [Simplify] `themeAccentColor` (`AppTheme.swift`) is a second name for `AppTheme.accentColor`, and `NavigationBarScrollFade`'s `systemBackground` layer is now dead (gradients are opaque) — remove both in a Smell pass.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-21 (item pass: Today — decide tonight slice 3, one "do this now" nudge — fixed: at 10pm spinach "use by today" hid tonight's marinade → prep leads once Today has moved on to tomorrow; UI seeds could clash on a reused simulator (today's spinach vs the prep-ahead shot) → `-seed-tonight-plan` clears it; prep nudge kitchen-link absence asserted; ARCHITECTURE map)
 - ⚔️ [Flow] Two preps for tomorrow (overnight oats + tikka marinade) show only the first (breakfast) — merge cues ("Chill + marinate tonight · 2 for tomorrow") — cost if wrong: the second plan fails for want of a reminder (rare: two long-lead recipes on one day).
 - ⚔️ [Flow] Only one use-soon row shows; other items going off within 3 days, and the "Your kitchen →" link when the nudge is a prep, are off Today (expiry notifications remain) — cost if wrong: some food wasted unseen; watch Kitchen expiry → Today taps.

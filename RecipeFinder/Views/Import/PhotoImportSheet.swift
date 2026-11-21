@@ -177,7 +177,7 @@ private func photoSourceLabel(icon: String, title: String, theme: AppTheme.Theme
         Image(systemName: icon)
         Text(title).fontWeight(.semibold)
     }
-    .adaptiveForegroundColor()
+    .foregroundStyle(AppTheme.onAccent)
     .frame(maxWidth: .infinity)
     .frame(height: AppTheme.height56)
     .background(AppTheme.accentColor(for: theme), in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
