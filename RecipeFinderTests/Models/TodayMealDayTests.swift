@@ -64,7 +64,25 @@ import Foundation
 
     @Test func anOpenPlannedDinnerKeepsTheEveningOnTonight() {
         let curry = recipe("Curry")
-        #expect(next(at(22, 30), [plan(curry, .dinner)]) == .tonight)
+        #expect(next(at(22, 30), [plan(curry, .dinner)], recipes: [curry]) == .tonight)
+    }
+
+    @Test func aPlannedDinnerWhoseRecipeIsGoneDoesNotHoldTheEvening() {
+        // Curry was deleted after it was planned: nothing to cook, so late evening still looks at tomorrow.
+        let curry = recipe("Curry")
+        #expect(next(at(22, 30), [plan(curry, .dinner)], recipes: []).isTomorrow)
+    }
+
+    @Test func somethingCookedThisEveningWithoutAPlanMovesTheEveningOn() {
+        // Cook this on a suggestion at 6pm, then Made it: no plan, but dinner is done.
+        let pasta = recipe("Pasta", lastCookedAt: at(18))
+        #expect(next(at(19), recipes: [pasta]).isTomorrow)
+        // A lunch cooked at 1pm isn't dinner.
+        let soup = recipe("Soup", lastCookedAt: at(13))
+        #expect(next(at(19), recipes: [soup]) == .tonight)
+        // Yesterday evening's cook doesn't count today.
+        let stew = recipe("Stew", lastCookedAt: at(19, dayOffset: -1))
+        #expect(next(at(19), recipes: [stew]) == .tonight)
     }
 
     @Test func aCookedDinnerMovesTheEveningOnToTomorrow() {
@@ -94,6 +112,13 @@ import Foundation
         #expect(phase(at(15, 59)) != phase(at(16)))
         #expect(phase(at(20, 59)) != phase(at(21)))
         #expect(phase(at(23, 59)) != phase(at(0, 0, dayOffset: 1)))
+    }
+
+    @Test func theClockPhaseMovesWhenALaterDinnerTimeEnds() {
+        // Dinner at 10pm: the evening ends at 10:30, inside the same meal slot, so only the late flag can move it.
+        let phase = { (date: Date) in TodayFeed.NextMeal.clockPhase(at: date, eatAt: 22 * 60, calendar: cal) }
+        #expect(phase(at(22, 29)) != phase(at(22, 30)))
+        #expect(phase(at(22, 30)) == phase(at(23, 59)))
     }
 
     // MARK: Hero

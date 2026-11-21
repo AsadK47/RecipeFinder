@@ -4,7 +4,7 @@ import SwiftUI
 /// recipe; late evening → tomorrow's breakfast) that Shuffle steps through, with a time-aware "Start by" line for
 /// dinner (tap it to change when dinner is), a one-line day strip (Breakfast ✓ · Lunch: Soup · Dinner: plan it), a "This week" strip with a
 /// one-tap "Plan tomorrow" and your cooking progress (streak, cooks this week, next badge). Browsing lives on Recipes →
-/// Discover ("Keep browsing →"), so Today stays short: one card for tonight, the theme accent on "Cook this" alone.
+/// Discover ("Keep browsing →"), so Today stays short: one card for the next meal, the theme accent on "Cook this" alone.
 struct TodayView: View {
     /// Switches the main tab (Recipes, Plan, …).
     let onOpen: (AppTab) -> Void
@@ -182,11 +182,15 @@ struct TodayView: View {
         )
     }
 
-    /// Plans the meal unless one appeared since the strip was built (another path, a recurring copy) — never replaces it.
+    /// Plans the meal unless one appeared since the strip was built (another path, a recurring copy) — never replaces
+    /// it. A plan whose recipe is gone has nothing to cook, so the strip offers the meal and picking one replaces it.
     private func planMeal(_ recipe: RecipeModel, on date: Date, mealTime: MealTime = .dinner) {
-        guard mealPlanning.mealPlan(for: date, mealTime: mealTime) == nil else {
-            refresh()
-            return
+        if let existing = mealPlanning.mealPlan(for: date, mealTime: mealTime) {
+            guard existing.recipe(in: recipeStore.recipes) == nil, !existing.isCompleted else {
+                refresh()
+                return
+            }
+            mealPlanning.removeMealPlan(for: date, mealTime: mealTime)
         }
         mealPlanning.addMealPlan(MealPlanModel(
             recipeId: recipe.id, recipeName: recipe.name, date: date, mealTime: mealTime, servings: recipe.currentServings

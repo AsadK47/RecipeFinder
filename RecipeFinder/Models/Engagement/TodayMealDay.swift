@@ -2,7 +2,7 @@ import Foundation
 
 extension TodayFeed {
     /// The meal Today's hero is for. From late evening (9pm, or half an hour after a later "Dinner at") — or from 4pm
-    /// once tonight's planned dinner is cooked — it's tomorrow's breakfast, unless tonight's planned dinner is still
+    /// once tonight's planned dinner, or anything since 4pm, is cooked — it's tomorrow's breakfast, unless tonight's planned dinner is still
     /// open, which keeps the card until it's cooked or the day ends (the cook chose it; a late dinner is still dinner).
     /// "Cooked" is `MealPlanModel.wasCooked` — ticked, or its recipe was cooked that day without Made it.
     struct NextMeal: Equatable {
@@ -19,10 +19,18 @@ extension TodayFeed {
             eatAt: Int = TonightTiming.defaultEatAt, calendar: Calendar
         ) -> NextMeal {
             let minute = TonightTiming.minuteOfDay(date, calendar: calendar)
-            let dinners = todaysPlans.filter { $0.mealTime == .dinner }
+            // A plan whose recipe is gone has nothing to cook, so it can't hold the evening open.
+            let dinners = todaysPlans.filter {
+                $0.mealTime == .dinner && ($0.isCompleted || $0.recipe(in: recipes) != nil)
+            }
             let dinnerOpen = dinners.contains { !$0.wasCooked(in: recipes, calendar: calendar) }
-            // Tonight's planned dinner already cooked: nothing left today, so look ahead.
-            let dinnerDone = !dinners.isEmpty && !dinnerOpen
+            // Something cooked since 4pm without a plan (Cook this on a suggestion) is tonight's dinner too.
+            let cookedThisEvening = recipes.contains { recipe in
+                guard let cookedAt = recipe.lastCookedAt, calendar.isDate(cookedAt, inSameDayAs: date) else { return false }
+                return TonightTiming.minuteOfDay(cookedAt, calendar: calendar) >= dinnerStartsAt
+            }
+            // Tonight's dinner already cooked: nothing left today, so look ahead.
+            let dinnerDone = !dinnerOpen && (!dinners.isEmpty || cookedThisEvening)
             let tomorrow = NextMeal(slot: .breakfast, isTomorrow: true)
             if minute >= lateEvening(eatAt: eatAt) { return dinnerOpen ? .tonight : tomorrow }
             if minute >= dinnerStartsAt { return dinnerDone ? tomorrow : .tonight }

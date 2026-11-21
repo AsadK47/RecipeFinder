@@ -32,7 +32,7 @@ struct TodayDayStripCard: View {
             Button { tapped(meal) } label: {
                 Label(meal.text, systemImage: icon(meal))
                     .font(.subheadline.weight(meal.isNext ? .semibold : .regular))
-                    .adaptiveForegroundColor(opacity: meal.state == .passed ? 0.6 : 1)
+                    .adaptiveForegroundColor(opacity: meal.state == .passed ? AppTheme.subduedEmphasisOpacity : 1)
                     .lineLimit(1)
                     .padding(.horizontal, AppTheme.spacing10)
                     .padding(.vertical, AppTheme.spacing6)
