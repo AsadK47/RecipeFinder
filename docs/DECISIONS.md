@@ -5,6 +5,36 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Today — decide tonight, slice 3 (one nudge)** (landed 86d5811): `TodayNudge.pick` shows one thing: something going off *today*
+  (wasted by tomorrow; skipped once Today has moved on to tomorrow — no meal left to use it, a marinade can still go on) → tomorrow's first prep-ahead (miss it tonight and the cook's plan fails) → soonest use-soon.
+  One `TodayNudgeCard` (title Prep ahead / Use it up, recipe photo + small badge, "Your kitchen →" only for Use it up)
+  replaces `TodayPrepAheadRow` + the 3-row `TodayUseSoonCard` (file renamed). `UseSoon.pairs` / `PrepAhead.nudges`
+  unchanged (Plan deck etc. don't use them; kept for their tests). UI seed spinach moved to expire *today* so an
+  earlier test's tomorrow prep plan can't take the slot. Left out (WIP=1): whether a later-meal plan should outrank
+  the next meal's suggestion (CHALLENGES 21 Nov). **Pre-mortem:** (1) prep-ahead hidden behind a far-off use-soon →
+  `tomorrowsPrepBeatsSomethingGoingOffLater`; (2) nudge vanishes / wrong kind wired → `tomorrowsFirstPrepIsTodaysNudge`,
+  `kitchenItemsGoingOffArePairedWithARecipe` + UI 18-today-planned / 29-today-use-soon; (3) kitchen link lost →
+  `linksToKitchen` expectations + UI 47-today-kitchen-at-home.
+- **Today — decide tonight, slice 2 (next meal)** (landed cd999ad): the hero is for the next meal by the clock — breakfast 5–11,
+  lunch 11–4, dinner 4–9, then tomorrow's breakfast (small hours = that day's breakfast). Tonight's planned dinner, if
+  still open, keeps the card past 9pm (a late dinner is still dinner); a cooked planned dinner moves the card on from
+  4pm. Plans order: next meal, later meals, then earlier still-open ones (a missed breakfast never leads at 1pm).
+  Suggestions say their meal ("For breakfast · Ready in 15 minutes"); "Start by…"/"Dinner at" only for tonight's
+  dinner (a breakfast idea at 8am said "Start by 6:40 to eat at 7" — the owner's "not time aware"). Day strip: one
+  card, three tappable meals (open → pick a recipe for that meal; planned/cooked → open it; passed unplanned → dimmed
+  "—"). Rejected: a new `MealSlot` case for "tomorrow" (it drives category filters; the day is a separate fact).
+  TodayFeedTests' `now` pinned to 6pm (it used the real clock, so meal-aware ordering would depend on CI time).
+  **Pre-mortem:** (1) 9:30pm with dinner not cooked yet flips to breakfast → `anOpenPlannedDinnerKeepsTheEveningOnTonight`
+  + UI 21:00 evening-line assertion; (2) morning pick still shows dinner timing → `breakfastAndLunchIdeasGetNoDinnerClock`;
+  (3) strip plans the wrong day/meal late at night → `lateEveningShowsTomorrowWithNothingPassed` (date = tomorrow) +
+  `PlanningDay.mealTime` passed to the sheet and `planMeal`.
+- **Today — decide tonight, slice 1 (trim)** (landed 22a48d0): browsing leaves Today because Discover already deals the same picks
+  (`DiscoveryPool` cookAgain = recent + `RecipeRediscovery`, usesWhatYouHave, newToYou), and "Keep browsing →" sits
+  under tonight's card. `TrySomethingNew` deleted rather than moved: Discover's *New to you* covers never-cooked.
+  Starters shelf kept for new users (Today must never be empty on day one). `RecipeRediscovery` stays (Discover uses
+  it). **Pre-mortem:** (1) a cook loses quick access to recent dishes → Discover cookAgain tests + Recipes "Recently
+  cooked" row; (2) new user's Today goes empty → starters kept, new-user screenshot; (3) kitchen matches stop driving
+  tonight's pick → `unplannedDayUsesTheBestKitchenMatch` + `kitchenMatchesNeedHalfTheIngredients…`.
 - **Smell Batch E recipe-writes split** (landed 46d6749): split by job — single writes stay in `+RecipeWrites`,
   field mapping in `+RecipeSaveParameters`, seed + merge-restore in `+RecipeBatchWrites`. `updateRecipesInBackground`
   deliberately stays in `+RecipeWrites` until `agent/recently-deleted` lands (that green branch edits it; moving it

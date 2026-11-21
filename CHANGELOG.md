@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Today — decide tonight slice 3 one do-this-now nudge · 86d5811
+- For you: Today now shows one thing to do next — start tomorrow's marinade tonight, or use up the spinach before it goes off — with the recipe a tap away, so Today stays calm and to the point.
+- Behind the build: the choice of what comes first is a small tested model, and a reviewer and a challenger shaped it — late in the evening, tomorrow's prep now comes before food you can no longer cook today.
+
 ## 2026-11-21 · Today — decide tonight slice 2 next-meal hero · cd999ad
 - For you: Today now follows your day — breakfast ideas in the morning, lunch at midday, dinner in the evening and tomorrow's breakfast once dinner is done — and a new card shows breakfast, lunch and dinner at a glance, so you can plan any of them with a tap.
 - Behind the build: the meal-by-clock rules are a small tested model, and a reviewer and a challenger caught two edge cases before it shipped — a late-afternoon dessert no longer counts as dinner.

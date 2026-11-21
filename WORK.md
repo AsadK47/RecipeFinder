@@ -58,47 +58,16 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - 🐞 **Meal planning is buggy**: ✅ landed 0acb4fd (interactive session 2026-11-20). Skip-one-week → Needs owner.
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
-- Today: 🚧 **Today — decide tonight** — ✅ slice 1 browsing off Today landed 22a48d0 (builder 2026-11-21; leftover
-  branch agent/today-trim-shelves, auto-cleanup). ✅ Slice 2 next-meal hero + day strip landed cd999ad
-  (builder 2026-11-21; leftover branches agent/today-next-meal, -2, auto-cleanup). Left: one "do this now" nudge merging prep-ahead + use-soon
-  (cuts lines — item's "net lines down"); then screenshots morning/evening/new user.
+- Today: ✅ **Today — decide tonight** done — slice 3 one "do this now" nudge landed 86d5811 (builder 2026-11-21).
+  Leftover branches agent/today-trim-shelves, agent/today-next-meal, -2, agent/today-nudge (auto-cleanup).
+  Plan-vs-suggestion ordering → Needs owner.
 
 ## Next action
-Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Today slice 3 on `agent/today-nudge` — CI, screenshots
-16/18/29/47, reviewer + challenger, land; also decide whether a plan for a later meal should outrank the next meal's suggestion (CHALLENGES 21 Nov). Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
-to `privacy.html`.
+Inbox first if any new 🐞/🟡. Today — decide tonight done → Phase 3 built. Next: top Smell (after a merged Queue item),
+else the next "Between phases" item per BACKLOG Roadmap. Website session: add the §4.2 aisle-order bullet + §4.3 clause
+from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Today — decide tonight, slice 3 (one nudge):** `TodayNudge.pick` shows one thing: something going off *today*
-  (wasted by tomorrow) → tomorrow's first prep-ahead (miss it tonight and the cook's plan fails) → soonest use-soon.
-  One `TodayNudgeCard` (title Prep ahead / Use it up, recipe photo + small badge, "Your kitchen →" only for Use it up)
-  replaces `TodayPrepAheadRow` + the 3-row `TodayUseSoonCard` (file renamed). `UseSoon.pairs` / `PrepAhead.nudges`
-  unchanged (Plan deck etc. don't use them; kept for their tests). UI seed spinach moved to expire *today* so an
-  earlier test's tomorrow prep plan can't take the slot. Left out (WIP=1): whether a later-meal plan should outrank
-  the next meal's suggestion (CHALLENGES 21 Nov). **Pre-mortem:** (1) prep-ahead hidden behind a far-off use-soon →
-  `tomorrowsPrepBeatsSomethingGoingOffLater`; (2) nudge vanishes / wrong kind wired → `tomorrowsFirstPrepIsTodaysNudge`,
-  `kitchenItemsGoingOffArePairedWithARecipe` + UI 18-today-planned / 29-today-use-soon; (3) kitchen link lost →
-  `linksToKitchen` expectations + UI 47-today-kitchen-at-home.
-- **Today — decide tonight, slice 2 (next meal):** the hero is for the next meal by the clock — breakfast 5–11,
-  lunch 11–4, dinner 4–9, then tomorrow's breakfast (small hours = that day's breakfast). Tonight's planned dinner, if
-  still open, keeps the card past 9pm (a late dinner is still dinner); a cooked planned dinner moves the card on from
-  4pm. Plans order: next meal, later meals, then earlier still-open ones (a missed breakfast never leads at 1pm).
-  Suggestions say their meal ("For breakfast · Ready in 15 minutes"); "Start by…"/"Dinner at" only for tonight's
-  dinner (a breakfast idea at 8am said "Start by 6:40 to eat at 7" — the owner's "not time aware"). Day strip: one
-  card, three tappable meals (open → pick a recipe for that meal; planned/cooked → open it; passed unplanned → dimmed
-  "—"). Rejected: a new `MealSlot` case for "tomorrow" (it drives category filters; the day is a separate fact).
-  TodayFeedTests' `now` pinned to 6pm (it used the real clock, so meal-aware ordering would depend on CI time).
-  **Pre-mortem:** (1) 9:30pm with dinner not cooked yet flips to breakfast → `anOpenPlannedDinnerKeepsTheEveningOnTonight`
-  + UI 21:00 evening-line assertion; (2) morning pick still shows dinner timing → `breakfastAndLunchIdeasGetNoDinnerClock`;
-  (3) strip plans the wrong day/meal late at night → `lateEveningShowsTomorrowWithNothingPassed` (date = tomorrow) +
-  `PlanningDay.mealTime` passed to the sheet and `planMeal`.
-- **Today — decide tonight, slice 1 (trim):** browsing leaves Today because Discover already deals the same picks
-  (`DiscoveryPool` cookAgain = recent + `RecipeRediscovery`, usesWhatYouHave, newToYou), and "Keep browsing →" sits
-  under tonight's card. `TrySomethingNew` deleted rather than moved: Discover's *New to you* covers never-cooked.
-  Starters shelf kept for new users (Today must never be empty on day one). `RecipeRediscovery` stays (Discover uses
-  it). **Pre-mortem:** (1) a cook loses quick access to recent dishes → Discover cookAgain tests + Recipes "Recently
-  cooked" row; (2) new user's Today goes empty → starters kept, new-user screenshot; (3) kitchen matches stop driving
-  tonight's pick → `unplannedDayUsesTheBestKitchenMatch` + `kitchenMatchesNeedHalfTheIngredients…`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

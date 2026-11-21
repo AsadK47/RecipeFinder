@@ -56,6 +56,14 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21 (item pass: Today — decide tonight slice 3, one "do this now" nudge — fixed: at 10pm spinach "use by today" hid tonight's marinade → prep leads once Today has moved on to tomorrow; UI seeds could clash on a reused simulator (today's spinach vs the prep-ahead shot) → `-seed-tonight-plan` clears it; prep nudge kitchen-link absence asserted; ARCHITECTURE map)
+- ⚔️ [Flow] Two preps for tomorrow (overnight oats + tikka marinade) show only the first (breakfast) — merge cues ("Chill + marinate tonight · 2 for tomorrow") — cost if wrong: the second plan fails for want of a reminder (rare: two long-lead recipes on one day).
+- ⚔️ [Flow] Only one use-soon row shows; other items going off within 3 days, and the "Your kitchen →" link when the nudge is a prep, are off Today (expiry notifications remain) — cost if wrong: some food wasted unseen; watch Kitchen expiry → Today taps.
+- ⚔️ [Flow] The nudge can repeat the hero's recipe (from 9pm planned oats are both the hero and the prep nudge; a kitchen-match hero can be the use-soon recipe) — drop or skip a duplicate in `pick` — cost if wrong: one slot of Today says the same thing twice.
+- ⚔️ [Time] At 1am "tonight for tomorrow's dinner" means the day after (calendar day) — cost if wrong: prep a day late for a night owl.
+- ⚔️ [Tests] `testCaptureTodayUseSoon` assumes the next meal is still today; a manual Screenshots run after 9pm with a prep plan left on the simulator gets the prep nudge instead (nightly is 03:00 UTC, safe) — cost if wrong: one red manual run.
+- ⚔️ [Structure] `TodayNudge` (Models) carries SF Symbol names and titles — minor layer leak, same as `HeroReason.caption` — cost if wrong: none now.
+
 ## 2026-11-21 (item pass: Today — decide tonight slice 2, next-meal hero + day strip — fixed: any recipe cooked after 4pm (a dessert, tomorrow's oats) counted as dinner → mains/soups only; picking from the strip did nothing over a ticked plan whose recipe was deleted → replaces it; ARCHITECTURE Today map)
 - ⚔️ [Flow] Any plan outranks a suggestion for the next meal: 8am with only dinner planned → hero "Tonight: Curry"; 10pm with only tomorrow's dinner → "Tomorrow night" while the strip highlights breakfast — cost if wrong: owner still reads Today as not time-aware.
 - ⚔️ [Data] `wasCooked` matches any cook of that recipe that day, so leftovers of last night's curry for lunch tick tonight's curry plan — cost if wrong: a planned dinner leaves Today at 4pm.
