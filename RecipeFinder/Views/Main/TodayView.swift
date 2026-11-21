@@ -222,11 +222,7 @@ struct TodayView: View {
                 onOpen: { open(hero.recipe) },
                 onCook: { cook(hero.recipe) }
             )
-            TodayKeepBrowsingRow {
-                recipesMode = .discover
-                discoverRequests &+= 1
-                onOpen(.recipes)
-            }
+            TodayKeepBrowsingRow(onBrowse: browse)
             if snapshot.week.hasOpenDinner, !recipeStore.recipes.isEmpty {
                 TodayPlanWeekRow(onPlan: onPlanWeek)
             }
@@ -235,6 +231,8 @@ struct TodayView: View {
                 tab: .plan, title: "Plan tonight", subtitle: "Pick something for dinner and it shows up here.",
                 color: .blue, onOpen: onOpen
             )
+            // No pick tonight (slow or untimed recipes, nothing planned): Discover is where the recipes are.
+            TodayKeepBrowsingRow(lead: "Looking for ideas?", onBrowse: browse)
         }
 
         ForEach(feed.prepAhead, id: \.recipe.id) { nudge in
@@ -271,6 +269,12 @@ struct TodayView: View {
         withAnimation(.easeInOut(duration: 0.25)) {
             tonightRecipeID = feed.nextTonightPick(after: current.recipe.id)?.recipe.id
         }
+    }
+
+    private func browse() {
+        recipesMode = .discover
+        discoverRequests &+= 1
+        onOpen(.recipes)
     }
 
     private func open(_ recipe: RecipeModel) {

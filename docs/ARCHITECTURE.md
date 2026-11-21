@@ -184,8 +184,8 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
 
 - `Views/Main/TodayView.swift` reads recipes, meal plans, kitchen, cooking streak and badges from the environment and
   rebuilds a `TodaySnapshot` (`Models/Engagement/TodaySnapshot.swift`) on each data change, not in `body`.
-- `TodaySnapshot.make` composes pure parts: `TodayFeed` (Tonight hero + Shuffle alternatives, shelves),
-  `TodayWeek` (seven-day strip), `TodayProgress`, and the weekly `TrySomethingNew` pick (nil for new users).
+- `TodaySnapshot.make` composes pure parts: `TodayFeed` (Tonight hero + Shuffle alternatives, prep-ahead,
+  use it up, new-user starters), `TodayWeek` (seven-day strip) and `TodayProgress`. Browsing lives on Recipes → Discover.
 - `TodayFeed` picks Tonight in order: today's plans, kitchen matches, then quick recipes. Quick picks use a stable
   per-day/meal rank (`dailyRank`, FNV-1a) and `MealSlot` by clock (breakfast 5–11, lunch 11–16, else dinner).
 - Card views live in `Views/Main/Today*.swift` (`TodaySections.swift`, `TodayWeekCard`, `TodayProgressCard`, …).

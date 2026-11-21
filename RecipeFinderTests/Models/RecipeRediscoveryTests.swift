@@ -63,7 +63,7 @@ import Foundation
     }
 }
 
-/// The full stale list behind Today's Rediscover shelf.
+/// The full stale list behind Discover's "Cook it again" chapter.
 @Suite struct RecipeRediscoveryRankedTests {
 
     @Test func ranksLovedFirstThenLongestCold() {

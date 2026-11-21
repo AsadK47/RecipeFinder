@@ -68,7 +68,7 @@ enum GroceriesMode: String, CaseIterable, Identifiable {
 
     /// Reminders and badges that open Groceries land on the side they're about: an expiry reminder on At home,
     /// everything else (groceries reminder, shopping badge) on To buy. `type` is the notification's `userInfo["type"]`.
-    /// A link that names a side (Today's kitchen shelves) gets that side.
+    /// A link that names a side (Today's Use it up) gets that side.
     static func side(openedBy type: String?) -> GroceriesMode {
         if type == NotificationKind.expiry.rawValue { return .atHome }
         return type.flatMap(GroceriesMode.init(rawValue:)) ?? .toBuy

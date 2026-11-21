@@ -146,7 +146,7 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
         XCTAssertTrue(element(app, id: "groceries.atHome").waitForExistence(timeout: 5),
                       "The In kitchen tag should open At home.")
 
-        // Leave the shared simulator as it was (later screenshots and Today shelves read the kitchen and list).
+        // Leave the shared simulator as it was (later screenshots and Today read the kitchen and list).
         removeRow(app, named: "Saffron threads")
         checkpoint(app, "after removing the kitchen test item")
         tapWhenReady(app.buttons["To buy"], "The switch should lead back to the shopping list.")

@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Groceries' *At home* side: what's in the kitchen, by category. It powers Today's
-/// "Fits your kitchen" and use-it-up, so it sits one tap from the shopping list rather than behind a menu.
+/// Groceries' *At home* side: what's in the kitchen, by category. It powers Tonight's
+/// kitchen picks, Use it up and Discover's "Uses what you have", so it sits one tap from the shopping list rather than behind a menu.
 struct KitchenAtHomeView: View {
     @Binding var collapsed: Set<String>
     let onAddIngredient: () -> Void

@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Today's "Use it up": kitchen items going off soon, each with a recipe that uses them. Tapping a row opens the recipe.
-/// One card with photo rows, so it sits calmly between the Tonight card and the shelves.
+/// One card with photo rows, so it sits calmly under the Tonight card.
 struct TodayUseSoonCard: View {
     let pairs: [UseSoonPair]
     let onOpen: (RecipeModel) -> Void
@@ -63,7 +63,7 @@ struct TodayUseSoonCard: View {
     }
 }
 
-/// A Today section title with an optional "Your kitchen →" link on the right, for the sections the kitchen powers,
+/// A Today section title with an optional "Your kitchen →" link on the right, for a section the kitchen powers,
 /// so the cook can see and change what they're built from (Kitchen you can find, owner 2026-11-17).
 struct TodaySectionHeader: View {
     let title: String

@@ -94,12 +94,14 @@ struct TodayShortcutCard: View {
 /// Under tonight's pick: when it doesn't appeal, one tap opens Recipes on Discover to keep looking (owner 2026-11-16,
 /// option D — Today stays one pick; the endless feed lives on Recipes).
 struct TodayKeepBrowsingRow: View {
+    /// "Not feeling it?" under a pick; with no pick to turn down, an invitation instead.
+    var lead = "Not feeling it?"
     let onBrowse: () -> Void
 
     var body: some View {
         Button(action: onBrowse) {
             // One Text, so large type wraps as a sentence with the arrow at its end.
-            (Text("Not feeling it? ").foregroundStyle(.secondary)
+            (Text("\(lead) ").foregroundStyle(.secondary)
                 + Text("Keep browsing \(Image(systemName: "arrow.right"))").fontWeight(.semibold))
                 .font(.subheadline)
                 .adaptiveForegroundColor()
@@ -110,7 +112,7 @@ struct TodayKeepBrowsingRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Not feeling it? Keep browsing")
+        .accessibilityLabel("\(lead) Keep browsing")
         .accessibilityHint("Opens Discover in Recipes")
         .accessibilityIdentifier("today.keepBrowsing")
     }

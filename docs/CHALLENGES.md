@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21 (item pass: Today — decide tonight slice 1, browsing off Today — fixed: a returning cook with no pick tonight was left with no recipe and no way to Discover → "Looking for ideas? Keep browsing →" under Plan tonight; 9 stale comments/docs)
+- ⚔️ [Flow] The weekly never-cooked pick is gone, not moved: Discover's *New to you* isn't ranked own-before-samples, reshuffles each launch and sits ~10th chapter — rank own uncooked first, or add them to Tonight's Shuffle — cost if wrong: saved-to-cook-someday recipes lose their steady nudge (watch Today → Cook this).
+  → Owner:
+- ⚔️ [Flow] "Your kitchen →" from Today now shows only on Use it up (needs dated items going off); Discover's *Uses what you have* has no link — put it on the hero when its reason is a kitchen match — cost if wrong: At home is one more tap (Groceries switch).
+  → Owner:
+- ⚔️ [Coverage] Discover needs ≥2 recipes per chapter, so one lone cooked/matching recipe that isn't tonight's pick shows nowhere; *Cook it again* lists recent before old, so old loves fall past 8 tiles when many are recent — cost if wrong: one fewer resurfaced dish for small libraries.
+  → Owner:
+- ⚔️ [Tests] The UI absence check (`testCaptureTodayProgress`) would also pass on main when seeds leave shelves empty, and runs nightly only; the no-pick Today path has a feed test but no UI test — cost if wrong: a returning shelf slips in unnoticed.
+  → Owner:
+
 ## 2026-11-21 (item pass: Smell Batch E recipe-writes split — fixed: 4 stale/false doc comments; code byte-identical, merges clean with agent/recently-deleted)
 - ⚔️ [Simplify] `RecipeSaveParameters`' 49-line memberwise init has zero callers (all use `init(from:)`) — delete — cost if wrong: none found.
   → Owner:

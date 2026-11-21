@@ -76,6 +76,14 @@ import Foundation
         #expect(feed([recipe("Soup", ingredients: ["leek"], prepTime: "1 hr")]).hero == nil)
     }
 
+    @Test func aReturningCookWithOnlySlowRecipesHasNoHero() {
+        // Today then shows "Plan tonight" + "Looking for ideas? Keep browsing →" (it used to lean on the shelves).
+        let stew = recipe("Stew", cookCount: 1, lastCookedAt: daysAgo(3), prepTime: "2 hr")
+        let result = feed([stew, recipe("Roast", prepTime: "3 hr")])
+        #expect(result.hero == nil)
+        #expect(!result.isNewUser)
+    }
+
     @Test func noPlanAndEmptyKitchenFallsBackToAQuickRecipe() {
         let slow = recipe("Stew", prepTime: "2 hr"), quick = recipe("Omelette")
         #expect(feed([slow, quick]).hero == TodayFeed.Hero(recipe: quick, reason: .quick(minutes: 15)))

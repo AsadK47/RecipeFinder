@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Today's progress row (streak, cooks this week, next badge) and the weekly "Try something new" pick.
+/// Today's progress row (streak, cooks this week, next badge).
 @Suite struct TodayProgressTests {
 
     private let cal: Calendar = {
