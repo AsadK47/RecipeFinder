@@ -168,7 +168,7 @@ struct WeekDinnersView: View {
             if night.isToday {
                 Text("Tonight")
                     .font(.caption2.weight(.bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(AppTheme.onAccent)
                     .padding(.horizontal, AppTheme.spacing8)
                     .padding(.vertical, 2)
                     .background(Capsule().fill(AppTheme.accentColor))

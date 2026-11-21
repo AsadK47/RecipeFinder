@@ -118,7 +118,7 @@ private struct WeekDayCell: View {
                     Text(dayNumber)
                         .font(.system(size: AppTheme.fontSize14, weight: isSelected || isToday ? .bold : .regular))
                         .foregroundStyle(
-                            isSelected ? .white
+                            isSelected ? AppTheme.onAccent
                             : isToday ? AppTheme.accentColor
                             : AppTheme.adaptiveEmphasis()
                         )

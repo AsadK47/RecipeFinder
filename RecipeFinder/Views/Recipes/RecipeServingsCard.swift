@@ -47,7 +47,7 @@ struct RecipeServingsCard: View {
                     // low-contrast accent-on-glass text was hard to read.
                     Text(String(format: "%.1fx", recipe.scaleFactor))
                         .font(.caption.weight(.bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(AppTheme.onAccent)
                         .padding(.horizontal, AppTheme.spacing6)
                         .padding(.vertical, AppTheme.spacing2)
                         .background(Capsule().fill(AppTheme.accentColor))
@@ -91,7 +91,7 @@ struct RecipeServingsCard: View {
             Text(label)
                 .font(.subheadline)
                 .fontWeight(isActive ? .bold : .medium)
-                .foregroundStyle(isActive ? .white : .primary)
+                .foregroundStyle(isActive ? AppTheme.onAccent : .primary)
                 .frame(maxWidth: .infinity)
                 .frame(height: AppTheme.height36)
                 .background(

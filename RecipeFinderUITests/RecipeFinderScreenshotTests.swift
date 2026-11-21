@@ -499,19 +499,28 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(gear.waitForExistence(timeout: 5), "Me should show the Settings gear at AX sizes.")
         gear.tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
+        // Lesson 23: hittable is true at the first peeking pixel, so scroll until the row clears the tab bar.
+        let tabTop = app.tabBars.firstMatch.frame.minY
+        func clearOfTabBar(_ element: XCUIElement) -> Bool {
+            element.exists && element.isHittable && element.frame.maxY < tabTop
+        }
         let appearance = app.staticTexts["Appearance & Theme"].firstMatch
-        for _ in 0..<6 where !appearance.isHittable { app.swipeUp() }
+        for _ in 0..<8 where !clearOfTabBar(appearance) { app.swipeUp() }
         checkpoint(app, "before Appearance & Theme (AX size)")
         appearance.tap()
-        let teal = app.buttons["theme.Teal"]
-        XCTAssertTrue(teal.waitForExistence(timeout: 5), "Appearance should show the picker at AX sizes.")
+        XCTAssertTrue(app.staticTexts["Color Theme"].waitForExistence(timeout: 5), "Appearance should open at AX sizes.")
+        // The swatches sit in a LazyVGrid: rows below the fold aren't built until scrolled to.
         for theme in themes {
-            XCTAssertEqual(app.buttons["theme.\(theme)"].label, theme, "VoiceOver should read the swatch's name.")
+            let swatch = app.buttons["theme.\(theme)"]
+            for _ in 0..<8 where !clearOfTabBar(swatch) { app.swipeUp() }
+            XCTAssertTrue(swatch.exists, "The picker should offer \(theme) at AX sizes.")
+            XCTAssertEqual(swatch.label, theme, "VoiceOver should read the swatch's name.")
+            if theme == "Teal" {
+                XCTAssertTrue(swatch.isSelected, "The default theme should read as selected.")
+                settle(0.8)
+                snap(app, "63-theme-picker-ax")
+            }
         }
-        XCTAssertTrue(teal.isSelected, "The default theme should read as selected.")
-        for _ in 0..<4 where !teal.isHittable { app.swipeUp() }
-        settle(0.8)
-        snap(app, "63-theme-picker-ax")
         app.terminate()
     }
 

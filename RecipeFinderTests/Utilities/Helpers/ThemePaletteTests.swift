@@ -207,6 +207,20 @@ struct ThemePaletteTests {
         #expect(colours.prefix(2).allSatisfy { hueDistance($0.h, swatch.hue) <= 5 })
     }
 
+    @Test("Increase Contrast accents stay tellable apart (ΔE OK ≥ 0.05 in both modes)")
+    func highContrastAccentsAreTellableApart() {
+        // 0.05, not the standard 0.06: at L 0.42 sRGB can't hold Saffron's and Honey's chroma (0.054 apart), and
+        // Dark's Tomato/Saffron land at 0.059. Names sit beside every swatch (CHALLENGES 21 Nov).
+        for dark in [false, true] {
+            let accents = Self.themes.map { $0.swatch.accent(dark: dark, highContrast: true) }
+            for (i, a) in accents.enumerated() {
+                for b in accents[(i + 1)...] {
+                    #expect(a.distance(to: b) >= 0.05, "\(a) vs \(b)")
+                }
+            }
+        }
+    }
+
     @Test("Standard contrast returns the palette unchanged", arguments: themes)
     func standardContrastIsThePalette(theme: AppTheme.ThemeType) {
         let swatch = theme.swatch

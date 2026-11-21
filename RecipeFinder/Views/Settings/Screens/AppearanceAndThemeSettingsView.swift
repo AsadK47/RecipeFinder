@@ -75,10 +75,11 @@ struct AppearanceAndThemeSettingsView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Circle()
                     .fill(AppTheme.accentColor(for: theme))
-                    .frame(width: swatchSize, height: swatchSize)
+                    // Capped: at AX sizes a fully scaled circle (~105pt) would truncate "Raspberry".
+                    .frame(width: min(swatchSize, AppTheme.iconSize48), height: min(swatchSize, AppTheme.iconSize48))
                     .overlay(
                         Circle()
-                            .strokeBorder(ThemeStore.shared.theme == theme ? Color.white : Color.clear, lineWidth: 2)
+                            .strokeBorder(ThemeStore.shared.theme == theme ? AppTheme.onAccent : Color.clear, lineWidth: 2)
                     )
 
                 Text(theme.rawValue)

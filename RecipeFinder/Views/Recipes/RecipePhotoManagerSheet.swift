@@ -102,7 +102,7 @@ struct RecipePhotoManagerSheet: View {
                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(accent)
                     )
-                    .foregroundStyle(.white)
+                    .foregroundStyle(AppTheme.onAccent)
                     .font(.subheadline.weight(.semibold))
             }
             .buttonStyle(.plain)

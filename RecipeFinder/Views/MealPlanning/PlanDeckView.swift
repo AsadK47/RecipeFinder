@@ -143,7 +143,7 @@ struct PlanDeckView: View {
             let planning = drag.width > 0
             Label(planning ? "Plan it" : "Not this one", systemImage: planning ? "heart.fill" : "xmark")
                 .font(.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(planning ? AppTheme.onAccent : .white)
                 .padding(.horizontal, AppTheme.spacing16)
                 .padding(.vertical, AppTheme.spacing8)
                 .background(Capsule().fill(planning ? AppTheme.accentColor : AppTheme.destructiveFill))
@@ -196,7 +196,8 @@ struct PlanDeckView: View {
     private var finished: some View {
         let copy = deck.finishedCopy
         return VStack(spacing: AppTheme.spacing16) {
-            IconBadge(systemName: "calendar.badge.checkmark", tint: AppTheme.accentColor, diameter: 72, style: .solid)
+            IconBadge(systemName: "calendar.badge.checkmark", tint: AppTheme.accentColor, diameter: 72, style: .solid,
+                      glyph: AppTheme.onAccent)
                 .accessibilityHidden(true)
             Text(copy.title)
                 .font(.title2.weight(.bold))
@@ -274,7 +275,7 @@ private struct DeckControl: View {
             VStack(spacing: AppTheme.spacing6) {
                 Image(systemName: systemImage)
                     .font(.system(size: diameter * 0.36, weight: .bold))
-                    .foregroundStyle(style == .primary ? Color.white : AppTheme.textColor(opacity: 1))
+                    .foregroundStyle(style == .primary ? AppTheme.onAccent : AppTheme.textColor(opacity: 1))
                     .frame(width: diameter, height: diameter)
                     .background {
                         if style == .primary {

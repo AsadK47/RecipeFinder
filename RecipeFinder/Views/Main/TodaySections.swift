@@ -84,7 +84,7 @@ struct TodayHeroCard: View {
                 Image(systemName: "arrow.right")
             }
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(.white)
+            .foregroundStyle(AppTheme.onAccent)
             .padding(.horizontal, AppTheme.spacing16)
             .padding(.vertical, AppTheme.spacing10)
             .background(Capsule().fill(AppTheme.accentColor))

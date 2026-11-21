@@ -55,7 +55,7 @@ struct GroceryStoreFilterBar: View {
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .lineLimit(1)
-                .foregroundStyle(isSelected ? Color.white : AppTheme.adaptiveEmphasis())
+                .foregroundStyle(isSelected ? AppTheme.onAccent : AppTheme.adaptiveEmphasis())
                 .chipStyle(isSelected ? AppTheme.accentColor : AppTheme.adaptiveFilterChip)
         }
         .buttonStyle(.plain)

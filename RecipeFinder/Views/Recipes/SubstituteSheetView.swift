@@ -34,7 +34,7 @@ struct SubstituteSheetView: View {
             Text("\(number)")
                 .font(.caption)
                 .fontWeight(.bold)
-                .foregroundStyle(.white)
+                .foregroundStyle(AppTheme.onAccent)
                 .frame(width: 22, height: 22)
                 .background(Circle().fill(AppTheme.accentColor))
                 .padding(.top, AppTheme.spacing2)

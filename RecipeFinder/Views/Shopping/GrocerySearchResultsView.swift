@@ -74,7 +74,7 @@ struct GrocerySearchResultsView: View {
                     } else {
                         Text("Add")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(AppTheme.onAccent)
                             .frame(width: 52, height: 32)
                             .background(Capsule().fill(AppTheme.accentColor))
                     }

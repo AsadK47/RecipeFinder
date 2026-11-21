@@ -6,7 +6,7 @@ extension AppTheme {
     private static let gradientCache = MemoCache<String, LinearGradient>(maxSize: AppTheme.ThemeType.allCases.count * 4)
 
     static func backgroundGradient(
-        for theme: ThemeType, colorScheme: ColorScheme, contrast: ColorSchemeContrast = .standard
+        for theme: ThemeType, colorScheme: ColorScheme, contrast: ColorSchemeContrast
     ) -> LinearGradient {
         let dark = colorScheme == .dark
         let highContrast = contrast == .increased
