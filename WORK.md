@@ -64,11 +64,21 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (cuts lines — item's "net lines down"); then screenshots morning/evening/new user.
 
 ## Next action
-Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Today slice 3 — one "do this now" nudge
-merging prep-ahead + use-soon; also decide whether a plan for a later meal should outrank the next meal's suggestion (CHALLENGES 21 Nov). Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
+Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Today slice 3 on `agent/today-nudge` — CI, screenshots
+16/18/29/47, reviewer + challenger, land; also decide whether a plan for a later meal should outrank the next meal's suggestion (CHALLENGES 21 Nov). Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
 to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Today — decide tonight, slice 3 (one nudge):** `TodayNudge.pick` shows one thing: something going off *today*
+  (wasted by tomorrow) → tomorrow's first prep-ahead (miss it tonight and the cook's plan fails) → soonest use-soon.
+  One `TodayNudgeCard` (title Prep ahead / Use it up, recipe photo + small badge, "Your kitchen →" only for Use it up)
+  replaces `TodayPrepAheadRow` + the 3-row `TodayUseSoonCard` (file renamed). `UseSoon.pairs` / `PrepAhead.nudges`
+  unchanged (Plan deck etc. don't use them; kept for their tests). UI seed spinach moved to expire *today* so an
+  earlier test's tomorrow prep plan can't take the slot. Left out (WIP=1): whether a later-meal plan should outrank
+  the next meal's suggestion (CHALLENGES 21 Nov). **Pre-mortem:** (1) prep-ahead hidden behind a far-off use-soon →
+  `tomorrowsPrepBeatsSomethingGoingOffLater`; (2) nudge vanishes / wrong kind wired → `tomorrowsFirstPrepIsTodaysNudge`,
+  `kitchenItemsGoingOffArePairedWithARecipe` + UI 18-today-planned / 29-today-use-soon; (3) kitchen link lost →
+  `linksToKitchen` expectations + UI 47-today-kitchen-at-home.
 - **Today — decide tonight, slice 2 (next meal):** the hero is for the next meal by the clock — breakfast 5–11,
   lunch 11–4, dinner 4–9, then tomorrow's breakfast (small hours = that day's breakfast). Tonight's planned dinner, if
   still open, keeps the card past 9pm (a late dinner is still dinner); a cooked planned dinner moves the card on from

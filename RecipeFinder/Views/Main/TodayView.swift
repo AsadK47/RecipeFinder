@@ -279,12 +279,9 @@ struct TodayView: View {
             )
         }
 
-        ForEach(feed.prepAhead, id: \.recipe.id) { nudge in
-            TodayPrepAheadRow(nudge: nudge) { open(nudge.recipe) }
-        }
-
-        if !feed.useSoon.isEmpty {
-            TodayUseSoonCard(pairs: feed.useSoon, onOpen: open, onOpenKitchen: openKitchen)
+        if let nudge = feed.nudge {
+            TodayNudgeCard(nudge: nudge, onOpen: { open(nudge.recipe) },
+                           onOpenKitchen: nudge.linksToKitchen ? openKitchen : nil)
         }
 
         let week = snapshot.week

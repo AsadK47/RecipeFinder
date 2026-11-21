@@ -321,21 +321,32 @@ import Foundation
         let oats = recipe("Overnight oats", steps: ["Mix and chill overnight."])
         let salad = recipe("Salad", steps: ["Toss."])
         let done = recipe("Bread", steps: ["Leave to rise overnight."])
-        let result = TodayFeed.make(
+        let nudges = PrepAhead.nudges(
             recipes: [tikka, oats, salad, done],
-            todaysPlans: [],
-            kitchenItemNames: [],
             tomorrowsPlans: [
                 plan(tikka, .dinner, on: tomorrow), plan(oats, .breakfast, on: tomorrow),
                 plan(salad, .lunch, on: tomorrow), plan(done, .snack, completed: true, on: tomorrow),
-            ],
-            now: now, calendar: cal
+            ]
         )
-        #expect(result.prepAhead == [
+        #expect(nudges == [
             PrepAheadNudge(recipe: oats, mealTime: .breakfast, cue: "Chill"),
             PrepAheadNudge(recipe: tikka, mealTime: .dinner, cue: "Marinate"),
         ])
-        #expect(result.prepAhead.last?.message == "Marinate tonight for tomorrow's dinner")
+        #expect(nudges.last?.message == "Marinate tonight for tomorrow's dinner")
+    }
+
+    @Test func tomorrowsFirstPrepIsTodaysNudge() {
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: now) ?? now
+        let tikka = recipe("Tikka", steps: ["Marinate the chicken overnight.", "Grill."])
+        let oats = recipe("Overnight oats", steps: ["Mix and chill overnight."])
+        let result = TodayFeed.make(
+            recipes: [tikka, oats], todaysPlans: [], kitchenItemNames: [],
+            tomorrowsPlans: [plan(tikka, .dinner, on: tomorrow), plan(oats, .breakfast, on: tomorrow)],
+            now: now, calendar: cal
+        )
+        #expect(result.nudge == .prepAhead(PrepAheadNudge(recipe: oats, mealTime: .breakfast, cue: "Chill")))
+        #expect(result.nudge?.title == "Prep ahead")
+        #expect(result.nudge?.linksToKitchen == false)
     }
 
     @Test func sameRecipeTwiceTomorrowIsNudgedOnce() {
@@ -355,7 +366,48 @@ import Foundation
         let result = TodayFeed.make(
             recipes: [saag], todaysPlans: [], kitchenItemNames: [], inventoryItems: [spinach], now: now, calendar: cal
         )
-        #expect(result.useSoon.map(\.recipe) == [saag])
-        #expect(result.useSoon.first?.itemNames == ["Spinach"])
+        guard case .useSoon(let pair) = result.nudge else {
+            Issue.record("Spinach going off tomorrow should be Today's nudge, got \(String(describing: result.nudge))")
+            return
+        }
+        #expect(pair.recipe == saag)
+        #expect(pair.itemNames == ["Spinach"])
+        #expect(result.nudge?.message == "Spinach: use by tomorrow")
+        #expect(result.nudge?.linksToKitchen == true)
+    }
+
+    @Test func nothingToDoMeansNoNudge() {
+        #expect(feed([recipe("Curry")]).nudge == nil)
+    }
+
+    // MARK: Do this now — one nudge
+
+    private func prep(_ name: String) -> PrepAheadNudge {
+        PrepAheadNudge(recipe: recipe(name), mealTime: .dinner, cue: "Marinate")
+    }
+
+    private func useSoon(_ item: String, daysLeft: Int) -> UseSoonPair {
+        UseSoonPair(itemNames: [item], daysLeft: daysLeft, when: daysLeft == 0 ? "today" : "tomorrow", recipe: recipe(item + " dish"))
+    }
+
+    @Test func somethingGoingOffTodayBeatsTomorrowsPrep() {
+        let spinach = useSoon("Spinach", daysLeft: 0)
+        #expect(TodayNudge.pick(prepAhead: [prep("Tikka")], useSoon: [spinach]) == .useSoon(spinach))
+    }
+
+    @Test func tomorrowsPrepBeatsSomethingGoingOffLater() {
+        let tikka = prep("Tikka")
+        #expect(TodayNudge.pick(prepAhead: [tikka], useSoon: [useSoon("Lemons", daysLeft: 1)]) == .prepAhead(tikka))
+    }
+
+    @Test func onlyTheFirstOfEachKindIsShown() {
+        let tikka = prep("Tikka"), lamb = prep("Lamb")
+        #expect(TodayNudge.pick(prepAhead: [tikka, lamb], useSoon: []) == .prepAhead(tikka))
+        let lemons = useSoon("Lemons", daysLeft: 1), feta = useSoon("Feta", daysLeft: 2)
+        #expect(TodayNudge.pick(prepAhead: [], useSoon: [lemons, feta]) == .useSoon(lemons))
+    }
+
+    @Test func noPrepAndNothingGoingOffMeansNoNudge() {
+        #expect(TodayNudge.pick(prepAhead: [], useSoon: []) == nil)
     }
 }

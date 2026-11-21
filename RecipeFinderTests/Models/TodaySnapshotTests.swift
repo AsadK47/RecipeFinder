@@ -80,7 +80,7 @@ import Foundation
     @Test func tomorrowsPlansReachPrepAhead() {
         let lamb = recipe("Lamb", steps: ["Marinate the lamb overnight.", "Roast."])
         let result = snapshot([lamb], plans: [plan(lamb, on: 1)])
-        #expect(result.feed.prepAhead.map(\.recipe) == [lamb])
+        #expect(result.feed.nudge?.recipe == lamb)
     }
 
     @Test func theWeekShowsPlansOnLaterDays() {

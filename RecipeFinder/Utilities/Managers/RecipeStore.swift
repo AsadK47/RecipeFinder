@@ -256,13 +256,13 @@ final class RecipeStore: RecipeStoring {
                       inventory: [])
     }
 
-    /// UI-test hook (`-seed-use-soon`): spinach going off tomorrow and lemons in three days, so Screenshots can
-    /// capture Today's "Use it up" card. The bundled recipes use both. Replaced each launch so a reused simulator
+    /// UI-test hook (`-seed-use-soon`): spinach going off today and lemons in three days, so Screenshots can
+    /// capture Today's "Use it up" nudge (going off today outranks a prep-ahead plan an earlier test left for tomorrow). The bundled recipes use both. Replaced each launch so a reused simulator
     /// never keeps yesterday's dates.
     private func seedUITestUseSoonIfRequested() {
         guard ProcessInfo.processInfo.arguments.contains("-seed-use-soon") else { return }
         let kitchen = KitchenInventoryManager.shared
-        for (name, days) in [("Spinach", 1), ("Lemons", 3)] {
+        for (name, days) in [("Spinach", 0), ("Lemons", 3)] {
             for stale in kitchen.inventoryItems where stale.name == name { kitchen.removeInventoryItem(stale) }
             guard let expiry = Calendar.current.date(byAdding: .day, value: days, to: Date()) else { continue }
             kitchen.addInventoryItem(KitchenInventoryModel(

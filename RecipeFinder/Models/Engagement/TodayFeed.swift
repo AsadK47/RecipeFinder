@@ -47,10 +47,8 @@ struct TodayFeed: Equatable {
     let isNewUser: Bool
     /// Sample recipes to try, shown to new users.
     let starters: [RecipeModel]
-    /// Tomorrow's planned meals that need starting tonight (marinate, soak, defrost…).
-    let prepAhead: [PrepAheadNudge]
-    /// Kitchen items going off in the next few days, each with a recipe that uses them.
-    let useSoon: [UseSoonPair]
+    /// The one thing to do now: tomorrow's prep or something going off soon (see `TodayNudge.pick`).
+    let nudge: TodayNudge?
 
     static let shelfLimit = 10
     static let quickLimitMinutes = 30
@@ -121,9 +119,11 @@ struct TodayFeed: Equatable {
             quickCount: recipes.filter { quickMinutes(of: $0) != nil }.count,
             isNewUser: isNewUser,
             starters: Array(starters.prefix(shelfLimit)),
-            prepAhead: PrepAhead.nudges(recipes: recipes, tomorrowsPlans: tomorrowsPlans),
-            useSoon: UseSoon.pairs(
-                items: inventoryItems, recipes: recipes, kitchenItemNames: kitchenItemNames, now: now, calendar: calendar
+            nudge: TodayNudge.pick(
+                prepAhead: PrepAhead.nudges(recipes: recipes, tomorrowsPlans: tomorrowsPlans),
+                useSoon: UseSoon.pairs(
+                    items: inventoryItems, recipes: recipes, kitchenItemNames: kitchenItemNames, now: now, calendar: calendar
+                )
             )
         )
     }

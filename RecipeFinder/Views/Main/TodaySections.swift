@@ -202,44 +202,6 @@ struct TodayShelf: View {
     }
 }
 
-/// "Prep ahead" nudge: a planned meal tomorrow that needs starting tonight. Tapping opens the recipe.
-struct TodayPrepAheadRow: View {
-    let nudge: PrepAheadNudge
-    let onOpen: () -> Void
-
-    var body: some View {
-        Button(action: onOpen) {
-            HStack(spacing: AppTheme.spacing16) {
-                IconBadge(systemName: "timer", tint: .orange, diameter: 44, iconSize: AppTheme.fontSize18, style: .tinted)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                    Text(nudge.message)
-                        .font(.caption.weight(.semibold))
-                        .adaptiveSecondaryForeground()
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(nudge.recipe.name)
-                        .font(.body.weight(.semibold))
-                        .adaptiveForegroundColor()
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
-            }
-            .padding(AppTheme.spacing16)
-            .appCard()
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Prep ahead: \(nudge.message). \(nudge.recipe.name)")
-        .accessibilityHint("Opens the recipe")
-        .accessibilityIdentifier("today.prepAhead")
-    }
-}
-
 /// "Copied a recipe link?" card. The link is read only through `PasteButton` — the user's tap is the consent, so iOS
 /// shows no "Allow Paste" prompt — and goes straight to the link importer.
 struct TodayClipboardCard: View {

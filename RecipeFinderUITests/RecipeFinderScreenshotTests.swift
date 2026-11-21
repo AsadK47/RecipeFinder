@@ -465,7 +465,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         XCTAssertTrue(hero.waitForExistence(timeout: 10), "Today should lead with a Tonight card.")
         XCTAssertTrue(hero.label.contains("Planned for tonight"), "The Tonight card should be the planned dinner.")
         // Tabs 2/3 slice 4: tomorrow's seeded dinner needs starting tonight, so Today nudges it.
-        let prepAhead = app.descendants(matching: .any).matching(identifier: "today.prepAhead").firstMatch
+        let prepAhead = app.buttons.matching(identifier: "today.nudge").firstMatch
         XCTAssertTrue(prepAhead.waitForExistence(timeout: 5), "Today should nudge tomorrow's prep-ahead dinner.")
         XCTAssertTrue(prepAhead.label.contains("tonight for tomorrow's dinner"), "The nudge should say when to prep.")
         settle()
@@ -555,15 +555,15 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         let allowPrompt = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Don’t Allow"]
         if allowPrompt.waitForExistence(timeout: 5) { allowPrompt.tap() }
         dismissBadgeSheet(app)
-        let row = app.buttons.matching(identifier: "today.useSoon.row").firstMatch
+        let row = app.buttons.matching(identifier: "today.nudge").firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 10), "Today should pair spinach going off with a recipe.")
-        XCTAssertTrue(row.label.contains("Spinach: use by tomorrow"), "The row should say when to use the spinach.")
+        XCTAssertTrue(row.label.contains("Spinach: use by today"), "The nudge should say when to use the spinach.")
         for _ in 0..<3 where !row.isHittable { app.swipeUp() }
         settle()
         snap(app, "29-today-use-soon")
 
         // Kitchen you can find slice 2: the section's "Your kitchen" link opens Groceries on At home.
-        let link = app.buttons["today.useSoon.openKitchen"]
+        let link = app.buttons["today.nudge.openKitchen"]
         XCTAssertTrue(link.waitForExistence(timeout: 5), "Use it up should link to the kitchen it's built from.")
         // Scrolling the row into view can tuck the header just above it under the nav bar.
         if !link.isHittable { app.swipeDown() }
