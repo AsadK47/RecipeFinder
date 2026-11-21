@@ -14,6 +14,27 @@ IDs or personal account details here.
 | Bundle ID & capabilities (iCloud) | Apple Developer portal | No — read-only check: `testflight-capabilities-check.yml` |
 | Agent routines (builder, challenger, reviewer, digest) | Claude scheduled tasks | No — prompts summarised in BACKLOG.md |
 
+## Agent routines (Claude scheduled tasks, times UK)
+| Routine | When | Does | Writes to |
+|---|---|---|---|
+| Builder | every 2 h at :35 | Takes the next BACKLOG item, builds it on `agent/<slug>`, lands it when CI is green | code + BACKLOG Log |
+| Daily reviewer | 21:10 | Two+ independent reviews of what landed since the last review | BACKLOG Inbox + Log |
+| Daily challenger | 05:40 | Devil's-advocate pass (strategy, security/MASVS, simplify/delete) | docs/CHALLENGES.md, Inbox |
+| Weekly CEO digest | Mon 07:50 | Shipped, health, decisions for the owner | docs/digest/ |
+| TestFlight feedback | hourly (GitHub Actions) | Files tester feedback as issues labelled `testflight-feedback` | GitHub issues |
+All push a short notification to the owner. Their full prompts live in the owner's Claude scheduled tasks, not here.
+
+## If something breaks
+- **CI red on `main`:** nothing new reaches TestFlight until it's green; the builder fixes `main` before new work.
+- **TestFlight upload fails:** read the `TestFlight` run log; usual causes are an expired cert/API key (see checklist) or
+  a build number clash (re-run the workflow).
+- **Signing cert or API key expired:** owner creates a new one in Apple Developer / App Store Connect and replaces the
+  GitHub secrets (`CI_DEV_CERT_P12` + password, `ASC_KEY_ID`/`ASC_ISSUER_ID`/`ASC_KEY_P8`).
+- **New synced Core Data fields:** owner runs the app from Xcode with sync on, then CloudKit Console → Deploy Schema
+  Changes to Production, before that build goes to testers.
+- **A routine stops reporting:** check its last run in Claude's scheduled tasks; a refused push means the session lacks
+  repo write access.
+
 ## Owner checklist (only the owner can do these)
 - [ ] Two-factor sign-in (passkeys where offered): GitHub, Apple ID (developer account), both Gmail accounts, Cloudflare.
 - [ ] App Store Connect API key used by CI has the **App Manager** role (not Admin). Rotate yearly — next: Nov 2027.
