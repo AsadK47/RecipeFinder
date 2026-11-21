@@ -313,7 +313,7 @@ are merged into a newer item or parked — never start them; their text stays as
   reshuffles (new chapter order and layouts, never the same recipe twice in a row); no "seen everything" end state.
   *Measure:* recipes opened from discovery that get cooked. *Done when:* chapter ranking +
   paging tested, perf budget for 300+ recipes, screenshots (scrolled 3 screens), CI green.
-- [ ] **Today — decide tonight** (Phase 3 · Decide). ✅ Slice 1 (22a48d0): browsing shelves + weekly pick off Today (Discover has them); "Looking for ideas? Keep browsing →" when there's no pick. Left: next-meal hero + day strip + one "do this now" nudge. **Owner feedback 2026-11-20:** "Today focuses on dinner and is not time aware;
+- [ ] **Today — decide tonight** (Phase 3 · Decide) — 🚧 builder agent 2026-11-21. ✅ Slice 1 (22a48d0): browsing shelves + weekly pick off Today (Discover has them); "Looking for ideas? Keep browsing →" when there's no pick. Left: next-meal hero + day strip + one "do this now" nudge. **Owner feedback 2026-11-20:** "Today focuses on dinner and is not time aware;
   feels slightly cluttered but also doesn't have enough; questioning its usability." Builder proposal (owner 2026-11-20:
   keep in backlog, roadmap order unchanged): **Today — the next meal**: one hero for the next meal by the clock (breakfast/lunch/dinner, late
   evening → tomorrow's breakfast; planned meal first, else a pick + reason; Cook this / Shuffle), a one-line day strip
