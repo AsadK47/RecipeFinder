@@ -12,7 +12,7 @@ IDs or personal account details here.
 | Website | GitHub Pages (RecipeFinderWebsite) behind Cloudflare | Yes |
 | Domain `recipefinder.uk` | Cloudflare Registrar — transfer lock on, DNSSEC signed, paid to 2031 | No |
 | Bundle ID & capabilities (iCloud) | Apple Developer portal | No — read-only check: `testflight-capabilities-check.yml` |
-| Agent routines (builder, challenger, reviewer, digest) | Claude scheduled tasks | No — prompts summarised in BACKLOG.md |
+| Agent routines (builder, challenger, reviewer, digest) | Claude scheduled tasks | No — see Agent routines below |
 
 ## Agent routines (Claude scheduled tasks, times UK)
 | Routine | When | Does | Writes to |
