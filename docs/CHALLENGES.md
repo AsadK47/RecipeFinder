@@ -56,6 +56,16 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-21 (item pass: Smell Batch E recipe-writes split — fixed: 4 stale/false doc comments; code byte-identical, merges clean with agent/recently-deleted)
+- ⚔️ [Simplify] `RecipeSaveParameters`' 49-line memberwise init has zero callers (all use `init(from:)`) — delete — cost if wrong: none found.
+  → Owner:
+- ⚔️ [Simplify] `updateRecipe` keeps its own 19-field `setValue` list beside `populate` — reuse `populate` then restore id + cook history — cost if wrong: a new field silently dropped on edit.
+  → Owner:
+- ⚔️ [Tests] No test asserts `updateRecipesInBackground` keeps `lastCookedAt`, that either write path round-trips `sourceText`, or that `mergeRecipes` silences badge celebrations — add round-trip asserts — cost if wrong: those lines can be deleted with CI green.
+  → Owner:
+- ⚔️ [Follow-up] Move `updateRecipesInBackground` to `+RecipeBatchWrites` after agent/recently-deleted lands (kept in place so that green branch merges without conflict).
+  → Owner:
+
 ## 2026-11-21 (daily challenger)
 - ⚔️ [Strategy] The roadmap says "Now — data you can trust" comes first — but Data safety 2/4 sync, 3/4 backups and 4/4 Recently deleted are still `[ ]` (BACKLOG.md:350,382,387) while Phases 1–3 are built and the Queue top is theme palette, import torture tests, library growth. 4/4 has carried "🚧 interactive session 2026-11-15" for 6 days (stale after 1), and `origin/agent/recently-deleted` is 1,357 commits behind main, last commit 2026-11-15 — alternative: either take the claim over and ship Recently deleted (the one data-loss net: a mis-tap delete is permanent today) before cosmetic items, or the owner formally defers it in PRODUCT.md — cost if wrong: a cook deletes a recipe with photos and it is gone; "data you can trust" is the stated phase and is silently skipped.
   → Owner: Accept / Reject / Later
@@ -293,7 +303,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 ## 2026-11-17 (item pass: Smell Batch A slice 4 — detail actions split; challenger 0 defects)
 - ⚔️ Tests — `RecipeDetailView+Actions.recordCook` wiring (assign `recordingCook()`'s result, then sync/persist/Made it) has no push-CI test; dropping `recipe = cooked` only fails nightly `RecipeFinderHabitLoopUITests`, which skips when already cooked today — a view-model seam would let a unit test catch it — cost if wrong: Made it/review prompt read a stale cook count.
   → Owner: Accept / Reject / Later
-- Not fixed (pre-existing): the one-cook-a-day rule lives only in `RecipeModel.recordingCook`; `PersistenceController.recordCook` (`PersistenceController+RecipeWrites.swift:177`) increments unconditionally with its own `Date()`, so any future caller that skips the model rule double-counts in the store.
+- Not fixed (pre-existing): the one-cook-a-day rule lives only in `RecipeModel.recordingCook`; `PersistenceController.recordCook` (`PersistenceController+RecipeWrites.swift`) increments unconditionally with its own `Date()`, so any future caller that skips the model rule double-counts in the store.
 
 ## 2026-11-17 (item pass: Smell Batch A slice 3 — fixed: tints + notes link untested, factRows test home; reviewer 0 defects)
 - ⚔️ Simplify — `RecipeDetailCopy.shortTime` replaces " hours"/" hour", but its only inputs (`prepTimeDisplay`/`cookTimeDisplay` via `DurationFormatter.label`, `RecipeFormatters.swift:80`) already say "hr" at 60+ min, so those two replacements are dead (pinned as-is in a refactor) — drop them with the recipe-times Smell — cost if wrong: none.

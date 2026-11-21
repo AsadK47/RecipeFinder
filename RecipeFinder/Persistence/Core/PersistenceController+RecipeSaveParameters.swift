@@ -1,8 +1,8 @@
 import CoreData
 import Foundation
 
-/// The recipe field list in one place: `RecipeSaveParameters` and the mapping onto a managed object, shared by
-/// single saves, seeding and background updates.
+/// `RecipeSaveParameters` and `populate`, the mapping onto a managed object used by saves, seeding, background
+/// updates and remote-change merging. (`updateRecipe` still keeps its own field list.)
 extension PersistenceController {
 
     struct RecipeSaveParameters {
@@ -107,7 +107,8 @@ extension PersistenceController {
         }
     }
 
-    /// Maps `RecipeSaveParameters` onto a fresh managed object; shared by `saveRecipe` and `seedRecipes` so the field list has one home. Returns false only if ingredients can't be encoded.
+    /// Maps `RecipeSaveParameters` onto a new or existing managed object (`saveRecipe`, `seedRecipes`,
+    /// `updateRecipesInBackground`, remote-change merging). Returns false only if ingredients can't be encoded.
     nonisolated static func populate(
         _ recipe: NSManagedObject,
         from parameters: RecipeSaveParameters

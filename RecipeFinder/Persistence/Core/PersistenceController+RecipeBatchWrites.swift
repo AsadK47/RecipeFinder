@@ -1,8 +1,8 @@
 import CoreData
 import Foundation
 
-/// Many-recipe writes: first-launch seeding and backup merge-restore. (`updateRecipesInBackground` stays in
-/// `+RecipeWrites` next to the predicates it shares.)
+/// Many-recipe writes: first-launch seeding and backup merge-restore. (`updateRecipesInBackground` moves here once
+/// `agent/recently-deleted` lands — that branch edits it in `+RecipeWrites`.)
 extension PersistenceController {
 
     /// Bulk-inserts starter recipes on a background context in one save so first launch doesn't freeze; skips
@@ -35,7 +35,8 @@ extension PersistenceController {
         }
     }
 
-    /// Non-destructive restore: saves only new recipes per `BackupMerge.mergedRecipes` (dedupes by id AND normalized name so re-imports don't duplicate).
+    /// Non-destructive restore: saves new recipes per `BackupMerge.mergedRecipesWithAdditions` (dedupes by id AND
+    /// normalized name so re-imports don't duplicate) and restores user state (`BackupMerge.restoredUserState`) onto existing ones.
     func mergeRecipes(_ incoming: [RecipeModel]) {
         let existing = fetchRecipes()
         let added = BackupMerge.mergedRecipesWithAdditions(existing: existing, incoming: incoming).added
