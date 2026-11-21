@@ -123,6 +123,17 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours"). Audit
+  (`AppTheme+Palette/Colors/Gradients`): Teal (173°) vs Green (160°) and Yellow (50°) vs Gold (46°) are near-duplicates,
+  so 8 themes read as 6; no blue at all; gradients drift off-family (Green ends blue, Pink → purple → blue, Purple ends
+  turquoise = clashing complement, Gold → silver → black = muddy); accents fail contrast in light mode (white text on
+  Yellow 1.4:1, Gold 2.1, Orange 2.3, Teal/Green 2.5; WCAG needs 4.5 text / 3 UI) and Red is 1.9:1 on dark. Fix:
+  8 hues spread ~45° round the wheel, food-named — Tomato ~5°, Saffron ~30°, Honey ~48° (Yellow+Gold merge),
+  Herb ~140°, Teal ~175° (default), Blueberry ~220°, Plum ~285°, Raspberry ~335°; each with light/dark accent variants
+  tuned (OKLCH, equal perceived lightness) to ≥4.5:1 for text and ≥3:1 for fills in both modes; gradients analogous only
+  (±25° of the theme hue, lightness steps). Saved themes migrate (Gold→Honey, Yellow→Honey, Green→Herb, Red→Tomato,
+  Orange→Saffron, Purple→Plum, Pink→Raspberry). *Done when:* contrast table test passes for every theme/mode,
+  screenshots of all 8 in light + dark, one reviewer + challenger, CI green.
 - [ ] **Import torture tests** (owner 2026-11-21: "build recipes ourselves … testing the import"). Agents author
   original test recipes (no copied text) as fixtures with expected results, each failing case → a fix, per the
   repro-first rule. Cover: (1) **CSV** — header variants/order, quoted multi-line cells, UTF-8 BOM, `;` separators and
