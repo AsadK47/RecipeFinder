@@ -59,14 +59,13 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
 - Today: 🚧 **Today — decide tonight** — ✅ slice 1 browsing off Today landed 22a48d0 (builder 2026-11-21; leftover
-  branch agent/today-trim-shelves, auto-cleanup). 🚧 Slice 2 next-meal hero + day strip on `agent/today-next-meal`
-  (builder 2026-11-21): `TodayFeed.NextMeal` + `TodayDayStrip` (`Models/Engagement/TodayMealDay.swift`),
-  `TodayDayStripCard`, tests `TodayMealDayTests`. Left after it: one "do this now" nudge merging prep-ahead + use-soon
+  branch agent/today-trim-shelves, auto-cleanup). ✅ Slice 2 next-meal hero + day strip landed cd999ad
+  (builder 2026-11-21; leftover branches agent/today-next-meal, -2, auto-cleanup). Left: one "do this now" nudge merging prep-ahead + use-soon
   (cuts lines — item's "net lines down"); then screenshots morning/evening/new user.
 
 ## Next action
-Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: finish Today slice 2 on
-`agent/today-next-meal` (CI, screenshots 24/25/27-today-*, reviewer + challenger, land), then slice 3 "do this now" nudge. Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
+Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Today slice 3 — one "do this now" nudge
+merging prep-ahead + use-soon; also decide whether a plan for a later meal should outrank the next meal's suggestion (CHALLENGES 21 Nov). Website session: add the §4.2 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift`
 to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands

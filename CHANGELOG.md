@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Today — decide tonight slice 2 next-meal hero · cd999ad
+- For you: Today now follows your day — breakfast ideas in the morning, lunch at midday, dinner in the evening and tomorrow's breakfast once dinner is done — and a new card shows breakfast, lunch and dinner at a glance, so you can plan any of them with a tap.
+- Behind the build: the meal-by-clock rules are a small tested model, and a reviewer and a challenger caught two edge cases before it shipped — a late-afternoon dessert no longer counts as dinner.
+
 ## 2026-11-21 · Today — decide tonight slice 1 browsing on Recipes · 22a48d0
 - For you: Today stays focused on what to cook tonight, and Recipes → Discover is where to browse more — Keep browsing takes you straight there, even on nights with no pick ready.
 - Behind the build: about 250 lines came out of Today, and a reviewer and a challenger checked that everything it showed still has a home in Discover.
