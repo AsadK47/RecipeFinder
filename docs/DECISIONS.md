@@ -5,6 +5,30 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Theme slice 2b:** owner chose a symbol per swatch (2026-11-21) — re-tuned colours top out ~0.04 ΔE under deuteranopia and greyed Herb/Raspberry; deleting colours left Herb/Teal (tritanopia) colliding.
+- **Theme slice 2a (accessibility):** Increase Contrast = Light accent L 0.42 (white ≥7.9:1), Light gradient +0.06 L
+  (black ≥7.9:1, HC accent ≥3.4:1 on it — standard is 1.8), Dark accent L 0.78 with **black** `onAccent` (≥9.8:1).
+  Rejected: white-on-Dark-HC accent — 7:1 needs Y ≤0.10, which sinks into the #121214 base (≈2.7:1); iOS's own Dark
+  high-contrast colours go lighter too. HC variants derived with `OKLCH.withLightness` (chroma eased into gamut), not 32
+  hand-typed numbers. Reduce Transparency: `.appCard` only (other materials adapt via iOS). **CVD (2b) parked:** at one
+  shared lightness, Tomato/Saffron/Honey collapse under deuteranopia (min ΔE OK 0.005 Light / 0.011 Dark); a random
+  search within ±12° hue, gamut and contrast bounds tops out at 0.035–0.044 and only by greying Herb (c 0.04) or
+  Raspberry (c 0.075). Names sit beside every swatch, so WCAG 1.4.1 holds. **Pre-mortem:** (1) black text lands on a
+  non-accent fill in Dark HC → all 12 `onAccent` sites checked on accent fills + reviewer; (2) HC accent clips or
+  fails 7:1 → HC contrast + gamut tests per theme; (3) picker unreadable/VoiceOver says "Checkmark" at AX sizes → UI
+  capture asserts labels + selection, shot 63.
+- **Theme palette (slice 1, landed a45fecd):** text on accent fills is white (`AppTheme.onAccent`) — 12 sites used
+  adaptive black, which failed on the deeper accents; Dark gradients deepened to L 0.28→0.15 so Dark accents are ≥3:1
+  on every stop (they were ~2:1). Themes defined in OKLCH, not sRGB, so accents share one perceived lightness per mode
+  (L 0.52 light / ~0.56 dark) and gradients step lightness on one hue family (±20°). Accent luminance is pinned to the
+  window where white text is ≥4.5:1 *and* the dark accent is ≥3:1 on the dark base — so accents are deeper than before
+  (Honey reads as amber, not lemon: yellow can't carry white text). Light gradients went lighter (L 0.82→0.66) so black
+  text is ≥4.5:1 on every stop (old teal end was ~4:1). Light accent vs the Light gradient is 1.8–3.2:1 (old teal
+  1.0–2.0) — 3:1 would need near-white gradients; recorded in CHALLENGES. Gold+Yellow merge into Honey; old names map in
+  `ThemeType(storedValue:)` and ThemeStore writes the new name back. Hue degrees in the item are HSL; code uses OKLCH
+  hues (Tomato 30 … Raspberry 358). **Pre-mortem:** (1) a saved theme resets to Teal on update → `oldNamesMigrate` +
+  `migratesOldName`; (2) an accent fails contrast / clips out of gamut → per-theme contrast + gamut tests;
+  (3) a gradient looks muddy or text vanishes on it → black/white-on-every-stop tests + 61/62 screenshots in both modes.
 - **Stop Repeating crash (Inbox 🐞)** (landed 4d9ef95): fix = re-look-up the toggled plan by id after `stopSeries`, not a reorder of
   `mealPlans` (order is the store's; sorting would touch every reader). **Pre-mortem:** (1) still crashes when a later
   copy precedes → `stopRepeatingWithALaterCopyListedFirstKeepsThisWeeksMeal` (seen red first); (2) the removed copy's

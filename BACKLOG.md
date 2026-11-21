@@ -123,15 +123,16 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours").
+- [x] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours").
   ✅ **Slice 1 landed** 1a5ba5a..a45fecd (builder 2026-11-21): 8 OKLCH food hues (Tomato, Saffron, Honey, Herb, Teal,
   Blueberry, Plum, Raspberry) in `Theme/ThemePalette.swift`, Light/Dark accents ≥4.5:1 under white text
   (`AppTheme.onAccent` on every accent fill), analogous gradients (±25°), Dark accent ≥3:1 on every Dark gradient stop,
   saved themes migrate (Gold/Yellow→Honey…), contrast table in `ThemePaletteTests`, shots 61-theme-*/62-today-*.
   ✅ **Slice 2a landed** 2c7ff3f..b3d81b7 (builder 2026-11-21): Increase Contrast (Light accent ≥7:1 white, gradient
   ≥7:1 black; Dark accent light with black `onAccent` ≥9.8:1), Reduce Transparency solid `.appCard`, one-column
-  AX-size picker + VoiceOver names, shot 63-theme-picker-ax. **Slice 2b left (⏸ Needs owner):** CVD — keep the 8
-  swatches tellable apart under protanopia/deuteranopia/tritanopia with a test. *Done when:* CVD test passes, CI green.
+  AX-size picker + VoiceOver names, shot 63-theme-picker-ax. ✅ **Slice 2b landed** 4533f2c..408dd08: colour-blind
+  cue = a symbol on each swatch (owner 2026-11-21 chose symbols over re-tuning or deleting colours — neither separates
+  them; tests: symbols distinct + exist).
 - [ ] **Import torture tests** (owner 2026-11-21: "build recipes ourselves … testing the import"). Agents author
   original test recipes (no copied text) as fixtures with expected results, each failing case → a fix, per the
   repro-first rule. Cover: (1) **CSV** — header variants/order, quoted multi-line cells, UTF-8 BOM, `;` separators and
@@ -787,11 +788,6 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 - Fridge photo, family cookbooks (iCloud sharing), cook-along Q&A, heirloom mode — earlier owner ideas, undecided.
 
 ## Needs owner
-- 🙋 **Theme: colour-blind separation** (builder 2026-11-21, Theme slice 2b): at one shared lightness, deuteranopia
-  makes Tomato/Saffron/Honey near-identical (ΔE OK 0.005–0.013); the best a search finds within gamut + contrast is
-  ~0.04, and only by greying Herb or Raspberry. Names sit beside every swatch. (a) accept names as the cue, test
-  ≥0.005 as a floor — recommended / (b) let accents vary in lightness (drops "one perceived lightness") / (c) add a
-  food symbol on each swatch / (d) muddier palette?
 - 🙋 **Today: should a later plan lead at 8am?** (builder 2026-11-21, Today — decide tonight): with only dinner planned,
   the 8am hero is "Tonight: <dinner>" not a breakfast idea (any plan outranks a suggestion — CHALLENGES 21 Nov). Keep
   (the cook's plan is the decision) / lead with the next meal's suggestion and show the plan in the day strip — recommended?
@@ -862,6 +858,7 @@ _Review 2026-11-21 (166 commits, 19–21 Nov; reviewers: correctness, tests/rule
 ## Log
 _Last 7 days; older entries are in `docs/LOG.md`._
 - 2026-11-21 · Inbox 🐞 Stop Repeating crash · f851bd8..4d9ef95 · `toggleRecurring` re-reads the plan by id after `stopSeries` removes later copies (a later copy stored ahead of it shifted the index → out-of-range crash). Test `stopRepeatingWithALaterCopyListedFirstKeepsThisWeeksMeal` seen red first (test host crashed, Build & Test 44957648954), green 44958547670. On phone: a weekly dinner synced from another device → hold it → Stop Repeating → no crash, this week's dinner stays · review: reviewer + challenger, 0 defects; 1 older gap found (earlier copies' reminders after stopping on a later copy) → Inbox · looked at: n/a — no UI change
+- 2026-11-21 · Theme palette slice 2b (colour-blind symbols) · 4533f2c..408dd08 · each theme swatch shows a symbol (flame, sparkles, honeycomb, leaf, waves, berries, moon, heart) so themes differ by shape, not only colour. On phone: Me → ⚙︎ → Appearance & Theme · review: 1 reviewer+challenger, flame vs drop too alike small → Honey honeycomb, Blueberry berries · CI green (44954777250, rebased run on 408dd08, Screenshots 44958987420; first Screenshots upload hit a GitHub network error) · looked at: 61-theme-honey-light, 63-theme-picker-ax
 - 2026-11-21 · Theme palette slice 2a (accessibility) · 2c7ff3f..b3d81b7 · Increase Contrast: deeper Light accents (white ≥7:1) and lighter Dark accents with black text; Reduce Transparency: solid cards; theme picker one column at AX text sizes, VoiceOver reads each name + Selected. On phone: Settings → Accessibility → Display & Text Size → Increase Contrast on, then Today / Plan / Groceries buttons in Light and Dark (check the Today paste button in Dark); Reduce Transparency on → cards solid · review: reviewer + challenger, both found 12 views with hard-coded white on accent fills (~2:1 under Dark HC) → `onAccent` + `IconBadge(glyph:)`; reviewer: AX UI test read lazy cells before scrolling + swatch truncation → fixed; challenger: `contrast:` default removed, HC distinctness test; 7 → CHALLENGES · CVD → Needs owner · CI green (44947828639, rebased 44952864806, Screenshots 44949307868) · looked at: 63-theme-picker-ax, 61-theme-raspberry-dark, 62-today-teal-dark
 - 2026-11-21 · Daily review · 0d49068..6d8e08e (166 commits) · review: 15 findings (🔴0 🐞3 🟡12)
 - 2026-11-21 · Theme palette by colour theory slice 1 (palette) · 1a5ba5a..a45fecd · 8 food-named themes replace Teal/Purple/Red/Orange/Yellow/Green/Pink/Gold; accents deeper with white text on every accent button/toast/tick; Dark gradients deeper; saved themes carry over (Gold/Yellow → Honey). On phone: Me → ⚙︎ → Appearance & Theme, tap each colour in Light and Dark; check your old theme survived the update · review: reviewer + challenger (white-on-accent on 12 sites, Dark accent ≥3:1 on gradient, UI-run theme/appearance reset, 4 test gaps fixed; 4 → CHALLENGES) · looked at: 61-theme-raspberry-light, 61-theme-blueberry-dark, 62-today-teal-light/-dark, 62-today-honey-light · new files ThemePalette.swift + ThemePaletteTests.swift registered in pbxproj by hand

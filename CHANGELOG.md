@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Theme palette slice 2b colour-blind symbols · 408dd08
+- For you: Each colour theme now carries its own symbol — a flame for Tomato, a leaf for Herb, a heart for Raspberry and more — so every theme is easy to pick out at a glance, whatever colours you see.
+- Behind the build: we checked the palette through colour-blindness simulations, chose symbols to make every theme distinct, and a reviewer swapped two shapes that looked alike at small sizes.
+
 ## 2026-11-21 · Inbox Stop Repeating crash · 4d9ef95
 - For you: Stop Repeating on a weekly dinner now works smoothly every time, including for meals planned on another of your devices, and this week's dinner stays on your plan.
 - Behind the build: a test reproduced the crash first, then a one-line fix made it pass, checked by a reviewer and a challenger.
