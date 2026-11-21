@@ -123,7 +123,7 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours").
+- [ ] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours"). — 🚧 builder agent 2026-11-21
   ✅ **Slice 1 landed** 1a5ba5a..a45fecd (builder 2026-11-21): 8 OKLCH food hues (Tomato, Saffron, Honey, Herb, Teal,
   Blueberry, Plum, Raspberry) in `Theme/ThemePalette.swift`, Light/Dark accents ≥4.5:1 under white text
   (`AppTheme.onAccent` on every accent fill), analogous gradients (±25°), Dark accent ≥3:1 on every Dark gradient stop,
