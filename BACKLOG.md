@@ -123,7 +123,7 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
-- [ ] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours"). Audit
+- [ ] **Theme palette by colour theory** — 🚧 builder agent 2026-11-21 — (owner 2026-11-21: "use colour theory to determine best colours"). Audit
   (`AppTheme+Palette/Colors/Gradients`): Teal (173°) vs Green (160°) and Yellow (50°) vs Gold (46°) are near-duplicates,
   so 8 themes read as 6; no blue at all; gradients drift off-family (Green ends blue, Pink → purple → blue, Purple ends
   turquoise = clashing complement, Gold → silver → black = muddy); accents fail contrast in light mode (white text on
