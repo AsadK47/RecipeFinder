@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-20, builder agent)
 
 ## In progress
+- Inbox 🟡 **Reset clears preferences**: branch `agent/reset-preferences` (dc489d3, test made @MainActor after a red compile) — CI + 1 reviewer + challenger running (builder 2026-11-21).
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — lands as soon as the owner deploys the CloudKit Production schema (model 17 photos + model 18 deletedAt).
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -56,13 +57,18 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
 ## Next action
-Inbox first: 🟡 Reset keeps `@AppStorage` keys touches Privacy §4.3 → check wording before coding. Then:
+Land `agent/reset-preferences` when green (§4.3 already says Reset clears preferences — code now matches, no text change). Then:
 *Groceries writes itself* slice 5 on `agent/groceries-delete-dupes`: delete the duplicated Kitchen/Shopping views +
 Plan's Add Week button (net lines down); then slice 4 ("Still got the coriander?"). Website session: add the §4.2
 aisle-order bullet + §4.3 clause from `PrivacyPolicyView.swift` to `privacy.html`.
 Owner 2026-11-20: Today — the next meal stays in the backlog at its roadmap place (Phase 3), no reorder.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Reset clears preferences:** code follows §4.3 rather than rewording it (Reset = full erasure, owner 2026-11-16).
+  Hand list of unprefixed keys, not "remove every non-`rf.` key" — standard defaults also hold Apple/SDK keys.
+  Kept: `today.handledClipboardChange`, `recipes.discoverRequests` (screen plumbing). **Pre-mortem:** (1) a key
+  dropped from the list → literal pin test; (2) clear misses a key → `coversEveryListedKey`; (3) theme/sync choice
+  wiped → same test asserts they survive.
 - **Groceries writes itself slice 1 (plan → list):** a one-tap card, not a silent auto-write — writing the list behind
   the cook's back would re-add items they deleted and fight iCloud folding; principle 7 is still one gesture. Window =
   next 7 days from today (Groceries has no week picker). No new stored state (a "shopped for meal X" set would be new
