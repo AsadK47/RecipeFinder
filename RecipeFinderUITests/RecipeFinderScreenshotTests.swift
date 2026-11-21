@@ -452,7 +452,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
     }
 
     /// Theme palette: every theme's picker and Today, in Light and Dark (`-preferredColorScheme` rides the argument
-    /// domain, so the run never changes the simulator's own setting). Ends back on Teal so later shots keep the default.
+    /// domain, so the run never changes the simulator's own setting). `-ui-testing` resets the theme to Teal on each launch.
     @MainActor
     func testCaptureThemes() {
         let themes = ["Tomato", "Saffron", "Honey", "Herb", "Teal", "Blueberry", "Plum", "Raspberry"]
@@ -466,13 +466,16 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             app.buttons["me.settings"].tap()
             XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5), "The Me gear should open Settings.")
             app.staticTexts["Appearance & Theme"].firstMatch.tap()
+            XCTAssertTrue(app.buttons["theme.Teal"].waitForExistence(timeout: 5), "Appearance should show the picker.")
+            settle(0.8)
             for theme in themes {
                 let swatch = app.buttons["theme.\(theme)"]
-                for _ in 0..<3 where !swatch.isHittable { app.swipeUp() }
                 XCTAssertTrue(swatch.waitForExistence(timeout: 5), "The picker should offer \(theme).")
+                for _ in 0..<3 where !swatch.isHittable { app.swipeUp() }
                 checkpoint(app, "before picking \(theme) (\(mode))")
                 swatch.tap()
-                XCTAssertTrue(swatch.isSelected, "\(theme) should read as selected.")
+                let selected = expectation(for: NSPredicate(format: "isSelected == true"), evaluatedWith: swatch)
+                wait(for: [selected], timeout: 5)
                 settle(0.8)
                 snap(app, "61-theme-\(theme.lowercased())-\(mode)")
                 app.tabBars.buttons["Today"].tap()
@@ -480,7 +483,6 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                 snap(app, "62-today-\(theme.lowercased())-\(mode)")
                 app.tabBars.buttons["Me"].tap()
             }
-            app.buttons["theme.Teal"].tap()
             app.terminate()
         }
     }

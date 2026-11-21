@@ -1,5 +1,7 @@
 import Testing
 import Foundation
+import SwiftUI
+import UIKit
 @testable import RecipeFinder
 
 /// The contrast table: every theme's accent and gradient, in Light and Dark, against WCAG 2.x.
@@ -33,6 +35,9 @@ struct ThemePaletteTests {
         #expect(abs(SRGB.white.contrast(with: .black) - 21) < 0.001)
         let grey = SRGB(r: 0.5, g: 0.5, b: 0.5)
         #expect(grey.contrast(with: .white) == SRGB.white.contrast(with: grey))
+        // #777777 on white is the textbook "just under AA" pair (4.48:1) — pins the gamma curve, not just 0 and 1.
+        let midGrey = SRGB(r: 119 / 255, g: 119 / 255, b: 119 / 255)
+        #expect(abs(midGrey.contrast(with: .white) - 4.48) < 0.01)
     }
 
     // MARK: Accents
@@ -52,9 +57,11 @@ struct ThemePaletteTests {
         #expect(theme.swatch.accentDark.srgb.contrast(with: Self.darkBase) >= 3)
     }
 
-    @Test("The Light accent stands out from white by at least 3:1", arguments: themes)
+    @Test("The Light accent stands out from the light base by at least 3:1", arguments: themes)
     func lightAccentStandsOut(theme: AppTheme.ThemeType) {
-        #expect(theme.swatch.accentLight.srgb.contrast(with: .white) >= 3)
+        // `AppTheme.secondaryBackgroundLight`, a touch darker than white.
+        let lightBase = SRGB(r: 242 / 255, g: 242 / 255, b: 247 / 255)
+        #expect(theme.swatch.accentLight.srgb.contrast(with: lightBase) >= 3)
     }
 
     @Test("Every palette colour is inside sRGB, so nothing is clipped", arguments: themes)
@@ -96,6 +103,19 @@ struct ThemePaletteTests {
         let swatch = theme.swatch
         #expect(hueDistance(swatch.accentLight.h, swatch.hue) <= 5)
         #expect(hueDistance(swatch.accentDark.h, swatch.hue) <= 5)
+    }
+
+    @Test("The app's accent shows the Light variant in Light and the Dark variant in Dark", arguments: themes)
+    func accentResolvesPerMode(theme: AppTheme.ThemeType) {
+        let accent = UIColor(AppTheme.accentColor(for: theme))
+        for (style, expected) in [(UIUserInterfaceStyle.light, theme.swatch.accentLight.srgb),
+                                  (.dark, theme.swatch.accentDark.srgb)] {
+            var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+            accent.resolvedColor(with: UITraitCollection(userInterfaceStyle: style))
+                .getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+            #expect(abs(Double(red) - expected.r) < 0.01 && abs(Double(green) - expected.g) < 0.01
+                && abs(Double(blue) - expected.b) < 0.01, "\(theme) \(style.rawValue)")
+        }
     }
 
     // MARK: Gradients

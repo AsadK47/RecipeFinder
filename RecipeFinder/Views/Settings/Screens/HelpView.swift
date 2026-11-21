@@ -109,7 +109,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "paintpalette",
                             title: "Customize Appearance",
-                            description: "Pick a color theme, from Tomato to Blueberry, and Light or Dark mode in Settings > Appearance & Theme."
+                            description: "Pick a color theme, from Tomato to Raspberry, and System, Light or Dark in Settings > Appearance & Theme."
                         )
 
                         HelpItem(

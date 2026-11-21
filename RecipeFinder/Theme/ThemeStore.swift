@@ -20,10 +20,11 @@ final class ThemeStore {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         let stored = defaults.string(forKey: Self.storageKey)
-        theme = stored.flatMap(AppTheme.ThemeType.init(storedValue:)) ?? .teal
+        let parsed = stored.flatMap(AppTheme.ThemeType.init(storedValue:))
+        theme = parsed ?? .teal
         // didSet doesn't run in init, so write a renamed theme (e.g. "Gold" → "Honey") back under its new name.
-        if let stored, stored != theme.rawValue, AppTheme.ThemeType(storedValue: stored) != nil {
-            defaults.set(theme.rawValue, forKey: Self.storageKey)
+        if let parsed, stored != parsed.rawValue {
+            defaults.set(parsed.rawValue, forKey: Self.storageKey)
         }
     }
 }

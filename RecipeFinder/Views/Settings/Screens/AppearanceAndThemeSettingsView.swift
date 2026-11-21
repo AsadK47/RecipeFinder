@@ -78,7 +78,7 @@ struct AppearanceAndThemeSettingsView: View {
                     .font(.subheadline)
                     .adaptiveForegroundColor()
                     .lineLimit(1)
-                    .minimumScaleFactor(0.8)   // the selected checkmark used to squeeze "Purple" into "Purpl/e"
+                    .minimumScaleFactor(0.8)   // the selected checkmark used to squeeze names like "Raspberry" onto two lines
 
                 Spacer(minLength: AppTheme.spacing4)
 

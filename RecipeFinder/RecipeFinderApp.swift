@@ -40,6 +40,8 @@ struct RecipeFinderApp: App {
                 UserDefaults.standard.set(mode.rawValue, forKey: RecipeBrowse.modeKey)
                 // Groceries' To buy | At home is remembered too; every run starts on the shopping list.
                 UserDefaults.standard.set(GroceriesMode.toBuy.rawValue, forKey: GroceriesMode.modeKey)
+                // The theme picker's shots change the theme; every run starts on the default so later shots match.
+                UserDefaults.standard.set(AppTheme.ThemeType.teal.rawValue, forKey: ThemeStore.storageKey)
             }
             if ProcessInfo.processInfo.arguments.contains("-show-badge-reveal") {
                 BadgeManager.shared.showRevealForUITesting(.headChef)
