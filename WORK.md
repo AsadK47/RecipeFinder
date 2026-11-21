@@ -58,6 +58,10 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - 🐞 **Meal planning is buggy**: ✅ landed 0acb4fd (interactive session 2026-11-20). Skip-one-week → Needs owner.
   Leftover branches agent/plan-bugs, agent/plan-bugs-ui-red, agent/plan-bugs-2 (auto-cleanup).
 
+- Today: 🚧 **Today — decide tonight** slice 1 (builder 2026-11-21) — `agent/today-trim-shelves`: Cook again / Fits
+  your kitchen / Rediscover shelves + weekly "Try something new" off Today (Discover has Cook it again / Uses what
+  you have / New to you). Left: hero for the next meal + day strip + one "do this now" nudge (prep-ahead + use-soon).
+
 ## Next action
 Inbox first if any new 🐞/🟡. Smell done after Groceries → next is a Queue/Roadmap item. Phase 2 (Decide & get) is built — dogfood gate is the owner's week. Next: Phase 3 per
 BACKLOG Roadmap (Today trimmed to deciding tonight / "the next meal" at its roadmap place, owner 2026-11-20); read
@@ -65,6 +69,13 @@ docs/PRODUCT.md first. Website session: add the §4.2 aisle-order bullet + §4.3
 to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Today — decide tonight, slice 1 (trim):** browsing leaves Today because Discover already deals the same picks
+  (`DiscoveryPool` cookAgain = recent + `RecipeRediscovery`, usesWhatYouHave, newToYou), and "Keep browsing →" sits
+  under tonight's card. `TrySomethingNew` deleted rather than moved: Discover's *New to you* covers never-cooked.
+  Starters shelf kept for new users (Today must never be empty on day one). `RecipeRediscovery` stays (Discover uses
+  it). **Pre-mortem:** (1) a cook loses quick access to recent dishes → Discover cookAgain tests + Recipes "Recently
+  cooked" row; (2) new user's Today goes empty → starters kept, new-user screenshot; (3) kitchen matches stop driving
+  tonight's pick → `unplannedDayUsesTheBestKitchenMatch` + `kitchenMatchesNeedHalfTheIngredients…`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
