@@ -67,16 +67,11 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   auto-cleanup). Slice 2b (CVD) ⏸ Needs owner — item stays open.
 
 ## Next action
-🚧 `agent/stop-repeating-crash`: red test f851bd8 (Build & Test 44957648954 should crash/fail) → push fix (re-look-up by id in `toggleRecurring`), green → land. Then: Inbox first: review 2026-11-21 added 3 🐞 — start with `MealPlanningManager.toggleRecurring` index crash (:250) on
-`agent/stop-repeating-crash` (red test with the later copy inserted first). Theme 2b waits on Needs owner. Website session: add the §4.2 aisle-order bullet + §4.3 clause
+Inbox first: ✅ Stop Repeating crash landed 4d9ef95 (leftover branch agent/stop-repeating-crash, auto-cleanup). Next 🐞:
+`MealPlanningManager.merge` → `syncSeriesReminders()` (:142), then Stop-on-a-later-copy reminders (:213), then SundayPlanNudge week. Theme 2b waits on Needs owner. Website session: add the §4.2 aisle-order bullet + §4.3 clause
 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **Stop Repeating crash (Inbox 🐞):** fix = re-look-up the toggled plan by id after `stopSeries`, not a reorder of
-  `mealPlans` (order is the store's; sorting would touch every reader). **Pre-mortem:** (1) still crashes when a later
-  copy precedes → `stopRepeatingWithALaterCopyListedFirstKeepsThisWeeksMeal` (seen red first); (2) the removed copy's
-  weekly reminder keeps firing → same test asserts it's not live; (3) the wrong copy is made one-off → asserts this
-  week's plan stays, not recurring.
 - **Theme slice 2a (accessibility):** Increase Contrast = Light accent L 0.42 (white ≥7.9:1), Light gradient +0.06 L
   (black ≥7.9:1, HC accent ≥3.4:1 on it — standard is 1.8), Dark accent L 0.78 with **black** `onAccent` (≥9.8:1).
   Rejected: white-on-Dark-HC accent — 7:1 needs Y ≤0.10, which sinks into the #121214 base (≈2.7:1); iOS's own Dark

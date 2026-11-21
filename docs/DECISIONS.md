@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Stop Repeating crash (Inbox 🐞)** (landed 4d9ef95): fix = re-look-up the toggled plan by id after `stopSeries`, not a reorder of
+  `mealPlans` (order is the store's; sorting would touch every reader). **Pre-mortem:** (1) still crashes when a later
+  copy precedes → `stopRepeatingWithALaterCopyListedFirstKeepsThisWeeksMeal` (seen red first); (2) the removed copy's
+  weekly reminder keeps firing → same test asserts it's not live; (3) the wrong copy is made one-off → asserts this
+  week's plan stays, not recurring.
 - **Today — decide tonight, slice 3 (one nudge)** (landed 86d5811): `TodayNudge.pick` shows one thing: something going off *today*
   (wasted by tomorrow; skipped once Today has moved on to tomorrow — no meal left to use it, a marinade can still go on) → tomorrow's first prep-ahead (miss it tonight and the cook's plan fails) → soonest use-soon.
   One `TodayNudgeCard` (title Prep ahead / Use it up, recipe photo + small badge, "Your kitchen →" only for Use it up)

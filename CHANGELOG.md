@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-21 · Inbox Stop Repeating crash · 4d9ef95
+- For you: Stop Repeating on a weekly dinner now works smoothly every time, including for meals planned on another of your devices, and this week's dinner stays on your plan.
+- Behind the build: a test reproduced the crash first, then a one-line fix made it pass, checked by a reviewer and a challenger.
+
 ## 2026-11-21 · Theme palette slice 2a accessibility · b3d81b7
 - For you: The app now follows Increase Contrast with stronger colours and crisper buttons in Light and Dark, shows solid cards when Reduce Transparency is on, and the colour picker reads clearly at the largest text sizes and in VoiceOver.
 - Behind the build: every contrast level is checked by a test for each theme, and a reviewer and a challenger found twelve buttons that needed to follow the new colours before it shipped.
