@@ -183,4 +183,42 @@ import Foundation
         #expect(defaults.string(forKey: ThemeStore.storageKey) == "Teal")
         #expect(store.bool(forKey: SyncPreference.key))
     }
+
+    /// Scans the app source so a new `@AppStorage` preference can't silently survive Reset: every literal key must be
+    /// in a Reset list or a named exemption, and every constant-keyed one must be a known expression.
+    @MainActor @Test func clearPreferences_coversEveryAppStorageKeyInTheApp() throws {
+        let appDir = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().appendingPathComponent("RecipeFinder")
+        let exempt: Set<String> = [
+            ThemeStore.storageKey,            // Reset sets the theme itself
+            "today.handledClipboardChange",   // screen plumbing: one clipboard link offered once
+            "recipes.discoverRequests"        // screen plumbing: a counter that triggers a scroll
+        ]
+        let knownConstantKeys: Set<String> = [
+            "GroceriesMode.modeKey", "RecipeBrowse.modeKey", "RecipeBrowse.discoverRequestKey",
+            "RecentWebSearches.storageKey", "LocalStore.keyPrefix + SundayPlanNudge.settingKey"
+        ]
+        let covered = LocalStore.unprefixedPreferenceKeys.union(LocalStore.unprefixedUserDataKeys).union(exempt)
+        let literal = try Regex(#"@AppStorage\("([^"]+)""#)
+        let constant = try Regex(#"@AppStorage\(([^"\)][^\)]*)\)"#)
+        let files = try #require(FileManager.default.enumerator(at: appDir, includingPropertiesForKeys: nil))
+        var scanned = 0
+        for case let url as URL in files where url.pathExtension == "swift" {
+            let source = try String(contentsOf: url, encoding: .utf8)
+            for match in source.matches(of: literal) {
+                scanned += 1
+                let key = String(source[try #require(match.output[1].range)])
+                #expect(key.hasPrefix(LocalStore.keyPrefix) || covered.contains(key),
+                        "\(url.lastPathComponent): @AppStorage(\"\(key)\") isn't cleared by Reset")
+            }
+            for match in source.matches(of: constant) {
+                scanned += 1
+                let expr = String(source[try #require(match.output[1].range)])
+                #expect(knownConstantKeys.contains(expr),
+                        "\(url.lastPathComponent): @AppStorage(\(expr)) — add it to a Reset list or this test")
+            }
+        }
+        #expect(scanned > 10, "found too few @AppStorage keys — is the source path right?")
+    }
 }
