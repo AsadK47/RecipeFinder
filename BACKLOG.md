@@ -128,8 +128,8 @@ are merged into a newer item or parked — never start them; their text stays as
   into signed TestFlight builds) and pin exact versions per RecipeFinder/CLAUDE.md. (2) Pin every third-party action to
   a full commit SHA (`actions/checkout@v4` etc. — testflight.yml holds the signing cert + ASC key). (3) Add a top-level
   `permissions:` block to testflight.yml (least privilege; it has none). (4) `.github/dependabot.yml` for github-actions
-  + swift, weekly, grouped. (5) SECURITY.md (how to report, contact recipefinderuk@gmail.com). (6) Owner toggles
-  (Needs owner, 2 min on github.com): secret scanning + push protection, private vulnerability reporting. *Done when:*
+  + swift, weekly, grouped. (5) SECURITY.md (how to report, contact recipefinderuk@gmail.com). (6) ✅ Owner turned on
+  secret scanning + push protection, private vulnerability reporting and Dependabot alerts (2026-11-21). *Done when:*
   CI green with pinned actions/deps, Dependabot opens its first update branch, two reviewers.
 - [x] 🐞 **Meal planning is buggy** (owner 2026-11-20) — landed 0acb4fd (see Log). Left: skip-one-week of a weekly meal → Needs owner.
 - [x] **Build with Xcode 27 / iOS 27 SDK** — (owner yes 2026-11-18 to change the
