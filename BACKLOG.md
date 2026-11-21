@@ -123,6 +123,16 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Recipes in our own words + a bigger library** (owner OK 2026-11-21; replaces the Needs owner question on
+  bundled method text). (1) Rewrite every bundled recipe's method in our own words, in batches (same curated-JSON +
+  seed + drift-test process; `seed-history.py` so installs update). Ingredient lists and amounts stay (not
+  copyrightable); steps are new text, never paraphrase-by-sentence of the source. (2) Grow the library from safe
+  sources only, again writing every method ourselves: Wikibooks Cookbook (CC BY-SA — credit + share-alike on edited
+  text), USDA MyPlate Kitchen (credit USDA; skip partner-owned recipes), TheMealDB only after checking its terms and
+  the owner OKs any fee. Never scraped datasets (Food.com, Epicurious, RecipeNLG, Recipe1M). (3) Credits screen in
+  Settings → About listing sources + licences. *Done when:* every bundled method rewritten (spot-check vs source by a
+  second reviewer), new recipes pass the seed audits (`audit-missing-amounts.py`), RecipeArt pictures queued for the
+  owner's Mac, credits live, CI green.
 - [ ] **Supply-chain + CI hardening** (owner asked about IaC/security 2026-11-21; audit findings). (1) Commit
   `Package.resolved` (none in repo today, so Kingfisher/ConfettiSwiftUI/ViewInspector float within their major version
   into signed TestFlight builds) and pin exact versions per RecipeFinder/CLAUDE.md. (2) Pin every third-party action to
@@ -792,10 +802,6 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Starter photos (optional, nice-to-have): pick ~6 photos you own or free-licensed ones (e.g. Unsplash, licence
   allows bundling in a free app) for the 6 starter recipes; drop the files in and agents will bundle them in
   `Assets.xcassets` — shipped inside the app, no runtime API calls.
-- 🙋 Before public App Store launch: the 332 bundled recipes' method text comes from blogs/sites (ingredient lists are
-  generally fine; written steps may be protected — not legal advice). Recommended: agents rewrite every method in our
-  own words in batches (same curated-JSON + seed + drift-test process), or trim the bundled set. Owner to confirm
-  before agents start.
 - 🙋 From Sept 2027, device-only task: renew the CI signing cert (`CI_DEV_CERT_P12`, expires 2027-11-10) and update
   the GitHub secrets.
 - 🙋 Later, once there is revenue: owner-funded charity pledge (e.g. "every 1,000 community Spoons funds a meal" via a UK food charity). Needs your decision + a Charities Act-compliant statement/agreement; agents never link money to Spoons.
