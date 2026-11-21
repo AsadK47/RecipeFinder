@@ -123,6 +123,15 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Import torture tests** (owner 2026-11-21: "build recipes ourselves … testing the import"). Agents author
+  original test recipes (no copied text) as fixtures with expected results, each failing case → a fix, per the
+  repro-first rule. Cover: (1) **CSV** — header variants/order, quoted multi-line cells, UTF-8 BOM, `;` separators and
+  comma decimals, empty rows, 1,000-row file (perf budget); (2) **Paprika/Mela** exports with photos, missing fields,
+  bad zip; (3) **web pages** — JSON-LD variants (`@graph`, arrays, HowToSection groups, ISO-8601 durations, string vs
+  object yields), microdata only, no schema (plain blog), paywall/cookie walls; (4) **text/OCR** — fractions (½, 1 1/2,
+  1–2), ranges, "a pinch", units in many spellings, noisy OCR line breaks; (5) **hostile input** — huge files, deeply
+  nested JSON, script tags in names, absurd numbers. Reuse `RecipeFinderTests/Fixtures/ImportRegressions` +
+  `OtherApps`. *Done when:* ≥60 new fixtures green, every bug found fixed or filed, CI green.
 - [ ] **Recipes in our own words + a bigger library** (owner OK 2026-11-21; replaces the Needs owner question on
   bundled method text). (1) Rewrite every bundled recipe's method in our own words, in batches (same curated-JSON +
   seed + drift-test process; `seed-history.py` so installs update). Ingredient lists and amounts stay (not
