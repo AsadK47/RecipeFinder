@@ -88,21 +88,34 @@ private struct DiscoveryTile: View {
                     .frame(height: imageHeight)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
                     .accessibilityHidden(true)
-                Text(recipe.name)
-                    .font(.subheadline.weight(.semibold))
-                    .adaptiveForegroundColor()
-                    .lineLimit(2, reservesSpace: reservesNameSpace)
-                    .multilineTextAlignment(.leading)
-                if recipe.hasTotalTime {
-                    Label(DurationFormatter.label(minutes: recipe.totalMinutes), systemImage: "clock")
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
-                        .lineLimit(1)
+                // The time sits right under the name; side-by-side tiles still keep the height of a two-line name
+                // below it, so a one-line name no longer leaves a gap above its time (owner 2026-11-21).
+                ZStack(alignment: .topLeading) {
+                    if reservesNameSpace {
+                        caption(name: "M\nM", minutes: 1).hidden().accessibilityHidden(true)
+                    }
+                    caption(name: recipe.name, minutes: recipe.hasTotalTime ? recipe.totalMinutes : nil)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
         }
         .accessibilityHint("Opens the recipe")
+    }
+
+    private func caption(name: String, minutes: Int?) -> some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
+            Text(name)
+                .font(.subheadline.weight(.semibold))
+                .adaptiveForegroundColor()
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+            if let minutes {
+                Label(DurationFormatter.label(minutes: minutes), systemImage: "clock")
+                    .font(.caption)
+                    .adaptiveSecondaryForeground()
+                    .lineLimit(1)
+            }
+        }
     }
 }
