@@ -56,6 +56,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 (item pass: Inbox 🐞 Sunday nudge weekly dinner — fixed: Wednesday-first test expected a Wednesday copy in a Mon–Tue check → weekly Monday dinner)
+- Not fixed (rule, not this change): the checked days are "Monday after → end of Plan's week" (e34cec0). Saturday-first checks Mon–Fri, so weekend dinners (one-off and now weekly) never count; Sunday-first, a weekly Sunday roast alone nudges every Sunday. Weekly dinners now follow the same rule as one-offs. → Owner: check a fixed Mon–Sun whatever the first weekday?
+
 ## 2026-11-22 (item pass: owner 🐞 Plan meal order + delete pop-ups — fixed: drag order leaked to other days; reminder change didn't re-order; Undo unreachable with VoiceOver; a second take-off lost the first Undo; restore/reminder tests couldn't fail)
 - ⚔️ [UX] Hold menu → Stop Repeating still drops later weekly copies with no Undo (`PlannedMealsSection.swift` → `toggleRecurring` → `stopSeries`) — older behaviour, outside the owner's ask — cost if wrong: a weekly dinner stopped by mistake must be re-planned.
 - ⚔️ [UX] After a drag, a new meal goes ahead of the first later meal in the dragged list (dinner dragged above breakfast + a 3pm snack → snack on top), and Undo returns the day to time order, not the dragged one — drag order is session-only by design — cost if wrong: one odd-looking order until the day is reopened.
