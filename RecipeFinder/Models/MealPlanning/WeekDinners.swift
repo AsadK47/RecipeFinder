@@ -31,33 +31,31 @@ enum WeekDinners {
         }
     }
 
-    /// The nights a dinner can move to, in week order: every other night from tonight on (a missed dinner can move
-    /// forward; nothing moves into the past). A missed dinner only moves onto an empty night — a swap would send that
-    /// night's dinner into the past. Repeating dinners don't move (yet): the weekly copy would refill the night they
-    /// left, planning the dish twice.
+    /// The nights a dinner can move to, in week order: every other night from tonight on (nothing moves into the
+    /// past). A past night's dinner doesn't move: Plan shows it only once cooked (`MealPlanModel.isShown`), so it's
+    /// history. Repeating dinners don't move (yet): the weekly copy would refill the night they left, planning the
+    /// dish twice.
     static func moveTargets(from night: Night, in nights: [Night]) -> [Night] {
-        guard night.plan?.isRecurring != true else { return [] }
+        guard !night.isPast, night.plan?.isRecurring != true else { return [] }
         return nights.filter { target in
-            target.date != night.date && !target.isPast
-                && target.plan?.isRecurring != true
-                && !(night.isPast && target.plan != nil)
+            target.date != night.date && !target.isPast && target.plan?.isRecurring != true
         }
     }
 
     /// The plans that change when `dinner` moves to `night`: the dinner itself (same time of day, new date) and,
-    /// if that night already has a dinner, that one moved back to `dinner`'s night. Empty when nothing changes.
+    /// if that night already has a dinner, that one moved back to `dinner`'s night.
     /// Empty when nothing changes or the move isn't allowed (see `moveTargets`).
     static func move(
         _ dinner: MealPlanModel, to night: Date, plans: [MealPlanModel], today: Date, calendar: Calendar = .current
     ) -> [MealPlanModel] {
         let startOfToday = calendar.startOfDay(for: today)
         guard !dinner.isOn(night, calendar: calendar), !dinner.isRecurring,
+              calendar.startOfDay(for: dinner.date) >= startOfToday,
               calendar.startOfDay(for: night) >= startOfToday,
               let moved = shifted(dinner, to: night, calendar: calendar) else { return [] }
         let occupant = plans.first { $0.id != dinner.id && $0.isSlot(night, .dinner, calendar: calendar) }
         guard let occupant else { return [moved] }
-        guard !occupant.isRecurring, calendar.startOfDay(for: dinner.date) >= startOfToday,
-              let swapped = shifted(occupant, to: dinner.date, calendar: calendar) else { return [] }
+        guard !occupant.isRecurring, let swapped = shifted(occupant, to: dinner.date, calendar: calendar) else { return [] }
         return [moved, swapped]
     }
 
