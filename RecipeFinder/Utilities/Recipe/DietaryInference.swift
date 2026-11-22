@@ -22,15 +22,17 @@ enum DietaryInference {
     /// "mein" because chow mein / lo mein noodles are usually egg noodles).
     static let animalProductWords: Set<String> = [
         "butter", "buttercream", "buttermilk", "cheddar", "cheese", "chocolate", "condensed", "cream", "curd",
-        "custard", "dairy", "egg", "eggs", "frosting", "ganache", "ghee", "gouda", "honey", "kaya", "lactose",
-        "ladyfingers", "margarine", "mascarpone", "mayo", "mayonnaise", "mein", "meringue", "milk", "mozzarella", "nutella",
-        "paneer", "raita", "shortcrust", "streusel", "whey", "yoghurt", "yogurt", "yolk", "yolks"
+        "custard", "dairy", "dripping", "drippings", "egg", "eggs", "fat", "frosting", "ganache", "ghee", "gouda",
+        "honey", "kaya", "lactose", "ladyfingers", "margarine", "mascarpone", "mayo", "mayonnaise", "mein",
+        "meringue", "milk", "mozzarella", "nutella", "paneer", "raita", "shortcrust", "streusel", "whey", "yoghurt",
+        "yogurt", "yolk", "yolks"
     ]
 
     /// A word right before an animal-product word that makes it a plant one ("coconut milk", "peanut butter",
     /// "plant-based milk").
     static let plantQualifiers: Set<String> = [
-        "almond", "based", "bean", "cacao", "cashew", "cocoa", "coconut", "nut", "oat", "peanut", "plant", "soy", "soya", "vegan"
+        "almond", "based", "bean", "cacao", "cashew", "cocoa", "coconut", "nut", "oat", "peanut", "plant", "soy", "soya",
+        "vegan"
     ]
 
     /// Stock, broth and the like are made from meat unless the line says otherwise.
@@ -44,7 +46,9 @@ enum DietaryInference {
         let lines = recipe.ingredients.map { words(in: $0.name) }
         guard !lines.isEmpty, lines != [["see", "recipe"]] else { return DietaryInfo() }
         let vegetarian = !containsMeat(words(in: recipe.name)) && !lines.contains(where: containsMeat)
-        let vegan = vegetarian && !lines.contains(where: containsAnimalProduct)
+        // A title that says "Vegan" is the author's own claim ("vegan butter", "dark chocolate" in their list).
+        let titledVegan = words(in: recipe.name).contains("vegan")
+        let vegan = vegetarian && (titledVegan || !lines.contains(where: containsAnimalProduct))
         return DietaryInfo(isVegetarian: vegetarian, isVegan: vegan)
     }
 
@@ -70,6 +74,10 @@ enum DietaryInference {
         words.indices.contains { index in
             guard animalProductWords.contains(words[index]) else { return false }
             if index > 0, plantQualifiers.contains(words[index - 1]) { return false }
+            // "full-fat coconut milk": the fat is described, the next word decides.
+            if words[index] == "fat", index > 0, ["full", "half", "low", "reduced"].contains(words[index - 1]) {
+                return false
+            }
             // "cream of tartar"
             if words[index] == "cream", Array(words.dropFirst(index + 1).prefix(2)) == ["of", "tartar"] { return false }
             return true

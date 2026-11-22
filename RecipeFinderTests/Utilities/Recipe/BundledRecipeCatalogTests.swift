@@ -304,12 +304,15 @@ struct BundledRecipeCatalogTests {
         #expect(meat.first?.dietaryInfo.isVegetarian == false)
     }
 
-    @Test("the shipped collection answers the Vegetarian and Vegan filters, and no chicken dish is vegetarian")
+    @Test("the shipped collection answers the Vegetarian and Vegan filters; no meat or fish dish is vegetarian")
     func shippedCollectionIsDietTagged() {
         let recipes = BundledRecipeCatalog.load()
         #expect(recipes.contains { $0.dietaryInfo.isVegetarian })
         #expect(recipes.contains { $0.dietaryInfo.isVegan })
-        #expect(!recipes.contains { $0.dietaryInfo.isVegetarian && $0.ingredients.contains { $0.name.localizedCaseInsensitiveContains("chicken") } })
+        for meat in ["chicken", "beef", "pork", "lamb", "fish", "prawn", "shrimp", "anchovy", "gelatin"] {
+            #expect(!recipes.contains { $0.dietaryInfo.isVegetarian && $0.ingredients.contains { $0.name.localizedCaseInsensitiveContains(meat) } }, "\(meat)")
+        }
+        #expect(recipes.filter { $0.name.localizedCaseInsensitiveContains("vegan") }.allSatisfy(\.dietaryInfo.isVegan))
         #expect(!recipes.contains { $0.dietaryInfo.isGlutenFree || $0.dietaryInfo.isNutFree || $0.dietaryInfo.isDairyFree })
     }
 

@@ -63,7 +63,7 @@ struct DietaryInferenceTests {
 
     @Test("dairy, eggs and honey are vegetarian but not vegan", arguments: [
         "large free-range eggs", "unsalted butter", "double cream", "milk, dairy or non-dairy", "lactose-free milk",
-        "greek yoghurt", "ghee", "honey", "mature cheddar", "dark chocolate", "egg noodles", "chow mein noodles", "curd", "kaya jam"
+        "greek yoghurt", "ghee", "honey", "mature cheddar", "dark chocolate", "egg noodles", "chow mein noodles", "curd", "kaya jam", "oil or fat of choice, for frying", "beef dripping"
     ])
     func animalProductsAreVegetarianOnly(ingredient: String) {
         let info = Self.infer([ingredient])
@@ -76,6 +76,17 @@ struct DietaryInferenceTests {
     ])
     func plantDairyStaysVegan(ingredient: String) {
         #expect(Self.infer([ingredient]).isVegan)
+    }
+
+    @Test("full-fat coconut milk is still vegan")
+    func fullFatPlantMilkStaysVegan() {
+        #expect(Self.infer(["full-fat canned coconut milk"]).isVegan)
+    }
+
+    @Test("a recipe its author titled Vegan is vegan, but a meat word still rules it out")
+    func veganTitleIsTrusted() {
+        #expect(Self.infer(["plain flour", "dark chocolate"], name: "Vegan Chocolate Chip Cookies").isVegan)
+        #expect(!Self.infer(["chicken", "rice"], name: "Vegan-ish Chicken Bowl").isVegan)
     }
 
     @Test("a meat word in the recipe's name rules it out even if the list doesn't say")

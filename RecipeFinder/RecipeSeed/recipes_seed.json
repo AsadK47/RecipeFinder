@@ -474,7 +474,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "B63F1F4B-12B2-52F8-A6AD-F3F16EE43234",
@@ -1153,7 +1153,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "BCA90B1E-DD21-5B2C-9DB6-A8D5A5E2826A",
@@ -1395,7 +1395,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "66670607-50B6-5C67-AC84-E1358DC44185",
@@ -1523,7 +1523,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "8EDE3D41-3A2A-5E3E-95FA-36FD7DE785A3",
@@ -1638,8 +1638,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "ABDC4CAD-A07E-5FAE-89EF-27F7E6307D15",
@@ -1754,7 +1754,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "31141D85-3E7F-5C5F-8C84-EE1A20A34719",
@@ -1947,8 +1947,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "048DC37E-DDEE-549E-ABFD-AB18913E8C20",
@@ -2410,7 +2410,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "90A8F7E3-946D-5BF4-A236-E95020D2387D",
@@ -2476,7 +2476,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "A28173B3-523D-5925-BCFB-30C64480A614",
@@ -2603,7 +2603,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "C328A632-7B70-50BF-9E33-4EFE3A032CA5",
@@ -4124,8 +4124,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "1FD0F0FB-B78F-55CC-9B23-1930110AC0BD",
@@ -4259,8 +4259,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "1B62A6D8-140F-5599-800F-E23FFB50B8FC",
@@ -4388,7 +4388,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "E65FD19C-B864-5313-A9CD-505D9897542E",
@@ -4485,7 +4485,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "B115FE00-B6C2-5E81-94E3-671EC9214FC9",
@@ -4570,7 +4570,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "E6D948B5-DA6D-540C-988F-134A5707B7E6",
@@ -4661,7 +4661,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "A84D2DB1-7422-5762-9DAE-C99CB8C0FFCD",
@@ -4746,7 +4746,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "2020C8D5-1073-5EFC-8868-4F223E9F8D24",
@@ -4831,7 +4831,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "49DF5981-3CB8-5810-BCC5-AD1B40ED5167",
@@ -4965,7 +4965,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "8FD846DD-751D-5364-A1E4-8D501D448013",
@@ -5079,7 +5079,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "14BB3879-662D-568E-912B-DB62936CD11B",
@@ -5164,7 +5164,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "9DA60F08-E3C8-5F85-8614-7F7657D01E55",
@@ -5249,7 +5249,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "58BD8CDE-E782-5140-BBCE-66CAAB191C09",
@@ -5395,7 +5395,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "95F2A5C7-AE86-5FAD-A283-BC6332EFE454",
@@ -5690,7 +5690,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "7D48DBB8-AFF1-5695-A3BA-2FBC07F1EAC6",
@@ -5751,7 +5751,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "EAB09EA0-227C-5DA7-8698-36882F188B11",
@@ -5971,8 +5971,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "FFD744D3-295E-5EF2-8BC7-18BADD964749",
@@ -6062,7 +6062,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "D28E00AA-C51D-5128-B32E-8EFE7A64BD1D",
@@ -6132,8 +6132,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "84CF6698-F334-5503-B22A-04C50EAA3F87",
@@ -6212,7 +6212,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "AE972DCE-A0CE-58D5-8B75-B3E16B1AF4E2",
@@ -6296,8 +6296,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "F763E2EA-686D-52AC-9421-97788B8FC1C2",
@@ -6436,7 +6436,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "3589A73C-C406-58F7-9109-3F79E1A1C4B4",
@@ -6593,8 +6593,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "7EB90494-663F-5F3C-B376-70E48B24A6F1",
@@ -6773,7 +6773,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "029E8F46-E8AB-5C09-8558-804FFFDF19EC",
@@ -6867,8 +6867,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "7CBF1554-D121-5C35-A33F-70A58159A2C6",
@@ -10588,7 +10588,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "68C4F5BE-056F-57AA-A5D8-1086AD488D9F",
@@ -11091,8 +11091,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "472B9D52-1E8E-54C4-A17A-FF340FE3B006",
@@ -11208,7 +11208,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "917722D6-7FAB-58D3-9C18-F119F7F4DEF3",
@@ -11287,7 +11287,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "2BA50006-FFA4-54A0-AD22-D734763A8B85",
@@ -11449,7 +11449,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "3F442B16-6891-5CF6-9624-479AC1F72621",
@@ -11523,7 +11523,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "C5DF0156-A996-5B50-9E0D-F9E77C124C64",
@@ -11629,7 +11629,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "ECD73E7B-77C1-562A-B545-D90D2381123C",
@@ -11720,7 +11720,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "15026DFD-6F1D-5D6A-B004-277FE13A211D",
@@ -11794,7 +11794,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "2FF1B06F-FD4B-5547-B1D7-C0DA9BF2CBF5",
@@ -11924,7 +11924,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "7FC245B1-C66D-5766-941E-FD0085C6B476",
@@ -12209,7 +12209,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "708716C5-7FAD-5BA0-8FB6-F6265EA86B23",
@@ -12330,7 +12330,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "8414B685-0EE4-5AA2-9DB6-16541BDF99E7",
@@ -12440,7 +12440,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2BA4DE6A-E1F3-5C5B-8A98-485DFD64FD8F",
@@ -12509,7 +12509,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "E017415C-299C-5D35-A1C3-36D8179F9AC6",
@@ -12613,7 +12613,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "30B8322A-142E-5C6D-85FD-42886F76B437",
@@ -12712,7 +12712,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "8BCF6D05-08F7-53DC-B774-11EB1A5A6653",
@@ -12988,7 +12988,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "A7171E82-38B8-5C8D-91F6-8F004D896647",
@@ -13079,8 +13079,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "47330E1F-38EE-5857-A7A2-98914C600793",
@@ -13443,7 +13443,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "B2B3DF4C-6F81-5023-AE41-874505A5996F",
@@ -13530,7 +13530,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "94FA2FAD-D2D8-5C89-B2A7-04020DF9F9CF",
@@ -13641,7 +13641,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "1F1CC13F-0C6F-5243-A8C7-98EB12E4CF46",
@@ -13777,7 +13777,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "51AEEBDB-4A00-5D34-A800-B992E1AE7E52",
@@ -13867,8 +13867,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "60585B87-B236-5A53-9469-0764FDB14D85",
@@ -14146,7 +14146,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "80C2091A-3817-5FB9-B1B8-4DEEE5852640",
@@ -14915,7 +14915,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "84F0302A-131A-5AD1-92E9-DE0E5CD921A1",
@@ -15020,7 +15020,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "C0D5C87B-CAB4-5B00-B1CE-615F5F200355",
@@ -15329,7 +15329,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "8576F1A8-5D6E-5092-90FA-5D7DD9FE2169",
@@ -15409,7 +15409,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "4F46D90C-33F0-5F6A-8570-150678E38123",
@@ -15658,7 +15658,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "EC3E8906-3498-5A23-AD00-508C9378516D",
@@ -15775,7 +15775,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "CE7E3C20-C236-5CA6-AD76-295824322FA0",
@@ -16424,8 +16424,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "76478C73-D24F-56AB-B5A9-90C7F51EF6A0",
@@ -16660,7 +16660,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "F44AEE14-96C5-538E-802B-E5E6D97AB7D9",
@@ -16725,7 +16725,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "0D4B0269-A074-5FD5-96F6-FC5EB457A204",
@@ -16976,8 +16976,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "780B837F-AEDA-5CFD-BDDF-4271D752F8A4",
@@ -17093,7 +17093,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "5E500445-09A9-599D-8D2B-A99C7A70816C",
@@ -17179,8 +17179,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "4AA32404-CE45-5954-BBAE-72AE3F07C887",
@@ -17253,7 +17253,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "BA2E5400-699D-5C13-93D5-88C71C552A12",
@@ -17325,8 +17325,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2775C891-6972-5F43-9B2D-EF09F98631F8",
@@ -17413,8 +17413,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "AB43BB04-BA8B-5A2B-ADD9-4361A66B48E2",
@@ -18086,7 +18086,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2A583E82-31CF-5FD3-99C7-0AD11EAEC439",
@@ -18183,8 +18183,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "F3373569-E915-545E-9461-1D971C237DA2",
@@ -18630,7 +18630,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "BF40FEEE-43E9-5AA3-AC8E-B79633DF7D1C",
@@ -18702,8 +18702,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "718BE630-A77C-5BA7-BFA0-4576E15670BB",
@@ -18795,8 +18795,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "ED697698-6B91-57A4-8E4E-FD26BCC73AA9",
@@ -18978,7 +18978,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "F4E2B7B3-BA87-5BFF-A93C-095F162CBF12",
@@ -19242,7 +19242,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "0B7ADF29-0F19-5763-AC41-18A2CA3A49BB",
@@ -19602,8 +19602,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "E8C4264A-0D78-59A4-8424-0B2A5D2419C4",
@@ -19769,8 +19769,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "49C8B749-B967-5490-B23E-47919EBC9A5B",
@@ -20331,7 +20331,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "1C02EC7A-E493-542E-A97F-CF0B44C2C255",
@@ -20642,8 +20642,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "12D35AF0-105A-58A9-867A-3D24777E8FD7",
@@ -20982,7 +20982,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "4705994C-D6E2-5162-9DB5-A1717B5CCB39",
@@ -21472,8 +21472,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "6EE06FF8-DE2D-5629-A330-8E6E44B983D6",
@@ -21689,7 +21689,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "872E1887-DD1B-5A8E-9EED-896126464FE1",
@@ -23014,7 +23014,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "B75E39F7-1A71-508A-9AA6-81426662D870",
@@ -23132,8 +23132,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "29483355-96DD-5142-8507-5780FCD8398A",
@@ -23250,7 +23250,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "FDFC5B8F-FAA4-55E0-A71D-00D780077510",
@@ -23348,7 +23348,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "DF5A6FB6-8FE7-5930-8357-FC672FEC6C4B",
@@ -23433,7 +23433,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "DEC5E865-4C1E-58BA-9A87-18606784E66A",
@@ -23535,7 +23535,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "54375FCE-4035-5801-B37A-EB747C62CB28",
@@ -23622,8 +23622,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "0E48201B-360E-542D-9D91-17DE47B97A08",
@@ -23690,7 +23690,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2C895520-CCBF-5A81-BC7C-9D985CD96702",
@@ -24056,7 +24056,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "B4C371EB-4F51-5FB4-861E-2B15AAE68515",
@@ -24179,7 +24179,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "8506C2B3-6ED3-5AFB-94F6-54F5767426D7",
@@ -24253,7 +24253,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "4C249839-92F3-562B-934D-B2D69B96A97C",
@@ -24459,7 +24459,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "E579A4B8-FF88-58CA-8882-994B3E173209",
@@ -24530,8 +24530,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "05FAB513-DA54-5535-A2B3-4AB8FFE08028",
@@ -24621,7 +24621,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "F78EB944-47BB-5C51-A675-0F28336B4DE9",
@@ -24722,8 +24722,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "F267A604-E8A9-50A5-9265-3AE34846C4BD",
@@ -24849,7 +24849,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "713392DA-43BC-5BF4-B8A6-9932AE79B6DD",
@@ -25000,8 +25000,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "CB31946B-CC8A-5D3F-9B19-2D46848422A8",
@@ -25091,7 +25091,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "DF177200-04CD-5EE7-BCFE-EE4F1A5E07B9",
@@ -25177,7 +25177,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "49E3A764-CFB8-5258-8E41-7B62BF632662",
@@ -25282,7 +25282,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "B6EBE220-4B78-560C-BCE5-4EC10DA4E148",
@@ -25417,7 +25417,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "BF143303-41F5-598D-A67A-CF1787339720",
@@ -25490,7 +25490,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "F2BC6F0E-EEEF-5F94-BE87-E2FD89DA8EAD",
@@ -25561,7 +25561,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "B4988806-3D7C-5F1B-94D1-65B20D913A3C",
@@ -25657,7 +25657,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "A4C7C510-B16B-5390-85C5-5D1047A55EB8",
@@ -25777,7 +25777,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "1796DCCB-002C-5C41-95FC-48A1322DD224",
@@ -25867,8 +25867,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "A14302D1-F0BE-56BA-AF9B-41D428DCBCD0",
@@ -25985,7 +25985,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "EE3482E6-974B-5BD8-86CE-F8BBE36EE911",
@@ -26070,7 +26070,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "4C958625-47E0-5628-8C9E-D2AD157DD61B",
@@ -26734,7 +26734,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "62087B7E-CE91-581B-B52F-80BDF34831A9",
@@ -26828,7 +26828,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "1AF5B5F8-B546-5CD6-BB4D-1B221335653F",
@@ -27037,7 +27037,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "FAAF6492-86D0-51D4-958D-3D661AEEB822",
@@ -27253,7 +27253,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "55C0DE0D-D9E2-5F04-84EB-98CA9D7B0F15",
@@ -27812,7 +27812,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2C0B3482-9BB4-56A1-8CF0-00BDF438D06B",
@@ -27897,7 +27897,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "9E72AC77-384A-5069-8455-69C105487491",
@@ -27997,8 +27997,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "8BFDFC93-D655-5804-A91C-FC02979026AF",
@@ -28309,8 +28309,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "5DD26EA1-8E6A-5101-8A32-3CEF03F3F9C7",
@@ -28387,8 +28387,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "3409DE16-0474-5BBB-A09F-44FD97F8E855",
@@ -28626,8 +28626,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "B0EBAD01-8509-5430-A1CB-C6FA7DC5D7D0",
@@ -28777,8 +28777,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "368B9396-9086-52EE-9D03-897EB7624CB2",
@@ -28923,7 +28923,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "4B76D548-B59A-5698-B52D-F790640D124F",
@@ -29028,7 +29028,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2383C2B3-0832-512B-B9B3-8830413432E4",
@@ -29126,7 +29126,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "37DD0625-811A-540A-AAA5-79EBDD70088D",
@@ -29219,7 +29219,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "F48B1DD4-2261-5BD8-910D-1BC1D56E5827",
@@ -29527,7 +29527,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "33349084-6FAF-5C82-8177-8BB84567E799",
@@ -29598,7 +29598,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "94F90ACB-F2D4-5831-9987-C785FB9A8F66",
@@ -29683,7 +29683,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "BCF7F739-E796-5F04-AE78-189A9EBEAC61",
@@ -30250,7 +30250,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "FDE99F92-3CD3-5F38-AF6D-41A88AFF9A9F",
@@ -30381,7 +30381,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "CBB2A427-141E-5EF7-A131-D4E074529CB1",
@@ -30511,8 +30511,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "0A5652C2-2FEE-53BA-8A15-A3FFF3385C7B",
@@ -30617,8 +30617,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "12C12965-B13D-5C1D-BDB6-7FEF33100285",
@@ -30714,8 +30714,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "5BFFDEC4-90F1-5710-907C-0243B8E66216",
@@ -30834,7 +30834,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "C0767C29-4D3B-51FF-9FC8-0BD3BE97B949",
@@ -30941,7 +30941,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "52885D80-B421-52EE-B3B6-8A6EC8E44A44",
@@ -31051,8 +31051,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "88BB2EB0-8433-527D-A276-FAAD3E92C837",
@@ -31170,7 +31170,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "C4988923-6B50-5116-AACB-7E90A943DE4E",
@@ -31251,8 +31251,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "AD4BC2B3-0539-5634-8CF3-795BA1817B2E",
@@ -31334,8 +31334,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "101A4917-3941-5710-A83F-3C6A333DC8F1",
@@ -31419,7 +31419,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "B4BD3D8B-D5AD-5FD8-B730-DFBFC8FAA79A",
@@ -31656,7 +31656,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "94D4943D-6F4A-5486-9C5A-87EE05893A4D",
@@ -31726,8 +31726,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2682B2CB-5868-5921-B20F-FF0CE22CA983",
@@ -31935,7 +31935,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "F77C971C-EC26-553B-A769-3549CBD6A77C",
@@ -32054,7 +32054,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "28E58286-F23E-5A17-AA58-233D1A856CB9",
@@ -32163,7 +32163,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "733CE4DF-511B-5A6B-994C-D9A1024A3DF9",
@@ -32530,8 +32530,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "79E382EA-3BAA-5789-837D-9CC63943DD0C",
@@ -32630,7 +32630,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "A8C0C1D4-772B-52C6-B80C-66BBE9A8ED45",
@@ -32994,8 +32994,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "CC394312-6406-51D7-ADED-F5D719C77705",
@@ -33440,8 +33440,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "F465EC5D-6ED8-554C-AAF0-801AF9CA5570",
@@ -34079,8 +34079,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "899C1D53-0308-54CE-9444-611D2AC5273B",
@@ -34335,7 +34335,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "5C27C796-2FE8-52AD-9F03-10A0C08ADF12",
@@ -34467,7 +34467,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "E0E715C7-60DB-5FCC-8179-7803482538DE",
@@ -34594,7 +34594,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "FE6E9A71-6FC4-5364-980E-F49B56456C4D",
@@ -34692,7 +34692,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "1F6C9B0E-AA79-5600-AC74-B4C2EE401C6C",
@@ -34789,8 +34789,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "DAE554EE-5FB3-5B80-B056-B964E0EE6F2E",
@@ -34925,8 +34925,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2394364F-B266-5A75-9608-3A8220A3C804",
@@ -35451,7 +35451,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2478D099-E414-55F4-A462-BC9C3ACE7EC1",
@@ -35873,7 +35873,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "D4219EE3-5EBF-5987-9009-88B030969DAC",
@@ -36004,8 +36004,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "7001B8EA-8271-5901-A6A2-FC1D4E32C24B",
@@ -36441,7 +36441,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "41A250F1-11A1-51F4-B07B-C537FC795A2E",
@@ -36945,7 +36945,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "DF48D2C9-E91A-584F-BBD9-7F49E52B5505",
@@ -37063,8 +37063,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "1F29C11B-625A-56C1-B298-C9830C92BBA1",
@@ -37152,7 +37152,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "AC706306-8823-50E6-AC26-7776B7F41207",
@@ -37472,7 +37472,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2421AC9F-7CCB-5BFB-A247-7095E37B4A78",
@@ -37801,7 +37801,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "9D1E4243-B9C5-5B12-A434-82ADDE11263F",
@@ -37864,8 +37864,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "E8B6F0F5-8C83-56D0-B3C2-637264DDC3A7",
@@ -37984,8 +37984,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "5497723F-BCAD-5297-9674-124F42ABD968",
@@ -38067,7 +38067,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "75E17F30-0EC1-5B62-A7B3-C09DC056441B",
@@ -38171,7 +38171,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "3E1F2418-54F9-5736-BDDF-FD2BADCB26D2",
@@ -38714,7 +38714,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "E184E44C-7CE6-5FE5-9D5E-BE4B5C136293",
@@ -38807,7 +38807,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "4497F57A-3297-539B-AB84-2D4F5DE59333",
@@ -38897,8 +38897,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "CA152681-3A77-5457-85AA-8C3613BFD78D",
@@ -39077,8 +39077,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "54DD4B3B-0C0F-53BA-988F-9778EFC786BD",
@@ -39169,8 +39169,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "9708ADBF-72EE-5194-8982-EFBB0651705F",
@@ -39266,8 +39266,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "2C6BD972-A2FB-5F75-BF91-02A858B7EA46",
@@ -39417,8 +39417,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Intermediate",
     "id" : "3101E854-98CD-57D8-AF49-A42BBB85C350",
@@ -40182,8 +40182,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Basic",
     "id" : "AA7C40D6-4750-55BC-9756-5086CE84D718",
@@ -40243,8 +40243,8 @@
       "isKeto" : false,
       "isLowCarb" : false,
       "isNutFree" : false,
-      "isVegan" : false,
-      "isVegetarian" : false
+      "isVegan" : true,
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "497E4FD0-4947-50FA-8E31-8335464B2FD0",
@@ -40557,7 +40557,7 @@
       "isLowCarb" : false,
       "isNutFree" : false,
       "isVegan" : false,
-      "isVegetarian" : false
+      "isVegetarian" : true
     },
     "difficulty" : "Expert",
     "id" : "4F5BEAEE-200D-5697-9CA0-1B4910366DFE",

@@ -33,7 +33,7 @@ enum BundledRecipeCatalog {
     // MARK: - Stale-sample refresh
 
     /// Bump when `recipes_seed.json` gains fixes that existing installs should pick up (and regenerate the history).
-    static let sampleRefreshVersion = 4
+    static let sampleRefreshVersion = 5
 
     /// The refresh can only judge "untouched" against real data: an empty bundle or history (missing/corrupt JSON)
     /// must not mark the version done, or it would never retry.
