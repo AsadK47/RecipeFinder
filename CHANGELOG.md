@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox HelpView appearance tip · a3df262
+- For you: Help and the Appearance & Theme screen now read naturally in British English — colour, favourites, customise — and the appearance tip tells you exactly where to choose System, Light or Dark.
+- Behind the build: a reviewer checked every help string against the real settings screens and spotted the Appearance screen still said "Color", fixed before it shipped.
+
 ## 2026-11-22 · Inbox seed dietary tags · c4e1ed7
 - For you: The Vegetarian and Vegan filters now find recipes in the built-in collection — 184 vegetarian and 59 vegan dishes, worked out from their ingredients.
 - Behind the build: tests showed both filters empty first; tagging errs on the side of caution, and a reviewer and a challenger read every tagged recipe's ingredients before it shipped.

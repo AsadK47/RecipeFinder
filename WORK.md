@@ -73,8 +73,8 @@ Inbox: ✅ plan deck pass decision landed 26f4481 (builder 2026-11-22; leftover 
 ✅ 🐞 Stop-on-a-later-copy reminders landed 88d5ed9 (interactive session 2026-11-22; leftover branches
 agent/stop-series-reminders, -2, auto-cleanup). ✅ 🐞 SundayPlanNudge week landed e34cec0 (leftover branches
 agent/sunday-nudge-week, -2, auto-cleanup). ✅ 🟡 CHANGELOG Reset wording fixed. ✅ 🟡 Privacy aisle-order wording landed b52d55d (builder 2026-11-22; leftover branch
-agent/privacy-aisle-wording, auto-cleanup). Next: the top 🟡 Inbox line (HelpView "System, Light or Dark" + British
-spelling). Website session: add the §4.2 aisle-order bullet (new wording: "for each shop you choose, and for trips with
+agent/privacy-aisle-wording, auto-cleanup). ✅ 🟡 HelpView appearance tip + British spelling landed a3df262 (builder 2026-11-22; leftover branch agent/help-copy,
+auto-cleanup). Next: the top 🟡 Inbox line (seen-red runs for 7e70ceb / 881f59e / 458fb27). Website session: add the §4.2 aisle-order bullet (new wording: "for each shop you choose, and for trips with
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
