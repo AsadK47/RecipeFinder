@@ -312,7 +312,8 @@ struct BundledRecipeCatalogTests {
         for meat in ["chicken", "beef", "pork", "lamb", "fish", "prawn", "shrimp", "anchovy", "gelatin"] {
             #expect(!recipes.contains { $0.dietaryInfo.isVegetarian && $0.ingredients.contains { $0.name.localizedCaseInsensitiveContains(meat) } }, "\(meat)")
         }
-        #expect(recipes.filter { $0.name.localizedCaseInsensitiveContains("vegan") }.allSatisfy(\.dietaryInfo.isVegan))
+        let untaggedVegan = recipes.filter { $0.name.localizedCaseInsensitiveContains("vegan") && !$0.dietaryInfo.isVegan }
+        #expect(untaggedVegan.isEmpty, "Titled Vegan but not tagged: \(untaggedVegan.map(\.name))")
         #expect(!recipes.contains { $0.dietaryInfo.isGlutenFree || $0.dietaryInfo.isNutFree || $0.dietaryInfo.isDairyFree })
     }
 
