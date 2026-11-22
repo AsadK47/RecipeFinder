@@ -1,0 +1,38 @@
+name: TestFlight public beta
+
+# Daily: hand the newest build to public-link testers (Beta App Review + add to the "Public Beta" group), so the public
+# link never points at an old or expired build (owner OK 2026-11-22). Uploads happen many times a day; one promotion a
+# day keeps Apple's review queue light. "Run workflow" to promote now. Named testflight-* so Build & Test skips it.
+
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight-promote
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Promote newest build to public testers
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          APP_ID: '6832321439'
+        run: |
+          set -o pipefail
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          cd .github/scripts
+          ASC_KEY_PATH="$KEY_PATH" python3 asc_promote_public.py | tee -a "$GITHUB_STEP_SUMMARY"
+          rm -f "$KEY_PATH"
