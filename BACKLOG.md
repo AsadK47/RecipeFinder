@@ -859,7 +859,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 **Cooking resume across relaunch** (builder 2026-11-19): cooking mode now resumes at the step you left while
   the app stays open. Keeping it after the app is closed means storing "recipe + step" on the device — add a Privacy
   §4.2 line ("where you are in a recipe you're cooking") and clear it on Reset? (yes / keep in-memory)
-- 🙋 ⚔️ 71 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
+- 🙋 ⚔️ 77 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
 - 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
 - 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
   `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
@@ -886,6 +886,8 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🐞 RecipeFinder/Utilities/Recipe/RecipeFilterCriteria.swift:84 + RecipeFinder/RecipeSeed/recipes_seed.json — all 332 bundled recipes have every dietaryInfo flag false, so the Vegetarian/Vegan/Gluten-Free filters return nothing on a fresh install — tag the seed from ingredients (seed-history.py + drift test) (challenger 2026-11-22)
+- 🔴 .github/workflows/testflight-promote.yml + asc_promote_public.py — daily auto-promotion to the public TestFlight link while bundled recipes still carry copied method text (legal blocker) and the CloudKit Production schema is undeployed; falls through to add-to-group for any non-READY state — switch to workflow_dispatch until own-words rewrite + schema deploy land (challenger 2026-11-22, owner decision)
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
