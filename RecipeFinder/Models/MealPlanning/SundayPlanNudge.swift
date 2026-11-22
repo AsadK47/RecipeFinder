@@ -28,8 +28,8 @@ enum SundayPlanNudge {
     }
 
     /// The first Sunday 18:00 after `now` whose week ahead (the Monday after, to the end of Plan's week) has no
-    /// dinner planned; nil when every week in the look-ahead already has one. A repeating dinner counts for every week from
-    /// its date on (Plan fills the repeat into each week), so a cook with one never gets nudged. Breakfast, lunch and
+    /// dinner planned; nil when every week in the look-ahead already has one. A repeating dinner counts for a week when one of
+    /// its weekly copies (from its date on) falls on a day checked. Breakfast, lunch and
     /// snacks don't count.
     static func fireDate(now: Date, plans: [MealPlanModel], calendar: Calendar = .current) -> Date? {
         let dinners = plans.filter { $0.mealTime == .dinner }
@@ -51,10 +51,13 @@ enum SundayPlanNudge {
             guard let monday = calendar.date(byAdding: .day, value: 1, to: sunday),
                   let lastDay = MealPlanCalendar(calendar: calendar).daysInWeek(containing: monday).last,
                   let weekEnd = calendar.date(byAdding: .day, value: 1, to: lastDay) else { return nil }
-            let weekStart = monday
-            let planned = dinners.contains { dinner in
-                let day = calendar.startOfDay(for: dinner.date)
-                return (day >= weekStart && day < weekEnd) || (dinner.isRecurring && day < weekEnd)
+            // A weekly dinner counts only when one of its copies lands on a day checked (same rule as Plan's nights).
+            var day = monday
+            var planned = false
+            while day < weekEnd, !planned {
+                planned = MealPlanModel.hasDinner(on: day, plans: dinners, calendar: calendar)
+                guard let next = calendar.date(byAdding: .day, value: 1, to: day) else { return nil }
+                day = next
             }
             if !planned { return fire }
         }
