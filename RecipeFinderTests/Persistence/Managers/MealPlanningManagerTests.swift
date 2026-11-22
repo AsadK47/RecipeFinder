@@ -915,8 +915,9 @@ struct WeeklyCopiesTests {
         #expect(MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: day(0), calendar: calendar).isEmpty)
     }
 
-    @Test func oneOffsAndCopiesInsideTheWeekAreNotTemplates() {
-        let plans = [plan("Once", on: day(-7), weekly: false), plan("Later", on: day(2))]
+    @Test func oneOffsAndCopiesFromLaterWeeksAreNotTemplates() {
+        // "Later" shares Wednesday with the week's empty day(2): only the `date < start` rule keeps it out.
+        let plans = [plan("Once", on: day(-7), weekly: false), plan("Later", on: day(9))]
         #expect(MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: day(0), calendar: calendar).isEmpty)
     }
 
