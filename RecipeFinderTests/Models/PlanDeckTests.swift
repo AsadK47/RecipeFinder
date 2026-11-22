@@ -415,6 +415,25 @@ import Foundation
         let deck = makeDeck(days: [day(1)], recipes: [only], recentlyPassed: [only.id])
         #expect(deck.current?.recipe.name == "Only")
     }
+
+    @Test func passesHoldOnlyDishesPassedInThisDeck() {
+        let earlier = recipe("Earlier")
+        let first = recipe("First", rating: 5)
+        let second = recipe("Second")
+        var deck = makeDeck(days: [day(1)], recipes: [earlier, first, second], recentlyPassed: [earlier.id])
+        #expect(deck.current?.recipe.name == "First")
+        deck.skip()
+        #expect(deck.passes.map(\.id) == [first.id])
+    }
+
+    @Test func busyNightAndLeaveOpenDoNotCountAsPassing() {
+        var deck = makeDeck(days: [day(1), day(2)], recipes: [recipe("Slow", minutes: 90), recipe("Quick", minutes: 15)])
+        deck.setBusy(true)
+        deck.setBusy(false)
+        deck.skipNight()
+        deck.plan()
+        #expect(deck.passes.isEmpty)
+    }
 }
 
 /// Owner 2026-11-20: "the swipe planning works the first time, then never appears again" — the button hid once the

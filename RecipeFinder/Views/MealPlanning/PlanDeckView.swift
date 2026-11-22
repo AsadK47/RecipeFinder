@@ -7,7 +7,7 @@ import SwiftUI
 struct PlanDeckView: View {
     @Binding var deck: PlanDeck
     let onPlan: (PlanDeck.Pick) -> Void
-    /// A dish passed on with Not this one / swipe left (Busy night and Leave open aren't passes).
+    /// Each dish `PlanDeck` counts as passed on (`passes`), as it happens.
     let onPass: (RecipeModel) -> Void
     let onClose: () -> Void
 
@@ -234,11 +234,7 @@ struct PlanDeckView: View {
     }
 
     private func skip() {
-        send(.leading) { deck in
-            guard let card = deck.current else { return }
-            onPass(card.recipe)
-            deck.skip()
-        }
+        send(.leading) { $0.skip() }
     }
 
     /// A re-deal for the same night fades, so it never looks like the dish was planned or passed on.
@@ -254,7 +250,10 @@ struct PlanDeckView: View {
         exitEdge = edge
         Task { @MainActor in
             guard deck.current?.id == cardID else { return }
+            let passedBefore = deck.passes.count
             withAnimation(.appGentle) { change(&deck) }
+            // The deck decides what counts as a pass; each new one is remembered as it happens.
+            for recipe in deck.passes.dropFirst(passedBefore) { onPass(recipe) }
             drag = .zero
         }
     }

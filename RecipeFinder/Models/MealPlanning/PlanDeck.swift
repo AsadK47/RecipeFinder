@@ -37,6 +37,9 @@ struct PlanDeck {
     private(set) var dayIndex = 0
     private(set) var current: Card?
     private(set) var picks: [Pick] = []
+    /// Dishes passed on in this deck with Not this one / swipe left, in order — Busy night and Leave open aren't
+    /// passes. What the cook's 30-day memory (`PlanDeckMemory`) records.
+    private(set) var passes: [RecipeModel] = []
     private let candidates: [Candidate]
     /// On the week already or picked here: never dealt again.
     private var taken: Set<UUID>
@@ -170,6 +173,7 @@ struct PlanDeck {
     mutating func skip() {
         guard let card = current else { return }
         passed.insert(card.recipe.id)
+        passes.append(card.recipe)
         current = deal()
     }
 
