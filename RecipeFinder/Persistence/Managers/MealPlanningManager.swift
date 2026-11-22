@@ -369,9 +369,10 @@ final class MealPlanningManager: MealPlanningManaging {
     ) -> [MealTime] {
         var result = existing.filter { selected.contains($0) }
         for mealTime in MealTime.allCases.sorted(by: { $0.sortOrder < $1.sortOrder }) {
-            if selected.contains(mealTime) && !result.contains(mealTime) {
-                result.append(mealTime)
-            }
+            guard selected.contains(mealTime), !result.contains(mealTime) else { continue }
+            // A newly added meal slots in ahead of the first later meal (lunch above dinner), keeping any dragged order.
+            let index = result.firstIndex { $0.sortOrder > mealTime.sortOrder } ?? result.endIndex
+            result.insert(mealTime, at: index)
         }
         return result
     }
