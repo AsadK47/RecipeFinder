@@ -748,6 +748,20 @@ struct PlanBugHuntTests {
         #expect(liveReminders == ["meal-\(nextWeek.id.uuidString)"])
     }
 
+    /// Reviewer + challenger 2026-11-22: a backup taken before the reminder was set holds the newer copy with none;
+    /// once it's the newest it would silence the series, so it takes the time this device's series already has.
+    @Test(arguments: [nil, 18] as [Int?])
+    func aRestoredWeeklyCopyKeepsThisDevicesReminderTime(restoredHour: Int?) throws {
+        let sut = makeManager()
+        weeklyDinner(sut, reminder: clock(19))
+        let nextWeek = MealPlanModel(recipeId: UUID(), recipeName: "Pasta", date: day(7), mealTime: .dinner,
+                                     isRecurring: true, reminderTime: restoredHour.map(clock))
+        sut.merge([nextWeek])
+        #expect(liveReminders == ["meal-\(nextWeek.id.uuidString)"])
+        let ringing = try #require(reminders.scheduled.last { $0.id == "meal-\(nextWeek.id.uuidString)" })
+        #expect(calendar.component(.hour, from: ringing.date) == 19)
+    }
+
     @Test func removingAWeeklyDinnerLeavesNoReminder() {
         let sut = makeManager()
         weeklyDinner(sut, reminder: clock(19))
