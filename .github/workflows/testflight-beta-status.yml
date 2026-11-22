@@ -1,0 +1,30 @@
+name: TestFlight beta status
+
+# "Run workflow" to read, from App Store Connect, the app's beta groups (public link on/limit), tester counts and which
+# builds each group can install. Read-only; same API key as the TestFlight workflow. Named testflight-* so Build & Test's
+# paths-ignore skips it.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read beta status
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          APP_ID: '6832321439'
+        run: |
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          cd .github/scripts
+          ASC_KEY_PATH="$KEY_PATH" python3 asc_beta_status.py | tee -a "$GITHUB_STEP_SUMMARY"
+          rm -f "$KEY_PATH"
