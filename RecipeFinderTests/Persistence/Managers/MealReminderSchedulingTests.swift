@@ -191,6 +191,22 @@ final class FakeMealReminderScheduler: MealReminderScheduling {
 
         let s = try #require(fake.scheduled.dropFirst(before).last { $0.id == "meal-\(earlier.id.uuidString)" })
         #expect(s.repeatsWeekly == false)
+        // The later copy's weekly reminder is replaced by its own one-off, so nothing rings every week any more.
+        let l = try #require(fake.scheduled.dropFirst(before).last { $0.id == "meal-\(later.id.uuidString)" })
+        #expect(l.repeatsWeekly == false)
+    }
+
+    @Test func stopRepeatingOnALaterCopy_leavesACookedEarlierCopyWithoutAReminder() {
+        let fake = FakeMealReminderScheduler()
+        let sut = makeManager(fake)
+        let (earlier, later) = weeklyPair(sut)
+        sut.toggleCompletion(earlier)
+        let before = fake.scheduled.count
+
+        sut.toggleRecurring(later)
+
+        #expect(!fake.scheduled.dropFirst(before).contains { $0.id == "meal-\(earlier.id.uuidString)" })
+        #expect(fake.cancelled.contains("meal-\(earlier.id.uuidString)"))
     }
 
     @Test func removingALaterCopy_givesTheEarlierCopyItsOwnReminder() throws {
@@ -203,6 +219,8 @@ final class FakeMealReminderScheduler: MealReminderScheduling {
 
         let s = try #require(fake.scheduled.dropFirst(before).last { $0.id == "meal-\(earlier.id.uuidString)" })
         #expect(s.repeatsWeekly == false)
+        #expect(!fake.scheduled.dropFirst(before).contains { $0.id == "meal-\(later.id.uuidString)" })
+        #expect(fake.cancelled.contains("meal-\(later.id.uuidString)"))
     }
 
     // MARK: - fire-date helper
