@@ -332,6 +332,21 @@ struct SortedOrderedMealTimesTests {
         #expect(result == [.dinner, .breakfast, .lunch, .snack])
     }
 
+    @Test("a meal added to a day slots in by time, ahead of later meals")
+    func addedMealSlotsInByTime() {
+        // Owner 2026-11-22: dinner from Plan my week, then lunch added → lunch must show above dinner.
+        #expect(MealPlanningManager.sortedOrderedMealTimes(existing: [.dinner], selected: [.dinner, .lunch])
+            == [.lunch, .dinner])
+        #expect(MealPlanningManager.sortedOrderedMealTimes(existing: [.lunch, .dinner], selected: [.breakfast, .lunch, .dinner])
+            == [.breakfast, .lunch, .dinner])
+    }
+
+    @Test("a meal added after a drag keeps the dragged order")
+    func addedMealKeepsDraggedOrder() {
+        #expect(MealPlanningManager.sortedOrderedMealTimes(existing: [.dinner, .lunch], selected: [.breakfast, .lunch, .dinner])
+            == [.breakfast, .dinner, .lunch])
+    }
+
     @Test("removes items no longer selected")
     func removesUnselected() {
         let result = MealPlanningManager.sortedOrderedMealTimes(
