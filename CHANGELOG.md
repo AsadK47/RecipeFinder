@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox Sunday nudge weekly dinner · af59876
+- For you: The Sunday "Plan next week's dinners?" reminder now looks at the nights a weekly dinner actually lands on, so a weekly Sunday roast no longer hides an empty Monday-to-Saturday when your week starts on Sunday.
+- Behind the build: a new test failed on the old code first, then passed with the fix; a reviewer caught one test with the wrong expectation and a challenger's question about which nights count went to the owner.
+
 ## 2026-11-22 · Inbox WeekDinners past dinners · 4d5c943
 - For you: Dinners you've already cooked this week stay put on Plan's week photos as a record of what you made, and VoiceOver describes exactly what you can do with each one.
 - Behind the build: a reviewer spotted a rule for moving missed dinners that could never run; it was removed with tests for cooked nights and for moving tonight's dinner late in the evening, checked by a reviewer and a challenger.
