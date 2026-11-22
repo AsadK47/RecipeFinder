@@ -123,6 +123,19 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Smart search & Ask the kitchen — built in-house** (owner 2026-11-22: "build one in house, piece by piece,
+  clever algorithms"). Works on every phone, offline, deterministic and testable; Apple's on-device model (already used
+  for text import) is an optional bonus layer later. Slices, each shippable: (1) **Query parser** — "quick chicken no
+  dairy for 4" → time ≤30, has chicken, excludes dairy, serves 4; numbers, negation (no/without/-free), diets, meal
+  slots, cuisines. (2) **Food vocabulary** — synonyms + regional names (aubergine/eggplant, coriander/cilantro),
+  plurals, ingredient families (dairy, nuts, gluten) — one tested table. (3) **Typo-tolerant ranking** — fuzzy match
+  (edit distance / trigrams) + BM25-style scoring over name, ingredients, tags. (4) **Vibes** — "cosy", "light",
+  "spicy", "fancy" from computed recipe traits (ingredients, method words, time) + Apple `NLEmbedding` word vectors
+  for unseen words. (5) **What can I make?** — reuse the kitchen matcher; rank by coverage + what's expiring.
+  (6) **Swaps** — curated substitution table (butter→oil ratios etc.), food-safety checked. (7) **Ask the kitchen**
+  chat 🤖 — a chat UI over these intents with suggestion chips and recipe cards in replies; answers only from the
+  cook's data. *Measure:* searches that open a recipe; asks that end in Cook/Plan. *Done when (per slice):* parser and
+  ranking tested with ≥100 example queries, perf budget, screenshots, CI green.
 - [x] **Theme palette by colour theory** (owner 2026-11-21: "use colour theory to determine best colours").
   ✅ **Slice 1 landed** 1a5ba5a..a45fecd (builder 2026-11-21): 8 OKLCH food hues (Tomato, Saffron, Honey, Herb, Teal,
   Blueberry, Plum, Raspberry) in `Theme/ThemePalette.swift`, Light/Dark accents ≥4.5:1 under white text
