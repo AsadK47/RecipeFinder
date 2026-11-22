@@ -56,6 +56,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 (item pass: Inbox 🐞 Stop Repeating on a later copy — fixed: stopped copy synced twice (cancel-then-add order isn't promised) → once; tests now check the later copy's weekly reminder goes and a cooked earlier copy gets none)
+- ⚔️ [Time] Stop on next week's copy, then Repeat again on it: its weekly trigger (weekday + time, `NotificationManager.swift:165`) also rings on this week's night, where the earlier copy now holds a one-off → two alerts that night. Root cause predates this change (a weekly trigger rings before its plan's first date) — cost if wrong: one duplicate alert after an unusual stop/re-repeat.
+
 ## 2026-11-22 · Inbox 🟡 plan deck pass decision — noted, not fixed
 - ⚔️ [Race] Close landing between ✕ and the deck's next main-actor turn drops the write (binding setter ignores a closed deck), so that one pass isn't remembered, while ♥ in the same race still saves its pick (`PlanDeckView.swift` `send`) — cost if wrong: one dish passed at the instant of closing can be dealt fresh next week.
   → Owner:
