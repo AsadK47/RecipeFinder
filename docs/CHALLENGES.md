@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 (item pass: owner 🐞 Plan meal order + delete pop-ups — fixed: drag order leaked to other days; reminder change didn't re-order; Undo unreachable with VoiceOver; a second take-off lost the first Undo; restore/reminder tests couldn't fail)
+- ⚔️ [UX] Hold menu → Stop Repeating still drops later weekly copies with no Undo (`PlannedMealsSection.swift` → `toggleRecurring` → `stopSeries`) — older behaviour, outside the owner's ask — cost if wrong: a weekly dinner stopped by mistake must be re-planned.
+- ⚔️ [UX] After a drag, a new meal goes ahead of the first later meal in the dragged list (dinner dragged above breakfast + a 3pm snack → snack on top), and Undo returns the day to time order, not the dragged one — drag order is session-only by design — cost if wrong: one odd-looking order until the day is reopened.
+- ⚔️ [Time] Today still orders by slot (breakfast, lunch, dinner, snack), so a 3pm snack shows after dinner there while Plan shows it before → next WORK.md action.
+
 ## 2026-11-22 (item pass: Inbox 🟡 MealPlanningManager+Series split — fixed: header claimed every function calendar-pure; clock-change week untested → `aWeekAcrossTheAutumnClockChangeFillsTheRightNights`)
 - ⚔️ [Tests] Two weekly copies on the same date + meal time (sync duplicates): which becomes the template depends on array order (`weeklyCopies`, `>` keeps the first) — unpinned — cost if wrong: next week copies the older duplicate's servings/reminder.
 - ⚔️ [Simplify] `newOccupied` in `weeklyCopies` can never match (each slot is visited once) — kept from the old code; safe to delete in Smell Batch G — cost if wrong: none.

@@ -68,6 +68,10 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ 🐞 owner: Plan meals in time order (e85cf25) + take-off with Undo, no pop-ups (fde4a2e) landed (interactive session
+2026-11-22; leftover branches agent/meal-time-order, -2, agent/plan-delete-popups, auto-cleanup). Next: Today orders a day
+by time too — `TodayFeed.swift:146`, `TodayWeek.swift:45`, `PrepAhead.swift:52` sort by `mealTime.sortOrder`; switch to
+`MealPlanModel.eatenBefore` (Today's "next meal" `TodayMealDay.swift:130` needs a pre-mortem: snack at 15:00 now comes before dinner).
 ✅ 🐞 Seed dietary tags landed c4e1ed7 (builder 2026-11-22; leftover branches agent/seed-dietary-tags, -2, auto-cleanup). 🔴 public promotion + allergen chips → Needs owner.
 Inbox: ✅ plan deck pass decision landed 26f4481 (builder 2026-11-22; leftover branch agent/plan-deck-passes, auto-cleanup).
 ✅ 🐞 Stop-on-a-later-copy reminders landed 88d5ed9 (interactive session 2026-11-22; leftover branches

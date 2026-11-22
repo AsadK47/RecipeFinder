@@ -41,6 +41,14 @@ anything else between entries):
 - For you: Plan my week works as before — dishes you pass on wait behind fresh ones next time, while Busy night and Leave open keep every dish fresh.
 - Behind the build: the rule for what counts as passing a dish moved back into the tested planning model, with its two tests restored, checked by a reviewer and a challenger.
 
+## 2026-11-22 · Plan take-off with Undo · fde4a2e
+- For you: Take a meal off Plan with one tap on the bin beside it or a swipe — it goes straight away, weekly meals too, and Undo on the toast brings it back just as it was.
+- Behind the build: two reviewers made sure Undo is easy to reach with VoiceOver and brings back several meals taken off in a row, and tests check a whole weekly series and its reminders come back.
+
+## 2026-11-22 · Plan meals in time order · e85cf25
+- For you: Each day on Plan now lists meals in the order you'll eat them — by the reminder time you set, or the usual time for breakfast, lunch, a snack and dinner — and a meal you add slots straight into place.
+- Behind the build: tests showed lunch landing below dinner first; a reviewer and a challenger then made a dragged order stay on its own day and a new reminder time re-order the day.
+
 ## 2026-11-22 · Inbox Sunday nudge week · e34cec0
 - For you: The Sunday evening planning nudge now follows the first day of the week your phone uses, and a tap opens the same week it asked about.
 - Behind the build: tests reproduced the mismatch first, and a reviewer and a challenger both caught that the first fix also counted tonight's dinner — fixed before it shipped.
