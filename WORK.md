@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+🚧 🐞 SundayPlanNudge weekly dinner (builder 2026-11-22): branch `agent/sunday-nudge-recurring` — 431746b tests (expect red), ae2fe5d fix (`fireDate` checks each day with `MealPlanModel.hasDinner`), not yet pushed until red seen. Then push, green → land. asc_promote 🐞 → Needs owner (guardrail).
 ✅ 🐞 owner: Plan meals in time order (e85cf25) + take-off with Undo, no pop-ups (fde4a2e) landed (interactive session
 2026-11-22; leftover branches agent/meal-time-order, -2, agent/plan-delete-popups, auto-cleanup). Next: Today orders a day
 by time too — `TodayFeed.swift:146`, `TodayWeek.swift:45`, `PrepAhead.swift:52` sort by `mealTime.sortOrder`; switch to
