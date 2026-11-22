@@ -243,8 +243,14 @@ final class FakePlanNudgeScheduler: PlanNudgeScheduling {
     @Test func aRepeatingDinnerClearsThePendingNudge() {
         storage.set(true, forKey: SundayPlanNudge.settingKey)
         let sut = makeManager()
+        // A weekly Monday dinner from the coming Monday: every week checked starts on a Monday, whatever today is and
+        // whatever the device's first weekday (a weekly dinner on today's weekday may fall outside, e.g. Sunday-first).
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let toMonday = (9 - calendar.component(.weekday, from: today)) % 7
+        let monday = calendar.date(byAdding: .day, value: toMonday, to: today) ?? today
         sut.addMealPlan(MealPlanModel(
-            recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .dinner, isRecurring: true
+            recipeId: UUID(), recipeName: "Dal", date: monday, mealTime: .dinner, isRecurring: true
         ))
         let scheduledBefore = nudges.scheduled.count
         sut.syncPlanNudge()
