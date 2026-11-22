@@ -1057,8 +1057,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             XCTAssertTrue(nextWeek.exists, "The planner should offer the next week.")
             nextWeek.tap()
         }
+        // A missing card is the owner's "deck vanished" bug (2026-11-20), so fail rather than skip.
         guard open.waitForExistence(timeout: 5) else {
-            throw XCTSkip("Every dinner this week and next is already planned on this simulator.")
+            XCTFail("Plan should offer Plan my week this week or next.")
+            return
         }
         checkpoint(app, "plan my week")
         open.tap()
