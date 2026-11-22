@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox WeekDinners past dinners · 4d5c943
+- For you: Dinners you've already cooked this week stay put on Plan's week photos as a record of what you made, and VoiceOver describes exactly what you can do with each one.
+- Behind the build: a reviewer spotted a rule for moving missed dinners that could never run; it was removed with tests for cooked nights and for moving tonight's dinner late in the evening, checked by a reviewer and a challenger.
+
 ## 2026-11-22 · Inbox MealPlanningManager+Series split · 2c5638a
 - For you: Weekly repeating meals keep filling each new week exactly as before, including the week the clocks go back.
 - Behind the build: the weekly-repeat rules moved into their own tested file, with a new test for the autumn clock change; a reviewer and a challenger found no change in behaviour.

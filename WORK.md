@@ -74,16 +74,10 @@ Inbox: ✅ plan deck pass decision landed 26f4481 (builder 2026-11-22; leftover 
 agent/stop-series-reminders, -2, auto-cleanup). ✅ 🐞 SundayPlanNudge week landed e34cec0 (leftover branches
 agent/sunday-nudge-week, -2, auto-cleanup). ✅ 🟡 CHANGELOG Reset wording fixed. ✅ 🟡 Privacy aisle-order wording landed b52d55d (builder 2026-11-22; leftover branch
 agent/privacy-aisle-wording, auto-cleanup). ✅ 🟡 HelpView appearance tip + British spelling landed a3df262 (builder 2026-11-22; leftover branch agent/help-copy,
-auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerged branch agent/seen-red, delete it). ✅ 🟡 CookingResumeMemory seam landed cbfba3f (builder 2026-11-22; leftover branch agent/cooking-resume-seam, auto-cleanup); Reset seam half stays in Inbox until *Reset store copies* is answered. Leftover branch agent/seen-red still to delete. ✅ 🟡 MealPlanningManager+Series split landed 2c5638a (builder 2026-11-22; leftover branch agent/meal-plan-series-split, auto-cleanup; rest → Smell Batch G). ✅ 🟡 testZZZPlanMyWeek skip → fail landed 32c0ec2 (builder 2026-11-22; leftover branch agent/plan-week-test-fail, auto-cleanup). Next: the next 🟡 Inbox line (WeekDinners missed-dinner branch unreachable). Website session: add the §4.2 aisle-order bullet (new wording: "for each shop you choose, and for trips with
+auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerged branch agent/seen-red, delete it). ✅ 🟡 CookingResumeMemory seam landed cbfba3f (builder 2026-11-22; leftover branch agent/cooking-resume-seam, auto-cleanup); Reset seam half stays in Inbox until *Reset store copies* is answered. Leftover branch agent/seen-red still to delete. ✅ 🟡 MealPlanningManager+Series split landed 2c5638a (builder 2026-11-22; leftover branch agent/meal-plan-series-split, auto-cleanup; rest → Smell Batch G). ✅ 🟡 testZZZPlanMyWeek skip → fail landed 32c0ec2 (builder 2026-11-22; leftover branch agent/plan-week-test-fail, auto-cleanup). ✅ 🟡 WeekDinners past dinners landed 4d5c943 (builder 2026-11-22; leftover branch agent/week-dinners-past, auto-cleanup). Next: the next 🟡 Inbox line (BACKLOG Log quick snack difficulty / filter chip order — run the missing reviewer). Website session: add the §4.2 aisle-order bullet (new wording: "for each shop you choose, and for trips with
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-- **WeekDinners past dinners (Inbox 🟡, `agent/week-dinners-past`):** deleted the "missed dinner moves forward"
-  branch instead of feeding unfiltered past plans — Plan shows past days as history (only cooked dinners,
-  `MealPlanModel.isShown`, from the 20 Nov plan bug fix), so restoring missed dinners would undo that. The branch was
-  also live for *cooked* past dinners (hold → "Move to Thu" would move a cooked dinner forward). **Pre-mortem:**
-  (1) a cooked dinner still offers moves → `cookedPastDinnerOffersNoMoves`; (2) tonight's dinner can't move →
-  `moveTargetsSkipPastNights` (from tonight); (3) a past swap sneaks through `move()` → `pastDinnerDoesNotSwap…`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

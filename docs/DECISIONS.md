@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **WeekDinners past dinners** (2026-11-22, 4d5c943): deleted the "missed dinner moves forward"
+  branch instead of feeding unfiltered past plans — Plan shows past days as history (only cooked dinners,
+  `MealPlanModel.isShown`, from the 20 Nov plan bug fix), so restoring missed dinners would undo that. The branch was
+  also live for *cooked* past dinners (hold → "Move to Thu" would move a cooked dinner forward). **Pre-mortem:**
+  (1) a cooked dinner still offers moves → `cookedPastDinnerOffersNoMoves`; (2) tonight's dinner can't move →
+  `moveTargetsSkipPastNights` (from tonight); (3) a past swap sneaks through `move()` → `pastDinnerDoesNotSwap…`.
 - **Seed dietary tags** (2026-11-22, c4e1ed7): infer only Vegetarian / Vegan, conservatively (any maybe-animal word rules the tag out; plain
   "stock" counts as meat; parmesan = animal rennet; "chow mein" noodles = egg). Allergen/diet flags (Gluten-, Dairy-,
   Nut-Free, Low-Carb, Keto) are never guessed — a wrong "Nut-Free" can hurt someone → Needs owner (hide those chips or
