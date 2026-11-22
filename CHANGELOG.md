@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox plan deck pass decision · 26f4481
+- For you: Plan my week works as before — dishes you pass on wait behind fresh ones next time, while Busy night and Leave open keep every dish fresh.
+- Behind the build: the rule for what counts as passing a dish moved back into the tested planning model, with its two tests restored, checked by a reviewer and a challenger.
+
 ## 2026-11-22 · Inbox restore weekly reminders · 9ab758b
 - For you: After restoring a backup, each weekly dinner rings once a week at the reminder time you set on this phone.
 - Behind the build: tests reproduced the double reminder first, and a reviewer and a challenger both caught a restored older reminder time that could take over — fixed before it shipped.

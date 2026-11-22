@@ -68,8 +68,10 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
-Inbox first: ✅ restore weekly reminders landed 9ab758b (leftover branch agent/merge-series-reminders, auto-cleanup). Next 🐞:
-Stop-on-a-later-copy reminders (`MealPlanningManager.stopSeries`, re-sync each copy it changes), then SundayPlanNudge week.  Website session: add the §4.2 aisle-order bullet + §4.3 clause
+Inbox: ✅ plan deck pass decision landed 26f4481 (builder 2026-11-22; leftover branch agent/plan-deck-passes, auto-cleanup).
+🐞 Stop-on-a-later-copy reminders is being worked by a parallel session on `agent/stop-series-reminders` (1cd65ac, test
+pushed 02:31 UTC 22 Nov) — don't duplicate; if that branch is still unmerged and idle >1 day, take it over. Then 🐞
+SundayPlanNudge week, then the next 🟡 Inbox line. Website session: add the §4.2 aisle-order bullet + §4.3 clause
 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
