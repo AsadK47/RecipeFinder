@@ -233,6 +233,8 @@ final class MealPlanningManager: MealPlanningManaging {
         mealPlans.removeAll { copy in later.contains { $0.id == copy.id } }
         for index in mealPlans.indices where inSeries(mealPlans[index]) {
             mealPlans[index].isRecurring = false
+            // The weekly reminder sat on the newest copy; each copy left behind now needs its own one-off.
+            syncReminder(for: mealPlans[index])
         }
     }
     
