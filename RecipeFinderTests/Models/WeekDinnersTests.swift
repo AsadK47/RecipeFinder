@@ -169,6 +169,13 @@ import Foundation
         #expect(!WeekDinners.moveTargets(from: nights[4], in: nights).contains { $0.date == day(0) })
     }
 
+    /// Tonight's dinner whose time has already gone (planned for 8am, now 8pm) is still tonight's: it can move.
+    @Test func tonightsDinnerMovesEvenAfterItsTime() {
+        let pasta = plan(recipe("Pasta"), on: day(3, hour: 8))
+        let moved = WeekDinners.move(pasta, to: day(4), plans: [pasta], today: day(3, hour: 20), calendar: cal)
+        #expect(moved.first?.date == day(4, hour: 8))
+    }
+
     @Test func nothingMovesIntoThePast() {
         let pasta = plan(recipe("Pasta"), on: day(4))
         #expect(WeekDinners.move(pasta, to: day(1), plans: [pasta], today: day(3), calendar: cal).isEmpty)

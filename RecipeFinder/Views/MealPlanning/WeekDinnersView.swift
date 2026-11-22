@@ -75,9 +75,7 @@ struct WeekDinnersView: View {
         .contextMenu { moveMenu(night, plan: plan) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(Self.spokenDay(night)), dinner: \(plan.recipeName)")
-        .accessibilityHint(night.recipe == nil
-                           ? "This recipe is no longer in your library. Use actions to move or remove it."
-                           : "Opens the recipe. Use actions to cook or move it.")
+        .accessibilityHint(Self.dinnerHint(night))
         .accessibilityAddTraits(night.recipe == nil ? [] : .isButton)
         .accessibilityActions { moveMenu(night, plan: plan) }
     }
@@ -176,6 +174,16 @@ struct WeekDinnersView: View {
         }
         .lineLimit(1)
         .minimumScaleFactor(0.8)
+    }
+
+    /// A past (cooked) dinner is history: no moves offered (WeekDinners.moveTargets), so the hint doesn't promise one.
+    private static func dinnerHint(_ night: WeekDinners.Night) -> String {
+        switch (night.recipe == nil, night.isPast) {
+        case (true, true): "This recipe is no longer in your library. Use actions to remove it."
+        case (true, false): "This recipe is no longer in your library. Use actions to move or remove it."
+        case (false, true): "Opens the recipe. Use actions to cook it again."
+        case (false, false): "Opens the recipe. Use actions to cook or move it."
+        }
     }
 
     private static func spokenDay(_ night: WeekDinners.Night) -> String {

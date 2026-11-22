@@ -55,7 +55,8 @@ enum WeekDinners {
               let moved = shifted(dinner, to: night, calendar: calendar) else { return [] }
         let occupant = plans.first { $0.id != dinner.id && $0.isSlot(night, .dinner, calendar: calendar) }
         guard let occupant else { return [moved] }
-        guard !occupant.isRecurring, let swapped = shifted(occupant, to: dinner.date, calendar: calendar) else { return [] }
+        guard !occupant.isRecurring,
+              let swapped = shifted(occupant, to: dinner.date, calendar: calendar) else { return [] }
         return [moved, swapped]
     }
 
