@@ -86,7 +86,7 @@ struct PlannedMealsSection: View {
                     Image(systemName: "trash")
                         .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                         .foregroundStyle(AppTheme.error.opacity(0.7))
-                        .frame(width: 32, height: 44)
+                        .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)

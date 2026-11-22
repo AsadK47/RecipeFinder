@@ -14,6 +14,13 @@ private struct ToastModifier: ViewModifier {
     @Binding var message: String?
     let icon: String
     let action: (title: String, perform: () -> Void)?
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverOn
+
+    /// A toast with a button stays long enough to reach it — much longer with VoiceOver, which has to find it first.
+    private var shownFor: Duration {
+        guard action != nil else { return .seconds(3) }
+        return voiceOverOn ? .seconds(15) : .seconds(6)
+    }
 
     func body(content: Content) -> some View {
         content
@@ -32,8 +39,11 @@ private struct ToastModifier: ViewModifier {
             .animation(.appGentle, value: message)
             // `.task(id:)` restarts on message change so rapid updates reset the dismiss timer instead of clearing early.
             .task(id: message) {
-                guard message != nil else { return }
-                try? await Task.sleep(for: .seconds(action == nil ? 3 : 5))
+                guard let shown = message else { return }
+                if let action {
+                    AccessibilityNotification.Announcement("\(shown). \(action.title) available").post()
+                }
+                try? await Task.sleep(for: shownFor)
                 message = nil
             }
     }
