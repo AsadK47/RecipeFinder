@@ -23,6 +23,7 @@ pick ("Not feeling it? Keep browsing →"), and the feed has "Pick one for tonig
 What's cooked feeds "Because you loved X" back in Recipes — the loop closes.
 
 ## Principles (every screen)
+Research behind them, as an 11-rule checklist with sources: [`docs/DESIGN-RESEARCH.md`](DESIGN-RESEARCH.md).
 1. **One primary action per screen**, obvious within a second.
 2. **Every action has a visible control; gestures are bonuses** (e.g. ♥ / ✕ buttons beside swipe, a Next button beside tap-right).
 3. **No setup, no data entry** — infer; ask only when it matters.

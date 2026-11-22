@@ -65,6 +65,7 @@ Visual language + shared UI tokens live in `RecipeFinder/DesignSystem.md` (livin
 - Singletons OK as composition-root defaults (`init(storage: .shared)`), but code under test must accept injected fakes.
 
 ## UX checklist (every view touched)
+- **Research rules** in `docs/DESIGN-RESEARCH.md` (speed, motion timing, choice, calm) — cite the rule number in reviews.
 - **Empty states** are actionable — always include a button, never dead-end copy.
 - **Primary actions** are visible — overflow menu is for rare/secondary actions only.
 - **Toolbar:** apply `.toolbarBackground(.hidden, for: .navigationBar)` with `backgroundGradient`.
