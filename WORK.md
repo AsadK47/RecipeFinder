@@ -71,7 +71,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 Inbox: ✅ plan deck pass decision landed 26f4481 (builder 2026-11-22; leftover branch agent/plan-deck-passes, auto-cleanup).
 ✅ 🐞 Stop-on-a-later-copy reminders landed 88d5ed9 (interactive session 2026-11-22; leftover branches
 agent/stop-series-reminders, -2, auto-cleanup). ✅ 🐞 SundayPlanNudge week landed e34cec0 (leftover branches
-agent/sunday-nudge-week, -2, auto-cleanup). Next: the top 🟡 Inbox line (CHANGELOG Reset theme wording). Website session: add the §4.2 aisle-order bullet + §4.3 clause
+agent/sunday-nudge-week, -2, auto-cleanup). ✅ 🟡 CHANGELOG Reset wording fixed. Next: the top 🟡 Inbox line (Privacy aisle-order wording — legal text: needs two reviewers + website `privacy.html` in the same item). Website session: add the §4.2 aisle-order bullet + §4.3 clause
 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands

@@ -70,7 +70,7 @@ anything else between entries):
 - Behind the build: two copies of the same screen piece became one, the app got about 150 lines smaller, and a reviewer and a challenger checked nothing a cook uses went missing.
 
 ## 2026-11-21 · Inbox 🟡 Reset clears preferences · 216eb49
-- For you: Reset App to Default now gives you a true fresh start — your settings return to their defaults too, while your colour theme and iCloud sync choice stay as you set them.
+- For you: Reset App to Default now gives you a true fresh start — your settings and colour theme return to their defaults too, while your iCloud sync choice stays as you set it.
 - Behind the build: a new test reads the app's own code and fails if a future setting would be missed by Reset, and a reviewer plus a challenger checked it against the Privacy Policy.
 
 ## 2026-11-20 · Inbox 🟡 Shop mode keep-awake re-hold · ac8a211
