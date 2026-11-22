@@ -1,4 +1,28 @@
-import Foundation
+import SwiftUI
+
+// MARK: - CookingResuming
+
+/// Behavioural seam for cooking mode's resume memory, injected through `@Environment(\.cookingResume)`.
+@MainActor
+protocol CookingResuming: AnyObject {
+    func remember(_ place: CookingResumeMemory.Place, for recipeID: UUID, content: [String])
+    func place(for recipeID: UUID, content: [String], itemCount: Int) -> CookingResumeMemory.Place?
+    func forget(_ recipeID: UUID)
+}
+
+private struct CookingResumingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor.
+    static var defaultValue: any CookingResuming {
+        MainActor.assumeIsolated { CookingResumeMemory.shared }
+    }
+}
+
+extension EnvironmentValues {
+    var cookingResume: any CookingResuming {
+        get { self[CookingResumingKey.self] }
+        set { self[CookingResumingKey.self] = newValue }
+    }
+}
 
 // MARK: - CookingResumeMemory
 
@@ -6,7 +30,7 @@ import Foundation
 /// same step with the same ingredients ticked. Held in memory for this app session only: it survives leaving cooking
 /// mode, switching tabs and backgrounding, not a relaunch (persisting it would be new on-device data — Needs owner).
 @MainActor
-final class CookingResumeMemory {
+final class CookingResumeMemory: CookingResuming {
 
     static let shared = CookingResumeMemory()
 

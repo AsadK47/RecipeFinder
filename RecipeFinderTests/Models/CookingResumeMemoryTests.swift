@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 import Testing
 @testable import RecipeFinder
 
@@ -104,5 +104,19 @@ struct CookingResumeMemoryTests {
         #expect(CookingModeView.resumeContent(for: a) == CookingModeView.resumeContent(for: a))
         #expect(CookingModeView.resumeContent(for: a) != CookingModeView.resumeContent(for: b))
         #expect(CookingModeView.resumeContent(for: a) != CookingModeView.resumeContent(for: c))
+    }
+
+    @Test("Cooking mode's environment seam defaults to the app's shared memory")
+    func environmentDefaultsToShared() {
+        #expect(EnvironmentValues().cookingResume === CookingResumeMemory.shared)
+    }
+
+    @Test("A test memory injected through the environment is the one cooking mode reads")
+    func environmentAcceptsInjectedMemory() {
+        let injected = memory(Clock())
+        var values = EnvironmentValues()
+        values.cookingResume = injected
+        #expect(values.cookingResume === injected)
+        #expect(values.cookingResume !== CookingResumeMemory.shared)
     }
 }

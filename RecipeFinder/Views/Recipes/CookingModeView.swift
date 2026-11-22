@@ -20,6 +20,7 @@ struct CookingModeView: View {
     @State private var stepIngredients: [[StepIngredientMatcher.Use]] = []
     @Environment(\.recipeTimer) private var timerManager
     @Environment(\.cookingTimers) private var cookingTimers
+    @Environment(\.cookingResume) private var resumeMemory
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     /// Restores what the screen was on the way out, so Settings' Keep Screen Awake survives a cook.
@@ -63,7 +64,7 @@ struct CookingModeView: View {
     private func finishCooking() {
         guard !isFinished else { return }
         isFinished = true
-        CookingResumeMemory.shared.forget(recipe.id)
+        resumeMemory.forget(recipe.id)
         BadgeManager.shared.unlockBadge(.headChef)
         // A logged cook closes straight into the caller's Made it sheet; one already counted today has no sheet.
         if onFinish?() ?? true {
@@ -96,14 +97,14 @@ struct CookingModeView: View {
     /// Picks up where this recipe was left earlier in this app session (step + ticked ingredients).
     private func restorePlace() {
         let content = Self.resumeContent(for: recipe)
-        guard let place = CookingResumeMemory.shared.place(for: recipe.id, content: content, itemCount: plan.count) else { return }
+        guard let place = resumeMemory.place(for: recipe.id, content: content, itemCount: plan.count) else { return }
         currentIndex = place.index
         completedItems = place.checkedIngredients
     }
 
     private func rememberPlace() {
         guard !isFinished else { return }
-        CookingResumeMemory.shared.remember(
+        resumeMemory.remember(
             .init(index: currentIndex, checkedIngredients: completedItems),
             for: recipe.id,
             content: Self.resumeContent(for: recipe)
