@@ -1075,7 +1075,8 @@ struct UndoTakeOffTests {
         sut.restore(before)
 
         #expect(Set(sut.mealPlans.map(\.id)) == [tonight.id, nextWeek.id])
-        #expect(sut.mealPlans.allSatisfy(\.isRecurring))
+        let allRepeat = sut.mealPlans.allSatisfy { $0.isRecurring }
+        #expect(allRepeat)
         #expect(scheduled(after: afterRemoval, id: nextWeek.id)?.repeatsWeekly == true)
     }
 
