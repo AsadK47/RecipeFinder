@@ -1051,15 +1051,10 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         dismissBadgeSheet(app)
         tab(app, "Plan", shot: nil)
         let open = app.buttons["plan.planMyWeek"]
-        // Earlier tests plan tonight and the next days, so late in the week this one can be full: plan next week.
-        if !open.waitForExistence(timeout: 5) {
-            let nextWeek = app.buttons["plan.week.next"]
-            XCTAssertTrue(nextWeek.exists, "The planner should offer the next week.")
-            nextWeek.tap()
-        }
-        // A missing card is the owner's "deck vanished" bug (2026-11-20), so fail rather than skip.
+        // The button looks four weeks ahead ("Plan week of …"), so it shows on the first Plan screen even when
+        // earlier tests filled this week; missing is the owner's "deck vanished" bug (2026-11-20) — fail, not skip.
         guard open.waitForExistence(timeout: 5) else {
-            XCTFail("Plan should offer Plan my week this week or next.")
+            XCTFail("Plan should offer Plan my week on the first Plan screen.")
             return
         }
         checkpoint(app, "plan my week")
