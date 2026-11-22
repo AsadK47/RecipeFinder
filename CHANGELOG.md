@@ -17,6 +17,10 @@ anything else between entries):
 - For you: Plan my week works as before — dishes you pass on wait behind fresh ones next time, while Busy night and Leave open keep every dish fresh.
 - Behind the build: the rule for what counts as passing a dish moved back into the tested planning model, with its two tests restored, checked by a reviewer and a challenger.
 
+## 2026-11-22 · Inbox Sunday nudge week · e34cec0
+- For you: The Sunday evening planning nudge now follows the first day of the week your phone uses, and a tap opens the same week it asked about.
+- Behind the build: tests reproduced the mismatch first, and a reviewer and a challenger both caught that the first fix also counted tonight's dinner — fixed before it shipped.
+
 ## 2026-11-22 · Inbox Stop Repeating on a later copy · 88d5ed9
 - For you: Stop Repeating from any week of a weekly dinner, and every night already on your plan keeps its own reminder.
 - Behind the build: tests reproduced the missing reminder first, then a reviewer and a challenger checked the fix and tightened it before it shipped.

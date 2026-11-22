@@ -56,6 +56,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 (item pass: Inbox 🐞 Sunday nudge week — fixed: first fix checked Plan's whole week, which in Sunday/Saturday/custom-first weeks starts on or before the nudge, so tonight's or an eaten dinner cancelled it (reviewer + challenger agreed) → Monday after to the end of Plan's week; tests for first weekdays 1/2/4/7 and the tap week)
+- ⚔️ [Time] Wednesday-first (custom iOS setting): Plan's week holding Monday ends Tuesday, so the nudge checks only Mon–Tue — a planned Mon or Tue silences it for a mostly empty week — follows Plan's week by design; rare setting — cost if wrong: one missed nudge.
+
 ## 2026-11-22 (item pass: Inbox 🐞 Stop Repeating on a later copy — fixed: stopped copy synced twice (cancel-then-add order isn't promised) → once; tests now check the later copy's weekly reminder goes and a cooked earlier copy gets none)
 - ⚔️ [Time] Stop on next week's copy, then Repeat again on it: its weekly trigger (weekday + time, `NotificationManager.swift:165`) also rings on this week's night, where the earlier copy now holds a one-off → two alerts that night. Root cause predates this change (a weekly trigger rings before its plan's first date) — cost if wrong: one duplicate alert after an unusual stop/re-repeat.
 
