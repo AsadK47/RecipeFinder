@@ -928,4 +928,15 @@ struct WeeklyCopiesTests {
         #expect(slots == ["Brunch-\(calendar.component(.weekday, from: day(5)))-\(MealTime.lunch)",
                           "Curry-\(calendar.component(.weekday, from: day(3)))-\(MealTime.dinner)"])
     }
+
+    @Test func aWeekAcrossTheAutumnClockChangeFillsTheRightNights() {
+        // UK clocks go back on Sunday 25 Oct 2026, so this week has a 25-hour day: counting 24-hour steps from
+        // Thursday would land twice on the Sunday and never reach Monday.
+        let date = { (day: Int) in self.calendar.date(from: DateComponents(year: 2026, month: 10, day: day, hour: 18))
+            ?? .distantPast }
+        let plans = [plan("Monday curry", on: date(19))]
+        let copies = MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: date(22), calendar: calendar)
+        #expect(copies.count == 1)
+        #expect(copies.first.map { calendar.isDate($0.date, inSameDayAs: date(26)) } == true)
+    }
 }
