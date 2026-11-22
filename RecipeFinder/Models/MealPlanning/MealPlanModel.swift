@@ -162,12 +162,33 @@ enum MealTime: String, Codable, CaseIterable {
         }
     }
 
+    /// Minutes after midnight this slot is usually eaten (its default reminder time): orders a day by time, so a
+    /// 3pm snack sits between lunch and dinner.
+    var defaultMinuteOfDay: Int {
+        let (hour, minute) = defaultReminderHourMinute
+        return hour * 60 + minute
+    }
+
     /// Today's date at this slot's default reminder time — a ready default for the time picker.
     var defaultReminderTime: Date {
         let (hour, minute) = defaultReminderHourMinute
         return Calendar.current.date(
             bySettingHour: hour, minute: minute, second: 0, of: Date()
         ) ?? Date()
+    }
+}
+
+extension MealPlanModel {
+    /// Minutes after midnight this meal is eaten: its reminder time when the cook set one, else its slot's usual time.
+    func minuteOfDay(calendar: Calendar = .current) -> Int {
+        guard let reminderTime else { return mealTime.defaultMinuteOfDay }
+        let time = calendar.dateComponents([.hour, .minute], from: reminderTime)
+        return (time.hour ?? 0) * 60 + (time.minute ?? 0)
+    }
+
+    /// Earlier in the day first; slot order breaks a tie (lunch and a snack both at 1pm).
+    static func eatenBefore(_ a: MealPlanModel, _ b: MealPlanModel) -> Bool {
+        (a.minuteOfDay(), a.mealTime.sortOrder) < (b.minuteOfDay(), b.mealTime.sortOrder)
     }
 }
 

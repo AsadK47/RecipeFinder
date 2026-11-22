@@ -13,8 +13,8 @@ struct MealPlanningView: View {
     @State var selectedMealTimes: Set<MealTime> = []
     @State var mealPlanSheet: MealPlanSheet?
     @State var weekShoppingFeedback: String?
-    /// Display order for the selected day's meal cards; persists drag order within a day.
-    @State private var orderedMealTimes: [MealTime] = []
+    /// Display order for the selected day's meal cards: by time of day, or as dragged (kept until the day changes).
+    @State var orderedMealTimes: [MealTime] = []
     @State private var pantryExpirySuggestions: [PantryExpirySuggestions.Match] = []
     /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
     @State private var pendingSuggestedRecipe: RecipeModel?
@@ -151,7 +151,7 @@ struct MealPlanningView: View {
             }
             updateSelectedMealTimes(for: selectedDate)
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
-                existing: [], selected: selectedMealTimes)
+                existing: [], selected: selectedMealTimes, minuteOfDay: minuteOfDay)
             updatePantryExpirySuggestions()
         }
         .onChange(of: scenePhase) { _, phase in
@@ -169,7 +169,7 @@ struct MealPlanningView: View {
         }
         .onChange(of: selectedMealTimes) { _, newMealTimes in
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
-                existing: orderedMealTimes, selected: newMealTimes)
+                existing: orderedMealTimes, selected: newMealTimes, minuteOfDay: minuteOfDay)
         }
         .onChange(of: kitchenManager.inventoryItems) { _, _ in
             updatePantryExpirySuggestions()
@@ -237,8 +237,7 @@ struct MealPlanningView: View {
             },
             onSelectDate: { date in
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    selectedDate = date
-                    updateSelectedMealTimes(for: date)
+                    openDay(date)
                 }
                 HapticManager.shared.light()
             },

@@ -301,7 +301,7 @@ final class MealPlanningManager: MealPlanningManaging {
     }
     
     func mealPlans(for date: Date) -> [MealPlanModel] {
-        mealPlans.filter { $0.isOn(date) }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
+        mealPlans.filter { $0.isOn(date) }.sorted(by: MealPlanModel.eatenBefore)
     }
     
     func hasMealPlans(for date: Date) -> Bool {
@@ -362,16 +362,18 @@ final class MealPlanningManager: MealPlanningManaging {
         return WeekShoppingSummary(items: items, mealsCovered: mealsCovered, missingRecipeNames: missingRecipeNames)
     }
 
-    /// Stable order for `selected`: preserves `existing` sequence, appends new slots in natural sort.
+    /// Stable order for `selected`: keeps `existing` sequence (a dragged order), slots new meals in by time of day.
     nonisolated static func sortedOrderedMealTimes(
         existing: [MealTime],
-        selected: Set<MealTime>
+        selected: Set<MealTime>,
+        minuteOfDay: (MealTime) -> Int = { $0.defaultMinuteOfDay }
     ) -> [MealTime] {
+        let key = { (time: MealTime) in (minuteOfDay(time), time.sortOrder) }
         var result = existing.filter { selected.contains($0) }
-        for mealTime in MealTime.allCases.sorted(by: { $0.sortOrder < $1.sortOrder }) {
-            guard selected.contains(mealTime), !result.contains(mealTime) else { continue }
-            // A newly added meal slots in ahead of the first later meal (lunch above dinner), keeping any dragged order.
-            let index = result.firstIndex { $0.sortOrder > mealTime.sortOrder } ?? result.endIndex
+        for mealTime in selected.sorted(by: { key($0) < key($1) }) where !result.contains(mealTime) {
+            // A newly added meal slots in by when it's eaten (lunch above dinner, a 3pm snack between them), ahead of
+            // the first later meal, so any dragged order is kept.
+            let index = result.firstIndex { key($0) > key(mealTime) } ?? result.endIndex
             result.insert(mealTime, at: index)
         }
         return result

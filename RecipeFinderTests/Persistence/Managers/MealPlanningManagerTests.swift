@@ -323,13 +323,30 @@ struct SortedOrderedMealTimesTests {
         #expect(result == [.lunch, .dinner])
     }
 
-    @Test("preserves custom order and appends new items at their natural position")
-    func preservesCustomOrderAndAppendsNew() {
+    @Test("preserves custom order and slots a new meal ahead of the first later one")
+    func preservesCustomOrderAndSlotsNewByTime() {
+        // A 3pm snack goes ahead of the dragged-up 7pm dinner; the dragged order of the rest stays.
         let result = MealPlanningManager.sortedOrderedMealTimes(
             existing: [.dinner, .breakfast, .lunch],
             selected: [.breakfast, .dinner, .lunch, .snack]
         )
-        #expect(result == [.dinner, .breakfast, .lunch, .snack])
+        #expect(result == [.snack, .dinner, .breakfast, .lunch])
+    }
+
+    @Test("a day opens in time order: a 3pm snack sits between lunch and dinner")
+    func snackSitsBetweenLunchAndDinner() {
+        #expect(MealPlanningManager.sortedOrderedMealTimes(existing: [], selected: [.dinner, .snack, .lunch, .breakfast])
+            == [.breakfast, .lunch, .snack, .dinner])
+    }
+
+    @Test("a reminder time the cook set orders the day")
+    func reminderTimesOrderTheDay() {
+        // A late breakfast (brunch at 12:30) after an early lunch at 12:00.
+        let minutes: [MealTime: Int] = [.breakfast: 12 * 60 + 30, .lunch: 12 * 60]
+        let result = MealPlanningManager.sortedOrderedMealTimes(
+            existing: [], selected: [.breakfast, .lunch]
+        ) { minutes[$0] ?? $0.defaultMinuteOfDay }
+        #expect(result == [.lunch, .breakfast])
     }
 
     @Test("a meal added to a day slots in by time, ahead of later meals")
@@ -597,7 +614,7 @@ struct ClearPastPlansTests {
     private let calendar = Calendar.current
 
     private func makeManager(_ plans: [MealPlanModel]) -> MealPlanningManager {
-        makeManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard),
+        makeManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
                     store: InMemoryMealPlanStore(plans))
     }
 
@@ -661,7 +678,7 @@ struct ClearPastPlansTests {
 
     @Test func clearedPlansStayGoneAfterReload() {
         let store = InMemoryMealPlanStore([plan("Yesterday", on: day(-1))])
-        let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
+        let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
         makeManager(storage: storage, store: store).clearOldMealPlans()
         #expect(makeManager(storage: storage, store: store).mealPlans.isEmpty)
     }
@@ -672,7 +689,7 @@ struct ClearPastPlansTests {
 @Suite("Plan bug hunt")
 struct PlanBugHuntTests {
     private let calendar = Calendar.current
-    private let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
+    private let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
     private let reminders = FakeMealReminderScheduler()
 
     private func makeManager(_ store: InMemoryMealPlanStore = InMemoryMealPlanStore()) -> MealPlanningManager {
@@ -953,5 +970,40 @@ struct WeeklyCopiesTests {
         let copies = MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: date(22), calendar: calendar)
         #expect(copies.count == 1)
         #expect(copies.first.map { calendar.isDate($0.date, inSameDayAs: date(26)) } == true)
+    }
+}
+
+// MARK: - Time of day
+
+@MainActor
+@Suite("A day's meals in time order")
+struct MealTimeOfDayTests {
+
+    private func at(_ hour: Int, _ minute: Int = 0) -> Date? {
+        Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: Date())
+    }
+
+    @Test func aMealWithoutAReminderIsEatenAtItsUsualTime() {
+        let plan = MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .snack)
+        #expect(plan.minuteOfDay() == 15 * 60)
+    }
+
+    @Test func aReminderTimeIsWhenTheMealIsEaten() {
+        let plan = MealPlanModel(
+            recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .dinner, reminderTime: at(17, 45)
+        )
+        #expect(plan.minuteOfDay() == 17 * 60 + 45)
+    }
+
+    @Test func mealPlansForADayComeInTimeOrder() {
+        let sut = MealPlanningManager(
+            storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            mealPlanStore: InMemoryMealPlanStore(), reminders: FakeMealReminderScheduler()
+        )
+        let day = Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date()
+        for mealTime in [MealTime.dinner, .snack, .lunch] {
+            sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: day, mealTime: mealTime))
+        }
+        #expect(sut.mealPlans(for: day).map(\.mealTime) == [.lunch, .snack, .dinner])
     }
 }

@@ -61,6 +61,19 @@ extension MealPlanningView {
         }
     }
 
+    /// When the selected day's meal in this slot is eaten (its reminder time, else the slot's usual time).
+    func minuteOfDay(_ mealTime: MealTime) -> Int {
+        mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime)?.minuteOfDay() ?? mealTime.defaultMinuteOfDay
+    }
+
+    /// Selects `date`. A dragged order belongs to the day it was made on, so each day opens in time order.
+    func openDay(_ date: Date) {
+        selectedDate = date
+        updateSelectedMealTimes(for: date)
+        orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
+            existing: [], selected: selectedMealTimes, minuteOfDay: minuteOfDay)
+    }
+
     func updateSelectedMealTimes(for date: Date) {
         let mealsForDate = shownPlans(for: date)
         selectedMealTimes = Set(mealsForDate.map { $0.mealTime })
@@ -206,8 +219,7 @@ extension MealPlanningView {
 
     /// An empty night's photo: picks that night and opens the recipe picker for its dinner.
     func planDinner(on night: Date) {
-        selectedDate = night
-        updateSelectedMealTimes(for: night)
+        openDay(night)
         mealPlanSheet = .recipeSelection(.dinner)
     }
 
@@ -247,7 +259,7 @@ extension MealPlanningView {
         if let start = currentWeekStart {
             mealPlanningManager.propagateRecurring(toWeekStarting: start)
         }
-        updateSelectedMealTimes(for: selectedDate)
+        openDay(date)
         HapticManager.shared.light()
     }
 }
