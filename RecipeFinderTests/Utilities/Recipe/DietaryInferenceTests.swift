@@ -14,7 +14,7 @@ struct DietaryInferenceTests {
         )
     }
 
-    private static func infer(_ name: String = "Dinner", _ ingredients: [String]) -> DietaryInfo {
+    private static func infer(_ ingredients: [String], name: String = "Dinner") -> DietaryInfo {
         DietaryInference.infer(recipe(name, ingredients))
     }
 
@@ -80,7 +80,7 @@ struct DietaryInferenceTests {
 
     @Test("a meat word in the recipe's name rules it out even if the list doesn't say")
     func meatInTheNameIsNotVegetarian() {
-        #expect(!Self.infer("Chicken korma", ["onion", "korma paste"]).isVegetarian)
+        #expect(!Self.infer(["onion", "korma paste"], name: "Chicken korma").isVegetarian)
     }
 
     @Test("a recipe with no real ingredient list isn't tagged", arguments: [[String](), ["See recipe"]])
