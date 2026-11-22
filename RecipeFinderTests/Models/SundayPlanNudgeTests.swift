@@ -105,6 +105,32 @@ import Foundation
         #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(22, 18))
     }
 
+    /// Sunday-first: the week checked after Sun 22 Nov is Mon 23–Sat 28, so a weekly Sunday dinner (next copy Sun 29,
+    /// in the following week) leaves it open.
+    @Test func sundayFirstAWeeklySundayDinnerDoesNotFillMondayToSaturday() {
+        let plans = [dinner(on: nov(15, 19), recurring: true)]
+        let sundayFirst = Self.calendar("UTC", firstWeekday: 1)
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: sundayFirst) == nov(22, 18))
+    }
+
+    @Test func mondayFirstAWeeklySundayDinnerFillsTheWeek() {
+        let plans = [dinner(on: nov(15, 19), recurring: true)]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nil)
+    }
+
+    @Test(arguments: [1, 2, 4, 7])
+    func aWeeklyWeekdayDinnerFillsEveryWeekAhead(firstWeekday: Int) {
+        let plans = [dinner(on: nov(11, 19), recurring: true)] // Wednesdays
+        let calendar = Self.calendar("UTC", firstWeekday: firstWeekday)
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: calendar) == nil)
+    }
+
+    /// A weekly dinner starting Sat 28 Nov fills a Monday-first week (23–29) from its first copy on.
+    @Test func aWeeklyDinnerStartingMidWeekCountsForThatWeek() {
+        let plans = [dinner(on: nov(28, 19), recurring: true)]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nil)
+    }
+
     @Test func skipsPlannedWeeksToTheFirstEmptyOne() {
         let plans = [dinner(on: nov(24)), dinner(on: nov(30))]
         let sixthOfDecember = cal.date(from: DateComponents(year: 2026, month: 12, day: 6, hour: 18))
