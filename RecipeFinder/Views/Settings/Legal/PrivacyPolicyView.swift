@@ -7,6 +7,7 @@ import SwiftUI
 // 5.1/5.2 describe the web search session and kept copies of web pictures.
 // Updated 2026-11-20 (owner OK in BACKLOG, Plan slice 4): 4.2/4.3 list the dishes passed on in Plan my week (30 days).
 // Updated 2026-11-20 (owner OK in BACKLOG, Groceries slice 3): 4.2/4.3 list the aisle order learned in shop mode.
+// Updated 2026-11-22 (BACKLOG Inbox): 4.2 aisle order is per shop, or for trips with no shop chosen (matches AisleOrder).
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -48,7 +49,7 @@ struct PrivacyPolicyView: View {
                 LegalBulletPoint("Your app preferences and settings")
                 LegalBulletPoint("Your recent web searches, so you can repeat them")
                 LegalBulletPoint("The dishes you passed on in Plan my week, kept for 30 days so your next week's cards lead with something fresh")
-                LegalBulletPoint("The order you usually shop the aisles in, for each shop you choose and overall, learned from your ticks in I'm in the shop, so your list follows your route")
+                LegalBulletPoint("The order you usually shop the aisles in, for each shop you choose, and for trips with no shop chosen, learned from your ticks in I'm in the shop, so your list follows your route")
                 LegalBulletPoint("Copies of pictures from recipe websites, so imported recipes show their picture offline")
                 LegalBulletPoint("Up to three safety copies of your recipe database, made before an app update changes how it is stored, to help recover your recipes if an update goes wrong. Newer copies replace older ones after later updates, and they are kept out of device backups.")
                 LegalBulletPoint("If your recipe database can't be opened, a copy of it set aside so it can be recovered")
