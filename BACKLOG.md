@@ -105,6 +105,8 @@ drop a line while moving it.
 ## Roadmap (owner OK 2026-11-14 — strategy in `docs/PRODUCT.md`; read it first)
 One phase at a time; within a phase, top to bottom. 🐞 / TestFlight / Inbox items still go first. Items marked `[~]`
 are merged into a newer item or parked — never start them; their text stays as reference spec.
+   **LAUNCH PLAN (owner OK 2026-11-22) — work in the order of [`docs/LAUNCH.md`](docs/LAUNCH.md) until the 4 Jan 2027
+   App Store release; feature freeze 14 Dec. It overrides the phase lines below where they differ.**
    **Next (owner order 2026-11-14, docs/PRODUCT.md):**
    **CI (owner 2026-11-16): free runners only, no paid minutes.** Target is ≤10 min once a runner starts; lanes
    stagger pushes (≤3 macOS jobs at once across lanes) so queueing stays short.

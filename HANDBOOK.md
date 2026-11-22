@@ -20,6 +20,7 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 ## How we work
 - [WORK.md](WORK.md) — live handoff between sessions: in progress, next action, decisions.
 - [tools/README.md](tools/README.md) — what each helper script does and what it needs.
+- [docs/LAUNCH.md](docs/LAUNCH.md) — the January launch plan: dates, must-ship order, owner tasks, marketing.
 - [docs/DESIGN-RESEARCH.md](docs/DESIGN-RESEARCH.md) — research-backed rules for what makes a good app (speed, motion, choice, habits).
 - [docs/OPERATIONS.md](docs/OPERATIONS.md) — where builds, data, domain and keys live, and the owner's security checklist.
 - [docs/DECISIONS.md](docs/DECISIONS.md) — why things are the way they are: options rejected and tradeoffs, per landed item, newest first.
