@@ -136,10 +136,33 @@ final class MealPlanningManager: MealPlanningManaging {
     /// Non-destructive restore: unions incoming plans by id without collapsing same-slot entries.
     func merge(_ incoming: [MealPlanModel]) {
         let (merged, added) = BackupMerge.mergedWithAdditions(existing: mealPlans, incoming: incoming)
-        mealPlans = merged
+        // A restored weekly copy may become its series' newest, which holds the reminder: it takes the time this
+        // device's series already has, so an older backup can't silence or move the cook's current reminder.
+        let localTimes = Self.seriesReminderTimes(mealPlans)
+        let addedIDs = Set(added.map(\.id))
+        mealPlans = merged.map { plan in
+            guard plan.isRecurring, addedIDs.contains(plan.id),
+                  let local = localTimes[SeriesKey(plan, calendar: .current)] else { return plan }
+            var adopted = plan
+            adopted.reminderTime = local
+            return adopted
+        }
         saveMealPlans()
         // Re-arm reminders for newly-restored plans so they survive a device migration.
-        for plan in added { syncReminder(for: plan) }
+        for plan in mealPlans where addedIDs.contains(plan.id) { syncReminder(for: plan) }
+        // A restored newer weekly copy takes the series' reminder, so the older copy must give its own up.
+        syncSeriesReminders()
+    }
+
+    /// Each weekly series' reminder time, read from its newest copy (the one that rings); nil = the cook has none.
+    nonisolated private static func seriesReminderTimes(_ plans: [MealPlanModel]) -> [SeriesKey: Date?] {
+        let newest = Set(newestRecurringCopies(plans))
+        var times: [SeriesKey: Date?] = [:]
+        // updateValue, not subscript assignment: assigning nil to a `Date?`-valued subscript would drop the key.
+        for plan in plans where newest.contains(plan.id) {
+            times.updateValue(plan.reminderTime, forKey: SeriesKey(plan, calendar: .current))
+        }
+        return times
     }
 
     func addMealPlan(_ mealPlan: MealPlanModel) {
