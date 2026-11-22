@@ -163,6 +163,47 @@ final class FakeMealReminderScheduler: MealReminderScheduling {
         #expect(fake.scheduled.last?.repeatsWeekly == true)
     }
 
+    /// Two copies of one weekly series: this week's and next week's (the newest, which holds the weekly reminder).
+    private func weeklyPair(_ sut: MealPlanningManager) -> (earlier: MealPlanModel, later: MealPlanModel) {
+        let recipe = UUID()
+        let earlier = MealPlanModel(
+            recipeId: recipe, recipeName: "Soup", date: futureDay(), mealTime: .dinner,
+            isCompleted: false, isRecurring: true, reminderTime: clock(19)
+        )
+        let later = MealPlanModel(
+            recipeId: recipe, recipeName: "Soup",
+            date: Calendar.current.date(byAdding: .day, value: 7, to: futureDay())!, mealTime: .dinner,
+            isCompleted: false, isRecurring: true, reminderTime: clock(19)
+        )
+        sut.addMealPlan(earlier)
+        sut.addMealPlan(later)
+        return (earlier, later)
+    }
+
+    @Test func stopRepeatingOnALaterCopy_givesTheEarlierCopyItsOwnReminder() throws {
+        let fake = FakeMealReminderScheduler()
+        let sut = makeManager(fake)
+        let (earlier, later) = weeklyPair(sut)
+        let before = fake.scheduled.count
+
+        sut.toggleRecurring(later)
+
+        let s = try #require(fake.scheduled.dropFirst(before).last { $0.id == "meal-\(earlier.id.uuidString)" })
+        #expect(s.repeatsWeekly == false)
+    }
+
+    @Test func removingALaterCopy_givesTheEarlierCopyItsOwnReminder() throws {
+        let fake = FakeMealReminderScheduler()
+        let sut = makeManager(fake)
+        let (earlier, later) = weeklyPair(sut)
+        let before = fake.scheduled.count
+
+        sut.removeMealPlan(later)
+
+        let s = try #require(fake.scheduled.dropFirst(before).last { $0.id == "meal-\(earlier.id.uuidString)" })
+        #expect(s.repeatsWeekly == false)
+    }
+
     // MARK: - fire-date helper
 
     @Test func reminderFireDate_combinesDayWithClockTime() throws {
