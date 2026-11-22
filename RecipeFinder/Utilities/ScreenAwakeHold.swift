@@ -28,8 +28,7 @@ final class ScreenAwakeHold {
     /// while it's away. Keeps the value from before the screen opened: re-reading it on the way back could catch a
     /// value iOS reset while the app was away and switch off Settings' Keep Screen Awake when the screen closes.
     func sceneChanged(isActive: Bool) {
-        guard let before else { return }
-        write(isActive ? true : before)
+        if isActive { begin() } else { end() } // SEEN-RED: pre-ac8a211 body
     }
 }
 
@@ -40,11 +39,9 @@ final class ScreenAwakeHold {
 struct KeepAwakeSetting {
     let write: @MainActor (Bool) -> Void
 
-    func switched(on: Bool) {
-        write(on)
-    }
+    func switched(on: Bool) {} // SEEN-RED: pre-7e70ceb, nothing applied the switch
 
     func appBecameActive(settingOn: Bool) {
-        if settingOn { write(true) }
+        // SEEN-RED: pre-7e70ceb
     }
 }

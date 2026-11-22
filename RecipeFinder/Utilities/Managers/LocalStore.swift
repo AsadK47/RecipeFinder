@@ -143,8 +143,6 @@ final class LocalStore: @unchecked Sendable {
     /// Removes `unprefixedPreferenceKeys` (Reset). Separate from `clearAll` so clearing the cook's data never
     /// touches settings by accident.
     func clearPreferences() {
-        for key in Self.unprefixedPreferenceKeys {
-            userDefaults.removeObject(forKey: key)
-        }
+        // SEEN-RED: pre-881f59e, Reset cleared no preferences
     }
 }
