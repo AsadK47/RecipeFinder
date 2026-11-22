@@ -12,7 +12,7 @@ enum SundayPlanNudge {
     static let lookAheadWeeks = 4
 
     static let title = "Plan next week's dinners?"
-    /// userInfo key carrying the Monday the nudge is about, so the tap opens Plan on that week, not the one ending tonight.
+    /// userInfo key carrying the Monday after the nudge: Plan opens the week holding it — the week the nudge checked.
     static let weekStartKey = "weekStart"
     static let body = "Next week is wide open — swipe through a few dinners on Plan and it's sorted in a minute."
 
@@ -27,9 +27,10 @@ enum SundayPlanNudge {
         (userInfo?[weekStartKey] as? Double).map { Date(timeIntervalSince1970: $0) }
     }
 
-    /// The first Sunday 18:00 after `now` whose following Monday–Sunday has no dinner planned; nil when every week
-    /// in the look-ahead already has one. A repeating dinner counts for every week from its date on (Plan fills the
-    /// repeat into each week), so a cook with one never gets nudged. Breakfast, lunch and snacks don't count.
+    /// The first Sunday 18:00 after `now` whose week ahead (Plan's week holding the Monday after) has no dinner
+    /// planned; nil when every week in the look-ahead already has one. A repeating dinner counts for every week from
+    /// its date on (Plan fills the repeat into each week), so a cook with one never gets nudged. Breakfast, lunch and
+    /// snacks don't count.
     static func fireDate(now: Date, plans: [MealPlanModel], calendar: Calendar = .current) -> Date? {
         let dinners = plans.filter { $0.mealTime == .dinner }
         let startOfToday = calendar.startOfDay(for: now)
@@ -44,8 +45,12 @@ enum SundayPlanNudge {
                   let fire = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: sunday) else { return nil }
             guard fire > now else { continue }
             checked += 1
-            guard let weekStart = calendar.date(byAdding: .day, value: 1, to: sunday),
-                  let weekEnd = calendar.date(byAdding: .day, value: 8, to: sunday) else { return nil }
+            // Plan's week holding the Monday after (the week a tap opens): Monday–Sunday where weeks start on
+            // Monday, that Sunday–Saturday where they start on Sunday.
+            guard let monday = calendar.date(byAdding: .day, value: 1, to: sunday) else { return nil }
+            let week = MealPlanCalendar(calendar: calendar).daysInWeek(containing: monday)
+            guard let weekStart = week.first, let lastDay = week.last,
+                  let weekEnd = calendar.date(byAdding: .day, value: 1, to: lastDay) else { return nil }
             let planned = dinners.contains { dinner in
                 let day = calendar.startOfDay(for: dinner.date)
                 return (day >= weekStart && day < weekEnd) || (dinner.isRecurring && day < weekEnd)
