@@ -368,7 +368,9 @@ final class MealPlanningManager: MealPlanningManaging {
         selected: Set<MealTime>,
         minuteOfDay: (MealTime) -> Int = { $0.defaultMinuteOfDay }
     ) -> [MealTime] {
-        let key = { (time: MealTime) in (minuteOfDay(time), time.sortOrder) }
+        // Read once up front: `minuteOfDay` is non-escaping, so the comparator closure can't hold it.
+        let minutes = Dictionary(uniqueKeysWithValues: MealTime.allCases.map { ($0, minuteOfDay($0)) })
+        let key = { (time: MealTime) in (minutes[time] ?? time.defaultMinuteOfDay, time.sortOrder) }
         var result = existing.filter { selected.contains($0) }
         for mealTime in selected.sorted(by: { key($0) < key($1) }) where !result.contains(mealTime) {
             // A newly added meal slots in by when it's eaten (lunch above dinner, a 3pm snack between them), ahead of
