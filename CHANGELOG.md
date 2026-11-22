@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox seed dietary tags · c4e1ed7
+- For you: The Vegetarian and Vegan filters now find recipes in the built-in collection — 184 vegetarian and 59 vegan dishes, worked out from their ingredients.
+- Behind the build: tests showed both filters empty first; tagging errs on the side of caution, and a reviewer and a challenger read every tagged recipe's ingredients before it shipped.
+
 ## 2026-11-22 · Inbox Privacy aisle-order wording · b52d55d
 - For you: The Privacy Policy now describes exactly how your aisle order is remembered — for each shop you pick, and for trips with no shop picked.
 - Behind the build: two reviewers checked the new sentence against the code that learns the order, and both found it accurate.
