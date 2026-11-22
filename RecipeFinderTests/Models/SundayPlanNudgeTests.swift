@@ -6,9 +6,11 @@ import Foundation
 /// the one pending notification in step with the switch and the plans. Fixed UTC calendar, week of Mon 16 Nov 2026.
 @Suite struct SundayPlanNudgeTests {
 
-    private static func calendar(_ zone: String) -> Calendar {
+    /// Monday-first (UK) unless told otherwise: Plan's week follows the calendar's first weekday.
+    private static func calendar(_ zone: String, firstWeekday: Int = 2) -> Calendar {
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = TimeZone(identifier: zone) ?? .current
+        cal.firstWeekday = firstWeekday
         return cal
     }
 
@@ -54,6 +56,21 @@ import Foundation
     @Test func nextWeeksSundayDinnerCountsForNextWeek() {
         let plans = [dinner(on: nov(29, 19))]
         #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(29, 18))
+    }
+
+    // Sunday-first locales (US): Plan's week runs Sunday–Saturday, so the Sunday nudge asks about the week that
+    // starts that Sunday — the week a tap opens — not a Monday–Sunday window Plan never shows.
+
+    private let sundayFirst = SundayPlanNudgeTests.calendar("UTC", firstWeekday: 1)
+
+    @Test func sundayFirstCountsThatSundaysDinnerAsTheWeekAhead() {
+        let plans = [dinner(on: nov(22, 19))]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: sundayFirst) == nov(29, 18))
+    }
+
+    @Test func sundayFirstLeavesTheFollowingSundaysDinnerToItsOwnWeek() {
+        let plans = [dinner(on: nov(29, 19))]
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: sundayFirst) == nov(22, 18))
     }
 
     @Test func aRepeatingDinnerMeansNoNudge() {
