@@ -124,6 +124,24 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Your diet, everywhere** (owner 2026-11-22: "have we met the users' nutritional/dietary needs?"). Today: recipes
+  carry 7 manual yes/no diet flags (default *no*, so imports are rarely tagged) and search has a diet filter; nothing
+  else knows your diet. (1) **Profile:** Me → "How you eat": diets (vegetarian, vegan, pescatarian), avoid lists
+  (pork, alcohol, beef; halal/kosher-friendly presets), allergies (the UK's 14 major allergens), dislikes. Stored on
+  device + your iCloud like other preferences (Privacy text: add it, two reviewers). (2) **Inferred from ingredients:**
+  a tested ingredient→allergen/diet table (dairy, gluten cereals, eggs, fish, crustaceans, molluscs, nuts, peanuts,
+  sesame, soy, celery, mustard, lupin, sulphites + meat/pork/alcohol) marks what a recipe *contains*; never claims
+  "free from" — the UI says "no X listed — check labels". (3) **Applied everywhere:** Today's pick, Discover, Plan
+  deck, search hide or flag recipes that clash; recipe page shows a clear "Contains: milk, egg" line and a warning
+  chip when it clashes with your profile; swaps suggest alternatives. *Measure:* clashing picks shown = 0. *Done
+  when:* allergen table tested against FSA's list with ≥200 ingredient cases, profile + filtering tested, legal/
+  wording reviewed by two reviewers, screenshots, CI green.
+- [ ] **Research audit of the app** (owner 2026-11-22: "do more research and document existing"). (1) Score every
+  main screen against `docs/DESIGN-RESEARCH.md` rules 1–11 using current screenshots + code (a table: screen × rule →
+  pass / gap + evidence), gaps → BACKLOG Inbox/Queue. (2) Extend the research doc with food-app sources: meal-planning
+  and diet-quality studies, cooking-at-home behaviour, recipe-app usability/accessibility studies, allergen labelling
+  guidance (UK FSA), food photography and appetite. Peer-reviewed or official sources only, each with a "for us"
+  line. *Done when:* `docs/DESIGN-AUDIT.md` exists with every screen scored, one reviewer + challenger.
 - [ ] **Calmer cooking-mode motion** (owner 2026-11-22: animation "slightly aggressive in its speed"; no toggle —
   fix the defaults). Step changes use `.appSpring` (0.3 s) for full-screen moves; Material puts full-screen transitions
   at ≥375 ms and Apple's fluid-interface guidance favours critically damped springs. Use a new `.appPage` spring
