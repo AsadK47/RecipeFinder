@@ -154,17 +154,6 @@ final class MealPlanningManager: MealPlanningManaging {
         syncSeriesReminders()
     }
 
-    /// Each weekly series' reminder time, read from its newest copy (the one that rings); nil = the cook has none.
-    nonisolated private static func seriesReminderTimes(_ plans: [MealPlanModel]) -> [SeriesKey: Date?] {
-        let newest = Set(newestRecurringCopies(plans))
-        var times: [SeriesKey: Date?] = [:]
-        // updateValue, not subscript assignment: assigning nil to a `Date?`-valued subscript would drop the key.
-        for plan in plans where newest.contains(plan.id) {
-            times.updateValue(plan.reminderTime, forKey: SeriesKey(plan, calendar: .current))
-        }
-        return times
-    }
-
     func addMealPlan(_ mealPlan: MealPlanModel) {
         // Planned by any route (deck, picker, Today): the dish is wanted again, so its pass is forgotten.
         PlanDeckMemory.update(in: storage, passed: [], planned: [mealPlan.recipeId], at: Date())
@@ -281,54 +270,7 @@ final class MealPlanningManager: MealPlanningManaging {
 
     /// Materialises the latest recurring template into each empty slot of the target week (stays recurring); idempotent.
     func propagateRecurring(toWeekStarting startDate: Date) {
-        let cal = Calendar.current
-        let start = cal.startOfDay(for: startDate)
-        guard let end = cal.date(byAdding: .day, value: 7, to: start) else { return }
-
-        let templates = mealPlans.filter { $0.isRecurring && $0.date < start }
-        guard !templates.isEmpty else { return }
-
-        // O(1) occupied-slot lookup instead of O(P) contains per slot.
-        let occupiedSlots = Set(mealPlans.map { SlotKey($0, calendar: cal) })
-
-        // Template lookup by (weekday, mealTime) keeping the most recent, so inner loop is O(1).
-        struct TemplateKey: Hashable { let weekday: Int; let mealTime: MealTime }
-        var templateBySlot: [TemplateKey: MealPlanModel] = [:]
-        for template in templates {
-            let key = TemplateKey(weekday: cal.component(.weekday, from: template.date), mealTime: template.mealTime)
-            if templateBySlot[key].map({ template.date > $0.date }) ?? true {
-                templateBySlot[key] = template
-            }
-        }
-
-        var newEntries: [MealPlanModel] = []
-        var newOccupied: Set<SlotKey> = []
-
-        for dayOffset in 0..<7 {
-            guard let candidate = cal.date(byAdding: .day, value: dayOffset, to: start),
-                  candidate < end else { continue }
-            let targetWeekday = cal.component(.weekday, from: candidate)
-
-            for mealTime in MealTime.allCases {
-                let slot = SlotKey(day: candidate, mealTime: mealTime)
-                guard !occupiedSlots.contains(slot) && !newOccupied.contains(slot) else { continue }
-
-                guard let template = templateBySlot[TemplateKey(weekday: targetWeekday, mealTime: mealTime)] else { continue }
-
-                newEntries.append(MealPlanModel(
-                    recipeId: template.recipeId,
-                    recipeName: template.recipeName,
-                    date: candidate,
-                    mealTime: mealTime,
-                    servings: template.servings,
-                    notes: template.notes,
-                    isRecurring: true,
-                    reminderTime: template.reminderTime
-                ))
-                newOccupied.insert(slot)
-            }
-        }
-
+        let newEntries = Self.weeklyCopies(of: mealPlans, forWeekStarting: startDate)
         guard !newEntries.isEmpty else { return }
         mealPlans.append(contentsOf: newEntries)
         saveMealPlans()
@@ -352,55 +294,6 @@ final class MealPlanningManager: MealPlanningManaging {
     /// How many plans Clear Past Plans would take off, for its confirmation.
     func pastPlanCount(keepingCookedIn recipes: [RecipeModel]) -> Int {
         Self.pastPlans(mealPlans, now: Date(), recipes: recipes).count
-    }
-
-    /// Plans on days before today: one-offs, and every copy of a weekly meal except the newest of its series (weekday +
-    /// meal time), which `propagateRecurring` copies forward. Dinners cooked on their day stay as the week's history
-    /// (`MealPlanModel.wasCooked`); cook counts live on the recipe, so nothing cooked is lost either way.
-    nonisolated static func pastPlans(
-        _ plans: [MealPlanModel], now: Date, recipes: [RecipeModel] = [], calendar: Calendar = .current
-    ) -> Set<UUID> {
-        let today = calendar.startOfDay(for: now)
-        let newestOfSeries = Set(newestRecurringCopies(plans, calendar: calendar))
-        return Set(plans.filter {
-            $0.date < today && !newestOfSeries.contains($0.id) && !$0.wasCooked(in: recipes, calendar: calendar)
-        }.map(\.id))
-    }
-
-    /// The newest copy of each weekly series (weekday + meal time) — the one later weeks are copied from.
-    nonisolated static func newestRecurringCopies(_ plans: [MealPlanModel], calendar: Calendar = .current) -> [UUID] {
-        var newest: [SeriesKey: MealPlanModel] = [:]
-        for plan in plans where plan.isRecurring {
-            let key = SeriesKey(plan, calendar: calendar)
-            if newest[key].map({ plan.date > $0.date }) ?? true { newest[key] = plan }
-        }
-        return newest.values.map(\.id)
-    }
-
-    /// A planner slot: the day (start of day) and meal time — one dish each.
-    struct SlotKey: Hashable {
-        let day: Date
-        let mealTime: MealTime
-
-        init(day: Date, mealTime: MealTime) {
-            self.day = day
-            self.mealTime = mealTime
-        }
-
-        init(_ plan: MealPlanModel, calendar: Calendar = .current) {
-            self.init(day: calendar.startOfDay(for: plan.date), mealTime: plan.mealTime)
-        }
-    }
-
-    /// A weekly series: same weekday and meal time (how `propagateRecurring` matches templates).
-    struct SeriesKey: Hashable {
-        let weekday: Int
-        let mealTime: MealTime
-
-        init(_ plan: MealPlanModel, calendar: Calendar) {
-            weekday = calendar.component(.weekday, from: plan.date)
-            mealTime = plan.mealTime
-        }
     }
 
     func mealPlan(for date: Date, mealTime: MealTime) -> MealPlanModel? {

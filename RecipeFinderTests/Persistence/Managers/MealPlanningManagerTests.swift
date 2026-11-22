@@ -875,3 +875,56 @@ struct PlanBugHuntTests {
             recipeId: UUID(), recipeName: "Once", date: day(-7), mealTime: .dinner)]))
     }
 }
+
+/// Pins the pure fill rule `propagateRecurring` now delegates to, so the extraction can't change what a week gets.
+@Suite("Weekly copies for a week")
+struct WeeklyCopiesTests {
+    private var calendar: Calendar {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(identifier: "Europe/London") ?? .gmt
+        return cal
+    }
+
+    /// Monday 23 Nov 2026 + `days`.
+    private func day(_ days: Int) -> Date {
+        let monday = calendar.date(from: DateComponents(year: 2026, month: 11, day: 23)) ?? .distantPast
+        return calendar.date(byAdding: .day, value: days, to: monday) ?? .distantPast
+    }
+
+    private func plan(_ name: String, on date: Date, _ mealTime: MealTime = .dinner, weekly: Bool = true,
+                      servings: Int = 2, reminder: Date? = nil) -> MealPlanModel {
+        MealPlanModel(recipeId: UUID(), recipeName: name, date: date, mealTime: mealTime, servings: servings,
+                      isRecurring: weekly, reminderTime: reminder)
+    }
+
+    @Test func anEmptyNightTakesTheNewestCopyOfItsSeries() {
+        let reminder = day(-14)
+        let plans = [plan("Old", on: day(-14)), plan("New", on: day(-7), servings: 4, reminder: reminder)]
+        let copies = MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: day(0), calendar: calendar)
+        #expect(copies.count == 1)
+        let copy = copies.first
+        #expect(copy?.recipeName == "New")
+        #expect(copy.map { calendar.isDate($0.date, inSameDayAs: day(0)) } == true)
+        #expect(copy?.isRecurring == true)
+        #expect(copy?.servings == 4)
+        #expect(copy?.reminderTime == reminder)
+    }
+
+    @Test func aNightAlreadyPlannedIsLeftAlone() {
+        let plans = [plan("Weekly", on: day(-7)), plan("Picked", on: day(0), weekly: false)]
+        #expect(MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: day(0), calendar: calendar).isEmpty)
+    }
+
+    @Test func oneOffsAndCopiesInsideTheWeekAreNotTemplates() {
+        let plans = [plan("Once", on: day(-7), weekly: false), plan("Later", on: day(2))]
+        #expect(MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: day(0), calendar: calendar).isEmpty)
+    }
+
+    @Test func eachMealTimeFillsOnItsOwnWeekday() {
+        let plans = [plan("Brunch", on: day(-2), .lunch), plan("Curry", on: day(-4), .dinner)]
+        let copies = MealPlanningManager.weeklyCopies(of: plans, forWeekStarting: day(0), calendar: calendar)
+        let slots = Set(copies.map { "\($0.recipeName)-\(calendar.component(.weekday, from: $0.date))-\($0.mealTime)" })
+        #expect(slots == ["Brunch-\(calendar.component(.weekday, from: day(5)))-\(MealTime.lunch)",
+                          "Curry-\(calendar.component(.weekday, from: day(3)))-\(MealTime.dinner)"])
+    }
+}
