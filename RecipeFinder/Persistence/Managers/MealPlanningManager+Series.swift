@@ -1,7 +1,7 @@
 import Foundation
 
 /// Weekly-series rules for `MealPlanningManager`: which copy of a repeating meal leads its series, which past plans
-/// Clear Past Plans takes, and what a new week is filled with. Pure and calendar-injected, so tests pin them directly.
+/// Clear Past Plans takes, and what a new week is filled with. Pure functions of the plans, so tests pin them directly.
 extension MealPlanningManager {
     /// Plans on days before today: one-offs, and every copy of a weekly meal except the newest of its series (weekday +
     /// meal time), which `propagateRecurring` copies forward. Dinners cooked on their day stay as the week's history
