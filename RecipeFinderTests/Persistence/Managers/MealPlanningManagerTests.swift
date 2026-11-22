@@ -737,6 +737,17 @@ struct PlanBugHuntTests {
         #expect(liveReminders.count == 1)
     }
 
+    /// Reviewer 2026-11-21: a backup restore brought next week's copy of a weekly dinner, but only the added copy was
+    /// re-synced — this week's copy kept its weekly reminder too, so the dinner reminder fired twice a week.
+    @Test func restoringANewerWeeklyCopyLeavesOneLiveReminder() {
+        let sut = makeManager()
+        weeklyDinner(sut, reminder: clock(19))
+        let nextWeek = MealPlanModel(recipeId: UUID(), recipeName: "Pasta", date: day(7), mealTime: .dinner,
+                                     isRecurring: true, reminderTime: clock(19))
+        sut.merge([nextWeek])
+        #expect(liveReminders == ["meal-\(nextWeek.id.uuidString)"])
+    }
+
     @Test func removingAWeeklyDinnerLeavesNoReminder() {
         let sut = makeManager()
         weeklyDinner(sut, reminder: clock(19))
