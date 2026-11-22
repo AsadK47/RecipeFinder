@@ -30,8 +30,8 @@ struct HelpView: View {
 
                         HelpItem(
                             icon: "heart.fill",
-                            title: "Saving Favorites",
-                            description: "Tap the heart icon on any recipe to add it to your favorites for quick access later."
+                            title: "Saving Favourites",
+                            description: "Tap the heart icon on any recipe to add it to your favourites for quick access later."
                         )
 
                         HelpItem(
@@ -108,8 +108,8 @@ struct HelpView: View {
 
                         HelpItem(
                             icon: "paintpalette",
-                            title: "Customize Appearance",
-                            description: "Pick a color theme, from Tomato to Raspberry, and System, Light or Dark in Settings > Appearance & Theme."
+                            title: "Customise Appearance",
+                            description: "Pick a colour theme, from Tomato to Raspberry, and choose System, Light or Dark in Settings > Appearance & Theme."
                         )
 
                         HelpItem(
@@ -179,7 +179,7 @@ struct HelpView: View {
 
                         FAQItem(
                             question: "How do I change the app theme?",
-                            answer: "Go to Settings > Appearance & Theme and tap a color — each one tints the whole app, in Light and Dark."
+                            answer: "Go to Settings > Appearance & Theme and tap a colour — each one tints the whole app, in Light and Dark."
                         )
 
                         FAQItem(
