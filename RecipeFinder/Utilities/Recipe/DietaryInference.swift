@@ -10,22 +10,22 @@ enum DietaryInference {
     /// Meat, fish and their by-products (gelatin, lard, fish sauces, pastes made with shrimp or fish).
     static let meatWords: Set<String> = [
         "anchovy", "anchovies", "bacon", "basa", "beef", "belacan", "bonito", "bone", "bones", "brisket", "calamari",
-        "caviar", "chicken", "chorizo", "cod", "crab", "dashi", "duck", "fish", "gammon", "gelatin", "gelatine",
-        "goat", "haddock", "halibut", "ham", "hen", "katsuobushi", "kimchi", "laksa", "lamb", "lard", "lobster",
-        "mackerel", "meat", "meatballs", "mince", "mussels", "mutton", "nuoc", "octopus", "oyster", "oysters",
-        "pancetta", "parmesan", "pecorino", "pepperoni", "pork", "prawn", "prawns", "prosciutto", "quail", "roe",
-        "salami", "salmon", "sardine", "sardines", "sausage", "sausages", "scallops", "seafood", "shrimp", "sirloin",
-        "squid", "steak", "suet", "tallow", "tilapia", "tuna", "turkey", "veal", "venison", "worcestershire"
+        "caviar", "chicken", "chorizo", "cod", "crab", "dashi", "dripping", "drippings", "duck", "fish", "gammon",
+        "gelatin", "gelatine", "goat", "haddock", "halibut", "ham", "hen", "katsuobushi", "kimchi", "laksa", "lamb",
+        "lard", "lobster", "mackerel", "meat", "meatballs", "mince", "mussels", "mutton", "nuoc", "octopus", "oyster",
+        "oysters", "pancetta", "parmesan", "pecorino", "pepperoni", "pork", "prawn", "prawns", "prosciutto", "quail",
+        "roe", "salami", "salmon", "sardine", "sardines", "sausage", "sausages", "scallops", "seafood", "shrimp",
+        "sirloin", "squid", "steak", "suet", "tallow", "tilapia", "tuna", "turkey", "veal", "venison",
+        "worcestershire"
     ]
 
     /// Animal products a vegetarian eats but a vegan doesn't (dairy, eggs, honey, and foods usually made with them —
     /// "mein" because chow mein / lo mein noodles are usually egg noodles).
     static let animalProductWords: Set<String> = [
         "butter", "buttercream", "buttermilk", "cheddar", "cheese", "chocolate", "condensed", "cream", "curd",
-        "custard", "dairy", "dripping", "drippings", "egg", "eggs", "fat", "frosting", "ganache", "ghee", "gouda",
-        "honey", "kaya", "lactose", "ladyfingers", "margarine", "mascarpone", "mayo", "mayonnaise", "mein",
-        "meringue", "milk", "mozzarella", "nutella", "paneer", "raita", "shortcrust", "streusel", "whey", "yoghurt",
-        "yogurt", "yolk", "yolks"
+        "custard", "dairy", "egg", "eggs", "fat", "frosting", "ganache", "ghee", "gouda", "honey", "kaya", "lactose",
+        "ladyfingers", "margarine", "mascarpone", "mayo", "mayonnaise", "mein", "meringue", "milk", "mozzarella",
+        "nutella", "paneer", "raita", "shortcrust", "streusel", "whey", "yoghurt", "yogurt", "yolk", "yolks"
     ]
 
     /// A word right before an animal-product word that makes it a plant one ("coconut milk", "peanut butter",
