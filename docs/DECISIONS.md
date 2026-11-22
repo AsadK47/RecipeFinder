@@ -5,6 +5,7 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Restore weekly reminders (Inbox 🐞):** a restored weekly copy adopts this device's series reminder time (the newest local copy's, nil included) — the cook's current choice beats an older backup. Rejected: `foldTwins`-style any-non-nil wins (would let a stale backup time override a reminder the cook turned off).
 - **Theme slice 2b:** owner chose a symbol per swatch (2026-11-21) — re-tuned colours top out ~0.04 ΔE under deuteranopia and greyed Herb/Raspberry; deleting colours left Herb/Teal (tritanopia) colliding.
 - **Theme slice 2a (accessibility):** Increase Contrast = Light accent L 0.42 (white ≥7.9:1), Light gradient +0.06 L
   (black ≥7.9:1, HC accent ≥3.4:1 on it — standard is 1.8), Dark accent L 0.78 with **black** `onAccent` (≥9.8:1).

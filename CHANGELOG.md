@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox restore weekly reminders · 9ab758b
+- For you: After restoring a backup, each weekly dinner rings once a week at the reminder time you set on this phone.
+- Behind the build: tests reproduced the double reminder first, and a reviewer and a challenger both caught a restored older reminder time that could take over — fixed before it shipped.
+
 ## 2026-11-21 · Theme palette slice 2b colour-blind symbols · 408dd08
 - For you: Each colour theme now carries its own symbol — a flame for Tomato, a leaf for Herb, a heart for Raspberry and more — so every theme is easy to pick out at a glance, whatever colours you see.
 - Behind the build: we checked the palette through colour-blindness simulations, chose symbols to make every theme distinct, and a reviewer swapped two shapes that looked alike at small sizes.

@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 (item pass: Inbox 🐞 restore weekly reminders — fixed: restored newer copy left the older copy's weekly reminder armed (fired twice); restored copy's stale/empty reminder time took over the series (reviewer + challenger agreed) → adopts this device's series time)
+- ⚔️ [Data] Same-weekday dinner restored as a *different* dish (weekly Tacos vs the cook's weekly Pasta) joins Pasta's series (`SeriesKey` = weekday + meal) — same rule `propagateRecurring` already uses — cost if wrong: one reminder names the restored dish.
+- ⚔️ [Data] A series stopped after the backup comes back on restore with its reminder — restore is non-destructive by design (old behaviour) — cost if wrong: a stopped weekly dinner returns until stopped again.
+- ⚔️ [Time] A restore that adds a same-slot twin, then a cold launch: iCloud fold runs with `before` empty so `reconcileReminders` skips — folded row's reminder may linger — rare, outside this diff — cost if wrong: one stray reminder.
+
 ## 2026-11-21 (item pass: Theme palette slice 2a accessibility — fixed: 12 views hard-coded white on accent fills, ~2:1 on the light Dark + Increase Contrast accent (both reviewers) → `AppTheme.onAccent`, `IconBadge(glyph:)`; AX picker test read lazy grid cells before scrolling + stopped under the tab bar (reviewer) → scrolls each swatch clear of the tab bar; scaled swatch truncated "Raspberry" → capped at 48pt; `contrast:` default hid a dropped argument → required)
 - ⚔️ [Look] Dark + Increase Contrast turns accent buttons light with **black** text — white at 7:1 would sink the accent into the dark base (~2.7:1); iOS tints go lighter too but system buttons keep white — alternative: mid accent with white ~3:1 (large text only) — cost if we're wrong: looks off-brand for that setting.
   → Owner: Accept / Reject / Later
