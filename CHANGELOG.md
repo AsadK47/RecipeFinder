@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox Privacy aisle-order wording · b52d55d
+- For you: The Privacy Policy now describes exactly how your aisle order is remembered — for each shop you pick, and for trips with no shop picked.
+- Behind the build: two reviewers checked the new sentence against the code that learns the order, and both found it accurate.
+
 ## 2026-11-22 · Inbox plan deck pass decision · 26f4481
 - For you: Plan my week works as before — dishes you pass on wait behind fresh ones next time, while Busy night and Leave open keep every dish fresh.
 - Behind the build: the rule for what counts as passing a dish moved back into the tested planning model, with its two tests restored, checked by a reviewer and a challenger.

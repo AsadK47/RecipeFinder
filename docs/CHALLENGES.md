@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 (item pass: Inbox 🟡 Privacy aisle-order wording — wording checked accurate vs `AisleOrder` by both reviewers; 0 defects)
+- ⚔️ [Tests] `LegalDocument.lastUpdated` (LegalComponents.swift:119) is shared by Privacy and Terms, so a Privacy-only edit re-dates Terms (22 Nov) though Terms didn't change (also true of the 20 Nov bump) — give each document its own date — cost if we're wrong: a reader assumes Terms changed and looks for what.
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-22 (item pass: Inbox 🐞 Sunday nudge week — fixed: first fix checked Plan's whole week, which in Sunday/Saturday/custom-first weeks starts on or before the nudge, so tonight's or an eaten dinner cancelled it (reviewer + challenger agreed) → Monday after to the end of Plan's week; tests for first weekdays 1/2/4/7 and the tap week)
 - ⚔️ [Time] Wednesday-first (custom iOS setting): Plan's week holding Monday ends Tuesday, so the nudge checks only Mon–Tue — a planned Mon or Tue silences it for a mostly empty week — follows Plan's week by design; rare setting — cost if wrong: one missed nudge.
 
