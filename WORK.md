@@ -74,7 +74,7 @@ Inbox: ✅ plan deck pass decision landed 26f4481 (builder 2026-11-22; leftover 
 agent/stop-series-reminders, -2, auto-cleanup). ✅ 🐞 SundayPlanNudge week landed e34cec0 (leftover branches
 agent/sunday-nudge-week, -2, auto-cleanup). ✅ 🟡 CHANGELOG Reset wording fixed. ✅ 🟡 Privacy aisle-order wording landed b52d55d (builder 2026-11-22; leftover branch
 agent/privacy-aisle-wording, auto-cleanup). ✅ 🟡 HelpView appearance tip + British spelling landed a3df262 (builder 2026-11-22; leftover branch agent/help-copy,
-auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerged branch agent/seen-red, delete it). Next: the next 🟡 Inbox line (CookingResumeMemory / Reset seams). Website session: add the §4.2 aisle-order bullet (new wording: "for each shop you choose, and for trips with
+auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerged branch agent/seen-red, delete it). ✅ 🟡 CookingResumeMemory seam landed cbfba3f (builder 2026-11-22; leftover branch agent/cooking-resume-seam, auto-cleanup); Reset seam half stays in Inbox until *Reset store copies* is answered. Leftover branch agent/seen-red still to delete. Next: the next 🟡 Inbox line (MealPlanningManager+Series split). Website session: add the §4.2 aisle-order bullet (new wording: "for each shop you choose, and for trips with
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
