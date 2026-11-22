@@ -119,8 +119,9 @@ import Foundation
     }
 
     @Test(arguments: [1, 2, 4, 7])
-    func aWeeklyWeekdayDinnerFillsEveryWeekAhead(firstWeekday: Int) {
-        let plans = [dinner(on: nov(11, 19), recurring: true)] // Wednesdays
+    func aWeeklyMondayDinnerFillsEveryWeekAhead(firstWeekday: Int) {
+        // Mondays: the Monday after the nudge is checked whatever the first weekday (a Wednesday-first week checks Mon–Tue only).
+        let plans = [dinner(on: nov(16, 19), recurring: true)]
         let calendar = Self.calendar("UTC", firstWeekday: firstWeekday)
         #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: calendar) == nil)
     }
