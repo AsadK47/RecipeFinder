@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 · Inbox 🟡 plan deck pass decision — noted, not fixed
+- ⚔️ [Race] Close landing between ✕ and the deck's next main-actor turn drops the write (binding setter ignores a closed deck), so that one pass isn't remembered, while ♥ in the same race still saves its pick (`PlanDeckView.swift` `send`) — cost if wrong: one dish passed at the instant of closing can be dealt fresh next week.
+  → Owner:
+- ⚔️ [Tests] The view's hand-off (`deck.passes.dropFirst(passedBefore)` → `onPass`) has no test; re-sending every earlier pass would go unnoticed because remembering is idempotent — same untestable-wiring gap as 2026-11-20 — cost if wrong: none visible today.
+  → Owner:
+
 ## 2026-11-22 (item pass: Inbox 🐞 restore weekly reminders — fixed: restored newer copy left the older copy's weekly reminder armed (fired twice); restored copy's stale/empty reminder time took over the series (reviewer + challenger agreed) → adopts this device's series time)
 - ⚔️ [Data] Same-weekday dinner restored as a *different* dish (weekly Tacos vs the cook's weekly Pasta) joins Pasta's series (`SeriesKey` = weekday + meal) — same rule `propagateRecurring` already uses — cost if wrong: one reminder names the restored dish.
 - ⚔️ [Data] A series stopped after the backup comes back on restore with its reminder — restore is non-destructive by design (old behaviour) — cost if wrong: a stopped weekly dinner returns until stopped again.
