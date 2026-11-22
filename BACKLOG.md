@@ -842,6 +842,7 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 - Fridge photo, family cookbooks (iCloud sharing), cook-along Q&A, heirloom mode — earlier owner ideas, undecided.
 
 ## Needs owner
+- 🙋 **Pause public TestFlight auto-promotion?** (builder 2026-11-22, Inbox 🔴 challenger): `testflight-promote.yml` promotes daily to the public link while bundled method text is still copied and the CloudKit Production schema is undeployed (guardrail: TestFlight workflows). Switch it to workflow_dispatch until both land (recommended) / keep daily?
 - 🙋 **Today: should a later plan lead at 8am?** (builder 2026-11-21, Today — decide tonight): with only dinner planned,
   the 8am hero is "Tonight: <dinner>" not a breakfast idea (any plan outranks a suggestion — CHALLENGES 21 Nov). Keep
   (the cook's plan is the decision) / lead with the next meal's suggestion and show the plan in the day strip — recommended?
@@ -886,8 +887,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🐞 RecipeFinder/Utilities/Recipe/RecipeFilterCriteria.swift:84 + RecipeFinder/RecipeSeed/recipes_seed.json — all 332 bundled recipes have every dietaryInfo flag false, so the Vegetarian/Vegan/Gluten-Free filters return nothing on a fresh install — tag the seed from ingredients (seed-history.py + drift test) (challenger 2026-11-22)
-- 🔴 .github/workflows/testflight-promote.yml + asc_promote_public.py — daily auto-promotion to the public TestFlight link while bundled recipes still carry copied method text (legal blocker) and the CloudKit Production schema is undeployed; falls through to add-to-group for any non-READY state — switch to workflow_dispatch until own-words rewrite + schema deploy land (challenger 2026-11-22, owner decision)
+- 🐞 RecipeFinder/Utilities/Recipe/RecipeFilterCriteria.swift:84 + RecipeFinder/RecipeSeed/recipes_seed.json — all 332 bundled recipes have every dietaryInfo flag false, so the Vegetarian/Vegan/Gluten-Free filters return nothing on a fresh install — tag the seed from ingredients (seed-history.py + drift test) (challenger 2026-11-22) — 🚧 builder agent 2026-11-22
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
