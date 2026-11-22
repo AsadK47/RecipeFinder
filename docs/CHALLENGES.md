@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-22 (item pass: Inbox 🟡 MealPlanningManager+Series split — fixed: header claimed every function calendar-pure; clock-change week untested → `aWeekAcrossTheAutumnClockChangeFillsTheRightNights`)
+- ⚔️ [Tests] Two weekly copies on the same date + meal time (sync duplicates): which becomes the template depends on array order (`weeklyCopies`, `>` keeps the first) — unpinned — cost if wrong: next week copies the older duplicate's servings/reminder.
+- ⚔️ [Simplify] `newOccupied` in `weeklyCopies` can never match (each slot is visited once) — kept from the old code; safe to delete in Smell Batch G — cost if wrong: none.
+
 ## 2026-11-22 (daily challenger — launch plan, public-beta promotion, "Your diet, everywhere"; methods 1, 2, 3 (STRIDE on the ASC key), 6, 7 + strategy)
 - ⚔️ [Strategy] The January launch plan is a plan we can't dogfood — `docs/LAUNCH.md` queues 10 must-ship items (diet profile with a new allergen table, Settings re-layout, share cards, Discover polish, Kitchen tabs, launch kit…) between 22 Nov and the 14 Dec freeze (21 days) while `docs/PRODUCT.md` still says "one phase at a time" and "a phase isn't done until the owner has used it for a week" (Discipline 1, 4) and was not edited to match (it still lists the old Now/Phase 1–3 order; only a BACKLOG line says LAUNCH "overrides"). Today/Groceries/Plan shipped this week have had no dogfood week, and items 5–8 add surface area after the owner's own gate would have closed. Premortem: 14 Dec arrives, 4 of 10 are half-built, and the freeze rule forces either a slip or a launch with a diet feature that is only half-applied (safest-looking, least safe) — alternative: cut the launch list to what blocks Apple/legal (2 own-words recipes, 3 Recently deleted, 9 hardening, 10 kit + cooking-flow finish), move 5–8 after launch, and edit PRODUCT.md in the same commit so there is one roadmap — cost if we're wrong: a rushed, unwitnessed feature set on a date chosen for marketing, with Apple review over Christmas.
   → Owner:

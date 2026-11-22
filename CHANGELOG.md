@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-22 · Inbox MealPlanningManager+Series split · 2c5638a
+- For you: Weekly repeating meals keep filling each new week exactly as before, including the week the clocks go back.
+- Behind the build: the weekly-repeat rules moved into their own tested file, with a new test for the autumn clock change; a reviewer and a challenger found no change in behaviour.
+
 ## 2026-11-22 · Inbox CookingResumeMemory seam · cbfba3f
 - For you: Cooking mode still picks up where you left off — same step, same ingredients ticked — when you close it mid-cook and come back.
 - Behind the build: the resume memory now plugs into cooking mode the same way its timers do, so tests can swap in their own; a reviewer and a challenger found no change in behaviour.
