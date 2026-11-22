@@ -166,13 +166,14 @@ final class FakeMealReminderScheduler: MealReminderScheduling {
     /// Two copies of one weekly series: this week's and next week's (the newest, which holds the weekly reminder).
     private func weeklyPair(_ sut: MealPlanningManager) -> (earlier: MealPlanModel, later: MealPlanModel) {
         let recipe = UUID()
+        let day = futureDay()  // read once: a second read across midnight would land on another weekday
         let earlier = MealPlanModel(
-            recipeId: recipe, recipeName: "Soup", date: futureDay(), mealTime: .dinner,
+            recipeId: recipe, recipeName: "Soup", date: day, mealTime: .dinner,
             isCompleted: false, isRecurring: true, reminderTime: clock(19)
         )
         let later = MealPlanModel(
             recipeId: recipe, recipeName: "Soup",
-            date: Calendar.current.date(byAdding: .day, value: 7, to: futureDay())!, mealTime: .dinner,
+            date: Calendar.current.date(byAdding: .day, value: 7, to: day)!, mealTime: .dinner,
             isCompleted: false, isRecurring: true, reminderTime: clock(19)
         )
         sut.addMealPlan(earlier)
