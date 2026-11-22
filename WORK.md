@@ -78,6 +78,12 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **WeekDinners past dinners (Inbox 🟡, `agent/week-dinners-past`):** deleted the "missed dinner moves forward"
+  branch instead of feeding unfiltered past plans — Plan shows past days as history (only cooked dinners,
+  `MealPlanModel.isShown`, from the 20 Nov plan bug fix), so restoring missed dinners would undo that. The branch was
+  also live for *cooked* past dinners (hold → "Move to Thu" would move a cooked dinner forward). **Pre-mortem:**
+  (1) a cooked dinner still offers moves → `cookedPastDinnerOffersNoMoves`; (2) tonight's dinner can't move →
+  `moveTargetsSkipPastNights` (from tonight); (3) a past swap sneaks through `move()` → `pastDinnerDoesNotSwap…`.
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
