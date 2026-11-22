@@ -21,6 +21,7 @@ IDs or personal account details here.
 | Daily reviewer | 21:10 | Two+ independent reviews of what landed since the last review | BACKLOG Inbox + Log |
 | Daily challenger | 05:40 | Devil's-advocate pass (strategy, security/MASVS, simplify/delete) | docs/CHALLENGES.md, Inbox |
 | Weekly CEO digest | Mon 07:50 | Shipped, health, decisions for the owner | docs/digest/ |
+| Public beta release | daily 06:23 UTC (GitHub Actions `testflight-promote.yml`) | Submits the newest build for Beta App Review and adds it to the Public Beta group | App Store Connect |
 | TestFlight feedback | hourly (GitHub Actions) | Files tester feedback as issues labelled `testflight-feedback` | GitHub issues |
 All push a short notification to the owner. Their full prompts live in the owner's Claude scheduled tasks, not here.
 
