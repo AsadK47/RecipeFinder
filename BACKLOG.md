@@ -118,11 +118,25 @@ are merged into a newer item or parked — never start them; their text stays as
    **Phase 2 — Decide & get:** Plan — swipe to match → Groceries writes itself.
    **Phase 3 — Discover:** Recipes — endless discovery → Today — decide tonight.
    **Wrapped:** skipped for 2026 (owner 2026-11-15).
-   **Between phases (one each):** Me 3/3 Settings tidy-up · CI screenshots of key screens · Showcase screenshots ·
+   **Next between-phases item (owner 2026-11-22): Me 3/3 Settings tidy-up** — start with a fresh audit of every
+   settings screen (screenshots + dead/duplicate rows), then the planned re-order. **Between phases (one each):** CI screenshots of key screens · Showcase screenshots ·
    Polish batch + Scroll fade · Swipes you can see and trust · Launch kit · Add flow 3/3 follow-up · Smells A → F + Large wizard · Pictures 3/4 leftovers (owner-paced).
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Discover polish — endless done right** (owner 2026-11-22: "have we done it correctly?"). Still missing from
+  option D: "Pick one for tonight" checkpoint cards every few chapters (one tap sets Today's pick). Plus the Instagram-
+  grade basics: tap the Recipes tab again → scroll to top; scroll position kept when you open a recipe and come back;
+  images load lazily and downsampled (memory flat after 20 screens — perf test); a soft "You've seen it all — here's
+  a fresh mix" divider when the pool reshuffles. Endless scroll stays on Discover + search results only (Today, Plan,
+  Groceries are finishable jobs). *Done when:* checkpoint + position logic tested, memory budget, screenshots, CI green.
+- [ ] **Growth loops** (owner 2026-11-22: "Instagram levels of popularity"). Privacy-first loops that bring new cooks:
+  (1) **Share a recipe as a beautiful card** (picture, name, time, "Made with RecipeFinder" + App Store link) and as a
+  `.recipefinderrecipe` file that imports in one tap; (2) **recipefinder.uk/r/… web page** for a shared recipe so
+  people without the app can read it and get the app (only what the sharer chose; no tracking); (3) **Made-it share**
+  ("I cooked this tonight" photo card); (4) gentle **invite a friend** after a 3rd cook; (5) App Store rating prompt
+  after a Made-it moment (SKStoreReviewController, max 3/yr). Needs a privacy-text check for (2). *Measure:* App
+  Store installs from shared links (campaign token in the App Store URL — Apple analytics, no own tracking).
 - [ ] **Smart search & Ask the kitchen — built in-house** (owner 2026-11-22: "build one in house, piece by piece,
   clever algorithms"). Works on every phone, offline, deterministic and testable; Apple's on-device model (already used
   for text import) is an optional bonus layer later. Slices, each shippable: (1) **Query parser** — "quick chicken no
