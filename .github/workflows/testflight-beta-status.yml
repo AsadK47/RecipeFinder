@@ -22,6 +22,7 @@ jobs:
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
           APP_ID: '6832321439'
         run: |
+          set -o pipefail
           KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
           printf '%s\n' "$ASC_KEY_P8" > "$KEY_PATH"
           chmod 600 "$KEY_PATH"

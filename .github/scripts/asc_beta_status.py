@@ -2,7 +2,6 @@
 newest builds each group can install (version, upload date, expiry, external review state). Read-only.
 Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, APP_ID."""
 import os
-import urllib.parse
 
 from asc import API, call, make_token
 
@@ -17,19 +16,13 @@ for g in groups:
           f"| feedback={a.get('feedbackEnabled')} | criteria={'yes' if a.get('hasAccessToAllBuilds') is None else a.get('hasAccessToAllBuilds')}")
     testers = call("GET", f"{API}/betaGroups/{g['id']}/relationships/betaTesters?limit=200", token)
     print(f"  testers: {len(testers.get('data', []))}")
-    q = urllib.parse.urlencode({"limit": 3, "include": "buildBetaDetail", "sort": "-uploadedDate"})
-    try:
-        builds = call("GET", f"{API}/betaGroups/{g['id']}/builds?{q}", token)
-    except Exception as e:  # sort may be unsupported on this relationship
-        builds = call("GET", f"{API}/betaGroups/{g['id']}/builds?limit=50&include=buildBetaDetail", token)
-    details = {d["id"]: d["attributes"] for d in builds.get("included", []) if d["type"] == "buildBetaDetails"}
+    builds = call("GET", f"{API}/betaGroups/{g['id']}/builds?limit=200", token)
     rows = sorted(builds.get("data", []), key=lambda b: b["attributes"].get("uploadedDate", ""), reverse=True)[:3]
     if not rows:
         print("  builds: NONE (testers in this group have nothing to install)")
     for b in rows:
         ba = b["attributes"]
-        did = (b.get("relationships", {}).get("buildBetaDetail", {}).get("data") or {}).get("id")
-        d = details.get(did, {})
+        d = call("GET", f"{API}/builds/{b['id']}/buildBetaDetail", token).get("data", {}).get("attributes", {})
         print(f"  build {ba.get('version')} uploaded {ba.get('uploadedDate', '')[:10]} expires {ba.get('expirationDate', '')[:10]} "
               f"expired={ba.get('expired')} minOS={ba.get('minOsVersion')} external={d.get('externalBuildState')}")
 
