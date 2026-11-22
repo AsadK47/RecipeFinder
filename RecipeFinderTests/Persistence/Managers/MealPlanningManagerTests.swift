@@ -1014,3 +1014,76 @@ struct MealTimeOfDayTests {
         #expect(sut.mealPlans(for: day).map(\.mealTime) == [.lunch, .snack, .dinner])
     }
 }
+
+// MARK: - Undo a take-off
+
+@MainActor
+@Suite("Undo taking a meal off")
+struct UndoTakeOffTests {
+
+    private let reminders = FakeMealReminderScheduler()
+
+    private func makeManager() -> MealPlanningManager {
+        MealPlanningManager(
+            storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            mealPlanStore: InMemoryMealPlanStore(), reminders: reminders
+        )
+    }
+
+    private func day(_ offset: Int) -> Date {
+        Calendar.current.date(byAdding: .day, value: offset, to: Calendar.current.startOfDay(for: Date()))!
+    }
+
+    private func plan(_ name: String, on date: Date, recurring: Bool = false, recipe: UUID = UUID()) -> MealPlanModel {
+        MealPlanModel(
+            recipeId: recipe, recipeName: name, date: date, mealTime: .dinner, isRecurring: recurring,
+            reminderTime: Calendar.current.date(bySettingHour: 19, minute: 0, second: 0, of: date)
+        )
+    }
+
+    @Test func undoPutsAOneOffBack() {
+        let sut = makeManager()
+        let dal = plan("Dal", on: day(2))
+        sut.addMealPlan(dal)
+        let before = sut.plansChangedByRemoving(dal)
+
+        sut.removeMealPlan(dal)
+        sut.restore(before)
+
+        #expect(sut.mealPlans.map(\.id) == [dal.id])
+        #expect(reminders.scheduled.last?.id == "meal-\(dal.id.uuidString)")
+    }
+
+    @Test func undoBringsAWeeklySeriesBackRepeating() {
+        let sut = makeManager()
+        let recipe = UUID()
+        let tonight = plan("Tacos", on: day(2), recurring: true, recipe: recipe)
+        let nextWeek = plan("Tacos", on: day(9), recurring: true, recipe: recipe)
+        sut.addMealPlan(tonight)
+        sut.addMealPlan(nextWeek)
+        let before = sut.plansChangedByRemoving(tonight)
+        #expect(Set(before.map(\.id)) == [tonight.id, nextWeek.id])
+
+        sut.removeMealPlan(tonight) // stops the series and drops next week's copy
+        sut.restore(before)
+
+        #expect(Set(sut.mealPlans.map(\.id)) == [tonight.id, nextWeek.id])
+        #expect(sut.mealPlans.allSatisfy(\.isRecurring))
+        let ringing = reminders.scheduled.last { $0.id == "meal-\(nextWeek.id.uuidString)" }
+        #expect(ringing?.repeatsWeekly == true)
+    }
+
+    @Test func undoLeavesANightPlannedSinceAlone() {
+        let sut = makeManager()
+        let dal = plan("Dal", on: day(2))
+        sut.addMealPlan(dal)
+        let before = sut.plansChangedByRemoving(dal)
+        sut.removeMealPlan(dal)
+        let pasta = plan("Pasta", on: day(2))
+        sut.addMealPlan(pasta)
+
+        sut.restore(before)
+
+        #expect(sut.mealPlans.map(\.id) == [pasta.id])
+    }
+}

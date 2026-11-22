@@ -10,7 +10,6 @@ struct MealTimeCard: View {
     var isRecurring: Bool = false
 
     private var dishName: String? { recipe?.name ?? plannedName }
-    var onRemove: (() -> Void)? = nil
 
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
@@ -64,14 +63,6 @@ struct MealTimeCard: View {
             Spacer()
 
             HStack(spacing: AppTheme.spacing8) {
-                if let onRemove, dishName != nil {
-                    Button(action: onRemove) {
-                        Image(systemName: "trash")
-                            .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                            .foregroundStyle(AppTheme.error.opacity(0.7))
-                    }
-                    .buttonStyle(.plain)
-                }
                 if dishName == nil {
                     Image(systemName: "chevron.right")
                         .font(.system(size: AppTheme.fontSize14, weight: .semibold))

@@ -241,10 +241,30 @@ extension MealPlanningView {
     }
 
     func removeDinner(_ dinner: MealPlanModel) {
+        takeOff(dinner)
+    }
+
+    /// Takes a meal off at once — a weekly one stops repeating — with Undo on the toast instead of a confirm pop-up.
+    func takeOff(_ plan: MealPlanModel) {
+        let before = mealPlanningManager.plansChangedByRemoving(plan)
         withAnimation(.appGentle) {
-            removeMealPlan(for: dinner.date, mealTime: .dinner)
+            removeMealPlan(for: plan.date, mealTime: plan.mealTime)
             updateSelectedMealTimes(for: selectedDate)
         }
+        HapticManager.shared.success()
+        removalUndo = before
+        removalToast = plan.isRecurring ? "\(plan.recipeName) off — no longer repeats" : "\(plan.recipeName) taken off"
+    }
+
+    func undoTakeOff() {
+        guard let before = removalUndo else { return }
+        removalUndo = nil
+        withAnimation(.appGentle) {
+            mealPlanningManager.restore(before)
+            updateSelectedMealTimes(for: selectedDate)
+            reorderDayByTime()
+        }
+        HapticManager.shared.light()
     }
 
     // MARK: - Week navigation

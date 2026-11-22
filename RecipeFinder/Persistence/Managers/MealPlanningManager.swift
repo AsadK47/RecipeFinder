@@ -6,6 +6,10 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func addMealPlan(_ mealPlan: MealPlanModel)
     func updateMealPlan(_ mealPlan: MealPlanModel)
     func removeMealPlan(for date: Date, mealTime: MealTime)
+    /// The plans taking `plan` off would change, as they are now: it, and for a weekly meal every copy of its series.
+    func plansChangedByRemoving(_ plan: MealPlanModel) -> [MealPlanModel]
+    /// Undo for a take-off: puts `plans` back as they were (by id), skipping a slot the cook has filled since.
+    func restore(_ plans: [MealPlanModel])
     func toggleRecurring(_ mealPlan: MealPlanModel)
     func propagateRecurring(toWeekStarting startDate: Date)
     func clearOldMealPlans()
@@ -198,6 +202,30 @@ final class MealPlanningManager: MealPlanningManaging {
 
     func removeMealPlan(for date: Date, mealTime: MealTime) {
         remove { $0.isSlot(date, mealTime) }
+    }
+
+    func plansChangedByRemoving(_ plan: MealPlanModel) -> [MealPlanModel] {
+        guard plan.isRecurring else { return mealPlans.filter { $0.id == plan.id } }
+        let key = SeriesKey(plan, calendar: .current)
+        return mealPlans.filter { $0.id == plan.id || ($0.isRecurring && SeriesKey($0, calendar: .current) == key) }
+    }
+
+    func restore(_ plans: [MealPlanModel]) {
+        var restored: [MealPlanModel] = []
+        for plan in plans {
+            if let index = mealPlans.firstIndex(where: { $0.id == plan.id }) {
+                mealPlans[index] = plan
+            } else if mealPlans.contains(where: { $0.isSlot(plan.date, plan.mealTime) }) {
+                continue // a meal planned there since wins: a night never holds two
+            } else {
+                mealPlans.append(plan)
+            }
+            restored.append(plan)
+        }
+        guard !restored.isEmpty else { return }
+        saveMealPlans()
+        for plan in restored { syncReminder(for: plan) }
+        syncSeriesReminders()
     }
 
     /// Removing a copy of a weekly meal also stops its series: otherwise the next copy refills the night from an

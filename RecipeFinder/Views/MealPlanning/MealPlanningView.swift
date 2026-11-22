@@ -19,8 +19,9 @@ struct MealPlanningView: View {
     /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
     @State private var pendingSuggestedRecipe: RecipeModel?
     @State var showClearPastConfirm = false
-    /// A weekly meal the cook is taking off: confirm first, since it ends the repeat.
-    @State var pendingWeeklyRemoval: MealPlanModel?
+    /// The plans as they were before the last take-off, for the toast's Undo (owner 2026-11-22: no confirm pop-ups).
+    @State var removalUndo: [MealPlanModel]?
+    @State var removalToast: String?
     /// Non-nil while the meal-reminder time picker is presented.
     @State var reminderContext: ReminderContext?
     /// Non-nil while "Plan my week" is dealing cards.
@@ -127,23 +128,8 @@ struct MealPlanningView: View {
         } message: {
             Text("Takes plans you didn't cook off your planner. Dinners you cooked stay in your week.")
         }
-        .confirmationDialog(
-            "Stop repeating \(pendingWeeklyRemoval?.recipeName ?? "this meal")?",
-            isPresented: Binding(get: { pendingWeeklyRemoval != nil }, set: { if !$0 { pendingWeeklyRemoval = nil } }),
-            titleVisibility: .visible
-        ) {
-            Button("Take Off and Stop Repeating", role: .destructive) {
-                if let plan = pendingWeeklyRemoval {
-                    withAnimation { removeMealPlan(for: plan.date, mealTime: plan.mealTime) }
-                    HapticManager.shared.success()
-                }
-                pendingWeeklyRemoval = nil
-            }
-            Button("Keep It", role: .cancel) { pendingWeeklyRemoval = nil }
-        } message: {
-            Text("It's planned every \(pendingWeeklyRemoval?.date.formatted(.dateTime.weekday(.wide)) ?? "week").")
-        }
         .toast($weekShoppingFeedback)
+        .toast($removalToast, icon: "trash", action: (title: "Undo", perform: undoTakeOff))
         .onAppear {
             rollOverToToday()
             if let start = currentWeekStart {
@@ -268,14 +254,7 @@ struct MealPlanningView: View {
                 HapticManager.shared.light()
             },
             onRemove: { mealTime in
-                if let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime), plan.isRecurring {
-                    pendingWeeklyRemoval = plan
-                    return
-                }
-                withAnimation {
-                    removeMealPlan(for: selectedDate, mealTime: mealTime)
-                }
-                HapticManager.shared.success()
+                if let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) { takeOff(plan) }
             },
             onToggleRecurring: { mealTime in
                 if let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) {

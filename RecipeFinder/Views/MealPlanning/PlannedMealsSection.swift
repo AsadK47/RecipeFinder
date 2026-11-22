@@ -52,8 +52,7 @@ struct PlannedMealsSection: View {
                     mealTime: mealTime,
                     recipe: recipeFor(mealTime),
                     plannedName: mealPlanFor(mealTime)?.recipeName,
-                    isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
-                    onRemove: { onRemove(mealTime) }
+                    isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false
                 )
             }
             .buttonStyle(.plain)
@@ -81,6 +80,20 @@ struct PlannedMealsSection: View {
                 }
             }
 
+            // Beside the card, not inside its button: a tap on the bin must never also open the recipe picker.
+            if mealPlanFor(mealTime) != nil {
+                Button { onRemove(mealTime) } label: {
+                    Image(systemName: "trash")
+                        .font(.system(size: AppTheme.fontSize14, weight: .semibold))
+                        .foregroundStyle(AppTheme.error.opacity(0.7))
+                        .frame(width: 32, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Take \(mealTime.rawValue.lowercased()) off the plan")
+                .accessibilityIdentifier("plan.meal.\(mealTime.rawValue).remove")
+            }
+
             if hasReminder(mealTime) {
                 Image(systemName: "bell.fill")
                     .font(.system(size: AppTheme.fontSize12))
@@ -99,8 +112,7 @@ struct PlannedMealsSection: View {
                         mealTime: mealTime,
                         recipe: recipeFor(mealTime),
                         plannedName: mealPlanFor(mealTime)?.recipeName,
-                        isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
-                        onRemove: {}
+                        isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false
                     )
                     .frame(width: 260)
                 }
