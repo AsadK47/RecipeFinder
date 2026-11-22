@@ -111,7 +111,7 @@ struct CookingResumeMemoryTests {
         #expect(EnvironmentValues().cookingResume === CookingResumeMemory.shared)
     }
 
-    @Test("A test memory injected through the environment is the one cooking mode reads")
+    @Test("The environment seam hands back an injected test memory, not the shared one")
     func environmentAcceptsInjectedMemory() {
         let injected = memory(Clock())
         var values = EnvironmentValues()
