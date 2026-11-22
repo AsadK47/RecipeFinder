@@ -39,11 +39,11 @@ struct AppearanceAndThemeSettingsView: View {
             }
 
             VStack(spacing: AppTheme.spacing8) {
-                SettingsSectionHeader(title: "Color Theme")
+                SettingsSectionHeader(title: "Colour Theme")
 
                 SettingsCard {
                     VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                        Text("Choose your favorite accent color for the app.")
+                        Text("Choose your favourite accent colour for the app.")
                             .font(.subheadline)
                             .adaptiveSecondaryForeground()
                             .fixedSize(horizontal: false, vertical: true)

@@ -508,7 +508,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         for _ in 0..<8 where !clearOfTabBar(appearance) { app.swipeUp() }
         checkpoint(app, "before Appearance & Theme (AX size)")
         appearance.tap()
-        XCTAssertTrue(app.staticTexts["Color Theme"].waitForExistence(timeout: 5), "Appearance should open at AX sizes.")
+        XCTAssertTrue(app.staticTexts["Colour Theme"].waitForExistence(timeout: 5), "Appearance should open at AX sizes.")
         // The swatches sit in a LazyVGrid: rows below the fold aren't built until scrolled to.
         for theme in themes {
             let swatch = app.buttons["theme.\(theme)"]

@@ -103,7 +103,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "square.and.arrow.up",
                             title: "Sharing Recipes",
-                            description: "Tap the share button on any recipe to send as text or beautiful PDF."
+                            description: "Tap the share button on any recipe to send as text or a beautiful PDF."
                         )
 
                         HelpItem(
@@ -168,7 +168,7 @@ struct HelpView: View {
                         )
 
                         FAQItem(
-                            question: "How do I backup my data?",
+                            question: "How do I back up my data?",
                             answer: "Your data is automatically saved. You can also export a backup from Settings > Data Management."
                         )
 
