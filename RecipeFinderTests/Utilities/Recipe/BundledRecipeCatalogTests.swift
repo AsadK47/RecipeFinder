@@ -33,6 +33,8 @@ struct BundledRecipeCatalogTests {
                 if let fixed = review.recipe { model = apply(fixed, to: model, sourceURL: sourceURL(in: entry.rawText)) }
             }
             guard seen.insert(normalised(model.name)).inserted else { continue }
+            // So the Vegetarian / Vegan filters find bundled recipes (other flags are never guessed).
+            model.dietaryInfo = DietaryInference.infer(model)
             recipes.append(model)
         }
         return recipes
@@ -294,6 +296,23 @@ struct BundledRecipeCatalogTests {
         #expect(recipes.first?.importedFromURL?.absoluteString == "https://example.com/rice")
     }
 
+    @Test("generated recipes are tagged vegetarian / vegan from their ingredients")
+    func generatedRecipesAreDietTagged() {
+        let veg = Self.generate(from: [SourceEntry(name: "Dal", rawText: "Dal\nIngredients\n200g lentils\n1 onion\nMethod\nCook.")])
+        let meat = Self.generate(from: [SourceEntry(name: "Stew", rawText: "Stew\nIngredients\n500g beef\n1 onion\nMethod\nCook.")])
+        #expect(veg.first?.dietaryInfo.isVegan == true)
+        #expect(meat.first?.dietaryInfo.isVegetarian == false)
+    }
+
+    @Test("the shipped collection answers the Vegetarian and Vegan filters, and no chicken dish is vegetarian")
+    func shippedCollectionIsDietTagged() {
+        let recipes = BundledRecipeCatalog.load()
+        #expect(recipes.contains { $0.dietaryInfo.isVegetarian })
+        #expect(recipes.contains { $0.dietaryInfo.isVegan })
+        #expect(!recipes.contains { $0.dietaryInfo.isVegetarian && $0.ingredients.contains { $0.name.localizedCaseInsensitiveContains("chicken") } })
+        #expect(!recipes.contains { $0.dietaryInfo.isGlutenFree || $0.dietaryInfo.isNutFree || $0.dietaryInfo.isDairyFree })
+    }
+
     @Test("Junk pasted into titles is cleaned", arguments: [
         ("Chapati PREP TIME COOK TIME ADDITIONAL TIME TOTAL TIME", "Chapati"),
         ("Seafood paella recipe Serves 2.0 0.7111111111 0.5555555556", "Seafood paella recipe"),
@@ -384,6 +403,15 @@ struct BundledRecipeCatalogTests {
         #expect(result.first?.instructions == Self.currentVersion.instructions)
         #expect(result.first?.imageName == Self.currentVersion.imageName)
         #expect(result.first?.isSampleRecipe == true)
+    }
+
+    @Test("an untouched copy from before diet tagging picks up its Vegetarian / Vegan tags")
+    func untagged_isRefreshedWithTags() {
+        let untagged = Self.sample(name: "Dal", ingredients: ["lentils", "onion"])
+        var tagged = untagged
+        tagged.dietaryInfo = DietaryInfo(isVegetarian: true, isVegan: true)
+        let result = BundledRecipeCatalog.staleSampleRefreshes(library: [untagged], current: [tagged], history: [untagged])
+        #expect(result.first?.dietaryInfo.isVegan == true)
     }
 
     @Test("refresh keeps favourite, rating, cook history, photos and tags")
