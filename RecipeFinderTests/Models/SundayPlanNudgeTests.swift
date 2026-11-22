@@ -58,19 +58,41 @@ import Foundation
         #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: cal) == nov(29, 18))
     }
 
-    // Sunday-first locales (US): Plan's week runs Sunday–Saturday, so the Sunday nudge asks about the week that
-    // starts that Sunday — the week a tap opens — not a Monday–Sunday window Plan never shows.
-
-    private let sundayFirst = SundayPlanNudgeTests.calendar("UTC", firstWeekday: 1)
-
-    @Test func sundayFirstCountsThatSundaysDinnerAsTheWeekAhead() {
-        let plans = [dinner(on: nov(22, 19))]
-        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: sundayFirst) == nov(29, 18))
-    }
+    // Other first weekdays (US Sunday-first, Saturday-first, or the cook's own choice in iOS): the nudge checks the
+    // Monday after it up to the end of Plan's week holding that Monday — the week a tap opens — never days up to tonight.
 
     @Test func sundayFirstLeavesTheFollowingSundaysDinnerToItsOwnWeek() {
         let plans = [dinner(on: nov(29, 19))]
+        let sundayFirst = Self.calendar("UTC", firstWeekday: 1)
         #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: sundayFirst) == nov(22, 18))
+    }
+
+    @Test func saturdayFirstLeavesTheFollowingSaturdaysDinnerToItsOwnWeek() {
+        let plans = [dinner(on: nov(28, 19))]
+        let saturdayFirst = Self.calendar("UTC", firstWeekday: 7)
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: saturdayFirst) == nov(22, 18))
+    }
+
+    @Test(arguments: [1, 2, 4, 7])
+    func tonightsOrAPastDinnerDoesNotStandInForTheWeekAhead(firstWeekday: Int) {
+        let plans = [dinner(on: nov(18, 19)), dinner(on: nov(21, 19)), dinner(on: nov(22, 19))]
+        let calendar = Self.calendar("UTC", firstWeekday: firstWeekday)
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: calendar) == nov(22, 18))
+    }
+
+    @Test(arguments: [1, 2, 4, 7])
+    func theNextDaysDinnerCountsWhateverTheFirstWeekday(firstWeekday: Int) {
+        let plans = [dinner(on: nov(23, 19))]
+        let calendar = Self.calendar("UTC", firstWeekday: firstWeekday)
+        #expect(SundayPlanNudge.fireDate(now: nov(20, 10), plans: plans, calendar: calendar) == nov(29, 18))
+    }
+
+    @Test(arguments: [1, 2, 4, 7])
+    func aTapOpensThePlanWeekHoldingTheFirstDayChecked(firstWeekday: Int) throws {
+        let calendar = Self.calendar("UTC", firstWeekday: firstWeekday)
+        let info = SundayPlanNudge.userInfo(firingAt: nov(22, 18), calendar: calendar)
+        let opened = try #require(info[SundayPlanNudge.weekStartKey].map { Date(timeIntervalSince1970: $0) })
+        #expect(MealPlanCalendar(calendar: calendar).daysInWeek(containing: opened).contains(nov(23)))
     }
 
     @Test func aRepeatingDinnerMeansNoNudge() {
