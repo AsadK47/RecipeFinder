@@ -614,7 +614,7 @@ struct ClearPastPlansTests {
     private let calendar = Calendar.current
 
     private func makeManager(_ plans: [MealPlanModel]) -> MealPlanningManager {
-        makeManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+        makeManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard),
                     store: InMemoryMealPlanStore(plans))
     }
 
@@ -678,7 +678,7 @@ struct ClearPastPlansTests {
 
     @Test func clearedPlansStayGoneAfterReload() {
         let store = InMemoryMealPlanStore([plan("Yesterday", on: day(-1))])
-        let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+        let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
         makeManager(storage: storage, store: store).clearOldMealPlans()
         #expect(makeManager(storage: storage, store: store).mealPlans.isEmpty)
     }
@@ -689,7 +689,7 @@ struct ClearPastPlansTests {
 @Suite("Plan bug hunt")
 struct PlanBugHuntTests {
     private let calendar = Calendar.current
-    private let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+    private let storage = LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString) ?? .standard)
     private let reminders = FakeMealReminderScheduler()
 
     private func makeManager(_ store: InMemoryMealPlanStore = InMemoryMealPlanStore()) -> MealPlanningManager {
@@ -993,6 +993,13 @@ struct MealTimeOfDayTests {
             recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .dinner, reminderTime: at(17, 45)
         )
         #expect(plan.minuteOfDay() == 17 * 60 + 45)
+    }
+
+    @Test func slotOrderBreaksATie() {
+        let lunch = MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .lunch, reminderTime: at(15))
+        let snack = MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: Date(), mealTime: .snack)
+        #expect(MealPlanModel.eatenBefore(lunch, snack))
+        #expect(!MealPlanModel.eatenBefore(snack, lunch))
     }
 
     @Test func mealPlansForADayComeInTimeOrder() {

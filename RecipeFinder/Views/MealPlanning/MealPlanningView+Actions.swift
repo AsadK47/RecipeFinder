@@ -70,6 +70,11 @@ extension MealPlanningView {
     func openDay(_ date: Date) {
         selectedDate = date
         updateSelectedMealTimes(for: date)
+        reorderDayByTime()
+    }
+
+    /// Puts the selected day's meals in the order they're eaten (on opening a day, or when a reminder time moves).
+    func reorderDayByTime() {
         orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
             existing: [], selected: selectedMealTimes, minuteOfDay: minuteOfDay)
     }
@@ -120,6 +125,7 @@ extension MealPlanningView {
         // Reminders are useless without permission; prompt on first opt-in (no-op if already granted).
         NotificationManager.shared.requestPermission { _ in }
         mealPlanningManager.updateMealPlan(plan)
+        reorderDayByTime()
         HapticManager.shared.success()
     }
 
@@ -127,6 +133,7 @@ extension MealPlanningView {
         guard var plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
         plan.reminderTime = nil
         mealPlanningManager.updateMealPlan(plan)
+        reorderDayByTime()
         HapticManager.shared.light()
     }
 
