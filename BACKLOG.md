@@ -124,6 +124,13 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- [ ] **Calmer cooking-mode motion** (owner 2026-11-22: animation "slightly aggressive in its speed"; no toggle —
+  fix the defaults). Step changes use `.appSpring` (0.3 s) for full-screen moves; Material puts full-screen transitions
+  at ≥375 ms and Apple's fluid-interface guidance favours critically damped springs. Use a new `.appPage` spring
+  (~0.45 s, damping 1.0, no bounce) for step changes and the Done card, cross-fade + small slide instead of a full
+  slide, and honour Reduce Motion (cross-fade only, already partly done). Entry: the planned "Get ready" step 0 (tester
+  feedback) gives a calm start screen before step 1 instead of a new toggle. *Done when:* animation tokens documented
+  in DesignSystem.md, UI test still steps through, owner says it feels right on device.
 - [ ] **Discover polish — endless done right** (owner 2026-11-22: "have we done it correctly?"). Still missing from
   option D: "Pick one for tonight" checkpoint cards every few chapters (one tap sets Today's pick). Plus the Instagram-
   grade basics: tap the Recipes tab again → scroll to top; scroll position kept when you open a recipe and come back;
