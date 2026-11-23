@@ -309,8 +309,19 @@ struct BundledRecipeCatalogTests {
         let recipes = BundledRecipeCatalog.load()
         #expect(recipes.contains { $0.dietaryInfo.isVegetarian })
         #expect(recipes.contains { $0.dietaryInfo.isVegan })
-        for meat in ["chicken", "beef", "pork", "lamb", "fish", "prawn", "shrimp", "anchovy", "gelatin"] {
+        for meat in ["chicken", "beef", "pork", "lamb", "fish", "prawn", "shrimp", "anchovy", "gelatin", "lardons",
+                     "guanciale", "liver", "trout", "clams", "herring", "marshmallow", "parmigiano", "grana"] {
             #expect(!recipes.contains { $0.dietaryInfo.isVegetarian && $0.ingredients.contains { $0.name.localizedCaseInsensitiveContains(meat) } }, "\(meat)")
+        }
+        // Every word on the lists, not a sample: a word added later is checked against the shipped tags too.
+        for recipe in recipes {
+            let lines = recipe.ingredients.map { DietaryInference.words(in: $0.name) }
+            if recipe.dietaryInfo.isVegetarian {
+                #expect(!lines.contains(where: DietaryInference.containsMeat), "\(recipe.name) is tagged Vegetarian")
+            }
+            if recipe.dietaryInfo.isVegan, !DietaryInference.words(in: recipe.name).contains("vegan") {
+                #expect(!lines.contains(where: DietaryInference.containsAnimalProduct), "\(recipe.name) is tagged Vegan")
+            }
         }
         let untaggedVegan = recipes.filter { $0.name.localizedCaseInsensitiveContains("vegan") && !$0.dietaryInfo.isVegan }
         #expect(untaggedVegan.isEmpty, "Titled Vegan but not tagged: \(untaggedVegan.map(\.name))")

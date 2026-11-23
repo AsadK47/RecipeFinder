@@ -28,7 +28,9 @@ struct DietaryInferenceTests {
     @Test("any meat or fish ingredient means neither vegetarian nor vegan", arguments: [
         "boneless chicken thighs", "lamb mince", "fish sauce", "cod fillets", "beef broth", "prawns",
         "worcestershire sauce", "halal gelatin powder", "dried kelp and anchovy stock pack", "yeo's laksa paste",
-        "kimchi, packed", "nuoc mam cham, optional", "lard", "bacon", "dripping"
+        "kimchi, packed", "nuoc mam cham, optional", "lard", "bacon", "dripping", "smoked lardons", "guanciale, diced",
+        "speck", "'nduja paste", "chicken livers", "lamb's liver", "trout fillets", "monkfish tail", "clams, scrubbed",
+        "pickled herring", "mini marshmallows", "parmigiano reggiano, grated", "grana padano"
     ])
     func meatIsNotVegetarian(ingredient: String) {
         let info = Self.infer(["onion", ingredient])
@@ -64,7 +66,8 @@ struct DietaryInferenceTests {
     @Test("dairy, eggs and honey are vegetarian but not vegan", arguments: [
         "large free-range eggs", "unsalted butter", "double cream", "milk, dairy or non-dairy", "lactose-free milk",
         "greek yoghurt", "ghee", "honey", "mature cheddar", "dark chocolate", "egg noodles", "chow mein noodles", "curd", "kaya jam",
-        "oil or fat of choice, for frying"
+        "oil or fat of choice, for frying", "ricotta", "feta, crumbled", "halloumi, sliced", "brie", "gruyère, grated",
+        "gruyere", "crème fraîche", "creme fraiche", "labneh", "kefir"
     ])
     func animalProductsAreVegetarianOnly(ingredient: String) {
         let info = Self.infer([ingredient])
