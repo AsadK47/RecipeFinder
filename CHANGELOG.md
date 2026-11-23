@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox WeekDinners VoiceOver hint · 533fe1b
+- For you: With VoiceOver, each dinner on Plan's week photos now tells you exactly what you can do with it — cook it, move it, or take it off the plan — including weekly dinners.
+- Behind the build: a reviewer and a challenger both caught the first version offering a move that weekly dinners don't have; the hint is now built from the same rules as the menu, with tests.
+
 ## 2026-11-23 · Inbox Favourites spelling · f34ca95
 - For you: The recipe filter and the heart button now say "Favourites", and VoiceOver reads the Favourites switch once, by name.
 - Behind the build: a reviewer checked every string and test for the old spelling and caught the switch being read twice, fixed before it shipped.
