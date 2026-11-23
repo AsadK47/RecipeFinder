@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Privacy policy vs public TestFlight · bff2827
+- For you: The Privacy Policy now explains beta testing: what TestFlight feedback reaches the Developer, what is posted publicly to help fix it, who handles it, and how to have it removed.
+- Behind the build: drafted from the feedback scripts and checked by two independent reviewers (text against code, and against UK GDPR notice needs), who caught the first draft calling the 14-day files private.
+
 ## 2026-11-23 · Inbox Toast cancel clears newer toast · ac70a1a
 - For you: Taking several meals off Plan in a row now keeps the "meals taken off" message on screen with its Undo, so every meal you took off can come back with one tap.
 - Behind the build: a new test failed on the old timer first; a challenger caught the first fix leaving an old Undo to reappear after leaving the screen, fixed before it shipped.
