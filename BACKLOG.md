@@ -793,6 +793,12 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   BACKLOG Log (script, user-facing lines only, newest week first). Confetti on notify sign-up (vanilla JS), a few food
   doodles, card hover motion. Proper 1200×630 share image, sitemap updated, Lighthouse ≥ 95 on all four scores.
 
+- [ ] **"I'm in the shop" from anywhere** (owner 2026-11-23). Shop mode opens only from the Groceries button today. Add an
+  App Shortcut / Siri phrase "I'm in the shop" (AppIntents, opens shop mode for the active shop) and a long-press
+  Home Screen quick action. No location, no new data, no privacy text change. Empty or all-ticked list → open Groceries
+  instead, with its usual add prompt. *Done when:* intent + quick action route tested, UI test opens shop mode from the
+  intent, screenshots, CI green.
+
 ## Smells (refactors — reviewer adds, builder works; see rule at top)
 - [x] **Large Class: `TodayView` (379 lines)** — 379→292: pure `TodaySnapshot` + `TodayFeed.shelves(excluding:)`, intro cards to `TodayIntroCards.swift` (46d38d1, d81af16).
 - [ ] **Primitive Obsession: recipe times stored as text** (owner OK incl. Core Data change, 2026-11-09).
