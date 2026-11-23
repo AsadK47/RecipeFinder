@@ -39,8 +39,6 @@ struct NotificationCenterClient: Sendable {
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
     static let shared = NotificationManager(center: .system, becomesDelegate: true)
 
-    static var notificationManager: NotificationManager { shared }
-
     private let center: NotificationCenterClient
 
     /// `becomesDelegate` is for the app's one shared instance: the tap router must be the center's delegate.
@@ -162,16 +160,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         return notificationId
     }
     
-    func sendImmediateNotification(title: String, body: String, identifier: String? = nil) {
-        let notificationId = identifier ?? "immediate-\(UUID().uuidString)"
-        
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-        schedule(id: notificationId, content: content, trigger: nil, failureLabel: "immediate notification")
-    }
-    
     @discardableResult
     func scheduleMealReminder(
         mealName: String,
@@ -238,37 +226,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         add(request, failureLabel: "Sunday plan nudge")
     }
 
-    @discardableResult
-    func scheduleDailyCookingReminder(
-        hour: Int,
-        minute: Int,
-        identifier: String = "daily-cooking-reminder"
-    ) -> String {
-        let content = UNMutableNotificationContent()
-        content.title = "👨‍🍳 Time to Cook!"
-        content.body = "Check your meal plan and start preparing your delicious meal"
-        content.sound = .default
-        content.userInfo = ["type": NotificationKind.dailyReminder.rawValue]
-        
-        var dateComponents = DateComponents()
-        dateComponents.hour = hour
-        dateComponents.minute = minute
-        
-        let trigger = UNCalendarNotificationTrigger(
-            dateMatching: dateComponents,
-            repeats: true
-        )
-        schedule(
-            id: identifier,
-            content: content,
-            trigger: trigger,
-            failureLabel: "daily reminder",
-            successMessage: "Daily reminder scheduled for \(hour):\(minute)"
-        )
-        
-        return identifier
-    }
-    
     static let groceriesReminderIdentifier = "daily-groceries-reminder"
 
     /// The Settings "Groceries Reminders" toggle: a repeating daily nudge at the chosen time, or none when off.
@@ -303,35 +260,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         return (hour: hour, minute: minute)
     }
 
-    func notifyShoppingListUpdate(itemsCount: Int) {
-        let content = UNMutableNotificationContent()
-        content.title = "🛒 Groceries Updated"
-        content.body = "You have \(itemsCount) items in your groceries"
-        content.sound = .default
-        schedule(
-            id: "shopping-list-\(UUID().uuidString)",
-            content: content,
-            trigger: nil,
-            failureLabel: "groceries update notification"
-        )
-    }
-    
     func cancelNotification(identifier: String) {
         center.removePending([identifier])
         logger.debug("🗑️ Canceled notification: \(identifier)")
-    }
-    
-    func cancelAllTimerNotifications() {
-        UNUserNotificationCenter.current().getPendingNotificationRequests { @Sendable requests in
-            let timerIds = requests
-                .filter { ($0.content.userInfo["type"] as? String) == NotificationKind.timer.rawValue }
-                .map { $0.identifier }
-            
-            Task {
-                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: timerIds)
-                logger.debug("🗑️ Canceled \(timerIds.count) timer notifications")
-            }
-        }
     }
     
     // MARK: - Pantry expiry notifications
@@ -360,21 +291,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
 
     func cancelExpiryNotification(for itemId: UUID) {
         center.removePending([Self.expiryIdentifier(for: itemId)])
-    }
-
-    func cancelAllNotifications() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        logger.debug("🗑️ Canceled all notifications")
-    }
-    
-    func getPendingNotifications(completion: @escaping @Sendable ([UNNotificationRequest]) -> Void) {
-        UNUserNotificationCenter.current().getPendingNotificationRequests { @Sendable requests in
-            completion(requests)
-        }
-    }
-    
-    func clearBadge() {
-        UNUserNotificationCenter.current().setBadgeCount(0)
     }
 }
 
