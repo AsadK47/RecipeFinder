@@ -96,7 +96,8 @@ drop a line while moving it.
   code). Missing → the item can't land. (Recipe photos began syncing on 14 Nov while the policy and the sync switch
   still said photos stay on the device.)
 - Change the Core Data model / `.xccurrentversion`, signing, entitlements, bundle IDs, CI/TestFlight workflows.
-- Change legal text (Terms, Privacy, LICENSE), pricing, or anything that sends data off the device.
+- Change legal text (Terms, Privacy, LICENSE), pricing, or anything that sends data off the device. Exception (owner
+  2026-11-23): wording that is dangerous, untrue or contradicts the app is always fixed at once — two reviewers, Log line.
 - Add a third-party dependency, a new Xcode target, or delete user data paths.
 - Skip, disable or weaken a test to get green.
 - New Swift files: no `XcodeWrite` in the cloud — register them in `project.pbxproj` by mirroring a sibling file's
