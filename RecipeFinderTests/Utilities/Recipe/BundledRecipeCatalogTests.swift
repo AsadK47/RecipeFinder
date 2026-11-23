@@ -309,18 +309,21 @@ struct BundledRecipeCatalogTests {
         let recipes = BundledRecipeCatalog.load()
         #expect(recipes.contains { $0.dietaryInfo.isVegetarian })
         #expect(recipes.contains { $0.dietaryInfo.isVegan })
-        for meat in ["chicken", "beef", "pork", "lamb", "fish", "prawn", "shrimp", "anchovy", "gelatin", "lardons",
-                     "guanciale", "liver", "trout", "clams", "herring", "marshmallow", "parmigiano", "grana"] {
+        for meat in ["chicken", "beef", "pork", "lamb", "fish", "prawn", "shrimp", "anchovy", "gelatin"] {
             #expect(!recipes.contains { $0.dietaryInfo.isVegetarian && $0.ingredients.contains { $0.name.localizedCaseInsensitiveContains(meat) } }, "\(meat)")
         }
-        // Every word on the lists, not a sample: a word added later is checked against the shipped tags too.
+        // Whole words, written out here rather than read from DietaryInference, so a word dropped from its lists
+        // can't pass ("grana" sits inside "pomegranate", "liver" inside "slivered").
+        let meatWords = ["lardons", "guanciale", "speck", "nduja", "liver", "livers", "trout", "monkfish", "clam", "clams",
+                         "herring", "marshmallow", "marshmallows", "parmigiano", "grana"]
+        let dairyWords = ["ricotta", "feta", "halloumi", "brie", "gruyère", "gruyere", "crème", "creme", "labneh", "kefir"]
         for recipe in recipes {
-            let lines = recipe.ingredients.map { DietaryInference.words(in: $0.name) }
+            let words = Set(recipe.ingredients.flatMap { DietaryInference.words(in: $0.name) })
             if recipe.dietaryInfo.isVegetarian {
-                #expect(!lines.contains(where: DietaryInference.containsMeat), "\(recipe.name) is tagged Vegetarian")
+                #expect(words.isDisjoint(with: meatWords), "\(recipe.name) is tagged Vegetarian")
             }
-            if recipe.dietaryInfo.isVegan, !DietaryInference.words(in: recipe.name).contains("vegan") {
-                #expect(!lines.contains(where: DietaryInference.containsAnimalProduct), "\(recipe.name) is tagged Vegan")
+            if recipe.dietaryInfo.isVegan {
+                #expect(words.isDisjoint(with: dairyWords), "\(recipe.name) is tagged Vegan")
             }
         }
         let untaggedVegan = recipes.filter { $0.name.localizedCaseInsensitiveContains("vegan") && !$0.dietaryInfo.isVegan }

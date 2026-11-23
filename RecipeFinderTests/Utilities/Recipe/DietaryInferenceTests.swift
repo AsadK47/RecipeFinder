@@ -29,8 +29,8 @@ struct DietaryInferenceTests {
         "boneless chicken thighs", "lamb mince", "fish sauce", "cod fillets", "beef broth", "prawns",
         "worcestershire sauce", "halal gelatin powder", "dried kelp and anchovy stock pack", "yeo's laksa paste",
         "kimchi, packed", "nuoc mam cham, optional", "lard", "bacon", "dripping", "smoked lardons", "guanciale, diced",
-        "speck", "'nduja paste", "chicken livers", "lamb's liver", "trout fillets", "monkfish tail", "clams, scrubbed",
-        "pickled herring", "mini marshmallows", "parmigiano reggiano, grated", "grana padano"
+        "speck", "'nduja paste", "calf liver", "chicken livers", "trout fillets", "monkfish tail", "clams, scrubbed",
+        "pickled herring", "a clam", "mini marshmallows", "parmigiano reggiano, grated", "grana padano"
     ])
     func meatIsNotVegetarian(ingredient: String) {
         let info = Self.infer(["onion", ingredient])

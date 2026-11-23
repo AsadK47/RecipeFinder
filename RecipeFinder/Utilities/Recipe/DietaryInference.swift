@@ -7,25 +7,28 @@ import Foundation
 /// Applied to the bundled recipes by the `BundledRecipeCatalogTests` generator (drift test).
 enum DietaryInference {
 
-    /// Meat, fish and their by-products (gelatin, lard, fish sauces, pastes made with shrimp or fish).
+    /// Meat, fish and their by-products (gelatin, lard, fish sauces, pastes made with shrimp or fish, marshmallows;
+    /// parmigiano / grana padano are made with animal rennet).
     static let meatWords: Set<String> = [
         "anchovy", "anchovies", "bacon", "basa", "beef", "belacan", "bonito", "bone", "bones", "brisket", "calamari",
-        "caviar", "chicken", "chorizo", "cod", "crab", "dashi", "dripping", "drippings", "duck", "fish", "gammon",
-        "gelatin", "gelatine", "goat", "haddock", "halibut", "ham", "hen", "katsuobushi", "kimchi", "laksa", "lamb",
-        "lard", "lobster", "mackerel", "meat", "meatballs", "mince", "mussels", "mutton", "nuoc", "octopus", "oyster",
-        "oysters", "pancetta", "parmesan", "pecorino", "pepperoni", "pork", "prawn", "prawns", "prosciutto", "quail",
-        "roe", "salami", "salmon", "sardine", "sardines", "sausage", "sausages", "scallops", "seafood", "shrimp",
-        "sirloin", "squid", "steak", "suet", "tallow", "tilapia", "tuna", "turkey", "veal", "venison",
-        "worcestershire"
+        "caviar", "chicken", "chorizo", "clam", "clams", "cod", "crab", "dashi", "dripping", "drippings", "duck", "fish",
+        "gammon", "gelatin", "gelatine", "goat", "grana", "guanciale", "haddock", "halibut", "ham", "hen", "herring",
+        "herrings", "katsuobushi", "kimchi", "laksa", "lamb", "lard", "lardons", "liver", "livers", "lobster", "mackerel",
+        "marshmallow", "marshmallows", "meat", "meatballs", "mince", "monkfish", "mussels", "mutton", "nduja", "nuoc",
+        "octopus", "oyster", "oysters", "pancetta", "parmesan", "parmigiano", "pecorino", "pepperoni", "pork", "prawn",
+        "prawns", "prosciutto", "quail", "roe", "salami", "salmon", "sardine", "sardines", "sausage", "sausages",
+        "scallops", "seafood", "shrimp", "sirloin", "speck", "squid", "steak", "suet", "tallow", "tilapia", "trout",
+        "tuna", "turkey", "veal", "venison", "worcestershire"
     ]
 
     /// Animal products a vegetarian eats but a vegan doesn't (dairy, eggs, honey, and foods usually made with them —
     /// "mein" because chow mein / lo mein noodles are usually egg noodles).
     static let animalProductWords: Set<String> = [
-        "butter", "buttercream", "buttermilk", "cheddar", "cheese", "chocolate", "condensed", "cream", "curd",
-        "custard", "dairy", "egg", "eggs", "fat", "frosting", "ganache", "ghee", "gouda", "honey", "kaya", "lactose",
-        "ladyfingers", "margarine", "mascarpone", "mayo", "mayonnaise", "mein", "meringue", "milk", "mozzarella",
-        "nutella", "paneer", "raita", "shortcrust", "streusel", "whey", "yoghurt", "yogurt", "yolk", "yolks"
+        "brie", "butter", "buttercream", "buttermilk", "cheddar", "cheese", "chocolate", "condensed", "cream", "creme",
+        "crème", "curd", "custard", "dairy", "egg", "eggs", "fat", "feta", "frosting", "ganache",
+        "ghee", "gouda", "gruyere", "gruyère", "halloumi", "honey", "kaya", "kefir", "labneh", "lactose", "ladyfingers",
+        "margarine", "mascarpone", "mayo", "mayonnaise", "mein", "meringue", "milk", "mozzarella", "nutella", "paneer",
+        "raita", "ricotta", "shortcrust", "streusel", "whey", "yoghurt", "yogurt", "yolk", "yolks"
     ]
 
     /// A word right before an animal-product word that makes it a plant one ("coconut milk", "peanut butter",
