@@ -75,7 +75,7 @@ struct WeekDinnersView: View {
         .contextMenu { moveMenu(night, plan: plan) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(Self.spokenDay(night)), dinner: \(plan.recipeName)")
-        .accessibilityHint(Self.dinnerHint(night))
+        .accessibilityHint(Self.dinnerHint(hasRecipe: night.recipe != nil, isPast: night.isPast))
         .accessibilityAddTraits(night.recipe == nil ? [] : .isButton)
         .accessibilityActions { moveMenu(night, plan: plan) }
     }
@@ -176,13 +176,14 @@ struct WeekDinnersView: View {
         .minimumScaleFactor(0.8)
     }
 
-    /// A past (cooked) dinner is history: no moves offered (WeekDinners.moveTargets), so the hint doesn't promise one.
-    private static func dinnerHint(_ night: WeekDinners.Night) -> String {
-        switch (night.recipe == nil, night.isPast) {
-        case (true, true): "This recipe is no longer in your library. Use actions to remove it."
-        case (true, false): "This recipe is no longer in your library. Use actions to move or remove it."
-        case (false, true): "Opens the recipe. Use actions to cook it again."
-        case (false, false): "Opens the recipe. Use actions to cook or move it."
+    /// VoiceOver hint naming every action the hold menu offers. A past (cooked) dinner is history: no moves offered
+    /// (WeekDinners.moveTargets), so the hint doesn't promise one — but it can still be taken off the plan.
+    nonisolated static func dinnerHint(hasRecipe: Bool, isPast: Bool) -> String {
+        switch (hasRecipe, isPast) {
+        case (false, true): "This recipe is no longer in your library. Use actions to take it off the plan."
+        case (false, false): "This recipe is no longer in your library. Use actions to move it or take it off the plan."
+        case (true, true): "Opens the recipe. Use actions to cook it again or take it off the plan."
+        case (true, false): "Opens the recipe. Use actions to cook it, move it or take it off the plan."
         }
     }
 

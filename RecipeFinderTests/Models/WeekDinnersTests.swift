@@ -194,4 +194,15 @@ import Foundation
         #expect(WeekDinners.move(weekly, to: day(5), plans: [weekly, once], today: day(0), calendar: cal).isEmpty)
         #expect(WeekDinners.move(once, to: day(1), plans: [weekly, once], today: day(0), calendar: cal).isEmpty)
     }
+
+    // MARK: - VoiceOver hint
+
+    /// The hint names every action the hold menu offers: take off is always there; move only from tonight on.
+    @Test(arguments: [(true, true), (true, false), (false, true), (false, false)])
+    func dinnerHintNamesTakeOffAndMovesOnlyAhead(hasRecipe: Bool, isPast: Bool) {
+        let hint = WeekDinnersView.dinnerHint(hasRecipe: hasRecipe, isPast: isPast)
+        #expect(hint.contains("take it off the plan"))
+        #expect(hint.contains("move") == !isPast)
+        #expect(hint.contains("cook") == hasRecipe)
+    }
 }
