@@ -8,8 +8,9 @@ import SwiftUI
 // Updated 2026-11-20 (owner OK in BACKLOG, Plan slice 4): 4.2/4.3 list the dishes passed on in Plan my week (30 days).
 // Updated 2026-11-20 (owner OK in BACKLOG, Groceries slice 3): 4.2/4.3 list the aisle order learned in shop mode.
 // Updated 2026-11-22 (BACKLOG Inbox): 4.2 aisle order is per shop, or for trips with no shop chosen (matches AisleOrder).
-// Updated 2026-11-23 (owner OK in chat, BACKLOG Needs owner "Privacy policy vs public TestFlight"): 6.4 describes
-// TestFlight beta feedback (fetch_testflight_feedback.py posts comment + device/iOS as public GitHub issues).
+// Updated 2026-11-23 (owner OK in chat, BACKLOG Needs owner "Privacy policy vs public TestFlight"): 6.4–6.6 and
+// 10.1–10.2 describe TestFlight beta feedback (fetch_testflight_feedback.py: public issues + 14-day public artifact).
+// Flagged for the solicitor: the US transfer safeguard, and whether publishing feedback passes the balancing test.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -29,7 +30,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("2. Our Approach to Privacy")
 
-                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device (and, if you turn on iCloud sync, in your own iCloud account) and is not collected by, or accessible to, the Developer, except where the Application retrieves content from the internet for features you use (see Section 5) and feedback you choose to send while testing a beta version (see Section 6.4).")
+                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device (and, if you turn on iCloud sync, in your own iCloud account) and is not collected by, or accessible to, the Developer, except where the Application retrieves content from the internet for features you use (see Section 5) and feedback you choose to send while testing a beta version (see Sections 6.4 to 6.6).")
 
                 BodyText("2.2 We will only collect or share Personal Information in the ways described in this Privacy Policy. If we introduce a feature that would handle your information differently, we will update this Privacy Policy before that feature is made available, and any such feature will be optional.")
 
@@ -82,7 +83,11 @@ struct PrivacyPolicyView: View {
 
                 BodyText("6.3 Ratings. The Application may ask you to rate it using Apple's standard prompt. No information is collected through this prompt.")
 
-                BodyText("6.4 Beta testing. If you test a beta version through Apple's TestFlight, feedback you choose to send (your comment, any screenshots, and crash reports from that version) reaches the Developer through Apple under Apple's TestFlight terms and privacy policy, together with your device model and iOS version. The Developer uses it to fix and improve the Application. Your comment, device model and iOS version are posted as an issue in the Application's public GitHub project, where anyone can read them; your name and email address are left out. Screenshots and crash reports are kept privately for 14 days, then deleted. Write nothing in a comment that you would not want to be public. To ask for a posted comment to be removed, contact the Developer (Section 13).")
+                BodyText("6.4 Beta testing. If you test a beta version through Apple's TestFlight, feedback you choose to send (your comment, any screenshots and any crash report) reaches the Developer through Apple, under Apple's TestFlight terms and privacy policy. Apple includes the time you sent it, your email address where Apple shares it, and technical details about your device such as its model, iOS version, language, time zone, network type, battery level and free storage. The Developer uses this to fix and improve the Application.")
+
+                BodyText("6.5 Your comment (its opening words become the issue title), the time you sent it, and your device model and iOS version are posted as an issue in the Application's public GitHub project, where anyone can read them. Your Apple account name and email address are kept out of the issue. Screenshots and crash reports are attached to the project's automated run for 14 days, where anyone signed in to GitHub can download them, and stay in App Store Connect under Apple's retention. Comments and screenshots are public, so please keep personal details out of them.")
+
+                BodyText("6.6 Feedback is stored on GitHub (GitHub, Inc.) and read by the Developer and by AI coding tools the Developer uses to investigate and fix issues (currently Anthropic's Claude). Apple, GitHub and Anthropic may process it in the United States. To have a posted comment and its files removed, contact the Developer (Section 13); copies others made while it was public, such as search engine caches, are outside the Developer's control.")
 
                 SectionTitle("7. Optional Sync and Sharing")
 
@@ -96,7 +101,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("8. Data Security")
 
-                BodyText("8.1 Data held on your Device is protected by your Device's own security, and data held in iCloud by Apple's. The Developer does not hold copies of it; beta feedback you choose to send is handled as described in Section 6.4.")
+                BodyText("8.1 Data held on your Device is protected by your Device's own security, and data held in iCloud by Apple's. The Developer does not hold copies of it; beta feedback you choose to send is handled as described in Sections 6.4 to 6.6.")
 
                 BodyText("8.2 The Developer recommends that you secure your Device with a strong passcode, and keep device encryption enabled.")
 
@@ -111,7 +116,9 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("10. Data Protection Laws")
 
-                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the Developer does not collect or receive the information you enter, the Developer does not act as a data controller of that information for most purposes. For beta feedback you choose to send (Section 6.4), the Developer is the data controller, relies on legitimate interests (fixing and improving the Application), keeps screenshots and crash reports for 14 days, and keeps posted comments until you ask for them to be removed. If that changes for any feature, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
+                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the Developer does not collect or receive the information you enter, the Developer does not act as a data controller of that information for most purposes. For beta feedback you choose to send (Sections 6.4 to 6.6), the Developer is the data controller and relies on legitimate interests (fixing and improving the Application); comments stay posted until you ask for them to be removed. If another feature changes this, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
+
+                BodyText("10.2 For beta feedback, you can ask the Developer for a copy of it, to correct or delete it, or to stop using it, by contacting the Developer (Section 13). You can also complain to the Information Commissioner's Office (ico.org.uk).")
 
                 SectionTitle("11. Children's Privacy")
 
