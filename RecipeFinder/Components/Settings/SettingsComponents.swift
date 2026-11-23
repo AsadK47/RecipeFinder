@@ -202,6 +202,9 @@ struct SettingsScreen<Content: View>: View {
                 .padding(.top, AppTheme.spacing20)
                 .padding(.bottom, AppTheme.spacing40)
             }
+
+            // The bar is transparent: without this, scrolled rows (tall at AX text sizes) show through the title.
+            NavigationBarScrollFade()
         }
         .appNavigationTitle(title)
     }
