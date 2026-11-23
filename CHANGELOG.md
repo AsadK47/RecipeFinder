@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox CookingResumeMemory host test · 5ec7f83
+- For you: Cooking mode keeps picking up where you left off — the step you were on and the ingredients you ticked — now checked by tests that open the real cooking screen.
+- Behind the build: the new tests were first run against a deliberately broken screen and failed, proving they notice; a challenger kept them clear of the app's own timers and settings.
+
 ## 2026-11-23 · Inbox NotificationManager coverage · 3e1525a
 - For you: Reminders work as before — cooking timers, meal and Sunday planning reminders, groceries and use-it-up alerts are now each checked by their own tests, so they keep arriving with the right words at the right time.
 - Behind the build: a new test seam lets every reminder be read without scheduling a real one; a reviewer and a challenger led to deleting seven unused helpers and adding a check that taps still open the right tab.

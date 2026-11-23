@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **CookingResume seam host test** (5ec7f83, `agent/cooking-resume-host`, red check `agent/cooking-resume-host-red` = view reads
+  `.shared`, must fail): hosts the real CookingModeView in a UIWindow with a fake `CookingResuming` (first view-hosting
+  unit test). Chosen over "log the gap" because the gap is exactly the mutation reviewers named. **Pre-mortem:** (1)
+  onAppear/onDisappear never fire offscreen → waitUntil times out, asserts fail (red run tells); (2) flaky under the
+  XCTest stall → 5 s poll; (3) shared CookingSession/idle timer leak → onDisappear ends both.
+
 - **NotificationManager seam:** a struct of three closures (not a protocol over `UNUserNotificationCenter`): matching
   the SDK's `@Sendable` completion signatures by retroactive conformance is brittle under Swift 6. Only `.shared`'s
   initializer makes it the center's delegate, so a test instance can't steal tap routing (`sharedInstanceRoutesTaps`).
