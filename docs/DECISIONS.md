@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Vegan seed methods (Chapati, Chai):** reworded to plant versions (vegan butter or oil; plant milk) rather than
+  untag — both are vegan at heart and the dairy was optional/serving-only. Test checks every vegan-tagged bundled
+  recipe's steps with `DietaryInference.containsAnimalProduct`; recipes titled "Vegan" skipped (author's dairy words
+  mean plant versions), 3 checked false positives listed. **Pre-mortem:** (1) installs keep the old step → history
+  regenerated (+2) + `sampleRefreshVersion` 6 (existing refresh tests); (2) the own-words rewrite re-adds butter/milk →
+  `veganSeedMethodsArePlantOnly`; (3) curated/seed drift → `committedCatalogMatchesGenerator`.
 - **Plan take-off with Undo (owner 🐞, owner chose "fix all"):** no confirm dialog — take-off is immediate with Undo on a toast (6 s, 15 s with VoiceOver, announced); take-offs while the toast is up share one Undo; `restore` puts plans back by id and never over a slot filled since. Bin sits beside the card, not inside its button (a tap also opened the recipe picker). Rejected: keeping the weekly confirm (the owner's pop-up), an undo stack (one merged Undo is simpler and loses nothing).
 - **Plan meals in time order (owner 🐞):** a day orders by each meal's reminder time, else its slot's usual time (8:00/13:00/15:00/19:00 — the existing reminder defaults); a dragged order stays only on the day it was made, and a reminder change re-sorts. Rejected: fixed slot order (a 3pm snack after dinner); querying anything from iOS beyond the clock and calendar already used.
 - **WeekDinners past dinners** (2026-11-22, 4d5c943): deleted the "missed dinner moves forward"

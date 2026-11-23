@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-23 (item pass: Inbox 🟡 vegan Chapati / Chai methods — fixed: exceptions keyed on the first raw dairy word per recipe could hide a later one and never went stale → keyed on unqualified words, every exception must be used)
+- Not fixed (clean today): `veganSeedMethodsArePlantOnly` reads steps, not `notes`, and recipes titled "Vegan" are skipped (their dairy words mean plant versions; ingredient lists checked) — cost if wrong: a dairy tip in a note of a vegan-tagged recipe ships unnoticed.
+  → Owner:
+
 ## 2026-11-23 (daily challenger — launch order vs. what shipped, the challenge loop itself, CI cleanup, dietary tags, UI-test order; methods 1, 2, 6, 7, 8 + strategy)
 - ⚔️ [Strategy] The launch order isn't being followed — `docs/LAUNCH.md` item 2 "Recipes in our own words" is called a *legal blocker* and is queued second, yet since 22 Nov (30 non-docs commits) there is not one commit rewriting a recipe method (`git log --since=2026-11-22` matches only cooking-resume seam, a Settings spelling fix and seed dietary tags). The same 30 commits are Plan meal-order, Sunday-nudge test fixes, Favourites spelling and VoiceOver hints (`f34ca95`, `533fe1b`) — none is a LAUNCH must-ship item and none is a 🔴/🐞 Inbox bug. 332 methods to rewrite and 20 days to the 14 Dec freeze is ~17 a day, and the rewrite needs the owner's spot-check, so it is the item most likely to miss the date. Premortem: 14 Dec, 120 recipes still copied → either launch with copied text (legal) or slip past Apple's Christmas review slowdown. — alternative: start the own-words lane today as its own parallel session (LAUNCH says "its own lane") and pause polish until its first batch lands; the Favourites/hint commits would have cost nothing a week later — cost if we're wrong: the launch date moves, or ships with the one thing the plan called a blocker.
   → Owner:

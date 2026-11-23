@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox vegan Chapati and Chai methods · b752fc0
+- For you: The built-in Chapati and Homemade Chai Concentrate now finish with plant-based choices — vegan butter or oil to brush, oat or soy milk for your cup — so every step fits their Vegan tag.
+- Behind the build: a new test reads the method of every recipe tagged Vegan and failed on the old wording first; a reviewer and a challenger tightened it so a fixed exception can't hide a new dairy step.
+
 ## 2026-11-23 · Inbox WeekDinners VoiceOver hint · 533fe1b
 - For you: With VoiceOver, each dinner on Plan's week photos now tells you exactly what you can do with it — cook it, move it, or take it off the plan — including weekly dinners.
 - Behind the build: a reviewer and a challenger both caught the first version offering a move that weekly dinners don't have; the hint is now built from the same rules as the menu, with tests.
