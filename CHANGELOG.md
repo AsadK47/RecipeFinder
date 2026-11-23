@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox Favourites spelling · f34ca95
+- For you: The recipe filter and the heart button now say "Favourites", and VoiceOver reads the Favourites switch once, by name.
+- Behind the build: a reviewer checked every string and test for the old spelling and caught the switch being read twice, fixed before it shipped.
+
 ## 2026-11-22 · Inbox Sunday nudge weekly dinner · af59876
 - For you: The Sunday "Plan next week's dinners?" reminder now looks at the nights a weekly dinner actually lands on, so a weekly Sunday roast no longer hides an empty Monday-to-Saturday when your week starts on Sunday.
 - Behind the build: a new test failed on the old code first, then passed with the fix; a reviewer caught one test with the wrong expectation and a challenger's question about which nights count went to the owner.
