@@ -143,6 +143,11 @@ struct CookingModeResumeWiringTests {
         func forget(_ recipeID: UUID) { forgotten.append(recipeID) }
     }
 
+    private struct SilentAlerts: CookingTimerAlerting {
+        func schedule(id: String, title: String, body: String, after seconds: TimeInterval) {}
+        func cancel(id: String) {}
+    }
+
     private let recipe = RecipeModel(
         name: "Rice", category: "Main", difficulty: "Basic", prepTime: "5", cookingTime: "10", baseServings: 2,
         ingredients: [Ingredient(baseQuantity: 1, unit: "cup", name: "rice")],
@@ -150,11 +155,16 @@ struct CookingModeResumeWiringTests {
     )
 
     private func host(_ memory: FakeMemory) -> UIWindow {
-        let view = CookingModeView(recipe: recipe).environment(\.cookingResume, memory)
+        // Every manager the screen reads is injected, so no test touches the shared UserDefaults or timers.
+        let defaults = UserDefaults(suiteName: UUID().uuidString) ?? .standard
+        let view = CookingModeView(recipe: recipe)
+            .environment(\.cookingResume, memory)
+            .environment(\.recipeTimer, RecipeTimerManager(defaults: defaults))
+            .environment(\.cookingTimers, CookingTimers(alerts: SilentAlerts()))
         let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
         let window = scene.map { UIWindow(windowScene: $0) } ?? UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = UIHostingController(rootView: view)
-        window.makeKeyAndVisible()
+        window.isHidden = false
         window.layoutIfNeeded()
         return window
     }
@@ -164,11 +174,12 @@ struct CookingModeResumeWiringTests {
         window.isHidden = true
     }
 
-    /// Lets SwiftUI run `onAppear` / `onDisappear` (they fire on the main run loop, after layout).
-    private func waitUntil(_ condition: () -> Bool) async throws {
+    /// Lets SwiftUI run `onAppear` / `onDisappear` (they fire on the main run loop, after layout); a timeout fails.
+    private func waitUntil(_ what: Comment, _ condition: () -> Bool) async throws {
         for _ in 0..<100 where !condition() {
             try await Task.sleep(for: .milliseconds(50))
         }
+        #expect(condition(), what)
     }
 
     @Test("Opening cooking mode looks up the place in the injected memory and resumes at it")
@@ -176,12 +187,15 @@ struct CookingModeResumeWiringTests {
         let memory = FakeMemory()
         memory.saved = .init(index: 2, checkedIngredients: [0])
         let window = host(memory)
-        defer { close(window) }
-        try await waitUntil { !memory.lookups.isEmpty && CookingSession.shared.currentIndex == 2 }
+        try await waitUntil("cooking mode appeared") { !memory.lookups.isEmpty && CookingSession.shared.currentIndex == 2 }
 
         #expect(memory.lookups.map(\.id) == [recipe.id])
         #expect(memory.lookups.first?.content == CookingModeView.resumeContent(for: recipe))
         #expect(CookingSession.shared.currentIndex == 2)
+
+        // Leave no cooking session or screen-awake hold behind for other tests.
+        close(window)
+        try await waitUntil("cooking mode closed") { !CookingSession.shared.isActive }
     }
 
     @Test("Leaving cooking mode mid-cook saves the place to the injected memory")
@@ -189,9 +203,9 @@ struct CookingModeResumeWiringTests {
         let memory = FakeMemory()
         memory.saved = .init(index: 1, checkedIngredients: [0])
         let window = host(memory)
-        try await waitUntil { !memory.lookups.isEmpty }
+        try await waitUntil("cooking mode appeared") { !memory.lookups.isEmpty }
         close(window)
-        try await waitUntil { !memory.remembered.isEmpty }
+        try await waitUntil("cooking mode closed") { !memory.remembered.isEmpty && !CookingSession.shared.isActive }
 
         #expect(memory.remembered.map(\.id) == [recipe.id])
         #expect(memory.remembered.first?.place == .init(index: 1, checkedIngredients: [0]))
