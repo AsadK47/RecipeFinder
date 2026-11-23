@@ -3,8 +3,7 @@ import Testing
 import UserNotifications
 @testable import RecipeFinder
 
-/// Pure parsing of the Settings reminder time. Scheduling itself goes through `UNUserNotificationCenter`
-/// (Apple framework, exempt from unit coverage).
+/// Pure parsing of the Settings reminder time (scheduling: `NotificationRequestTests` below).
 @Suite struct GroceriesReminderTimeTests {
 
     @Test(arguments: [("10:00", 10, 0), ("07:45", 7, 45), ("23:59", 23, 59), ("0:05", 0, 5)])
@@ -26,6 +25,12 @@ final class FakeNotificationCenter: @unchecked Sendable {
     private var addedRequests: [UNNotificationRequest] = []
     private var removedIdentifiers: [String] = []
     private var permissionAsks = 0
+    /// The cook's answer to the permission prompt.
+    let grants: Bool
+
+    init(grants: Bool = true) {
+        self.grants = grants
+    }
 
     var added: [UNNotificationRequest] { lock.withLock { addedRequests } }
     var removed: [String] { lock.withLock { removedIdentifiers } }
@@ -42,7 +47,7 @@ final class FakeNotificationCenter: @unchecked Sendable {
             },
             requestAuthorization: { [self] done in
                 lock.withLock { permissionAsks += 1 }
-                done(true, nil)
+                done(grants, nil)
             }
         )
     }
@@ -104,6 +109,8 @@ final class FakeNotificationCenter: @unchecked Sendable {
     func streakReminderWordingFollowsTheWeeks(weeks: Int, body: String) {
         manager.scheduleStreakReminder(weeks: weeks, at: sundayEvening, identifier: "streak")
 
+        #expect(fake.added.count == 1)
+
         let request = fake.added.first
         #expect(request?.content.body == body)
         #expect(request?.content.userInfo["type"] as? String == NotificationKind.streak.rawValue)
@@ -113,6 +120,8 @@ final class FakeNotificationCenter: @unchecked Sendable {
 
     @Test func groceriesReminderOnRepeatsDailyAtTheChosenTime() {
         manager.syncGroceriesReminder(isOn: true, time: "07:45")
+
+        #expect(fake.added.count == 1)
 
         let request = fake.added.first
         #expect(request?.identifier == NotificationManager.groceriesReminderIdentifier)
@@ -140,6 +149,8 @@ final class FakeNotificationCenter: @unchecked Sendable {
                                          expiryDate: expiry)
 
         let identifier = manager.scheduleExpiryNotification(for: item)
+
+        #expect(fake.added.count == 1)
 
         #expect(identifier == NotificationManager.expiryIdentifier(for: item.id))
         let request = fake.added.first
@@ -176,6 +187,8 @@ final class FakeNotificationCenter: @unchecked Sendable {
         manager.scheduleMealReminder(mealName: "Dinner", recipeName: "Dal", date: sundayEvening,
                                      identifier: "meal-1", repeatsWeekly: true)
 
+        #expect(fake.added.count == 1)
+
         let request = fake.added.first
         #expect(request?.content.body == "Time for Dinner: Dal")
         #expect(request?.content.userInfo["type"] as? String == NotificationKind.meal.rawValue)
@@ -189,6 +202,8 @@ final class FakeNotificationCenter: @unchecked Sendable {
     @Test func oneOffMealReminderFiresOnItsDate() {
         let id = manager.scheduleMealReminder(mealName: "Lunch", recipeName: "Soup", date: sundayEvening)
 
+        #expect(fake.added.count == 1)
+
         let request = fake.added.first
         #expect(request?.identifier == id)
         let trigger = calendarTrigger(request)
@@ -200,6 +215,8 @@ final class FakeNotificationCenter: @unchecked Sendable {
     @Test func timerFiresAfterItsIntervalTaggedAsATimer() {
         let id = manager.scheduleTimerNotification(title: "Rice", body: "Done", timeInterval: 600)
 
+        #expect(fake.added.count == 1)
+
         let request = fake.added.first
         #expect(request?.identifier == id)
         #expect(request?.content.userInfo["type"] as? String == NotificationKind.timer.rawValue)
@@ -208,8 +225,15 @@ final class FakeNotificationCenter: @unchecked Sendable {
         #expect(trigger?.repeats == false)
     }
 
-    @Test func permissionAnswerReachesTheCaller() async {
-        #expect(await manager.requestPermission())
+    @Test(arguments: [true, false])
+    func permissionAnswerReachesTheCaller(grants: Bool) async {
+        let fake = FakeNotificationCenter(grants: grants)
+        let answer = await NotificationManager(center: fake.client).requestPermission()
+        #expect(answer == grants)
         #expect(fake.asks == 1)
+    }
+
+    @Test func sharedInstanceRoutesTaps() {
+        #expect(UNUserNotificationCenter.current().delegate === NotificationManager.shared)
     }
 }

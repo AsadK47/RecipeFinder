@@ -37,18 +37,19 @@ struct NotificationCenterClient: Sendable {
 }
 
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
-    static let shared = NotificationManager(center: .system, becomesDelegate: true)
+    /// The app's one instance is the center's delegate (tap routing); test instances never are.
+    static let shared: NotificationManager = {
+        let manager = NotificationManager(center: .system)
+        UNUserNotificationCenter.current().delegate = manager
+        manager.checkAuthorizationStatus()
+        return manager
+    }()
 
     private let center: NotificationCenterClient
 
-    /// `becomesDelegate` is for the app's one shared instance: the tap router must be the center's delegate.
-    init(center: NotificationCenterClient, becomesDelegate: Bool = false) {
+    init(center: NotificationCenterClient) {
         self.center = center
         super.init()
-        if becomesDelegate {
-            UNUserNotificationCenter.current().delegate = self
-            checkAuthorizationStatus()
-        }
     }
     
     func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
