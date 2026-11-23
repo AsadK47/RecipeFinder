@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-23 (item pass: Inbox 🐞 Toast cancel clears newer toast — fixed: returning on any cancellation also skipped the clear when the view left, so an old take-off toast and its Undo reappeared later → clear only if the message is unchanged)
+- Not fixed: the A → B → A race (message changes and back before the old wait resumes) lets the old wait clear the new A; no caller can do that without a user action in between; cost if wrong: a toast ends early.
+- Not fixed (pre-existing): the same message set twice doesn't restart the timer (`.task(id:)` unchanged), and `askToClearPastPlans` (MealPlanningView+Actions.swift:96) doesn't clear `removalToast`, so two toasts can overlap.
+  → Owner:
+
 ## 2026-11-23 (item pass: Inbox 🟡 NotificationManager coverage — fixed: pending/cancel-all paths bypassed the seam (reviewer + challenger) → deleted, no callers; one-request asserts, denied permission, `sharedInstanceRoutesTaps` added)
 - Not fixed: `NotificationCenterClient.system` (the real adapter) is run by no test — a typo that drops requests ships green; cost if wrong: no reminders on device until someone notices.
   → Owner:

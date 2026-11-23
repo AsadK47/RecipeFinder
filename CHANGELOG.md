@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox Toast cancel clears newer toast · ac70a1a
+- For you: Taking several meals off Plan in a row now keeps the "meals taken off" message on screen with its Undo, so every meal you took off can come back with one tap.
+- Behind the build: a new test failed on the old timer first; a challenger caught the first fix leaving an old Undo to reappear after leaving the screen, fixed before it shipped.
+
 ## 2026-11-23 · Inbox CookingResumeMemory host test · 5ec7f83
 - For you: Cooking mode keeps picking up where you left off — the step you were on and the ingredients you ticked — now checked by tests that open the real cooking screen.
 - Behind the build: the new tests were first run against a deliberately broken screen and failed, proving they notice; a challenger kept them clear of the app's own timers and settings.
