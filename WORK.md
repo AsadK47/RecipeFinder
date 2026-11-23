@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-23, builder agent)
 
 ## In progress
+- Inbox 🟡 **NotificationManager coverage** (builder 2026-11-23): `agent/notification-seam` — `NotificationCenterClient` seam (add / removePending / requestAuthorization) injected into `NotificationManager.init(center:becomesDelegate:)`; `NotificationRequestTests` read every request built. Waiting on Build & Test.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — lands as soon as the owner deploys the CloudKit Production schema (model 17 photos + model 18 deletedAt).
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -83,6 +84,13 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **NotificationManager seam:** a struct of three closures (not a protocol over `UNUserNotificationCenter`): matching
+  the SDK's `@Sendable` completion signatures by retroactive conformance is brittle under Swift 6. Only `.shared`
+  becomes the center's delegate, so a test instance can't steal tap routing. Tap routing stays untested
+  (`UNNotificationResponse` can't be built). **Pre-mortem:** (1) the seam drops a request on the floor → every
+  scheduler test asserts one request added; (2) a reminder asks for permission it shouldn't (or stops asking) →
+  `asks` count per scheduler; (3) the real app stops routing taps → `.shared` keeps `becomesDelegate: true` (UI tests
+  opening Plan from the Sunday nudge path unaffected; checked by reading).
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's

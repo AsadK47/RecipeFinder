@@ -14,19 +14,47 @@ enum NotificationKind: String {
     case planNudge = "plan-nudge"
 }
 
+/// The calls `NotificationManager` makes on the notification center, so tests can read each request it builds
+/// (content, trigger, identifier) without scheduling real notifications or prompting for permission.
+struct NotificationCenterClient: Sendable {
+    let add: @Sendable (UNNotificationRequest, @escaping @Sendable ((any Error)?) -> Void) -> Void
+    let removePending: @Sendable ([String]) -> Void
+    let requestAuthorization: @Sendable (@escaping @Sendable (Bool, (any Error)?) -> Void) -> Void
+
+    static let system = NotificationCenterClient(
+        add: { request, done in
+            UNUserNotificationCenter.current().add(request) { error in done(error) }
+        },
+        removePending: { identifiers in
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+        },
+        requestAuthorization: { done in
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                done(granted, error)
+            }
+        }
+    )
+}
+
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
-    static let shared = NotificationManager()
+    static let shared = NotificationManager(center: .system, becomesDelegate: true)
 
     static var notificationManager: NotificationManager { shared }
-    
-    override init() {
+
+    private let center: NotificationCenterClient
+
+    /// `becomesDelegate` is for the app's one shared instance: the tap router must be the center's delegate.
+    init(center: NotificationCenterClient, becomesDelegate: Bool = false) {
+        self.center = center
         super.init()
-        UNUserNotificationCenter.current().delegate = self
-        checkAuthorizationStatus()
+        if becomesDelegate {
+            UNUserNotificationCenter.current().delegate = self
+            checkAuthorizationStatus()
+        }
     }
     
     func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+        center.requestAuthorization { granted, error in
             Task { @MainActor in
                 if let error = error {
                     logger.error("❌ Notification permission error: \(error.localizedDescription)")
@@ -57,7 +85,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
 
     /// The single path every request is added through, so no failure goes unlogged.
     private func add(_ request: UNNotificationRequest, failureLabel: String, successMessage: String? = nil) {
-        UNUserNotificationCenter.current().add(request) { error in
+        center.add(request) { error in
             if let error = error {
                 logger.error("❌ Failed to schedule \(failureLabel): \(error.localizedDescription)")
             } else if let successMessage {
@@ -289,7 +317,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     }
     
     func cancelNotification(identifier: String) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+        center.removePending([identifier])
         logger.debug("🗑️ Canceled notification: \(identifier)")
     }
     
@@ -331,9 +359,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     }
 
     func cancelExpiryNotification(for itemId: UUID) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(
-            withIdentifiers: [Self.expiryIdentifier(for: itemId)]
-        )
+        center.removePending([Self.expiryIdentifier(for: itemId)])
     }
 
     func cancelAllNotifications() {
