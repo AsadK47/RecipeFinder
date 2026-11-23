@@ -863,7 +863,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 **Cooking resume across relaunch** (builder 2026-11-19): cooking mode now resumes at the step you left while
   the app stays open. Keeping it after the app is closed means storing "recipe + step" on the device — add a Privacy
   §4.2 line ("where you are in a recipe you're cooking") and clear it on Reset? (yes / keep in-memory)
-- 🙋 ⚔️ 77 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
+- 🙋 ⚔️ 162 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
 - 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
 - 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
   `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
@@ -913,6 +913,7 @@ _Review 2026-11-22 (79 commits, 6d8e08e..be0fa2b; reviewers: correctness, tests/
 - 🟡 RecipeFinder/RecipeSeed/recipes_seed.json — vegan-tagged "Chapati" says "brush with … butter or ghee" and "Homemade Chai Concentrate" says "steamed milk" — use vegan butter / plant milk, or untag (reviewer 2026-11-22)
 - 🟡 RecipeFinder/Utilities/Recipe/DietaryInference.swift:11 — word lists miss lardons, guanciale, speck, nduja, liver, trout, monkfish, clams, herring, marshmallows, parmigiano/grana (veg) and ricotta, feta, halloumi, brie, gruyère, crème fraîche, labneh, kefir (vegan); today's seed is clean — add the words + a test that fails on any tagged recipe with a listed word (reviewer 2026-11-22)
 - 🟡 Screenshot 63-theme-picker-ax (preview) — at AX text size the picker's scrolled text shows through and overlaps the "Appearance & Theme" title and back button — give the nav bar a background when scrolled, or pad content under it (reviewer 2026-11-22)
+- 🐞 .github/workflows/cleanup-agent-branches.yml — fails nightly on all 15 runs (45113611120): `git push --delete` refused by repo rule GH013 "Cannot delete this branch", script dies at the first merged branch, 228 agent branches remain — lift the ruleset's delete block for `agent/*` or delete the workflow (challenger 2026-11-23)
 
 ## Log
 _Last 7 days; older entries are in `docs/LOG.md`._
