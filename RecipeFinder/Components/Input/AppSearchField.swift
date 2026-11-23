@@ -37,9 +37,14 @@ struct AppSearchField: View {
 
                 ZStack(alignment: .leading) {
                     if text.isEmpty {
+                        // One line, like the text field it stands in for: when Cancel narrows the field a wrapped
+                        // placeholder left the cursor beside its first line (owner 2026-11-23).
                         Text(placeholder)
                             .font(.callout)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                             .foregroundStyle(AppTheme.textColor(opacity: AppTheme.disabledEmphasisOpacity))
+                            .allowsHitTesting(false)
                     }
                     TextField("", text: $text)
                         .focused(isFocused)

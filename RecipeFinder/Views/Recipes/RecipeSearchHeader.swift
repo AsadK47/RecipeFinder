@@ -75,7 +75,7 @@ struct RecipeSearchHeader: View {
             HStack(spacing: AppTheme.spacing12) {
                 AppSearchField(
                     text: $searchText,
-                    placeholder: "What would you like to eat...?",
+                    placeholder: "What would you like to eat?",
                     isFocused: isSearchFocused
                 )
                 CircleButton(icon: "plus", action: onAdd)
