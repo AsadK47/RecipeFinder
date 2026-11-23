@@ -20,7 +20,7 @@ struct CookingModeView: View {
     @State private var stepIngredients: [[StepIngredientMatcher.Use]] = []
     @Environment(\.recipeTimer) private var timerManager
     @Environment(\.cookingTimers) private var cookingTimers
-    @Environment(\.cookingResume) private var resumeMemory
+    private var resumeMemory: any CookingResuming { CookingResumeMemory.shared }
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     /// Restores what the screen was on the way out, so Settings' Keep Screen Awake survives a cook.
