@@ -10,6 +10,15 @@ extension View {
     }
 }
 
+/// The toast's dismiss timer, kept out of the view so it can be tested.
+enum ToastDismissal {
+    /// Waits `duration`, then says whether to clear the toast.
+    static func shouldDismiss(after duration: Duration) async -> Bool {
+        try? await Task.sleep(for: duration)
+        return true
+    }
+}
+
 private struct ToastModifier: ViewModifier {
     @Binding var message: String?
     let icon: String
@@ -43,7 +52,7 @@ private struct ToastModifier: ViewModifier {
                 if let action {
                     AccessibilityNotification.Announcement("\(shown). \(action.title) available").post()
                 }
-                try? await Task.sleep(for: shownFor)
+                guard await ToastDismissal.shouldDismiss(after: shownFor) else { return }
                 message = nil
             }
     }

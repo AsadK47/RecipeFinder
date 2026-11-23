@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F3E0A5700000000000000002 /* ToastDismissalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E0A5700000000000000001 /* ToastDismissalTests.swift */; };
 		9E09461E2EFB8BA20072BDFE /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E09461D2EFB8BA20072BDFE /* ConfettiSwiftUI */; };
 		9E1E26122FBA077A0002A220 /* RecipeImportBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1E26112FBA077A0002A220 /* RecipeImportBuilderTests.swift */; };
 		9E1E26142FBA09F80002A220 /* RecipeImportBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1E26132FBA09F80002A220 /* RecipeImportBuilder.swift */; };
@@ -655,6 +656,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F3E0A5700000000000000001 /* ToastDismissalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastDismissalTests.swift; sourceTree = "<group>"; };
 		9E1E26112FBA077A0002A220 /* RecipeImportBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportBuilderTests.swift; sourceTree = "<group>"; };
 		9E1E26132FBA09F80002A220 /* RecipeImportBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportBuilder.swift; sourceTree = "<group>"; };
 		D1E8359DA974A3FBA5F35589 /* RecipeImageLocalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImageLocalizer.swift; sourceTree = "<group>"; };
@@ -2066,6 +2068,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		F3E0A5700000000000000003 /* Feedback */ = {
+			isa = PBXGroup;
+			children = (
+				F3E0A5700000000000000001 /* ToastDismissalTests.swift */,
+			);
+			path = Feedback;
+			sourceTree = "<group>";
+		};
 		9E90AB002FA9247B00096D9D /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
@@ -2151,6 +2161,7 @@
 				9E5B398A2FABC70C00C96DB3 /* Layout */,
 				9E90AB002FA9247B00096D9D /* Buttons */,
 				9E97EEAD30084C6800D35FAB /* Settings */,
+				F3E0A5700000000000000003 /* Feedback */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3242,6 +3253,7 @@
 				F3D4056C305863C60076834D /* PhotoOCRImportPersistenceTests.swift in Sources */,
 				9E90AAFE2FA9029E00096D9D /* UnitConversionTests.swift in Sources */,
 				9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */,
+				F3E0A5700000000000000002 /* ToastDismissalTests.swift in Sources */,
 				F3D4054330560A2D0076834D /* OnboardingContentTests.swift in Sources */,
 				F3D4055C305643B40076834D /* PantryAlertsCategorisationTests.swift in Sources */,
 				F3E9D24B30487BD8008BF231 /* TextRecipeParserCaptionTests.swift in Sources */,
