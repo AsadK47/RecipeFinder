@@ -95,7 +95,9 @@ drop a line while moving it.
   and in-app explanatory copy **in the same item**, checked by two independent reviewers (text vs app, claims vs
   code). Missing → the item can't land. (Recipe photos began syncing on 14 Nov while the policy and the sync switch
   still said photos stay on the device.)
-- Change the Core Data model / `.xccurrentversion`, signing, entitlements, bundle IDs, CI/TestFlight workflows.
+- Change the Core Data model / `.xccurrentversion`, signing, entitlements, bundle IDs. (Owner 2026-11-23: CI/TestFlight
+  workflows and scripts are OK to edit, and iCloud sync bugs OK to fix, without asking — two reviewers, Log line;
+  a fix that needs a new model version or entitlement still asks.)
 - Change legal text (Terms, Privacy, LICENSE), pricing, or anything that sends data off the device. Exception (owner
   2026-11-23): wording that is dangerous, untrue or contradicts the app is always fixed at once — two reviewers, Log line.
 - Add a third-party dependency, a new Xcode target, or delete user data paths.
@@ -852,10 +854,7 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 
 ## Needs owner
 - 🙋 🔴 **Privacy policy vs public TestFlight** (builder 2026-11-23, Inbox 🔴 reviewer 2026-11-22): policy says you never receive user data, but `fetch_testflight_feedback.py` files each public tester's comment + device/iOS as an issue on the **public** repo (screenshots/crash logs kept 14 days as artifacts). Legal text = guardrail. Add a TestFlight beta clause to Privacy + `privacy.html` (agent drafts, two reviewers) and stop putting device details in public issues — recommended / pause feedback filing until launch?
-- 🙋 **cleanup-agent-branches fails nightly** (builder 2026-11-23, Inbox 🐞 challenger): a repo ruleset blocks deleting `agent/*` (GH013), so the workflow dies at the first branch and 228 remain; fixing it touches a ruleset or CI workflow (guardrail). Lift the delete block for `agent/*` (recommended) / delete the workflow and prune by hand?
-- 🙋 **asc_promote_public.py state check** (builder 2026-11-22, Inbox 🐞): the fix edits a TestFlight workflow script (guardrail) — OK to make it add the build only for READY/WAITING/IN_BETA_REVIEW/BETA_APPROVED and fail otherwise? Finding: 🐞 .github/scripts/asc_promote_public.py:44 — adds the build to Public Beta and exits green whatever `externalBuildState` is (e.g. MISSING_EXPORT_COMPLIANCE, BETA_REJECTED); next day the `in_group` early exit (:29) skips the state check, so the public link silently stays on an old build — add only for READY/WAITING/IN_BETA_REVIEW/BETA_APPROVED, else `sys.exit(state)`; check state before the "already available" exit (reviewer 2026-11-22)
 - 🙋 **Gluten-Free / Dairy-Free / Nut-Free / Low-Carb / Keto filter chips** (builder 2026-11-22, seed dietary tags): bundled recipes now carry Vegetarian/Vegan only — allergen flags are never guessed (a wrong "Nut-Free" can hurt), so those 5 chips still find nothing. Hide them until *Your diet, everywhere* lands (recommended) / hand-tag the seed / keep?
-- 🙋 **Pause public TestFlight auto-promotion?** (builder 2026-11-22, Inbox 🔴 challenger): `testflight-promote.yml` promotes daily to the public link while bundled method text is still copied and the CloudKit Production schema is undeployed (guardrail: TestFlight workflows). Switch it to workflow_dispatch until both land (recommended) / keep daily?
 - 🙋 **Today: should a later plan lead at 8am?** (builder 2026-11-21, Today — decide tonight): with only dinner planned,
   the 8am hero is "Tonight: <dinner>" not a breakfast idea (any plan outranks a suggestion — CHALLENGES 21 Nov). Keep
   (the cook's plan is the decision) / lead with the next meal's suggestion and show the plan in the day strip — recommended?
@@ -900,6 +899,12 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🐞 **Workflow items unblocked** (owner 2026-11-23: workflows OK to edit) — do each as its own item:
+  (a) `cleanup-agent-branches.yml` dies on GH013 at the first protected `agent/*` branch → skip refused deletes and carry on, report the count;
+  (b) `asc_promote_public.py` — add the build to Public Beta only for READY/WAITING/IN_BETA_REVIEW/BETA_APPROVED, else exit non-zero; check state before the "already available" exit;
+  (c) `testflight-promote.yml` → `workflow_dispatch` only until bundled method text is our own and the CloudKit Production schema is deployed (both still open);
+  (d) `testflight-feedback.yml` — stop uploading tester screenshots/crash logs as public artifacts (keep them in App Store Connect; agents fetch them via the ASC API when fixing) and update Privacy 6.5 in the same item;
+  (e) Inbox 🟡 `testflight_notes.py` scopes + promote `.p8` trap below are unblocked too.
 - 🐞 TestFlight 2026-11-15 "Froze" on badge reveal after View all badges: f16ea8a fixes a dropped settle-animation
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
