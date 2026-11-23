@@ -8,6 +8,8 @@ import SwiftUI
 // Updated 2026-11-20 (owner OK in BACKLOG, Plan slice 4): 4.2/4.3 list the dishes passed on in Plan my week (30 days).
 // Updated 2026-11-20 (owner OK in BACKLOG, Groceries slice 3): 4.2/4.3 list the aisle order learned in shop mode.
 // Updated 2026-11-22 (BACKLOG Inbox): 4.2 aisle order is per shop, or for trips with no shop chosen (matches AisleOrder).
+// Updated 2026-11-23 (owner OK in chat, BACKLOG Needs owner "Privacy policy vs public TestFlight"): 6.4 describes
+// TestFlight beta feedback (fetch_testflight_feedback.py posts comment + device/iOS as public GitHub issues).
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
@@ -27,7 +29,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("2. Our Approach to Privacy")
 
-                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device (and, if you turn on iCloud sync, in your own iCloud account) and is not collected by, or accessible to, the Developer, except where the Application retrieves content from the internet for features you use (see Section 5).")
+                BodyText("2.1 The Application is designed to be private by default. In the current version, information you enter or generate is stored on your Device (and, if you turn on iCloud sync, in your own iCloud account) and is not collected by, or accessible to, the Developer, except where the Application retrieves content from the internet for features you use (see Section 5) and feedback you choose to send while testing a beta version (see Section 6.4).")
 
                 BodyText("2.2 We will only collect or share Personal Information in the ways described in this Privacy Policy. If we introduce a feature that would handle your information differently, we will update this Privacy Policy before that feature is made available, and any such feature will be optional.")
 
@@ -80,6 +82,8 @@ struct PrivacyPolicyView: View {
 
                 BodyText("6.3 Ratings. The Application may ask you to rate it using Apple's standard prompt. No information is collected through this prompt.")
 
+                BodyText("6.4 Beta testing. If you test a beta version through Apple's TestFlight, feedback you choose to send (your comment, any screenshots, and crash reports from that version) reaches the Developer through Apple under Apple's TestFlight terms and privacy policy, together with your device model and iOS version. The Developer uses it to fix and improve the Application. Your comment, device model and iOS version are posted as an issue in the Application's public GitHub project, where anyone can read them; your name and email address are left out. Screenshots and crash reports are kept privately for 14 days, then deleted. Write nothing in a comment that you would not want to be public. To ask for a posted comment to be removed, contact the Developer (Section 13).")
+
                 SectionTitle("7. Optional Sync and Sharing")
 
                 BodyText("7.1 iCloud sync. You can turn on iCloud sync in Settings > Data Management. It is off until you turn it on. Turning it on or off takes effect the next time you open the Application. While it is on, everything described in Section 4.1, including photos you add to recipes, is stored in the private database of your own iCloud account, using Apple's CloudKit service under Apple's terms and privacy policy, and kept up to date on each device signed in to that account. Each device fetches its own copy of pictures from recipe websites (Section 5.2). The Developer cannot access your iCloud account or the data in it.")
@@ -92,7 +96,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("8. Data Security")
 
-                BodyText("8.1 Data held on your Device is protected by your Device's own security, and data held in iCloud by Apple's. The Developer does not hold copies of it.")
+                BodyText("8.1 Data held on your Device is protected by your Device's own security, and data held in iCloud by Apple's. The Developer does not hold copies of it; beta feedback you choose to send is handled as described in Section 6.4.")
 
                 BodyText("8.2 The Developer recommends that you secure your Device with a strong passcode, and keep device encryption enabled.")
 
@@ -107,7 +111,7 @@ struct PrivacyPolicyView: View {
             Group {
                 SectionTitle("10. Data Protection Laws")
 
-                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the Developer does not collect or receive the information you enter, the Developer does not act as a data controller of that information for most purposes. If that changes for any feature, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
+                BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the Developer does not collect or receive the information you enter, the Developer does not act as a data controller of that information for most purposes. For beta feedback you choose to send (Section 6.4), the Developer is the data controller, relies on legitimate interests (fixing and improving the Application), keeps screenshots and crash reports for 14 days, and keeps posted comments until you ask for them to be removed. If that changes for any feature, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
 
                 SectionTitle("11. Children's Privacy")
 
