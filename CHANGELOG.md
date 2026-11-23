@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox DietaryInference word lists · 1ed14dc
+- For you: Vegetarian and Vegan tags on built-in recipes now recognise more ingredients, from lardons, 'nduja and monkfish to feta, halloumi and crème fraîche, so new recipes are tagged with more care.
+- Behind the build: new tests failed on the old lists first; a reviewer and a challenger both caught a test that confused "pomegranate" with grana padano, fixed before it shipped.
+
 ## 2026-11-23 · Inbox vegan Chapati and Chai methods · b752fc0
 - For you: The built-in Chapati and Homemade Chai Concentrate now finish with plant-based choices — vegan butter or oil to brush, oat or soy milk for your cup — so every step fits their Vegan tag.
 - Behind the build: a new test reads the method of every recipe tagged Vegan and failed on the old wording first; a reviewer and a challenger tightened it so a fixed exception can't hide a new dairy step.
