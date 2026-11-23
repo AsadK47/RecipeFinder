@@ -125,16 +125,31 @@ struct DietaryInferenceTests {
         #expect(!recipes.isEmpty)
         // A recipe its author titled Vegan uses dairy words for plant versions throughout ("the buttercream").
         let tagged = recipes.filter { $0.dietaryInfo.isVegan && !DietaryInference.words(in: $0.name).contains("vegan") }
+        var used: Set<String> = []
         for recipe in tagged {
             for step in recipe.prePrepInstructions + recipe.instructions {
-                let words = DietaryInference.words(in: step)
-                guard DietaryInference.containsAnimalProduct(words) else { continue }
-                let word = words.first(where: DietaryInference.animalProductWords.contains) ?? ""
-                #expect(
-                    Self.plantStepExceptions.contains("\(recipe.name)|\(word)"),
-                    "\(recipe.name) is tagged Vegan but its method says: \(step)"
-                )
+                for word in Self.unqualifiedAnimalWords(in: step) {
+                    let key = "\(recipe.name)|\(word)"
+                    if Self.plantStepExceptions.contains(key) {
+                        used.insert(key)
+                    } else {
+                        Issue.record("\(recipe.name) is tagged Vegan but its method says: \(step)")
+                    }
+                }
             }
+        }
+        // A fixed or renamed recipe's exception must go, so it can't cover a later step under that name.
+        #expect(used == Self.plantStepExceptions)
+    }
+
+    /// Each animal-product word in the step that no plant word qualifies ("butter", not "vegan butter").
+    private static func unqualifiedAnimalWords(in step: String) -> [String] {
+        let words = DietaryInference.words(in: step)
+        return words.indices.compactMap { index in
+            let pair = Array(words[max(0, index - 1)...index])
+            guard DietaryInference.animalProductWords.contains(words[index]),
+                  DietaryInference.containsAnimalProduct(pair) else { return nil }
+            return words[index]
         }
     }
 }
