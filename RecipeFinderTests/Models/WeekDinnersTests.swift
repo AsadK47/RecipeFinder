@@ -197,12 +197,27 @@ import Foundation
 
     // MARK: - VoiceOver hint
 
-    /// The hint names every action the hold menu offers: take off is always there; move only from tonight on.
-    @Test(arguments: [(true, true), (true, false), (false, true), (false, false)])
-    func dinnerHintNamesTakeOffAndMovesOnlyAhead(hasRecipe: Bool, isPast: Bool) {
-        let hint = WeekDinnersView.dinnerHint(hasRecipe: hasRecipe, isPast: isPast)
-        #expect(hint.contains("take it off the plan"))
-        #expect(hint.contains("move") == !isPast)
-        #expect(hint.contains("cook") == hasRecipe)
+    /// The hint names what the hold menu offers: cook when the recipe exists, take off always, move only when
+    /// `moveTargets` has somewhere to go (not past, not repeating, not when every other night is behind us).
+    @Test func dinnerHintMatchesTheHoldMenu() {
+        let pasta = recipe("Pasta"), curry = recipe("Curry"), gone = recipe("Gone")
+        var weekly = plan(curry, on: day(4))
+        weekly.isRecurring = true
+        let plans = [plan(pasta, on: day(1)), plan(pasta, on: day(3)), weekly, plan(gone, on: day(5))]
+        let nights = WeekDinners.nights(week: week, plans: plans, recipes: [pasta, curry], today: day(2), calendar: cal)
+        let hint = { (offset: Int) in WeekDinnersView.dinnerHint(nights[offset], in: nights) }
+
+        #expect(hint(1) == "Opens the recipe. Use actions to cook it again or take it off the plan.")
+        #expect(hint(3) == "Opens the recipe. Use actions to cook it, move it or take it off the plan.")
+        #expect(hint(4) == "Opens the recipe. Use actions to cook it or take it off and stop it repeating.")
+        #expect(hint(5) == "This recipe is no longer in your library. Use actions to move it or take it off the plan.")
+    }
+
+    @Test func dinnerHintOffersNoMoveWhenNoOtherNightIsAhead() {
+        let pasta = recipe("Pasta")
+        let nights = WeekDinners.nights(week: week, plans: [plan(pasta, on: day(6))], recipes: [pasta],
+                                        today: day(6), calendar: cal)
+        #expect(WeekDinners.moveTargets(from: nights[6], in: nights).isEmpty)
+        #expect(!WeekDinnersView.dinnerHint(nights[6], in: nights).contains("move it"))
     }
 }

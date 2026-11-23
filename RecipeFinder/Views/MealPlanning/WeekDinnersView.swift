@@ -75,7 +75,7 @@ struct WeekDinnersView: View {
         .contextMenu { moveMenu(night, plan: plan) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(Self.spokenDay(night)), dinner: \(plan.recipeName)")
-        .accessibilityHint(Self.dinnerHint(hasRecipe: night.recipe != nil, isPast: night.isPast))
+        .accessibilityHint(Self.dinnerHint(night, in: nights))
         .accessibilityAddTraits(night.recipe == nil ? [] : .isButton)
         .accessibilityActions { moveMenu(night, plan: plan) }
     }
@@ -176,15 +176,19 @@ struct WeekDinnersView: View {
         .minimumScaleFactor(0.8)
     }
 
-    /// VoiceOver hint naming every action the hold menu offers. A past (cooked) dinner is history: no moves offered
-    /// (WeekDinners.moveTargets), so the hint doesn't promise one — but it can still be taken off the plan.
-    nonisolated static func dinnerHint(hasRecipe: Bool, isPast: Bool) -> String {
-        switch (hasRecipe, isPast) {
-        case (false, true): "This recipe is no longer in your library. Use actions to take it off the plan."
-        case (false, false): "This recipe is no longer in your library. Use actions to move it or take it off the plan."
-        case (true, true): "Opens the recipe. Use actions to cook it again or take it off the plan."
-        case (true, false): "Opens the recipe. Use actions to cook it, move it or take it off the plan."
-        }
+    /// VoiceOver hint naming every action the hold menu (`moveMenu`) offers for this night, so it can't promise a
+    /// move `WeekDinners.moveTargets` withholds (past nights, repeating dinners, no other night ahead).
+    nonisolated static func dinnerHint(_ night: WeekDinners.Night, in nights: [WeekDinners.Night]) -> String {
+        var actions: [String] = []
+        if night.recipe != nil { actions.append(night.isPast ? "cook it again" : "cook it") }
+        if !WeekDinners.moveTargets(from: night, in: nights).isEmpty { actions.append("move it") }
+        actions.append(night.plan?.isRecurring == true ? "take it off and stop it repeating" : "take it off the plan")
+        let opens = night.recipe == nil ? "This recipe is no longer in your library." : "Opens the recipe."
+        // Joined by hand, not ListFormatStyle: the hint is British English whatever the device region (no Oxford comma).
+        let list = actions.count > 1
+            ? actions.dropLast().joined(separator: ", ") + " or " + (actions.last ?? "")
+            : actions.joined()
+        return "\(opens) Use actions to \(list)."
     }
 
     private static func spokenDay(_ night: WeekDinners.Night) -> String {
