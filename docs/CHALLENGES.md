@@ -776,3 +776,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Locale] "8 pm" / "Start by 5:40" are spoken 12-hour by spec; 24-hour locales still see them — `Date.FormatStyle` if owner wants locale times — cost if wrong: reads oddly outside UK/US.
   → Owner:
+
+## 2026-11-23 (item pass: Settings nav bar fade — 0 defects)
+- ⚔️ [Tests] No test notices a broken `NavigationBarScrollFade` (deleted, `.ignoresSafeArea()` moved before `.mask`, hit testing on) — screenshots attach images, never compare — cost if wrong: overlap or a blank band returns unseen until someone looks at 63-theme-picker-ax / 02-recipe.
+  → Owner:
+- ⚔️ [Scope] Root Settings (`SettingsView.swift`) and ~16 other `appNavigationTitle` screens still have no fade; folding it into `appNavigationChrome()` would cover all but needs care on hero-image screens — tracked as Queue *Scroll fade elsewhere*.
+  → Owner:

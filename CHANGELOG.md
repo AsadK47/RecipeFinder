@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox Settings nav bar fade · 3959ed6
+- For you: Settings screens keep their title and back button clear as you scroll, even with large text — rows now fade softly under the top bar.
+- Behind the build: checked on the large-text theme picker screenshot; a reviewer and a challenger went through all thirteen settings screens that share the fix.
+
 ## 2026-11-23 · Inbox DietaryInference word lists · 1ed14dc
 - For you: Vegetarian and Vegan tags on built-in recipes now recognise more ingredients, from lardons, 'nduja and monkfish to feta, halloumi and crème fraîche, so new recipes are tagged with more care.
 - Behind the build: new tests failed on the old lists first; a reviewer and a challenger both caught a test that confused "pomegranate" with grana padano, fixed before it shipped.
