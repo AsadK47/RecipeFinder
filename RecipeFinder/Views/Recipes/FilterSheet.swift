@@ -48,17 +48,12 @@ struct FilterSheet: View {
                     .background(AppTheme.subtleStroke)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                    HStack {
+                    Toggle(isOn: $showFavoritesOnly) {
                         Text("Favourites")
                             .font(.headline)
                             .adaptiveForegroundColor()
-
-                        Spacer()
-
-                        Toggle("", isOn: $showFavoritesOnly)
-                            .tint(AppTheme.accentColor)
-                            .accessibilityLabel("Favourites")
                     }
+                    .tint(AppTheme.accentColor)
                 }
 
                 if !availableCollections.isEmpty {

@@ -69,7 +69,7 @@ struct AnimatedHeartButton: View {
             }
         }
         .accessibilityLabel(isFavorite ? "Remove from favourites" : "Add to favourites")
-        .accessibilityHint(isFavorite ? "Double tap to remove it from your favourites" : "Double tap to add it to your favourites")
+        .accessibilityHint(isFavorite ? "Removes this recipe from your favourites" : "Saves this recipe to your favourites")
         .accessibilityAddTraits(.isButton)
         .onChange(of: isFavorite) { _, newValue in
             if newValue { animateHeart() }
