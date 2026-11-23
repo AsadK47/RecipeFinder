@@ -19,7 +19,7 @@ struct ActiveFiltersBar: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: AppTheme.spacing8) {
                 if showFavoritesOnly {
-                    FilterChip(label: "Favorites", icon: "heart.fill") {
+                    FilterChip(label: "Favourites", icon: "heart.fill") {
                         HapticManager.shared.light()
                         showFavoritesOnly = false
                     }

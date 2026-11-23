@@ -68,8 +68,8 @@ struct AnimatedHeartButton: View {
                     .animation(.spring(response: Timing.springResponseUp, dampingFraction: Timing.dampingUp), value: scale)
             }
         }
-        .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
-        .accessibilityHint(isFavorite ? "Double tap to unfavorite" : "Double tap to mark as favorite")
+        .accessibilityLabel(isFavorite ? "Remove from favourites" : "Add to favourites")
+        .accessibilityHint(isFavorite ? "Double tap to remove it from your favourites" : "Double tap to add it to your favourites")
         .accessibilityAddTraits(.isButton)
         .onChange(of: isFavorite) { _, newValue in
             if newValue { animateHeart() }

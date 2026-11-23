@@ -49,7 +49,7 @@ struct FilterSheet: View {
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     HStack {
-                        Text("Show Favorites Only")
+                        Text("Favourites")
                             .font(.headline)
                             .adaptiveForegroundColor()
 
@@ -57,6 +57,7 @@ struct FilterSheet: View {
 
                         Toggle("", isOn: $showFavoritesOnly)
                             .tint(AppTheme.accentColor)
+                            .accessibilityLabel("Favourites")
                     }
                 }
 
