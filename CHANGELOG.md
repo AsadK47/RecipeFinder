@@ -57,6 +57,10 @@ anything else between entries):
 - For you: Plan my week works as before — dishes you pass on wait behind fresh ones next time, while Busy night and Leave open keep every dish fresh.
 - Behind the build: the rule for what counts as passing a dish moved back into the tested planning model, with its two tests restored, checked by a reviewer and a challenger.
 
+## 2026-11-23 · Search placeholder on one line · f952384
+- For you: Search fields keep "What would you like to eat?" neatly on one line beside the cursor, even when Cancel appears.
+- Behind the build: one shared search field across the app, so the fix reaches Recipes, Groceries and every recipe picker at once.
+
 ## 2026-11-22 · Plan take-off with Undo · fde4a2e
 - For you: Take a meal off Plan with one tap on the bin beside it or a swipe — it goes straight away, weekly meals too, and Undo on the toast brings it back just as it was.
 - Behind the build: two reviewers made sure Undo is easy to reach with VoiceOver and brings back several meals taken off in a row, and tests check a whole weekly series and its reminders come back.
