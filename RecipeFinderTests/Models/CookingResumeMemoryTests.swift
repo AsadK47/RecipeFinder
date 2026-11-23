@@ -120,3 +120,81 @@ struct CookingResumeMemoryTests {
         #expect(values.cookingResume !== CookingResumeMemory.shared)
     }
 }
+
+/// Hosts the real `CookingModeView` in a window with a fake memory, so the view's own wiring is under test: these fail
+/// if cooking mode goes back to `CookingResumeMemory.shared` (the seam tests above only see the EnvironmentKey).
+@Suite("CookingModeView uses the injected resume memory", .serialized)
+@MainActor
+struct CookingModeResumeWiringTests {
+
+    private final class FakeMemory: CookingResuming {
+        var saved: CookingResumeMemory.Place?
+        private(set) var lookups: [(id: UUID, content: [String])] = []
+        private(set) var remembered: [(place: CookingResumeMemory.Place, id: UUID)] = []
+        private(set) var forgotten: [UUID] = []
+
+        func remember(_ place: CookingResumeMemory.Place, for recipeID: UUID, content: [String]) {
+            remembered.append((place, recipeID))
+        }
+        func place(for recipeID: UUID, content: [String], itemCount: Int) -> CookingResumeMemory.Place? {
+            lookups.append((recipeID, content))
+            return saved
+        }
+        func forget(_ recipeID: UUID) { forgotten.append(recipeID) }
+    }
+
+    private let recipe = RecipeModel(
+        name: "Rice", category: "Main", difficulty: "Basic", prepTime: "5", cookingTime: "10", baseServings: 2,
+        ingredients: [Ingredient(baseQuantity: 1, unit: "cup", name: "rice")],
+        prePrepInstructions: [], instructions: ["Rinse", "Boil", "Rest"], notes: ""
+    )
+
+    private func host(_ memory: FakeMemory) -> UIWindow {
+        let view = CookingModeView(recipe: recipe).environment(\.cookingResume, memory)
+        let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+        let window = scene.map { UIWindow(windowScene: $0) } ?? UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = UIHostingController(rootView: view)
+        window.makeKeyAndVisible()
+        window.layoutIfNeeded()
+        return window
+    }
+
+    private func close(_ window: UIWindow) {
+        window.rootViewController = nil
+        window.isHidden = true
+    }
+
+    /// Lets SwiftUI run `onAppear` / `onDisappear` (they fire on the main run loop, after layout).
+    private func waitUntil(_ condition: () -> Bool) async throws {
+        for _ in 0..<100 where !condition() {
+            try await Task.sleep(for: .milliseconds(50))
+        }
+    }
+
+    @Test("Opening cooking mode looks up the place in the injected memory and resumes at it")
+    func opensAtInjectedPlace() async throws {
+        let memory = FakeMemory()
+        memory.saved = .init(index: 2, checkedIngredients: [0])
+        let window = host(memory)
+        defer { close(window) }
+        try await waitUntil { !memory.lookups.isEmpty && CookingSession.shared.currentIndex == 2 }
+
+        #expect(memory.lookups.map(\.id) == [recipe.id])
+        #expect(memory.lookups.first?.content == CookingModeView.resumeContent(for: recipe))
+        #expect(CookingSession.shared.currentIndex == 2)
+    }
+
+    @Test("Leaving cooking mode mid-cook saves the place to the injected memory")
+    func leavingRemembersInInjectedMemory() async throws {
+        let memory = FakeMemory()
+        memory.saved = .init(index: 1, checkedIngredients: [0])
+        let window = host(memory)
+        try await waitUntil { !memory.lookups.isEmpty }
+        close(window)
+        try await waitUntil { !memory.remembered.isEmpty }
+
+        #expect(memory.remembered.map(\.id) == [recipe.id])
+        #expect(memory.remembered.first?.place == .init(index: 1, checkedIngredients: [0]))
+        #expect(memory.forgotten.isEmpty)
+    }
+}
