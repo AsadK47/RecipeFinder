@@ -12,10 +12,12 @@ extension View {
 
 /// The toast's dismiss timer, kept out of the view so it can be tested.
 enum ToastDismissal {
-    /// Waits `duration`, then clears the toast.
+    /// Waits `duration`, then clears the toast if it still shows `shown`. A cancelled wait still clears (the view
+    /// left, so an old Undo can't come back later) unless a newer message replaced it (`.task(id:)` restarted).
     @MainActor
     static func run(showing shown: String, for duration: Duration, current: () -> String?, clear: () -> Void) async {
-        try? await Task.sleep(for: duration)
+        try? await Task.sleep(for: duration) // Cancellation ends the wait early; the check below decides.
+        guard current() == shown else { return }
         clear()
     }
 }
