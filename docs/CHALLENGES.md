@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-23 (item pass: Inbox 🟡 NotificationManager coverage — fixed: pending/cancel-all paths bypassed the seam (reviewer + challenger) → deleted, no callers; one-request asserts, denied permission, `sharedInstanceRoutesTaps` added)
+- Not fixed: `NotificationCenterClient.system` (the real adapter) is run by no test — a typo that drops requests ships green; cost if wrong: no reminders on device until someone notices.
+  → Owner:
+- Not fixed (pre-existing): `scheduleExpiryNotification` checks that expiry − 1 day is in the future but fires at 18:00 that day — at 18:10, an item expiring tomorrow gets a trigger already past, so no alert; fix: compare the 18:00 trigger date with now.
+  → Owner:
+
 ## 2026-11-23 (item pass: Inbox 🟡 vegan Chapati / Chai methods — fixed: exceptions keyed on the first raw dairy word per recipe could hide a later one and never went stale → keyed on unqualified words, every exception must be used)
 - Not fixed (clean today): `veganSeedMethodsArePlantOnly` reads steps, not `notes`, and recipes titled "Vegan" are skipped (their dairy words mean plant versions; ingredient lists checked) — cost if wrong: a dairy tip in a note of a vegan-tagged recipe ships unnoticed.
   → Owner:

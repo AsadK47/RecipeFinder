@@ -5,6 +5,14 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **NotificationManager seam:** a struct of three closures (not a protocol over `UNUserNotificationCenter`): matching
+  the SDK's `@Sendable` completion signatures by retroactive conformance is brittle under Swift 6. Only `.shared`'s
+  initializer makes it the center's delegate, so a test instance can't steal tap routing (`sharedInstanceRoutesTaps`).
+  7 uncalled helpers (daily reminder, immediate, shopping update, cancel-all/timers, pending, badge) deleted rather
+  than seamed (both reviewers flagged them uncovered; YAGNI). Tap routing stays untested
+  (`UNNotificationResponse` can't be built). **Pre-mortem:** (1) the seam drops a request on the floor → every
+  scheduler test asserts one request added; (2) a reminder asks for permission it shouldn't (or stops asking) →
+  `asks` count per scheduler; (3) the real app stops routing taps → `sharedInstanceRoutesTaps`. Gap: the `.system` adapter is never run by a test.
 - **Vegan seed methods (Chapati, Chai):** reworded to plant versions (vegan butter or oil; plant milk) rather than
   untag — both are vegan at heart and the dairy was optional/serving-only. Test checks every vegan-tagged bundled
   recipe's steps with `DietaryInference.containsAnimalProduct`; recipes titled "Vegan" skipped (author's dairy words

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-23 · Inbox NotificationManager coverage · 3e1525a
+- For you: Reminders work as before — cooking timers, meal and Sunday planning reminders, groceries and use-it-up alerts are now each checked by their own tests, so they keep arriving with the right words at the right time.
+- Behind the build: a new test seam lets every reminder be read without scheduling a real one; a reviewer and a challenger led to deleting seven unused helpers and adding a check that taps still open the right tab.
+
 ## 2026-11-23 · Inbox Settings nav bar fade · 3959ed6
 - For you: Settings screens keep their title and back button clear as you scroll, even with large text — rows now fade softly under the top bar.
 - Behind the build: checked on the large-text theme picker screenshot; a reviewer and a challenger went through all thirteen settings screens that share the fix.
