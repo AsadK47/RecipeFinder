@@ -113,4 +113,28 @@ struct DietaryInferenceTests {
         #expect(!Self.infer(["Chicken Breast"]).isVegetarian)
         #expect(!Self.infer(["EGGS"]).isVegan)
     }
+
+    /// Steps that name a dairy word but call for a plant one (the ingredient list says which) or a cooker setting.
+    private static let plantStepExceptions: Set<String> = [
+        "Coriander Chickpea Bowl|cream", "Wild West Wings|milk", "Instant Pot Idli Dosa Batter|yogurt"
+    ]
+
+    @Test("a bundled recipe tagged Vegan never asks for an animal product in its method")
+    func veganSeedMethodsArePlantOnly() {
+        let recipes = BundledRecipeCatalog.load()
+        #expect(!recipes.isEmpty)
+        // A recipe its author titled Vegan uses dairy words for plant versions throughout ("the buttercream").
+        let tagged = recipes.filter { $0.dietaryInfo.isVegan && !DietaryInference.words(in: $0.name).contains("vegan") }
+        for recipe in tagged {
+            for step in recipe.prePrepInstructions + recipe.instructions {
+                let words = DietaryInference.words(in: step)
+                guard DietaryInference.containsAnimalProduct(words) else { continue }
+                let word = words.first(where: DietaryInference.animalProductWords.contains) ?? ""
+                #expect(
+                    Self.plantStepExceptions.contains("\(recipe.name)|\(word)"),
+                    "\(recipe.name) is tagged Vegan but its method says: \(step)"
+                )
+            }
+        }
+    }
 }
