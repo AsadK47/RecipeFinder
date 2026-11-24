@@ -25,6 +25,25 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)
     }
 
+    // MARK: - Search field name
+
+    /// VoiceOver must hear what the search field is for: the placeholder names the field itself rather than sitting
+    /// beside an unnamed "text field" as separate static text.
+    @MainActor
+    func testSearchFieldIsNamedByItsPlaceholder() throws {
+        let app = launchApp()
+
+        app.tabBars.buttons["Groceries"].tap()
+
+        let search = app.textFields["groceries.search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5), "Groceries search field should exist.")
+        XCTAssertEqual(search.label, "Add or search groceries…", "The search field should be named by its placeholder.")
+        XCTAssertFalse(
+            app.staticTexts["Add or search groceries…"].exists,
+            "The placeholder shouldn't be read a second time as separate text."
+        )
+    }
+
     // MARK: - Groceries search results
 
     @MainActor
