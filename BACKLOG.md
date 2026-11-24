@@ -899,7 +899,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
 - 🐞 **Workflow items unblocked** (owner 2026-11-23: workflows OK to edit) — do each as its own item:
-  (a) `cleanup-agent-branches.yml` dies on GH013 at the first protected `agent/*` branch → skip refused deletes and carry on, report the count;
+  (a) `cleanup-agent-branches.yml` dies on GH013 at the first protected `agent/*` branch → skip refused deletes and carry on, report the count; — 🚧 builder agent 2026-11-24
   (b) `asc_promote_public.py` — add the build to Public Beta only for READY/WAITING/IN_BETA_REVIEW/BETA_APPROVED, else exit non-zero; check state before the "already available" exit;
   (c) `testflight-promote.yml` → `workflow_dispatch` only until bundled method text is our own and the CloudKit Production schema is deployed (both still open);
   (d) `testflight-feedback.yml` — stop uploading tester screenshots/crash logs as public artifacts (keep them in App Store Connect; agents fetch them via the ASC API when fixing) and update Privacy 6.5 in the same item;
