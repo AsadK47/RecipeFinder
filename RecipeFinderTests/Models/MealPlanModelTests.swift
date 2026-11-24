@@ -294,4 +294,12 @@ struct MealPlanTakeOffTests {
         #expect(result.message == "3 meals taken off")
         #expect(result.undo == [w1, w2, w3, dal])
     }
+
+    /// A stale second tap on a dinner already taken off changes nothing: still one meal off, not "2 meals".
+    @Test func aTakeOffThatChangesNothingKeepsTheOneMealMessage() {
+        let dal = plan("Dal")
+        let result = MealPlanTakeOff.after(taking: dal, changed: [], earlier: [dal], isStillPlanned: { _ in false })
+        #expect(result.message == "Dal taken off")
+        #expect(result.undo == [dal])
+    }
 }

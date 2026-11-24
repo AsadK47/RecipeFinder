@@ -18,12 +18,11 @@ struct MealPlanTakeOff: Equatable {
                       isStillPlanned: (MealPlanModel) -> Bool) -> MealPlanTakeOff {
         // First copy per id wins: it's the state before any of them.
         let undo = earlier + changed.filter { plan in !earlier.contains { $0.id == plan.id } }
-        guard !earlier.isEmpty else {
-            let text = plan.isRecurring ? "\(plan.recipeName) taken off and stopped repeating"
-                                        : "\(plan.recipeName) taken off"
-            return MealPlanTakeOff(undo: undo, message: text)
-        }
+        let single = plan.isRecurring ? "\(plan.recipeName) taken off and stopped repeating"
+                                      : "\(plan.recipeName) taken off"
+        guard !earlier.isEmpty else { return MealPlanTakeOff(undo: undo, message: single) }
+        // A second tap on a meal already off changes nothing, so it mustn't read as one more.
         let gone = undo.filter { !isStillPlanned($0) }.count
-        return MealPlanTakeOff(undo: undo, message: "\(max(gone, 2)) meals taken off")
+        return MealPlanTakeOff(undo: undo, message: gone > 1 ? "\(gone) meals taken off" : single)
     }
 }

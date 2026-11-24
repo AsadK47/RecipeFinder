@@ -11,6 +11,8 @@ protocol MealPlanningManaging: AnyObject, Observable {
     /// Undo for a take-off: puts `plans` back as they were (by id), skipping a slot the cook has filled since.
     /// Returns the plans it skipped for a different dish, so the cook can be told they stayed off.
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel]
+    /// Whether a plan with this id is on the plan now, on any day.
+    func isPlanned(_ id: UUID) -> Bool
     func toggleRecurring(_ mealPlan: MealPlanModel)
     func propagateRecurring(toWeekStarting startDate: Date)
     func clearOldMealPlans()
@@ -209,6 +211,10 @@ final class MealPlanningManager: MealPlanningManaging {
         guard plan.isRecurring else { return mealPlans.filter { $0.id == plan.id } }
         let key = SeriesKey(plan, calendar: .current)
         return mealPlans.filter { $0.id == plan.id || ($0.isRecurring && SeriesKey($0, calendar: .current) == key) }
+    }
+
+    func isPlanned(_ id: UUID) -> Bool {
+        mealPlans.contains { $0.id == id }
     }
 
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel] {
