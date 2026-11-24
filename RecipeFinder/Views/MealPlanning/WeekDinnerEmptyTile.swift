@@ -43,9 +43,11 @@ struct WeekDinnerEmptyTile<DayLabel: View>: View {
             // A missed night is history, not a call to action: half height so the nights ahead lead.
             .frame(height: night.isPast ? photoHeight / 2 : photoHeight)
             dayLabel
+            // A missed night's text is primary, like a cooked night's dish name: the whole tile is already dimmed
+            // (0.55), and secondary × 0.55 fell below 3:1 in Dark (challenger 2026-11-24).
             Text(night.isPast ? "No dinner planned" : "Plan dinner")
                 .font(.subheadline)
-                .adaptiveSecondaryForeground()
+                .foregroundStyle(night.isPast ? AppTheme.textColor() : AppTheme.adaptiveSecondary)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

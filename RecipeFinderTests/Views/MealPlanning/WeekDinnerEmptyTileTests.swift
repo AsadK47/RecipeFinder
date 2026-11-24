@@ -26,6 +26,16 @@ import ViewInspector
         #expect(throws: (any Error).self) { try view.find(ViewType.Button.self) }
     }
 
+    @Test func voiceOverNamesAMissedNight() throws {
+        let spoken = try tile(isPast: true).inspect().vStack().accessibilityLabel().string()
+        #expect(spoken == "Sunday 22, no dinner planned")
+    }
+
+    @Test func voiceOverNamesANightAhead() throws {
+        let spoken = try tile(isPast: false).inspect().button().accessibilityLabel().string()
+        #expect(spoken == "Sunday 22, no dinner planned")
+    }
+
     @Test func nightAheadPlansItsDateOnTap() throws {
         let box = Box()
         let view = try tile(isPast: false, box).inspect()
