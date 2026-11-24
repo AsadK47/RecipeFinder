@@ -266,12 +266,14 @@ extension MealPlanningView {
     func undoTakeOff() {
         guard let before = removalUndo else { return }
         removalUndo = nil
+        var skipped: [MealPlanModel] = []
         withAnimation(.appGentle) {
-            mealPlanningManager.restore(before)
+            skipped = mealPlanningManager.restore(before)
             updateSelectedMealTimes(for: selectedDate)
             reorderDayByTime()
         }
         HapticManager.shared.light()
+        weekShoppingFeedback = MealPlanModel.notPutBackMessage(skipped)
     }
 
     // MARK: - Week navigation

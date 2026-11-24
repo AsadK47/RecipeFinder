@@ -86,6 +86,14 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 
+- **Undo says what stayed off** (`agent/plan-undo-skipped`, builder 2026-11-24): `restore` returns the plans it skipped
+  (`@discardableResult`, CQS bend accepted: the skip is decided inside the same write); text is pure
+  `MealPlanModel.notPutBackMessage`, shown on the plain toast (`weekShoppingFeedback`) after the Undo toast clears.
+  Rejected: putting the old meal back over the new one (drops the cook's later choice). **Pre-mortem:** (1) a night
+  refilled by a weekly copy loses the one-off silently → `undoSkipsAOneOffWhoseNightAWeeklyCopyRefilled`; (2) toast
+  says "stayed off" when everything came back → `undoThatPutsEverythingBackSkipsNothing` + `nothingSkippedSaysNothing`;
+  (3) view never shows it — thin glue, no test (unconfirmed on device). Seen red on `agent/plan-undo-skipped-red`.
+
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

@@ -213,21 +213,23 @@ final class MealPlanningManager: MealPlanningManaging {
 
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel] {
         var restored: [MealPlanModel] = []
+        var skipped: [MealPlanModel] = []
         for plan in plans {
             if let index = mealPlans.firstIndex(where: { $0.id == plan.id }) {
                 mealPlans[index] = plan
             } else if mealPlans.contains(where: { $0.isSlot(plan.date, plan.mealTime) }) {
-                continue // a meal planned there since wins: a night never holds two
+                skipped.append(plan) // a meal planned there since wins: a night never holds two
+                continue
             } else {
                 mealPlans.append(plan)
             }
             restored.append(plan)
         }
-        guard !restored.isEmpty else { return [] }
+        guard !restored.isEmpty else { return skipped }
         saveMealPlans()
         for plan in restored { syncReminder(for: plan) }
         syncSeriesReminders()
-        return []
+        return skipped
     }
 
     /// Removing a copy of a weekly meal also stops its series: otherwise the next copy refills the night from an

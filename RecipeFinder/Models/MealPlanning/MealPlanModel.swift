@@ -82,7 +82,11 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
     /// (`propagateRecurring` fills a week only when it's shown, so a week ahead can look open when it isn't).
     /// Toast text after Undo when some meals couldn't go back (their night was planned again since); nil when all did.
     static func notPutBackMessage(_ skipped: [MealPlanModel]) -> String? {
-        nil
+        switch skipped.count {
+        case 0: nil
+        case 1: "\(skipped[0].recipeName) stayed off: that meal is planned again"
+        default: "\(skipped.count) meals stayed off: those meals are planned again"
+        }
     }
 
     static func hasDinner(on day: Date, plans: [MealPlanModel], calendar: Calendar = .current) -> Bool {
