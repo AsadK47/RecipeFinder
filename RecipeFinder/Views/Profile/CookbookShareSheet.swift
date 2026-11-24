@@ -100,6 +100,8 @@ struct CookbookShareCard: View {
         let format = UIGraphicsImageRendererFormat()
         format.scale = scale
         format.opaque = true
+        // 8-bit sRGB like the old `uiImage`, not an extended-range bitmap on wide-colour screens.
+        format.preferredRange = .standard
         var drew = false
         let image = UIGraphicsImageRenderer(size: size, format: format).image { bitmap in
             UIColor.black.setFill()
