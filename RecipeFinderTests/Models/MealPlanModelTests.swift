@@ -246,3 +246,52 @@ struct MealPlanNotPutBackTests {
                 == "Tacos stayed off: another meal is planned there now")
     }
 }
+
+/// Plan's take-off toast: one Undo for take-offs in a row, and a count of meals that actually came off.
+@Suite("Take-off toast and Undo")
+struct MealPlanTakeOffTests {
+    private let day: TimeInterval = 86_400
+    private let start = Date(timeIntervalSince1970: 1_800_000_000)
+
+    private func plan(_ name: String, week: Int = 0, recurring: Bool = false) -> MealPlanModel {
+        MealPlanModel(recipeId: UUID(), recipeName: name, date: start.addingTimeInterval(Double(week) * 7 * day),
+                      mealTime: .dinner, isRecurring: recurring)
+    }
+
+    @Test func firstTakeOffNamesTheMeal() {
+        let dal = plan("Dal")
+        let result = MealPlanTakeOff.after(taking: dal, changed: [dal], earlier: [], isStillPlanned: { _ in false })
+        #expect(result.message == "Dal taken off")
+        #expect(result.undo == [dal])
+    }
+
+    @Test func firstTakeOffOfAWeeklyMealSaysItStoppedRepeating() {
+        let tacos = plan("Tacos", recurring: true)
+        let result = MealPlanTakeOff.after(taking: tacos, changed: [tacos], earlier: [], isStillPlanned: { _ in false })
+        #expect(result.message == "Tacos taken off and stopped repeating")
+    }
+
+    @Test func aSecondTakeOffSharesTheUndoAndKeepsTheFirstSnapshot() {
+        let dal = plan("Dal")
+        var edited = dal
+        edited.servings = 9
+        let curry = plan("Curry", week: 1)
+        let result = MealPlanTakeOff.after(taking: curry, changed: [curry, edited], earlier: [dal],
+                                           isStillPlanned: { _ in false })
+        #expect(result.undo == [dal, curry])
+        #expect(result.message == "2 meals taken off")
+    }
+
+    /// W2 of a W1–W3 weekly series: W2 and W3 come off, W1 only stops repeating and stays planned.
+    /// Then one more meal comes off: 3 meals, not 4.
+    @Test func anEarlierWeeklyCopyThatStaysPlannedIsNotCounted() {
+        let w1 = plan("Tacos", week: 0, recurring: true)
+        let w2 = plan("Tacos", week: 1, recurring: true)
+        let w3 = plan("Tacos", week: 2, recurring: true)
+        let dal = plan("Dal", week: 3)
+        let result = MealPlanTakeOff.after(taking: dal, changed: [dal], earlier: [w1, w2, w3],
+                                           isStillPlanned: { $0.id == w1.id })
+        #expect(result.message == "3 meals taken off")
+        #expect(result.undo == [w1, w2, w3, dal])
+    }
+}

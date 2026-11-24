@@ -251,16 +251,13 @@ extension MealPlanningView {
             removeMealPlan(for: plan.date, mealTime: plan.mealTime)
             updateSelectedMealTimes(for: selectedDate)
         }
-        // Take-offs in a row while the toast is up share one Undo, so the first is never lost. First copy per id wins:
-        // it's the state before any of them.
-        let earlier = removalToast == nil ? [] : (removalUndo ?? [])
-        let merged = earlier + before.filter { plan in !earlier.contains { $0.id == plan.id } }
-        removalUndo = merged
+        let result = MealPlanTakeOff.after(taking: plan, changed: before,
+                                           earlier: removalToast == nil ? [] : (removalUndo ?? [])) { gone in
+            mealPlanningManager.mealPlans(for: gone.date).contains { $0.id == gone.id }
+        }
+        removalUndo = result.undo
         weekShoppingFeedback = nil // one toast at a time: both sit at the bottom
-        let meals = Set(merged.map { "\($0.mealTime.rawValue)-\(Calendar.current.startOfDay(for: $0.date))" })
-        removalToast = earlier.isEmpty
-            ? (plan.isRecurring ? "\(plan.recipeName) taken off and stopped repeating" : "\(plan.recipeName) taken off")
-            : "\(max(meals.count, 2)) meals taken off"
+        removalToast = result.message
     }
 
     func undoTakeOff() {
