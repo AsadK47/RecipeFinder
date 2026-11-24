@@ -10,18 +10,25 @@ struct WeekDinnerEmptyTile<DayLabel: View>: View {
     @ScaledMetric(relativeTo: .body) private var photoHeight: CGFloat = 96
 
     var body: some View {
-        Button {
-            HapticManager.shared.light()
-            onPlan(night.date)
-        } label: {
+        if night.isPast {
+            // Not a disabled button: Plan already dims a past tile (0.55), and a disabled button dims it again —
+            // "No dinner planned" went near-invisible on the light end of the gradient.
             content
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(spokenDay), no dinner planned")
+        } else {
+            Button {
+                HapticManager.shared.light()
+                onPlan(night.date)
+            } label: {
+                content
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(spokenDay), no dinner planned")
+            .accessibilityHint("Plans dinner for this night")
+            .accessibilityAddTraits(.isButton)
         }
-        .buttonStyle(.plain)
-        .disabled(night.isPast)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(spokenDay), no dinner planned")
-        .accessibilityHint(night.isPast ? "" : "Plans dinner for this night")
-        .accessibilityAddTraits(.isButton)
     }
 
     private var content: some View {
