@@ -11,6 +11,7 @@ struct AppSearchField: View {
 
     private let externalFocus: FocusState<Bool>.Binding?
     @FocusState private var ownFocus: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private var isFocused: FocusState<Bool>.Binding { externalFocus ?? $ownFocus }
 
@@ -35,16 +36,19 @@ struct AppSearchField: View {
                     .foregroundStyle(AppTheme.adaptiveHighEmphasis)
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
 
-                ZStack(alignment: .leading) {
+                // One line, like the text field it stands in for: when Cancel narrows the field a wrapped
+                // placeholder left the cursor beside its first line (owner 2026-11-23). At accessibility sizes one
+                // line truncates to a word or two, so it wraps there with the cursor on its first line.
+                ZStack(alignment: dynamicTypeSize.isAccessibilitySize ? .topLeading : .leading) {
                     if text.isEmpty {
-                        // One line, like the text field it stands in for: when Cancel narrows the field a wrapped
-                        // placeholder left the cursor beside its first line (owner 2026-11-23).
                         Text(placeholder)
                             .font(.callout)
-                            .lineLimit(1)
+                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
                             .minimumScaleFactor(0.8)
                             .foregroundStyle(AppTheme.textColor(opacity: AppTheme.disabledEmphasisOpacity))
                             .allowsHitTesting(false)
+                            // The field below carries it as its name; read once, not as separate text.
+                            .accessibilityHidden(true)
                     }
                     TextField("", text: $text)
                         .focused(isFocused)
@@ -54,6 +58,7 @@ struct AppSearchField: View {
                         .font(.callout)
                         .adaptiveForegroundColor()
                         .tint(AppTheme.textColor())
+                        .accessibilityLabel(placeholder)
                         .accessibilityIdentifier(accessibilityID ?? "")
                 }
 
