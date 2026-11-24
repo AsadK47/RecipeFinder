@@ -55,7 +55,7 @@ struct QuickSnackSheet: View {
                         .font(.title2)
                         .animation(.default, value: selectedEmoji)
 
-                    TextField("Search or type a snack...", text: $searchText)
+                    TextField("Search or type a snack…", text: $searchText)
                         .autocorrectionDisabled()
                         .onChange(of: searchText) { _, newValue in
                             let trimmed = newValue.trimmingCharacters(in: .whitespaces)

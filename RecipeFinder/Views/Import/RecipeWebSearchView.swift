@@ -67,7 +67,7 @@ struct RecipeWebSearchView: View {
                 Image(systemName: "magnifyingglass")
                     .adaptiveSecondaryForeground()
                     .accessibilityHidden(true)
-                TextField("Search \(engine.displayName) for a recipe", text: $query)
+                TextField("Search \(engine.displayName) for a recipe…", text: $query)
                     .textFieldStyle(.plain)
                     .submitLabel(.search)
                     .focused($queryFocused)
