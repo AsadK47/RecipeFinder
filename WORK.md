@@ -68,7 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
-🚧 Inbox 🟡 take-off count (builder 2026-11-24): `agent/plan-takeoff-count` (96c870b fix) + `agent/plan-takeoff-count-red` (10a8c9b, must fail `anEarlierWeeklyCopyThatStaysPlannedIsNotCounted`) pushed; check both Build & Test runs, then land.
+✅ Inbox 🟡 take-off count landed 4355abd (builder 2026-11-24; leftover branches agent/plan-takeoff-count auto-cleanup, agent/plan-takeoff-count-red unmerged — delete). Next: Inbox 🟡 Toast.swift:56 — announce every toast to VoiceOver (challenger 2026-11-24).
 ✅ Inbox 🟡 MealPlanningManager `restore` skipped plans landed 45dc4be (builder 2026-11-24; leftover branches agent/plan-undo-skipped auto-cleanup, agent/plan-undo-skipped-red unmerged — delete). Next: Inbox 🟡 MealPlanningView+Actions.swift:260 "N meals taken off" count → pure function (file now 306 lines — extract the take-off merge + toast text first).
 ✅ Inbox 🔴 TestFlight feedback injection slice 1 (agent gate, `owner-ok` label) landed on main (builder 2026-11-24, docs only); rest (script drops tester text + Privacy 6.5/6.6) waits with Inbox (d), which the owner must land (scripts/workflows to main refused to the agent). Next: owner fast-forwards (a)/(b); meanwhile the first Inbox 🟡 not touching `.github/` — MealPlanningManager `restore` skipped plans (MealPlanningManager.swift:218).
 ⏸ Inbox 🐞 (a) cleanup GH013: done on `agent/cleanup-skip-refused` (8648522, reviewed, workflow-only so no Build & Test) — the agent may not push it to main; owner fast-forwards `main` to it. If its first run warns "no branch could be deleted", the ruleset blocks all agent/* deletes → lift it for agent/* or retire the job (CHALLENGES:79). ⏸ Inbox 🐞 (b) asc_promote state check: done on `agent/asc-promote-state` (ca981bf, reviewer + challenger, scripts only so no Build & Test) — agent push to main refused again → owner fast-forwards `main` to it (after or with (a); both branch from main and touch different files). Next: Inbox 🐞 (c) `testflight-promote.yml` → `workflow_dispatch` only — likely refused on main too, so ask the owner to land (a)/(b) first.
@@ -87,14 +87,6 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-
-- **Take-off toast count** (`MealPlanTakeOff.after`): counts snapshot ids no longer planned (an earlier weekly copy
-  that only stopped repeating stays planned → not counted); still-planned check via `mealPlans(for: date)` so the
-  protocol gains nothing. New file in Models/MealPlanning (pbxproj by hand) rather than growing MealPlanModel (285).
-  **Pre-mortem:** (1) count too high for a weekly series → `anEarlierWeeklyCopyThatStaysPlannedIsNotCounted`;
-  (2) Undo loses the first take-off's snapshot → `aSecondTakeOffSharesTheUndoAndKeepsTheFirstSnapshot`;
-  (3) single take-off text regresses → `firstTakeOff…` tests.
-
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

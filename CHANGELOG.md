@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-24 · Inbox take-off toast count · 4355abd
+- For you: When you take several meals off Plan in a row, the message now counts exactly the meals that came off, so a weekly dinner that stays on an earlier night isn't counted.
+- Behind the build: a new test failed on the old count first; a challenger found two more miscounts (a repeated tap and a moved meal), both fixed with tests before it shipped.
+
 ## 2026-11-24 · Inbox MealPlanningManager restore skipped plans · 45dc4be
 - For you: When you undo taking a meal off Plan and another meal has taken its place since, Plan now tells you which meal stayed off, so nothing disappears quietly.
 - Behind the build: new tests failed on the old code first; a reviewer and a challenger reworded the message to be accurate, gave it its own calendar note and stopped it covering the Undo message.

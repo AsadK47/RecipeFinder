@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Take-off toast count** (4355abd, builder 2026-11-24; `MealPlanTakeOff.after`): counts snapshot ids no longer planned (an earlier weekly copy
+  that only stopped repeating stays planned → not counted); still-planned check by id on any day (`isPlanned(_:)` added
+  to the protocol after review: a kept copy moved while the toast was up counted as gone); a no-op second tap keeps
+  the one-meal text. Seen red on `agent/plan-takeoff-count-red`. New file in Models/MealPlanning (pbxproj by hand) rather than growing MealPlanModel (285).
+  **Pre-mortem:** (1) count too high for a weekly series → `anEarlierWeeklyCopyThatStaysPlannedIsNotCounted`;
+  (2) Undo loses the first take-off's snapshot → `aSecondTakeOffSharesTheUndoAndKeepsTheFirstSnapshot`;
+  (3) single take-off text regresses → `firstTakeOff…` tests.
 - **Undo says what stayed off** (45dc4be, builder 2026-11-24): `restore` returns the plans it skipped
   (`@discardableResult`, CQS bend accepted: the skip is decided inside the same write); text is pure
   `MealPlanModel.notPutBackMessage` (counts dishes by recipe, so a weekly dish's later copies are one meal), shown on its

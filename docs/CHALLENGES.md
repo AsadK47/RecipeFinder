@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-24 (item pass: Inbox 🟡 take-off toast count — fixed: a stale second tap that changed nothing read "2 meals taken off" → one-meal text; a kept weekly copy moved to another night while the toast was up counted as gone (reviewer + challenger) → `isPlanned(id)` on any day)
+- Not fixed: the view's `isStillPlanned` closure is thin glue with no host test — a wrong closure would pass every unit test; `isPlannedFindsAPlanByIdOnAnyDay` covers the manager half. Cost if wrong: toast count off, Undo unaffected.
+- Not fixed (design): later weekly copies `propagateRecurring` made for weeks the cook browsed count as meals taken off, so the number depends on how far ahead they looked. Cost: a bigger number than the cook expects.
+  → Owner:
+
 ## 2026-11-24 (item pass: Inbox 🔴 TestFlight feedback injection, agent gate — fixed: gate now also covers comments/edits on a labelled issue, BACKLOG:111 names it, Inbox line keeps the title + `.p8` detail)
 - Not fixed: the agent's GitHub token acts as the owner, so a label added by a steered agent looks like the owner's — "agents never add it" is a written rule only; cost if wrong: a stranger's text is worked as a bug.
 - Not fixed: issue body/title still carry tester text and the body still says "Agent loop: reproduce, fix" (script change, with Inbox (d)); `owner-ok` label doesn't exist yet (owner creates it).
