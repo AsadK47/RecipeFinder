@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🔴 Privacy 6.5 crash reports + 7.3 sharing landed d4f516e (builder 2026-11-24; leftover branch agent/privacy-share-wording, auto-cleanup). Website session: copy 6.5/7.3 + date 24 Nov 2026 into `privacy.html`. Next: Inbox 🐞 MealPlanTakeOff.swift:25 `gone` counts later-week copies, then 🐞 MealPlanningView+Actions.swift:274 undoNote Task, then `NotificationManagerTests.swift:236`.
 ✅ Inbox 🟡 search placeholder copy landed 57e10d0 (builder 2026-11-24; leftover branch agent/search-placeholder-copy, auto-cleanup). Next: Inbox 🟡 `NotificationManagerTests.swift:236` shared instance / force-unwraps.
 ✅ f952384 review fixes landed 1d9a2cc..694569c (builder 2026-11-24): search field VoiceOver name + AX-size wrap; At-home UI test scrolls to its tag. Leftover branch agent/search-field-a11y (remote is pre-rebase 615c035 — delete by hand). Next: Inbox 🟡 search placeholder copy (now unblocked), then `NotificationManagerTests.swift:236`.
 ✅ Inbox 🟡 seen-red labels + f952384 review done (builder 2026-11-24, docs only). Next: first open Inbox 🟡 that needs no device or owner — `NotificationManagerTests.swift:236` shared instance / force-unwraps (reviewer 2026-11-23). New Inbox 🟡 search placeholder copy: take it after agent/search-field-a11y lands (same component).

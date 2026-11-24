@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-24 · Inbox Privacy 6.5 + 7.3 wording · d4f516e
+- For you: The Privacy Policy now describes the sharing you can already do — recipes, your shopping list and My Cookbook pages through the share sheet — and says plainly that beta crash reports are public too.
+- Behind the build: a reviewer and a challenger checked every line against the app's code and both found the shopping list share the first draft missed.
+
 ## 2026-11-24 · Inbox search placeholder copy · 57e10d0
 - For you: Search fields across the app now share one friendly style, like "Search recipes…" and "Search foods…", so every search reads the same way.
 - Behind the build: a challenger checked every search field and found one more ingredient prompt to match.
