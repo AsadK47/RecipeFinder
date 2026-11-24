@@ -23,7 +23,7 @@ struct MealPlanTakeOff: Equatable {
                                         : "\(plan.recipeName) taken off"
             return MealPlanTakeOff(undo: undo, message: text)
         }
-        let meals = Set(undo.map { "\($0.mealTime.rawValue)-\(Calendar.current.startOfDay(for: $0.date))" })
-        return MealPlanTakeOff(undo: undo, message: "\(max(meals.count, 2)) meals taken off")
+        let gone = undo.filter { !isStillPlanned($0) }.count
+        return MealPlanTakeOff(undo: undo, message: "\(max(gone, 2)) meals taken off")
     }
 }
