@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-23, builder agent)
 
 ## In progress
+- Inbox 🟡 **placeholderCardIsOpaque flake** (builder 2026-11-24): branch `agent/share-card-opaque` (089cdd9) — `CookbookShareCard.render` draws via `ImageRenderer.render` into an opaque `UIGraphicsImageRenderer` on black + new `cardIsUpright` test; waiting on Build & Test, reviewer + challenger running.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — lands as soon as the owner deploys the CloudKit Production schema (model 17 photos + model 18 deletedAt).
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -83,6 +84,8 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **Share card opaque (flake):** failing log (run 45135500689) showed corner alpha **0** — nothing drawn, not a translucent tint — so `renderer.isOpaque` + `.uiImage` produced a blank, non-opaque bitmap on a stalled simulator. Draw through `render` into our own opaque CG bitmap on black: opacity no longer depends on ImageRenderer. Flake can't be reproduced on demand → *unconfirmed*. **Pre-mortem:** (1) flipped card (CG vs UIKit origin) → `cardIsUpright`; (2) blank card now passes opacity as solid black → `cardShowsPhoto`/`cardIsUpright` need the red photo drawn; (3) wrong pixel size → `cardPixelSize`.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
