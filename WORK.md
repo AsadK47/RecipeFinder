@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🟡 seen-red labels + f952384 review done (builder 2026-11-24, docs only). Next: first open Inbox 🟡 that needs no device or owner — `NotificationManagerTests.swift:236` shared instance / force-unwraps (reviewer 2026-11-23). New Inbox 🟡 search placeholder copy: take it after agent/search-field-a11y lands (same component).
 ✅ Inbox 🟡 Plan empty-night contrast landed 931ade6 (builder 2026-11-24; leftover branch agent/plan-past-night-contrast, auto-cleanup); Screenshots on main triggered to refresh the `screenshots` release. Next: Inbox 🟡 c496d06/b4e4ec6/e85cf25 seen-red/unconfirmed labels + reviewer/challenger on f952384 — first open Inbox 🟡 that needs no device or owner.
 ✅ Inbox 🟡 Toast VoiceOver landed 508a17b (builder 2026-11-24; leftover branches agent/toast-announce auto-cleanup, agent/toast-announce-red unmerged — delete). Next: Inbox 🟡 Screenshots on main + 04-meal-plan empty-night text contrast (reviewer 2026-11-21) — first open Inbox 🟡 that needs no device or owner.
 ✅ Inbox 🟡 take-off count landed 4355abd (builder 2026-11-24; leftover branches agent/plan-takeoff-count auto-cleanup, agent/plan-takeoff-count-red unmerged — delete). Next: Inbox 🟡 Toast.swift:56 — announce every toast to VoiceOver (challenger 2026-11-24).

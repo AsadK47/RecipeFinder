@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-24 (item pass: f952384 search placeholder on one line — review only, fixes on agent/search-field-a11y)
+- ⚔️ [Tests] Reverting f952384 fails no test — no unit/UI test references `AppSearchField` or its placeholder (only the cuisine field's `placeholderValue`, RecipeFinderSheetPresentationUITests:88); agent/search-field-a11y's audit test covers the name, not the one-line layout — alternative: native `TextField(_:text:prompt:)` + a `placeholderValue` UI test.
+- ⚔️ [Break] Below AX sizes the placeholder shrinks to 0.8× (AppSearchField.swift:45) then the typed text snaps to full `.callout` on the first keystroke — alternative: native prompt (same metrics as the text); not seen on a device, no SE-width + Cancel screenshot exists.
+
 ## 2026-11-24 (item pass: Inbox 🟡 Plan empty-night contrast — fixed: Dark secondary text × 0.55 ≈ 2.7:1 → primary text; root cause confirmed by before/after screenshots)
 - Not fixed: no Dark-mode Plan screenshot exists, so Dark contrast is by reasoning (primary × 0.55), not looked at — add a Dark 04 shot with *CI screenshots of key screens*.
 - Not fixed: the tile's 0.55 ignores Increase Contrast (`colorSchemeContrast`) — owner's dimming; raise only with the owner.
