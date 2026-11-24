@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+🚧 Inbox 🟡 Toast VoiceOver: `agent/toast-announce` (e61947a, `ToastAnnouncement.text` + every toast posts) + red `agent/toast-announce-red` (d03f623) pushed, CI runs 45395182418 / 45395153821, reviewer + challenger running. Next: red must fail `plainToastIsAnnounced`, fix green → rebase, ff main, tick, Log, CHANGELOG.
 ✅ Inbox 🟡 take-off count landed 4355abd (builder 2026-11-24; leftover branches agent/plan-takeoff-count auto-cleanup, agent/plan-takeoff-count-red unmerged — delete). Next: Inbox 🟡 Toast.swift:56 — announce every toast to VoiceOver (challenger 2026-11-24).
 ✅ Inbox 🟡 MealPlanningManager `restore` skipped plans landed 45dc4be (builder 2026-11-24; leftover branches agent/plan-undo-skipped auto-cleanup, agent/plan-undo-skipped-red unmerged — delete). Next: Inbox 🟡 MealPlanningView+Actions.swift:260 "N meals taken off" count → pure function (file now 306 lines — extract the take-off merge + toast text first).
 ✅ Inbox 🔴 TestFlight feedback injection slice 1 (agent gate, `owner-ok` label) landed on main (builder 2026-11-24, docs only); rest (script drops tester text + Privacy 6.5/6.6) waits with Inbox (d), which the owner must land (scripts/workflows to main refused to the agent). Next: owner fast-forwards (a)/(b); meanwhile the first Inbox 🟡 not touching `.github/` — MealPlanningManager `restore` skipped plans (MealPlanningManager.swift:218).
