@@ -22,6 +22,13 @@ enum ToastDismissal {
     }
 }
 
+/// What VoiceOver hears when a toast appears; it can't see the capsule slide in.
+enum ToastAnnouncement {
+    static func text(for message: String, actionTitle: String?) -> String? {
+        actionTitle.map { "\(message). \($0) available" }
+    }
+}
+
 private struct ToastModifier: ViewModifier {
     @Binding var message: String?
     let icon: String
@@ -52,8 +59,8 @@ private struct ToastModifier: ViewModifier {
             // `.task(id:)` restarts on message change so rapid updates reset the dismiss timer instead of clearing early.
             .task(id: message) {
                 guard let shown = message else { return }
-                if let action {
-                    AccessibilityNotification.Announcement("\(shown). \(action.title) available").post()
+                if let announcement = ToastAnnouncement.text(for: shown, actionTitle: action?.title) {
+                    AccessibilityNotification.Announcement(announcement).post()
                 }
                 await ToastDismissal.run(showing: shown, for: shownFor, current: { message }, clear: { message = nil })
             }

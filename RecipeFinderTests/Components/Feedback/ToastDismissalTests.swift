@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// The toast's dismiss timer. `ToastModifier.body` is layout plus one call to `ToastDismissal.run` (thin glue).
+/// The toast's dismiss timer and VoiceOver text. `ToastModifier.body` is layout plus calls to these (thin glue).
 @MainActor
 @Suite("Toast dismissal")
 struct ToastDismissalTests {
@@ -47,5 +47,15 @@ struct ToastDismissalTests {
         wait.cancel()
         await wait.value
         #expect(shown.message == nil)
+    }
+
+    @Test("Every toast is announced to VoiceOver, not only ones with a button")
+    func plainToastIsAnnounced() {
+        #expect(ToastAnnouncement.text(for: "No past plans to clear", actionTitle: nil) == "No past plans to clear")
+    }
+
+    @Test("A toast with a button says the button is there")
+    func actionToastNamesTheButton() {
+        #expect(ToastAnnouncement.text(for: "1 meal taken off", actionTitle: "Undo") == "1 meal taken off. Undo available")
     }
 }
