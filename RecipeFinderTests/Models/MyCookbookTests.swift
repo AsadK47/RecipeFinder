@@ -260,6 +260,17 @@ struct CookbookShareCardTests {
         #expect(top.alpha == 255)
     }
 
+    @Test("the card is drawn the right way up: photo bright at the top, darkened behind the name at the foot")
+    func cardIsUpright() throws {
+        let photo = Self.solid(.red, size: CGSize(width: 400, height: 300))
+        let card = try #require(CookbookShareCard.render(page: page, picture: photo))
+        let top = try #require(Self.pixel(card, x: 540, y: 20))
+        let foot = try #require(Self.pixel(card, x: 1070, y: 1340))
+        #expect(top.red > 200)
+        #expect(foot.red < 120)
+        #expect(foot.alpha == 255)
+    }
+
     @Test("the card's photo is loaded from a file on the phone")
     func pictureLoadsFromFile() async throws {
         let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

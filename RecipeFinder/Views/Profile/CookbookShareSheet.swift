@@ -94,11 +94,26 @@ struct CookbookShareCard: View {
     static func render(page: CookbookPage, picture: UIImage?, now: Date = Date()) -> UIImage? {
         let renderer = ImageRenderer(content: CookbookShareCard(page: page, picture: picture,
                                                                 line: MyCookbook.shareLine(for: page, now: now)))
-        renderer.scale = scale
-        // Opaque, so the placeholder art's soft tints don't come out see-through in other apps.
-        renderer.isOpaque = true
         renderer.proposedSize = ProposedViewSize(size)
-        return renderer.uiImage
+        // Drawn into an opaque bitmap on a black base rather than `renderer.uiImage`, which on a busy simulator once
+        // came back fully transparent (corner alpha 0, CI run 45135500689) — the card is never see-through.
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        format.opaque = true
+        var drew = false
+        let image = UIGraphicsImageRenderer(size: size, format: format).image { bitmap in
+            UIColor.black.setFill()
+            bitmap.fill(CGRect(origin: .zero, size: size))
+            let context = bitmap.cgContext
+            // `render` draws with Core Graphics' bottom-left origin; UIKit's bitmap is top-left.
+            context.translateBy(x: 0, y: size.height)
+            context.scaleBy(x: 1, y: -1)
+            renderer.render(rasterizationScale: scale) { _, draw in
+                draw(context)
+                drew = true
+            }
+        }
+        return drew ? image : nil
     }
 
     /// The page's picture as a bitmap (photo, kept web copy, built-in art or asset); nil → the card draws the
