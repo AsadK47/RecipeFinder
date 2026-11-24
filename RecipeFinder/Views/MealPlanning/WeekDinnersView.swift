@@ -117,38 +117,7 @@ struct WeekDinnersView: View {
     }
 
     private func emptyTile(_ night: WeekDinners.Night) -> some View {
-        Button {
-            HapticManager.shared.light()
-            onPlan(night.date)
-        } label: {
-            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .strokeBorder(AppTheme.subtleStroke, style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                    Image(systemName: night.isPast ? "moon.zzz" : "plus")
-                        .font(.title2.weight(.semibold))
-                        .adaptiveSecondaryForeground()
-                }
-                // A missed night is history, not a call to action: half height so the nights ahead lead.
-                .frame(height: night.isPast ? photoHeight / 2 : photoHeight)
-                dayLabel(night)
-                Text(night.isPast ? "No dinner planned" : "Plan dinner")
-                    .font(.subheadline)
-                    .adaptiveSecondaryForeground()
-                    .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(AppTheme.spacing8)
-            .frame(maxHeight: .infinity, alignment: .top)
-            .appCard()
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .disabled(night.isPast)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(Self.spokenDay(night)), no dinner planned")
-        .accessibilityHint(night.isPast ? "" : "Plans dinner for this night")
-        .accessibilityAddTraits(.isButton)
+        WeekDinnerEmptyTile(night: night, spokenDay: Self.spokenDay(night), dayLabel: dayLabel(night), onPlan: onPlan)
     }
 
     private func dayLabel(_ night: WeekDinners.Night) -> some View {
