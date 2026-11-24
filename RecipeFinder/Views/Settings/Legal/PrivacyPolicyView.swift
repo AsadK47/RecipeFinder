@@ -11,7 +11,7 @@ import SwiftUI
 // Updated 2026-11-23 (owner OK in chat, BACKLOG Needs owner "Privacy policy vs public TestFlight"): 6.4–6.6 and
 // 10.1–10.2 describe TestFlight beta feedback (fetch_testflight_feedback.py: public issues + 14-day public artifact).
 // Updated 2026-11-24 (BACKLOG Inbox, reviewer): 6.5 names crash reports as public; 7.3 describes share-sheet sharing
-// (RecipeDetailToolbar recipe file/text, CookbookShareSheet page picture).
+// (RecipeDetailToolbar recipe file/text, KitchenShoppingView list text, CookbookShareSheet picture + caption).
 // Flagged for the solicitor: the US transfer safeguard, and whether publishing feedback passes the balancing test.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
@@ -97,7 +97,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("7.2 You can turn iCloud sync off at any time in the same place; sync stops the next time you open the Application, and your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, removes it from your iCloud account and from every device signed in to it. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, the Application then sends those changes to your iCloud account and to every device signed in to it.")
 
-                BodyText("7.3 Sharing. You can share a recipe (as a recipe file or as text) or a My Cookbook page (as a picture) through the iOS share sheet. It goes to the people and apps you choose, who can see and keep it, and is handled from then on under their terms; the Developer does not receive a copy. Any future feature that shares content in a new way will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
+                BodyText("7.3 Sharing. Through the iOS share sheet you can share a recipe (as a recipe file or as text), your shopping list (as text) and a My Cookbook page (as a picture with a caption naming the dish, how many times you've made it and when). You can also save a backup file of your data wherever you choose (Section 9.1). What you share goes to the people and apps you choose, who can see and keep it, and is handled from then on under their terms; the Application does not send the Developer a copy. Any future feature that shares content in a new way will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
             }
 
             Group {
