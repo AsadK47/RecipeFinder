@@ -89,6 +89,13 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 
+- **Plan empty-night contrast** (`agent/plan-past-night-contrast`): cause is double dimming — the past tile is
+  already 0.55 (owner 2026-11-20) and `.disabled` on a plain Button dims it again. Fix: a missed night is plain
+  content, not a disabled button (extracted `WeekDinnerEmptyTile`). Rejected: raising the 0.55 (owner's call) or a
+  darker text colour (would differ from the cooked past tile). **Pre-mortem:** (1) still faint → look at 04-meal-plan
+  on the branch's Screenshots; (2) a night ahead loses its tap → `nightAheadPlansItsDateOnTap`; (3) VoiceOver calls a
+  past night a button → past branch has no `.isButton` trait (by reading).
+
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
