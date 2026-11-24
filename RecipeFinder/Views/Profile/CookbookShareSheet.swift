@@ -108,17 +108,19 @@ struct CookbookShareCard: View {
     /// The card's black background makes every drawn card solid, so a see-through corner means nothing was drawn.
     static func isDrawn(_ image: UIImage) -> Bool {
         guard let cgImage = image.cgImage else { return false }
-        var alpha: UInt8 = 0
-        let read: Bool = withUnsafeMutableBytes(of: &alpha) { buffer in
+        var rgba = [UInt8](repeating: 0, count: 4)
+        let read: Bool = rgba.withUnsafeMutableBytes { buffer in
             guard let context = CGContext(data: buffer.baseAddress, width: 1, height: 1, bitsPerComponent: 8,
-                                          bytesPerRow: 1, space: nil,
-                                          bitmapInfo: CGImageAlphaInfo.alphaOnly.rawValue) else { return false }
+                                          bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(),
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
+                return false
+            }
             // The pixel 2 in from the top-left corner (Core Graphics counts y from the bottom).
             context.draw(cgImage, in: CGRect(x: -2, y: -(cgImage.height - 3), width: cgImage.width,
                                               height: cgImage.height))
             return true
         }
-        return read && alpha == 255
+        return read && rgba[3] == 255
     }
 
     /// The page's picture as a bitmap (photo, kept web copy, built-in art or asset); nil → the card draws the
