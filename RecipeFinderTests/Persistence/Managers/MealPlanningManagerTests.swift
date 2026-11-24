@@ -1108,8 +1108,40 @@ struct UndoTakeOffTests {
         let pasta = plan("Pasta", on: day(2))
         sut.addMealPlan(pasta)
 
-        sut.restore(before)
+        let skipped = sut.restore(before)
 
         #expect(sut.mealPlans.map(\.id) == [pasta.id])
+        #expect(skipped.map(\.id) == [dal.id]) // so Undo can say the dal stayed off
+    }
+
+    @Test func undoThatPutsEverythingBackSkipsNothing() {
+        let sut = makeManager()
+        let dal = plan("Dal", on: day(2))
+        sut.addMealPlan(dal)
+        let before = sut.plansChangedByRemoving(dal)
+        sut.removeMealPlan(dal)
+
+        let skipped = sut.restore(before)
+
+        #expect(skipped.isEmpty)
+    }
+
+    @Test func undoSkipsAOneOffWhoseNightAWeeklyCopyRefilled() throws {
+        let sut = makeManager()
+        let recipe = UUID()
+        let lastWeek = plan("Tacos", on: day(2), recurring: true, recipe: recipe)
+        let dal = plan("Dal", on: day(9))
+        sut.addMealPlan(lastWeek)
+        sut.addMealPlan(dal)
+        let before = sut.plansChangedByRemoving(dal)
+        sut.removeMealPlan(dal)
+        sut.propagateRecurring(toWeekStarting: Calendar.current.startOfDay(for: day(9)))
+        let refilled = try #require(sut.mealPlan(for: day(9), mealTime: .dinner))
+        #expect(refilled.recipeName == "Tacos")
+
+        let skipped = sut.restore(before)
+
+        #expect(skipped.map(\.id) == [dal.id])
+        #expect(sut.mealPlan(for: day(9), mealTime: .dinner)?.recipeName == "Tacos")
     }
 }

@@ -9,7 +9,8 @@ protocol MealPlanningManaging: AnyObject, Observable {
     /// The plans taking `plan` off would change, as they are now: it, and for a weekly meal every copy of its series.
     func plansChangedByRemoving(_ plan: MealPlanModel) -> [MealPlanModel]
     /// Undo for a take-off: puts `plans` back as they were (by id), skipping a slot the cook has filled since.
-    func restore(_ plans: [MealPlanModel])
+    /// Returns the plans it skipped, so the cook can be told they stayed off.
+    @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel]
     func toggleRecurring(_ mealPlan: MealPlanModel)
     func propagateRecurring(toWeekStarting startDate: Date)
     func clearOldMealPlans()
@@ -210,7 +211,7 @@ final class MealPlanningManager: MealPlanningManaging {
         return mealPlans.filter { $0.id == plan.id || ($0.isRecurring && SeriesKey($0, calendar: .current) == key) }
     }
 
-    func restore(_ plans: [MealPlanModel]) {
+    @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel] {
         var restored: [MealPlanModel] = []
         for plan in plans {
             if let index = mealPlans.firstIndex(where: { $0.id == plan.id }) {
@@ -222,10 +223,11 @@ final class MealPlanningManager: MealPlanningManaging {
             }
             restored.append(plan)
         }
-        guard !restored.isEmpty else { return }
+        guard !restored.isEmpty else { return [] }
         saveMealPlans()
         for plan in restored { syncReminder(for: plan) }
         syncSeriesReminders()
+        return []
     }
 
     /// Removing a copy of a weekly meal also stops its series: otherwise the next copy refills the night from an

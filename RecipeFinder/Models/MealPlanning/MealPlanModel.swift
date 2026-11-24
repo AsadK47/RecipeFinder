@@ -80,6 +80,11 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
     
     /// A night's dinner is taken: planned, or a weekly dinner on that weekday from an earlier week will be copied in
     /// (`propagateRecurring` fills a week only when it's shown, so a week ahead can look open when it isn't).
+    /// Toast text after Undo when some meals couldn't go back (their night was planned again since); nil when all did.
+    static func notPutBackMessage(_ skipped: [MealPlanModel]) -> String? {
+        nil
+    }
+
     static func hasDinner(on day: Date, plans: [MealPlanModel], calendar: Calendar = .current) -> Bool {
         let weekday = calendar.component(.weekday, from: day)
         let start = calendar.startOfDay(for: day)

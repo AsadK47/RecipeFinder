@@ -219,3 +219,24 @@ struct MealPlanShownTests {
         #expect(plan(dal, on: at(23)).isShown(now: at(20, 22), recipes: [dal], calendar: cal))
     }
 }
+
+/// Undo after a take-off can't put a meal back on a night planned since; the toast has to say so.
+@Suite("Undo: meals that couldn't go back")
+struct MealPlanNotPutBackTests {
+    private func plan(_ name: String) -> MealPlanModel {
+        MealPlanModel(recipeId: UUID(), recipeName: name, date: Date(), mealTime: .dinner)
+    }
+
+    @Test func nothingSkippedSaysNothing() {
+        #expect(MealPlanModel.notPutBackMessage([]) == nil)
+    }
+
+    @Test func oneSkippedNamesTheMeal() {
+        #expect(MealPlanModel.notPutBackMessage([plan("Dal")]) == "Dal stayed off: that meal is planned again")
+    }
+
+    @Test func severalSkippedCountThem() {
+        #expect(MealPlanModel.notPutBackMessage([plan("Dal"), plan("Tacos")])
+                == "2 meals stayed off: those meals are planned again")
+    }
+}
