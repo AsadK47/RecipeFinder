@@ -221,8 +221,9 @@ struct CookbookShareCardTests {
         }
     }
 
-    /// Alpha and red of one pixel (x, y from the top-left) of the rendered card, read back through a bitmap context.
-    private static func pixel(_ image: UIImage, x: Int, y: Int) -> (alpha: UInt8, red: UInt8)? {
+    /// Alpha and colour of one pixel (x, y from the top-left) of the rendered card, read back through a bitmap context.
+    private static func pixel(_ image: UIImage, x: Int, y: Int)
+        -> (alpha: UInt8, red: UInt8, green: UInt8, blue: UInt8)? {
         guard let cgImage = image.cgImage else { return nil }
         var bytes = [UInt8](repeating: 0, count: 4)
         let drawn: Bool = bytes.withUnsafeMutableBytes { buffer in
@@ -233,7 +234,7 @@ struct CookbookShareCardTests {
                                               height: cgImage.height))
             return true
         }
-        return drawn ? (bytes[3], bytes[0]) : nil
+        return drawn ? (bytes[3], bytes[0], bytes[1], bytes[2]) : nil
     }
 
     @Test("the card renders 1080 × 1350 pixels, a 4:5 portrait that fits feeds and messages")
@@ -249,6 +250,18 @@ struct CookbookShareCardTests {
         let card = try #require(CookbookShareCard.render(page: page, picture: nil))
         let corner = try #require(Self.pixel(card, x: 2, y: 2))
         #expect(corner.alpha == 255)
+        // The placeholder art's tint, not a blank card on its black background.
+        #expect(Int(corner.red) + Int(corner.green) + Int(corner.blue) > 30)
+    }
+
+    @Test("a bitmap with nothing drawn in its corner doesn't count as a card")
+    func undrawnBitmapIsNotACard() {
+        #expect(!CookbookShareCard.isDrawn(Self.solid(.clear, size: CGSize(width: 64, height: 64))))
+    }
+
+    @Test("a bitmap with a solid corner counts as drawn")
+    func solidBitmapIsDrawn() {
+        #expect(CookbookShareCard.isDrawn(Self.solid(.black, size: CGSize(width: 64, height: 64))))
     }
 
     @Test("the card shows the dish photo, filling the top of the card")
@@ -258,17 +271,6 @@ struct CookbookShareCardTests {
         let top = try #require(Self.pixel(card, x: 540, y: 20))
         #expect(top.red > 200)
         #expect(top.alpha == 255)
-    }
-
-    @Test("the card is drawn the right way up: photo bright at the top, darkened behind the name at the foot")
-    func cardIsUpright() throws {
-        let photo = Self.solid(.red, size: CGSize(width: 400, height: 300))
-        let card = try #require(CookbookShareCard.render(page: page, picture: photo))
-        let top = try #require(Self.pixel(card, x: 540, y: 20))
-        let foot = try #require(Self.pixel(card, x: 1070, y: 1340))
-        #expect(top.red > 200)
-        #expect(foot.red < 120)
-        #expect(foot.alpha == 255)
     }
 
     @Test("the card's photo is loaded from a file on the phone")

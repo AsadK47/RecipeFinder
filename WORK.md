@@ -1,7 +1,7 @@
 # WORK.md — handoff (2026-11-23, builder agent)
 
 ## In progress
-- Inbox 🟡 **placeholderCardIsOpaque flake** (builder 2026-11-24): branch `agent/share-card-opaque` (089cdd9) — `CookbookShareCard.render` draws via `ImageRenderer.render` into an opaque `UIGraphicsImageRenderer` on black + new `cardIsUpright` test; waiting on Build & Test, reviewer + challenger running.
+- Inbox 🟡 **placeholderCardIsOpaque flake** (builder 2026-11-24): branch `agent/share-card-opaque` — `CookbookShareCard.render` keeps `uiImage`, checks `isDrawn` (corner alpha), retries once, else nil → "Try again"; waiting on Build & Test.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — lands as soon as the owner deploys the CloudKit Production schema (model 17 photos + model 18 deletedAt).
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -85,7 +85,7 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 
-- **Share card opaque (flake):** failing log (run 45135500689) showed corner alpha **0** — nothing drawn, not a translucent tint — so `renderer.isOpaque` + `.uiImage` produced a blank, non-opaque bitmap on a stalled simulator. Draw through `render` into our own opaque CG bitmap on black: opacity no longer depends on ImageRenderer. Flake can't be reproduced on demand → *unconfirmed*. **Pre-mortem:** (1) flipped card (CG vs UIKit origin) → `cardIsUpright`; (2) blank card now passes opacity as solid black → `cardShowsPhoto`/`cardIsUpright` need the red photo drawn; (3) wrong pixel size → `cardPixelSize`.
+- **Share card drawn-check (flake):** failing logs (runs 45101329693, 45135500689) showed corner alpha **0** while the card has `.background(Color.black)` — so nothing was drawn, not translucent tints. First fix (opaque CG bitmap on black via `render`) rejected by the challenger: it turns a blank render into a black card that passes. Now: `uiImage` (no `isOpaque`, so an undrawn card reads see-through), `isDrawn` corner check, one retry, nil → the sheet's existing "Try again". Root cause (CI stall) stays with the CI lane. Can't reproduce on demand → *unconfirmed*. **Pre-mortem:** (1) blank card shipped → `placeholderCardIsOpaque` now asserts the corner isn't black + `isDrawn` unit tests; (2) check wrongly rejects real cards → every render test `#require`s a card; (3) wrong pixel → `isDrawn` reads the same (2,2) the test reads.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

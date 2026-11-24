@@ -92,30 +92,33 @@ struct CookbookShareCard: View {
     /// Draws the card as a bitmap; nil if the renderer couldn't.
     @MainActor
     static func render(page: CookbookPage, picture: UIImage?, now: Date = Date()) -> UIImage? {
-        let renderer = ImageRenderer(content: CookbookShareCard(page: page, picture: picture,
-                                                                line: MyCookbook.shareLine(for: page, now: now)))
-        renderer.proposedSize = ProposedViewSize(size)
-        // Drawn into an opaque bitmap on a black base rather than `renderer.uiImage`, which on a busy simulator once
-        // came back fully transparent (corner alpha 0, CI run 45135500689) — the card is never see-through.
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = scale
-        format.opaque = true
-        // 8-bit sRGB like the old `uiImage`, not an extended-range bitmap on wide-colour screens.
-        format.preferredRange = .standard
-        var drew = false
-        let image = UIGraphicsImageRenderer(size: size, format: format).image { bitmap in
-            UIColor.black.setFill()
-            bitmap.fill(CGRect(origin: .zero, size: size))
-            let context = bitmap.cgContext
-            // `render` draws with Core Graphics' bottom-left origin; UIKit's bitmap is top-left.
-            context.translateBy(x: 0, y: size.height)
-            context.scaleBy(x: 1, y: -1)
-            renderer.render(rasterizationScale: scale) { _, draw in
-                draw(context)
-                drew = true
-            }
+        let card = CookbookShareCard(page: page, picture: picture, line: MyCookbook.shareLine(for: page, now: now))
+        // Twice at most: on a stalled simulator the renderer twice handed back a bitmap with nothing drawn (corner
+        // alpha 0, CI runs 45101329693 and 45135500689). Nil → the sheet's "Try again", never a blank card.
+        for attempt in 1...2 {
+            let renderer = ImageRenderer(content: card)
+            renderer.scale = scale
+            renderer.proposedSize = ProposedViewSize(size)
+            if let image = renderer.uiImage, isDrawn(image) { return image }
+            CookbookShareSheet.logger.info("Cookbook share card came back undrawn (attempt \(attempt))")
         }
-        return drew ? image : nil
+        return nil
+    }
+
+    /// The card's black background makes every drawn card solid, so a see-through corner means nothing was drawn.
+    static func isDrawn(_ image: UIImage) -> Bool {
+        guard let cgImage = image.cgImage else { return false }
+        var alpha: UInt8 = 0
+        let read: Bool = withUnsafeMutableBytes(of: &alpha) { buffer in
+            guard let context = CGContext(data: buffer.baseAddress, width: 1, height: 1, bitsPerComponent: 8,
+                                          bytesPerRow: 1, space: nil,
+                                          bitmapInfo: CGImageAlphaInfo.alphaOnly.rawValue) else { return false }
+            // The pixel 2 in from the top-left corner (Core Graphics counts y from the bottom).
+            context.draw(cgImage, in: CGRect(x: -2, y: -(cgImage.height - 3), width: cgImage.width,
+                                              height: cgImage.height))
+            return true
+        }
+        return read && alpha == 255
     }
 
     /// The page's picture as a bitmap (photo, kept web copy, built-in art or asset); nil → the card draws the
