@@ -10,6 +10,8 @@ import SwiftUI
 // Updated 2026-11-22 (BACKLOG Inbox): 4.2 aisle order is per shop, or for trips with no shop chosen (matches AisleOrder).
 // Updated 2026-11-23 (owner OK in chat, BACKLOG Needs owner "Privacy policy vs public TestFlight"): 6.4–6.6 and
 // 10.1–10.2 describe TestFlight beta feedback (fetch_testflight_feedback.py: public issues + 14-day public artifact).
+// Updated 2026-11-24 (BACKLOG Inbox, reviewer): 6.5 names crash reports as public; 7.3 describes share-sheet sharing
+// (RecipeDetailToolbar recipe file/text, CookbookShareSheet page picture).
 // Flagged for the solicitor: the US transfer safeguard, and whether publishing feedback passes the balancing test.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
@@ -85,7 +87,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("6.4 Beta testing. If you test a beta version through Apple's TestFlight, feedback you choose to send (your comment, any screenshots and any crash report) reaches the Developer through Apple, under Apple's TestFlight terms and privacy policy. Apple includes the time you sent it, your email address where Apple shares it, and technical details about your device such as its model, iOS version, language, time zone, network type, battery level and free storage. The Developer uses this to fix and improve the Application.")
 
-                BodyText("6.5 Your comment (its opening words become the issue title), the time you sent it, and your device model and iOS version are posted as an issue in the Application's public GitHub project, where anyone can read them. Your Apple account name and email address are kept out of the issue. Screenshots and crash reports are attached to the project's automated run for 14 days, where anyone signed in to GitHub can download them, and stay in App Store Connect under Apple's retention. Comments and screenshots are public, so please keep personal details out of them.")
+                BodyText("6.5 Your comment (its opening words become the issue title), the time you sent it, and your device model and iOS version are posted as an issue in the Application's public GitHub project, where anyone can read them. Your Apple account name and email address are kept out of the issue. Screenshots and crash reports are attached to the project's automated run for 14 days, where anyone signed in to GitHub can download them, and stay in App Store Connect under Apple's retention. Comments, screenshots and crash reports are public, so please keep personal details out of them.")
 
                 BodyText("6.6 Feedback is stored on GitHub (GitHub, Inc.) and read by the Developer and by AI coding tools the Developer uses to investigate and fix issues (currently Anthropic's Claude). Apple, GitHub and Anthropic may process it in the United States. To have a posted comment and its files removed, contact the Developer (Section 13); copies others made while it was public, such as search engine caches, are outside the Developer's control.")
 
@@ -95,7 +97,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("7.2 You can turn iCloud sync off at any time in the same place; sync stops the next time you open the Application, and your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, removes it from your iCloud account and from every device signed in to it. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, the Application then sends those changes to your iCloud account and to every device signed in to it.")
 
-                BodyText("7.3 Future versions may offer sharing recipes and collections with people you choose. Content you choose to share will be visible to the people you share it with. Any such feature will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
+                BodyText("7.3 Sharing. You can share a recipe (as a recipe file or as text) or a My Cookbook page (as a picture) through the iOS share sheet. It goes to the people and apps you choose, who can see and keep it, and is handled from then on under their terms; the Developer does not receive a copy. Any future feature that shares content in a new way will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
             }
 
             Group {
