@@ -141,6 +141,8 @@ final class RecipeFinderSheetPresentationUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Suggested Ingredients"].waitForNonExistence(timeout: 5),
                       "Return on To buy should add the item and close the suggestions.")
         let tag = app.buttons["groceries.inKitchen"].firstMatch
+        // An earlier test in the same shard (Plan my week) can fill the list, leaving the new row below the fold.
+        for _ in 0..<6 where !tag.exists { app.swipeUp() }
         tapWhenReady(tag, "An item that's also at home should carry an In kitchen tag.")
         checkpoint(app, "after tapping In kitchen")
         XCTAssertTrue(element(app, id: "groceries.atHome").waitForExistence(timeout: 5),
