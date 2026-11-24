@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🟡 Plan empty-night contrast landed 931ade6 (builder 2026-11-24; leftover branch agent/plan-past-night-contrast, auto-cleanup); Screenshots on main triggered to refresh the `screenshots` release. Next: Inbox 🟡 c496d06/b4e4ec6/e85cf25 seen-red/unconfirmed labels + reviewer/challenger on f952384 — first open Inbox 🟡 that needs no device or owner.
 ✅ Inbox 🟡 Toast VoiceOver landed 508a17b (builder 2026-11-24; leftover branches agent/toast-announce auto-cleanup, agent/toast-announce-red unmerged — delete). Next: Inbox 🟡 Screenshots on main + 04-meal-plan empty-night text contrast (reviewer 2026-11-21) — first open Inbox 🟡 that needs no device or owner.
 ✅ Inbox 🟡 take-off count landed 4355abd (builder 2026-11-24; leftover branches agent/plan-takeoff-count auto-cleanup, agent/plan-takeoff-count-red unmerged — delete). Next: Inbox 🟡 Toast.swift:56 — announce every toast to VoiceOver (challenger 2026-11-24).
 ✅ Inbox 🟡 MealPlanningManager `restore` skipped plans landed 45dc4be (builder 2026-11-24; leftover branches agent/plan-undo-skipped auto-cleanup, agent/plan-undo-skipped-red unmerged — delete). Next: Inbox 🟡 MealPlanningView+Actions.swift:260 "N meals taken off" count → pure function (file now 306 lines — extract the take-off merge + toast text first).
@@ -88,13 +89,6 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-
-- **Plan empty-night contrast** (`agent/plan-past-night-contrast`): cause is double dimming — the past tile is
-  already 0.55 (owner 2026-11-20) and `.disabled` on a plain Button dims it again. Fix: a missed night is plain
-  content, not a disabled button (extracted `WeekDinnerEmptyTile`). Rejected: raising the 0.55 (owner's call) or a
-  darker text colour (would differ from the cooked past tile). **Pre-mortem:** (1) still faint → look at 04-meal-plan
-  on the branch's Screenshots; (2) a night ahead loses its tap → `nightAheadPlansItsDateOnTap`; (3) VoiceOver calls a
-  past night a button → past branch has no `.isButton` trait (by reading).
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

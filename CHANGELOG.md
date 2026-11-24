@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-24 · Inbox Plan empty-night contrast · 931ade6
+- For you: On Plan, a night that has passed without a dinner now reads "No dinner planned" clearly, so your week is easy to read at a glance.
+- Behind the build: a new test failed on the old tile first, and before-and-after screenshots confirmed the cause; a challenger's dark-mode check led to the clearer text colour.
+
 ## 2026-11-24 · Inbox Toast VoiceOver announcement · 508a17b
 - For you: With VoiceOver on, every confirmation message is now read aloud as it appears, such as "Added to groceries" or a note that a meal stayed off your plan.
 - Behind the build: a new test failed on the old code first; a reviewer and a challenger both checked no message is read twice.

@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-24 (item pass: Inbox 🟡 Plan empty-night contrast — fixed: Dark secondary text × 0.55 ≈ 2.7:1 → primary text; root cause confirmed by before/after screenshots)
+- Not fixed: no Dark-mode Plan screenshot exists, so Dark contrast is by reasoning (primary × 0.55), not looked at — add a Dark 04 shot with *CI screenshots of key screens*.
+- Not fixed: the tile's 0.55 ignores Increase Contrast (`colorSchemeContrast`) — owner's dimming; raise only with the owner.
+- Not fixed: no test sees opacity or colour; contrast stays a screenshot/device check.
+
 ## 2026-11-24 (item pass: Inbox 🟡 Toast VoiceOver announcement — fixed: test name claimed "every toast is announced" but checks only the text → renamed (reviewer + challenger agree))
 - Not fixed: the unconditional `.post()` in `ToastModifier` (Toast.swift) is thin glue no test sees — putting back `if action != nil` passes every test. Cost if wrong: plain toasts silent again for VoiceOver.
 - Not fixed: `.task(id: message)` doesn't re-run when the same text is set twice (e.g. adding the same ingredient again), so the second toast is neither re-announced nor re-timed — as before this change. Cost: one missed repeat announcement.

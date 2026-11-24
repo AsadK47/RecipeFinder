@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Plan empty-night contrast** (931ade6, builder 2026-11-24; `WeekDinnerEmptyTile`): cause was double dimming — the
+  past tile is 0.55 (owner 2026-11-20) and `.disabled` on a plain Button dimmed it again; before/after screenshots
+  (Screenshots 45420282072) confirmed it. A missed night is now plain content, not a disabled button; its text is
+  primary like a cooked night's dish name (secondary × 0.55 ≈ 2.7:1 in Dark, challenger). Kept the owner's 0.55.
+  **Pre-mortem:** (1) still faint → looked at 04-meal-plan; (2) a night ahead loses its tap →
+  `nightAheadPlansItsDateOnTap`; (3) VoiceOver calls a past night a button → past branch has no `.isButton`, label tested.
 - **Toast VoiceOver announcement** (508a17b, builder 2026-11-24; `ToastAnnouncement.text`): every toast posts an
   announcement from `ToastModifier`'s `.task(id:)`; plain toasts were silent since the file's first commit with no recorded
   reason (challenger checked the history). Text kept in a pure function so it is tested; the `.post()` call is thin glue.
