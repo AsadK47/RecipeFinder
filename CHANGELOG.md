@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-24 · Inbox search placeholder copy · 57e10d0
+- For you: Search fields across the app now share one friendly style, like "Search recipes…" and "Search foods…", so every search reads the same way.
+- Behind the build: a challenger checked every search field and found one more ingredient prompt to match.
+
 ## 2026-11-24 · Inbox f952384 review: search field name + large text · 1d9a2cc
 - For you: With VoiceOver, the search fields now say what they're for, like "Add or search groceries…". At the largest text sizes the prompt wraps onto more lines, so you can read all of it.
 - Behind the build: a new VoiceOver test failed on the old field first; a reviewer and a challenger both found the unnamed field and the cut-off prompt at large text sizes.
