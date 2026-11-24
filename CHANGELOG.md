@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-24 · Inbox MealPlanningManager restore skipped plans · 45dc4be
+- For you: When you undo taking a meal off Plan and another meal has taken its place since, Plan now tells you which meal stayed off, so nothing disappears quietly.
+- Behind the build: new tests failed on the old code first; a reviewer and a challenger reworded the message to be accurate, gave it its own calendar note and stopped it covering the Undo message.
+
 ## 2026-11-24 · Inbox placeholderCardIsOpaque flake · 2405a30
 - For you: Sharing a My Cookbook page always sends the finished card with its dish art; if the picture can't be drawn, the sheet offers Try again.
 - Behind the build: CI logs showed a rare empty render; a challenger turned down a first fix that would have sent it as a black card, so the card is now checked and redrawn instead.

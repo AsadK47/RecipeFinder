@@ -819,3 +819,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Scope] Root Settings (`SettingsView.swift`) and ~16 other `appNavigationTitle` screens still have no fade; folding it into `appNavigationChrome()` would cover all but needs care on hero-image screens — tracked as Queue *Scroll fade elsewhere*.
   → Owner:
+
+## 2026-11-24 (item pass: Undo says what stayed off — fixed: untrue copy, moved doc comment, cart icon, toast overlap, haptic, weekly copies counted per plan, same dish counted as lost)
+- ⚔️ [Premortem] Merged Undo: take Dal off, plan Pasta on that night, take Pasta off, Undo → Dal comes back and the note says Pasta stayed off (first snapshot per slot wins, `MealPlanningView+Actions.swift` take-off merge). Kept: the earliest state is what Undo promised; now at least it's said aloud — alternative: restore the latest plan per slot — cost if wrong: the cook gets the older meal back.
+  → Owner:
+- ⚔️ [Tests] Deleting the `undoNote` hand-off in `undoTakeOff` fails no test (view glue, logged *unconfirmed*); the copy tests pin wording, not truth.
+  → Owner:

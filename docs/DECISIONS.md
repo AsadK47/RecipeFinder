@@ -5,6 +5,16 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Undo says what stayed off** (45dc4be, builder 2026-11-24): `restore` returns the plans it skipped
+  (`@discardableResult`, CQS bend accepted: the skip is decided inside the same write); text is pure
+  `MealPlanModel.notPutBackMessage` (counts dishes by recipe, so a weekly dish's later copies are one meal), shown on its
+  own `undoNote` toast 450 ms after Undo (the Undo toast clears in the same tick — showing at once overlapped it),
+  warning haptic. Same dish re-planned in the slot isn't a skip. Review: reviewer + challenger — fixed untrue copy
+  ("that meal is planned again"), moved doc comment, cart icon, overlap, haptic, copy count, same-dish skip.
+  Rejected: putting the old meal back over the new one (drops the cook's later choice). **Pre-mortem:** (1) a night
+  refilled by a weekly copy loses the one-off silently → `undoSkipsAOneOffWhoseNightAWeeklyCopyRefilled`; (2) toast
+  says "stayed off" when everything came back → `undoThatPutsEverythingBackSkipsNothing` + `nothingSkippedSaysNothing`;
+  (3) view never shows it — thin glue, no test (unconfirmed on device). Seen red on `agent/plan-undo-skipped-red`.
 - **Share card drawn-check (flake)** (2405a30): failing logs (runs 45101329693, 45135500689) showed corner alpha **0** while the card has `.background(Color.black)` — so nothing was drawn, not translucent tints. First fix (opaque CG bitmap on black via `render`) rejected by the challenger: it turns a blank render into a black card that passes. Now: `uiImage` (no `isOpaque`, so an undrawn card reads see-through), `isDrawn` corner check, one retry, nil → the sheet's existing "Try again". Root cause (CI stall) stays with the CI lane. Can't reproduce on demand → *unconfirmed*. **Pre-mortem:** (1) blank card shipped → `placeholderCardIsOpaque` now asserts the corner isn't black + `isDrawn` unit tests; (2) check wrongly rejects real cards → every render test `#require`s a card; (3) wrong pixel → `isDrawn` reads the same (2,2) the test reads.
 - **CookingResume seam host test** (5ec7f83, `agent/cooking-resume-host`, red check `agent/cooking-resume-host-red` = view reads
   `.shared`, must fail): hosts the real CookingModeView in a UIWindow with a fake `CookingResuming` (first view-hosting

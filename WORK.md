@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🟡 MealPlanningManager `restore` skipped plans landed 45dc4be (builder 2026-11-24; leftover branches agent/plan-undo-skipped auto-cleanup, agent/plan-undo-skipped-red unmerged — delete). Next: Inbox 🟡 MealPlanningView+Actions.swift:260 "N meals taken off" count → pure function (file now 306 lines — extract the take-off merge + toast text first).
 ✅ Inbox 🔴 TestFlight feedback injection slice 1 (agent gate, `owner-ok` label) landed on main (builder 2026-11-24, docs only); rest (script drops tester text + Privacy 6.5/6.6) waits with Inbox (d), which the owner must land (scripts/workflows to main refused to the agent). Next: owner fast-forwards (a)/(b); meanwhile the first Inbox 🟡 not touching `.github/` — MealPlanningManager `restore` skipped plans (MealPlanningManager.swift:218).
 ⏸ Inbox 🐞 (a) cleanup GH013: done on `agent/cleanup-skip-refused` (8648522, reviewed, workflow-only so no Build & Test) — the agent may not push it to main; owner fast-forwards `main` to it. If its first run warns "no branch could be deleted", the ruleset blocks all agent/* deletes → lift it for agent/* or retire the job (CHALLENGES:79). ⏸ Inbox 🐞 (b) asc_promote state check: done on `agent/asc-promote-state` (ca981bf, reviewer + challenger, scripts only so no Build & Test) — agent push to main refused again → owner fast-forwards `main` to it (after or with (a); both branch from main and touch different files). Next: Inbox 🐞 (c) `testflight-promote.yml` → `workflow_dispatch` only — likely refused on main too, so ask the owner to land (a)/(b) first.
 ✅ 🐞 SundayPlanNudge weekly dinner landed af59876 (builder 2026-11-22; leftover branch agent/sunday-nudge-recurring, auto-cleanup); checked-days question → CHALLENGES 22 Nov. asc_promote 🐞 → Needs owner. Next: Inbox 🟡 testflight_notes / Log reviewer lines.
@@ -85,17 +86,6 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-
-- **Undo says what stayed off** (`agent/plan-undo-skipped`, builder 2026-11-24): `restore` returns the plans it skipped
-  (`@discardableResult`, CQS bend accepted: the skip is decided inside the same write); text is pure
-  `MealPlanModel.notPutBackMessage` (counts dishes by recipe, so a weekly dish's later copies are one meal), shown on its
-  own `undoNote` toast 450 ms after Undo (the Undo toast clears in the same tick — showing at once overlapped it),
-  warning haptic. Same dish re-planned in the slot isn't a skip. Review: reviewer + challenger — fixed untrue copy
-  ("that meal is planned again"), moved doc comment, cart icon, overlap, haptic, copy count, same-dish skip.
-  Rejected: putting the old meal back over the new one (drops the cook's later choice). **Pre-mortem:** (1) a night
-  refilled by a weekly copy loses the one-off silently → `undoSkipsAOneOffWhoseNightAWeeklyCopyRefilled`; (2) toast
-  says "stayed off" when everything came back → `undoThatPutsEverythingBackSkipsNothing` + `nothingSkippedSaysNothing`;
-  (3) view never shows it — thin glue, no test (unconfirmed on device). Seen red on `agent/plan-undo-skipped-red`.
 
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
