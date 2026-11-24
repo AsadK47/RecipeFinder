@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-24 · Inbox f952384 review: search field name + large text · 1d9a2cc
+- For you: With VoiceOver, the search fields now say what they're for, like "Add or search groceries…". At the largest text sizes the prompt wraps onto more lines, so you can read all of it.
+- Behind the build: a new VoiceOver test failed on the old field first; a reviewer and a challenger both found the unnamed field and the cut-off prompt at large text sizes.
+
 ## 2026-11-24 · Inbox Plan empty-night contrast · 931ade6
 - For you: On Plan, a night that has passed without a dinner now reads "No dinner planned" clearly, so your week is easy to read at a glance.
 - Behind the build: a new test failed on the old tile first, and before-and-after screenshots confirmed the cause; a challenger's dark-mode check led to the clearer text colour.

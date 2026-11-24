@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-24 (item pass: search field a11y fixes — fixed: VoiceOver name, AX-size wrap (reviewer + challenger agreed))
+- ⚔️ [Break] On a 375pt phone with Cancel showing, "What would you like to eat?" still truncates even at 0.8× (≈140pt free, RecipeSearchHeader `+` button). Kept: owner asked for one line below AX sizes; shorter copy or dropping `+` while focused would fix it.
+  → Owner:
+- ⚔️ [Tests] `.accessibilityHidden` on the placeholder Text can't be checked by XCUITest (hidden SwiftUI text is still listed) — device check only.
+  → Owner:
+
 ## 2026-11-24 (item pass: f952384 search placeholder on one line — review only, fixes on agent/search-field-a11y)
 - ⚔️ [Tests] Reverting f952384 fails no test — no unit/UI test references `AppSearchField` or its placeholder (only the cuisine field's `placeholderValue`, RecipeFinderSheetPresentationUITests:88); agent/search-field-a11y's audit test covers the name, not the one-line layout — alternative: native `TextField(_:text:prompt:)` + a `placeholderValue` UI test.
 - ⚔️ [Break] Below AX sizes the placeholder shrinks to 0.8× (AppSearchField.swift:45) then the typed text snaps to full `.callout` on the first keystroke — alternative: native prompt (same metrics as the text); not seen on a device, no SE-width + Cancel screenshot exists.
