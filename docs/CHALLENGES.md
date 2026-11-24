@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-24 (item pass: Inbox 🟡 Toast VoiceOver announcement — fixed: test name claimed "every toast is announced" but checks only the text → renamed (reviewer + challenger agree))
+- Not fixed: the unconditional `.post()` in `ToastModifier` (Toast.swift) is thin glue no test sees — putting back `if action != nil` passes every test. Cost if wrong: plain toasts silent again for VoiceOver.
+- Not fixed: `.task(id: message)` doesn't re-run when the same text is set twice (e.g. adding the same ingredient again), so the second toast is neither re-announced nor re-timed — as before this change. Cost: one missed repeat announcement.
+- Not fixed (device only): an announcement posted while focus moves (Undo tap, a closing sheet) can be cut short by VoiceOver — the Undo toast had this already.
+
 ## 2026-11-24 (item pass: Inbox 🟡 take-off toast count — fixed: a stale second tap that changed nothing read "2 meals taken off" → one-meal text; a kept weekly copy moved to another night while the toast was up counted as gone (reviewer + challenger) → `isPlanned(id)` on any day)
 - Not fixed: the view's `isStillPlanned` closure is thin glue with no host test — a wrong closure would pass every unit test; `isPlannedFindsAPlanByIdOnAnyDay` covers the manager half. Cost if wrong: toast count off, Undo unaffected.
 - Not fixed (design): later weekly copies `propagateRecurring` made for weeks the cook browsed count as meals taken off, so the number depends on how far ahead they looked. Cost: a bigger number than the cook expects.

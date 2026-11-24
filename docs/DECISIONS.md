@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Toast VoiceOver announcement** (508a17b, builder 2026-11-24; `ToastAnnouncement.text`): every toast posts an
+  announcement from `ToastModifier`'s `.task(id:)`; plain toasts were silent since the file's first commit with no recorded
+  reason (challenger checked the history). Text kept in a pure function so it is tested; the `.post()` call is thin glue.
+  **Pre-mortem:** (1) a toast read twice (a call site also announces) → reviewers grepped all 5 `.toast(` sites, none do;
+  (2) a toast re-read when the screen comes back → cancelled wait clears the message (`cancelledWithSameMessageClears`);
+  (3) plain toast still silent → `plainToastAnnouncesItsMessage` (seen red) for the text, the post itself *unconfirmed*.
 - **Take-off toast count** (4355abd, builder 2026-11-24; `MealPlanTakeOff.after`): counts snapshot ids no longer planned (an earlier weekly copy
   that only stopped repeating stays planned → not counted); still-planned check by id on any day (`isPlanned(_:)` added
   to the protocol after review: a kept copy moved while the toast was up counted as gone); a no-op second tap keeps
