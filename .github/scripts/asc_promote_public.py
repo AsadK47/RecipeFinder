@@ -7,6 +7,8 @@ import os
 import sys
 import urllib.error
 
+import asc
+
 # externalBuildState values where the build may sit in the public group (Apple reviews or has approved it).
 ADDABLE = {"WAITING_FOR_BETA_REVIEW", "IN_BETA_REVIEW", "BETA_APPROVED", "READY_FOR_BETA_TESTING", "IN_BETA_TESTING"}
 SUBMITTABLE = "READY_FOR_BETA_SUBMISSION"
@@ -22,12 +24,12 @@ def decide(state, in_group):
     return "fail"
 
 
-def main():
-    from asc import API, call, make_token
-
-    token = make_token(os.environ["ASC_KEY_ID"], os.environ["ASC_ISSUER_ID"], os.environ["ASC_KEY_PATH"])
-    app = os.environ["APP_ID"]
-    group_name = os.environ.get("GROUP_NAME", "Public Beta")
+def main(env=os.environ, call=asc.call, make_token=asc.make_token):
+    """`call` and `make_token` are parameters so tests can check the requests without the network."""
+    API = asc.API
+    token = make_token(env["ASC_KEY_ID"], env["ASC_ISSUER_ID"], env["ASC_KEY_PATH"])
+    app = env["APP_ID"]
+    group_name = env.get("GROUP_NAME", "Public Beta")
 
     groups = call("GET", f"{API}/apps/{app}/betaGroups?limit=50", token).get("data", [])
     group = next((g for g in groups
@@ -50,7 +52,9 @@ def main():
     print(f"Build {number}: external state {state}, in {group_name}: {in_group}")
 
     if action == "fail":
-        sys.exit(f"Build {number} is {state}; not adding it to {group_name}. Fix it in App Store Connect.")
+        # stdout, so the reason reaches the run summary (the workflow tees stdout only).
+        print(f"Build {number} is {state}; not adding it to {group_name}. Fix it in App Store Connect.")
+        sys.exit(1)
     if action == "done":
         print(f"Build {number} is already available to {group_name}; nothing to do.")
         return
