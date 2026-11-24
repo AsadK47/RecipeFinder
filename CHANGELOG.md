@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-24 · Inbox placeholderCardIsOpaque flake · 2405a30
+- For you: Sharing a My Cookbook page always sends the finished card with its dish art; if the picture can't be drawn, the sheet offers Try again.
+- Behind the build: CI logs showed a rare empty render; a challenger turned down a first fix that would have sent it as a black card, so the card is now checked and redrawn instead.
+
 ## 2026-11-23 · Privacy policy vs public TestFlight · 1854908
 - For you: The Privacy Policy now explains beta testing: what TestFlight feedback reaches the Developer, what is posted publicly to help fix it, who handles it, and how to have it removed.
 - Behind the build: drafted from the feedback scripts and checked by two independent reviewers (text against code, and against UK GDPR notice needs), who caught the first draft calling the 14-day files private.
