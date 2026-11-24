@@ -23,13 +23,31 @@ jobs:
 
       - name: Delete merged agent branches
         run: |
+          # A repository rule may refuse some deletes (GH013): skip those and carry on. Any other push error
+          # still fails the job once every branch has been tried, so red keeps meaning "look at this".
           git fetch --prune origin '+refs/heads/agent/*:refs/remotes/origin/agent/*'
+          deleted=0; refused=0; failed=0; kept=0
           for ref in $(git for-each-ref --format='%(refname:short)' 'refs/remotes/origin/agent/'); do
             branch="${ref#origin/}"
-            if git cherry origin/main "$ref" | grep -q '^+'; then
-              echo "keep   $branch (has commits not on main)"
+            # Capture first: a failed `git cherry`, or SIGPIPE from `| grep -q` under pipefail, must never read as merged.
+            if ! cherry=$(git cherry origin/main "$ref"); then
+              echo "::error::git cherry failed for $branch"
+              failed=$((failed + 1))
+            elif grep -q '^+' <<<"$cherry"; then
+              echo "keep    $branch (has commits not on main)"
+              kept=$((kept + 1))
+            elif out=$(git push origin --delete "$branch" 2>&1); then
+              echo "delete  $branch"
+              deleted=$((deleted + 1))
+            elif grep -q 'GH013' <<<"$out"; then
+              echo "refused $branch (repository rule)"
+              refused=$((refused + 1))
             else
-              echo "delete $branch"
-              git push origin --delete "$branch"
+              echo "::error::delete $branch failed: $out"
+              failed=$((failed + 1))
             fi
           done
+          summary="deleted $deleted · refused by rule $refused · failed $failed · kept $kept"
+          echo "$summary"
+          echo "Agent branches: $summary" >> "$GITHUB_STEP_SUMMARY"
+          [ "$failed" -eq 0 ]
