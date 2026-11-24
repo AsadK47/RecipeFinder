@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-24 (item pass: Inbox 🐞 (b) asc_promote_public state check — fixed: fail reason went to stderr, missing from the run summary (reviewer + challenger agreed) → stdout; `main()` untested (challenger) → fake App Store Connect tests, 3 mutants killed)
+- Not fixed: no workflow runs `.github/scripts/test_*.py` (Build & Test ignores `.github/scripts/**`), so these tests run only by hand — add a cheap ubuntu job running `python3 -m unittest discover -s .github/scripts -p 'test_*.py'` on script changes (own item); cost if wrong: a broken `decide()` ships green.
+- Not fixed (intended): a rejected newest build now turns the daily run red until a newer build is uploaded.
+  → Owner:
+
 ## 2026-11-23 (item pass: Inbox 🐞 Toast cancel clears newer toast — fixed: returning on any cancellation also skipped the clear when the view left, so an old take-off toast and its Undo reappeared later → clear only if the message is unchanged)
 - Not fixed: the A → B → A race (message changes and back before the old wait resumes) lets the old wait clear the new A; no caller can do that without a user action in between; cost if wrong: a toast ends early.
 - Not fixed (pre-existing): the same message set twice doesn't restart the timer (`.task(id:)` unchanged), and `askToClearPastPlans` (MealPlanningView+Actions.swift:96) doesn't clear `removalToast`, so two toasts can overlap.
