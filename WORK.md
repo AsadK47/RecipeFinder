@@ -88,7 +88,10 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
 
 - **Undo says what stayed off** (`agent/plan-undo-skipped`, builder 2026-11-24): `restore` returns the plans it skipped
   (`@discardableResult`, CQS bend accepted: the skip is decided inside the same write); text is pure
-  `MealPlanModel.notPutBackMessage`, shown on the plain toast (`weekShoppingFeedback`) after the Undo toast clears.
+  `MealPlanModel.notPutBackMessage` (counts dishes by recipe, so a weekly dish's later copies are one meal), shown on its
+  own `undoNote` toast 450 ms after Undo (the Undo toast clears in the same tick — showing at once overlapped it),
+  warning haptic. Same dish re-planned in the slot isn't a skip. Review: reviewer + challenger — fixed untrue copy
+  ("that meal is planned again"), moved doc comment, cart icon, overlap, haptic, copy count, same-dish skip.
   Rejected: putting the old meal back over the new one (drops the cook's later choice). **Pre-mortem:** (1) a night
   refilled by a weekly copy loses the one-off silently → `undoSkipsAOneOffWhoseNightAWeeklyCopyRefilled`; (2) toast
   says "stayed off" when everything came back → `undoThatPutsEverythingBackSkipsNothing` + `nothingSkippedSaysNothing`;

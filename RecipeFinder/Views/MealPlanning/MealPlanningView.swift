@@ -22,6 +22,8 @@ struct MealPlanningView: View {
     /// The plans as they were before the last take-off, for the toast's Undo (owner 2026-11-22: no confirm pop-ups).
     @State var removalUndo: [MealPlanModel]?
     @State var removalToast: String?
+    /// After Undo: names meals that stayed off because another meal holds their slot now.
+    @State var undoNote: String?
     /// Non-nil while the meal-reminder time picker is presented.
     @State var reminderContext: ReminderContext?
     /// Non-nil while "Plan my week" is dealing cards.
@@ -130,6 +132,7 @@ struct MealPlanningView: View {
         }
         .toast($weekShoppingFeedback)
         .toast($removalToast, icon: "trash", action: (title: "Undo", perform: undoTakeOff))
+        .toast($undoNote, icon: "calendar.badge.exclamationmark")
         .onAppear {
             rollOverToToday()
             if let start = currentWeekStart {

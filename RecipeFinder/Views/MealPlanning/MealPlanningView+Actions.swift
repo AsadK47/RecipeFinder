@@ -272,8 +272,13 @@ extension MealPlanningView {
             updateSelectedMealTimes(for: selectedDate)
             reorderDayByTime()
         }
-        HapticManager.shared.light()
-        weekShoppingFeedback = MealPlanModel.notPutBackMessage(skipped)
+        guard let note = MealPlanModel.notPutBackMessage(skipped) else { return HapticManager.shared.light() }
+        HapticManager.shared.warning()
+        Task {
+            // The Undo toast clears as Undo returns; showing this in the same spot at once would overlap it.
+            do { try await Task.sleep(for: .milliseconds(450)) } catch { return }
+            undoNote = note
+        }
     }
 
     // MARK: - Week navigation

@@ -9,7 +9,7 @@ protocol MealPlanningManaging: AnyObject, Observable {
     /// The plans taking `plan` off would change, as they are now: it, and for a weekly meal every copy of its series.
     func plansChangedByRemoving(_ plan: MealPlanModel) -> [MealPlanModel]
     /// Undo for a take-off: puts `plans` back as they were (by id), skipping a slot the cook has filled since.
-    /// Returns the plans it skipped, so the cook can be told they stayed off.
+    /// Returns the plans it skipped for a different dish, so the cook can be told they stayed off.
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel]
     func toggleRecurring(_ mealPlan: MealPlanModel)
     func propagateRecurring(toWeekStarting startDate: Date)
@@ -217,8 +217,9 @@ final class MealPlanningManager: MealPlanningManaging {
         for plan in plans {
             if let index = mealPlans.firstIndex(where: { $0.id == plan.id }) {
                 mealPlans[index] = plan
-            } else if mealPlans.contains(where: { $0.isSlot(plan.date, plan.mealTime) }) {
-                skipped.append(plan) // a meal planned there since wins: a night never holds two
+            } else if let occupant = mealPlans.first(where: { $0.isSlot(plan.date, plan.mealTime) }) {
+                // A meal planned there since wins: a slot never holds two. The same dish planned again isn't a loss.
+                if occupant.recipeId != plan.recipeId { skipped.append(plan) }
                 continue
             } else {
                 mealPlans.append(plan)

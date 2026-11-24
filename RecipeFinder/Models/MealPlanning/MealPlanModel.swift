@@ -78,17 +78,20 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         mealTime == slotMealTime && isOn(day, calendar: calendar)
     }
     
-    /// A night's dinner is taken: planned, or a weekly dinner on that weekday from an earlier week will be copied in
-    /// (`propagateRecurring` fills a week only when it's shown, so a week ahead can look open when it isn't).
-    /// Toast text after Undo when some meals couldn't go back (their night was planned again since); nil when all did.
+    /// Toast text after Undo when some meals couldn't go back (another meal holds their slot now); nil when all did.
+    /// Counts dishes, not plans: one weekly dish's copies for later weeks are still one meal to the cook.
     static func notPutBackMessage(_ skipped: [MealPlanModel]) -> String? {
-        switch skipped.count {
-        case 0: nil
-        case 1: "\(skipped[0].recipeName) stayed off: that meal is planned again"
-        default: "\(skipped.count) meals stayed off: those meals are planned again"
+        var dishes: [MealPlanModel] = []
+        for plan in skipped where !dishes.contains(where: { $0.recipeId == plan.recipeId }) { dishes.append(plan) }
+        switch dishes.count {
+        case 0: return nil
+        case 1: return "\(dishes[0].recipeName) stayed off: another meal is planned there now"
+        default: return "\(dishes.count) meals stayed off: other meals are planned there now"
         }
     }
 
+    /// A night's dinner is taken: planned, or a weekly dinner on that weekday from an earlier week will be copied in
+    /// (`propagateRecurring` fills a week only when it's shown, so a week ahead can look open when it isn't).
     static func hasDinner(on day: Date, plans: [MealPlanModel], calendar: Calendar = .current) -> Bool {
         let weekday = calendar.component(.weekday, from: day)
         let start = calendar.startOfDay(for: day)

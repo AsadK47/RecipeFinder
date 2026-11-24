@@ -1114,6 +1114,22 @@ struct UndoTakeOffTests {
         #expect(skipped.map(\.id) == [dal.id]) // so Undo can say the dal stayed off
     }
 
+    @Test func undoDoesNotCountANightReplannedWithTheSameDish() {
+        let sut = makeManager()
+        let recipe = UUID()
+        let dal = plan("Dal", on: day(2), recipe: recipe)
+        sut.addMealPlan(dal)
+        let before = sut.plansChangedByRemoving(dal)
+        sut.removeMealPlan(dal)
+        let dalAgain = plan("Dal", on: day(2), recipe: recipe)
+        sut.addMealPlan(dalAgain)
+
+        let skipped = sut.restore(before)
+
+        #expect(skipped.isEmpty)
+        #expect(sut.mealPlans.map(\.id) == [dalAgain.id])
+    }
+
     @Test func undoThatPutsEverythingBackSkipsNothing() {
         let sut = makeManager()
         let dal = plan("Dal", on: day(2))

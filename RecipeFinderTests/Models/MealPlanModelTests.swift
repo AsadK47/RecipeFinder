@@ -223,8 +223,8 @@ struct MealPlanShownTests {
 /// Undo after a take-off can't put a meal back on a night planned since; the toast has to say so.
 @Suite("Undo: meals that couldn't go back")
 struct MealPlanNotPutBackTests {
-    private func plan(_ name: String) -> MealPlanModel {
-        MealPlanModel(recipeId: UUID(), recipeName: name, date: Date(), mealTime: .dinner)
+    private func plan(_ name: String, recipe: UUID = UUID()) -> MealPlanModel {
+        MealPlanModel(recipeId: recipe, recipeName: name, date: Date(), mealTime: .dinner)
     }
 
     @Test func nothingSkippedSaysNothing() {
@@ -232,11 +232,17 @@ struct MealPlanNotPutBackTests {
     }
 
     @Test func oneSkippedNamesTheMeal() {
-        #expect(MealPlanModel.notPutBackMessage([plan("Dal")]) == "Dal stayed off: that meal is planned again")
+        #expect(MealPlanModel.notPutBackMessage([plan("Dal")]) == "Dal stayed off: another meal is planned there now")
     }
 
     @Test func severalSkippedCountThem() {
         #expect(MealPlanModel.notPutBackMessage([plan("Dal"), plan("Tacos")])
-                == "2 meals stayed off: those meals are planned again")
+                == "2 meals stayed off: other meals are planned there now")
+    }
+
+    @Test func copiesOfOneWeeklyDishCountOnce() {
+        let tacos = UUID()
+        #expect(MealPlanModel.notPutBackMessage([plan("Tacos", recipe: tacos), plan("Tacos", recipe: tacos)])
+                == "Tacos stayed off: another meal is planned there now")
     }
 }
