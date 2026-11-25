@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox undoNote Task not cancelled · 061585b
+- For you: On Plan, taking a meal off straight after an Undo now shows its own message with Undo clearly, without the earlier "stayed off" note covering it.
+- Behind the build: a reviewer and a challenger checked the timing; the challenger also caught a note that could appear late after leaving Plan, fixed too.
+
 ## 2026-11-25 · Inbox take-off count counts later-week copies · 5476015
 - For you: When you take meals off Plan in a row, the message counts each meal you took off once — a weekly dinner counts as one meal, even with later weeks already showing.
 - Behind the build: a reviewer and a challenger each found a miscount in the first fix, so the count now follows your taps, with tests for every case they found.

@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **undoNote call-off** (061585b, builder 2026-11-25): wait held in a tiny `DelayedToast` value (Toast.swift, no new
+  file) so cancel/replace is unit-tested; view wiring is thin glue (*unconfirmed*: no test sees the overlap).
+  **Pre-mortem:** (1) note still shows after a take-off in the 450 ms wait → `callOffDuringTheWaitKeepsItHidden`;
+  (2) note already up covers the new toast → `callOffHidesAShownNote`; (3) two Undos queue two notes →
+  `newerNoteReplacesTheWaitingOne`. No layout change. `.onDisappear` also calls it off (challenger: a waiting note showed out of context back on Plan).
 - **Take-off toast counts per tap** (5476015, builder 2026-11-25; supersedes the 4355abd count below): `MealPlanTakeOff.meals`
   +1 per tap whose `changed` holds the tapped plan; stale taps add 0 and keep the last counted meal's name (`named`).
   Rejected: counting snapshot ids (a weekly dinner's later-week copies each counted: "4" for 2 taps) and grouping weekly
