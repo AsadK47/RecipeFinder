@@ -87,6 +87,18 @@ struct SeedRecipeProviderTests {
         #expect(glutenSources.filter { text.contains($0) }.isEmpty, "\(recipe.name) claims gluten-free")
     }
 
+    @Test("a starter tagged vegan names no animal product", arguments: SeedRecipeProvider.recipes)
+    func veganClaimHolds(recipe: RecipeModel) {
+        guard recipe.dietaryInfo.isVegan else { return }
+        let text = (recipe.ingredients.map(\.name) + recipe.prePrepInstructions + recipe.instructions + [recipe.notes])
+            .joined(separator: " ").lowercased()
+        let animalProducts = [
+            "egg", "feta", "cheese", "parmesan", "mozzarella", "butter", "milk", "cream", "yoghurt", "yogurt", "ghee",
+            "honey", "chicken", "beef", "pork", "lamb", "bacon", "fish", "prawn", "anchov", "gelatine", "mayonnaise",
+        ]
+        #expect(animalProducts.filter { text.contains($0) }.isEmpty, "\(recipe.name) claims vegan")
+    }
+
     // MARK: - Shipped versions (stale-sample refresh)
 
     @Test("earlier shipped starter versions belong to today's starters and differ from them")
@@ -132,9 +144,31 @@ struct SeedRecipeProviderTests {
         #expect(updates.isEmpty)
     }
 
-    @Test("the refresh version is past 6, so installs that already ran 6 pick up the Greek salad fix")
+    @Test("the refresh version is past 7, so installs that already ran 7 pick up the Avocado Toast fix")
     func refreshVersionReachesExistingInstalls() {
-        #expect(BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: 6))
+        #expect(BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: 7))
+    }
+
+    @Test("an untouched starter Avocado Toast seeded by an older build loses its vegan tag on refresh",
+          arguments: ["Basic", "Easy"])
+    @MainActor
+    func oldAvocadoToastIsRefreshed(difficulty: String) async throws {
+        let persistence = PersistenceController(inMemory: true)
+        var old = try #require(SeedRecipeProvider.shippedVersions.first {
+            $0.name == "Avocado Toast" && $0.difficulty == difficulty
+        })
+        old.isFavorite = true
+        #expect(old.dietaryInfo.isVegan)
+        #expect(await persistence.seedRecipes([old]))
+        let stored = await persistence.fetchRecipesAsync()
+        let sources = try #require(BundledRecipeCatalog.refreshSources(
+            bundled: BundledRecipeCatalog.load(), bundledHistory: BundledRecipeCatalog.loadHistory()
+        ))
+        let updates = BundledRecipeCatalog.sampleUpdates(library: stored, current: sources.current, history: sources.history)
+        #expect(updates.count == 1)
+        #expect(updates.first?.dietaryInfo.isVegan == false)
+        #expect(updates.first?.dietaryInfo.isVegetarian == true)
+        #expect(updates.first?.isFavorite == true)
     }
 
     @Test("starters alone never complete the refresh when the bundled data is missing")
