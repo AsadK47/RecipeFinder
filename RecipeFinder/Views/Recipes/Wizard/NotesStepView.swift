@@ -38,7 +38,7 @@ struct NotesStepView: View {
                     ZStack(alignment: .topLeading) {
                         if notes.isEmpty {
                             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                                Text("Add your notes here...")
+                                Text("Add your notes here…")
                                     .foregroundStyle(.secondary.opacity(AppTheme.glassLightOpacity))
                                     .padding(.horizontal, AppTheme.spacing4)
                                     .padding(.vertical, AppTheme.spacing8)

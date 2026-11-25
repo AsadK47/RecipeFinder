@@ -114,7 +114,7 @@ struct FilterSheet: View {
                         .font(.headline)
                         .adaptiveForegroundColor()
 
-                    TextField("e.g. Chicken, tomato…", text: $ingredientSearchText)
+                    TextField("e.g. chicken, tomato…", text: $ingredientSearchText)
                         .textFieldStyle(.plain)
                         .padding(AppTheme.spacing12)
                         .background(
