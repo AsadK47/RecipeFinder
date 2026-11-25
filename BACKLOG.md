@@ -874,7 +874,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 **Cooking resume across relaunch** (builder 2026-11-19): cooking mode now resumes at the step you left while
   the app stays open. Keeping it after the app is closed means storing "recipe + step" on the device — add a Privacy
   §4.2 line ("where you are in a recipe you're cooking") and clear it on Reset? (yes / keep in-memory)
-- 🙋 ⚔️ 169 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
+- 🙋 ⚔️ 175 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
 - 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
 - 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
   `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
@@ -901,6 +901,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🐞 RecipeFinder/Models/Recipe/RecipeDietaryInfo.swift:34 / FilterSheet — Gluten-Free, Dairy-Free, Nut-Free, Low-Carb and Keto chips match nothing (0 seeded recipes carry them; recommended default in Needs owner is past 72 h) — hide the five chips until *Your diet, everywhere* lands (challenger 2026-11-25)
 - 🔴 .github/scripts/fetch_testflight_feedback.py:87-101 — public issues still carry up to 4,000 chars of stranger text in the body + 70 in the title, and the issue body (:97) still tells the agent loop to fix it with no `owner-ok` mention; the loop may edit workflows holding the ASC `.p8` key (agent gate landed: BACKLOG top, `owner-ok` label, builder 2026-11-24) — body keeps date/device/kind only, tester text stays in App Store Connect; do with (d) below, which updates Privacy 6.5/6.6 + `privacy.html` (challenger 2026-11-24)
 - 🐞 **Workflow items unblocked** (owner 2026-11-23: workflows OK to edit) — do each as its own item:
   (a) `cleanup-agent-branches.yml` dies on GH013 at the first protected `agent/*` branch → skip refused deletes and carry on, report the count; — ⏸ built on `agent/cleanup-skip-refused` (8648522, 2 reviews), landing on main was refused to the agent → owner: fast-forward main to it
