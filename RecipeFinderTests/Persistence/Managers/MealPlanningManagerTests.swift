@@ -1002,12 +1002,12 @@ struct MealTimeOfDayTests {
         #expect(!MealPlanModel.eatenBefore(snack, lunch))
     }
 
-    @Test func mealPlansForADayComeInTimeOrder() {
+    @Test func mealPlansForADayComeInTimeOrder() throws {
         let sut = MealPlanningManager(
-            storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            storage: LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString))),
             mealPlanStore: InMemoryMealPlanStore(), reminders: FakeMealReminderScheduler()
         )
-        let day = Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date()
+        let day = try #require(Calendar.current.date(byAdding: .day, value: 2, to: Date()))
         for mealTime in [MealTime.dinner, .snack, .lunch] {
             sut.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Dal", date: day, mealTime: mealTime))
         }
@@ -1022,16 +1022,23 @@ struct MealTimeOfDayTests {
 struct UndoTakeOffTests {
 
     private let reminders = FakeMealReminderScheduler()
+    /// Fresh per test (Swift Testing builds a new suite value for each), so no test touches the shared defaults.
+    private let storage: LocalStore
+    /// Today and the next two weeks, from midnight; `day(n)` reads one.
+    private let days: [Date]
+
+    init() throws {
+        storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+        let today = Calendar.current.startOfDay(for: Date())
+        days = try (0...14).map { try #require(Calendar.current.date(byAdding: .day, value: $0, to: today)) }
+    }
 
     private func makeManager() -> MealPlanningManager {
-        MealPlanningManager(
-            storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
-            mealPlanStore: InMemoryMealPlanStore(), reminders: reminders
-        )
+        MealPlanningManager(storage: storage, mealPlanStore: InMemoryMealPlanStore(), reminders: reminders)
     }
 
     private func day(_ offset: Int) -> Date {
-        Calendar.current.date(byAdding: .day, value: offset, to: Calendar.current.startOfDay(for: Date()))!
+        days[offset]
     }
 
     private func plan(_ name: String, on date: Date, recurring: Bool = false, recipe: UUID = UUID()) -> MealPlanModel {

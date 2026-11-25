@@ -233,6 +233,9 @@ final class FakeNotificationCenter: @unchecked Sendable {
         #expect(fake.asks == 1)
     }
 
+    /// Exempt from the no-shared-state rule (RecipeFinderTests/CLAUDE.md): it reads which object the real center
+    /// routes taps to. Building `.shared` sets that delegate and reads the permission status; it schedules nothing,
+    /// removes nothing and never prompts, so no other test can see it.
     @Test func sharedInstanceRoutesTaps() {
         #expect(UNUserNotificationCenter.current().delegate === NotificationManager.shared)
     }

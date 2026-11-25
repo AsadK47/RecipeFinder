@@ -154,9 +154,9 @@ struct CookingModeResumeWiringTests {
         prePrepInstructions: [], instructions: ["Rinse", "Boil", "Rest"], notes: ""
     )
 
-    private func host(_ memory: FakeMemory) -> UIWindow {
+    private func host(_ memory: FakeMemory) throws -> UIWindow {
         // Every manager the screen reads is injected, so no test touches the shared UserDefaults or timers.
-        let defaults = UserDefaults(suiteName: UUID().uuidString) ?? .standard
+        let defaults = try #require(UserDefaults(suiteName: UUID().uuidString))
         let view = CookingModeView(recipe: recipe)
             .environment(\.cookingResume, memory)
             .environment(\.recipeTimer, RecipeTimerManager(defaults: defaults))
@@ -186,7 +186,7 @@ struct CookingModeResumeWiringTests {
     func opensAtInjectedPlace() async throws {
         let memory = FakeMemory()
         memory.saved = .init(index: 2, checkedIngredients: [0])
-        let window = host(memory)
+        let window = try host(memory)
         try await waitUntil("cooking mode appeared") { !memory.lookups.isEmpty && CookingSession.shared.currentIndex == 2 }
 
         #expect(memory.lookups.map(\.id) == [recipe.id])
@@ -202,7 +202,7 @@ struct CookingModeResumeWiringTests {
     func leavingRemembersInInjectedMemory() async throws {
         let memory = FakeMemory()
         memory.saved = .init(index: 1, checkedIngredients: [0])
-        let window = host(memory)
+        let window = try host(memory)
         try await waitUntil("cooking mode appeared") { !memory.lookups.isEmpty }
         close(window)
         try await waitUntil("cooking mode closed") { !memory.remembered.isEmpty && !CookingSession.shared.isActive }

@@ -6,7 +6,7 @@ Applies to everything under `RecipeFinderTests/`.
 These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** use Swift Testing (`@Suite`, `@Test`, `#expect`) for all new tests — no new XCTest.
-- **MUST NOT** use shared `UserDefaults`, the app's real Core Data store, or network in unit tests — inject fakes. Core Data: `PersistenceController(inMemory: true)`, or a SQLite file in a fresh `temporaryDirectory` folder when the test needs a real file (relaunch, migration, backup, recovery). Sole exception: `PersistenceControllerTests.sharedStoreLoadsImmediately` reads `.shared`'s load state (never writes).
+- **MUST NOT** use shared `UserDefaults`, the app's real Core Data store, or network in unit tests — inject fakes. Core Data: `PersistenceController(inMemory: true)`, or a SQLite file in a fresh `temporaryDirectory` folder when the test needs a real file (relaunch, migration, backup, recovery). Exceptions (read-only, never write/schedule/prompt): `PersistenceControllerTests.sharedStoreLoadsImmediately` (`.shared`'s load state), `NotificationRequestTests.sharedInstanceRoutesTaps` (the real center's delegate). Isolated defaults: `try #require(UserDefaults(suiteName: UUID().uuidString))`, never `!` or `?? .standard`.
 
 ## Framework
 Swift Testing (`@Suite`, `@Test`, `#expect`) for all new/migrated tests. No new XCTest — migrate XCTest files opportunistically. UI tests stay XCUITest.
