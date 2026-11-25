@@ -8,9 +8,9 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func removeMealPlan(for date: Date, mealTime: MealTime)
     /// The plans taking `plan` off would change, as they are now: it, and for a weekly meal every copy of its series.
     func plansChangedByRemoving(_ plan: MealPlanModel) -> [MealPlanModel]
-    /// Plan's take-off: removes `plan` and returns the plans it changed, as they were (`plansChangedByRemoving`),
-    /// for Undo; empty when nothing came off.
-    @discardableResult func takeOff(_ plan: MealPlanModel) -> [MealPlanModel]
+    /// Plan's take-off: removes `plan` (by id; else the same dish on its night, its twin kept by an iCloud fold) and
+    /// returns the stored copy removed plus the plans it changed, as they were, for Undo; nil when nothing came off.
+    @discardableResult func takeOff(_ plan: MealPlanModel) -> (removed: MealPlanModel, before: [MealPlanModel])?
     /// Undo for a take-off: puts `plans` back as they were (by id), skipping a slot the cook has filled since.
     /// Returns the plans it skipped for a different dish, so the cook can be told they stayed off.
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel]
@@ -214,14 +214,15 @@ final class MealPlanningManager: MealPlanningManaging {
         return mealPlans.filter { $0.id == plan.id || ($0.isRecurring && SeriesKey($0, calendar: .current) == key) }
     }
 
-    @discardableResult func takeOff(_ plan: MealPlanModel) -> [MealPlanModel] {
-        // By id, not slot: a stale tap on a night planned again since must not delete the new dish, which Undo
-        // (built from `plan`'s snapshot) couldn't put back.
-        // The stored copy, not the caller's: Undo's snapshot must be of the series removal will actually change.
-        guard let current = mealPlans.first(where: { $0.id == plan.id }) else { return [] }
+    @discardableResult func takeOff(_ plan: MealPlanModel) -> (removed: MealPlanModel, before: [MealPlanModel])? {
+        // Not by slot: a stale tap on a night planned again since must not delete the new dish, which Undo couldn't
+        // put back. The stored copy, not the caller's, so Undo's snapshot is of the series removal really changes.
+        guard let current = mealPlans.first(where: { $0.id == plan.id })
+                ?? mealPlans.first(where: { $0.isSlot(plan.date, plan.mealTime) && $0.recipeId == plan.recipeId })
+        else { return nil }
         let before = plansChangedByRemoving(current)
         removeMealPlan(current)
-        return before
+        return (current, before)
     }
 
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel] {

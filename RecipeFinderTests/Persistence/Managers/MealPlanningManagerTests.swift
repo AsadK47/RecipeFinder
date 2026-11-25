@@ -1168,9 +1168,10 @@ struct UndoTakeOffTests {
         let dal = plan("Dal", on: day(2))
         sut.addMealPlan(dal)
 
-        let before = sut.takeOff(dal)
+        let tookOff = sut.takeOff(dal)
 
-        #expect(before.map(\.id) == [dal.id])
+        #expect(tookOff?.removed.id == dal.id)
+        #expect(tookOff?.before.map(\.id) == [dal.id])
         #expect(sut.mealPlans.isEmpty)
     }
 
@@ -1182,10 +1183,10 @@ struct UndoTakeOffTests {
         let pasta = plan("Pasta", on: day(2))
         sut.addMealPlan(pasta)
 
-        let before = sut.takeOff(dal) // a second tap from a screen that still showed the dal
+        let tookOff = sut.takeOff(dal) // a second tap from a screen that still showed the dal
 
         #expect(sut.mealPlans.map(\.id) == [pasta.id])
-        #expect(before.isEmpty) // nothing came off, so nothing for Undo
+        #expect(tookOff == nil) // nothing came off, so nothing for Undo
     }
 
     @Test func aStaleTakeOffOfAWeeklyMealLeavesTheDishPlannedSince() {
@@ -1205,14 +1206,29 @@ struct UndoTakeOffTests {
         let sut = makeManager()
         let dal = plan("Dal", on: day(2))
         sut.addMealPlan(dal)
-        let first = sut.takeOff(dal)
+        let first = sut.takeOff(dal)?.before ?? []
         let pasta = plan("Pasta", on: day(2))
         sut.addMealPlan(pasta)
-        let second = sut.takeOff(dal)
+        let second = sut.takeOff(dal)?.before ?? []
 
         let skipped = sut.restore(first + second)
 
         #expect(sut.mealPlans.map(\.id) == [pasta.id])
         #expect(skipped.map(\.id) == [dal.id])
+    }
+
+    /// An iCloud fold kept the other device's copy of the same dish while the hold menu showed ours: it comes off.
+    @Test func takeOffFindsTheSameDishWhenAFoldKeptItsTwin() {
+        let sut = makeManager()
+        let recipe = UUID()
+        let kept = plan("Dal", on: day(2), recipe: recipe)
+        sut.addMealPlan(kept)
+        let held = plan("Dal", on: day(2), recipe: recipe) // folded away; its id is gone
+
+        let tookOff = sut.takeOff(held)
+
+        #expect(sut.mealPlans.isEmpty)
+        #expect(tookOff?.removed.id == kept.id)
+        #expect(tookOff?.before.map(\.id) == [kept.id])
     }
 }
