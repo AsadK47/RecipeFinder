@@ -331,6 +331,18 @@ struct BundledRecipeCatalogTests {
         #expect(!recipes.contains { $0.dietaryInfo.isGlutenFree || $0.dietaryInfo.isNutFree || $0.dietaryInfo.isDairyFree })
     }
 
+    @Test("no bundled title claims a diet its tags never carry (gluten-free, dairy-free, nut-free, keto, low-carb)")
+    func titlesClaimNoUntaggedDiet() {
+        // Bundled recipes are tagged Vegetarian / Vegan only, so a title promising any other diet is a claim the
+        // recipe's own tags contradict — an allergen promise nobody checked.
+        let claims = ["gluten-free", "gluten free", "dairy-free", "dairy free", "nut-free", "nut free",
+                      "keto", "low-carb", "low carb"]
+        let claiming = BundledRecipeCatalog.load().filter { recipe in
+            claims.contains { recipe.name.localizedCaseInsensitiveContains($0) }
+        }
+        #expect(claiming.isEmpty, "Titles claim an untagged diet: \(claiming.map(\.name))")
+    }
+
     @Test("Junk pasted into titles is cleaned", arguments: [
         ("Chapati PREP TIME COOK TIME ADDITIONAL TIME TOTAL TIME", "Chapati"),
         ("Seafood paella recipe Serves 2.0 0.7111111111 0.5555555556", "Seafood paella recipe"),
