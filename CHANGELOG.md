@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox hide unmatched diet chips · 138fb26
+- For you: Recipe filters now offer Vegetarian and Vegan, the diets every recipe is tagged for, so each chip you tap finds dishes. More diets arrive with a fuller diet feature.
+- Behind the build: a test now checks every diet chip on offer finds bundled recipes; a reviewer and a challenger read the change.
+
 ## 2026-11-25 · TestFlight feedback stays private · 8b04b9f
 - For you: Feedback you send while testing a beta stays in App Store Connect, and the Privacy Policy now explains who sees it and how to have it deleted.
 - Behind the build: the feedback job now posts a short notice with no tester content; two reviewers checked the policy text against the scripts.
