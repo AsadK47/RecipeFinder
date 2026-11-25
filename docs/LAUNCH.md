@@ -34,8 +34,8 @@ Smart search → Ask the kitchen · Theme palette + accessibility · Import tort
 - ✅ 2026-11-25: CloudKit schema deployed to Production for RecipeModel 17 (all 11 `CD_` record types). Unblocks item 3.
 - ✅ 2026-11-25: model 18 `deletedAt` added by hand in Development (`CD_Recipe.CD_deletedAt`, Date/Time) and deployed to
   Production, so `agent/recently-deleted` can land without another owner step.
-- **By 1 Dec:** recruit 10–20 testers (friends who cook, LinkedIn, r/TestFlight); the public link now always has a
-  fresh build.
+- **When ready:** recruit testers (friends who cook, LinkedIn, r/TestFlight) — drafts in `docs/TESTER-POSTS.md`; five
+  who really cook beat twenty who open it once. Public promotion is manual now, so run it before posting.
 - **By 14 Dec:** approve the App Store text and screenshots agents prepare; confirm price (free).
 - **4 Jan:** post on LinkedIn, Product Hunt, Hacker News (Show HN), r/iosapps; email the website waitlist.
 
