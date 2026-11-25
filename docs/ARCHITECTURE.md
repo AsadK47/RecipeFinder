@@ -199,6 +199,8 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
   edited ones; bump `BundledRecipeCatalog.sampleRefreshVersion` when shipped fixes should reach existing installs.
 - `SeedRecipeProvider` holds starter recipes with fixed UUIDs. `RecipeStore.seedIfNeeded` seeds starters into an
   empty library and the bundled collection once (flags `seedRecipesLoaded`, `bundledRecipesSeeded_v1`).
+  When a starter changes, add its old copy to `SeedRecipeProvider.shippedVersions` (the starters' history) and bump
+  `sampleRefreshVersion` so untouched copies on existing installs pick it up.
 - `RecipeArt/<recipe id>.jpg` — illustrations made with `tools/RecipeArt` and compressed by
   `tools/bundle-recipe-art.py`. `BundledRecipeArt` resolves them as a display fallback via the `bundled-art:` prefix:
   never stored on a recipe and never synced; the recipe's own image or photos win.

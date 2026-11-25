@@ -12,6 +12,15 @@ enum SeedRecipeProvider {
         greekSalad,
     ]
 
+    /// Earlier shipped versions of starters that differ from today's (newest first), so the stale-sample refresh can
+    /// update untouched copies on existing installs — the starters' counterpart of `recipes_seed_history.json`.
+    static let shippedVersions: [RecipeModel] = [
+        // Before 25 Nov 2026 the Greek salad claimed gluten-free while its method serves it with crusty bread.
+        makeGreekSalad(category: "Side", difficulty: "Basic", isGlutenFree: true),
+        makeGreekSalad(category: "Salad", difficulty: "Basic", isGlutenFree: true),
+        makeGreekSalad(category: "Salad", difficulty: "Easy", isGlutenFree: true),
+    ]
+
     // MARK: - Recipes
 
     private static let spaghettibolognese = RecipeModel(
@@ -178,34 +187,38 @@ enum SeedRecipeProvider {
         isSampleRecipe: true
     )
 
-    private static let greekSalad = RecipeModel(
-        id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000006")!,
-        name: "Greek Salad",
-        category: "Side",
-        difficulty: "Basic",
-        prepTime: "10 minutes",
-        cookingTime: "0 minutes",
-        baseServings: 2,
-        ingredients: [
-            .init(baseQuantity: 4,   unit: "",    name: "ripe tomatoes, roughly chopped"),
-            .init(baseQuantity: 1,   unit: "",    name: "cucumber, roughly chopped"),
-            .init(baseQuantity: 1,   unit: "",    name: "red onion, thinly sliced"),
-            .init(baseQuantity: 100, unit: "g",   name: "kalamata olives"),
-            .init(baseQuantity: 200, unit: "g",   name: "feta cheese, broken into chunks"),
-            .init(baseQuantity: 3,   unit: "tbsp", name: "extra virgin olive oil"),
-            .init(baseQuantity: 1,   unit: "tbsp", name: "red wine vinegar"),
-            .init(baseQuantity: 1,   unit: "tsp",  name: "dried oregano"),
-        ],
-        prePrepInstructions: [],
-        instructions: [
-            "Combine the tomatoes, cucumber, and red onion in a large bowl.",
-            "Scatter over the olives and feta.",
-            "Whisk together the olive oil, vinegar, and oregano. Season with black pepper only — the feta and olives are already salty.",
-            "Drizzle the dressing over the salad and toss gently so the feta stays in chunks.",
-            "Serve immediately with crusty bread.",
-        ],
-        notes: "Greek salad should not be refrigerated — serve at room temperature for the best flavour. Assemble just before serving.",
-        dietaryInfo: DietaryInfo(isVegetarian: true, isGlutenFree: true),
-        isSampleRecipe: true
-    )
+    private static let greekSalad = makeGreekSalad(category: "Side", difficulty: "Basic", isGlutenFree: false)
+
+    private static func makeGreekSalad(category: String, difficulty: String, isGlutenFree: Bool) -> RecipeModel {
+        RecipeModel(
+            id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000006")!,
+            name: "Greek Salad",
+            category: category,
+            difficulty: difficulty,
+            prepTime: "10 minutes",
+            cookingTime: "0 minutes",
+            baseServings: 2,
+            ingredients: [
+                .init(baseQuantity: 4,   unit: "",    name: "ripe tomatoes, roughly chopped"),
+                .init(baseQuantity: 1,   unit: "",    name: "cucumber, roughly chopped"),
+                .init(baseQuantity: 1,   unit: "",    name: "red onion, thinly sliced"),
+                .init(baseQuantity: 100, unit: "g",   name: "kalamata olives"),
+                .init(baseQuantity: 200, unit: "g",   name: "feta cheese, broken into chunks"),
+                .init(baseQuantity: 3,   unit: "tbsp", name: "extra virgin olive oil"),
+                .init(baseQuantity: 1,   unit: "tbsp", name: "red wine vinegar"),
+                .init(baseQuantity: 1,   unit: "tsp",  name: "dried oregano"),
+            ],
+            prePrepInstructions: [],
+            instructions: [
+                "Combine the tomatoes, cucumber, and red onion in a large bowl.",
+                "Scatter over the olives and feta.",
+                "Whisk together the olive oil, vinegar, and oregano. Season with black pepper only — the feta and olives are already salty.",
+                "Drizzle the dressing over the salad and toss gently so the feta stays in chunks.",
+                "Serve immediately with crusty bread.",
+            ],
+            notes: "Greek salad should not be refrigerated — serve at room temperature for the best flavour. Assemble just before serving.",
+            dietaryInfo: DietaryInfo(isVegetarian: true, isGlutenFree: isGlutenFree),
+            isSampleRecipe: true
+        )
+    }
 }

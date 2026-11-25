@@ -72,4 +72,70 @@ struct SeedRecipeProviderTests {
         let actual = SeedRecipeProvider.recipes.first { $0.name == "Greek Salad" }?.id
         #expect(actual == expected)
     }
+
+    // MARK: - Allergen claims
+
+    @Test("a starter tagged gluten-free names no gluten source", arguments: SeedRecipeProvider.recipes)
+    func glutenFreeClaimHolds(recipe: RecipeModel) {
+        guard recipe.dietaryInfo.isGlutenFree else { return }
+        let text = (recipe.ingredients.map(\.name) + recipe.prePrepInstructions + recipe.instructions + [recipe.notes])
+            .joined(separator: " ").lowercased()
+        let glutenSources = ["bread", "flour", "pasta", "spaghetti", "toast", "wheat", "barley", "pitta", "naan", "couscous"]
+        #expect(glutenSources.filter(text.contains).isEmpty, "\(recipe.name) claims gluten-free")
+    }
+
+    // MARK: - Shipped versions (stale-sample refresh)
+
+    @Test("earlier shipped starter versions belong to today's starters and differ from them")
+    func shippedVersionsMatchStarters() throws {
+        let current = Dictionary(uniqueKeysWithValues: SeedRecipeProvider.recipes.map { ($0.id, $0) })
+        #expect(!SeedRecipeProvider.shippedVersions.isEmpty)
+        for old in SeedRecipeProvider.shippedVersions {
+            let fresh = try #require(current[old.id])
+            #expect(!BundledRecipeCatalog.hasSameContent(old, fresh), "\(old.name)")
+        }
+    }
+
+    @Test("an untouched starter Greek salad seeded by an older build loses its gluten-free tag on refresh")
+    @MainActor
+    func oldGreekSaladIsRefreshed() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        var old = try #require(SeedRecipeProvider.shippedVersions.first { $0.name == "Greek Salad" })
+        old.isFavorite = true
+        #expect(old.dietaryInfo.isGlutenFree)
+        #expect(await persistence.seedRecipes([old]))
+        let stored = await persistence.fetchRecipesAsync()
+        let sources = try #require(BundledRecipeCatalog.refreshSources(
+            bundled: BundledRecipeCatalog.load(), bundledHistory: BundledRecipeCatalog.loadHistory()
+        ))
+        let updates = BundledRecipeCatalog.sampleUpdates(library: stored, current: sources.current, history: sources.history)
+        #expect(updates.count == 1)
+        #expect(updates.first?.dietaryInfo.isGlutenFree == false)
+        #expect(updates.first?.isFavorite == true)
+    }
+
+    @Test("a starter Greek salad the user edited keeps their text")
+    func editedGreekSaladIsLeftAlone() throws {
+        let old = try #require(SeedRecipeProvider.shippedVersions.first)
+        let edited = RecipeModel(
+            id: old.id, name: old.name, category: old.category, difficulty: old.difficulty, prepTime: old.prepTime,
+            cookingTime: old.cookingTime, baseServings: old.baseServings, ingredients: old.ingredients,
+            prePrepInstructions: [], instructions: old.instructions, notes: "No bread — we use rice cakes.",
+            dietaryInfo: old.dietaryInfo, isSampleRecipe: true
+        )
+        let updates = BundledRecipeCatalog.staleSampleRefreshes(
+            library: [edited], current: SeedRecipeProvider.recipes, history: SeedRecipeProvider.shippedVersions
+        )
+        #expect(updates.isEmpty)
+    }
+
+    @Test("starters alone never complete the refresh when the bundled data is missing")
+    func refreshSourcesNeedBundleData() {
+        let r = SeedRecipeProvider.recipes[0]
+        #expect(BundledRecipeCatalog.refreshSources(bundled: [], bundledHistory: [r]) == nil)
+        #expect(BundledRecipeCatalog.refreshSources(bundled: [r], bundledHistory: []) == nil)
+        let sources = BundledRecipeCatalog.refreshSources(bundled: [r], bundledHistory: [r], starters: [r], starterHistory: [r])
+        #expect(sources?.current.count == 2)
+        #expect(sources?.history.count == 2)
+    }
 }

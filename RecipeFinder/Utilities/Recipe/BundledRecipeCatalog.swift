@@ -33,12 +33,24 @@ enum BundledRecipeCatalog {
     // MARK: - Stale-sample refresh
 
     /// Bump when `recipes_seed.json` gains fixes that existing installs should pick up (and regenerate the history).
-    static let sampleRefreshVersion = 6
+    static let sampleRefreshVersion = 7
 
     /// The refresh can only judge "untouched" against real data: an empty bundle or history (missing/corrupt JSON)
     /// must not mark the version done, or it would never retry.
     static func canCompleteSampleRefresh(current: [RecipeModel], history: [RecipeModel]) -> Bool {
         !current.isEmpty && !history.isEmpty
+    }
+
+    /// What the refresh compares against: today's bundled recipes plus the starters, and every earlier shipped
+    /// version of both. Nil while the bundle data can't be judged (`canCompleteSampleRefresh`), so the starters
+    /// alone never mark a version done.
+    static func refreshSources(
+        bundled: [RecipeModel], bundledHistory: [RecipeModel],
+        starters: [RecipeModel] = SeedRecipeProvider.recipes,
+        starterHistory: [RecipeModel] = SeedRecipeProvider.shippedVersions
+    ) -> (current: [RecipeModel], history: [RecipeModel])? {
+        guard canCompleteSampleRefresh(current: bundled, history: bundledHistory) else { return nil }
+        return (bundled + starters, bundledHistory + starterHistory)
     }
 
     static func needsSampleRefresh(lastRunVersion: Int, currentVersion: Int = sampleRefreshVersion) -> Bool {

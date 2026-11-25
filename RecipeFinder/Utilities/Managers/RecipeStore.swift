@@ -140,7 +140,7 @@ final class RecipeStore: RecipeStoring {
         return repaired
     }
 
-    /// Versioned one-time pass: bundled samples are seeded once, so installs keep pre-curation copies (steps parsed
+    /// Versioned one-time pass: bundled samples and starters are seeded once, so installs keep pre-curation copies (steps parsed
     /// as ingredients, etc.). Rewrites untouched ones with today's content; edited copies are never overwritten.
     private func refreshStaleSamples(in library: [RecipeModel]) async -> [RecipeModel] {
         let key = "bundledSampleRefreshVersion"
@@ -148,10 +148,10 @@ final class RecipeStore: RecipeStoring {
             return library
         }
         let refreshes = await Task.detached(priority: .utility) { () -> [RecipeModel]? in
-            let current = BundledRecipeCatalog.load()
-            let history = BundledRecipeCatalog.loadHistory()
-            guard BundledRecipeCatalog.canCompleteSampleRefresh(current: current, history: history) else { return nil }
-            return BundledRecipeCatalog.sampleUpdates(library: library, current: current, history: history)
+            guard let sources = BundledRecipeCatalog.refreshSources(
+                bundled: BundledRecipeCatalog.load(), bundledHistory: BundledRecipeCatalog.loadHistory()
+            ) else { return nil }
+            return BundledRecipeCatalog.sampleUpdates(library: library, current: sources.current, history: sources.history)
         }.value
         // Bundle data missing or unreadable: leave the version unmarked so the next launch retries.
         guard let refreshes else { return library }
