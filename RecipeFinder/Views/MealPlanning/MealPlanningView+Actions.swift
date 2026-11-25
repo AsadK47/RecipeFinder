@@ -54,13 +54,6 @@ extension MealPlanningView {
         return mealPlan.recipe(in: recipes)
     }
 
-    func removeMealPlan(for date: Date, mealTime: MealTime) {
-        mealPlanningManager.removeMealPlan(for: date, mealTime: mealTime)
-        if mealPlanningManager.mealPlan(for: date, mealTime: mealTime) == nil {
-            selectedMealTimes.remove(mealTime)
-        }
-    }
-
     /// When the selected day's meal in this slot is eaten (its reminder time, else the slot's usual time).
     func minuteOfDay(_ mealTime: MealTime) -> Int {
         mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime)?.minuteOfDay() ?? mealTime.defaultMinuteOfDay
@@ -247,9 +240,9 @@ extension MealPlanningView {
     /// Takes a meal off at once — a weekly one stops repeating — with Undo on the toast instead of a confirm pop-up.
     func takeOff(_ plan: MealPlanModel) {
         undoNoteDelay.callOff { undoNote = nil }
-        let before = mealPlanningManager.plansChangedByRemoving(plan)
+        var before: [MealPlanModel] = []
         withAnimation(.appGentle) {
-            removeMealPlan(for: plan.date, mealTime: plan.mealTime)
+            before = mealPlanningManager.takeOff(plan)
             updateSelectedMealTimes(for: selectedDate)
         }
         let result = MealPlanTakeOff.after(taking: plan, changed: before,

@@ -8,6 +8,9 @@ protocol MealPlanningManaging: AnyObject, Observable {
     func removeMealPlan(for date: Date, mealTime: MealTime)
     /// The plans taking `plan` off would change, as they are now: it, and for a weekly meal every copy of its series.
     func plansChangedByRemoving(_ plan: MealPlanModel) -> [MealPlanModel]
+    /// Plan's take-off: removes `plan` and returns the plans it changed, as they were (`plansChangedByRemoving`),
+    /// for Undo; empty when nothing came off.
+    @discardableResult func takeOff(_ plan: MealPlanModel) -> [MealPlanModel]
     /// Undo for a take-off: puts `plans` back as they were (by id), skipping a slot the cook has filled since.
     /// Returns the plans it skipped for a different dish, so the cook can be told they stayed off.
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel]
@@ -209,6 +212,12 @@ final class MealPlanningManager: MealPlanningManaging {
         guard plan.isRecurring else { return mealPlans.filter { $0.id == plan.id } }
         let key = SeriesKey(plan, calendar: .current)
         return mealPlans.filter { $0.id == plan.id || ($0.isRecurring && SeriesKey($0, calendar: .current) == key) }
+    }
+
+    @discardableResult func takeOff(_ plan: MealPlanModel) -> [MealPlanModel] {
+        let before = plansChangedByRemoving(plan)
+        removeMealPlan(for: plan.date, mealTime: plan.mealTime)
+        return before
     }
 
     @discardableResult func restore(_ plans: [MealPlanModel]) -> [MealPlanModel] {

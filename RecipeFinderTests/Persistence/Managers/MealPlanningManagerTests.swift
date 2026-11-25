@@ -1160,4 +1160,59 @@ struct UndoTakeOffTests {
         #expect(skipped.map(\.id) == [dal.id])
         #expect(sut.mealPlan(for: day(9), mealTime: .dinner)?.recipeName == "Tacos")
     }
+
+    // MARK: - Take-off removes the tapped meal, not whatever now fills its night
+
+    @Test func takeOffRemovesTheMealAndReturnsItForUndo() {
+        let sut = makeManager()
+        let dal = plan("Dal", on: day(2))
+        sut.addMealPlan(dal)
+
+        let before = sut.takeOff(dal)
+
+        #expect(before.map(\.id) == [dal.id])
+        #expect(sut.mealPlans.isEmpty)
+    }
+
+    @Test func aStaleTakeOffLeavesTheDishPlannedSince() {
+        let sut = makeManager()
+        let dal = plan("Dal", on: day(2))
+        sut.addMealPlan(dal)
+        sut.takeOff(dal)
+        let pasta = plan("Pasta", on: day(2))
+        sut.addMealPlan(pasta)
+
+        let before = sut.takeOff(dal) // a second tap from a screen that still showed the dal
+
+        #expect(sut.mealPlans.map(\.id) == [pasta.id])
+        #expect(before.isEmpty) // nothing came off, so nothing for Undo
+    }
+
+    @Test func aStaleTakeOffOfAWeeklyMealLeavesTheDishPlannedSince() {
+        let sut = makeManager()
+        let tacos = plan("Tacos", on: day(2), recurring: true)
+        sut.addMealPlan(tacos)
+        sut.takeOff(tacos)
+        let pasta = plan("Pasta", on: day(2))
+        sut.addMealPlan(pasta)
+
+        sut.takeOff(tacos)
+
+        #expect(sut.mealPlans.map(\.id) == [pasta.id])
+    }
+
+    @Test func undoAfterAStaleTakeOffKeepsTheDishPlannedSince() {
+        let sut = makeManager()
+        let dal = plan("Dal", on: day(2))
+        sut.addMealPlan(dal)
+        let first = sut.takeOff(dal)
+        let pasta = plan("Pasta", on: day(2))
+        sut.addMealPlan(pasta)
+        let second = sut.takeOff(dal)
+
+        let skipped = sut.restore(first + second)
+
+        #expect(sut.mealPlans.map(\.id) == [pasta.id])
+        #expect(skipped.map(\.id) == [dal.id])
+    }
 }
