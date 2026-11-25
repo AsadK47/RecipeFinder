@@ -157,7 +157,7 @@ final class RecipeStore: RecipeStoring {
         let refreshes = await Task.detached(priority: .utility) { () -> [RecipeModel]? in
             let data = bundle()
             guard let sources = BundledRecipeCatalog.refreshSources(
-                bundled: data.current, bundledHistory: data.history
+                bundled: data.current, bundledHistory: data.history, starters: [], starterHistory: []
             ) else { return nil }
             return BundledRecipeCatalog.sampleUpdates(library: library, current: sources.current, history: sources.history)
         }.value
