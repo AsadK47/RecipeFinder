@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Take-off toast counts per tap** (5476015, builder 2026-11-25; supersedes the 4355abd count below): `MealPlanTakeOff.meals`
+  +1 per tap whose `changed` holds the tapped plan; stale taps add 0 and keep the last counted meal's name (`named`).
+  Rejected: counting snapshot ids (a weekly dinner's later-week copies each counted: "4" for 2 taps) and grouping weekly
+  snapshots by weekday + meal time (W2 then the kept W1 read as 1 meal — reviewer). `isPlanned(_:)` deleted (dead).
+  **Pre-mortem:** (1) weekly + copies over-counted → `laterWeeklyCopiesTakenOffWithTheirDinnerCountOnce`; (2) kept copy
+  taken off next under-counted → `theKeptEarlierCopyTakenOffNextIsOneMoreMeal`; (3) stale tap renames/recounts →
+  `aStaleTapOnAnotherMealKeepsTheNameOfTheOneTakenOff`, `aStaleSecondTapOnAWeeklyDinnerKeepsTheOneMealMessage`.
 - **Plan empty-night contrast** (931ade6, builder 2026-11-24; `WeekDinnerEmptyTile`): cause was double dimming — the
   past tile is 0.55 (owner 2026-11-20) and `.disabled` on a plain Button dimmed it again; before/after screenshots
   (Screenshots 45420282072) confirmed it. A missed night is now plain content, not a disabled button; its text is
