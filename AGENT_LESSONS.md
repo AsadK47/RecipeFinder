@@ -85,3 +85,6 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
    row of it syncs (3 of 11 were missing until a photo, a shop and an inventory item were added); a new field can be
    added by hand (Console → Record Types → +, `CD_<name>`). Simulator iCloud sign-in fails on new iOS betas — use a device.
    No check: a manual Console step (docs/OPERATIONS.md).
+38. **A bundled title is input to its tags.** 2026-11-25: dropping "Vegan" from "Apple Jalebi (Gluten-Free, Vegan)" lost its
+   Vegan tag (`DietaryInference` trusts a title that says Vegan; "coconut milk" reads as milk) — read what the generator
+   derives from a field before editing it. Check: `committedCatalogMatchesGenerator` (caught it, run 45715179594).

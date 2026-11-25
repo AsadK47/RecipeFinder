@@ -940,3 +940,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 ## 2026-11-25 (item pass: starter Greek salad gluten-free — fixed: `contains` overload spelling, version pin test, wider gluten word list)
 - ⚔️ [Data] A device still on an older build can save the whole Greek salad record (e.g. a favourite tap) with `isGlutenFree: true` and sync it back after a newer device has run refresh v7, which never runs again — *suspected*, not traced (does `updateRecipe` write dietaryInfo on a favourite toggle?); applies to every bundled refresh — cost if wrong: the claim returns on that install until the next version bump.
+
+## 2026-11-25 (item pass: bundled titles' diet claims — fixed: Lactose-Free Meat Lasagne (both reviewers), version-bump pin test)
+- ⚔️ [Copy] "Paleo Chicken Pot Pie Soup" and "Halal Kimchi" name eating styles the app has no tag for; left as the author's names — *not fixed*: neither is an allergen claim the app's labels contradict — cost if wrong: a cook reads "Paleo" as grain/dairy-free (the soup lists butter or ghee).
+- ⚔️ [Search] Searching "gluten free" no longer finds the jalebi (almond + arrowroot flour) — accepted: the claim was never checked, and a GF tag waits for a fuller diet feature.

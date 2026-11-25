@@ -196,7 +196,8 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
 - `recipes_seed.json` — the bundled collection, decoded by `BundledRecipeCatalog.load()`. It is generated off-device
   by `BundledRecipeCatalogTests` from `recipes_source.json` plus human-reviewed `recipes_curated.json`.
 - `recipes_seed_history.json` (from `tools/seed-history.py`) lets the sample refresh tell untouched old copies from
-  edited ones; bump `BundledRecipeCatalog.sampleRefreshVersion` when shipped fixes should reach existing installs.
+  edited ones; bump `BundledRecipeCatalog.sampleRefreshVersion` when shipped fixes should reach existing installs
+  (`historyChangeBumpsRefreshVersion` pins the history file's hash to the version, so a regenerated history fails until both move).
 - `SeedRecipeProvider` holds starter recipes with fixed UUIDs. `RecipeStore.seedIfNeeded` seeds starters into an
   empty library and the bundled collection once (flags `seedRecipesLoaded`, `bundledRecipesSeeded_v1`).
   When a starter changes, add its old copy to `SeedRecipeProvider.shippedVersions` (the starters' history) and bump

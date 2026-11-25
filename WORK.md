@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🟡 Apple Jalebi title/tag landed 6c4cf6b..82b2213 (builder 2026-11-25; also Tangzhong + lasagne titles, history pin test; leftover branches agent/jalebi-title auto-cleanup, agent/jalebi-title-red unmerged — delete). Next: Inbox 🔴 `DataManagementSettingsView.swift` `resetToDefault` clears Kingfisher's disk cache (Privacy 4.3; two reviewers).
 ✅ Inbox 🟡 refreshStaleSamples wiring test landed 1380e01 (builder 2026-11-25; leftover branches agent/sample-refresh-wiring auto-cleanup, agent/sample-refresh-wiring-red unmerged — delete). Next: Inbox 🟡 Apple Jalebi title/tag (recipes_seed.json).
 ✅ Inbox 🐞 starter Avocado Toast vegan claim landed c2afa17..a6a7aab (builder 2026-11-25; leftover branches agent/avocado-vegan auto-cleanup, agent/avocado-vegan-red unmerged — delete). Next: Inbox 🟡 `RecipeStore.swift:150` refreshStaleSamples wiring test, then 🟡 Apple Jalebi title/tag.
 ✅ Inbox 🐞 starter Greek salad gluten-free landed bd8decf..4fd63f9 (builder 2026-11-25; leftover branches agent/greek-salad-gluten auto-cleanup, agent/greek-salad-gluten-red unmerged — delete). Next: Inbox 🐞 Avocado Toast vegan claim (SeedRecipeProvider.swift:121) — add its old copy to `shippedVersions`, bump `sampleRefreshVersion` to 8.

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox Apple Jalebi title/tag · 6c4cf6b
+- For you: Three bundled recipe titles now match their labels: Vegan Apple Jalebi, Oat Milk Tangzhong Bread and Meat Lasagne. If you haven't changed your copy, it updates on its own and keeps your favourite and rating.
+- Behind the build: a new test that failed on the old titles checks no bundled title promises a diet its labels don't carry, and another makes sure recipe fixes always reach your copies; a reviewer and a challenger both found the lasagne.
+
 ## 2026-11-25 · Inbox refreshStaleSamples wiring test · 4008773
 - For you: Fixes to the starter recipes keep reaching your copies when you open the app, with your favourites and ratings kept.
 - Behind the build: new tests run the launch refresh against a fresh store and failed when it was wired to the bundled recipes alone; a reviewer and a challenger read the change.
