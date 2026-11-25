@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox starter Greek salad gluten-free claim · bd8decf
+- For you: The starter Greek Salad is no longer labelled gluten-free, since it's served with crusty bread. If you haven't changed your copy, it updates on its own and keeps your favourite and rating.
+- Behind the build: a test that failed on the old recipe now checks every gluten-free starter names no gluten source; a reviewer and a challenger checked the update path.
+
 ## 2026-11-25 · Inbox hide unmatched diet chips · 138fb26
 - For you: Recipe filters now offer Vegetarian and Vegan, the diets every recipe is tagged for, so each chip you tap finds dishes. More diets arrive with a fuller diet feature.
 - Behind the build: a test now checks every diet chip on offer finds bundled recipes; a reviewer and a challenger read the change.

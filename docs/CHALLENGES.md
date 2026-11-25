@@ -934,3 +934,6 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner (2026-11-25, B6): Reject — same known "view glue has no unit test" gap as the B6 item
 - ⚔️ [Data] A night holding two plans of different dishes after a backup `merge()` now loses only the tapped one; the other then shows in its place (was: both deleted, one beyond Undo) — cost if wrong: the cook taps once more.
   → Owner (2026-11-25, B8): Reject — rare race/order quirk, reviewed and accepted; take-off toast frozen at its current text before launch
+
+## 2026-11-25 (item pass: starter Greek salad gluten-free — fixed: `contains` overload spelling, version pin test, wider gluten word list)
+- ⚔️ [Data] A device still on an older build can save the whole Greek salad record (e.g. a favourite tap) with `isGlutenFree: true` and sync it back after a newer device has run refresh v7, which never runs again — *suspected*, not traced (does `updateRecipe` write dietaryInfo on a favourite toggle?); applies to every bundled refresh — cost if wrong: the claim returns on that install until the next version bump.

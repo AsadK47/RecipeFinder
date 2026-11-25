@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Starter Greek salad gluten-free** (bd8decf, builder 2026-11-25): set false rather than rewording the method to
+  "gluten-free bread" (honest about the recipe as written). Existing installs: starters join the stale-sample refresh
+  via `SeedRecipeProvider.shippedVersions` (all 3 shipped Greek salad content keys, from git) + `refreshSources`,
+  version 6→7; starters alone never complete a run when bundle JSON is missing. Edited copies keep the old tag by the
+  refresh's "a miss is safe" rule → Needs owner. Rejected: freezing old versions as literals (3×30 duplicated lines) —
+  a comment on `makeGreekSalad` says to copy it to a literal before any other edit.
 - **Needs owner batch** (owner 2026-11-25, "go with recommendations"): Privacy §2.2/§6.2 keep "only" (a legal
   limit, not product copy); §7.4 share-sheet clause is covered by §7.3 Sharing (f4c8431..d4f516e); Plan deck swipe-up
   → option (b); toolbar timer retired; cuisines count real cuisines only; Today 8am leads with the next meal's

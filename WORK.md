@@ -1,4 +1,4 @@
-# WORK.md — handoff (2026-11-23, builder agent)
+# WORK.md — handoff (2026-11-25, builder agent)
 
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 starter Greek salad gluten-free landed bd8decf..4fd63f9 (builder 2026-11-25; leftover branches agent/greek-salad-gluten auto-cleanup, agent/greek-salad-gluten-red unmerged — delete). Next: Inbox 🐞 Avocado Toast vegan claim (SeedRecipeProvider.swift:121) — add its old copy to `shippedVersions`, bump `sampleRefreshVersion` to 8.
 ✅ Inbox 🐞 hide five diet chips landed c3bd711 (builder 2026-11-25; leftover branches agent/hide-diet-chips, -2, auto-cleanup). Next: Inbox 🐞 Greek salad `isGlutenFree` (SeedRecipeProvider.swift:208) — dangerous allergen claim, fix first.
 ✅ Inbox 🟡 FilterSheet/NotesStepView placeholder copy landed 8eaf4af (builder 2026-11-25; leftover branch agent/placeholder-case, auto-cleanup). Next: top Inbox 🐞 — hide the five unmatched diet chips (RecipeDietaryInfo.swift:34 / FilterSheet, owner 2026-11-25).
 ✅ Inbox 🟡 CHANGELOG wording (both reviewer lines) fixed on main (builder 2026-11-25, docs only). Next: Inbox 🟡 FilterSheet.swift:117 "e.g. chicken, tomato…" + NotesStepView.swift:41 ellipsis (reviewer 2026-11-24).
