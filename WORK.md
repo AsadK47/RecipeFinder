@@ -96,6 +96,13 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 
+- **Take-off by id** (`agent/plan-takeoff-by-id`): `MealPlanningManaging.takeOff(_:)` removes by id and returns the
+  Undo snapshot, [] when the plan is already gone — moved into the manager so it's testable (view glue was 0%).
+  Rejected: snapshotting the slot's plans (keeps the stale-tap delete, just makes it undoable). Red-first: refactor
+  commit 783d412 keeps the old slot delete + tests. **Pre-mortem:** (1) stale tap deletes the new dish →
+  `aStaleTakeOffLeavesTheDishPlannedSince`; (2) weekly meal stale tap → `…OfAWeeklyMeal…`; (3) Undo after a stale tap
+  loses the new dish → `undoAfterAStaleTakeOffKeepsTheDishPlannedSince`.
+
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
