@@ -1,7 +1,8 @@
 # Agent working lessons
 
 Hard-won lessons from AI-assisted sessions on this repo. Keep short; promote a
-recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
+recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step). New entries end `Check:` or
+`No check:` (CLAUDE.md Harness decay); entries whose check has landed move to `docs/archive/` monthly.
 
 ## Process
 1. **Verify a finding's premise before editing — in *both* directions.** Audits/reviews
@@ -72,11 +73,15 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 34. **Land a fix to a scheduled job before cleaning up what it produced.** 2026-11-25: tester issues #14–16 were deleted
    while the hourly feedback job still ran the old code; it re-filed them (#17–19) with tester text and a new artifact
    an hour later → a second clean-up. Fix first, confirm one run of the new code, then delete.
+   No check: an ordering judgement across a live schedule.
 35. **"Private" on a public repo means checked, not assumed.** 2026-11-23/25: the policy said screenshots were "kept
    privately", but artifacts on a public repo download for any GitHub user; issue edit history and title changes stay
    public after an edit (only deleting the issue removes them). Two reviewers checking text against code caught both.
+   Check: queued — CI step that fails if a workflow uploads feedback artifacts or posts tester fields to issues.
 36. **One checkout per agent.** 2026-11-25: a docs agent editing `/home/user/RecipeFinder` while another switched it to a
    feature branch nearly committed onto that branch. Give a second lane its own `git worktree`.
+   Check: queued — lane start script creates a worktree per `agent/*` branch.
 37. **CloudKit Production needs every record type to exist in Development first.** 2026-11-25: a type appears only once a
    row of it syncs (3 of 11 were missing until a photo, a shop and an inventory item were added); a new field can be
    added by hand (Console → Record Types → +, `CD_<name>`). Simulator iCloud sign-in fails on new iOS betas — use a device.
+   No check: a manual Console step (docs/OPERATIONS.md).

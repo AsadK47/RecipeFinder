@@ -57,7 +57,8 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
       Chesterton's fence, would-the-tests-notice). Fix what's real; anything not fixed goes to `docs/CHALLENGES.md`
       with why.
 7. When green: if no other lane has a green branch waiting, land it alone: rebase on `origin/main`; if that brought
-   in new commits, push and wait for green again; then fast-forward `main` and push it (ships a TestFlight build with
+   in new commits, push and wait for green again — unless they only *modify* existing `*.md` files that aren't in
+   `project.pbxproj` (no add/delete/rename: `git diff --diff-filter=ADR --name-only` empty), which can't break the build; then fast-forward `main` and push it (ships a TestFlight build with
    auto-filled "What to Test"). **Batch landing** (owner 2026-11-15, for parallel lanes): mark the branch
    `ready to batch` in its WORK.md lane line instead. The landing agent recreates `agent/batch` from `origin/main`,
    merges every ready branch into it (`--no-ff`; a conflict → that branch is left out and its lane fixes it), pushes
@@ -86,6 +87,12 @@ item in the same session (no need to wait for the nightly run) — then `fire_tr
 - **Look at the screens:** download main's `*-web.jpg` for screens touched (`gh api
   repos/AsadK47/RecipeFinder/releases/tags/screenshots --jq '.assets[].name'`), Read them, flag clipping, overlap,
   empty/broken states, unreadable text; note if Screenshots wasn't re-run on main after a UI change.
+
+### Weekly owner batch (owner 2026-11-25)
+Every Monday, the reviewer sends the owner one push notification linking a batched list of open **Needs owner** items,
+each with a recommendation. Recommendations are applied 72 h later unless the owner changes them, except guardrail
+items (model versions, entitlements, signing, money, new or changed legal clauses), which wait for an explicit answer;
+fixing untrue copy follows CLAUDE.md's fix-without-asking rule.
 
 ### Log rotation (reviewer, each run)
 Keep **Log** to the last 7 days. Move older lines, unchanged, to the top of `docs/LOG.md` under a
@@ -862,6 +869,13 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   share links: "Sam made your lasagne", see a friend's latest cooks, copy their recipe. Needs owner call (privacy
   policy, new sync scope) after Phase 2. Today's step towards it: sharing a My Cookbook page.
 Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — why it might matter`. No loop step → it stays.
+- Weekly meal: skip one week — loop step: Decide — after launch (owner 2026-11-25): needs a synced "skipped" marker → Privacy text
+- Cooking resume across relaunch — loop step: Cook — after launch (owner 2026-11-25): stores recipe + step on device → Privacy §4.2 line + clear on Reset
+- Smell: recipe times → Int minutes — loop step: none — after launch (owner 2026-11-25): new model version + CloudKit deploy; do as RecipeModel 19 after model 18
+- Cookbook notes / "who it was for" — loop step: Remember — after launch (owner 2026-11-25): needs a per-cook synced record (model 19)
+- Play decisions — loop step: Cook — after launch (owner 2026-11-25): 4 open questions in docs/PLAY.md incl. Game Center alias sent to Apple
+- Planner: read your iOS calendar — loop step: Decide — after launch (owner 2026-11-25): calendar permission + on-device read; busy nights stay manual meanwhile
+- Today "New imports" shelf — loop step: Discover — after launch (owner 2026-11-25): needs a recipe add-date field (model change)
 - Swipe between tabs (Instagram-style) — loop step: none — owner idea 2026-11-15; clashes with sideways rows (Today, Recipes, Me) and the edge back-swipe; decide after the owner's week of use.
 - Play extras (Kitchen Bites, Cooking Path, quests, mascot, Spoons + shop, daily-streak rework) — loop step: Cook
   (habit) — revisit after Phase 1 shows whether Made-it alone builds the habit. Items: Play 1/7, 2/7, 4/7–7/7.
@@ -875,43 +889,9 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 - Plan beyond dinner (owner asked 2026-11-23; 3 reviewers — product, market, cost — agreed: not before launch, no full 3×7 deck) — loop step: Decide — after launch, in this order: (1) "Make extra for tomorrow's lunch" on a dinner card fills lunch with leftovers (Mealime's answer; see the leftovers idea merged into Plan); (2) repeat a usual breakfast/lunch across the week; (3) lunch cards inferred from habit (≥3 lunches planned in 2 weeks), no chooser. Blockers for a breakfast deck: 7 seed breakfasts vs 143 mains, no Lunch category, lunch would compete with dinner for dishes. Evidence: dinner is the hardest meal to decide for 57% of UK adults (OnePoll 2024).
 
 ## Needs owner
-- 🙋 **Today: should a later plan lead at 8am?** (builder 2026-11-21, Today — decide tonight): with only dinner planned,
-  the 8am hero is "Tonight: <dinner>" not a breakfast idea (any plan outranks a suggestion — CHALLENGES 21 Nov). Keep
-  (the cook's plan is the decision) / lead with the next meal's suggestion and show the plan in the day strip — recommended?
-- 🙋 **Weekly meal: skip one week** (Plan bug hunt 2026-11-20): taking one week of a repeating meal off now asks and stops the repeat (no way to skip a single week without storing a "skipped" marker = new synced data → Privacy text). Add a skip marker (model/privacy change) / keep stop-only?
-_Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once the core loop is finished — don't ping before then; the sync device checks above stay owner-paced._
-- 🙋 **Plan deck: what does swipe up do?** (builder 2026-11-19, swipe to match slice 3): the deck deals tonight's card
-  first, so "up = tonight" can only show after the cook taps *Leave tonight open* (challenger: it nudges what they just
-  declined). Pick one: (a) up on a later night **swaps** with an already-planned tonight (old dish moves to that night)
-  — recommended; (b) drop up from the week deck, keep it for the Inspire me deck; (c) land as built (branch e45d1ce).
-- 🙋 **Two timers in cooking mode** (builder 2026-11-19, Cooking flow 3b): step timers are now named pills; the toolbar ⏱ still opens the old single custom timer (`CookTimerView`), which doesn't show the pills. Retire the toolbar timer in cooking mode, or turn it into "add a custom named timer" to the pills?
-- 🙋 **"Cuisines tried" counts courses** (builder 2026-11-17, Me hero): a cooked recipe with no cuisine counts its
-  category (Main, Dessert…) as a cuisine — in the Globetrotter badge and now Me's strip (pinned by
-  `metrics_cuisineFallsBackToCategoryWhenCuisineMissing`); starter recipes have no cuisine. Count real cuisines only
-  (both places; earned badges stay) — recommended / keep the fallback?
-- 🙋 **Cooking resume across relaunch** (builder 2026-11-19): cooking mode now resumes at the step you left while
-  the app stays open. Keeping it after the app is closed means storing "recipe + step" on the device — add a Privacy
-  §4.2 line ("where you are in a recipe you're cooking") and clear it on Reset? (yes / keep in-memory)
 - 🙋 **Sync device checks** (owner-paced; all 254 challenges were answered 2026-11-25): CHALLENGES 627 (photo returns
   after iCloud sign-out/in), 635 + 637 (delete with sync off stays deleted elsewhere, one and many), 645 (CloudKit
   exports a delete made while the mirror was off — the fix may be a no-op).
-- 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
-- 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
-  `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
-  ships, or fold it into model 18 now? Builder skips to Batch A meanwhile.
-- 🙋 **Cookbook notes / "who it was for"** (builder 2026-11-16): needs a per-cook record (RecipeModel 19 or a synced
-  cook-log entity). Add it after Recently deleted's model 18 ships, or drop notes from My Cookbook?
-- 🙋 **Privacy §7.4 for sharing** (builder 2026-11-16, challenger): tapping Share hands a recipe or a cookbook page
-  picture (your photo, dish, dates, stars) to the iOS share sheet; the app sends nothing itself, so the policy is
-  unchanged. Add an optional clause ("When you tap Share, what you chose goes to the iOS share sheet; where it goes is
-  your choice") to §7 + `privacy.html`? Recommended: yes, next legal pass.
-- 🙋 **Play decisions** (see `docs/PLAY.md`; agents start Play 1/7 once answered): (1) daily streak from a
-  1-minute action (Tonight check-in, Kitchen Bite or a cook) replaces the weekly flame, weekly cooks become the goal
-  ring — OK? (2) RecipeModel 18 with a synced `PlayEventEntity` — OK? (3) agents write Kitchen Bites quiz content
-  (own words, food-safety facts checked against FSA/NHS) — OK? (4) Game Center weekly leagues (opt-in; score + alias
-  go to Apple): yes / later / no?
-- 🙋 Planner: read your iOS calendar (on-device, permission prompt) to mark busy evenings automatically in Fill my week? Default: manual busy nights only.
-- 🙋 Today "New imports" shelf needs a recipe add-date = new Core Data field (model 16, guardrail). Add it, or drop the shelf?
 - 🙋 Starter photos (optional, nice-to-have): pick ~6 photos you own or free-licensed ones (e.g. Unsplash, licence
   allows bundling in a free app) for the 6 starter recipes; drop the files in and agents will bundle them in
   `Assets.xcassets` — shipped inside the app, no runtime API calls.
@@ -921,10 +901,16 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
+- 🟡 Lesson 35 check: a CI step (or test over `.github/`) that fails if any workflow uploads TestFlight feedback as an artifact or if `fetch_testflight_feedback.py` `issue_for` output contains tester fields (comment, device, email) (owner 2026-11-25, mistake-proof rule)
+- 🟡 Lesson 36 check: lanes start in their own `git worktree` per `agent/*` branch (script or documented one-liner in BACKLOG step 4) so parallel agents never share a checkout (owner 2026-11-25)
+- 🟡 Today at 8am with only dinner planned: lead with the next meal's suggestion; tonight's plan shows in the day strip (owner 2026-11-25, recommended answer)
+- 🟡 Plan deck: drop swipe-up from the week deck (keep it for Inspire me), option (b); close branch agent/plan-deck-tonight unmerged (owner 2026-11-25)
+- 🟡 Cooking mode: retire the toolbar ⏱ custom timer; step timer pills are the one timer (owner 2026-11-25)
+- 🟡 "Cuisines tried": count real cuisines only (Me strip + Globetrotter); earned badges stay (owner 2026-11-25, recommended answer)
 - 🐞 RecipeFinder/Models/Recipe/RecipeDietaryInfo.swift:34 / FilterSheet — Gluten-Free, Dairy-Free, Nut-Free, Low-Carb and Keto chips match nothing (0 seeded recipes carry them; recommended default in Needs owner is past 72 h) — hide the five chips until *Your diet, everywhere* lands (challenger 2026-11-25; owner 2026-11-25, CHALLENGES B4)
 - 🐞 **Workflow items unblocked** (owner 2026-11-23: workflows OK to edit) — do each as its own item:
-  (a) `cleanup-agent-branches.yml` dies on GH013 at the first protected `agent/*` branch → skip refused deletes and carry on, report the count; — ⏸ built on `agent/cleanup-skip-refused` (8648522, 2 reviews), landing on main was refused to the agent → owner: fast-forward main to it
-  (b) `asc_promote_public.py` — add the build to Public Beta only for READY/WAITING/IN_BETA_REVIEW/BETA_APPROVED, else exit non-zero; check state before the "already available" exit; — ⏸ built on `agent/asc-promote-state` (ca981bf, reviewer + challenger, 10 script tests), landing on main was refused to the agent → owner: fast-forward main to it
+  (a) ✅ 2026-11-25 `cleanup-agent-branches.yml` skips refused deletes and reports them (landed from agent/cleanup-skip-refused);
+  (b) ✅ 2026-11-25 `asc_promote_public.py` checks the build's review state before promoting (landed from agent/asc-promote-state, 10 script tests);
   (c) ✅ 2026-11-25 `testflight-promote.yml` is `workflow_dispatch` only (a8094ee) until bundled method text is our own; restore the daily cron after that;
   (d) ✅ 2026-11-25 no artifacts; issues are content-free notices; Privacy 6.4–6.6/10 + privacy.html updated;
   (e) Inbox 🟡 `testflight_notes.py` scopes + promote `.p8` trap below are unblocked too.
@@ -980,6 +966,7 @@ _Review 2026-11-24 (62 commits, b6db909..67d8ebc; reviewers: correctness, tests/
 
 ## Log
 _Last 7 days; older entries are in `docs/LOG.md`._
+- 2026-11-25 · Owner rules + kaizen (owner: "take my asking as the action") · docs only + 2 parked CI fixes · CLAUDE.md: act-don't-ask, mistake-proof-before-documenting; BACKLOG step 7 docs-only rebase lands without re-CI; weekly owner batch; Needs owner: 4 decided (→ Inbox 🟡), 7 → Parking lot after launch, §7.4 + "only" answered; landed agent/cleanup-skip-refused + agent/asc-promote-state (10 script tests pass locally; 2 reviews each earlier)
 - 2026-11-25 · Inbox 🔴 TestFlight feedback stays private + (c)/(d) (owner: "action it") · 8b04b9f..4242160 · public issues are content-free notices (kind, date, submission id), no artifact upload, daily public promotion now manual; Privacy 6.5/6.6/10.1/10.2 say feedback stays in App Store Connect under Apple's retention until you ask (no deletion schedule, owner) · evidence (deductive): old issues #14–16 held tester comment + device and artifact 14144532479 held a screenshot — artifact deleted, issues rewritten then deleted by owner · review: 2 reviewers (code vs policy; UK GDPR), 9 fixed · CI green 45621036099 · looked at: none (text only) · website privacy.html mirrored
 - 2026-11-25 · Owner answered 254 challenges (batches B1–B15, owner "go with recommendations") · docs only · 73 accepted → BACKLOG, 93 rejected (19 already resolved), 70 later; 18 already had a verdict
 - 2026-11-25 · Owner task: CloudKit Production schema (RecipeModel 17) · docs only · owner ran the app from Xcode on iPhone with sync on, created photo/shop/inventory rows so all 11 `CD_` record types reached Development (seen in owner's Console screenshots), then Deploy Schema Changes → Production. Model 18 `deletedAt`: owner added `CD_Recipe.CD_deletedAt` (Date/Time) by hand in Development and deployed it too

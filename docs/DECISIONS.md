@@ -5,6 +5,10 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Needs owner batch** (owner 2026-11-25, "go with recommendations"): Privacy §2.2/§6.2 keep "only" (a legal
+  limit, not product copy); §7.4 share-sheet clause is covered by §7.3 Sharing (f4c8431..d4f516e); Plan deck swipe-up
+  → option (b); toolbar timer retired; cuisines count real cuisines only; Today 8am leads with the next meal's
+  suggestion. Seven model/feature items → Parking lot, after launch.
 - **Take-off by id** (7df56e5, builder 2026-11-25): `MealPlanningManaging.takeOff(_:)` removes the stored copy by id
   (else the same dish on its night — an iCloud fold may have kept the twin) and returns it + the Undo snapshot, nil
   when nothing came off; moved into the manager so it's tested (view glue was 0%). Rejected: snapshotting the slot's
