@@ -252,17 +252,15 @@ extension MealPlanningView {
             updateSelectedMealTimes(for: selectedDate)
         }
         let result = MealPlanTakeOff.after(taking: plan, changed: before,
-                                           earlier: removalToast == nil ? [] : (removalUndo ?? [])) {
-            mealPlanningManager.isPlanned($0.id)
-        }
-        removalUndo = result.undo
+                                           earlier: removalToast == nil ? nil : pendingTakeOff)
+        pendingTakeOff = result
         weekShoppingFeedback = nil // one toast at a time: both sit at the bottom
         removalToast = result.message
     }
 
     func undoTakeOff() {
-        guard let before = removalUndo else { return }
-        removalUndo = nil
+        guard let before = pendingTakeOff?.undo else { return }
+        pendingTakeOff = nil
         var skipped: [MealPlanModel] = []
         withAnimation(.appGentle) {
             skipped = mealPlanningManager.restore(before)

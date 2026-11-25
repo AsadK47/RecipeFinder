@@ -19,8 +19,8 @@ struct MealPlanningView: View {
     /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
     @State private var pendingSuggestedRecipe: RecipeModel?
     @State var showClearPastConfirm = false
-    /// The plans as they were before the last take-off, for the toast's Undo (owner 2026-11-22: no confirm pop-ups).
-    @State var removalUndo: [MealPlanModel]?
+    /// The take-offs in a row while the toast is up: one Undo for them all (owner 2026-11-22: no confirm pop-ups).
+    @State var pendingTakeOff: MealPlanTakeOff?
     @State var removalToast: String?
     /// After Undo: names meals that stayed off because another meal holds their slot now.
     @State var undoNote: String?
