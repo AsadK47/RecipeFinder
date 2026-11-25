@@ -217,9 +217,10 @@ final class MealPlanningManager: MealPlanningManaging {
     @discardableResult func takeOff(_ plan: MealPlanModel) -> [MealPlanModel] {
         // By id, not slot: a stale tap on a night planned again since must not delete the new dish, which Undo
         // (built from `plan`'s snapshot) couldn't put back.
-        guard mealPlans.contains(where: { $0.id == plan.id }) else { return [] }
-        let before = plansChangedByRemoving(plan)
-        removeMealPlan(plan)
+        // The stored copy, not the caller's: Undo's snapshot must be of the series removal will actually change.
+        guard let current = mealPlans.first(where: { $0.id == plan.id }) else { return [] }
+        let before = plansChangedByRemoving(current)
+        removeMealPlan(current)
         return before
     }
 
