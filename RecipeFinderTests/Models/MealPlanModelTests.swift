@@ -283,7 +283,7 @@ struct MealPlanTakeOffTests {
     }
 
     /// W2 of a W1–W3 weekly series: W2 and W3 come off, W1 only stops repeating and stays planned.
-    /// Then one more meal comes off: 3 meals, not 4.
+    /// Then one more meal comes off: two taps, two meals — the weekly dish counts once, its kept copy not at all.
     @Test func anEarlierWeeklyCopyThatStaysPlannedIsNotCounted() {
         let w1 = plan("Tacos", week: 0, recurring: true)
         let w2 = plan("Tacos", week: 1, recurring: true)
@@ -291,8 +291,44 @@ struct MealPlanTakeOffTests {
         let dal = plan("Dal", week: 3)
         let result = MealPlanTakeOff.after(taking: dal, changed: [dal], earlier: [w1, w2, w3],
                                            isStillPlanned: { $0.id == w1.id })
-        #expect(result.message == "3 meals taken off")
+        #expect(result.message == "2 meals taken off")
         #expect(result.undo == [w1, w2, w3, dal])
+    }
+
+    /// Taking off a weekly dinner also deletes its later-week copies: with one more meal that's two meals, not four.
+    @Test func laterWeeklyCopiesTakenOffWithTheirDinnerCountOnce() {
+        let tacos = plan("Tacos", week: 0, recurring: true)
+        let copies = [plan("Tacos", week: 1, recurring: true), plan("Tacos", week: 2, recurring: true)]
+        let copiesOfOneDish = copies.map { copy -> MealPlanModel in
+            var same = copy
+            same.recipeId = tacos.recipeId
+            return same
+        }
+        let dal = plan("Dal", week: 3)
+        let result = MealPlanTakeOff.after(taking: dal, changed: [dal], earlier: [tacos] + copiesOfOneDish,
+                                           isStillPlanned: { _ in false })
+        #expect(result.message == "2 meals taken off")
+        #expect(result.undo == [tacos] + copiesOfOneDish + [dal])
+    }
+
+    /// A stale second tap on a weekly dinner already taken off (with its later copies) is still one meal.
+    @Test func aStaleSecondTapOnAWeeklyDinnerKeepsTheOneMealMessage() {
+        let tacos = plan("Tacos", week: 0, recurring: true)
+        var copy = plan("Tacos", week: 1, recurring: true)
+        copy.recipeId = tacos.recipeId
+        let result = MealPlanTakeOff.after(taking: tacos, changed: [], earlier: [tacos, copy],
+                                           isStillPlanned: { _ in false })
+        #expect(result.message == "Tacos taken off and stopped repeating")
+    }
+
+    /// Two one-off dinners of the same dish on different nights are two meals.
+    @Test func twoOneOffsOfTheSameDishCountTwice() {
+        let dal = plan("Dal", week: 0)
+        var again = plan("Dal", week: 1)
+        again.recipeId = dal.recipeId
+        let result = MealPlanTakeOff.after(taking: again, changed: [again], earlier: [dal],
+                                           isStillPlanned: { _ in false })
+        #expect(result.message == "2 meals taken off")
     }
 
     /// A stale second tap on a dinner already taken off changes nothing: still one meal off, not "2 meals".
