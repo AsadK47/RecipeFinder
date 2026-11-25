@@ -24,6 +24,8 @@ struct MealPlanningView: View {
     @State var removalToast: String?
     /// After Undo: names meals that stayed off because another meal holds their slot now.
     @State var undoNote: String?
+    /// Waits before showing `undoNote`; a new take-off calls it off so the note can't cover its toast.
+    @State var undoNoteDelay = DelayedToast()
     /// Non-nil while the meal-reminder time picker is presented.
     @State var reminderContext: ReminderContext?
     /// Non-nil while "Plan my week" is dealing cards.

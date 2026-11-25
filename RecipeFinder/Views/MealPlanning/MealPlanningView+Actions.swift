@@ -246,6 +246,7 @@ extension MealPlanningView {
 
     /// Takes a meal off at once — a weekly one stops repeating — with Undo on the toast instead of a confirm pop-up.
     func takeOff(_ plan: MealPlanModel) {
+        undoNoteDelay.callOff { undoNote = nil }
         let before = mealPlanningManager.plansChangedByRemoving(plan)
         withAnimation(.appGentle) {
             removeMealPlan(for: plan.date, mealTime: plan.mealTime)
@@ -269,11 +270,8 @@ extension MealPlanningView {
         }
         guard let note = MealPlanModel.notPutBackMessage(skipped) else { return HapticManager.shared.light() }
         HapticManager.shared.warning()
-        Task {
-            // The Undo toast clears as Undo returns; showing this in the same spot at once would overlap it.
-            do { try await Task.sleep(for: .milliseconds(450)) } catch { return }
-            undoNote = note
-        }
+        // The Undo toast clears as Undo returns; showing this in the same spot at once would overlap it.
+        undoNoteDelay.show(note, after: .milliseconds(450)) { undoNote = $0 }
     }
 
     // MARK: - Week navigation

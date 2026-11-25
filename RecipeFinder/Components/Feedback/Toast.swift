@@ -22,6 +22,30 @@ enum ToastDismissal {
     }
 }
 
+/// A toast shown after a short wait (so it doesn't overlap one that is leaving), which a newer toast calls off.
+@MainActor
+struct DelayedToast {
+    private(set) var pending: Task<Void, Never>?
+
+    /// Shows `message` through `show` after `delay`, replacing a note still waiting.
+    mutating func show(_ message: String, after delay: Duration, _ show: @escaping @MainActor (String) -> Void) {
+        pending?.cancel()
+        pending = Task { @MainActor in
+            do { try await Task.sleep(for: delay) } catch { return }
+            // The wait can end just before a cancel lands; a called-off note stays hidden.
+            guard !Task.isCancelled else { return }
+            show(message)
+        }
+    }
+
+    /// Calls off a note still waiting and hides one already up, so it can't cover a newer toast.
+    mutating func callOff(hide: () -> Void) {
+        pending?.cancel()
+        pending = nil
+        hide()
+    }
+}
+
 /// What VoiceOver hears when a toast appears — every toast, since a VoiceOver user can't see the capsule slide in.
 enum ToastAnnouncement {
     static func text(for message: String, actionTitle: String?) -> String {

@@ -60,3 +60,59 @@ struct ToastDismissalTests {
         #expect(ToastAnnouncement.text(for: "1 meal taken off", actionTitle: "Undo") == "1 meal taken off. Undo available")
     }
 }
+
+/// Plan's "stayed off" note after Undo waits before it shows; a take-off in that wait must call it off.
+@MainActor
+@Suite("Delayed toast")
+struct DelayedToastTests {
+
+    @MainActor
+    private final class Shown {
+        var messages: [String] = []
+        var current: String?
+        func show(_ message: String) { messages.append(message); current = message }
+    }
+
+    @Test("A note shows once its wait is over")
+    func showsAfterTheWait() async {
+        let shown = Shown()
+        var delayed = DelayedToast()
+        delayed.show("Tacos stayed off", after: .milliseconds(1)) { shown.show($0) }
+        await delayed.pending?.value
+        #expect(shown.current == "Tacos stayed off")
+    }
+
+    @Test("A take-off during the wait calls the note off")
+    func callOffDuringTheWaitKeepsItHidden() async {
+        let shown = Shown()
+        var delayed = DelayedToast()
+        delayed.show("Tacos stayed off", after: .seconds(60)) { shown.show($0) }
+        let waiting = delayed.pending
+        delayed.callOff { shown.current = nil }
+        await waiting?.value
+        #expect(shown.messages.isEmpty)
+        #expect(delayed.pending == nil)
+    }
+
+    @Test("A take-off while the note is up hides it")
+    func callOffHidesAShownNote() async {
+        let shown = Shown()
+        var delayed = DelayedToast()
+        delayed.show("Tacos stayed off", after: .milliseconds(1)) { shown.show($0) }
+        await delayed.pending?.value
+        delayed.callOff { shown.current = nil }
+        #expect(shown.current == nil)
+    }
+
+    @Test("A newer note replaces one still waiting")
+    func newerNoteReplacesTheWaitingOne() async {
+        let shown = Shown()
+        var delayed = DelayedToast()
+        delayed.show("Tacos stayed off", after: .seconds(60)) { shown.show($0) }
+        let first = delayed.pending
+        delayed.show("2 meals stayed off", after: .milliseconds(1)) { shown.show($0) }
+        await first?.value
+        await delayed.pending?.value
+        #expect(shown.messages == ["2 meals stayed off"])
+    }
+}
