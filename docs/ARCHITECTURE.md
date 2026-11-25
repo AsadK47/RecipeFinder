@@ -213,7 +213,7 @@ All in `.github/` (`ls .github/workflows` for the current set; each YAML's heade
 | `testflight.yml` | push to `main` touching app/extension/project files (not `*.md`), manual | Archive, upload to App Store Connect (build number = run number), then set "What to Test" (`testflight_notes.py`, `set_whats_new.py`) |
 | `coverage.yml` | nightly, manual | Unit tests with coverage; publishes to the `coverage` release on `main` |
 | `screenshots.yml` | manual | Captures App Store screenshots to the `screenshots` / `screenshots-preview` releases |
-| `testflight-feedback.yml` | daily, manual | Files a content-free notice per TestFlight feedback as a GitHub issue (`fetch_testflight_feedback.py`) |
+| `testflight-feedback.yml` | hourly, manual | Files a content-free notice per TestFlight feedback as a GitHub issue (`fetch_testflight_feedback.py`) |
 | `testflight-capabilities-check.yml` | manual | Reads the app's capabilities in App Store Connect (`asc_capabilities.py`) |
 | `cleanup-agent-branches.yml` | daily, manual | Deletes merged `agent/*` branches |
 | `tools-build.yml` | push to `tools/RecipeArt/**`, manual | Builds the RecipeArt tool |
