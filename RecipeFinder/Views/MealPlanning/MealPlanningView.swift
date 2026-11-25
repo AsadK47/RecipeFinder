@@ -135,6 +135,8 @@ struct MealPlanningView: View {
         .toast($weekShoppingFeedback)
         .toast($removalToast, icon: "trash", action: (title: "Undo", perform: undoTakeOff))
         .toast($undoNote, icon: "calendar.badge.exclamationmark")
+        // A note still waiting when the cook leaves Plan would show out of context on the way back.
+        .onDisappear { undoNoteDelay.callOff { undoNote = nil } }
         .onAppear {
             rollOverToToday()
             if let start = currentWeekStart {

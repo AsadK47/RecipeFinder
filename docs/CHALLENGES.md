@@ -854,3 +854,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner:
 - ⚔️ [Tests] Deleting the `undoNote` hand-off in `undoTakeOff` fails no test (view glue, logged *unconfirmed*); the copy tests pin wording, not truth.
   → Owner:
+
+## 2026-11-25 (item pass: undoNote call-off — fixed: note left pending when the cook leaves Plan (`.onDisappear`), 60 s test wait → 2 s)
+- ⚔️ [Tests] Deleting `undoNoteDelay.callOff` in `takeOff` (MealPlanningView+Actions.swift) fails no test (view glue, *unconfirmed*); the `Task.isCancelled` guard in `DelayedToast` needs an injected sleep to test — cost if wrong: note covers the Undo toast again.
+  → Owner:
+- ⚔️ [UX] `weekShoppingFeedback` ("No past plans to clear") can sit under `undoNote`/`removalToast`; only `takeOff` clears it — cost if wrong: two toasts stacked for ≤3 s.
+  → Owner:
+- ⚔️ [Simplify] Two-line alternative (`guard removalToast == nil` in the old Task + `undoNote = nil` in `takeOff`) rejected: `DelayedToast` keeps the cancel/replace rules unit-tested and covers leaving Plan.
+  → Owner:
+

@@ -86,7 +86,7 @@ struct DelayedToastTests {
     func callOffDuringTheWaitKeepsItHidden() async {
         let shown = Shown()
         var delayed = DelayedToast()
-        delayed.show("Tacos stayed off", after: .seconds(60)) { shown.show($0) }
+        delayed.show("Tacos stayed off", after: .seconds(2)) { shown.show($0) }
         let waiting = delayed.pending
         delayed.callOff { shown.current = nil }
         await waiting?.value
@@ -108,7 +108,7 @@ struct DelayedToastTests {
     func newerNoteReplacesTheWaitingOne() async {
         let shown = Shown()
         var delayed = DelayedToast()
-        delayed.show("Tacos stayed off", after: .seconds(60)) { shown.show($0) }
+        delayed.show("Tacos stayed off", after: .seconds(2)) { shown.show($0) }
         let first = delayed.pending
         delayed.show("2 meals stayed off", after: .milliseconds(1)) { shown.show($0) }
         await first?.value
