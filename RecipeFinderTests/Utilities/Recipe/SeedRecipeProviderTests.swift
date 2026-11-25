@@ -72,4 +72,15 @@ struct SeedRecipeProviderTests {
         let actual = SeedRecipeProvider.recipes.first { $0.name == "Greek Salad" }?.id
         #expect(actual == expected)
     }
+
+    // MARK: - Allergen claims
+
+    @Test("a starter tagged gluten-free names no gluten source", arguments: SeedRecipeProvider.recipes)
+    func glutenFreeClaimHolds(recipe: RecipeModel) {
+        guard recipe.dietaryInfo.isGlutenFree else { return }
+        let text = (recipe.ingredients.map(\.name) + recipe.prePrepInstructions + recipe.instructions + [recipe.notes])
+            .joined(separator: " ").lowercased()
+        let glutenSources = ["bread", "flour", "pasta", "spaghetti", "toast", "wheat", "barley", "pitta", "naan", "couscous"]
+        #expect(glutenSources.filter(text.contains).isEmpty, "\(recipe.name) claims gluten-free")
+    }
 }
