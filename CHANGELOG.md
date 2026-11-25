@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox FilterSheet/NotesStepView placeholder copy · 8eaf4af
+- For you: The ingredient filter hint now reads "e.g. chicken, tomato…" and the recipe notes box reads "Add your notes here…", matching the rest of the app's prompts.
+- Behind the build: a two-line copy change, checked by a challenger for tests or screens that read the old wording.
+
 ## 2026-11-25 · Inbox dead dailyReminder kind · 5de2fad
 - For you: Reminders work as before — timers, meal reminders, the Sunday nudge and groceries reminders each open the right tab when you tap them.
 - Behind the build: a leftover reminder type nothing sends any more was removed, with a test that failed on the old code first and a challenger pass.

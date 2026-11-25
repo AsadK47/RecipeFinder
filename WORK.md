@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🟡 FilterSheet/NotesStepView placeholder copy landed 8eaf4af (builder 2026-11-25; leftover branch agent/placeholder-case, auto-cleanup). Next: top Inbox 🐞 — hide the five unmatched diet chips (RecipeDietaryInfo.swift:34 / FilterSheet, owner 2026-11-25).
 ✅ Inbox 🟡 CHANGELOG wording (both reviewer lines) fixed on main (builder 2026-11-25, docs only). Next: Inbox 🟡 FilterSheet.swift:117 "e.g. chicken, tomato…" + NotesStepView.swift:41 ellipsis (reviewer 2026-11-24).
 ✅ Inbox 🟡 dead `NotificationKind.dailyReminder` landed 5de2fad (builder 2026-11-25; leftover branch agent/drop-daily-reminder, auto-cleanup); Batch G gained MealPlanningManager + MealPlanningView+Actions. Next: Inbox 🟡 CHANGELOG.md:29/:76 wording (reviewer 2026-11-23), then CHANGELOG.md:17/:41/:29/:37 (reviewer 2026-11-24) — docs only.
 ✅ Inbox 🟡 NotificationManagerTests exemption + `try #require` defaults landed d9dc06e (builder 2026-11-25; leftover branch agent/test-require-defaults, auto-cleanup). Next: Inbox 🐞 RecipeDietaryInfo chips duplicates Needs owner (wait for owner), so take Inbox 🟡 NotificationManager.swift:12 dead `dailyReminder` case.
