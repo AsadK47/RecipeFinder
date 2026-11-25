@@ -56,6 +56,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-25 (item pass: Inbox 🟡 refreshStaleSamples wiring test — fixed: tests use the real bundle loader so a broken default fails)
+- ⚔️ [Tests] The refresh marks its version only after `updateRecipesInBackground` succeeds, but no test makes the save fail, so moving the mark before the save passes. Not fixed: needs a failing-persistence seam for one line; low value. `load()` dropping the call → Inbox 🟡.
+
 ## 2026-11-25 (item pass: Inbox 🟡 dead `dailyReminder` kind — no defects)
 - ⚔️ [Tests] `retiredDailyReminderIsNotAKind` guards the retired raw value — a re-added plain `case dailyReminder` (raw value "dailyReminder") would pass it (NotificationManagerTests.swift:237) — not fixed: the guard is against the old pending-notification tag, and a new case would come with its own sender and tests — cost if we're wrong: a dead case again, found by review
   → Owner (2026-11-25, B6): Reject — same known "view glue has no unit test" gap as the B6 item

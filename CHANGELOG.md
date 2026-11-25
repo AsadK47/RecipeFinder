@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox refreshStaleSamples wiring test · 4008773
+- For you: Fixes to the starter recipes keep reaching your copies when you open the app, with your favourites and ratings kept.
+- Behind the build: new tests run the launch refresh against a fresh store and failed when it was wired to the bundled recipes alone; a reviewer and a challenger read the change.
+
 ## 2026-11-25 · Inbox starter Avocado Toast vegan claim · c2afa17
 - For you: The starter Avocado Toast is now labelled vegetarian rather than vegan, since it lists eggs and suggests feta. If you haven't changed your copy, it updates on its own and keeps your favourite and rating.
 - Behind the build: a test that failed on the old recipe now checks every vegan starter names no animal product; a reviewer caught a build-breaking slip before it landed.

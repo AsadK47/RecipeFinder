@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **refreshStaleSamples wiring test** (1380e01, builder 2026-11-25): seam = `refreshStaleSamples` made internal with injected `storage: LocalStore`
+  and `bundle` loader (defaults = real), not a full `load()` test — `load()` also hits `LocalStore.shared` and
+  `BadgeManager.shared` in other passes. **Pre-mortem:** (1) wiring reverted to bundled-only → starter fixes never
+  reach installs → `launchRefreshReachesStarters` (seen red on the -red twin, run 45696661498); (2) missing bundle marks the version
+  done → never retries → `launchRefreshWaitsForBundleData`; (3) pass reruns every launch → `launchRefreshRunsOncePerVersion`.
+
+
 - **Starter Greek salad gluten-free** (bd8decf, builder 2026-11-25): set false rather than rewording the method to
   "gluten-free bread" (honest about the recipe as written). Existing installs: starters join the stale-sample refresh
   via `SeedRecipeProvider.shippedVersions` (all 3 shipped Greek salad content keys, from git) + `refreshSources`,
