@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Take-off by id** (7df56e5, builder 2026-11-25): `MealPlanningManaging.takeOff(_:)` removes the stored copy by id
+  (else the same dish on its night — an iCloud fold may have kept the twin) and returns it + the Undo snapshot, nil
+  when nothing came off; moved into the manager so it's tested (view glue was 0%). Rejected: snapshotting the slot's
+  plans (keeps the stale-tap delete, only makes it undoable). **Pre-mortem:** (1) stale tap deletes the new dish →
+  `aStaleTakeOffLeavesTheDishPlannedSince`; (2) weekly → `…OfAWeeklyMeal…`; (3) Undo after a stale tap →
+  `undoAfterAStaleTakeOffKeepsTheDishPlannedSince`; fold twin → `takeOffFindsTheSameDishWhenAFoldKeptItsTwin`.
 - **undoNote call-off** (061585b, builder 2026-11-25): wait held in a tiny `DelayedToast` value (Toast.swift, no new
   file) so cancel/replace is unit-tested; view wiring is thin glue (*unconfirmed*: no test sees the overlap).
   **Pre-mortem:** (1) note still shows after a take-off in the 450 ms wait → `callOffDuringTheWaitKeepsItHidden`;

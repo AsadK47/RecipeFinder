@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox take-off deletes by slot · 7df56e5
+- For you: On Plan, taking a meal off removes that meal, so a dish you've planned on the same night since stays on your plan and Undo brings back what you took off.
+- Behind the build: new tests failed on the old code first; a reviewer and a challenger checked it, and the challenger's iCloud case is now handled too.
+
 ## 2026-11-25 · Inbox undoNote Task not cancelled · 061585b
 - For you: On Plan, taking a meal off straight after an Undo now shows its own message with Undo clearly, without the earlier "stayed off" note covering it.
 - Behind the build: a reviewer and a challenger checked the timing; the challenger also caught a note that could appear late after leaving Plan, fixed too.

@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 take-off deletes by slot landed 7df56e5 (builder 2026-11-25; leftover branch agent/plan-takeoff-by-id, auto-cleanup). Next: Inbox 🟡 `NotificationManagerTests.swift:236` shared instance / force-unwraps.
 ✅ Inbox 🐞 undoNote Task landed 061585b (builder 2026-11-25; leftover branch agent/plan-undo-note-cancel, auto-cleanup). Next: Inbox 🐞 MealPlanningView+Actions.swift:249 take-off slot-vs-id deletion, then `NotificationManagerTests.swift:236`.
 ✅ Inbox 🐞 take-off count (later-week copies) landed 5476015 (builder 2026-11-25; count per tap; leftover branch agent/plan-takeoff-series, remote pre-rebase — delete by hand). Next: Inbox 🐞 MealPlanningView+Actions.swift:274 undoNote Task (cancel + clear in `takeOff`), then the new 🐞 take-off slot-vs-id deletion (:249), then `NotificationManagerTests.swift:236`.
 ✅ Inbox 🔴 Privacy 6.5 crash reports + 7.3 sharing landed d4f516e (builder 2026-11-24; leftover branch agent/privacy-share-wording, auto-cleanup). Website session: copy 6.5/7.3 + date 24 Nov 2026 into `privacy.html`. Next: Inbox 🐞 MealPlanTakeOff.swift:25 `gone` counts later-week copies, then 🐞 MealPlanningView+Actions.swift:274 undoNote Task, then `NotificationManagerTests.swift:236`.
@@ -96,12 +97,6 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 
-- **Take-off by id** (`agent/plan-takeoff-by-id`): `MealPlanningManaging.takeOff(_:)` removes by id and returns the
-  Undo snapshot, [] when the plan is already gone — moved into the manager so it's testable (view glue was 0%).
-  Rejected: snapshotting the slot's plans (keeps the stale-tap delete, just makes it undoable). Red-first: refactor
-  commit 783d412 keeps the old slot delete + tests. **Pre-mortem:** (1) stale tap deletes the new dish →
-  `aStaleTakeOffLeavesTheDishPlannedSince`; (2) weekly meal stale tap → `…OfAWeeklyMeal…`; (3) Undo after a stale tap
-  loses the new dish → `undoAfterAStaleTakeOffKeepsTheDishPlannedSince`.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
