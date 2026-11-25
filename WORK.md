@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+🚧 Inbox 🐞 undoNote Task: `agent/plan-undo-note-cancel` (2531db4) — `DelayedToast` (Toast.swift) holds the note's wait; `takeOff` calls it off + clears `undoNote`. Waiting on Build & Test + reviewer/challenger; then land, then 🐞 :249 slot-vs-id.
 ✅ Inbox 🐞 take-off count (later-week copies) landed 5476015 (builder 2026-11-25; count per tap; leftover branch agent/plan-takeoff-series, remote pre-rebase — delete by hand). Next: Inbox 🐞 MealPlanningView+Actions.swift:274 undoNote Task (cancel + clear in `takeOff`), then the new 🐞 take-off slot-vs-id deletion (:249), then `NotificationManagerTests.swift:236`.
 ✅ Inbox 🔴 Privacy 6.5 crash reports + 7.3 sharing landed d4f516e (builder 2026-11-24; leftover branch agent/privacy-share-wording, auto-cleanup). Website session: copy 6.5/7.3 + date 24 Nov 2026 into `privacy.html`. Next: Inbox 🐞 MealPlanTakeOff.swift:25 `gone` counts later-week copies, then 🐞 MealPlanningView+Actions.swift:274 undoNote Task, then `NotificationManagerTests.swift:236`.
 ✅ Inbox 🟡 search placeholder copy landed 57e10d0 (builder 2026-11-24; leftover branch agent/search-placeholder-copy, auto-cleanup). Next: Inbox 🟡 `NotificationManagerTests.swift:236` shared instance / force-unwraps.
@@ -94,6 +95,12 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **undoNote call-off** (`agent/plan-undo-note-cancel`): wait held in a tiny `DelayedToast` value (Toast.swift, no new
+  file) so cancel/replace is unit-tested; view wiring is thin glue (*unconfirmed*: no test sees the overlap).
+  **Pre-mortem:** (1) note still shows after a take-off in the 450 ms wait → `callOffDuringTheWaitKeepsItHidden`;
+  (2) note already up covers the new toast → `callOffHidesAShownNote`; (3) two Undos queue two notes →
+  `newerNoteReplacesTheWaitingOne`. No layout change.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
