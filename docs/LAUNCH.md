@@ -31,8 +31,9 @@ Smart search → Ask the kitchen · Theme palette + accessibility · Import tort
 (owner call) · Xcode 27 / iOS 27 SDK (**hard deadline March 2027**).
 
 ## Owner tasks
-- **Now:** deploy the CloudKit schema to Production (Mac): run the app from Xcode with sync on → CloudKit Console →
-  Deploy Schema Changes. Unblocks item 3.
+- ✅ 2026-11-25: CloudKit schema deployed to Production for RecipeModel 17 (all 11 `CD_` record types). Unblocks item 3.
+- **Before `agent/recently-deleted` lands:** run that branch from Xcode with sync on (model 18 adds `deletedAt`), take a
+  recipe off so the field reaches Development, then CloudKit Console → Deploy Schema Changes again.
 - **By 1 Dec:** recruit 10–20 testers (friends who cook, LinkedIn, r/TestFlight); the public link now always has a
   fresh build.
 - **By 14 Dec:** approve the App Store text and screenshots agents prepare; confirm price (free).
