@@ -9,7 +9,6 @@ enum NotificationKind: String {
     case meal
     case expiry
     case streak
-    case dailyReminder = "daily-reminder"
     case groceriesReminder = "groceries-reminder"
     case planNudge = "plan-nudge"
 }
@@ -336,12 +335,6 @@ extension NotificationManager {
                 name: .openGroceries,
                 object: nil,
                 userInfo: userInfo
-            )
-
-        case .dailyReminder:
-            NotificationCenter.default.post(
-                name: .openRecipes,
-                object: nil
             )
 
         case .streak, nil:
