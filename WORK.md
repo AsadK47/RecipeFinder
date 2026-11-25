@@ -2,7 +2,7 @@
 
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
-- Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — model 17 schema is deployed to Production (owner 2026-11-25); before landing, the owner runs this branch from Xcode with sync on and deploys again for model 18 `deletedAt` (docs/LAUNCH.md Owner tasks).
+- Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
 - Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - CI (CI lane, owner TOP): landed f343fa5 + d775cf6 (prepare action, cached booted simulator, 4 UI shards, coverage.yml). Jobs 7:40–10; wall time hurt by runner queueing (Needs owner) and unit-job variance. Next: sample the test host during the ~60s XCTest stall (`xcrun simctl spawn $SIM spindump` or `sample` on RecipeFinder) on agent/ci-10min, then 3 consecutive pushes ≤10 → tick.
