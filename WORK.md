@@ -6,7 +6,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
 - Discover: ✅ endless discovery landed (2b6847f). Polish noted: feature tile leaves a gap between title and time.
 - CI (CI lane, owner TOP): landed f343fa5 + d775cf6 (prepare action, cached booted simulator, 4 UI shards, coverage.yml). Jobs 7:40–10; wall time hurt by runner queueing (Needs owner) and unit-job variance. Next: sample the test host during the ~60s XCTest stall (`xcrun simctl spawn $SIM spindump` or `sample` on RecipeFinder) on agent/ci-10min, then 3 consecutive pushes ≤10 → tick.
-- Privacy: ✅ landed 037a8ea. Website session: copy §2.1, §4.1–4.4 (4.2/4.3 gained the Plan my week line 20 Nov), §5.1–5.3, §7.1 + date 22 Nov 2026 from `PrivacyPolicyView.swift` into `privacy.html`, and Terms §3.1.
+- Privacy: ✅ landed 037a8ea. Website: ✅ privacy.html mirrors the app's 24 Nov policy, and §12/cookies.html describe the site's own data (Web3Forms, Gmail, GitHub Pages + Cloudflare, localStorage) — recipefinderwebsite 1130b83, 4 reviewers.
 
 - Inbox 🟡 Reset store copies: ⏸ parked in Needs owner (data-loss risk on `.corrupt-*`, 2 reviewers agree); branch `agent/reset-store-copies` (87f5737) unmerged, Decisions on that branch's WORK.md — rework per owner's answer.
 - Remember: ✅ **My Cookbook** done — slice 3 (share a page) landed 0adbf0b (builder 2026-11-16); notes / "who it was
