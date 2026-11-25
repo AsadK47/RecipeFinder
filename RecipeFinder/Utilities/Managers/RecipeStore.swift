@@ -142,14 +142,22 @@ final class RecipeStore: RecipeStoring {
 
     /// Versioned one-time pass: bundled samples and starters are seeded once, so installs keep pre-curation copies (steps parsed
     /// as ingredients, etc.). Rewrites untouched ones with today's content; edited copies are never overwritten.
-    private func refreshStaleSamples(in library: [RecipeModel]) async -> [RecipeModel] {
+    /// Internal so tests can run it with an isolated `storage` and stand-in bundle data.
+    func refreshStaleSamples(
+        in library: [RecipeModel],
+        storage: LocalStore = .shared,
+        bundle: @escaping @Sendable () -> (current: [RecipeModel], history: [RecipeModel]) = {
+            (BundledRecipeCatalog.load(), BundledRecipeCatalog.loadHistory())
+        }
+    ) async -> [RecipeModel] {
         let key = "bundledSampleRefreshVersion"
-        guard BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: LocalStore.shared.integer(forKey: key)) else {
+        guard BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: storage.integer(forKey: key)) else {
             return library
         }
         let refreshes = await Task.detached(priority: .utility) { () -> [RecipeModel]? in
+            let data = bundle()
             guard let sources = BundledRecipeCatalog.refreshSources(
-                bundled: BundledRecipeCatalog.load(), bundledHistory: BundledRecipeCatalog.loadHistory()
+                bundled: data.current, bundledHistory: data.history
             ) else { return nil }
             return BundledRecipeCatalog.sampleUpdates(library: library, current: sources.current, history: sources.history)
         }.value
@@ -157,7 +165,7 @@ final class RecipeStore: RecipeStoring {
         guard let refreshes else { return library }
         // One background save; on failure keep the old copies and retry next launch.
         guard await persistence.updateRecipesInBackground(refreshes) else { return library }
-        LocalStore.shared.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key)
+        storage.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key)
         guard !refreshes.isEmpty else { return library }
         let byID = Dictionary(refreshes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         Self.logger.info("Refreshed \(refreshes.count) stale sample recipes")

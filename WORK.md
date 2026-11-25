@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+🚧 builder agent 2026-11-25 Inbox 🟡 refreshStaleSamples wiring test — branch `agent/sample-refresh-wiring` (seen-red twin `agent/sample-refresh-wiring-red` reverts to bundled-only). Next: green → land, then 🟡 Apple Jalebi title/tag.
 ✅ Inbox 🐞 starter Avocado Toast vegan claim landed c2afa17..a6a7aab (builder 2026-11-25; leftover branches agent/avocado-vegan auto-cleanup, agent/avocado-vegan-red unmerged — delete). Next: Inbox 🟡 `RecipeStore.swift:150` refreshStaleSamples wiring test, then 🟡 Apple Jalebi title/tag.
 ✅ Inbox 🐞 starter Greek salad gluten-free landed bd8decf..4fd63f9 (builder 2026-11-25; leftover branches agent/greek-salad-gluten auto-cleanup, agent/greek-salad-gluten-red unmerged — delete). Next: Inbox 🐞 Avocado Toast vegan claim (SeedRecipeProvider.swift:121) — add its old copy to `shippedVersions`, bump `sampleRefreshVersion` to 8.
 ✅ Inbox 🐞 hide five diet chips landed c3bd711 (builder 2026-11-25; leftover branches agent/hide-diet-chips, -2, auto-cleanup). Next: Inbox 🐞 Greek salad `isGlutenFree` (SeedRecipeProvider.swift:208) — dangerous allergen claim, fix first.
@@ -103,6 +104,12 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **refreshStaleSamples wiring test:** seam = `refreshStaleSamples` made internal with injected `storage: LocalStore`
+  and `bundle` loader (defaults = real), not a full `load()` test — `load()` also hits `LocalStore.shared` and
+  `BadgeManager.shared` in other passes. **Pre-mortem:** (1) wiring reverted to bundled-only → starter fixes never
+  reach installs → `launchRefreshReachesStarters` (seen red on the -red twin); (2) missing bundle marks the version
+  done → never retries → `launchRefreshWaitsForBundleData`; (3) pass reruns every launch → `launchRefreshRunsOncePerVersion`.
 
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and

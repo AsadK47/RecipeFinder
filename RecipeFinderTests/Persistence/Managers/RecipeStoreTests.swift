@@ -163,4 +163,69 @@ struct RecipeStoreTests {
         await store.refresh()
         #expect(store.recipes.contains { $0.name == "Alpha" })
     }
+
+    // MARK: - Launch refresh of stale samples
+
+    private static let refreshKey = "bundledSampleRefreshVersion"
+
+    /// A bundle stand-in with real (non-empty) data, so only the starters can produce a refresh.
+    private static let standInBundle: @Sendable () -> (current: [RecipeModel], history: [RecipeModel]) = {
+        let bundled = RecipeModel(
+            id: UUID(), name: "Stand-in", category: "Main", difficulty: "Basic", prepTime: "", cookingTime: "",
+            baseServings: 1, ingredients: [], prePrepInstructions: [], instructions: [], notes: "", isSampleRecipe: true
+        )
+        return ([bundled], [bundled])
+    }
+
+    private func storedOldGreekSalad(in persistence: PersistenceController) async throws -> [RecipeModel] {
+        var old = try #require(SeedRecipeProvider.shippedVersions.first { $0.name == "Greek Salad" })
+        old.isFavorite = true
+        #expect(old.dietaryInfo.isGlutenFree)
+        #expect(await persistence.seedRecipes([old]))
+        return await persistence.fetchRecipesAsync()
+    }
+
+    @Test("the launch refresh rewrites an untouched old starter copy and saves it")
+    func launchRefreshReachesStarters() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let library = try await storedOldGreekSalad(in: persistence)
+        let storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+
+        let refreshed = await RecipeStore(persistence: persistence)
+            .refreshStaleSamples(in: library, storage: storage, bundle: Self.standInBundle)
+
+        // Regression guard: wiring the refresh to the bundled recipes alone skips every starter fix.
+        #expect(refreshed.first?.dietaryInfo.isGlutenFree == false)
+        #expect(refreshed.first?.isFavorite == true)
+        #expect(await persistence.fetchRecipesAsync().first?.dietaryInfo.isGlutenFree == false)
+        #expect(storage.integer(forKey: Self.refreshKey) == BundledRecipeCatalog.sampleRefreshVersion)
+    }
+
+    @Test("missing bundle data leaves the starter copy as it was and the refresh unmarked")
+    func launchRefreshWaitsForBundleData() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let library = try await storedOldGreekSalad(in: persistence)
+        let storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+
+        let refreshed = await RecipeStore(persistence: persistence)
+            .refreshStaleSamples(in: library, storage: storage, bundle: { ([], []) })
+
+        #expect(refreshed.first?.dietaryInfo.isGlutenFree == true)
+        #expect(await persistence.fetchRecipesAsync().first?.dietaryInfo.isGlutenFree == true)
+        #expect(storage.integer(forKey: Self.refreshKey) == 0)
+    }
+
+    @Test("a refresh version already done doesn't run again")
+    func launchRefreshRunsOncePerVersion() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let library = try await storedOldGreekSalad(in: persistence)
+        let storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+        storage.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: Self.refreshKey)
+
+        let refreshed = await RecipeStore(persistence: persistence)
+            .refreshStaleSamples(in: library, storage: storage, bundle: Self.standInBundle)
+
+        #expect(refreshed.first?.dietaryInfo.isGlutenFree == true)
+        #expect(await persistence.fetchRecipesAsync().first?.dietaryInfo.isGlutenFree == true)
+    }
 }
