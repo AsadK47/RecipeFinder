@@ -19,6 +19,9 @@ enum SeedRecipeProvider {
         makeGreekSalad(category: "Side", difficulty: "Basic", isGlutenFree: true),
         makeGreekSalad(category: "Salad", difficulty: "Basic", isGlutenFree: true),
         makeGreekSalad(category: "Salad", difficulty: "Easy", isGlutenFree: true),
+        // Before 25 Nov 2026 the Avocado Toast claimed vegan while it lists eggs and suggests feta.
+        makeAvocadoToast(difficulty: "Basic", isVegan: true),
+        makeAvocadoToast(difficulty: "Easy", isVegan: true),
     ]
 
     // MARK: - Recipes
@@ -93,34 +96,39 @@ enum SeedRecipeProvider {
         isSampleRecipe: true
     )
 
-    private static let avocadoToast = RecipeModel(
-        id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000003")!,
-        name: "Avocado Toast",
-        category: "Breakfast",
-        difficulty: "Basic",
-        prepTime: "5 minutes",
-        cookingTime: "5 minutes",
-        baseServings: 2,
-        ingredients: [
-            .init(baseQuantity: 2, unit: "",     name: "ripe avocados"),
-            .init(baseQuantity: 4, unit: "slices", name: "sourdough bread"),
-            .init(baseQuantity: 1, unit: "tbsp", name: "lemon juice"),
-            .init(baseQuantity: 1, unit: "pinch", name: "chilli flakes"),
-            .init(baseQuantity: 2, unit: "",     name: "eggs (optional, poached)"),
-            .init(baseQuantity: 1, unit: "pinch", name: "flaky sea salt"),
-        ],
-        prePrepInstructions: [],
-        instructions: [
-            "Toast the sourdough slices until golden.",
-            "Halve and stone the avocados. Scoop the flesh into a bowl, add the lemon juice and a pinch of salt, then mash to your preferred texture — chunky or smooth.",
-            "Spread the avocado generously onto the toast.",
-            "Top with chilli flakes and a final pinch of flaky salt. Add a poached egg if you like.",
-        ],
-        notes: "The lemon juice prevents browning and brightens the flavour. Add a handful of cherry tomatoes or crumbled feta for variety.",
-        isFavorite: false,
-        dietaryInfo: DietaryInfo(isVegetarian: true, isVegan: true, isGlutenFree: false),
-        isSampleRecipe: true
-    )
+    private static let avocadoToast = makeAvocadoToast(difficulty: "Basic", isVegan: false)
+
+    /// Shared by today's toast and its `shippedVersions`, which differ only in these parameters. Before editing any
+    /// other text here, copy the old toast into `shippedVersions` as a literal, or untouched copies stop refreshing.
+    private static func makeAvocadoToast(difficulty: String, isVegan: Bool) -> RecipeModel {
+        RecipeModel(
+            id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000003")!,
+            name: "Avocado Toast",
+            category: "Breakfast",
+            difficulty: difficulty,
+            prepTime: "5 minutes",
+            cookingTime: "5 minutes",
+            baseServings: 2,
+            ingredients: [
+                .init(baseQuantity: 2, unit: "",     name: "ripe avocados"),
+                .init(baseQuantity: 4, unit: "slices", name: "sourdough bread"),
+                .init(baseQuantity: 1, unit: "tbsp", name: "lemon juice"),
+                .init(baseQuantity: 1, unit: "pinch", name: "chilli flakes"),
+                .init(baseQuantity: 2, unit: "",     name: "eggs (optional, poached)"),
+                .init(baseQuantity: 1, unit: "pinch", name: "flaky sea salt"),
+            ],
+            prePrepInstructions: [],
+            instructions: [
+                "Toast the sourdough slices until golden.",
+                "Halve and stone the avocados. Scoop the flesh into a bowl, add the lemon juice and a pinch of salt, then mash to your preferred texture — chunky or smooth.",
+                "Spread the avocado generously onto the toast.",
+                "Top with chilli flakes and a final pinch of flaky salt. Add a poached egg if you like.",
+            ],
+            notes: "The lemon juice prevents browning and brightens the flavour. Add a handful of cherry tomatoes or crumbled feta for variety.",
+            isFavorite: false,
+            dietaryInfo: DietaryInfo(isVegetarian: true, isVegan: isVegan, isGlutenFree: false),
+            isSampleRecipe: true
+        )
 
     private static let bananaBread = RecipeModel(
         id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000004")!,

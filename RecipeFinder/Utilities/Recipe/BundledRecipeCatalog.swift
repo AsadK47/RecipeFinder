@@ -34,7 +34,7 @@ enum BundledRecipeCatalog {
 
     /// Bump when `recipes_seed.json` (regenerate its history) or a starter (add its old copy to
     /// `SeedRecipeProvider.shippedVersions`) gains fixes that existing installs should pick up.
-    static let sampleRefreshVersion = 7
+    static let sampleRefreshVersion = 8
 
     /// The refresh can only judge "untouched" against real data: an empty bundle or history (missing/corrupt JSON)
     /// must not mark the version done, or it would never retry.
