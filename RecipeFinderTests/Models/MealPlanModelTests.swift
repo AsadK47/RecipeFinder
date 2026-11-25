@@ -344,6 +344,25 @@ struct MealPlanTakeOffTests {
         #expect(result.message == "2 meals taken off")
     }
 
+    /// A stale tap on another meal already off keeps naming the one that came off.
+    @Test func aStaleTapOnAnotherMealKeepsTheNameOfTheOneTakenOff() {
+        let dal = plan("Dal")
+        let curry = plan("Curry", week: 1)
+        let first = MealPlanTakeOff.after(taking: dal, changed: [dal], earlier: nil)
+        let result = MealPlanTakeOff.after(taking: curry, changed: [], earlier: first)
+        #expect(result.message == "Dal taken off")
+        #expect(result.meals == 1)
+    }
+
+    /// A first tap on a meal already off (synced away) takes nothing off: no meals counted, nothing to Undo.
+    @Test func aFirstTapThatChangesNothingCountsNoMeals() {
+        let dal = plan("Dal")
+        let result = MealPlanTakeOff.after(taking: dal, changed: [], earlier: nil)
+        #expect(result.meals == 0)
+        #expect(result.undo.isEmpty)
+        #expect(result.message == "Dal taken off")
+    }
+
     /// A stale second tap on a dinner already taken off changes nothing: still one meal off, not "2 meals".
     @Test func aTakeOffThatChangesNothingKeepsTheOneMealMessage() {
         let dal = plan("Dal")

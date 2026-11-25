@@ -7,6 +7,8 @@ struct MealPlanTakeOff: Equatable {
     /// Meals the cook took off in this row: one per tap that took something off. A weekly dinner is one meal,
     /// though its later-week copies go with it.
     let meals: Int
+    /// The meal the toast names when one came off: the last tap that took something off.
+    let named: MealPlanModel
     let message: String
 
     /// - Parameters:
@@ -20,9 +22,13 @@ struct MealPlanTakeOff: Equatable {
         let before = earlier?.undo ?? []
         // First copy per id wins: it's the state before any of them.
         let undo = before + changed.filter { plan in !before.contains { $0.id == plan.id } }
-        let meals = (earlier?.meals ?? 0) + (changed.contains { $0.id == plan.id } ? 1 : 0)
-        let single = plan.isRecurring ? "\(plan.recipeName) taken off and stopped repeating"
-                                      : "\(plan.recipeName) taken off"
-        return MealPlanTakeOff(undo: undo, meals: meals, message: meals > 1 ? "\(meals) meals taken off" : single)
+        let tookOff = changed.contains { $0.id == plan.id }
+        let meals = (earlier?.meals ?? 0) + (tookOff ? 1 : 0)
+        // A stale tap on another meal mustn't rename the one that came off.
+        let named = tookOff ? plan : (earlier?.named ?? plan)
+        let single = named.isRecurring ? "\(named.recipeName) taken off and stopped repeating"
+                                       : "\(named.recipeName) taken off"
+        return MealPlanTakeOff(undo: undo, meals: meals, named: named,
+                               message: meals > 1 ? "\(meals) meals taken off" : single)
     }
 }

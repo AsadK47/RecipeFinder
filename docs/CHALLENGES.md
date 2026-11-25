@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-25 (item pass: Inbox 🐞 take-off count per tap — fixed: series-key grouping undercounted W2-then-W1 (reviewer) → count per tap; stale tap on another meal renamed the toast (challenger) → `named`; `isPlanned` deleted (dead))
+- Not fixed (pre-existing, both reviewers): `takeOff` reads `changed` by id but `removeMealPlan(for:mealTime:)` removes by slot — a stale tap on a slot re-planned meanwhile, or a slot holding two plans after a merge, deletes a plan Undo can't bring back → Inbox 🐞.
+- Not fixed: the view glue (`pendingTakeOff`, `removalToast == nil ? nil : …`) has no host test; the 2026-11-24 `isStillPlanned` closure risk is gone with the closure.
+
 ## 2026-11-24 (item pass: search field a11y fixes — fixed: VoiceOver name, AX-size wrap (reviewer + challenger agreed))
 - ⚔️ [Break] On a 375pt phone with Cancel showing, "What would you like to eat?" still truncates even at 0.8× (≈140pt free, RecipeSearchHeader `+` button). Kept: owner asked for one line below AX sizes; shorter copy or dropping `+` while focused would fix it.
   → Owner:

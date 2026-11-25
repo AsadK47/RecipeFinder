@@ -1060,18 +1060,6 @@ struct UndoTakeOffTests {
         #expect(scheduled(after: afterRemoval, id: dal.id) != nil)
     }
 
-    /// Plan's take-off toast counts a plan as off by id, wherever it now sits (a kept copy may have been moved).
-    @Test func isPlannedFindsAPlanByIdOnAnyDay() {
-        let sut = makeManager()
-        var dal = plan("Dal", on: day(2))
-        sut.addMealPlan(dal)
-        dal.date = day(4)
-        sut.updateMealPlan(dal)
-        #expect(sut.isPlanned(dal.id))
-        sut.removeMealPlan(dal)
-        #expect(!sut.isPlanned(dal.id))
-    }
-
     @Test func undoBringsAWeeklySeriesBackRepeating() {
         let sut = makeManager()
         let recipe = UUID()
