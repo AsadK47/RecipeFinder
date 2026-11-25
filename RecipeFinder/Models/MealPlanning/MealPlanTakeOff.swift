@@ -12,9 +12,11 @@ struct MealPlanTakeOff: Equatable {
     ///   - earlier: the pending Undo while the toast is still up; empty when it isn't.
     ///   - isStillPlanned: whether a plan's id is still on the plan after the take-off (an earlier weekly copy
     ///     that only stopped repeating stays planned, so it isn't counted as taken off).
+    ///   - calendar: groups a weekly dinner's copies by weekday.
     static func after(taking plan: MealPlanModel,
                       changed: [MealPlanModel],
                       earlier: [MealPlanModel],
+                      calendar: Calendar = .current,
                       isStillPlanned: (MealPlanModel) -> Bool) -> MealPlanTakeOff {
         // First copy per id wins: it's the state before any of them.
         let undo = earlier + changed.filter { plan in !earlier.contains { $0.id == plan.id } }
@@ -22,7 +24,17 @@ struct MealPlanTakeOff: Equatable {
                                       : "\(plan.recipeName) taken off"
         guard !earlier.isEmpty else { return MealPlanTakeOff(undo: undo, message: single) }
         // A second tap on a meal already off changes nothing, so it mustn't read as one more.
-        let gone = undo.filter { !isStillPlanned($0) }.count
+        let gone = meals(in: undo.filter { !isStillPlanned($0) }, calendar: calendar)
         return MealPlanTakeOff(undo: undo, message: gone > 1 ? "\(gone) meals taken off" : single)
+    }
+
+    /// One weekly dinner is one meal to the cook, though taking it off also deletes its later-week copies:
+    /// weekly plans of the same dish, weekday and meal time count once; one-offs each count.
+    private static func meals(in plans: [MealPlanModel], calendar: Calendar) -> Int {
+        struct Weekly: Hashable { let recipeId: UUID; let weekday: Int; let mealTime: MealTime }
+        let weekly = Set(plans.filter(\.isRecurring).map {
+            Weekly(recipeId: $0.recipeId, weekday: calendar.component(.weekday, from: $0.date), mealTime: $0.mealTime)
+        })
+        return plans.filter { !$0.isRecurring }.count + weekly.count
     }
 }
