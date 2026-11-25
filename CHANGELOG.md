@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox starter Avocado Toast vegan claim · c2afa17
+- For you: The starter Avocado Toast is now labelled vegetarian rather than vegan, since it lists eggs and suggests feta. If you haven't changed your copy, it updates on its own and keeps your favourite and rating.
+- Behind the build: a test that failed on the old recipe now checks every vegan starter names no animal product; a reviewer caught a build-breaking slip before it landed.
+
 ## 2026-11-25 · Inbox starter Greek salad gluten-free claim · bd8decf
 - For you: The starter Greek Salad is no longer labelled gluten-free, since it's served with crusty bread. If you haven't changed your copy, it updates on its own and keeps your favourite and rating.
 - Behind the build: a test that failed on the old recipe now checks every gluten-free starter names no gluten source; a reviewer and a challenger checked the update path.
