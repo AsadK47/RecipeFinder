@@ -129,6 +129,7 @@ enum SeedRecipeProvider {
             dietaryInfo: DietaryInfo(isVegetarian: true, isVegan: isVegan, isGlutenFree: false),
             isSampleRecipe: true
         )
+    }
 
     private static let bananaBread = RecipeModel(
         id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000004")!,

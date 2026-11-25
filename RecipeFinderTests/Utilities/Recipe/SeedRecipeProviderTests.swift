@@ -94,7 +94,7 @@ struct SeedRecipeProviderTests {
             .joined(separator: " ").lowercased()
         let animalProducts = [
             "egg", "feta", "cheese", "parmesan", "mozzarella", "butter", "milk", "cream", "yoghurt", "yogurt", "ghee",
-            "honey", "chicken", "beef", "pork", "lamb", "bacon", "fish", "prawn", "anchov", "gelatine", "mayonnaise",
+            "honey", "chicken", "beef", "pork", "lamb", "bacon", "fish", "prawn", "anchov", "gelatin", "mayonnaise",
         ]
         #expect(animalProducts.filter { text.contains($0) }.isEmpty, "\(recipe.name) claims vegan")
     }
