@@ -233,6 +233,11 @@ final class FakeNotificationCenter: @unchecked Sendable {
         #expect(fake.asks == 1)
     }
 
+    /// Nothing schedules a daily cooking reminder (helpers deleted in c8daa10), so its tap route is gone too.
+    @Test func retiredDailyReminderIsNotAKind() {
+        #expect(NotificationKind(rawValue: "daily-reminder") == nil)
+    }
+
     /// Exempt from the no-shared-state rule (RecipeFinderTests/CLAUDE.md): it reads which object the real center
     /// routes taps to. Building `.shared` sets that delegate and reads the permission status; it schedules nothing,
     /// removes nothing and never prompts, so no other test can see it.
