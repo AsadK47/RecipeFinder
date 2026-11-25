@@ -1,12 +1,12 @@
 name: TestFlight feedback
 
-# Hourly: file a short notice for each new TestFlight feedback (screenshots, crashes) as a GitHub issue labelled
+# Daily: file a short notice for each new TestFlight feedback (screenshots, crashes) as a GitHub issue labelled
 # `testflight-feedback`. The repo is public, so notices carry no tester content (Privacy 6.5): the owner reads the
 # feedback in App Store Connect and writes what to fix on the issue before adding `owner-ok`.
 
 on:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '17 7 * * *'  # once a day (owner 2026-11-25: fewer runs); "Run workflow" to check now
   workflow_dispatch:
 
 permissions:
