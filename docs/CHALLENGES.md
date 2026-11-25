@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-25 (item pass: Inbox 🟡 dead `dailyReminder` kind — no defects)
+- ⚔️ [Tests] `retiredDailyReminderIsNotAKind` guards the retired raw value — a re-added plain `case dailyReminder` (raw value "dailyReminder") would pass it (NotificationManagerTests.swift:237) — not fixed: the guard is against the old pending-notification tag, and a new case would come with its own sender and tests — cost if we're wrong: a dead case again, found by review
+  → Owner: Accept / Reject / Later
+
 ## 2026-11-25 (daily challenger — launch order vs. the last 7 days, stale gates, import fetch, take-off toast, dead diet chips; methods 1, 2, 3 (STRIDE: DoS on import), 6, 7, 8 + strategy)
 - ⚔️ [Strategy] The launch plan's order is not what the last week built: 23 of 50 commits since 18 Nov (`git log --since="7 days ago" --format=%s | grep -E 'take.?off|toast'`) polish one Plan toast ("N meals taken off"), while LAUNCH must-ship #2 "Recipes in our own words" — the item LAUNCH.md calls a legal blocker — is still `[ ]` (BACKLOG.md:205) with 0 commits with method/rewrite/own-words in the subject in 7 days. Freeze is 14 Dec, 19 days away, and 8 of 10 must-ship items are untouched. Phase check: Plan toast edge cases serve "Decide" but no loop step needs a correct *count* in a transient toast. — alternative: bug fixes that no cook can reach (stale tap on a toast that lasts seconds) go to Parking lot; the lane takes #2 until the first batch lands — cost if we're wrong: 4 Jan ships with another publisher's recipe text, or the date slips.
   → Owner:

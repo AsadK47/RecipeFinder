@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · Inbox dead dailyReminder kind · 5de2fad
+- For you: Reminders work as before — timers, meal reminders, the Sunday nudge and groceries reminders each open the right tab when you tap them.
+- Behind the build: a leftover reminder type nothing sends any more was removed, with a test that failed on the old code first and a challenger pass.
+
 ## 2026-11-25 · Inbox take-off deletes by slot · 7df56e5
 - For you: On Plan, taking a meal off removes that meal, so a dish you've planned on the same night since stays on your plan and Undo brings back what you took off.
 - Behind the build: new tests failed on the old code first; a reviewer and a challenger checked it, and the challenger's iCloud case is now handled too.
