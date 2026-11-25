@@ -863,3 +863,9 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Simplify] Two-line alternative (`guard removalToast == nil` in the old Task + `undoNote = nil` in `takeOff`) rejected: `DelayedToast` keeps the cancel/replace rules unit-tested and covers leaving Plan.
   → Owner:
 
+
+## 2026-11-25 (item pass: take-off by id — fixed: snapshot the stored copy, not the caller's (reviewer); a fold that kept the same dish's twin left it planned under a "taken off" toast (challenger) → same-dish fallback on its night)
+- ⚔️ [Tests] Putting the view's take-off back to a slot delete (MealPlanningView+Actions.swift `takeOff`) fails no test — the manager's `takeOff` is covered, the view glue isn't (*unconfirmed* wiring) — cost if wrong: the stale-tap delete returns.
+  → Owner:
+- ⚔️ [Data] A night holding two plans of different dishes after a backup `merge()` now loses only the tapped one; the other then shows in its place (was: both deleted, one beyond Undo) — cost if wrong: the cook taps once more.
+  → Owner:
