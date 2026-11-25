@@ -34,7 +34,7 @@ anything else between entries):
 - Behind the build: a reviewer and a challenger checked every line against the app's code and both found the shopping list share the first draft missed.
 
 ## 2026-11-24 · Inbox search placeholder copy · 57e10d0
-- For you: Search fields across the app now share one friendly style, like "Search recipes…" and "Search foods…", so every search reads the same way.
+- For you: Search prompts in Groceries, Kitchen and the recipe pickers now end with a tidy ellipsis, like "Search recipes…", "Search foods…" and "Add or search groceries…".
 - Behind the build: a challenger checked every search field and found one more ingredient prompt to match.
 
 ## 2026-11-24 · Inbox f952384 review: search field name + large text · 1d9a2cc
@@ -46,7 +46,7 @@ anything else between entries):
 - Behind the build: a new test failed on the old tile first, and before-and-after screenshots confirmed the cause; a challenger's dark-mode check led to the clearer text colour.
 
 ## 2026-11-24 · Inbox Toast VoiceOver announcement · 508a17b
-- For you: With VoiceOver on, every confirmation message is now read aloud as it appears, such as "Added to groceries" or a note that a meal stayed off your plan.
+- For you: With VoiceOver on, every confirmation message is now read aloud as it appears, such as the note when you add ingredients to Groceries, or when a meal stayed off your plan.
 - Behind the build: a new test failed on the old code first; a reviewer and a challenger both checked no message is read twice.
 
 ## 2026-11-24 · Inbox take-off toast count · 4355abd
@@ -54,11 +54,11 @@ anything else between entries):
 - Behind the build: a new test failed on the old count first; a challenger found two more miscounts (a repeated tap and a moved meal), both fixed with tests before it shipped.
 
 ## 2026-11-24 · Inbox MealPlanningManager restore skipped plans · 45dc4be
-- For you: When you undo taking a meal off Plan and another meal has taken its place since, Plan now tells you which meal stayed off, so nothing disappears quietly.
+- For you: When you undo taking a meal off Plan and another meal has taken its place since, Plan now tells you what stayed off — the meal by name, or how many meals when several did — so nothing disappears quietly.
 - Behind the build: new tests failed on the old code first; a reviewer and a challenger reworded the message to be accurate, gave it its own calendar note and stopped it covering the Undo message.
 
 ## 2026-11-24 · Inbox placeholderCardIsOpaque flake · 2405a30
-- For you: Sharing a My Cookbook page always sends the finished card with its dish art; if the picture can't be drawn, the sheet offers Try again.
+- For you: Sharing a My Cookbook page now checks the card was drawn before it sends; if it wasn't, the sheet offers Try again.
 - Behind the build: CI logs showed a rare empty render; a challenger turned down a first fix that would have sent it as a black card, so the card is now checked and redrawn instead.
 
 ## 2026-11-23 · Privacy policy vs public TestFlight · 1854908
@@ -82,7 +82,7 @@ anything else between entries):
 - Behind the build: checked on the large-text theme picker screenshot; a reviewer and a challenger went through all thirteen settings screens that share the fix.
 
 ## 2026-11-23 · Inbox DietaryInference word lists · 1ed14dc
-- For you: Vegetarian and Vegan tags on built-in recipes now recognise more ingredients, from lardons, 'nduja and monkfish to feta, halloumi and crème fraîche, so new recipes are tagged with more care.
+- For you: Every built-in recipe tagged Vegetarian or Vegan is now checked against a longer ingredient list, from lardons, 'nduja and monkfish to feta, halloumi and crème fraîche, so the tags keep fitting what's in the dish.
 - Behind the build: new tests failed on the old lists first; a reviewer and a challenger both caught a test that confused "pomegranate" with grana padano, fixed before it shipped.
 
 ## 2026-11-23 · Inbox vegan Chapati and Chai methods · b752fc0
@@ -96,6 +96,10 @@ anything else between entries):
 ## 2026-11-23 · Inbox Favourites spelling · f34ca95
 - For you: The recipe filter and the heart button now say "Favourites", and VoiceOver reads the Favourites switch once, by name.
 - Behind the build: a reviewer checked every string and test for the old spelling and caught the switch being read twice, fixed before it shipped.
+
+## 2026-11-23 · Search placeholder on one line · f952384
+- For you: Search fields keep their prompt neatly beside the cursor, even when Cancel appears.
+- Behind the build: one shared search field across the app, so the fix reaches Recipes, Groceries and every recipe picker at once.
 
 ## 2026-11-22 · Inbox Sunday nudge weekly dinner · af59876
 - For you: The Sunday "Plan next week's dinners?" reminder now looks at the nights a weekly dinner actually lands on, so a weekly Sunday roast no longer hides an empty Monday-to-Saturday when your week starts on Sunday.
@@ -128,10 +132,6 @@ anything else between entries):
 ## 2026-11-22 · Inbox plan deck pass decision · 26f4481
 - For you: Plan my week works as before — dishes you pass on wait behind fresh ones next time, while Busy night and Leave open keep every dish fresh.
 - Behind the build: the rule for what counts as passing a dish moved back into the tested planning model, with its two tests restored, checked by a reviewer and a challenger.
-
-## 2026-11-23 · Search placeholder on one line · f952384
-- For you: Search fields keep "What would you like to eat?" neatly on one line beside the cursor, even when Cancel appears.
-- Behind the build: one shared search field across the app, so the fix reaches Recipes, Groceries and every recipe picker at once.
 
 ## 2026-11-22 · Plan take-off with Undo · fde4a2e
 - For you: Take a meal off Plan with one tap on the bin beside it or a swipe — it goes straight away, weekly meals too, and Undo on the toast brings it back just as it was.
