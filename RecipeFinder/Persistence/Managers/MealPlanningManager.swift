@@ -215,8 +215,11 @@ final class MealPlanningManager: MealPlanningManaging {
     }
 
     @discardableResult func takeOff(_ plan: MealPlanModel) -> [MealPlanModel] {
+        // By id, not slot: a stale tap on a night planned again since must not delete the new dish, which Undo
+        // (built from `plan`'s snapshot) couldn't put back.
+        guard mealPlans.contains(where: { $0.id == plan.id }) else { return [] }
         let before = plansChangedByRemoving(plan)
-        removeMealPlan(for: plan.date, mealTime: plan.mealTime)
+        removeMealPlan(plan)
         return before
     }
 
