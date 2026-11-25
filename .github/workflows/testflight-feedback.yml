@@ -1,8 +1,8 @@
 name: TestFlight feedback
 
-# Hourly: file new TestFlight feedback (screenshots, crashes) as GitHub issues labelled `testflight-feedback`,
-# which the agent loop works first. Issues, not BACKLOG.md commits: `main` is protected against bot pushes.
-# Text only goes into the (public) repo; screenshots and crash logs go to a short-lived artifact.
+# Hourly: file a short notice for each new TestFlight feedback (screenshots, crashes) as a GitHub issue labelled
+# `testflight-feedback`. The repo is public, so notices carry no tester content (Privacy 6.5): the owner reads the
+# feedback in App Store Connect and writes what to fix on the issue before adding `owner-ok`.
 
 on:
   schedule:
@@ -41,18 +41,8 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           BUNDLE_ID: com.asadkhan.recipefinder
-          FEEDBACK_OUT_DIR: ${{ runner.temp }}/feedback
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 .github/scripts/fetch_testflight_feedback.py
-
-      - name: Upload screenshots and crash logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: testflight-feedback
-          path: ${{ runner.temp }}/feedback
-          if-no-files-found: ignore
-          retention-days: 14
 
       - name: Remove API key
         if: always()
