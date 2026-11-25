@@ -189,6 +189,8 @@ enum SeedRecipeProvider {
 
     private static let greekSalad = makeGreekSalad(category: "Side", difficulty: "Basic", isGlutenFree: false)
 
+    /// Shared by today's salad and its `shippedVersions`, which differ only in these parameters. Before editing any
+    /// other text here, copy the old salad into `shippedVersions` as a literal, or untouched copies stop refreshing.
     private static func makeGreekSalad(category: String, difficulty: String, isGlutenFree: Bool) -> RecipeModel {
         RecipeModel(
             id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000006")!,

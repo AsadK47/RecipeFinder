@@ -80,8 +80,11 @@ struct SeedRecipeProviderTests {
         guard recipe.dietaryInfo.isGlutenFree else { return }
         let text = (recipe.ingredients.map(\.name) + recipe.prePrepInstructions + recipe.instructions + [recipe.notes])
             .joined(separator: " ").lowercased()
-        let glutenSources = ["bread", "flour", "pasta", "spaghetti", "toast", "wheat", "barley", "pitta", "naan", "couscous"]
-        #expect(glutenSources.filter(text.contains).isEmpty, "\(recipe.name) claims gluten-free")
+        let glutenSources = [
+            "bread", "flour", "pasta", "spaghetti", "noodle", "toast", "wheat", "barley", "rye", "spelt", "semolina",
+            "bulgur", "couscous", "orzo", "pitta", "naan", "tortilla", "pastry", "soy sauce", "beer", "oats",
+        ]
+        #expect(glutenSources.filter { text.contains($0) }.isEmpty, "\(recipe.name) claims gluten-free")
     }
 
     // MARK: - Shipped versions (stale-sample refresh)
@@ -127,6 +130,11 @@ struct SeedRecipeProviderTests {
             library: [edited], current: SeedRecipeProvider.recipes, history: SeedRecipeProvider.shippedVersions
         )
         #expect(updates.isEmpty)
+    }
+
+    @Test("the refresh version is past 6, so installs that already ran 6 pick up the Greek salad fix")
+    func refreshVersionReachesExistingInstalls() {
+        #expect(BundledRecipeCatalog.needsSampleRefresh(lastRunVersion: 6))
     }
 
     @Test("starters alone never complete the refresh when the bundled data is missing")
