@@ -502,6 +502,20 @@ struct BundledRecipeCatalogTests {
         #expect(history.allSatisfy { currentIDs.contains($0.id) })
     }
 
+    @Test("an untouched copy titled with an untagged diet claim refreshes to today's title",
+          arguments: ["Apple Jalebi (Gluten-Free, Vegan)", "Dairy-Free Tangzhong Bread"])
+    func claimTitledCopyRefreshes(oldName: String) throws {
+        let history = BundledRecipeCatalog.loadHistory()
+        let current = BundledRecipeCatalog.load()
+        var old = try #require(history.first { $0.name == oldName }, "history should hold \(oldName)")
+        old.isSampleRecipe = true
+        let result = BundledRecipeCatalog.staleSampleRefreshes(library: [old], current: current, history: history)
+        let refreshed = try #require(result.first)
+        #expect(refreshed.id == old.id)
+        #expect(refreshed.name != oldName)
+        #expect(!refreshed.name.localizedCaseInsensitiveContains("free"))
+    }
+
     @Test("an old copy seeded through the store still matches its shipped version after the round trip")
     @MainActor
     func roundTrippedOldCopy_isRecognisedAsUnedited() async {
