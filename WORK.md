@@ -68,7 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
-🚧 Inbox 🟡 NotificationManagerTests:236 exemption + `try #require` defaults on `agent/test-require-defaults` (d9dc06e, Build & Test run 45561950841; challenger running). When green: ff main, tick Inbox line, Log. Broader sweep of other tests' `UserDefaults(suiteName:)!` / `?? .standard` (≈25 sites) → new Inbox 🟡, not this item (WIP=1).
+✅ Inbox 🟡 NotificationManagerTests exemption + `try #require` defaults landed d9dc06e (builder 2026-11-25; leftover branch agent/test-require-defaults, auto-cleanup). Next: Inbox 🐞 RecipeDietaryInfo chips duplicates Needs owner (wait for owner), so take Inbox 🟡 NotificationManager.swift:12 dead `dailyReminder` case.
 ✅ Inbox 🐞 take-off deletes by slot landed 7df56e5 (builder 2026-11-25; leftover branch agent/plan-takeoff-by-id, auto-cleanup). Next: Inbox 🟡 `NotificationManagerTests.swift:236` shared instance / force-unwraps.
 ✅ Inbox 🐞 undoNote Task landed 061585b (builder 2026-11-25; leftover branch agent/plan-undo-note-cancel, auto-cleanup). Next: Inbox 🐞 MealPlanningView+Actions.swift:249 take-off slot-vs-id deletion, then `NotificationManagerTests.swift:236`.
 ✅ Inbox 🐞 take-off count (later-week copies) landed 5476015 (builder 2026-11-25; count per tap; leftover branch agent/plan-takeoff-series, remote pre-rebase — delete by hand). Next: Inbox 🐞 MealPlanningView+Actions.swift:274 undoNote Task (cancel + clear in `takeOff`), then the new 🐞 take-off slot-vs-id deletion (:249), then `NotificationManagerTests.swift:236`.
