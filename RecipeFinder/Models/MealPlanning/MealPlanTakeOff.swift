@@ -29,11 +29,12 @@ struct MealPlanTakeOff: Equatable {
     }
 
     /// One weekly dinner is one meal to the cook, though taking it off also deletes its later-week copies:
-    /// weekly plans of the same dish, weekday and meal time count once; one-offs each count.
+    /// weekly plans on the same weekday and meal time count once — the series `MealPlanningManager.SeriesKey`
+    /// stops together — and one-offs each count.
     private static func meals(in plans: [MealPlanModel], calendar: Calendar) -> Int {
-        struct Weekly: Hashable { let recipeId: UUID; let weekday: Int; let mealTime: MealTime }
+        struct Weekly: Hashable { let weekday: Int; let mealTime: MealTime }
         let weekly = Set(plans.filter(\.isRecurring).map {
-            Weekly(recipeId: $0.recipeId, weekday: calendar.component(.weekday, from: $0.date), mealTime: $0.mealTime)
+            Weekly(weekday: calendar.component(.weekday, from: $0.date), mealTime: $0.mealTime)
         })
         return plans.filter { !$0.isRecurring }.count + weekly.count
     }

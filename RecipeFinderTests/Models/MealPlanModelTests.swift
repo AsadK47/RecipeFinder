@@ -321,6 +321,17 @@ struct MealPlanTakeOffTests {
         #expect(result.message == "Tacos taken off and stopped repeating")
     }
 
+    /// The same dish weekly on two weekdays is two series, so two meals.
+    @Test func oneDishWeeklyOnTwoWeekdaysCountsTwice() {
+        let monday = plan("Dal", recurring: true)
+        var tuesday = MealPlanModel(recipeId: monday.recipeId, recipeName: "Dal", date: start.addingTimeInterval(day),
+                                    mealTime: .dinner, isRecurring: true)
+        tuesday.servings = monday.servings
+        let result = MealPlanTakeOff.after(taking: tuesday, changed: [tuesday], earlier: [monday],
+                                           isStillPlanned: { _ in false })
+        #expect(result.message == "2 meals taken off")
+    }
+
     /// Two one-off dinners of the same dish on different nights are two meals.
     @Test func twoOneOffsOfTheSameDishCountTwice() {
         let dal = plan("Dal", week: 0)
