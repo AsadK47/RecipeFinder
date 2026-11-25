@@ -1,12 +1,10 @@
 name: TestFlight public beta
 
-# Daily: hand the newest build to public-link testers (Beta App Review + add to the "Public Beta" group), so the public
-# link never points at an old or expired build (owner OK 2026-11-22). Uploads happen many times a day; one promotion a
-# day keeps Apple's review queue light. "Run workflow" to promote now. Named testflight-* so Build & Test skips it.
+# Hand the newest build to public-link testers (Beta App Review + add to the "Public Beta" group). Manual only
+# ("Run workflow") until bundled recipe method text is in our own words (owner 2026-11-25, challenges 114/178, BACKLOG
+# Inbox (c)); the daily schedule (owner OK 2026-11-22) comes back after that. Named testflight-* so Build & Test skips it.
 
 on:
-  schedule:
-    - cron: '23 6 * * *'
   workflow_dispatch:
 
 permissions:
