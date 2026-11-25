@@ -331,11 +331,11 @@ struct BundledRecipeCatalogTests {
         #expect(!recipes.contains { $0.dietaryInfo.isGlutenFree || $0.dietaryInfo.isNutFree || $0.dietaryInfo.isDairyFree })
     }
 
-    @Test("no bundled title claims a diet its tags never carry (gluten-free, dairy-free, nut-free, keto, low-carb)")
+    @Test("no bundled title claims a diet its tags never carry (gluten-free, dairy-free, lactose-free, nut-free, keto, low-carb)")
     func titlesClaimNoUntaggedDiet() {
         // Bundled recipes are tagged Vegetarian / Vegan only, so a title promising any other diet is a claim the
         // recipe's own tags contradict — an allergen promise nobody checked.
-        let claims = ["gluten-free", "gluten free", "dairy-free", "dairy free", "nut-free", "nut free",
+        let claims = ["gluten-free", "gluten free", "dairy-free", "dairy free", "lactose-free", "lactose free", "nut-free", "nut free",
                       "keto", "low-carb", "low carb"]
         let claiming = BundledRecipeCatalog.load().filter { recipe in
             claims.contains { recipe.name.localizedCaseInsensitiveContains($0) }
@@ -502,8 +502,19 @@ struct BundledRecipeCatalogTests {
         #expect(history.allSatisfy { currentIDs.contains($0.id) })
     }
 
+    /// The history file only changes when shipped recipes do, and those fixes reach installs only through a
+    /// `sampleRefreshVersion` bump. Regenerated the history? Bump the version, then update both pins here.
+    @Test("the shipped history file never changes without a sampleRefreshVersion bump")
+    func historyChangeBumpsRefreshVersion() throws {
+        let url = try #require(Bundle.main.url(forResource: "recipes_seed_history", withExtension: "json"))
+        let digest = SHA256.hash(data: try Data(contentsOf: url)).map { String(format: "%02x", $0) }.joined()
+        #expect(BundledRecipeCatalog.sampleRefreshVersion == 9)
+        #expect(digest == "7f5bfd159813f15d1fea3aaae094d550d7b3a334bf6304599e9074ec63f97893",
+                "recipes_seed_history.json changed: bump sampleRefreshVersion and update both pins")
+    }
+
     @Test("an untouched copy titled with an untagged diet claim refreshes to today's title",
-          arguments: ["Apple Jalebi (Gluten-Free, Vegan)", "Dairy-Free Tangzhong Bread"])
+          arguments: ["Apple Jalebi (Gluten-Free, Vegan)", "Dairy-Free Tangzhong Bread", "Lactose-Free Meat Lasagne"])
     func claimTitledCopyRefreshes(oldName: String) throws {
         let history = BundledRecipeCatalog.loadHistory()
         let current = BundledRecipeCatalog.load()
