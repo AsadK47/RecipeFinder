@@ -26,8 +26,8 @@ fix is behaviour-preserving: characterisation tests first, refactor in its own c
    2026-11-10 to edit `build.yml` for speed. If an item is too big for one run, do a coherent first slice, tick
    nothing, and rewrite the item to say what's left. If it's unclear or would break a guardrail, move it to
    **Needs owner** with a one-line question and stop.
-3. **Claim it first:** append `— 🚧 <who> <YYYY-MM-DD>` to the item's title line and push that to `main` before
-   writing code ("who" = builder agent / interactive session). Skip items claimed by someone else; a claim older than
+3. **Claim it first** in WORK.md (lane line `🚧 <who> <YYYY-MM-DD> <item>`) before writing code, no backlog commit
+   per claim (owner 2026-11-25; "who" = builder agent / interactive session). Skip items claimed by someone else; a claim older than
    1 day with no open `agent/*` branch is stale and may be taken over (say so in the Log). Remove the 🚧 when ticking.
 4. Branch `agent/<short-slug>` from latest `main`. Write tests first (Swift Testing) for any logic.
    A 🐞 that is a bad import: add `RecipeFinderTests/Fixtures/ImportRegressions/<slug>.txt` + `.expected.json` first
@@ -134,6 +134,15 @@ are merged into a newer item or parked — never start them; their text stays as
    **Website** runs in its own session (Site 3/6, 4/6).
 
 ## Queue
+- **Launch lane rule** (owner 2026-11-25, CHALLENGES B2): until the 14 Dec freeze a lane takes only LAUNCH must-ship items and 🔴/🐞
+  bugs, in this order: (a) *Recipes in our own words*, (b) *Data safety 4/4 Recently deleted* (schema deployed,
+  f50e21e9), (c) Inbox *CI hardening*. Anything else goes to Parking lot. Me's weekly cooks go in `docs/LOG.md` each
+  Sunday (owner) as the dinners-cooked measure.
+- [ ] **Weekly challenge triage** (owner 2026-11-25, CHALLENGES B3): once a week an agent closes every reversible `docs/CHALLENGES.md`
+  entry older than 7 days on its recommended default (Accept → Queue/Inbox line; else Reject/Later with one line why);
+  legal, money and data-loss entries go to Needs owner. Item-pass notes that already say "not fixed" get no `→ Owner:`
+  line. The open count comes from a script in `tools/`, never typed. *Done when:* script prints the count, first
+  weekly pass logged.
 - [ ] **Your diet, everywhere** (owner 2026-11-22: "have we met the users' nutritional/dietary needs?"). Today: recipes
   carry 7 manual yes/no diet flags (default *no*, so imports are rarely tagged) and search has a diet filter; nothing
   else knows your diet. (1) **Profile:** Me → "How you eat": diets (vegetarian, vegan, pescatarian), avoid lists
@@ -837,6 +846,13 @@ Compare side by side with the app screenshots before pushing. Legal pages (priva
   (CLAUDE.md error rule). Data-only/optional reads may stay. Group by folder.
 - [ ] **Large wizard: ~1,444 lines across `RecipeWizardView*` + `Wizard/` (target ≤1,000)** — ✅ `SuggestionChip` + hint loop in `NotesStepView` (6b7560c). Remaining: review `RecipeNameStepView` (~210), `BasicInfoStepView`, `WizardIntroSheet`.
 - [ ] **Batch G — Large Class: plan/shop/kitchen managers + screens** (reviewer 2026-11-21) — `MealPlanningManager` (549 on 25 Nov; 497 after the series split, 2c5638a), `MealPlanningView+Actions` (292, take-off glue), `KitchenInventoryManager` (422), `ShoppingListManager` (402), `MealPlanningView` (360), `KitchenShoppingView` (352), `TodayView` (341): extract tested pure functions / subviews, one branch per file.
+- [ ] **Batch H — Dead code + duplicates** (owner 2026-11-25, CHALLENGES B14; "Batch G" in the challenges = this): `newOccupied` in
+  `weeklyCopies` (never matches); `themeAccentColor` + dead `systemBackground` layer in `NavigationBarScrollFade`;
+  `RecipeSaveParameters`' unused 49-line init; `updateRecipe` reuses `populate`; `updateRecipesInBackground` →
+  `+RecipeBatchWrites`; dead " hour(s)" replacements in `RecipeDetailCopy.shortTime`; hide empty facts like cuisine;
+  `RecipeBrowseRequest` own file; shared `DayCell` for Plan/Today week strips; Combine `.onReceive` (×5 in ContentView,
+  ~10 in all) → async `notifications(named:)`; share-card retry back to a plain render + test-side retry; whats-new reads
+  CHANGELOG; renderer curls `"…"` too. One commit per smell, behaviour-preserving.
 - [x] **Large Class: `RecipeWizardView` (376 lines, limit ~300)** — 242 lines after Manual 2/3 slice 3 (14b1f63).
 
 ## Parking lot (owner 2026-11-14 — ideas wait here; reviewed monthly with the owner)
@@ -858,7 +874,6 @@ Format: `- <idea> — loop step: <Discover/Decide/Get/Cook/Remember/none> — wh
 - Plan beyond dinner (owner asked 2026-11-23; 3 reviewers — product, market, cost — agreed: not before launch, no full 3×7 deck) — loop step: Decide — after launch, in this order: (1) "Make extra for tomorrow's lunch" on a dinner card fills lunch with leftovers (Mealime's answer; see the leftovers idea merged into Plan); (2) repeat a usual breakfast/lunch across the week; (3) lunch cards inferred from habit (≥3 lunches planned in 2 weeks), no chooser. Blockers for a breakfast deck: 7 seed breakfasts vs 143 mains, no Lunch category, lunch would compete with dinner for dishes. Evidence: dinner is the hardest meal to decide for 57% of UK adults (OnePoll 2024).
 
 ## Needs owner
-- 🙋 **Gluten-Free / Dairy-Free / Nut-Free / Low-Carb / Keto filter chips** (builder 2026-11-22, seed dietary tags): bundled recipes now carry Vegetarian/Vegan only — allergen flags are never guessed (a wrong "Nut-Free" can hurt), so those 5 chips still find nothing. Hide them until *Your diet, everywhere* lands (recommended) / hand-tag the seed / keep?
 - 🙋 **Today: should a later plan lead at 8am?** (builder 2026-11-21, Today — decide tonight): with only dinner planned,
   the 8am hero is "Tonight: <dinner>" not a breakfast idea (any plan outranks a suggestion — CHALLENGES 21 Nov). Keep
   (the cook's plan is the decision) / lead with the next meal's suggestion and show the plan in the day strip — recommended?
@@ -876,7 +891,9 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 **Cooking resume across relaunch** (builder 2026-11-19): cooking mode now resumes at the step you left while
   the app stays open. Keeping it after the app is closed means storing "recipe + step" on the device — add a Privacy
   §4.2 line ("where you are in a recipe you're cooking") and clear it on Reset? (yes / keep in-memory)
-- 🙋 ⚔️ 175 unanswered challenges in docs/CHALLENGES.md — Accept / Reject / Later each.
+- 🙋 **Sync device checks** (owner-paced; all 254 challenges were answered 2026-11-25): CHALLENGES 627 (photo returns
+  after iCloud sign-out/in), 635 + 637 (delete with sync off stays deleted elsewhere, one and many), 645 (CloudKit
+  exports a delete made while the mirror was off — the fix may be a no-op).
 - 🙋 **Privacy §2.2/§6.2 "only"** (builder 2026-11-15, Inbox 🟡): there "only" is a legal limit ("only collect or share … as described", "only with your permission"), not product copy — removing it weakens the promise. Keep as is (recommended) / reword?
 - 🙋 **Smell: recipe times → Int minutes** (builder 2026-11-16): needs a new model version adding attributes to synced
   `RecipeEntity` (CloudKit Production schema deploy too). Do it as RecipeModel 19 after Recently deleted's model 18
@@ -903,7 +920,7 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
 - 🙋 Website tester quotes — add real TestFlight tester quotes (with permission) once there are some; never invent them.
 
 ## Inbox (reviewer findings — worked automatically as 🐞, see top)
-- 🐞 RecipeFinder/Models/Recipe/RecipeDietaryInfo.swift:34 / FilterSheet — Gluten-Free, Dairy-Free, Nut-Free, Low-Carb and Keto chips match nothing (0 seeded recipes carry them; recommended default in Needs owner is past 72 h) — hide the five chips until *Your diet, everywhere* lands (challenger 2026-11-25)
+- 🐞 RecipeFinder/Models/Recipe/RecipeDietaryInfo.swift:34 / FilterSheet — Gluten-Free, Dairy-Free, Nut-Free, Low-Carb and Keto chips match nothing (0 seeded recipes carry them; recommended default in Needs owner is past 72 h) — hide the five chips until *Your diet, everywhere* lands (challenger 2026-11-25; owner 2026-11-25, CHALLENGES B4)
 - 🔴 .github/scripts/fetch_testflight_feedback.py:87-101 — public issues still carry up to 4,000 chars of stranger text in the body + 70 in the title, and the issue body (:97) still tells the agent loop to fix it with no `owner-ok` mention; the loop may edit workflows holding the ASC `.p8` key (agent gate landed: BACKLOG top, `owner-ok` label, builder 2026-11-24) — body keeps date/device/kind only, tester text stays in App Store Connect; do with (d) below, which updates Privacy 6.5/6.6 + `privacy.html` (challenger 2026-11-24)
 - 🐞 **Workflow items unblocked** (owner 2026-11-23: workflows OK to edit) — do each as its own item:
   (a) `cleanup-agent-branches.yml` dies on GH013 at the first protected `agent/*` branch → skip refused deletes and carry on, report the count; — ⏸ built on `agent/cleanup-skip-refused` (8648522, 2 reviews), landing on main was refused to the agent → owner: fast-forward main to it
@@ -915,11 +932,27 @@ _Owner 2026-11-15: revisit this list (and CHALLENGES "→ Owner:" lines) once th
   completion (hypothesis). Also possible (unconfirmed): on a fresh install a queued "Welcome Aboard!" reveal opened right after View all and looked like the same reveal stuck — fixed 732ec22. New UI test passes **with and without** the fix in the simulator, so it is not proof —
   confirm on device / via MetricKit hang reports before closing.
 - 🟡 7 list reloads + viewContext merges still on main — move off main if "Diagnostics" slow-step/MetricKit logs name them.
+- 🔴 RecipeFinder/Views/Settings/Screens/DataManagementSettingsView.swift `resetToDefault` — Privacy 4.3 says Reset clears "copies of website pictures" but Kingfisher's `ImageCache.default` disk cache stays — clear it in Reset; two reviewers (owner 2026-11-25, CHALLENGES 594)
+- 🔴 RecipeFinder/Persistence/PersistenceController.swift:154 `attemptStoreRecovery` — before first unlock store reads fail and a healthy store is moved aside (library looks empty) — check `isProtectedDataAvailable` before recovering; data-loss surface, two reviewers (owner 2026-11-25, CHALLENGES 818)
+- 🐞 **CI hardening** (owner 2026-11-25, CHALLENGES B1): (1) owner fast-forwards (a) + (b) below; (2) commit `Package.resolved`, pin the 26 `uses:` lines to SHAs, add `dependabot.yml` + `SECURITY.md`; (3) one ubuntu job runs `.github/scripts/test_*.py` and `tools/website-behind-the-build.py --check` on script changes
+- 🐞 **Import resource limits** (owner 2026-11-25, CHALLENGES B5): `HTMLFetcher.swift:33` streams with `session.bytes` and a ~5 MB cap (`tooLarge`), reusing `RemoteImageFetcher`'s loop + a total timeout; file open uses `NSFileCoordinator`
+- 🐞 RecipeFinder/Utilities/Managers/NotificationManager.swift `scheduleExpiryNotification` — checks expiry − 1 day is in the future but fires at 18:00; an item added after 18:00 the day before gets a past trigger, no alert — compare the 18:00 trigger with now (owner 2026-11-25, CHALLENGES B9)
+- 🐞 RecipeFinder/Views/Recipes/Wizard/RecipeWizardBuilder.swift:72-80 — difficulty normalised by substring in 3 places ("not easy", "medium-hard" → wrong level) — one tested `Difficulty` parser used by `RecipeFilterCriteria`, `SmartCollection`, `DifficultyBarsView` (owner 2026-11-25, CHALLENGES 398)
+- 🐞 RecipeFinder/Models/Recipe/CookingPlan.swift `timerRegex` — misses "an hour", "half an hour", "1½ hours"; "2 to 3 hours" / "10-15 minutes" take the wrong number — fixture-first, use the lower bound (owner 2026-11-25, CHALLENGES 404)
+- 🐞 Copy merge (`mergeSyncedRecipeCopies`) keeps only the kept copy's hero `imageName` — a hero photo only one device had leaves the recipe — move the losing hero into `photoNames`; iCloud-sync fix, two reviewers (owner 2026-11-25, CHALLENGES 657)
+- 🐞 Shared recipe file import — a remote `imageURL` loads on open (read receipt to the sender) — drop the remote image URL on file import (owner 2026-11-25, CHALLENGES 498)
+- 🟡 **Permission truth** (owner 2026-11-25, CHALLENGES B9): expiry, meal, groceries and timer reminders show "Notifications are off" when denied instead of scheduling silently (`addAskingPermissionFirst`), incl. a switch left On after iOS Settings turns them off
+- 🟡 **Today refresh** (owner 2026-11-25, CHALLENGES B10): refresh Today on `NSCalendarDayChanged` / scene active, a minute `TimelineView` for the tonight line, and pass the tapped day into Plan
+- 🟡 **Test seams** (owner 2026-11-25, CHALLENGES B6): (1) Reset through a tested `ResetService` use case (Reset 🟡 line below); (2) one push-CI UI smoke test per tab's primary action; (3) restore `basicFilterFindsSnack`; (4) `olderModel()` points at model 16
+- 🟡 **UI tests seed their own state** (owner 2026-11-25, CHALLENGES B7): each UI test seeds via launch args (no `testZZZ…` order), `screenshots.yml` also runs on main pushes touching `Views/**`, split the 1,444-line screenshot file by tab
+- 🟡 **Look & accessibility fixes** (owner 2026-11-25, CHALLENGES B12): adaptive nav-title colour (`RecipeFinderApp.swift:157` `UIColor.white` ≈1.9:1 on Light); badge pager next/previous VoiceOver actions; "<1%" for trace nutrients
+- 🟡 Filters footnote — Vegetarian tag sits on rennet cheeses (cheddar, mascarpone) — state one standard in the filter footnote ("cheese counted as vegetarian") (owner 2026-11-25, CHALLENGES 160)
+- 🟡 Queue *Your diet, everywhere* — cut allergen inference (UK GDPR Art. 9 health data): diets only; allergens wait for a legal review and tester demand — rewrite the item (owner 2026-11-25, CHALLENGES 180)
 _Review 2026-11-09 (60 commits, 8–9 Nov; CI on main green):_
 - 🧹 13 `origin/agent/*` branches already merged (or superseded) still exist — delete by hand (proxy refuses).
 _Review 2026-11-21 (166 commits, 19–21 Nov; reviewers: correctness, tests/rules, copy/privacy + screenshots):_
 - 🟡 *unconfirmed* view wiring (no unit test can see it; logic red-run 45013327147): AppRootView applies Keep Screen Awake (7e70ceb), ShopModeView re-takes the hold on scene change (458fb27), Reset calls `clearPreferences` (881f59e) — confirm on device: switch on → screen stays lit; shop → lock → unlock → still lit; Reset → switches back to defaults (builder 2026-11-22)
-- 🟡 RecipeFinder/Views/Settings/Screens/DataManagementSettingsView.swift `resetToDefault` — ~15 `.shared` calls (LocalStore, NotificationManager, every manager, PersistenceController); route Reset through one tested use-case seam. Do after the owner answers *Reset store copies* (parked branch agent/reset-store-copies edits the same function) (reviewer 2026-11-21; cooking-resume half landed cbfba3f)
+- 🟡 RecipeFinder/Views/Settings/Screens/DataManagementSettingsView.swift `resetToDefault` — ~15 `.shared` calls (LocalStore, NotificationManager, every manager, PersistenceController); route Reset through one tested use-case seam (= part (1) of *Test seams* above). Do after the owner answers *Reset store copies* (parked branch agent/reset-store-copies edits the same function) (reviewer 2026-11-21; cooking-resume half landed cbfba3f)
 - ✅ 🟡 RecipeFinder/Utilities/Managers/NotificationManager.swift — 29% line coverage while this range added `schedulePlanNudge`/`requestPermission`; coverage.txt is from ad7829d (no figures for TodayMealDay, TodayNudge, StillGotCheck) — re-run Coverage on main, test the nudge content via an `add` seam (reviewer 2026-11-21) — landed 3e1525a (builder 2026-11-23)
 - ✅ 🟡 Screenshots release `screenshots` (main) last refreshed 18 Nov despite Plan deck, Cooking mode, Shop mode and Theme changes; preview at a45fecd checked (no overlap/clipping); 04-meal-plan empty "No dinner planned" text is near-invisible — run Screenshots on main; raise empty-night text contrast (reviewer 2026-11-21) — landed 87a805c/931ade6 (builder 2026-11-24)
 _Review 2026-11-22 (79 commits, 6d8e08e..be0fa2b; reviewers: correctness, tests/rules, copy/privacy + screenshots):_
@@ -948,6 +981,7 @@ _Review 2026-11-24 (62 commits, b6db909..67d8ebc; reviewers: correctness, tests/
 
 ## Log
 _Last 7 days; older entries are in `docs/LOG.md`._
+- 2026-11-25 · Owner answered 254 challenges (batches B1–B15, owner "go with recommendations") · docs only · 73 accepted → BACKLOG, 93 rejected (19 already resolved), 70 later; 18 already had a verdict
 - 2026-11-25 · Owner task: CloudKit Production schema (RecipeModel 17) · docs only · owner ran the app from Xcode on iPhone with sync on, created photo/shop/inventory rows so all 11 `CD_` record types reached Development (seen in owner's Console screenshots), then Deploy Schema Changes → Production. Model 18 `deletedAt`: owner added `CD_Recipe.CD_deletedAt` (Date/Time) by hand in Development and deployed it too
 - 2026-11-25 · Inbox 🟡 dead `NotificationKind.dailyReminder` · 0f87e58..5de2fad · nothing to see on phone — reminders and their taps behave as before · evidence: deductive (no producer of "daily-reminder" since c8daa10; its only caller, NotificationExamplesView, was never reachable and was deleted 2025-12-23) · seen red: run 45577874717 (`retiredDailyReminderIsNotAKind`), green 45580583297 · review: challenger 0 defects, 1 weak-test note → CHALLENGES · looked at: none (no UI) · MealPlanningManager (549) + MealPlanningView+Actions (292) added to Smell Batch G · leftover branch agent/drop-daily-reminder (auto-cleanup)
 - 2026-11-25 · Inbox 🐞 take-off deletes by slot · 783d412..7df56e5 · on phone: Plan → take a meal off, plan another dish on that night while the toast is up, tap the old meal's take-off again (stale screen) → the new dish stays; Undo → the new dish stays, toast says the first stayed off · evidence: deductive (`removeMealPlan(for:mealTime:)` deleted by slot while Undo snapshotted by id) · seen red: run 45548051812 (3 stale-tap tests, refactor commit with the old slot delete) · green 45549708852 · review: reviewer (0 defects, 1 suggestion applied: snapshot the stored copy) + challenger (1 fixed: an iCloud fold keeping the same dish's twin left it planned under a "taken off" toast → same-dish fallback); view glue untested → CHALLENGES · looked at: no layout change · leftover branch agent/plan-takeoff-by-id (auto-cleanup)
