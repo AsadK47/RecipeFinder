@@ -69,3 +69,14 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 31. **A closure kept in a `let` can't capture a non-escaping closure parameter.** 2026-11-22: `let key = { minuteOfDay($0) }` in `sortedOrderedMealTimes` → Swift 6 error → 1 CI cycle; read the values into a dictionary first.
 32. **A test that uses `Date()` with `Calendar.current` must hold on every weekday and first weekday.** 2026-11-22: weekly dinner planned for "today" (a Sunday, US runner) stopped covering Mon–Sat after the Sunday-nudge fix → 1 CI cycle; pick a date the rule covers whatever today is.
 33. **Branch pushes run unit tests only; UI tests need "Run workflow".** 2026-11-24: a red UI test pushed to `agent/search-field-a11y` sat behind a push run that skips the UI shards → ~10 min lost; for a UI red/green, dispatch `build.yml` on the branch (or Screenshots for screenshot tests). XCUITest still lists `.accessibilityHidden` SwiftUI text — it can't prove something is hidden from VoiceOver.
+34. **Land a fix to a scheduled job before cleaning up what it produced.** 2026-11-25: tester issues #14–16 were deleted
+   while the hourly feedback job still ran the old code; it re-filed them (#17–19) with tester text and a new artifact
+   an hour later → a second clean-up. Fix first, confirm one run of the new code, then delete.
+35. **"Private" on a public repo means checked, not assumed.** 2026-11-23/25: the policy said screenshots were "kept
+   privately", but artifacts on a public repo download for any GitHub user; issue edit history and title changes stay
+   public after an edit (only deleting the issue removes them). Two reviewers checking text against code caught both.
+36. **One checkout per agent.** 2026-11-25: a docs agent editing `/home/user/RecipeFinder` while another switched it to a
+   feature branch nearly committed onto that branch. Give a second lane its own `git worktree`.
+37. **CloudKit Production needs every record type to exist in Development first.** 2026-11-25: a type appears only once a
+   row of it syncs (3 of 11 were missing until a photo, a shop and an inventory item were added); a new field can be
+   added by hand (Console → Record Types → +, `CD_<name>`). Simulator iCloud sign-in fails on new iOS betas — use a device.
