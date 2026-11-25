@@ -147,7 +147,7 @@ RecipeFinderUITests/     UI, screenshot and accessibility tests
 ### How it's built
 
 - **CI** — `build.yml` builds and tests every `agent/*` branch and `main`; UI screenshots run nightly.
-- **TestFlight** — every app-code push to `main` uploads a beta build; tester feedback is filed as GitHub issues.
+- **TestFlight** — every app-code push to `main` uploads a beta build; each tester report opens a GitHub issue for follow-up.
 - **Agent loop** — work is planned in [`BACKLOG.md`](BACKLOG.md) and built by scheduled Claude Code agents on
   `agent/<slug>` branches; `main` advances when a branch is green. Start at [`HANDBOOK.md`](HANDBOOK.md): product
   strategy in [`docs/PRODUCT.md`](docs/PRODUCT.md), code map in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md),

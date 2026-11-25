@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-25 · TestFlight feedback stays private · 8b04b9f
+- For you: Feedback you send while testing a beta stays in App Store Connect, and the Privacy Policy now explains who sees it and how to have it deleted.
+- Behind the build: the feedback job now posts a short notice with no tester content; two reviewers checked the policy text against the scripts.
+
 ## 2026-11-25 · Inbox FilterSheet/NotesStepView placeholder copy · 8eaf4af
 - For you: The ingredient filter hint now reads "e.g. chicken, tomato…" and the recipe notes box reads "Add your notes here…", matching the rest of the app's prompts.
 - Behind the build: a two-line copy change, checked by a challenger for tests or screens that read the old wording.
