@@ -9,6 +9,10 @@ enum SortOrder: String, CaseIterable, Hashable {
 
 /// Full recipe-search filter set as a plain value; extracted from `RecipeSearchView` so filter/sort is pure and testable (view builds one from `@State` and calls `apply(to:)`).
 struct RecipeFilterCriteria: Hashable {
+    /// Diet chips the filter sheet offers. Only diets the bundled recipes are tagged with (`DietaryInference`);
+    /// Gluten-Free, Dairy-Free, Nut-Free, Low-Carb and Keto return with *Your diet, everywhere* (owner 2026-11-25).
+    static let dietaryFilterOptions = ["Vegetarian", "Vegan"]
+
     var searchText: String = ""
     var ingredientSearchText: String = ""
     var availableIngredientsOnly: Bool = false

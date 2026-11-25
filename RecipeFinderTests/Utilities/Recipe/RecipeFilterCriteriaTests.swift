@@ -124,6 +124,20 @@ struct RecipeFilterCriteriaTests {
         #expect(criteria.apply(to: recipes).map(\.name) == ["Matches"])
     }
 
+    @Test("Every diet chip on offer finds bundled recipes", arguments: RecipeFilterCriteria.dietaryFilterOptions)
+    func dietChipFindsBundledRecipes(tag: String) {
+        let bundled = BundledRecipeCatalog.load()
+        #expect(!bundled.isEmpty)
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedDietaryFilters = [tag]
+        #expect(!criteria.apply(to: bundled).isEmpty, "\(tag) chip would show no bundled recipes")
+    }
+
+    @Test("Diet chips offered are the diets bundled recipes are tagged with")
+    func dietChipsOnOffer() {
+        #expect(RecipeFilterCriteria.dietaryFilterOptions == ["Vegetarian", "Vegan"])
+    }
+
     @Test("Multiple dietary filters require all to be satisfied")
     func dietaryFilterAllRequired() {
         let recipes = [

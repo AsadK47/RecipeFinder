@@ -21,7 +21,6 @@ struct FilterSheet: View {
     @Binding var selectedCollectionID: UUID?
     
     let cookTimeOptions = [15, 30, 45, 60, 90, 121]
-    let dietaryOptions = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Nut-Free", "Low-Carb", "Keto"]
     
     private let columns = [
         GridItem(.adaptive(minimum: 100, maximum: 120), spacing: AppTheme.spacing8, alignment: .center)
@@ -133,7 +132,7 @@ struct FilterSheet: View {
                         .adaptiveForegroundColor()
 
                     LazyVGrid(columns: columns, spacing: AppTheme.spacing8) {
-                        ForEach(dietaryOptions, id: \.self) { diet in
+                        ForEach(RecipeFilterCriteria.dietaryFilterOptions, id: \.self) { diet in
                             RecipeFilterButton(
                                 label: diet,
                                 isSelected: selectedDietaryFilters.contains(diet)
