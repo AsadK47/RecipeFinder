@@ -438,22 +438,33 @@ private func recipe(
         #expect(plan.delete == ["b"])
     }
 
-    /// The cook's own hero photo on the copy that goes would leave the recipe; it joins the kept copy's photos.
-    @Test func aHeroPhotoOnlyTheOtherCopyHadJoinsTheKeptCopysPhotos() {
+    /// The cook's own hero photo on the copy that goes would leave the recipe; it becomes the hero in place of a
+    /// web picture. Not a gallery entry: heroes share one file path per recipe, so the next hero would overwrite it.
+    @Test func aHeroPhotoOnlyTheOtherCopyHadReplacesTheKeptCopysWebPicture() {
         let ownHero = "RecipeImages/\(fishPie.uuidString).jpg"
         let plan = RecipeCopyMerge.plan([
             copy("a", recipe(fishPie, photos: ["one.jpg"], hero: "https://example.com/pie.jpg")),
             copy("b", recipe(fishPie, hero: ownHero))
         ])
-        #expect(plan.update["a"]?.imageName == "https://example.com/pie.jpg")
-        #expect(plan.update["a"]?.photoNames == ["one.jpg", ownHero])
+        #expect(plan.update["a"]?.imageName == ownHero)
+        #expect(plan.update["a"]?.photoNames == ["one.jpg"])
         #expect(plan.delete == ["b"])
     }
 
-    @Test func anUnillustratedKeptCopyStillGainsTheOtherCopysHero() {
+    @Test func anUnillustratedKeptCopyTakesTheOtherCopysHero() {
         let ownHero = "RecipeImages/\(fishPie.uuidString).jpg"
         let plan = RecipeCopyMerge.plan([copy("a", recipe(fishPie)), copy("b", recipe(fishPie, hero: ownHero))])
-        #expect(plan.update["a"]?.photoNames == [ownHero])
+        #expect(plan.update["a"]?.imageName == ownHero)
+        #expect(plan.update["a"]?.photoNames == [])
+    }
+
+    /// A kept copy already showing the cook's own hero keeps it (an older app's absolute path counts too).
+    @Test(arguments: ["RecipeImages/mine.jpg", "/var/mobile/Documents/RecipeImages/mine.jpg"])
+    func theKeptCopysOwnHeroWins(kept: String) {
+        let plan = RecipeCopyMerge.plan([
+            copy("a", recipe(fishPie, hero: kept)), copy("b", recipe(fishPie, hero: "RecipeImages/theirs.jpg"))
+        ])
+        #expect(plan.update["a"] == nil)
     }
 
     /// Same hero on both copies, or one the kept copy already shows among its photos: nothing to add.
@@ -566,7 +577,7 @@ private func recipe(
         #expect(copies.first?.isFavorite == true)
     }
 
-    /// Whichever copy the merge keeps, the cook's own hero photo is still on the recipe afterwards.
+    /// Whichever copy the merge keeps, the cook's own hero photo is still the recipe's hero afterwards.
     @Test func aHeroPhotoOnOneCopySurvivesTheMerge() async {
         let ownHero = "RecipeImages/\(fishPie.uuidString).jpg"
         let persistence = PersistenceController(inMemory: true)
@@ -578,7 +589,8 @@ private func recipe(
         let copies = persistence.fetchRecipes().filter { $0.id == fishPie }
         #expect(merged)
         #expect(copies.count == 1)
-        #expect(copies.contains { ([$0.imageName].compactMap { $0 } + $0.photoNames).contains(ownHero) })
+        #expect(copies.first?.imageName == ownHero)
+        #expect(copies.first?.photoNames == [])
     }
 
     /// Review of issue #16: the merge runs off the main thread now, so the cook can save between its read and its
