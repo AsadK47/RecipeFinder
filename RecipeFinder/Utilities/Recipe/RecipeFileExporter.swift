@@ -148,6 +148,7 @@ enum RecipeFileExporter {
 enum RecipeFileError: LocalizedError, Equatable {
     case unsupportedVersion(Int)
     case tooLarge
+    case notDownloaded
 
     var errorDescription: String? {
         switch self {
@@ -155,6 +156,8 @@ enum RecipeFileError: LocalizedError, Equatable {
             return "This recipe was exported with a newer version of RecipeFinder (format \(v))."
         case .tooLarge:
             return "This file is too large to be a recipe, so it was left unopened."
+        case .notDownloaded:
+            return "This recipe file is still downloading from iCloud. Connect to the internet and try again."
         }
     }
 }
@@ -180,14 +183,36 @@ struct ScopedFileAccess: Sendable {
 struct FileReadCoordination: Sendable {
     let read: @Sendable (URL, (URL) throws -> Data) throws -> Data
 
-    static let fileCoordinator = FileReadCoordination { url, body in
-        var coordinationError: NSError?
-        var result: Result<Data, any Error>?
-        NSFileCoordinator(filePresenter: nil).coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
-            result = Result { try body(readURL) }
+    static let fileCoordinator = fileCoordinator(timeout: 30)
+
+    /// Gives up after `timeout` seconds — a placeholder opened offline would otherwise hold a thread forever —
+    /// and reports `RecipeFileError.notDownloaded`.
+    static func fileCoordinator(timeout: TimeInterval) -> FileReadCoordination {
+        FileReadCoordination { url, body in
+            let coordinator = CoordinatorBox(NSFileCoordinator(filePresenter: nil))
+            // `cancel()` is made to be called from another thread; it ends a wait that hasn't reached the reader yet.
+            let giveUp = DispatchWorkItem { coordinator.value.cancel() }
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + timeout, execute: giveUp)
+            defer { giveUp.cancel() }
+            var coordinationError: NSError?
+            var result: Result<Data, any Error>?
+            coordinator.value.coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
+                result = Result { try body(readURL) }
+            }
+            if let coordinationError {
+                if coordinationError.domain == NSCocoaErrorDomain, coordinationError.code == NSUserCancelledError {
+                    throw RecipeFileError.notDownloaded
+                }
+                throw coordinationError
+            }
+            guard let result else { throw CocoaError(.fileReadUnknown) }
+            return try result.get()
         }
-        if let coordinationError { throw coordinationError }
-        guard let result else { throw CocoaError(.fileReadUnknown) }
-        return try result.get()
     }
+}
+
+/// Carries the coordinator into the give-up timer; `NSFileCoordinator.cancel()` is documented as callable from any thread.
+private final class CoordinatorBox: @unchecked Sendable {
+    let value: NSFileCoordinator
+    init(_ value: NSFileCoordinator) { self.value = value }
 }

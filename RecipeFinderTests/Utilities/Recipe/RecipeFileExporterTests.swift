@@ -290,6 +290,39 @@ import Foundation
         }
     }
 
+    @Test func systemCoordinatorGivesUpWhenTheFileIsHeld() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
+        // A coordinated write held by another thread makes the read wait, as an iCloud download that never arrives does.
+        let writing = DispatchSemaphore(value: 0)
+        let release = DispatchSemaphore(value: 0)
+        let writerDone = DispatchSemaphore(value: 0)
+        DispatchQueue.global().async {
+            var error: NSError?
+            NSFileCoordinator(filePresenter: nil).coordinate(writingItemAt: url, options: [], error: &error) { _ in
+                writing.signal()
+                release.wait()
+            }
+            writerDone.signal()
+        }
+        writing.wait()
+        defer {
+            release.signal()
+            writerDone.wait()
+        }
+        #expect(throws: RecipeFileError.notDownloaded) {
+            _ = try RecipeFileExporter.read(
+                from: url,
+                access: AccessSpy(grants: true).access,
+                coordination: .fileCoordinator(timeout: 0.3)
+            )
+        }
+    }
+
+    @Test func notDownloadedErrorExplainsItself() {
+        #expect(RecipeFileError.notDownloaded.errorDescription?.isEmpty == false)
+    }
+
     @Test func tooLargeErrorExplainsItself() {
         #expect(RecipeFileError.tooLarge.errorDescription?.isEmpty == false)
     }
