@@ -5,6 +5,14 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Store recovery waits for unlock** (cc506b3..f869bee, builder 2026-11-26): a failed open while `isProtectedDataAvailable` is false leaves the store in
+  place and reopens it on `protectedDataDidBecomeAvailable` (backup-before-upgrade re-checked then too); a store that
+  still won't open after unlock is recovered as before. Rejected: never recovering while locked without a retry
+  (library empty for the whole session). Not done (next Inbox 🟡): lists loaded empty before the late open don't
+  re-read. **Pre-mortem:** (1) healthy store moved aside while locked → `lockedDeviceLeavesTheStoreInPlace`;
+  (2) store never reopens after unlock → `unlockOpensTheStoreAgain`; (3) truly corrupt store never recovered →
+  same test + `corruptStoreIsPreservedNotDeleted`; healthy store reopens in place → `unlockOpensAHealthyStoreInPlace`.
+  Lock is checked before `retryWithoutSync` (reviewer + challenger: else a locked launch turns iCloud sync off).
 - **refreshStaleSamples wiring test** (1380e01, builder 2026-11-25): seam = `refreshStaleSamples` made internal with injected `storage: LocalStore`
   and `bundle` loader (defaults = real), not a full `load()` test — `load()` also hits `LocalStore.shared` and
   `BadgeManager.shared` in other passes. **Pre-mortem:** (1) wiring reverted to bundled-only → starter fixes never

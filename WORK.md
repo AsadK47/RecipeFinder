@@ -1,7 +1,6 @@
 # WORK.md — handoff (2026-11-25, builder agent)
 
 ## In progress
-- 🚧 builder agent 2026-11-26 Inbox 🔴 store recovery waits for unlock — `agent/store-recovery-unlock` (+ `-red`).
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -69,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🔴 store recovery waits for unlock landed cc506b3..f869bee (builder 2026-11-26; leftover branches agent/store-recovery-unlock auto-cleanup, agent/store-recovery-unlock-red unmerged — delete). Next: Inbox 🐞 CI hardening (2) — commit `Package.resolved`, pin `uses:` to SHAs, `dependabot.yml` + `SECURITY.md` (first open Inbox item after it).
 ✅ Inbox 🔴 Reset clears Kingfisher's picture cache landed 40a86b8..262c952 (builder 2026-11-26; leftover branches agent/reset-picture-cache auto-cleanup, agent/reset-picture-cache-red unmerged — delete). Next: Inbox 🔴 `PersistenceController.swift:154` `attemptStoreRecovery` — check `isProtectedDataAvailable` before moving a store aside (data loss; two reviewers).
 ✅ Inbox 🟡 Apple Jalebi title/tag landed 6c4cf6b..82b2213 (builder 2026-11-25; also Tangzhong + lasagne titles, history pin test; leftover branches agent/jalebi-title auto-cleanup, agent/jalebi-title-red unmerged — delete). Next: Inbox 🔴 `DataManagementSettingsView.swift` `resetToDefault` clears Kingfisher's disk cache (Privacy 4.3; two reviewers).
 ✅ Inbox 🟡 refreshStaleSamples wiring test landed 1380e01 (builder 2026-11-25; leftover branches agent/sample-refresh-wiring auto-cleanup, agent/sample-refresh-wiring-red unmerged — delete). Next: Inbox 🟡 Apple Jalebi title/tag (recipes_seed.json).
@@ -107,15 +107,6 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-
-- **Store recovery waits for unlock:** a failed open while `isProtectedDataAvailable` is false leaves the store in
-  place and reopens it on `protectedDataDidBecomeAvailable` (backup-before-upgrade re-checked then too); a store that
-  still won't open after unlock is recovered as before. Rejected: never recovering while locked without a retry
-  (library empty for the whole session). Not done (next Inbox 🟡): lists loaded empty before the late open don't
-  re-read. **Pre-mortem:** (1) healthy store moved aside while locked → `lockedDeviceLeavesTheStoreInPlace`;
-  (2) store never reopens after unlock → `unlockOpensTheStoreAgain`; (3) truly corrupt store never recovered →
-  same test + `corruptStoreIsPreservedNotDeleted`; healthy store reopens in place → `unlockOpensAHealthyStoreInPlace`.
-  Lock is checked before `retryWithoutSync` (reviewer + challenger: else a locked launch turns iCloud sync off).
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

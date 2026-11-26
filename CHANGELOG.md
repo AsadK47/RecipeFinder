@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox store recovery waits for unlock · cc506b3
+- For you: If your phone opens the app in the background while it's still locked, your recipes now stay safely in place and open as soon as you unlock.
+- Behind the build: a new test that failed on the old code checks a locked device leaves the recipe store untouched; a reviewer and a challenger both caught that iCloud sync could pause, fixed before landing.
+
 ## 2026-11-26 · Inbox Reset clears the picture cache · 40a86b8
 - For you: Reset in Data Management now also clears the copies of pictures the app keeps for quick drawing, website pictures included, as the Privacy Policy describes.
 - Behind the build: a new test stores pictures in a scratch cache and checks Reset's clear empties both memory and disk, and it failed with the clear switched off; a reviewer and a challenger read the change.

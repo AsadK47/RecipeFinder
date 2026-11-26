@@ -87,7 +87,8 @@ doc links to them rather than repeating them:
   asserts it is empty for the shipped model.
 - **Before a migration**, `StoreBackup` copies the SQLite file and sidecars to
   `Application Support/StoreBackups/store-*` (newest 3 kept, excluded from device backup).
-- **On load failure**, `PersistenceController` first retries without the CloudKit mirror (`retryWithoutSync`), then
+- **On load failure**, `PersistenceController` first checks the device is unlocked (locked → leave the store and reopen
+  it on `protectedDataDidBecomeAvailable`), then retries without the CloudKit mirror (`retryWithoutSync`), then
   moves the unreadable store aside as `<store>.corrupt-<timestamp>` and opens a fresh one — it never deletes it.
 - **Guardrail:** root [`CLAUDE.md`](../CLAUDE.md) forbids pointing `.xccurrentversion` below `RecipeModel 17` and
   removing `NSPersistentHistoryTrackingKey`. Adding a model version: add a new `.xcdatamodel`, bump
