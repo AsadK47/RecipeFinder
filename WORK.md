@@ -1,7 +1,6 @@
 # WORK.md — handoff (2026-11-26, builder agent)
 
 ## In progress
-- 🚧 builder agent 2026-11-26 Inbox 🐞 difficulty parser — branch `agent/difficulty-parser`.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -69,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 difficulty parser landed 3d1c5d1..c07ac7a (builder 2026-11-26; leftover branches agent/difficulty-parser auto-cleanup, agent/difficulty-parser-red unmerged — delete). Next: Inbox 🐞 `CookingPlan.swift` `timerRegex` ("an hour", "1½ hours", ranges → lower bound) — fixture-first.
 ✅ Inbox 🔴 Mary Berry Fish Pie rename (+ Pret cookies) landed d5e9de6..513679a (builder 2026-11-26; leftover branches agent/fish-pie-rename, agent/fish-pie-rename-red unmerged — delete; agent/fish-pie-rename-2 auto-cleanup). Next: Inbox 🐞 `RecipeWizardBuilder.swift:72-80` difficulty substring → one tested `Difficulty` parser.
 ✅ Inbox 🐞 expiry reminder past 18:00 landed df62ded..0c0bf9a (builder 2026-11-26; leftover branches agent/expiry-past-trigger remote pre-rebase, agent/expiry-past-trigger-red unmerged — delete both). Next: Inbox 🐞 `RecipeWizardBuilder.swift:72-80` difficulty substring → one tested `Difficulty` parser (first open Inbox 🐞 needing no owner; 🔴 Mary Berry Fish Pie rename is above it — take it first if the own-words lane is free).
 ✅ Inbox 🐞 Import resource limits done — slice 2 landed 719e3ef..9f86aa7 (builder 2026-11-26; leftover branches agent/import-file-coordinator auto-cleanup, agent/import-file-coordinator-red unmerged — delete). Next: Inbox 🐞 `NotificationManager.swift` `scheduleExpiryNotification` 18:00 past trigger (first open Inbox 🐞).
@@ -114,16 +114,6 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-
-- **Difficulty parser (Inbox 🐞):** the "3 places" already shared `RecipeWizardBuilder.normalizeDifficulty`; the bug was
-  its substring match, so the fix is one `Difficulty` enum (`Models/Recipe/Difficulty.swift`) that reads whole words and
-  `normalizeDifficulty` delegates to it (call sites unchanged — a String→enum migration of `Recipe.difficulty` would
-  touch Core Data/sync for no cook-visible gain). Rules: negated level → one step to the middle; range → mean rounded
-  toward the easier end (order-independent; "medium-hard" → Intermediate as the item asks, "easy–medium" → Basic).
-  Rejected: harder end for ranges (keeps "medium-hard" → Expert, the reported bug). **Pre-mortem:** (1) the 332
-  bundled recipes change level → their values are exact level words, identity holds (`normalizesDifficulty` cases);
-  (2) "not easy" still files under Easy recipes → `normalizesDifficultyByWord`; (3) word order flips the result →
-  "Not hard, easy" / "easy, not hard" cases.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

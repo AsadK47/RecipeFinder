@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox difficulty parser · c07ac7a
+- For you: Recipe difficulty reads labels the way you would — "not easy", "medium-hard" or "not for beginners" now land on the right level in filters, Easy recipes and the difficulty bars, including on imported recipes.
+- Behind the build: one tested difficulty reader replaces three word-fragment matches; new tests failed on the old code first, and a reviewer and a challenger read the change.
+
 ## 2026-11-26 · Inbox Mary Berry Fish Pie rename · 513679a
 - For you: The built-in fish pie is now Classic Fish Pie and the chocolate almond butter cookies have a fresh name too, both with methods written in our own words; copies you haven't changed update by themselves.
 - Behind the build: a new test keeps people's and shops' names out of built-in recipe titles and failed on the old ones first; a reviewer and a challenger read the change.

@@ -88,3 +88,6 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 38. **A bundled title is input to its tags.** 2026-11-25: dropping "Vegan" from "Apple Jalebi (Gluten-Free, Vegan)" lost its
    Vegan tag (`DietaryInference` trusts a title that says Vegan; "coconut milk" reads as milk) — read what the generator
    derives from a field before editing it. Check: `committedCatalogMatchesGenerator` (caught it, run 45715179594).
+39. **The share extension compiles the import parser.** 2026-11-26: `Difficulty.swift` joined only the app target, and
+   `RecipeParser+TextMetadata.swift` (also in `RecipeShareExtension`) couldn't find it — a type the parser calls joins both
+   Sources phases. Check: Build & Test compiles the extension (caught it, run 45861210860).

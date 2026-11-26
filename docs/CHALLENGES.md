@@ -988,4 +988,6 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Test] The title check only sees capitalised possessives: brand titles without one (Ferrero Rocher, Lotus Biscoff, Ninja Foodi, ~30 "Instant Pot …") and "McDonald's" pass → Inbox 🟡 audit; possessive dish names (Devil's Food, Hunter's Chicken) would need the allowlist.
 - ⚔️ [Sync] A device on an older build can save its stale copy back over the renamed one until it updates — speculative, heals on update.
 - ⚔️ [Data] Copies the user edited keep the old title and method — by design (the refresh never overwrites edits).
-
+- ⚔️ [Assumption] Difficulty parser (c07ac7a): "Easy for advanced cooks" reads as a range → Intermediate; "Hard to mess up" → Expert; "Showing off" (Jamie Oliver) and numeric labels ("3/5", "Level 2") → Intermediate — kept: rare, and the middle is the safe default.
+- ⚔️ [Product] "Not difficult" / "not too hard" → Intermediate, not Basic — a negated level means the middle by design (safe claim either way); flip to one step down if testers disagree.
+- ⚔️ [Data] Stored labels like "Harder" (Expert either way now) or "Easyish" (was Basic, now Intermediate) can move filter bucket silently; the card shows the raw text — accepted, the old buckets came from substring accidents.
