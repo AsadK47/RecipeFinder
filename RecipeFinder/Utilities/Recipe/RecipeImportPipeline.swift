@@ -32,6 +32,8 @@ enum RecipeImportError: LocalizedError, Equatable {
     case invalidEncoding
     case missingRequiredData(String)
     case tooManyRedirects
+    case pageTooLarge
+    case timedOut
 
     var errorDescription: String? {
         switch self {
@@ -43,6 +45,10 @@ enum RecipeImportError: LocalizedError, Equatable {
             return "Missing required data: \(detail)"
         case .tooManyRedirects:
             return "Too many redirects. Please try a different URL."
+        case .pageTooLarge:
+            return "This page is too large to read. Copy the recipe from the page and paste the text instead."
+        case .timedOut:
+            return "The website took too long to answer. Try again in a moment, or copy the recipe from the page and paste the text instead."
         }
     }
 }

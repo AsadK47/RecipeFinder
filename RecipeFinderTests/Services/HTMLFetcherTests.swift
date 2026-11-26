@@ -17,7 +17,11 @@ struct HTMLFetcherTests {
             var headers: [String: String] = [:]
             var body: Data = Data()
             var error: Error?
+            /// Sends the response, then one byte every 20 ms until the request is cancelled (a page that never ends).
+            var drip = false
         }
+
+        private var dripTimer: DispatchSourceTimer?
 
         nonisolated(unsafe) static var current = Stub()
 
@@ -36,19 +40,106 @@ struct HTMLFetcherTests {
                 headerFields: Self.current.headers
             )!
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            if Self.current.drip {
+                let timer = DispatchSource.makeTimerSource(queue: .global())
+                timer.schedule(deadline: .now(), repeating: .milliseconds(20))
+                timer.setEventHandler { [weak self] in
+                    guard let self else { return }
+                    self.client?.urlProtocol(self, didLoad: Data("a".utf8))
+                }
+                dripTimer = timer
+                timer.resume()
+                return
+            }
             client?.urlProtocol(self, didLoad: Self.current.body)
             client?.urlProtocolDidFinishLoading(self)
         }
 
-        override func stopLoading() {}
+        override func stopLoading() {
+            dripTimer?.cancel()
+            dripTimer = nil
+        }
     }
 
     // MARK: - Helper
 
-    private func makeFetcher() -> URLSessionHTMLFetcher {
+    private func makeFetcher(
+        maxBytes: Int = URLSessionHTMLFetcher.defaultMaxBytes,
+        totalTimeout: Duration = URLSessionHTMLFetcher.defaultTotalTimeout
+    ) -> URLSessionHTMLFetcher {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [StubURLProtocol.self]
-        return URLSessionHTMLFetcher(session: URLSession(configuration: config))
+        return URLSessionHTMLFetcher(
+            session: URLSession(configuration: config), maxBytes: maxBytes, totalTimeout: totalTimeout
+        )
+    }
+
+    private let pageURL = URL(string: "https://example.com/recipe")
+
+    // MARK: - Resource limits (a huge or never-ending page must not fill memory, least of all in the Share extension)
+
+    @Test("By default a page is capped at 5 MB and the whole fetch at 60 seconds")
+    func defaultLimits() {
+        let fetcher = URLSessionHTMLFetcher()
+
+        #expect(fetcher.maxBytes == 5 * 1024 * 1024)
+        #expect(fetcher.totalTimeout == .seconds(60))
+    }
+
+    @Test("A body one byte over the cap is cut off as too large")
+    func bodyOverCapThrowsPageTooLarge() async throws {
+        StubURLProtocol.current = .init(statusCode: 200, body: Data(repeating: 0x61, count: 1_001))
+        let fetcher = makeFetcher(maxBytes: 1_000)
+        let url = try #require(pageURL)
+
+        await #expect(throws: RecipeImportError.pageTooLarge) {
+            _ = try await fetcher.fetch(URLRequest(url: url))
+        }
+    }
+
+    @Test("A declared Content-Length over the cap is refused before reading the body")
+    func declaredLengthOverCapThrowsPageTooLarge() async throws {
+        StubURLProtocol.current = .init(
+            statusCode: 200, headers: ["Content-Length": "999999999"], body: Data("tiny".utf8)
+        )
+        let fetcher = makeFetcher(maxBytes: 1_000)
+        let url = try #require(pageURL)
+
+        await #expect(throws: RecipeImportError.pageTooLarge) {
+            _ = try await fetcher.fetch(URLRequest(url: url))
+        }
+    }
+
+    @Test("A body exactly at the cap is returned whole")
+    func bodyAtCapIsReturned() async throws {
+        let body = Data(repeating: 0x61, count: 1_000)
+        StubURLProtocol.current = .init(statusCode: 200, body: body)
+        let fetcher = makeFetcher(maxBytes: 1_000)
+        let url = try #require(pageURL)
+
+        let (data, _) = try await fetcher.fetch(URLRequest(url: url))
+
+        #expect(data == body)
+    }
+
+    @Test("A page that keeps sending a byte now and then times out as a whole", .timeLimit(.minutes(1)))
+    func drippingPageTimesOut() async throws {
+        StubURLProtocol.current = .init(statusCode: 200, drip: true)
+        let fetcher = makeFetcher(totalTimeout: .milliseconds(500))
+        let url = try #require(pageURL)
+
+        await #expect(throws: RecipeImportError.timedOut) {
+            _ = try await fetcher.fetch(URLRequest(url: url))
+        }
+    }
+
+    @Test("Both limits tell the cook to paste the recipe text instead", arguments: [
+        RecipeImportError.pageTooLarge, .timedOut
+    ])
+    func limitMessagesOfferPasting(_ error: RecipeImportError) throws {
+        let message = try #require(error.errorDescription)
+
+        #expect(message.contains("paste the text"))
     }
 
     // MARK: - Tests
