@@ -140,18 +140,4 @@ import Foundation
         #expect(week([only], tonight: [only.id]).planTomorrow == nil)
         #expect(week([]).planTomorrow == nil)
     }
-
-    // MARK: - Plan the week row (owner 2026-11-20: reach the deck from Today)
-
-    @Test func anOpenDinnerOffersTheDeck() {
-        let pasta = recipe("Pasta")
-        let plans = (0..<6).map { plan(pasta, .dinner, on: $0) }
-        #expect(week([pasta], plans: plans).hasOpenDinner)
-    }
-
-    @Test func sevenPlannedDinnersHideTheDeckRow() {
-        let pasta = recipe("Pasta")
-        let plans = (0..<7).map { plan(pasta, .dinner, on: $0) } + [plan(pasta, .lunch, on: 2)]
-        #expect(!week([pasta], plans: plans).hasOpenDinner)
-    }
 }

@@ -1201,21 +1201,6 @@ final class RecipeFinderScreenshotTests: XCTestCase {
         expectation(for: gone, evaluatedWith: app.buttons["planDeck.close"])
         waitForExpectations(timeout: 5)
 
-        // Today's "Plan the week" row reaches the deck in one tap (owner 2026-11-20).
-        tab(app, "Today", shot: nil)
-        let planWeek = app.buttons["today.planWeek"]
-        for _ in 0..<4 where !planWeek.exists { app.swipeUp(velocity: .slow) }
-        if planWeek.waitForExistence(timeout: 3) {
-            checkpoint(app, "plan the week from Today")
-            planWeek.tap()
-            XCTAssertTrue(card.waitForExistence(timeout: 5) || finished.waitForExistence(timeout: 1),
-                          "Today's Plan the week should open the deck.")
-            app.buttons["planDeck.close"].tap()
-            expectation(for: gone, evaluatedWith: app.buttons["planDeck.close"])
-            waitForExpectations(timeout: 5)
-        } else {
-            tab(app, "Plan", shot: nil)
-        }
 
         // Swipe a planned meal left to take it off (owner 2026-11-20: "can't clear old plans").
         let dinner = app.descendants(matching: .any)["plan.meal.Dinner"]
