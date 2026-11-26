@@ -66,18 +66,11 @@ enum RecipeWizardBuilder {
     }
 
     /// The three difficulty levels, easiest first — the one list the editor and the filter sheet both show.
-    static let difficultyLevels = ["Basic", "Intermediate", "Expert"]
+    static let difficultyLevels = Difficulty.allCases.map(\.rawValue)
 
-    /// Maps a free-text difficulty label onto one of the wizard's three levels.
+    /// Maps a free-text difficulty label onto one of the wizard's three levels (rules on `Difficulty(parsing:)`).
     static func normalizeDifficulty(_ raw: String) -> String {
-        let normalized = raw.lowercased()
-        if normalized.contains("easy") || normalized.contains("basic") || normalized.contains("beginner") {
-            return "Basic"
-        } else if normalized.contains("hard") || normalized.contains("expert") || normalized.contains("advanced") {
-            return "Expert"
-        } else {
-            return "Intermediate"
-        }
+        Difficulty(parsing: raw).rawValue
     }
 
     /// Non-blank ingredient rows as domain `Ingredient`s, trimmed. A blank amount stays 0 ("no amount", shown as a

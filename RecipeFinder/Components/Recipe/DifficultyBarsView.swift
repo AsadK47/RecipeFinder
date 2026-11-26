@@ -18,7 +18,7 @@ struct DifficultyBarsView: View {
     }
 
     /// Bars filled for the recipe's level: the app's own Basic / Intermediate / Expert (and imported labels such as
-    /// easy / medium / hard) map through `RecipeWizardBuilder.normalizeDifficulty`; anything else shows the middle.
+    /// easy / medium / hard) are read by whole word through `Difficulty(parsing:)`; anything else shows the middle.
     var filledBars: Int {
         let level = RecipeWizardBuilder.normalizeDifficulty(difficulty)
         let index = RecipeWizardBuilder.difficultyLevels.firstIndex(of: level) ?? 1
