@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-26 (item pass: Inbox 🐞 Import resource limits slice 1 — fixed: no test for a 60 s wait after success, idle timeout showed system text, Share extension waited 60 s)
+- ⚔️ [Break] A page over 5 MB fails outright, though its JSON-LD usually sits in the first KB of <head> — accepted: the largest real pages measured are 1.42 MB decompressed (Bon Appétit), about 3.5× headroom; truncate at the cap and parse the start if a tester hits it.
+- ⚔️ [Threat] Limits stop at the fetch: a 5 MB page then goes through `decodeHTML`, a String copy and `cleanHTML` → `decodeHTMLEntities` (NSAttributedString HTML import over the whole cleaned page, RecipeParser.swift:181,253), with no time limit, in the Share extension too — Later: measure peak memory on a 5 MB page in the extension before capping the parse input.
+
 ## 2026-11-26 (daily challenger — launch lane vs. the last day, unlock-wait recovery, SHA pins; methods 1, 2, 3 (STRIDE: DoS/Tampering on the store), 6, 7, 8 + strategy)
 - ⚔️ [Strategy] The Launch lane rule (BACKLOG.md:144) is already being skipped one day after it was made: it orders (a) *Recipes in our own words*, (b) Recently deleted, (c) CI hardening — but `git log --since="2 days ago"` shows (c) landed (757fa390, 4318d7c9), plus store-recovery, Reset picture cache and seed-claim fixes, while (a) is still `[ ]` (BACKLOG.md:223) and `git log --since="14 days ago" -i --grep="own words\|rewrite"` finds 0 commits on it; `agent/recently-deleted` is unmerged. The only visible effect of "own words" so far is a workaround (78d9d68d: promote to public beta by hand "until method text is our own"). Freeze is 14 Dec (18 days) — alternative: one lane, (a) only, batch-by-batch, until the first rewrite batch is on main; bugs only by owner-ok — cost if we're wrong: the legal blocker is the last thing left on 13 Dec and the launch slips or ships copied method text.
   → Owner: Accept / Reject (why) / Later

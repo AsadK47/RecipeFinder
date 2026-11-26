@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox Import resource limits · 6fe121d
+- For you: Importing from a link now stays quick and steady on very large or slow web pages, with a clear suggestion to paste the recipe text when a page can't be read, and sharing from Safari hands over to the app sooner.
+- Behind the build: page downloads now stop at 5 MB and one minute, checked by new tests that failed on the old code with a page that never ends; a reviewer and a challenger read the change.
+
 ## 2026-11-26 · Inbox CI hardening · 4318d7c
 - For you: Every build now uses the exact versions of the app's picture, confetti and test libraries we checked, so updates arrive when we choose them.
 - Behind the build: the build tools are pinned to fixed versions and reviewed weekly, the build stops if a library drifts, and a reviewer and a challenger read the change.
