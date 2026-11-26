@@ -142,7 +142,17 @@ enum RecipeCopyMerge {
             merged.isFavorite = merged.isFavorite || other.isFavorite
             if kept.rating == 0 { merged.rating = max(merged.rating, other.rating) }
             merged.photoNames += other.photoNames.filter { !merged.photoNames.contains($0) }
+            if let hero = losingHero(of: other, keptIn: merged) { merged.photoNames.append(hero) }
         }
         return merged
+    }
+
+    /// The cook's own hero photo on a copy that goes, when the kept copy doesn't show it: without this it would
+    /// leave the recipe. It joins the photos rather than replacing the kept hero. Web pictures and built-in art
+    /// aren't photos the cook took, so they stay out (they'd count as a cook photo for badges and Made it).
+    private static func losingHero(of other: RecipeModel, keptIn merged: RecipeModel) -> String? {
+        guard let hero = other.imageName, RecipePhotoSync.syncablePath(hero) != nil,
+              hero != merged.imageName, !merged.photoNames.contains(hero) else { return nil }
+        return hero
     }
 }
