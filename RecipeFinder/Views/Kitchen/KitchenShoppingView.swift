@@ -184,6 +184,12 @@ struct KitchenShoppingView: View {
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
             }
+            if let activeStore, ShoppingListGrouping.split(shopping.items, at: activeStore).atStore.isEmpty {
+                GroceryStoreHint(store: activeStore) { assigningStore = GroceryStoreSelection(name: activeStore) }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 8, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            }
             ShoppingProgressBar(
                 checkedCount: visibleItems.filter(\.isChecked).count,
                 totalCount: visibleItems.count

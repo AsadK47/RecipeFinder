@@ -29,6 +29,31 @@ struct GroceryStoresTests {
         #expect(item.isAvailable(at: nil))
     }
 
+    @Test("A picked store leads with its own items, then items bought anywhere; other stores' items stay off")
+    func splitLeadsWithTheStoresItems() {
+        let milk = ShoppingListModel(name: "Milk")
+        let halloumi = ShoppingListModel(name: "Halloumi", stores: ["Lidl"])
+        let tea = ShoppingListModel(name: "Tea", stores: ["Tesco"])
+        let split = ShoppingListGrouping.split([milk, halloumi, tea], at: "Lidl")
+        #expect(split.atStore.map { $0.name } == ["Halloumi"])
+        #expect(split.anywhere.map { $0.name } == ["Milk"])
+    }
+
+    @Test("All keeps every item in one list")
+    func splitWithNoStoreKeepsEverything() {
+        let items = [ShoppingListModel(name: "Milk"), ShoppingListModel(name: "Tea", stores: ["Tesco"])]
+        let split = ShoppingListGrouping.split(items, at: nil)
+        #expect(split.atStore.map { $0.name } == ["Milk", "Tea"])
+        #expect(split.anywhere.isEmpty)
+    }
+
+    @Test("A store with nothing set to it has an empty lead, so To buy offers Choose items")
+    func splitForAnUnusedStoreHasNoLead() {
+        let split = ShoppingListGrouping.split([ShoppingListModel(name: "Milk")], at: "Aldi")
+        #expect(split.atStore.isEmpty)
+        #expect(split.anywhere.map { $0.name } == ["Milk"])
+    }
+
     // MARK: - Names
 
     @Test("Store names are trimmed; blanks and case-insensitive duplicates are rejected",

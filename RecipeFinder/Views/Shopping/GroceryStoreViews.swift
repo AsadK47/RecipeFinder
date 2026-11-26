@@ -64,6 +64,27 @@ struct GroceryStoreFilterBar: View {
     }
 }
 
+/// Shown on To buy when a picked store has nothing set to it yet: every item still shows (items with no store can be
+/// bought anywhere), so this offers the step that makes the store's list its own.
+struct GroceryStoreHint: View {
+    let store: String
+    let onChoose: () -> Void
+
+    var body: some View {
+        HStack(spacing: AppTheme.spacing12) {
+            Text("Pick what you buy at \(store) to see it first.")
+                .font(.subheadline)
+                .adaptiveSecondaryForeground()
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button("Choose items", action: onChoose)
+                .font(.subheadline.weight(.semibold))
+                .accessibilityHint("Pick the groceries you buy at \(store)")
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("groceries.storeHint")
+    }
+}
+
 /// Add, rename (tap) and delete (swipe) the user's grocery stores.
 struct GroceryStoresSheet: View {
     @Environment(\.shopping) private var shopping

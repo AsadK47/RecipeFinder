@@ -18,16 +18,37 @@ struct ShoppingSectionsView: View {
             .union(kitchen.inventoryItems.map { $0.name.lowercased() })
     }
 
-    private var groupedItems: [(key: String, value: [ShoppingListModel])] {
-        ShoppingListGrouping.grouped(
-            manager.items.filter { $0.isAvailable(at: store) }, aisleOrder: manager.aisleOrder, store: store
-        )
+    private func grouped(_ items: [ShoppingListModel]) -> [(key: String, value: [ShoppingListModel])] {
+        ShoppingListGrouping.grouped(items, aisleOrder: manager.aisleOrder, store: store)
     }
 
     var body: some View {
-        ForEach(groupedItems, id: \.key) { group in
+        let split = ShoppingListGrouping.split(manager.items, at: store)
+        if let store, !split.atStore.isEmpty, !split.anywhere.isEmpty {
+            // A picked store leads with what's set to it, so the filter visibly changes the list.
+            tierTitle("At \(store)")
+            sections(split.atStore)
+            tierTitle("Anywhere")
+            sections(split.anywhere)
+        } else {
+            sections(split.atStore + split.anywhere)
+        }
+    }
+
+    private func sections(_ items: [ShoppingListModel]) -> some View {
+        ForEach(grouped(items), id: \.key) { group in
             categorySection(for: group.key, items: group.value)
         }
+    }
+
+    private func tierTitle(_ title: String) -> some View {
+        Text(title)
+            .font(.headline)
+            .adaptiveForegroundColor()
+            .accessibilityAddTraits(.isHeader)
+            .listRowInsets(EdgeInsets(top: 12, leading: 20, bottom: 4, trailing: 16))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
     }
 
     @ViewBuilder

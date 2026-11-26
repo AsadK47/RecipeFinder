@@ -33,6 +33,15 @@ enum ShoppingListGrouping {
             }
     }
 
+    /// What To buy shows at `store`: the items set to it, then the items with no store (bought anywhere). Items set to
+    /// other stores stay off. With no store picked (All), every item is in `atStore` and `anywhere` is empty.
+    static func split(
+        _ items: [ShoppingListModel], at store: String?
+    ) -> (atStore: [ShoppingListModel], anywhere: [ShoppingListModel]) {
+        guard let store else { return (items, []) }
+        return (items.filter { $0.stores.contains(store) }, items.filter { $0.stores.isEmpty })
+    }
+
     /// A plain-text rendering of the grouped shopping list, suitable for sharing.
     static func shareText(for groups: [(key: String, value: [ShoppingListModel])]) -> String {
         var text = "🛒 Groceries\n\n"
