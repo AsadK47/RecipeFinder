@@ -184,7 +184,7 @@ struct KitchenShoppingView: View {
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
             }
-            if let activeStore, ShoppingListGrouping.split(shopping.items, at: activeStore).atStore.isEmpty {
+            if let activeStore, ShoppingListGrouping.offersChooseItems(visibleItems, at: activeStore) {
                 GroceryStoreHint(store: activeStore) { assigningStore = GroceryStoreSelection(name: activeStore) }
                     .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 8, trailing: 16))
                     .listRowSeparator(.hidden)
@@ -235,7 +235,7 @@ struct KitchenShoppingView: View {
                 icon: "storefront",
                 title: "Nothing to buy at \(store)",
                 message: "Every item on your list is set to another store.",
-                actionTitle: "Choose Items",
+                actionTitle: "Choose items",
                 onAction: { assigningStore = GroceryStoreSelection(name: store) }
             )
         }

@@ -54,6 +54,39 @@ struct GroceryStoresTests {
         #expect(split.anywhere.map { $0.name } == ["Milk"])
     }
 
+    @Test("A picked store with items of its own and others shows At <store> then Anywhere")
+    func tiersLeadWithTheStore() {
+        let items = [ShoppingListModel(name: "Milk"), ShoppingListModel(name: "Halloumi", stores: ["Lidl"]),
+                     ShoppingListModel(name: "Tea", stores: ["Tesco"])]
+        let tiers = ShoppingListGrouping.tiers(items, at: "Lidl")
+        #expect(tiers.map { $0.title } == ["At Lidl", "Anywhere"])
+        #expect(tiers.map { $0.items.map { $0.name } } == [["Halloumi"], ["Milk"]])
+    }
+
+    @Test("All, or a store with nothing of its own, is one untitled list")
+    func tiersStayFlatWithoutAStoreSplit() {
+        let items = [ShoppingListModel(name: "Milk"), ShoppingListModel(name: "Tea", stores: ["Tesco"])]
+        #expect(ShoppingListGrouping.tiers(items, at: nil).map { $0.title } == [nil])
+        #expect(ShoppingListGrouping.tiers(items, at: "Aldi").map { $0.items.map { $0.name } } == [["Milk"]])
+    }
+
+    @Test("Choose items is offered while a picked store has nothing set to it")
+    func offersChooseItemsUntilAnItemIsSet() {
+        let milk = ShoppingListModel(name: "Milk")
+        #expect(ShoppingListGrouping.offersChooseItems([milk], at: "Lidl"))
+        #expect(!ShoppingListGrouping.offersChooseItems([milk], at: nil))
+        #expect(!ShoppingListGrouping.offersChooseItems([ShoppingListModel(name: "Feta", stores: ["Lidl"])], at: "Lidl"))
+    }
+
+    @Test("The split shows exactly what the store filter, progress bar and shop mode count", arguments: ["Lidl", "Aldi"])
+    func splitMatchesAvailability(store: String) {
+        let items = [ShoppingListModel(name: "Milk"), ShoppingListModel(name: "Halloumi", stores: ["Lidl"]),
+                     ShoppingListModel(name: "Tea", stores: ["Tesco"])]
+        let split = ShoppingListGrouping.split(items, at: store)
+        let shown = Set((split.atStore + split.anywhere).map { $0.id })
+        #expect(shown == Set(items.filter { $0.isAvailable(at: store) }.map { $0.id }))
+    }
+
     // MARK: - Names
 
     @Test("Store names are trimmed; blanks and case-insensitive duplicates are rejected",

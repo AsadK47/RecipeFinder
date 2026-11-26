@@ -71,17 +71,24 @@ struct GroceryStoreHint: View {
     let onChoose: () -> Void
 
     var body: some View {
-        HStack(spacing: AppTheme.spacing12) {
-            Text("Pick what you buy at \(store) to see it first.")
-                .font(.subheadline)
-                .adaptiveSecondaryForeground()
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Button("Choose items", action: onChoose)
-                .font(.subheadline.weight(.semibold))
-                .accessibilityHint("Pick the groceries you buy at \(store)")
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: AppTheme.spacing12) { message; Spacer(minLength: 0); button }
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) { message; button }
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("groceries.storeHint")
+    }
+
+    private var message: some View {
+        Text("Pick what you buy at \(store) to see it first.")
+            .font(.subheadline)
+            .adaptiveSecondaryForeground()
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var button: some View {
+        PrimaryButton("Choose items", size: .compact, variant: .secondary, action: onChoose)
+            .accessibilityHint("Pick the groceries you buy at \(store)")
     }
 }
 

@@ -39,7 +39,27 @@ enum ShoppingListGrouping {
         _ items: [ShoppingListModel], at store: String?
     ) -> (atStore: [ShoppingListModel], anywhere: [ShoppingListModel]) {
         guard let store else { return (items, []) }
-        return (items.filter { $0.stores.contains(store) }, items.filter { $0.stores.isEmpty })
+        // Same rule as `isAvailable(at:)` (progress bar, shop mode), split by whether the item names this store.
+        let available = items.filter { $0.isAvailable(at: store) }
+        return (available.filter { $0.stores.contains(store) }, available.filter { $0.stores.isEmpty })
+    }
+
+    /// The tiers To buy shows: one untitled tier for All or when the store has nothing of its own (or nothing else),
+    /// else "At <store>" then "Anywhere". Empty tiers are dropped. One shape for every case, so assigning the first
+    /// item doesn't rebuild the whole list.
+    static func tiers(_ items: [ShoppingListModel], at store: String?) -> [(title: String?, items: [ShoppingListModel])] {
+        let parts = Self.split(items, at: store)
+        guard let store, !parts.atStore.isEmpty, !parts.anywhere.isEmpty else {
+            let all = parts.atStore + parts.anywhere
+            return all.isEmpty ? [] : [(nil, all)]
+        }
+        return [("At \(store)", parts.atStore), ("Anywhere", parts.anywhere)]
+    }
+
+    /// Whether To buy should offer "Choose items" for `store`: it's picked and nothing on the list is set to it yet.
+    static func offersChooseItems(_ items: [ShoppingListModel], at store: String?) -> Bool {
+        guard let store else { return false }
+        return !items.contains { $0.stores.contains(store) }
     }
 
     /// A plain-text rendering of the grouped shopping list, suitable for sharing.

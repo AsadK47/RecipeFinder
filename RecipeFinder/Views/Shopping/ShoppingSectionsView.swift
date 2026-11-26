@@ -23,21 +23,13 @@ struct ShoppingSectionsView: View {
     }
 
     var body: some View {
-        let split = ShoppingListGrouping.split(manager.items, at: store)
-        if let store, !split.atStore.isEmpty, !split.anywhere.isEmpty {
-            // A picked store leads with what's set to it, so the filter visibly changes the list.
-            tierTitle("At \(store)")
-            sections(split.atStore)
-            tierTitle("Anywhere")
-            sections(split.anywhere)
-        } else {
-            sections(split.atStore + split.anywhere)
-        }
-    }
-
-    private func sections(_ items: [ShoppingListModel]) -> some View {
-        ForEach(grouped(items), id: \.key) { group in
-            categorySection(for: group.key, items: group.value)
+        // Tiers are identified by title; category sections inside a tier by category (collapse is shared by category
+        // name across tiers — deliberate: one Dairy toggle, WORK.md Decisions).
+        ForEach(ShoppingListGrouping.tiers(manager.items, at: store), id: \.title) { tier in
+            if let title = tier.title { tierTitle(title) }
+            ForEach(grouped(tier.items), id: \.key) { group in
+                categorySection(for: group.key, items: group.value)
+            }
         }
     }
 
