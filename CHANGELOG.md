@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox Mary Berry Fish Pie rename · 513679a
+- For you: The built-in fish pie is now Classic Fish Pie and the chocolate almond butter cookies have a fresh name too, both with methods written in our own words; copies you haven't changed update by themselves.
+- Behind the build: a new test keeps people's and shops' names out of built-in recipe titles and failed on the old ones first; a reviewer and a challenger read the change.
+
 ## 2026-11-26 · Inbox expiry reminder evening · df62ded
 - For you: "Expiring tomorrow" reminders arrive at 6 pm the evening before, including for things that run out early the next morning.
 - Behind the build: the reminder time is worked out by one tested function, checked by tests that failed on the old code; a reviewer and a challenger read the change.
