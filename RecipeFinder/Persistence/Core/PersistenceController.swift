@@ -139,11 +139,12 @@ final class PersistenceController {
 
                     self.loadError = error
                     self.isStoreLoaded = false
-                    guard !self.retryWithoutSync(storeDescription) else { return }
-                    if self.isProtectedDataAvailable() {
-                        self.attemptStoreRecovery()
-                    } else {
+                    // Lock first: a locked device also fails the iCloud open, and retrying without sync would
+                    // turn sync off for the session.
+                    if !self.isProtectedDataAvailable() {
                         self.openAfterUnlock()
+                    } else if !self.retryWithoutSync(storeDescription) {
+                        self.attemptStoreRecovery()
                     }
                 } else {
                     persistenceLogger.debug("✅ Core Data store loaded successfully at: \(storeURL)")
