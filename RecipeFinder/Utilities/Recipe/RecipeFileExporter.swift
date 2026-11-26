@@ -157,7 +157,7 @@ enum RecipeFileError: LocalizedError, Equatable {
         case .tooLarge:
             return "This file is too large to be a recipe, so it was left unopened."
         case .notDownloaded:
-            return "This recipe file is still downloading from iCloud. Connect to the internet and try again."
+            return "This recipe file isn't ready to open yet. Check your connection and try again."
         }
     }
 }
