@@ -25,7 +25,8 @@ struct RecipePackage: Codable {
     let dietaryInfo: DietaryInfo
     /// Original source URL, if this recipe was imported from the web.
     let sourceURL: String?
-    /// Hero image URL — only when it's an HTTP URL; sender's local file paths omitted.
+    /// Hero image URL — only when it's an HTTP URL; sender's local file paths omitted. Still written so older
+    /// versions show the picture; `decode` ignores it, since loading it would tell its host when the file was opened.
     let imageURL: String?
 
     struct PackagedIngredient: Codable {
@@ -135,7 +136,8 @@ enum RecipeFileExporter {
             prePrepInstructions: package.prePrepInstructions,
             instructions: package.instructions,
             notes: notes,
-            imageName: package.imageURL,
+            // The remote picture is not loaded: fetching it would act as a read receipt to whoever hosts it.
+            imageName: nil,
             tags: package.tags,
             dietaryInfo: package.dietaryInfo,
             cuisine: package.cuisine
