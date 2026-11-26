@@ -34,7 +34,13 @@ jobs:
           git ls-files -z '*.py' | xargs -0 python3 -m py_compile
       - name: Script unit tests
         run: |
-          python3 -m unittest discover -v -s .github/scripts -p 'test_*.py'
-          python3 -m unittest discover -v -s tools -p 'test_*.py'
+          # Every tracked test file, wherever it lives (discover alone skips folders that aren't packages).
+          # A file with no tests exits 5 (Python 3.12+), so it can't pass silently.
+          files=$(git ls-files 'test_*.py' '**/test_*.py')
+          test -n "$files" || { echo "::error::no test_*.py files found"; exit 1; }
+          for f in $files; do
+            echo "== $f"
+            python3 -m unittest discover -v -s "$(dirname "$f")" -p "$(basename "$f")"
+          done
       - name: CHANGELOG parses for the website
         run: python3 tools/website-behind-the-build.py --check
