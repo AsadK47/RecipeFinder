@@ -1,5 +1,6 @@
 import CoreData
 import Foundation
+import UIKit
 
 let persistenceLogger = AppLogger.logger(category: "PersistenceController")
 
@@ -8,7 +9,8 @@ let persistenceLogger = AppLogger.logger(category: "PersistenceController")
 final class PersistenceController {
     static let shared = PersistenceController(
         backupDirectory: StoreBackup.defaultDirectory(),
-        syncOn: SyncPreference.isOn(in: .shared)
+        syncOn: SyncPreference.isOn(in: .shared),
+        isProtectedDataAvailable: { UIApplication.shared.isProtectedDataAvailable }
     )
 
     let container: NSPersistentContainer
@@ -20,6 +22,13 @@ final class PersistenceController {
     var outsideChangeCheck: Task<Bool, Never>?
     /// The latest `mergeSyncedRecipeCopies` pass; each waits for the one before so two never delete the same copies.
     var copyMerge: Task<Bool, Never>?
+
+    /// False while the device is locked (before first unlock the store's file can't be read): a failed open then
+    /// waits for the unlock instead of moving a healthy store aside.
+    private let isProtectedDataAvailable: @MainActor () -> Bool
+    private let notificationCenter: NotificationCenter
+    private let backupDirectory: URL?
+    private var unlockObserver: (any NSObjectProtocol)?
 
     /// The open store file's identifier; a fresh file (recovery, reinstall) gets a new one.
     var storeFileID: String? {
@@ -65,7 +74,19 @@ final class PersistenceController {
     /// `backupDirectory`: where the store is copied before a model upgrade (`StoreBackup`); nil = no copy (tests),
     /// so only `.shared` writes to the real Application Support.
     /// `syncOn`: mirror the store to the cook's iCloud (`CloudSyncStore`); read once at launch. Never in tests.
-    init(inMemory: Bool = false, storeURL: URL? = nil, backupDirectory: URL? = nil, syncOn: Bool = false) {
+    /// `isProtectedDataAvailable` / `notificationCenter`: whether the device is unlocked, and where its
+    /// `protectedDataDidBecomeAvailable` arrives — injected so tests can lock and unlock.
+    init(
+        inMemory: Bool = false,
+        storeURL: URL? = nil,
+        backupDirectory: URL? = nil,
+        syncOn: Bool = false,
+        isProtectedDataAvailable: @escaping @MainActor () -> Bool = { true },
+        notificationCenter: NotificationCenter = .default
+    ) {
+        self.isProtectedDataAvailable = isProtectedDataAvailable
+        self.notificationCenter = notificationCenter
+        self.backupDirectory = inMemory ? nil : backupDirectory
         container = NSPersistentCloudKitContainer(name: "RecipeModel")
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
@@ -73,7 +94,7 @@ final class PersistenceController {
             container.persistentStoreDescriptions.first?.url = storeURL
         }
         configureStore(syncOn: syncOn && !inMemory)
-        if !inMemory, let backupDirectory { backUpBeforeMigration(into: backupDirectory) }
+        if let backupDirectory = self.backupDirectory { backUpBeforeMigration(into: backupDirectory) }
         loadStore()
     }
 
@@ -118,8 +139,11 @@ final class PersistenceController {
 
                     self.loadError = error
                     self.isStoreLoaded = false
-                    if !self.retryWithoutSync(storeDescription) {
+                    guard !self.retryWithoutSync(storeDescription) else { return }
+                    if self.isProtectedDataAvailable() {
                         self.attemptStoreRecovery()
+                    } else {
+                        self.openAfterUnlock()
                     }
                 } else {
                     persistenceLogger.debug("✅ Core Data store loaded successfully at: \(storeURL)")
@@ -141,6 +165,25 @@ final class PersistenceController {
         description.cloudKitContainerOptions = nil
         loadStore()
         return true
+    }
+
+    /// The device is locked, so the store's file is unreadable, not broken (a background launch before first
+    /// unlock). Moving it aside would hide every recipe; open it again once the cook unlocks instead.
+    private func openAfterUnlock() {
+        guard unlockObserver == nil else { return }
+        persistenceLogger.error("⚠️ Store unreadable while the device is locked; opening it after unlock")
+        unlockObserver = notificationCenter.addObserver(
+            forName: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, let observer = self.unlockObserver else { return }
+                self.notificationCenter.removeObserver(observer)
+                self.unlockObserver = nil
+                guard !self.isStoreLoaded else { return }
+                if let backupDirectory = self.backupDirectory { self.backUpBeforeMigration(into: backupDirectory) }
+                self.loadStore()
+            }
+        }
     }
 
     private func attemptStoreRecovery() {

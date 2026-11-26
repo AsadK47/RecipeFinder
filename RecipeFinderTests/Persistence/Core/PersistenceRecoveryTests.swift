@@ -1,6 +1,7 @@
 import Testing
 import CoreData
 import Foundation
+import UIKit
 @testable import RecipeFinder
 
 /// Store-recovery durability: a corrupt/unreadable store must be moved aside and preserved, never silently deleted, so a failed migration can't wipe recipes — the app starts fresh but the original bytes stay on disk.
@@ -25,5 +26,61 @@ import Foundation
             .contentsOfDirectory(atPath: directory.path)
             .filter { $0.hasPrefix("RecipeModel.sqlite.corrupt-") }
         #expect(!preserved.isEmpty)
+    }
+
+    /// Before first unlock the store's file can't be read; that's a locked device, not a broken store, so it must
+    /// stay where it is (moving it aside makes the library look empty after unlock).
+    @Test func lockedDeviceLeavesTheStoreInPlace() throws {
+        let directory = try Self.makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let storeURL = try Self.unreadableStore(in: directory)
+
+        let controller = PersistenceController(
+            storeURL: storeURL, isProtectedDataAvailable: { false }, notificationCenter: NotificationCenter()
+        )
+
+        #expect(!controller.isStoreLoaded)
+        #expect(FileManager.default.fileExists(atPath: storeURL.path))
+        #expect(try Self.preservedCopies(in: directory).isEmpty)
+    }
+
+    /// Once the cook unlocks, the store is opened again; one that still won't open is recovered as before.
+    @Test func unlockOpensTheStoreAgain() throws {
+        let directory = try Self.makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let storeURL = try Self.unreadableStore(in: directory)
+        let center = NotificationCenter()
+        let device = DeviceLock()
+
+        let controller = PersistenceController(
+            storeURL: storeURL, isProtectedDataAvailable: { device.isUnlocked }, notificationCenter: center
+        )
+        device.isUnlocked = true
+        center.post(name: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil)
+
+        #expect(controller.isStoreLoaded)
+        #expect(try !Self.preservedCopies(in: directory).isEmpty)
+    }
+
+    @MainActor private final class DeviceLock {
+        var isUnlocked = false
+    }
+
+    private static func makeDirectory() throws -> URL {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory
+    }
+
+    /// A file Core Data can't open, standing in for a store the locked device won't let it read.
+    private static func unreadableStore(in directory: URL) throws -> URL {
+        let storeURL = directory.appendingPathComponent("RecipeModel.sqlite")
+        try Data("this is not a valid sqlite store".utf8).write(to: storeURL)
+        return storeURL
+    }
+
+    private static func preservedCopies(in directory: URL) throws -> [String] {
+        try FileManager.default.contentsOfDirectory(atPath: directory.path)
+            .filter { $0.hasPrefix("RecipeModel.sqlite.corrupt-") }
     }
 }
