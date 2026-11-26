@@ -11083,7 +11083,7 @@
     "baseServings" : 10,
     "category" : "Dessert",
     "cookCount" : 0,
-    "cookingTime" : "0 minutes",
+    "cookingTime" : "10 minutes",
     "currentServings" : 10,
     "dietaryInfo" : {
       "isDairyFree" : false,
@@ -11171,18 +11171,18 @@
       }
     ],
     "instructions" : [
-      "Preheat the oven to 180C fan and line two baking sheets with baking paper.",
-      "Sieve the flour, cocoa, bicarbonate of soda and salt into a mixing bowl. Stir in the sugars, flaked almonds and chocolate pieces.",
-      "Gently melt the coconut oil and almond butter in a saucepan over low heat. Remove from the heat and stir in the golden syrup and water.",
-      "Pour the wet ingredients into the dry and stir with a wooden spoon until thoroughly combined.",
-      "Divide the dough into ten equal pieces, roll each into a ball and place on the baking sheets. Press down to flatten slightly.",
-      "Bake for 8-10 minutes, until dry to the touch and the edges are starting to firm up.",
-      "Leave on the tray for 15 minutes to firm up, then transfer to a wire rack to cool completely."
+      "Heat the oven to 180C fan and line two baking trays with baking paper.",
+      "Sift the flour, cocoa, bicarbonate of soda and salt into a large bowl, then mix in both sugars, the toasted almonds and the chocolate.",
+      "Warm the coconut oil and almond butter together in a small pan over a low heat until just melted. Off the heat, stir in the golden syrup and the water.",
+      "Tip the warm mixture into the bowl and stir until no dry flour is left and you have a soft dough.",
+      "Split the dough into 10 equal pieces, roll them into balls and space them out on the trays. Flatten each one a little with your fingers.",
+      "Bake for about 10 minutes, until the tops feel dry and the edges have just set. They will still be soft in the middle.",
+      "Leave them on the trays for 15 minutes to firm up, then move them to a wire rack to cool completely."
     ],
     "isFavorite" : false,
     "isSampleRecipe" : true,
-    "name" : "Pret's Dark Chocolate and Almond Butter Vegan Cookies",
-    "notes" : "Toast the flaked almonds in a dry pan over medium heat, stirring, until fragrant. Peanut butter works instead of almond butter. Keeps for a week in an airtight container.",
+    "name" : "Dark Chocolate and Almond Butter Vegan Cookies",
+    "notes" : "To toast the almonds, stir them in a dry frying pan over a medium heat until they smell nutty and start to colour. Peanut butter can stand in for almond butter. The cookies keep for about a week in an airtight tin.",
     "photoNames" : [
 
     ],
@@ -16386,20 +16386,20 @@
       }
     ],
     "instructions" : [
-      "Grease a shallow 2.5 litre dish with butter.",
-      "Melt the butter in a pan over a high heat and fry the onion for a few minutes. Lower the heat, cover and soften for 15 minutes, stirring occasionally.",
-      "Uncover and increase the heat to drive off any moisture. Sprinkle in the flour, then add the milk gradually, stirring well between additions, and let the sauce thicken.",
-      "Season with salt and pepper, add the lemon juice and fresh haddock and cook for a couple of minutes, stirring, until the fish is just cooked. Stir in the smoked haddock (and spinach or peas, if using).",
-      "Pour into the buttered dish, leave to cool and top with the hard-boiled eggs.",
-      "Preheat the oven to 200C/400F/Gas 6. Boil the potatoes in salted water for about 15 minutes until tender.",
-      "Drain, return to the pan and mash with the hot milk and butter until smooth. Season to taste.",
-      "Spread the mash over the filling and score with a fork.",
-      "Bake for about 30 minutes until the potato is crisp and golden-brown. Serve with garlic bread."
+      "Butter a shallow ovenproof dish of about 2.5 litres.",
+      "Put the onion and the 75g butter in a pan over a low heat, cover and let the onion turn soft and sweet for about 15 minutes without colouring. Take the lid off for the last couple of minutes so any liquid cooks away.",
+      "Stir the flour into the onion and cook for a minute. Pour in the milk a splash at a time, stirring after each one, and keep stirring until you have a smooth, thick sauce.",
+      "Season the sauce, add the lemon juice and the fresh haddock and simmer gently for about 3 minutes, stirring, until the fish turns opaque. Fold in the smoked haddock, plus the spinach or peas if you are using them.",
+      "Spoon the filling into the dish, let it cool a little, then scatter the chopped eggs over the top.",
+      "Heat the oven to 200C (180C fan), gas 6. Meanwhile, cook the potatoes in boiling salted water for about 15 minutes, until a knife slides in easily.",
+      "Drain the potatoes well, then mash them in the pan with the hot milk and the 50g butter until smooth. Season to taste.",
+      "Spread the mash over the filling right to the edges and rough up the top with a fork so it crisps.",
+      "Bake for about 30 minutes, until the top is golden and the filling bubbles at the sides. Garlic bread goes well alongside."
     ],
     "isFavorite" : false,
     "isSampleRecipe" : true,
-    "name" : "Mary Berry's Fish Pie",
-    "notes" : "Make ahead: cover the assembled pie with foil and chill for up to 36 hours, then bake at 200C for about 40 minutes until piping hot. To freeze, leave out the eggs. Floury potatoes such as Maris Piper or King Edward make the best mash.\n\nhttps://www.bbc.co.uk/food/recipes/mary_berrys_fish_pie_79943",
+    "name" : "Classic Fish Pie",
+    "notes" : "Make ahead: assemble the pie, cover with foil and keep it in the fridge for up to 36 hours, then bake at 200C for about 40 minutes until hot all the way through. Leave out the eggs if you plan to freeze it. Floury potatoes such as Maris Piper or King Edward give the fluffiest mash.\n\nhttps://www.bbc.co.uk/food/recipes/mary_berrys_fish_pie_79943",
     "photoNames" : [
 
     ],
