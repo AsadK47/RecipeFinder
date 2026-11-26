@@ -70,7 +70,7 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0   # full history, so file dates can be restored
 
@@ -101,7 +101,7 @@ jobs:
 
       - name: Save booted simulator
         if: always() && github.ref == 'refs/heads/main' && needs.gate.outputs.run == 'true' && env.SIM_CACHE_HIT != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ${{ env.SIM_DIR }}
           key: ${{ env.SIM_KEY }}
@@ -109,14 +109,14 @@ jobs:
       # Only main writes the cache (Home Assistant, Element X): per-branch saves filled the 10 GB limit and evicted it.
       - name: Save build cache
         if: always() && github.ref == 'refs/heads/main' && hashFiles('DerivedData/**') != ''
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: DerivedData
           key: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-${{ github.sha }}
 
       - name: Keep logs if it fails
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: test-results
           path: |
@@ -139,7 +139,7 @@ jobs:
         shard: [ 1, 2, 3, 4 ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
 
@@ -162,7 +162,7 @@ jobs:
 
       - name: Keep logs if it fails
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ui-test-results-${{ matrix.shard }}
           path: |

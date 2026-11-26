@@ -1,0 +1,21 @@
+# Weekly, grouped updates for the pinned GitHub Actions and Swift packages.
+# Actions are pinned to commit SHAs; Dependabot moves the SHA and its version comment together.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directories:
+      - "/"
+      - "/.github/actions/prepare"
+      - "/.github/actions/select-xcode"
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: swift
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      swift-packages:
+        patterns: ["*"]

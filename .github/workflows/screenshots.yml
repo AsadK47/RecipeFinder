@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 50   # boot (10) + capture (36) caps + ~4 setup/publish, so publish always gets its turn
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0   # file dates restored below so the reused build cache stays valid
 
@@ -51,7 +51,7 @@ jobs:
           defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
       - name: Restore build cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: DerivedData
           key: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-${{ github.sha }}
@@ -108,7 +108,7 @@ jobs:
       # Only main updates the shared release; branch runs keep their screenshots as a run artifact.
       - name: Keep branch screenshots
         if: (success() || failure()) && github.ref != 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: screenshots
           path: ${{ runner.temp }}/shots
@@ -143,7 +143,7 @@ jobs:
 
       - name: Keep logs if it fails
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: screenshot-logs
           path: |

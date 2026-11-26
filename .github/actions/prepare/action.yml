@@ -48,7 +48,7 @@ runs:
         defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
 
     - name: Restore build cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: DerivedData
         key: deriveddata-test-${{ runner.os }}-${{ env.XCODE_BUILD }}-${{ github.sha }}
@@ -74,7 +74,7 @@ runs:
     - name: Restore booted simulator
       if: inputs.boot == 'true'
       id: simcache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: ${{ env.SIM_DIR }}
         key: ${{ env.SIM_KEY }}
