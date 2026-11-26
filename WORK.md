@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 expiry reminder past 18:00 landed df62ded..0c0bf9a (builder 2026-11-26; leftover branches agent/expiry-past-trigger remote pre-rebase, agent/expiry-past-trigger-red unmerged — delete both). Next: Inbox 🐞 `RecipeWizardBuilder.swift:72-80` difficulty substring → one tested `Difficulty` parser (first open Inbox 🐞 needing no owner; 🔴 Mary Berry Fish Pie rename is above it — take it first if the own-words lane is free).
 ✅ Inbox 🐞 Import resource limits done — slice 2 landed 719e3ef..9f86aa7 (builder 2026-11-26; leftover branches agent/import-file-coordinator auto-cleanup, agent/import-file-coordinator-red unmerged — delete). Next: Inbox 🐞 `NotificationManager.swift` `scheduleExpiryNotification` 18:00 past trigger (first open Inbox 🐞).
 ✅ Inbox 🐞 Import resource limits slice 1 landed 6fe121d..78686c7 (builder 2026-11-26). Next: slice 2 — `RecipeFileExporter.read(from:)` coordinated read via `NSFileCoordinator` (red test first), then tick the item.
 ✅ Inbox 🐞 CI hardening (3) script tests landed c3f1011..e74e395 (builder 2026-11-26; leftover branch agent/script-tests auto-cleanup). Next: Inbox 🐞 Import resource limits (`HTMLFetcher.swift:33` streamed ~5 MB cap + total timeout, `NSFileCoordinator` on file open).
