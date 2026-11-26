@@ -162,7 +162,11 @@ struct TodayFeed: Equatable {
         var seen = Set<UUID>()
         let unique = (planned + suggested).filter { seen.insert($0.recipe.id).inserted }
         if !quickCanLead, case .quick? = unique.first?.reason { return [] }
-        return unique
+        guard !unique.isEmpty else { return [] }
+        // Shuffle keeps going past the quick ones with longer recipes that fit the meal (owner 2026-11-26: it looped
+        // "6 or so"). They follow, never lead: a library of only slow recipes still gets "Plan tonight", not a stew.
+        let longer = slot.suitable(longerPicks(recipes, slot: slot, dayKey: dayKey)).filter { $0.recipe.id != lastCookedID }
+        return unique + longer.filter { seen.insert($0.recipe.id).inserted }
     }
 
     /// Recipes ready in `quickLimitMinutes` or less, your own before built-in samples, in an order that changes each
@@ -177,6 +181,19 @@ struct TodayFeed: Equatable {
                 return ra != rb ? ra < rb : a.0.name < b.0.name
             }
             .map { Hero(recipe: $0.0, reason: .quick(minutes: $0.1)) }
+    }
+
+    /// Recipes that take longer than `quickLimitMinutes`, your own first, in the same daily-varied order. Their reason
+    /// is `.quick(minutes:)` too — it carries the time the card shows ("Ready in 1 hr").
+    private static func longerPicks(_ recipes: [RecipeModel], slot: MealSlot, dayKey: String) -> [Hero] {
+        recipes
+            .filter { $0.totalMinutes > quickLimitMinutes }
+            .sorted { a, b in
+                if a.isSampleRecipe != b.isSampleRecipe { return !a.isSampleRecipe }
+                let ra = dailyRank(a.id, slot: slot, dayKey: dayKey), rb = dailyRank(b.id, slot: slot, dayKey: dayKey)
+                return ra != rb ? ra < rb : a.name < b.name
+            }
+            .map { Hero(recipe: $0, reason: .quick(minutes: $0.totalMinutes)) }
     }
 
     /// Stable across launches (FNV-1a, not Swift's per-launch seeded `Hasher`), different per day and meal.

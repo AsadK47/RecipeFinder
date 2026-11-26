@@ -129,10 +129,11 @@ import Foundation
         let a = recipe("A"), b = recipe("B"), c = recipe("C", prepTime: "2 hr")
         let result = feed([a, b, c])
         let order = result.tonightOptions.map(\.recipe)
-        #expect(Set(order.map(\.id)) == [a.id, b.id])
+        #expect(Set(order.prefix(2).map { $0.id }) == [a.id, b.id])
+        #expect(order.last == c)
         #expect(result.nextTonightPick(after: nil)?.recipe == order[1])
         #expect(result.nextTonightPick(after: order[0].id)?.recipe == order[1])
-        #expect(result.nextTonightPick(after: order[1].id)?.recipe == order[0])
+        #expect(result.nextTonightPick(after: c.id)?.recipe == order[0])
     }
 
     @Test func theShownPickSurvivesARefreshByRecipeNotPosition() {
