@@ -114,7 +114,8 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
   (library empty for the whole session). Not done (next Inbox 🟡): lists loaded empty before the late open don't
   re-read. **Pre-mortem:** (1) healthy store moved aside while locked → `lockedDeviceLeavesTheStoreInPlace`;
   (2) store never reopens after unlock → `unlockOpensTheStoreAgain`; (3) truly corrupt store never recovered →
-  same test + `corruptStoreIsPreservedNotDeleted`.
+  same test + `corruptStoreIsPreservedNotDeleted`; healthy store reopens in place → `unlockOpensAHealthyStoreInPlace`.
+  Lock is checked before `retryWithoutSync` (reviewer + challenger: else a locked launch turns iCloud sync off).
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

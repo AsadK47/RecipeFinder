@@ -62,6 +62,32 @@ import UIKit
         #expect(try !Self.preservedCopies(in: directory).isEmpty)
     }
 
+    /// A healthy store that was unreadable while locked opens in place after unlock — nothing is moved aside.
+    @Test func unlockOpensAHealthyStoreInPlace() throws {
+        let directory = try Self.makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let healthy = directory.appendingPathComponent("Healthy", isDirectory: true)
+        try FileManager.default.createDirectory(at: healthy, withIntermediateDirectories: true)
+        let healthyURL = healthy.appendingPathComponent("RecipeModel.sqlite")
+        _ = PersistenceController(storeURL: healthyURL)
+        let storeURL = try Self.unreadableStore(in: directory)
+        let center = NotificationCenter()
+        let device = DeviceLock()
+
+        let controller = PersistenceController(
+            storeURL: storeURL, isProtectedDataAvailable: { device.isUnlocked }, notificationCenter: center
+        )
+        try FileManager.default.removeItem(at: storeURL)
+        for sidecar in ["", "-wal", "-shm"] where FileManager.default.fileExists(atPath: healthyURL.path + sidecar) {
+            try FileManager.default.copyItem(atPath: healthyURL.path + sidecar, toPath: storeURL.path + sidecar)
+        }
+        device.isUnlocked = true
+        center.post(name: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil)
+
+        #expect(controller.isStoreLoaded)
+        #expect(try Self.preservedCopies(in: directory).isEmpty)
+    }
+
     @MainActor private final class DeviceLock {
         var isUnlocked = false
     }
