@@ -41,7 +41,15 @@ struct RecipeWizardBuilderTests {
             ("challenging", "Expert"),
             ("Intermediate", "Intermediate"),
             ("Quite easy", "Basic"),
-            ("hardboiled egg level", "Intermediate")
+            ("hardboiled egg level", "Intermediate"),
+            ("isn't hard", "Intermediate"),
+            ("Never easy", "Intermediate"),
+            ("Not for beginners", "Intermediate"),
+            ("No-fuss beginner", "Basic"),
+            ("Harder", "Expert"),
+            ("Simple", "Basic"),
+            ("A challenge", "Expert"),
+            ("Tricky", "Expert")
         ]
     )
     func normalizesDifficultyByWord(input: String, expected: String) {

@@ -831,3 +831,30 @@ struct RecipeParserDOMListHeaderTests {
         #expect(RecipeParser.cuisineName(raw) == expected)
     }
 }
+
+@Suite("RecipeParser extractDifficulty")
+struct RecipeParserDifficultyTests {
+
+    @Test(
+        "A difficulty label is read whole by the one Difficulty parser",
+        arguments: [
+            ("Difficulty: Medium-hard", "Intermediate"),
+            ("Difficulty level: Expert", "Expert"),
+            ("Skill level: Not for beginners", "Intermediate"),
+            ("Serves 4\nLevel: easy\nPrep 10 mins", "Basic"),
+            ("Difficulty: Challenging", "Expert"),
+            ("Difficulty: easy\nSpice level: hard", "Basic")
+        ]
+    )
+    func readsTheWholeLabel(text: String, expected: String) {
+        #expect(RecipeParser.extractDifficulty(from: text) == expected)
+    }
+
+    @Test(
+        "Text that names no difficulty level gives none",
+        arguments: ["Spice level: hard", "Difficulty: Hardly any effort", "Sea level: 2 m", "No label here"]
+    )
+    func noLevelGivesNil(text: String) {
+        #expect(RecipeParser.extractDifficulty(from: text) == nil)
+    }
+}

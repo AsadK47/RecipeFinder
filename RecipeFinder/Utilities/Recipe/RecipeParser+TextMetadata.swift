@@ -142,17 +142,13 @@ extension RecipeParser {
         return nil
     }
 
+    /// The first "Difficulty: …" / "Skill level: …" / line-leading "Level: …" label, read whole by
+    /// `Difficulty(parsing:)` so negations and ranges ("Not for beginners", "Medium-hard") survive the import.
+    /// A bare "level" mid-line ("Spice level: hard") is not a difficulty.
     static func extractDifficulty(from text: String) -> String? {
-        let difficulties = ["easy", "medium", "moderate", "hard", "difficult", "beginner", "intermediate", "advanced"]
-
-        let lowercased = text.lowercased()
-        for difficulty in difficulties {
-            if lowercased.range(of: "difficulty:?\\s*\(difficulty)", options: .regularExpression) != nil ||
-               lowercased.range(of: "level:?\\s*\(difficulty)", options: .regularExpression) != nil {
-                return difficulty.capitalized
-            }
-        }
-
-        return nil
+        let pattern = #"(?:\bdifficulty(?:\s+level)?|\bskill\s+level|^[ \t]*level)[ \t]*:?[ \t]*([^\n;|]{1,40})"#
+        let labels = allCaptures(pattern, in: text, options: [.caseInsensitive, .anchorsMatchLines])
+        guard let label = labels.first(where: Difficulty.mentionsLevel) else { return nil }
+        return Difficulty(parsing: label).rawValue
     }
 }
