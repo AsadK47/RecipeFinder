@@ -231,6 +231,14 @@ are merged into a newer item or parked — never start them; their text stays as
   Settings → About listing sources + licences. *Done when:* every bundled method rewritten (spot-check vs source by a
   second reviewer), new recipes pass the seed audits (`audit-missing-amounts.py`), RecipeArt pictures queued for the
   owner's Mac, credits live, CI green.
+- [ ] **Cooking safety reference** (owner idea 2026-11-26: "our own mappings" for times/temps). A small table in
+  `tools/cooking-reference.json` built from public guidance — UK FSA/NHS (Open Government Licence, credit) and USDA
+  FSIS (public domain): safe core temperatures (poultry, pork, mince, reheating "steaming hot", rice cooled fast and
+  reheated once), and typical oven time ranges per kg/cut at fan temperatures. Facts, written in our own words with
+  the source named per row. Use it to (1) audit every bundled and AI-drafted method (`tools/` script, CI-run on the
+  seed): flag times/temps outside the range or a missing "cook until …" check for poultry/pork/mince; (2) have the
+  own-words lane draft from it rather than from memory. *Done when:* table + audit land, the seed passes it, credits
+  screen lists FSA/NHS/USDA. Not medical advice; doneness checks (core temperature / juices run clear) over time alone.
 - [ ] **Supply-chain + CI hardening** (owner asked about IaC/security 2026-11-21; audit findings). **(1)–(5) landed 4318d7c (2026-11-26); left: Dependabot's first update branch; Inbox *CI hardening* (3) landed e74e395.** (1) Commit
   `Package.resolved` (none in repo today, so Kingfisher/ConfettiSwiftUI/ViewInspector float within their major version
   into signed TestFlight builds) and pin exact versions per RecipeFinder/CLAUDE.md. (2) Pin every third-party action to
