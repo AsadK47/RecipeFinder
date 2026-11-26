@@ -154,13 +154,16 @@ struct TodayFeed: Equatable {
         // Cooked without Made it (its recipe's last cook is that day) counts as done too, matching Plan.
         let open = plans.filter { !$0.wasCooked(in: recipes, calendar: calendar) }
         let next = nextMeal.mealTime.sortOrder
-        let orderedPlans = open.filter { $0.mealTime.sortOrder >= next }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
-            + open.filter { $0.mealTime.sortOrder < next }.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }
-        let planned = orderedPlans.compactMap { plan in
-            byID[plan.recipeId].map {
-                Hero(recipe: $0, reason: nextMeal.isTomorrow ? .plannedTomorrow(plan.mealTime) : .planned(plan.mealTime))
+        let inOrder = { (picked: [MealPlanModel]) -> [Hero] in
+            picked.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }.compactMap { plan in
+                byID[plan.recipeId].map {
+                    Hero(recipe: $0, reason: nextMeal.isTomorrow ? .plannedTomorrow(plan.mealTime) : .planned(plan.mealTime))
+                }
             }
         }
+        let current = inOrder(open.filter { $0.mealTime.sortOrder == next })
+        let later = inOrder(open.filter { $0.mealTime.sortOrder > next })
+        let missed = inOrder(open.filter { $0.mealTime.sortOrder < next })
 
         let lastCookedID = recipes
             .filter { $0.lastCookedAt != nil }
@@ -169,8 +172,16 @@ struct TodayFeed: Equatable {
         let quick = quickPicks(recipes, slot: slot, dayKey: dayKey)
         let suggested = slot.suitable(kitchen + quick).filter { $0.recipe.id != lastCookedID }
 
+        // Breakfast or lunch today: that meal's own plan, then ideas for it, then the day's later plans (owner
+        // 2026-11-26: 8am offered tonight's dinner with "7 pm" and a prep line). Tonight, tomorrow and a new user's
+        // Today keep plans first. A planned dish never also shows as an idea.
+        let ideasLeadLaterPlans = !nextMeal.isTonight && !nextMeal.isTomorrow && quickCanLead
+        let plannedIDs = Set((current + later + missed).map(\.recipe.id))
+        let ordered = ideasLeadLaterPlans
+            ? current + suggested.filter { !plannedIDs.contains($0.recipe.id) } + later + missed
+            : current + later + missed + suggested
         var seen = Set<UUID>()
-        let unique = (planned + suggested).filter { seen.insert($0.recipe.id).inserted }
+        let unique = ordered.filter { seen.insert($0.recipe.id).inserted }
         if !quickCanLead, case .quick? = unique.first?.reason { return ([], []) }
         guard !unique.isEmpty else { return ([], []) }
         // Shuffle keeps going past the quick ones with longer recipes of the same kind (owner 2026-11-26: it looped
