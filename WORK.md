@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-26, builder agent)
 
 ## In progress
+- 🚧 builder agent 2026-11-26 Inbox 🐞 difficulty parser — branch `agent/difficulty-parser`.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -113,6 +114,16 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **Difficulty parser (Inbox 🐞):** the "3 places" already shared `RecipeWizardBuilder.normalizeDifficulty`; the bug was
+  its substring match, so the fix is one `Difficulty` enum (`Models/Recipe/Difficulty.swift`) that reads whole words and
+  `normalizeDifficulty` delegates to it (call sites unchanged — a String→enum migration of `Recipe.difficulty` would
+  touch Core Data/sync for no cook-visible gain). Rules: negated level → one step to the middle; range → mean rounded
+  toward the easier end (order-independent; "medium-hard" → Intermediate as the item asks, "easy–medium" → Basic).
+  Rejected: harder end for ranges (keeps "medium-hard" → Expert, the reported bug). **Pre-mortem:** (1) the 332
+  bundled recipes change level → their values are exact level words, identity holds (`normalizesDifficulty` cases);
+  (2) "not easy" still files under Easy recipes → `normalizesDifficultyByWord`; (3) word order flips the result →
+  "Not hard, easy" / "easy, not hard" cases.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
