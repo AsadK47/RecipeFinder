@@ -117,6 +117,14 @@ import Foundation
         #expect(Set(options.map(\.recipe.id)) == Set(library.map(\.id)))
     }
 
+    /// Owner 2026-11-26: "Shuffle … literally only shuffles 6 or so" — it stopped at recipes ready in 30 minutes.
+    @Test func shuffleKeepsGoingPastQuickPicksWithLongerOnes() {
+        let quick = recipe("Omelette"), stew = recipe("Stew", prepTime: "2 hr"), roast = recipe("Roast", prepTime: "1 hr")
+        let options = feed([stew, quick, roast]).tonightOptions
+        #expect(options.first?.recipe == quick)
+        #expect(Set(options.dropFirst().map { $0.recipe.id }) == [stew.id, roast.id])
+    }
+
     @Test func shuffleStepsThroughThePicksAndWrapsRound() {
         let a = recipe("A"), b = recipe("B"), c = recipe("C", prepTime: "2 hr")
         let result = feed([a, b, c])
