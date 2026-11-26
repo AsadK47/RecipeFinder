@@ -290,8 +290,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     static func expiryReminderDate(for expiryDate: Date?, now: Date, calendar: Calendar = .current) -> Date? {
         guard let expiryDate,
               let dayBefore = calendar.date(byAdding: .day, value: -1, to: expiryDate),
-              let evening = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: dayBefore),
-              evening > now else { return nil }
+              dayBefore > now,
+              let evening = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: dayBefore) else { return nil }
         return evening
     }
 
