@@ -268,11 +268,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     // MARK: - Pantry expiry notifications
 
     @discardableResult
-    func scheduleExpiryNotification(for item: KitchenInventoryModel) -> String? {
-        guard let expiryDate = item.expiryDate else { return nil }
-        // Notify the evening before expiry so the user can plan dinner.
-        guard let notifyDate = Calendar.current.date(byAdding: .day, value: -1, to: expiryDate),
-              notifyDate > Date() else { return nil }
+    func scheduleExpiryNotification(for item: KitchenInventoryModel, now: Date = Date()) -> String? {
+        guard let notifyDate = Self.expiryReminderDate(for: item.expiryDate, now: now) else { return nil }
 
         let identifier = Self.expiryIdentifier(for: item.id)
         let content = UNMutableNotificationContent()
@@ -281,12 +278,21 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.sound = .default
         content.userInfo = ["type": NotificationKind.expiry.rawValue, "itemId": item.id.uuidString]
 
-        var components = Calendar.current.dateComponents([.year, .month, .day], from: notifyDate)
-        components.hour = 18
+        let components = Calendar.current.dateComponents([.year, .month, .day, .hour], from: notifyDate)
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         addAskingPermissionFirst(request, failureLabel: "expiry notification")
         return identifier
+    }
+
+    /// 18:00 the evening before expiry, so the cook can plan dinner — nil when there is no date or that evening has
+    /// already passed (an item added after 18:00 the day before would otherwise get a past trigger and no alert).
+    static func expiryReminderDate(for expiryDate: Date?, now: Date, calendar: Calendar = .current) -> Date? {
+        guard let expiryDate,
+              let dayBefore = calendar.date(byAdding: .day, value: -1, to: expiryDate),
+              let evening = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: dayBefore),
+              evening > now else { return nil }
+        return evening
     }
 
     func cancelExpiryNotification(for itemId: UUID) {

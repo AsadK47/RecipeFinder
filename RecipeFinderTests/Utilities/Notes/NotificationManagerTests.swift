@@ -177,6 +177,32 @@ final class FakeNotificationCenter: @unchecked Sendable {
         #expect(fake.asks == 0)
     }
 
+    /// Added at 19:00 for something that expires tomorrow night: that 18:00 has passed, so no reminder is scheduled.
+    @Test func expiryAddedAfterSixTheDayBeforeSchedulesNothing() throws {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let now = try #require(calendar.date(bySettingHour: 19, minute: 0, second: 0, of: today))
+        let tomorrow = try #require(calendar.date(byAdding: .day, value: 1, to: today))
+        let expiry = try #require(calendar.date(bySettingHour: 22, minute: 0, second: 0, of: tomorrow))
+        let item = KitchenInventoryModel(name: "Milk", category: .dairy, quantity: 1, unit: "l", expiryDate: expiry)
+
+        #expect(manager.scheduleExpiryNotification(for: item, now: now) == nil)
+        #expect(fake.added.isEmpty)
+        #expect(fake.asks == 0)
+    }
+
+    /// Added at 17:00 the day before: 18:00 is still ahead, so tonight's reminder is scheduled.
+    @Test func expiryAddedBeforeSixTheDayBeforeStillNotifiesTonight() throws {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let now = try #require(calendar.date(bySettingHour: 17, minute: 0, second: 0, of: today))
+        let tomorrow = try #require(calendar.date(byAdding: .day, value: 1, to: today))
+        let expiry = try #require(calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow))
+        let expected = try #require(calendar.date(bySettingHour: 18, minute: 0, second: 0, of: today))
+
+        #expect(NotificationManager.expiryReminderDate(for: expiry, now: now) == expected)
+    }
+
     @Test func cancellingAnExpiryRemovesItsIdentifier() {
         let id = UUID()
         manager.cancelExpiryNotification(for: id)
