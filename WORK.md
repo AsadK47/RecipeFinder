@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-26, builder agent)
 
 ## In progress
+- 🚧 builder agent 2026-11-26 Inbox 🔴 Mary Berry Fish Pie rename (+ Pret cookies brand name) — branch `agent/fish-pie-rename`.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
