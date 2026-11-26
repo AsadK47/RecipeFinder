@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Step timer phrases** (ff80a1c..33ab63f, builder 2026-11-26): one regex kept (amount = number / ½-style / " 1/2" / a, an,
+  half an, a half; optional range; unit) rather than a tokenizer — the existing compound-duration loop works unchanged on its
+  matches. Range = lower bound (owner 2026-11-25), not the reviewer's upper bound. Range separators: unspaced dash or spaced
+  "to"/"or"; a spaced dash is punctuation (rejected "upper ≥ lower" guard: "gas mark 4 - 25" passes it). "a/an second(s)" is
+  dropped as an ordinal.
 - **Difficulty parser** (3d1c5d1..c07ac7a, builder 2026-11-26): the "3 places" already shared `RecipeWizardBuilder.normalizeDifficulty`; the bug was
   its substring match, so the fix is one `Difficulty` enum (`Models/Recipe/Difficulty.swift`) that reads whole words and
   `normalizeDifficulty` delegates to it (call sites unchanged — a String→enum migration of `Recipe.difficulty` would

@@ -56,6 +56,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-26 (item pass: Inbox 🐞 step timer phrases — fixed: "a second bowl" hid the real timer, spaced dash read as a range, "2 1/2 hours" → 2 h)
+- ⚔️ [Break] Lower bound on wide ranges: "simmer 1-3 hours" → 60, "prove 30–60 minutes" → 30 — owner's rule (2026-11-25): a check-early timer; don't flip it to the upper bound.
+- ⚔️ [Break] Seconds ranges round to nothing: "beat 20–30 seconds" → no timer (was 1 min) — accepted: a one-minute timer for 20 s was wrong too.
+- ⚔️ [Break] Trailing "and a half" is dropped: "an hour and a half" → 60, "1 and a half hours" → none — errs short like the lower bound; add when a cook asks.
+- ⚔️ [Break] A spaced dash is punctuation, so "simmer 10 - 15 mins" → 15 (upper) — accepted to keep "gas mark 4 - 25 minutes" → 25; unspaced "10-15" → 10.
+
 ## 2026-11-26 (item pass: Inbox 🐞 Import resource limits slice 2 — fixed: offline placeholder could block a thread forever → 30 s cancel; copy assumed iCloud → reworded)
 - ⚔️ [Break] The coordinator downloads the whole file before the 5 MB cap applies (RecipeFileExporter.swift `readCapped`), so a huge shared file costs that much data and storage — a `fileSizeKey` pre-check before coordinating would refuse it first; not fixed: a placeholder's size needs `ubiquitousItem` keys and the file is one the cook chose to open — cost if wrong: one large download.
 - ⚔️ [Break] `fileOpenTask?.cancel()` (ContentView.swift:85) doesn't reach the `Task.detached` read, so a second tap waits behind the first for up to 30 s — not fixed: the 30 s give-up bounds it; an async `coordinate(with:queue:)` + cancellation handler would remove it.

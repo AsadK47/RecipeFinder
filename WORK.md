@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 step timer phrases landed ff80a1c..33ab63f (builder 2026-11-26; leftover branches agent/timer-phrases red unmerged — delete, agent/timer-phrases-fix auto-cleanup). Next: Inbox 🐞 `mergeSyncedRecipeCopies` losing hero `imageName` → move it into `photoNames` (iCloud sync, two reviewers).
 ✅ Inbox 🐞 difficulty parser landed 3d1c5d1..c07ac7a (builder 2026-11-26; leftover branches agent/difficulty-parser auto-cleanup, agent/difficulty-parser-red unmerged — delete). Next: Inbox 🐞 `CookingPlan.swift` `timerRegex` ("an hour", "1½ hours", ranges → lower bound) — fixture-first.
 ✅ Inbox 🔴 Mary Berry Fish Pie rename (+ Pret cookies) landed d5e9de6..513679a (builder 2026-11-26; leftover branches agent/fish-pie-rename, agent/fish-pie-rename-red unmerged — delete; agent/fish-pie-rename-2 auto-cleanup). Next: Inbox 🐞 `RecipeWizardBuilder.swift:72-80` difficulty substring → one tested `Difficulty` parser.
 ✅ Inbox 🐞 expiry reminder past 18:00 landed df62ded..0c0bf9a (builder 2026-11-26; leftover branches agent/expiry-past-trigger remote pre-rebase, agent/expiry-past-trigger-red unmerged — delete both). Next: Inbox 🐞 `RecipeWizardBuilder.swift:72-80` difficulty substring → one tested `Difficulty` parser (first open Inbox 🐞 needing no owner; 🔴 Mary Berry Fish Pie rename is above it — take it first if the own-words lane is free).

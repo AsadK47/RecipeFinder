@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox step timer phrases · 33ab63f
+- For you: Cooking mode offers a timer for steps like "simmer for an hour", "rest for half an hour" or "bake 1½ hours", and a range such as "10-15 minutes" starts at the shorter time so you can check early.
+- Behind the build: new tests failed on the old timer reader first; a reviewer caught "in a second bowl" hiding the real timer and a challenger caught "gas mark 4 - 25 minutes", both fixed before it shipped.
+
 ## 2026-11-26 · Inbox difficulty parser · c07ac7a
 - For you: Recipe difficulty reads labels the way you would — "not easy", "medium-hard" or "not for beginners" now land on the right level in filters, Easy recipes and the difficulty bars, including on imported recipes.
 - Behind the build: one tested difficulty reader replaces three word-fragment matches; new tests failed on the old code first, and a reviewer and a challenger read the change.
