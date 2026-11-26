@@ -17,7 +17,7 @@ enum TonightTiming {
         switch hero.reason {
         case .planned(let meal): meal == .dinner
         case .plannedTomorrow: false
-        case .kitchenMatch, .quick: forDinner
+        case .kitchenMatch, .quick, .longer: forDinner
         }
     }
     private static let eveningStartsAt = 18 * 60

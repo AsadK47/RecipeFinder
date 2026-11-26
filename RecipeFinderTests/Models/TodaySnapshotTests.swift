@@ -72,7 +72,7 @@ import Foundation
         )
         #expect(result.feed == feed)
         #expect(result.week == TodayWeek.make(
-            recipes: recipes, plans: plans, tonightIDs: Set(feed.tonightOptions.map(\.recipe.id)), now: now, calendar: cal
+            recipes: recipes, plans: plans, tonightIDs: feed.leadIDs, now: now, calendar: cal
         ))
         #expect(result.progress == TodayProgress.make(recipes: recipes, streak: streak, unlockedBadgeIDs: ["head_chef"]))
     }

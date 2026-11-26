@@ -125,6 +125,26 @@ import Foundation
         #expect(Set(options.dropFirst().map { $0.recipe.id }) == [stew.id, roast.id])
     }
 
+    @Test func longerPicksSayHowLongTheyTakeAndStayOutOfPlanTomorrowsWay() {
+        let quick = recipe("Omelette"), stew = recipe("Stew", prepTime: "2 hr")
+        let result = feed([stew, quick])
+        #expect(result.tonightOptions.last == .init(recipe: stew, reason: .longer(minutes: 130)))
+        #expect(result.leadIDs == [quick.id])
+    }
+
+    @Test func aMorningsLongerPicksAreBreakfastsNotMains() {
+        let pancakes = recipe("Pancakes", category: "Breakfast")
+        let croissants = recipe("Croissants", prepTime: "50 min", category: "Breakfast")
+        let curry = recipe("Curry", prepTime: "1 hr", category: "Main")
+        let options = feed([pancakes, croissants, curry], at: at(8)).tonightOptions
+        #expect(options.map { $0.recipe } == [pancakes, croissants])
+    }
+
+    @Test func theLongerTailSkipsTheLastCooked() {
+        let quick = recipe("Omelette"), stew = recipe("Stew", cookCount: 1, lastCookedAt: daysAgo(1), prepTime: "2 hr")
+        #expect(!feed([stew, quick]).tonightOptions.contains { $0.recipe == stew })
+    }
+
     @Test func shuffleStepsThroughThePicksAndWrapsRound() {
         let a = recipe("A"), b = recipe("B"), c = recipe("C", prepTime: "2 hr")
         let result = feed([a, b, c])

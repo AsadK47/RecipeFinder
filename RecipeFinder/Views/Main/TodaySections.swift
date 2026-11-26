@@ -145,6 +145,7 @@ struct TodayHeroCard: View {
         case .planned(let time), .plannedTomorrow(let time): time.icon
         case .kitchenMatch: "refrigerator.fill"
         case .quick: "bolt.fill"
+        case .longer: "clock"
         }
     }
 }

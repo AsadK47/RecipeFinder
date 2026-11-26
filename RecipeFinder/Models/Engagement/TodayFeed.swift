@@ -12,6 +12,8 @@ struct TodayFeed: Equatable {
         case kitchenMatch(have: Int, total: Int)
         /// A recipe that's on the table in `minutes` (≤ `TodayFeed.quickLimitMinutes`).
         case quick(minutes: Int)
+        /// A longer recipe that fits the meal — Shuffle's tail after the quick ones; never leads.
+        case longer(minutes: Int)
 
         var caption: String {
             switch self {
@@ -21,6 +23,7 @@ struct TodayFeed: Equatable {
             case .plannedTomorrow(let time): "Planned for tomorrow's \(time.rawValue.lowercased())"
             case .kitchenMatch(let have, let total): "You have \(have)/\(total) ingredients"
             case .quick(let minutes): "Ready in \(DurationFormatter.label(minutes: minutes))"
+            case .longer(let minutes): "Takes \(DurationFormatter.label(minutes: minutes))"
             }
         }
     }
@@ -60,19 +63,25 @@ struct TodayFeed: Equatable {
         switch hero.reason {
         case .planned(let meal): NextMeal.title(meal, isTomorrow: false)
         case .plannedTomorrow(let meal): NextMeal.title(meal, isTomorrow: true)
-        case .kitchenMatch, .quick: nextMeal.title
+        case .kitchenMatch, .quick, .longer: nextMeal.title
         }
     }
 
     func caption(for hero: Hero) -> String {
         switch hero.reason {
         case .planned, .plannedTomorrow: hero.reason.caption
-        case .kitchenMatch, .quick: "\(nextMeal.forLabel) · \(hero.reason.caption)"
+        case .kitchenMatch, .quick, .longer: "\(nextMeal.forLabel) · \(hero.reason.caption)"
         }
     }
 
-    /// The hero first, then its alternatives — what Shuffle cycles through.
-    var tonightOptions: [Hero] { (hero.map { [$0] } ?? []) + alternatives }
+    /// Longer recipes that fit the meal, after the alternatives (Shuffle's tail; never the hero).
+    var more: [Hero] = []
+
+    /// The hero first, then its alternatives, then the longer tail — what Shuffle cycles through.
+    var tonightOptions: [Hero] { (hero.map { [$0] } ?? []) + alternatives + more }
+
+    /// Tonight's leading picks (hero + alternatives, not the longer tail) — what "Plan tomorrow" steers clear of.
+    var leadIDs: Set<UUID> { Set(((hero.map { [$0] } ?? []) + alternatives).map(\.recipe.id)) }
 
     /// The pick to show for `recipeID` (Shuffle's current choice), else the hero — so a refresh that reorders or
     /// drops picks never swaps the card to a different recipe by position.
@@ -114,8 +123,8 @@ struct TodayFeed: Equatable {
 
         return TodayFeed(
             nextMeal: nextMeal,
-            hero: options.first,
-            alternatives: Array(options.dropFirst()),
+            hero: options.lead.first,
+            alternatives: Array(options.lead.dropFirst()),
             quickCount: recipes.filter { quickMinutes(of: $0) != nil }.count,
             isNewUser: isNewUser,
             starters: Array(starters.prefix(shelfLimit)),
@@ -125,7 +134,8 @@ struct TodayFeed: Equatable {
                     items: inventoryItems, recipes: recipes, kitchenItemNames: kitchenItemNames, now: now, calendar: calendar
                 ),
                 dayIsOver: nextMeal.isTomorrow
-            )
+            ),
+            more: options.more
         )
     }
 
@@ -138,7 +148,7 @@ struct TodayFeed: Equatable {
     private static func tonightOptions(
         recipes: [RecipeModel], plans: [MealPlanModel], matches: [KitchenMatch], quickCanLead: Bool,
         nextMeal: NextMeal, dayKey: String, calendar: Calendar
-    ) -> [Hero] {
+    ) -> (lead: [Hero], more: [Hero]) {
         let slot = nextMeal.slot
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         // Cooked without Made it (its recipe's last cook is that day) counts as done too, matching Plan.
@@ -161,12 +171,17 @@ struct TodayFeed: Equatable {
 
         var seen = Set<UUID>()
         let unique = (planned + suggested).filter { seen.insert($0.recipe.id).inserted }
-        if !quickCanLead, case .quick? = unique.first?.reason { return [] }
-        guard !unique.isEmpty else { return [] }
-        // Shuffle keeps going past the quick ones with longer recipes that fit the meal (owner 2026-11-26: it looped
+        if !quickCanLead, case .quick? = unique.first?.reason { return ([], []) }
+        guard !unique.isEmpty else { return ([], []) }
+        // Shuffle keeps going past the quick ones with longer recipes of the same kind (owner 2026-11-26: it looped
         // "6 or so"). They follow, never lead: a library of only slow recipes still gets "Plan tonight", not a stew.
-        let longer = slot.suitable(longerPicks(recipes, slot: slot, dayKey: dayKey)).filter { $0.recipe.id != lastCookedID }
-        return unique + longer.filter { seen.insert($0.recipe.id).inserted }
+        // Same categories the suggestions used (the meal's own, else mains/soups) — no further fallback, so 8am never
+        // runs on into slow curries or a dinner into slow desserts.
+        let used = Set(suggested.map { $0.recipe.category.lowercased() })
+        let kinds = used.isDisjoint(with: slot.categories) ? MealSlot.dinner.categories : slot.categories
+        let more = longerPicks(recipes, kinds: kinds, slot: slot, dayKey: dayKey)
+            .filter { $0.recipe.id != lastCookedID && seen.insert($0.recipe.id).inserted }
+        return (unique, more)
     }
 
     /// Recipes ready in `quickLimitMinutes` or less, your own before built-in samples, in an order that changes each
@@ -183,17 +198,18 @@ struct TodayFeed: Equatable {
             .map { Hero(recipe: $0.0, reason: .quick(minutes: $0.1)) }
     }
 
-    /// Recipes that take longer than `quickLimitMinutes`, your own first, in the same daily-varied order. Their reason
-    /// is `.quick(minutes:)` too — it carries the time the card shows ("Ready in 1 hr").
-    private static func longerPicks(_ recipes: [RecipeModel], slot: MealSlot, dayKey: String) -> [Hero] {
+    /// Recipes of `kinds` that take longer than `quickLimitMinutes`, your own first, in the same daily-varied order.
+    private static func longerPicks(
+        _ recipes: [RecipeModel], kinds: Set<String>, slot: MealSlot, dayKey: String
+    ) -> [Hero] {
         recipes
-            .filter { $0.totalMinutes > quickLimitMinutes }
+            .filter { $0.totalMinutes > quickLimitMinutes && kinds.contains($0.category.lowercased()) }
+            .map { ($0, dailyRank($0.id, slot: slot, dayKey: dayKey)) }
             .sorted { a, b in
-                if a.isSampleRecipe != b.isSampleRecipe { return !a.isSampleRecipe }
-                let ra = dailyRank(a.id, slot: slot, dayKey: dayKey), rb = dailyRank(b.id, slot: slot, dayKey: dayKey)
-                return ra != rb ? ra < rb : a.name < b.name
+                if a.0.isSampleRecipe != b.0.isSampleRecipe { return !a.0.isSampleRecipe }
+                return a.1 != b.1 ? a.1 < b.1 : a.0.name < b.0.name
             }
-            .map { Hero(recipe: $0, reason: .quick(minutes: $0.totalMinutes)) }
+            .map { Hero(recipe: $0.0, reason: .longer(minutes: $0.0.totalMinutes)) }
     }
 
     /// Stable across launches (FNV-1a, not Swift's per-launch seeded `Hasher`), different per day and meal.

@@ -46,7 +46,7 @@ struct TodaySnapshot: Equatable {
             ),
             week: TodayWeek.make(
                 recipes: recipes, plans: weekPlans,
-                tonightIDs: Set(feed.tonightOptions.map(\.recipe.id)), now: now, calendar: calendar
+                tonightIDs: feed.leadIDs, now: now, calendar: calendar
             ),
             progress: TodayProgress.make(recipes: recipes, streak: streak, unlockedBadgeIDs: unlockedBadgeIDs)
         )
