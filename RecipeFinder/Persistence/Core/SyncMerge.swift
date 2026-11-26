@@ -142,17 +142,25 @@ enum RecipeCopyMerge {
             merged.isFavorite = merged.isFavorite || other.isFavorite
             if kept.rating == 0 { merged.rating = max(merged.rating, other.rating) }
             merged.photoNames += other.photoNames.filter { !merged.photoNames.contains($0) }
-            if let hero = losingHero(of: other, keptIn: merged) { merged.photoNames.append(hero) }
+            if let hero = losingHero(of: other, keptIn: merged) { merged.imageName = hero }
         }
         return merged
     }
 
-    /// The cook's own hero photo on a copy that goes, when the kept copy doesn't show it: without this it would
-    /// leave the recipe. It joins the photos rather than replacing the kept hero. Web pictures and built-in art
-    /// aren't photos the cook took, so they stay out (they'd count as a cook photo for badges and Made it).
+    /// The cook's own hero photo on a copy that goes becomes the kept copy's hero when that copy shows none of the
+    /// cook's own (none, a web picture or built-in art) — otherwise the photo would leave the recipe. It takes the
+    /// hero slot, not the gallery: every hero is saved at `RecipeImages/<recipe id>.jpg`, so as a gallery entry the
+    /// next hero chosen would overwrite it (and removing that hero would leave the gallery pointing at it). Web
+    /// pictures and built-in art aren't the cook's photos, so a losing one never replaces anything.
     private static func losingHero(of other: RecipeModel, keptIn merged: RecipeModel) -> String? {
         guard let hero = other.imageName, RecipePhotoSync.syncablePath(hero) != nil,
-              hero != merged.imageName, !merged.photoNames.contains(hero) else { return nil }
+              !showsOwnPhoto(merged.imageName), !merged.photoNames.contains(hero) else { return nil }
         return hero
+    }
+
+    /// Whether a hero reference is the cook's own file — synced (`RecipeImages/<name>.jpg`) or a legacy absolute path.
+    private static func showsOwnPhoto(_ imageName: String?) -> Bool {
+        guard let imageName, !imageName.isEmpty else { return false }
+        return RecipePhotoSync.syncablePath(imageName) != nil || imageName.hasPrefix("/")
     }
 }
