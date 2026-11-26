@@ -63,7 +63,8 @@ struct URLSessionHTMLFetcher: HTMLFetching {
     }
 
     /// Reads the body as it arrives, throwing `pageTooLarge` as soon as it passes `maxBytes` (or when the declared
-    /// `Content-Length` already does). Non-2xx bodies are read too, so callers see the status unchanged.
+    /// `Content-Length` already does, whatever the status). Other non-2xx bodies are read too, so callers see the
+    /// status unchanged.
     private func readCapped(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
         do {
             return try await readBody(request)
