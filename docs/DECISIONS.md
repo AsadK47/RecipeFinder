@@ -5,6 +5,7 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Groceries store filter** (owner bug 2026-11-26, 257c3c4..beb0d54): Cause: items with no store show under every store, so picking a store with nothing assigned changed nothing. Fix: a picked store shows "At <store>" then "Anywhere"; with nothing set to it, a "Choose items" hint. One tiers shape (`ShoppingListGrouping.tiers`) so the first assignment doesn't rebuild the list. Kept: collapse is shared by category name across tiers (one Dairy toggle); shop mode (`ShopTrip`) stays in aisle order rather than store-first — you walk the shop by aisle. Rejected: hiding untagged items under a store (they're bought anywhere; hiding them would lose items).
 - **CI hardening (2)** (757fa39..4318d7c, builder 2026-11-26): lockfile holds today's resolved versions so nothing
   changes in the build; `project.pbxproj` keeps upToNextMajor ranges so Dependabot can propose bumps (the lockfile +
   `-onlyUsePackageVersionsFromResolvedFile` is the pin). Actions pinned to the commit the floating `v4` tag already

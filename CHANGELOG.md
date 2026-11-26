@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Groceries store filter · 257c3c4
+- For you: Picking a store on To buy now shows that store's items first, then the things you can buy anywhere; if nothing is set to the store yet, Choose items gets you started.
+- Behind the build: the filter worked, but items with no store show everywhere, so the list looked the same; a reviewer caught the list rebuilding on the first assignment, fixed before it shipped.
+
 ## 2026-11-26 · Inbox Import resource limits · 6fe121d
 - For you: Importing from a link now stays quick and steady on very large or slow web pages, with a clear suggestion to paste the recipe text when a page can't be read, and sharing from Safari hands over to the app sooner.
 - Behind the build: page downloads now stop at 5 MB and one minute, checked by new tests that failed on the old code with a page that never ends; a reviewer and a challenger read the change.

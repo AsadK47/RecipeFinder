@@ -151,10 +151,3 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
   (1) a disabled service is needed by a test → UI shards + unit run green; (2) shard misses a test → union is Xcode's
   own list, fail if empty; (3) stale cached device after an image update → key has Xcode build + UDID.
 
-## Decisions — Groceries store filter (owner bug 2026-11-26, agent/groceries-store-first)
-- Cause: items with no store show under every store, so picking a store with nothing assigned changed nothing.
-- Fix: a picked store shows "At <store>" then "Anywhere"; with nothing set to it, a "Choose items" hint. One tiers
-  shape (`ShoppingListGrouping.tiers`) so the first assignment doesn't rebuild the list.
-- Kept: collapse is shared by category name across tiers (one Dairy toggle); shop mode (`ShopTrip`) stays in aisle
-  order rather than store-first — you walk the shop by aisle. Rejected: hiding untagged items under a store (they're
-  bought anywhere; hiding them would lose items).
