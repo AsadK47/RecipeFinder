@@ -145,6 +145,29 @@ import Foundation
         #expect(result.tonightOptions.map(\.reason) == [.quick(minutes: 15), .planned(.dinner)])
     }
 
+    @Test func tonightsPlanIsSecondEvenWithManyBreakfastIdeas() {
+        let ideas = (1...4).map { recipe("Breakfast \($0)", category: "Breakfast") }, curry = recipe("Curry")
+        let result = feed(ideas + [curry], today: [plan(curry, .dinner)], at: at(8))
+        #expect(result.tonightOptions.dropFirst().first?.reason == .planned(.dinner))
+    }
+
+    @Test func aDinnerThatNeedsMorningPrepStillLeadsAtBreakfast() {
+        let pancakes = recipe("Pancakes", category: "Breakfast")
+        let stew = RecipeModel(
+            name: "Stew", category: "Main", difficulty: "Basic", prepTime: "5 min", cookingTime: "10 min",
+            baseServings: 2, ingredients: [], prePrepInstructions: [],
+            instructions: ["Defrost the chicken in the fridge", "Simmer for an hour"], notes: ""
+        )
+        let result = feed([pancakes, stew], today: [plan(stew, .dinner)], at: at(8))
+        #expect(result.hero?.reason == .planned(.dinner))
+    }
+
+    @Test func aMainIsNotPassedOffAsABreakfastIdeaOverTonightsPlan() {
+        let wrap = recipe("Wrap"), curry = recipe("Curry")
+        let result = feed([wrap, curry], today: [plan(curry, .dinner)], at: at(8))
+        #expect(result.hero?.reason == .planned(.dinner))
+    }
+
     @Test func aPlannedBreakfastLeadsInTheMorning() {
         let porridge = recipe("Porridge", category: "Breakfast"), curry = recipe("Curry")
         let result = feed([porridge, curry], today: [plan(curry, .dinner), plan(porridge, .breakfast)], at: at(8))

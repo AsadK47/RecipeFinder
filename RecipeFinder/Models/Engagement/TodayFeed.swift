@@ -58,7 +58,7 @@ struct TodayFeed: Equatable {
 
     /// What the card says about `hero`: a plan names its meal already; a suggestion says which meal it's for
     /// ("For breakfast · Ready in 10 minutes"), so a morning pick never reads as tonight's dinner.
-    /// The meal `hero` is for: a plan's own meal (a dinner plan can lead at 8am), else the next meal.
+    /// The meal `hero` is for: a plan's own meal (a dinner plan leads at 8am when it needs morning prep), else the next meal.
     func title(for hero: Hero) -> String {
         switch hero.reason {
         case .planned(let meal): NextMeal.title(meal, isTomorrow: false)
@@ -114,7 +114,9 @@ struct TodayFeed: Equatable {
         let mealDay = nextMeal.isTomorrow ? (calendar.date(byAdding: .day, value: 1, to: now) ?? now) : now
         let options = tonightOptions(
             recipes: recipes, plans: nextMeal.isTomorrow ? tomorrowsPlans : todaysPlans, matches: matches,
-            quickCanLead: !isNewUser, nextMeal: nextMeal, dayKey: dayKey(mealDay, calendar: calendar), calendar: calendar
+            quickCanLead: !isNewUser, nextMeal: nextMeal,
+            isMorning: (5 * 60..<12 * 60).contains(TonightTiming.minuteOfDay(now, calendar: calendar)),
+            dayKey: dayKey(mealDay, calendar: calendar), calendar: calendar
         )
 
         let starters = isNewUser
@@ -139,15 +141,15 @@ struct TodayFeed: Equatable {
         )
     }
 
-    /// The next meal's picks, best first: that day's open plans (the next meal's, then later meals, then earlier ones
-    /// still open — each in meal order; snacks after dinner), then kitchen matches,
-    /// then quick recipes (favourites and your own first). One entry per recipe, uncapped: Shuffle steps through every
+    /// The next meal's picks, best first: that meal's plan; at breakfast/lunch one idea for it before the day's later
+    /// plans (see `ideasLead`), else the later and missed plans first; then kitchen matches and quick recipes (your own
+    /// first). One entry per recipe, uncapped: Shuffle steps through every
     /// suitable pick (a cap of 4 made it loop the same few — owner 2026-11-17).
     /// Suggestions never repeat the last recipe cooked; a plan always shows (the cook chose it). A new user's Today
     /// leads with importing + Starters, so a quick pick can only follow a plan or kitchen match there, not lead.
     private static func tonightOptions(
         recipes: [RecipeModel], plans: [MealPlanModel], matches: [KitchenMatch], quickCanLead: Bool,
-        nextMeal: NextMeal, dayKey: String, calendar: Calendar
+        nextMeal: NextMeal, isMorning: Bool, dayKey: String, calendar: Calendar
     ) -> (lead: [Hero], more: [Hero]) {
         let slot = nextMeal.slot
         let byID = Dictionary(recipes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -172,13 +174,19 @@ struct TodayFeed: Equatable {
         let quick = quickPicks(recipes, slot: slot, dayKey: dayKey)
         let suggested = slot.suitable(kitchen + quick).filter { $0.recipe.id != lastCookedID }
 
-        // Breakfast or lunch today: that meal's own plan, then ideas for it, then the day's later plans (owner
-        // 2026-11-26: 8am offered tonight's dinner with "7 pm" and a prep line). Tonight, tomorrow and a new user's
-        // Today keep plans first. A planned dish never also shows as an idea.
-        let ideasLeadLaterPlans = !nextMeal.isTonight && !nextMeal.isTomorrow && quickCanLead
+        // Breakfast or lunch today: that meal's own plan, then one idea for it, then the day's later plans, then the
+        // other ideas (owner 2026-11-26: 8am offered tonight's dinner with "7 pm" and a prep line). Plans keep leading
+        // tonight, tomorrow, for a new user, when no idea is actually for this meal (a main labelled "breakfast"), and
+        // in the morning when tonight's dinner needs a head start ("Defrost this morning for tonight" shows on its card).
         let plannedIDs = Set((current + later + missed).map(\.recipe.id))
-        let ordered = ideasLeadLaterPlans
-            ? current + suggested.filter { !plannedIDs.contains($0.recipe.id) } + later + missed
+        let ideas = suggested.filter { !plannedIDs.contains($0.recipe.id) }
+        let dinnerNeedsMorningPrep = isMorning && later.contains { hero in
+            hero.reason == .planned(.dinner) && PrepAhead.cue(for: hero.recipe) != nil
+        }
+        let ideasLead = !nextMeal.isTonight && !nextMeal.isTomorrow && quickCanLead && !dinnerNeedsMorningPrep
+            && ideas.contains { slot.categories.contains($0.recipe.category.lowercased()) }
+        let ordered = ideasLead
+            ? current + Array(ideas.prefix(1)) + later + missed + Array(ideas.dropFirst())
             : current + later + missed + suggested
         var seen = Set<UUID>()
         let unique = ordered.filter { seen.insert($0.recipe.id).inserted }
