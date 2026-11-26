@@ -143,12 +143,18 @@ final class FakeNotificationCenter: @unchecked Sendable {
         #expect(fake.asks == 0)
     }
 
-    @Test func expiryNotifiesAtSixTheEveningBefore() {
-        let expiry = Date().addingTimeInterval(3 * 24 * 60 * 60)
+    /// 19:00 today, so "the evening before" is decided by the test, not by when CI runs it.
+    static func sevenPMToday() throws -> Date {
+        try #require(Calendar.current.date(bySettingHour: 19, minute: 0, second: 0, of: Date()))
+    }
+
+    @Test func expiryNotifiesAtSixTheEveningBefore() throws {
+        let now = try Self.sevenPMToday()
+        let expiry = now.addingTimeInterval(3 * 24 * 60 * 60)
         let item = KitchenInventoryModel(name: "Coriander", category: .produce, quantity: 1, unit: "bunch",
                                          expiryDate: expiry)
 
-        let identifier = manager.scheduleExpiryNotification(for: item)
+        let identifier = manager.scheduleExpiryNotification(for: item, now: now)
 
         #expect(fake.added.count == 1)
 
@@ -168,11 +174,12 @@ final class FakeNotificationCenter: @unchecked Sendable {
     }
 
     @Test(arguments: [nil, -60.0 * 60, 12.0 * 60 * 60])
-    func expiryWithNoDateOrNoEveningLeftSchedulesNothing(secondsFromNow: Double?) {
-        let expiry = secondsFromNow.map { Date().addingTimeInterval($0) }
+    func expiryWithNoDateOrNoEveningLeftSchedulesNothing(secondsFromNow: Double?) throws {
+        let now = try Self.sevenPMToday()
+        let expiry = secondsFromNow.map { now.addingTimeInterval($0) }
         let item = KitchenInventoryModel(name: "Milk", category: .produce, quantity: 1, unit: "l", expiryDate: expiry)
 
-        #expect(manager.scheduleExpiryNotification(for: item) == nil)
+        #expect(manager.scheduleExpiryNotification(for: item, now: now) == nil)
         #expect(fake.added.isEmpty)
         #expect(fake.asks == 0)
     }
