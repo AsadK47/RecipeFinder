@@ -137,6 +137,14 @@ import Foundation
         #expect(result.title(for: TodayFeed.Hero(recipe: curry, reason: .quick(minutes: 15))) == "Breakfast")
     }
 
+    /// Owner 2026-11-26: at breakfast time Today offered tonight's planned dinner with "7 pm" and a prep line.
+    @Test func atBreakfastTimeABreakfastIdeaLeadsAndTonightsPlanFollows() {
+        let pancakes = recipe("Pancakes", category: "Breakfast"), curry = recipe("Curry")
+        let result = feed([pancakes, curry], today: [plan(curry, .dinner)], at: at(8))
+        #expect(result.hero == TodayFeed.Hero(recipe: pancakes, reason: .quick(minutes: 15)))
+        #expect(result.tonightOptions.map(\.reason) == [.quick(minutes: 15), .planned(.dinner)])
+    }
+
     @Test func aPlannedBreakfastLeadsInTheMorning() {
         let porridge = recipe("Porridge", category: "Breakfast"), curry = recipe("Curry")
         let result = feed([porridge, curry], today: [plan(curry, .dinner), plan(porridge, .breakfast)], at: at(8))
