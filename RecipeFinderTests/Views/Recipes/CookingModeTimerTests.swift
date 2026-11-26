@@ -36,7 +36,40 @@ struct CookingModeTimerTests {
     @Test("separate mentions aren't summed — the first duration wins (regression: 6h + 48h became a 3240-min timer)")
     func separateMentionsNotSummed() {
         #expect(CookingPlan.timerMinutes(in: "Marinate for at least 6 hours, up to 48 hours") == 360)
-        #expect(CookingPlan.timerMinutes(in: "Broil for 4-5 minutes, then serve within 6 minutes") == 5)
+        #expect(CookingPlan.timerMinutes(in: "Broil for 4-5 minutes, then serve within 6 minutes") == 4)
+    }
+
+    // Owner 2026-11-25 (CHALLENGES 404): word amounts and fractions get a timer; a range takes its lower bound,
+    // so the cook checks early rather than finding it overdone.
+    @Test("word amounts, fractions and ranges read as a duration (range → lower bound)", arguments: [
+        ("Simmer for an hour", 60),
+        ("Leave to stand for about an hour", 60),
+        ("Rest the dough for half an hour", 30),
+        ("Cook for a minute, stirring", 1),
+        ("Bake for 1½ hours", 90),
+        ("Bake for 1 ½ hours", 90),
+        ("Prove for ½ hour", 30),
+        ("Braise for 2 to 3 hours", 120),
+        ("Simmer 10-15 minutes", 10),
+        ("Simmer 10–15 minutes", 10),
+        ("Simmer 10 - 15 mins", 10),
+        ("Roast for 1-1½ hours", 60),
+        ("Bake 20 or 25 minutes", 20),
+        ("Simmer 1½ hours 15 minutes", 105),
+    ])
+    func wordsFractionsAndRanges(text: String, minutes: Int) {
+        #expect(CookingPlan.timerMinutes(in: text) == minutes)
+    }
+
+    @Test("words and numbers that aren't an amount of time stay nil", arguments: [
+        "Leave for a few minutes",
+        "Bring 2 to the boil",
+        "Cut into 2-3 cm pieces",
+        "Serve with a handful of herbs",
+        "Add half the sugar",
+    ])
+    func notADuration(text: String) {
+        #expect(CookingPlan.timerMinutes(in: text) == nil)
     }
 
     @Test("compound durations joined by 'and' still combine")
