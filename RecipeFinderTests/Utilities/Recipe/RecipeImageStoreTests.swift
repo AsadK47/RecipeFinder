@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 import UIKit
+import Kingfisher
 @testable import RecipeFinder
 
 @Suite("RecipeImageStore")
@@ -177,5 +178,26 @@ struct RecipeImageStoreTests {
         try store.deleteAllPhotos()
 
         #expect(store.persist(makeImage(), recipeId: UUID()) != nil)
+    }
+
+    @Test("Reset's picture-cache clear empties Kingfisher's on-disk and in-memory picture copies (Privacy 4.3)")
+    @MainActor
+    func clearPictureCacheEmptiesDiskAndMemory() async throws {
+        let directory = makeTempDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let cache = try ImageCache(name: "reset-test", cacheDirectoryURL: directory)
+        let image = makeImage()
+        let data = try #require(image.pngData())
+        await withCheckedContinuation { (done: CheckedContinuation<Void, Never>) in
+            cache.storeToDisk(data, forKey: "https://example.com/web.jpg") { _ in done.resume() }
+        }
+        cache.store(image, forKey: "https://example.com/shown.jpg", toDisk: false)
+        #expect(cache.isCached(forKey: "https://example.com/web.jpg"))
+        #expect(cache.isCached(forKey: "https://example.com/shown.jpg"))
+
+        await RecipeImageStore.clearPictureCache(cache)
+
+        #expect(!cache.isCached(forKey: "https://example.com/web.jpg"))
+        #expect(!cache.isCached(forKey: "https://example.com/shown.jpg"))
     }
 }
