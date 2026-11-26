@@ -65,6 +65,15 @@ struct URLSessionHTMLFetcher: HTMLFetching {
     /// Reads the body as it arrives, throwing `pageTooLarge` as soon as it passes `maxBytes` (or when the declared
     /// `Content-Length` already does). Non-2xx bodies are read too, so callers see the status unchanged.
     private func readCapped(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
+        do {
+            return try await readBody(request)
+        } catch let error as URLError where error.code == .timedOut {
+            // The idle timeout between packets: same cook-facing message as the whole-fetch limit.
+            throw RecipeImportError.timedOut
+        }
+    }
+
+    private func readBody(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
         let (bytes, response) = try await session.bytes(for: request)
         guard let http = response as? HTTPURLResponse else {
             throw RecipeImportError.invalidResponse

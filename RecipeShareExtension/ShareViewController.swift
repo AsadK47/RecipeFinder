@@ -127,7 +127,9 @@ final class ShareViewController: UIViewController {
     private func importInExtension(from url: URL, rawURLFallback: String) {
         Task { @MainActor in
             do {
-                let outcome = try await RecipeImportPipeline().fetchAndParse(from: url)
+                // A short budget: on any failure the app imports the link later, so a long wait buys nothing.
+                let fetcher = URLSessionHTMLFetcher(totalTimeout: .seconds(15))
+                let outcome = try await RecipeImportPipeline(fetcher: fetcher).fetchAndParse(from: url)
                 // The app still checks for duplicates, so say it's on its way rather than "saved".
                 if SharedImportInbox.isCompleteRecipe(outcome.data),
                    SharedImportInbox.storeExtractedRecipe(outcome.data) {

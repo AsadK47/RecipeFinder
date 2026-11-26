@@ -133,6 +133,28 @@ struct HTMLFetcherTests {
         }
     }
 
+    @Test("A quick page returns at once, without waiting for the whole-fetch limit", .timeLimit(.minutes(1)))
+    func quickPageDoesNotWaitForTimeout() async throws {
+        StubURLProtocol.current = .init(statusCode: 200, body: Data("page".utf8))
+        let fetcher = makeFetcher(totalTimeout: .seconds(600))
+        let url = try #require(pageURL)
+
+        let (data, _) = try await fetcher.fetch(URLRequest(url: url))
+
+        #expect(data == Data("page".utf8))
+    }
+
+    @Test("A stalled connection reads as the same timeout the cook can act on")
+    func idleTimeoutBecomesTimedOut() async throws {
+        StubURLProtocol.current = .init(error: URLError(.timedOut))
+        let fetcher = makeFetcher()
+        let url = try #require(pageURL)
+
+        await #expect(throws: RecipeImportError.timedOut) {
+            _ = try await fetcher.fetch(URLRequest(url: url))
+        }
+    }
+
     @Test("Both limits tell the cook to paste the recipe text instead", arguments: [
         RecipeImportError.pageTooLarge, .timedOut
     ])
