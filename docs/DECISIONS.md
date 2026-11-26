@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Copy merge keeps the losing hero** (6543b14..9f45133, builder 2026-11-26): the losing copy's own hero takes the kept copy's
+  hero slot when that slot holds no own photo (none / web / bundled art), rather than joining `photoNames` as the Inbox line
+  said — every hero is saved at `RecipeImages/<recipe id>.jpg`, so as a gallery entry the next hero would overwrite the file
+  and removing the hero would leave the gallery pointing at it (reviewer + challenger agreed). The cook's own photo replacing
+  a web picture is the cook's choice winning. Web/bundled/`web-` pictures never move (they'd count as cook photos for badges).
 - **Step timer phrases** (ff80a1c..33ab63f, builder 2026-11-26): one regex kept (amount = number / ½-style / " 1/2" / a, an,
   half an, a half; optional range; unit) rather than a tokenizer — the existing compound-duration loop works unchanged on its
   matches. Range = lower bound (owner 2026-11-25), not the reviewer's upper bound. Range separators: unspaced dash or spaced

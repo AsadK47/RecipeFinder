@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox copy merge keeps the losing hero · 9f45133
+- For you: When iCloud brings two of your devices together, a photo you set as a built-in recipe's main picture on one of them stays as that recipe's main picture.
+- Behind the build: new tests failed on the old merge first; a reviewer and a challenger both caught that the first draft put the photo where the next main picture would overwrite it, fixed before it shipped.
+
 ## 2026-11-26 · Inbox step timer phrases · 33ab63f
 - For you: Cooking mode offers a timer for steps like "simmer for an hour", "rest for half an hour" or "bake 1½ hours", and a range such as "10-15 minutes" starts at the shorter time so you can check early.
 - Behind the build: new tests failed on the old timer reader first; a reviewer caught "in a second bowl" hiding the real timer and a challenger caught "gas mark 4 - 25 minutes", both fixed before it shipped.

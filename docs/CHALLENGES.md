@@ -741,6 +741,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 ## 2026-11-14 (item pass: Data safety 2/4 slice 4b-2a — fixed: pruning inferred deletes from a library diff, so a failed fetch then one save, or a stale load overwriting a newer one, would delete every synced photo in iCloud; now removed only where an edit/delete happens on this device)
 - ⚔️ [Break] Copy merge keeps one hero — `RecipeCopyMerge.merging` (SyncMerge.swift:110) unions `photoNames` but keeps only the kept copy's `imageName`, so a custom hero on the losing copy leaves the recipe (pre-existing) — alternative: move the losing hero into `photoNames` — cost if we're wrong: a photo only one device had disappears from that recipe.
   → Owner (2026-11-25): Accept → BACKLOG Inbox 🐞 copy merge keeps the losing hero photo
+  → Landed 6543b14..9f45133 (2026-11-26) as hero slot, not `photoNames` (fixed hero path would collide). Noted, not fixed:
+- ⚔️ [Break] A hero the cook removed on the kept copy while a losing copy still holds it comes back as the hero after the merge (same as `photoNames` union today) — alternative: per-photo delete markers — cost if we're wrong: a removed photo reappears once.
+- ⚔️ [Break] Both copies set an own hero before meeting: both use `RecipeImages/<id>.jpg`, `RecipePhotoSync` keeps the newer file, the older photo is gone before the merge runs (pre-existing) — alternative: unique hero file names — cost if we're wrong: one of two hero photos is lost.
+- ⚔️ [Break] `oneCopyEach` shows the first copy, not the one the merge keeps, so text edits made while two copies coexist can land on the losing copy and be dropped (marks and photos survive; pre-existing).
 - ⚔️ [Break] Orphan photo rows are never collected — a delete whose pass never ran (app killed, sync off at the time) leaves its row in iCloud forever (bytes only; never shown, download needs a referencing recipe) — alternative: a sweep of rows no recipe references, run only after a full import is known complete — cost if we're wrong: iCloud quota slowly used by dead photos.
   → Owner (2026-11-25, B15): Later — revisit with Data safety 3/4 (backups); nothing lost
 
