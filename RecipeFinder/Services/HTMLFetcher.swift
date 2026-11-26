@@ -49,9 +49,32 @@ struct URLSessionHTMLFetcher: HTMLFetching {
     }
 
     func fetch(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
-        let (data, response) = try await session.data(for: request)
+        let limit = totalTimeout
+        return try await withThrowingTaskGroup(of: (data: Data, response: HTTPURLResponse).self) { group in
+            group.addTask { try await readCapped(request) }
+            group.addTask {
+                try await Task.sleep(for: limit)
+                throw RecipeImportError.timedOut
+            }
+            defer { group.cancelAll() }
+            guard let first = try await group.next() else { throw RecipeImportError.invalidResponse }
+            return first
+        }
+    }
+
+    /// Reads the body as it arrives, throwing `pageTooLarge` as soon as it passes `maxBytes` (or when the declared
+    /// `Content-Length` already does). Non-2xx bodies are read too, so callers see the status unchanged.
+    private func readCapped(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
+        let (bytes, response) = try await session.bytes(for: request)
         guard let http = response as? HTTPURLResponse else {
             throw RecipeImportError.invalidResponse
+        }
+        if http.expectedContentLength > Int64(maxBytes) { throw RecipeImportError.pageTooLarge }
+        var data = Data()
+        data.reserveCapacity(Int(max(0, min(http.expectedContentLength, Int64(maxBytes)))))
+        for try await byte in bytes {
+            data.append(byte)
+            if data.count > maxBytes { throw RecipeImportError.pageTooLarge }
         }
         return (data, http)
     }
