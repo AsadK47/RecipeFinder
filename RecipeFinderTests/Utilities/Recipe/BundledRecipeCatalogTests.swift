@@ -343,6 +343,20 @@ struct BundledRecipeCatalogTests {
         #expect(claiming.isEmpty, "Titles claim an untagged diet: \(claiming.map(\.name))")
     }
 
+    @Test("no bundled title names a person or brand with a possessive (Mary Berry's, Pret's)")
+    func titlesNameNoPersonOrBrand() throws {
+        // A person's or shop's name in a title implies their endorsement (owner 2026-11-26). Family words are fine.
+        // Brand names without a possessive (appliances, products) are audited by hand — see BACKLOG Inbox.
+        let possessive = try Regex(#"\b([A-Z][a-z]+)['’]s\b"#)
+        let allowed: Set<String> = ["Shepherd", "Mum", "Mom", "Grandma", "Nan", "Granny", "Nana"]
+        let named = BundledRecipeCatalog.load().filter { recipe in
+            recipe.name.matches(of: possessive).contains { match in
+                !allowed.contains(String(recipe.name[match.range].dropLast(2)))
+            }
+        }
+        #expect(named.isEmpty, "Titles name a person or brand: \(named.map(\.name))")
+    }
+
     @Test("Junk pasted into titles is cleaned", arguments: [
         ("Chapati PREP TIME COOK TIME ADDITIONAL TIME TOTAL TIME", "Chapati"),
         ("Seafood paella recipe Serves 2.0 0.7111111111 0.5555555556", "Seafood paella recipe"),
@@ -508,8 +522,8 @@ struct BundledRecipeCatalogTests {
     func historyChangeBumpsRefreshVersion() throws {
         let url = try #require(Bundle.main.url(forResource: "recipes_seed_history", withExtension: "json"))
         let digest = SHA256.hash(data: try Data(contentsOf: url)).map { String(format: "%02x", $0) }.joined()
-        #expect(BundledRecipeCatalog.sampleRefreshVersion == 9)
-        #expect(digest == "7f5bfd159813f15d1fea3aaae094d550d7b3a334bf6304599e9074ec63f97893",
+        #expect(BundledRecipeCatalog.sampleRefreshVersion == 10)
+        #expect(digest == "54d470fb55555544e6a22152326dde421f6b1cebc78858615f610547864b7a5f",
                 "recipes_seed_history.json changed: bump sampleRefreshVersion and update both pins")
     }
 
@@ -525,6 +539,23 @@ struct BundledRecipeCatalogTests {
         #expect(refreshed.id == old.id)
         #expect(refreshed.name != oldName)
         #expect(!refreshed.name.localizedCaseInsensitiveContains("free"))
+    }
+
+    @Test("an untouched copy titled with a person's or brand's name refreshes to today's title and method",
+          arguments: ["Mary Berry's Fish Pie", "Pret's Dark Chocolate and Almond Butter Vegan Cookies"])
+    func namedTitleCopyRefreshes(oldName: String) throws {
+        let history = BundledRecipeCatalog.loadHistory()
+        let current = BundledRecipeCatalog.load()
+        var old = try #require(history.first { $0.name == oldName }, "history should hold \(oldName)")
+        old.isSampleRecipe = true
+        let result = BundledRecipeCatalog.staleSampleRefreshes(library: [old], current: current, history: history)
+        let refreshed = try #require(result.first)
+        let today = try #require(current.first { $0.id == old.id })
+        #expect(refreshed.id == old.id)
+        #expect(refreshed.name == today.name)
+        #expect(!refreshed.name.contains("'s"))
+        #expect(refreshed.instructions == today.instructions)
+        #expect(refreshed.instructions != old.instructions)
     }
 
     @Test("an old copy seeded through the store still matches its shipped version after the round trip")
