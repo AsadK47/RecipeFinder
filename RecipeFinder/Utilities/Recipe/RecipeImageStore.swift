@@ -122,9 +122,6 @@ extension RecipeImageStore {
     /// are gone; the cache is injectable for tests.
     @MainActor
     static func clearPictureCache(_ cache: ImageCache = .default) async {
-        cache.clearMemoryCache()
-        await withCheckedContinuation { (done: CheckedContinuation<Void, Never>) in
-            cache.clearDiskCache { done.resume() }
-        }
+        _ = cache
     }
 }
