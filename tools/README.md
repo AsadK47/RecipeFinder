@@ -1,7 +1,8 @@
 # tools/
 
 Helper scripts that sit outside the app. Run from the repo root. None ship in the app; CI skips this folder
-(`paths-ignore`), except `RecipeArt`, which `tools-build.yml` compiles.
+(`paths-ignore`), except `RecipeArt`, which `tools-build.yml` compiles; `script-tests.yml` runs every `test_*.py` and
+`website-behind-the-build.py --check` (Python 3.12+).
 
 | Tool | What it does | Needs |
 |---|---|---|

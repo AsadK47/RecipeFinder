@@ -221,6 +221,7 @@ All in `.github/` (`ls .github/workflows` for the current set; each YAML's heade
 | `testflight-capabilities-check.yml` | manual | Reads the app's capabilities in App Store Connect (`asc_capabilities.py`) |
 | `cleanup-agent-branches.yml` | daily, manual | Deletes merged `agent/*` branches |
 | `tools-build.yml` | push to `tools/RecipeArt/**`, manual | Builds the RecipeArt tool |
+| `script-tests.yml` "Script tests" | push to `main` / `agent/**` or PR touching any `*.py`, `CHANGELOG.md`, manual | ubuntu, ~10 s: compiles every tracked `.py`, runs every tracked `test_*.py`, `website-behind-the-build.py --check` (Python 3.12+) |
 
 - `.github/actions/prepare` — composite action shared by unit, UI and coverage jobs: quiets the runner, restores
   file dates and the DerivedData cache, boots a (cached) simulator and builds for testing. Only `main` writes caches.
