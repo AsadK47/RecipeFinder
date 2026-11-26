@@ -980,3 +980,12 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Time] An item added after 18:00 the day before expiry gets no reminder at all (none fired before either — the trigger was in the past) — accepted: Today's Use-soon nudge shows it; revisit when the expiry screen ships.
 - ⚔️ [Sync] Expiry reminders are scheduled only on add/edit on this device: items that arrive by iCloud sync, or survive a reinstall, never get one (pre-existing) — belongs with the Groceries + Kitchen expiry-screen item.
 - ⚔️ [Time] The 18:00 trigger floats with the time zone while the "has it passed?" check uses the zone at scheduling — rare travel edge, pre-existing, accepted.
+
+## 2026-11-26 (item pass: Mary Berry / Pret titles — fixed: cookie method still tracked the source step by step (reviewer) → restructured; make-ahead note had no fan figure and lost the foil tip (reviewer); refresh test only checked for "'s" (challenger) → asserts today's name and method; curly apostrophe matched)
+- ⚔️ [Data] Meal plans store `recipeName`, so planned meals, weekly series and meal reminders keep "Mary Berry's Fish Pie" after the refresh (navigation still resolves by id) — pre-existing → Inbox 🟡.
+- ⚔️ [Data] No test catches a `recipes_seed.json` change that skips the history regen + version bump (82b2213 did this; v10 now fixes its Apple Jalebi copies too) → Inbox 🟡.
+- ⚔️ [Legal] The fish pie keeps its bbc.co.uk source link (shown as "View Original"; URL slug says mary_berrys) — kept on purpose: credit to the source; ingredients are still the source's list. Both reviewers recommend keeping.
+- ⚔️ [Test] The title check only sees capitalised possessives: brand titles without one (Ferrero Rocher, Lotus Biscoff, Ninja Foodi, ~30 "Instant Pot …") and "McDonald's" pass → Inbox 🟡 audit; possessive dish names (Devil's Food, Hunter's Chicken) would need the allowlist.
+- ⚔️ [Sync] A device on an older build can save its stale copy back over the renamed one until it updates — speculative, heals on update.
+- ⚔️ [Data] Copies the user edited keep the old title and method — by design (the refresh never overwrites edits).
+
