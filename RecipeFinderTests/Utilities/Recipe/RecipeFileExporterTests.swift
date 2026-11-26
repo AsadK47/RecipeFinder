@@ -77,11 +77,31 @@ import Foundation
         #expect(decoded.dietaryInfo.isGlutenFree == true)
     }
 
-    @Test func roundTripPreservesHTTPImageURL() throws {
+    // A shared file's remote picture would load when the recipe shows, telling its host when the file was opened.
+    @Test func decodeDropsTheRemoteImageURL() throws {
         let recipe = makeRecipe()
         let data = try RecipeFileExporter.encode(recipe)
         let decoded = try RecipeFileExporter.decode(data)
-        #expect(decoded.imageName == "https://example.com/image.jpg")
+        #expect(decoded.imageName == nil)
+    }
+
+    @Test(arguments: ["https://tracker.example/open?id=42", "http://example.com/a.jpg"])
+    func decodeDropsAnImageURLWrittenIntoTheFile(_ imageURL: String) throws {
+        let json = """
+        {
+          "version": 1, "name": "Sent Recipe", "category": "Main", "difficulty": "Easy",
+          "prepTime": "", "cookingTime": "", "baseServings": 2, "ingredients": [],
+          "prePrepInstructions": [], "instructions": ["Cook it"], "notes": "", "tags": [],
+          "imageURL": "\(imageURL)",
+          "dietaryInfo": {
+            "isVegetarian": false, "isVegan": false, "isGlutenFree": false, "isDairyFree": false,
+            "isNutFree": false, "isLowCarb": false, "isKeto": false
+          }
+        }
+        """
+        let decoded = try RecipeFileExporter.decode(Data(json.utf8))
+        #expect(decoded.name == "Sent Recipe")
+        #expect(decoded.imageName == nil)
     }
 
     // MARK: - Personal data isolation
