@@ -93,6 +93,7 @@ jobs:
             -resultBundlePath Screenshots.xcresult \
             -parallel-testing-enabled NO \
             -enableCodeCoverage NO \
+            -onlyUsePackageVersionsFromResolvedFile \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
           ls -la "$RUNNER_TEMP/shots"
 

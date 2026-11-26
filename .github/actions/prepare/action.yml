@@ -113,5 +113,5 @@ runs:
       run: |
         set -o pipefail
         xcodebuild build-for-testing -scheme RecipeFinder -destination "id=$SIM" -derivedDataPath DerivedData \
-          -enableCodeCoverage "$COVERAGE" -skipPackagePluginValidation -skipMacroValidation \
+          -enableCodeCoverage "$COVERAGE" -skipPackagePluginValidation -skipMacroValidation -onlyUsePackageVersionsFromResolvedFile \
           COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
