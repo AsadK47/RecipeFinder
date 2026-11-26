@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Today leads with the next meal · f02cbbf
+- For you: In the morning and at lunchtime, Today now leads with an idea for that meal, with tonight's planned dinner one Shuffle away; a dinner that needs defrosting or marinating still comes first in the morning so you see the reminder.
+- Behind the build: a new test reproduced the 8am dinner card first; a reviewer caught the morning prep reminder getting hidden and tonight's plan sinking behind every idea, both fixed before it shipped.
+
 ## 2026-11-26 · Today Shuffle keeps going · 40babe2
 - For you: Shuffle on Today now keeps going past the quick recipes with longer ones for the same meal, each marked with how long it takes.
 - Behind the build: a new test failed on the old Shuffle first; a reviewer caught longer picks crowding out Plan tomorrow and drifting into the wrong meal, fixed before it shipped.
