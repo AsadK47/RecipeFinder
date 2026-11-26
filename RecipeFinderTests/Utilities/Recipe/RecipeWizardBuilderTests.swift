@@ -25,6 +25,29 @@ struct RecipeWizardBuilderTests {
         #expect(RecipeWizardBuilder.normalizeDifficulty(input) == expected)
     }
 
+    @Test(
+        "Difficulty reads whole words, negations and ranges — not substrings",
+        arguments: [
+            ("not easy", "Intermediate"),
+            ("Not too hard", "Intermediate"),
+            ("uneasy", "Intermediate"),
+            ("medium-hard", "Intermediate"),
+            ("easy–medium", "Basic"),
+            ("easy to hard", "Intermediate"),
+            ("Not hard, easy", "Basic"),
+            ("easy, not hard", "Basic"),
+            ("Moderate", "Intermediate"),
+            ("Difficult", "Expert"),
+            ("challenging", "Expert"),
+            ("Intermediate", "Intermediate"),
+            ("Quite easy", "Basic"),
+            ("hardboiled egg level", "Intermediate")
+        ]
+    )
+    func normalizesDifficultyByWord(input: String, expected: String) {
+        #expect(RecipeWizardBuilder.normalizeDifficulty(input) == expected)
+    }
+
     @Test("Difficulty levels run easiest first")
     func difficultyLevelsRunEasiestFirst() {
         #expect(RecipeWizardBuilder.difficultyLevels == ["Basic", "Intermediate", "Expert"])
