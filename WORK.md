@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-25, builder agent)
 
 ## In progress
+- 🚧 builder agent 2026-11-26 Inbox 🐞 **Import resource limits** slice 1 (page fetch cap + total timeout) on `agent/import-page-limits` (717a69c); seen-red on `agent/import-page-limits-red` (6fe121d). Slice 2 left: `NSFileCoordinator` coordinated read in `RecipeFileExporter.read(from:)`.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -109,6 +110,15 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **Import resource limits (slice 1):** `URLSessionHTMLFetcher` streams with `session.bytes` (same loop as
+  `URLSessionRemoteImageFetcher`) and stops at 5 MB (`pageTooLarge`); a task group races a 60 s whole-fetch timeout
+  (`timedOut`) because `timeoutInterval` is only an idle timeout. Cap counts decoded (decompressed) bytes; a declared
+  Content-Length over the cap is refused up front. Kept the loop inline rather than a shared helper (two 6-line copies;
+  a shared file would need registering in both targets). **Pre-mortem:** (1) a real recipe page > 5 MB is refused →
+  5 MB is ~2.5× the heaviest publisher HTML; message offers paste-the-text; (2) the timeout fires after success or
+  swallows a network error → `okResponse…`, `networkErrorPropagates` stay green; (3) the cap never trips (Content-Length
+  absent, drip) → `bodyOverCapThrowsPageTooLarge`, `drippingPageTimesOut`, seen red on `-red`.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
