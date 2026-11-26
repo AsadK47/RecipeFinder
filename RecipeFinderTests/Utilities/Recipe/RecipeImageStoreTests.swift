@@ -191,7 +191,7 @@ struct RecipeImageStoreTests {
         await withCheckedContinuation { (done: CheckedContinuation<Void, Never>) in
             cache.storeToDisk(data, forKey: "https://example.com/web.jpg") { _ in done.resume() }
         }
-        cache.store(image, forKey: "https://example.com/shown.jpg", toDisk: false)
+        try await cache.store(image, forKey: "https://example.com/shown.jpg", toDisk: false)
         #expect(cache.isCached(forKey: "https://example.com/web.jpg"))
         #expect(cache.isCached(forKey: "https://example.com/shown.jpg"))
 
