@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Today drops the Plan the week row · 0cb13a9
+- For you: Today stays focused on tonight; swipe through dinners for the week from Plan → Plan my week.
+- Behind the build: the row and the code that only it used are gone; a reviewer checked nothing else still pointed at them.
+
 ## 2026-11-26 · Today leads with the next meal · f02cbbf
 - For you: In the morning and at lunchtime, Today now leads with an idea for that meal, with tonight's planned dinner one Shuffle away; a dinner that needs defrosting or marinating still comes first in the morning so you see the reminder.
 - Behind the build: a new test reproduced the 8am dinner card first; a reviewer caught the morning prep reminder getting hidden and tonight's plan sinking behind every idea, both fixed before it shipped.
