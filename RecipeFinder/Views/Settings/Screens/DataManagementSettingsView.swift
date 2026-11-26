@@ -305,6 +305,8 @@ struct DataManagementSettingsView: View {
             }
         }
 
+        // Kingfisher's own copies of drawn pictures (website pictures among them) live outside the photo folder.
+        Task { await RecipeImageStore.clearPictureCache() }
         URLSessionHTMLFetcher.clearSharedSessionData()
 
         // Settings live under global @AppStorage keys — restore defaults (Privacy §4.3). Observers react: the root

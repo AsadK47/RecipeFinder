@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 private let logger = AppLogger.logger(category: "RecipeImageStore")
 
@@ -112,5 +113,18 @@ struct RecipeImageStore {
         guard !reference.isEmpty, !reference.hasPrefix("http") else { return nil }
         if reference.hasPrefix("/") { return reference }
         return documentsDirectory?.appendingPathComponent(reference).path
+    }
+}
+
+extension RecipeImageStore {
+    /// Reset (Privacy 4.3): Kingfisher keeps its own copies of every picture it has drawn — website pictures among
+    /// them — in memory and in Caches, outside the photo folder `deleteAllPhotos` removes. Returns once the disk copies
+    /// are gone; the cache is injectable for tests.
+    @MainActor
+    static func clearPictureCache(_ cache: ImageCache = .default) async {
+        cache.clearMemoryCache()
+        await withCheckedContinuation { (done: CheckedContinuation<Void, Never>) in
+            cache.clearDiskCache { done.resume() }
+        }
     }
 }
