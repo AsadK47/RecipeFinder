@@ -52,13 +52,19 @@ struct CookingModeTimerTests {
         ("Braise for 2 to 3 hours", 120),
         ("Simmer 10-15 minutes", 10),
         ("Simmer 10–15 minutes", 10),
-        ("Simmer 10 - 15 mins", 10),
         ("Roast for 1-1½ hours", 60),
         ("Bake 20 or 25 minutes", 20),
         ("Simmer 1½ hours 15 minutes", 105),
         ("Rest for a half hour", 30),
         ("In a second bowl, whisk the eggs, then bake for 20 minutes", 20),
         ("Add a second layer of pasta and bake 30 minutes", 30),
+        ("Simmer on low for about 2 1/2 hours", 150),
+        ("Braise for 3 1/2-4 hours", 210),
+        ("Rest for 1/2 hour", 30),
+        ("Roast for 1¾ hours", 105),
+        ("Simmer 20—25 minutes", 20),
+        ("Bake at gas mark 4 - 25 minutes", 25),
+        ("Step 3 – 20 minutes", 20),
     ])
     func wordsFractionsAndRanges(text: String, minutes: Int) {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)

@@ -80,28 +80,37 @@ struct CookingPlan: Equatable {
     }
 
     // Only counts an amount followed by a time unit, so "350°F"/"2 eggs" aren't read as durations. An amount is a
-    // number (with an optional ½-style fraction), a lone fraction, or the words "a"/"an"/"half an"; a range
-    // ("10-15", "2 to 3", "20 or 25") keeps its lower bound in group 1 (owner 2026-11-25). Compiled once.
-    private static let amount = #"(?:\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|[½¼¾⅓⅔])"#
+    // number (with an optional "½" or " 1/2" fraction), a lone fraction, or the words "a"/"an"/"half an"/"a half". A
+    // range keeps its lower bound in group 1 (owner 2026-11-25): an unspaced dash ("10-15", "1-1½") or a spaced
+    // "to"/"or" ("2 to 3", "20 or 25"); a spaced dash is punctuation ("gas mark 4 - 25 minutes"). Compiled once.
+    private static let amount = #"(?:\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|[½¼¾⅓⅔])"#
     private static let timerRegex = try? NSRegularExpression(
-        pattern: #"(\bhalf an?\b|\ban? half\b|\ban?\b|"# + amount + #")(?:\s*(?:-|–|—|\bto\b|\bor\b)\s*"# + amount + #")?"#
+        pattern: #"(\bhalf an?\b|\ban? half\b|\ban?\b|"# + amount + #")(?:(?:[-–—]|\s+(?:to|or)\s+)"# + amount + #")?"#
             + #"\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#,
         options: [.caseInsensitive]
     )
 
     private static let fractions: [Character: Double] = ["½": 0.5, "¼": 0.25, "¾": 0.75, "⅓": 1.0 / 3, "⅔": 2.0 / 3]
 
-    /// The number an amount stands for: "an" → 1, "half an"/"a half" → 0.5, "1½" → 1.5, "½" → 0.5, "12" → 12.
+    /// The number an amount stands for: "an" → 1, "half an"/"a half" → 0.5, "1½" / "1 1/2" → 1.5, "½" → 0.5.
     private static func value(ofAmount text: String) -> Double {
         let words = text.lowercased()
         if words.hasSuffix("half") || words.hasPrefix("half") { return 0.5 }
         if words == "a" || words == "an" { return 1 }
-        var digits = ""
-        var fraction = 0.0
-        for character in words {
-            if let part = fractions[character] { fraction = part } else if !character.isWhitespace { digits.append(character) }
+        var total = 0.0
+        for token in words.split(whereSeparator: \.isWhitespace) {
+            var digits = ""
+            for character in token {
+                if let part = fractions[character] { total += part } else { digits.append(character) }
+            }
+            let parts = digits.split(separator: "/")
+            if parts.count == 2, let top = Double(parts[0]), let bottom = Double(parts[1]), bottom > 0 {
+                total += top / bottom
+            } else {
+                total += Double(digits) ?? 0
+            }
         }
-        return (Double(digits) ?? 0) + fraction
+        return total
     }
 
     /// Minutes for the text's FIRST duration. A compound like "1 hour 30 minutes" is combined, but separate mentions
