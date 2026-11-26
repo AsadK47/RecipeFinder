@@ -10,8 +10,9 @@ cook's data or weaken the app, please tell us privately so it can be fixed befor
 - email **recipefinderuk@gmail.com** with "Security" in the subject.
 
 Please include the app version (Settings → About), what you did, and what happened. We aim to reply within
-7 days and keep you updated until the fix ships. Credit is given in the release notes if you'd like it.
+7 days and keep you updated until the fix ships. If you'd like credit, it goes in the notes of the build
+that ships the fix.
 
 ## Supported versions
 
-Fixes go into the latest App Store and TestFlight build.
+Fixes ship in the next TestFlight build, and in the App Store build once the app is released there.
