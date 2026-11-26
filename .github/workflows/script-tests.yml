@@ -1,0 +1,40 @@
+name: Script tests
+
+# The Python helpers (.github/scripts, tools/) are skipped by Build & Test, so this cheap ubuntu job checks them:
+# every tracked .py compiles, every test_*.py passes, and CHANGELOG.md still parses for the website.
+# Python 3.12 is the floor (tools/website-whats-new.py uses 3.12 f-string quoting); ubuntu-24.04 ships 3.12.
+on:
+  push:
+    branches: [ main, 'agent/**' ]
+    paths:
+      - '**.py'
+      - 'CHANGELOG.md'
+      - '.github/workflows/script-tests.yml'
+  pull_request:
+    paths:
+      - '**.py'
+      - 'CHANGELOG.md'
+      - '.github/workflows/script-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scripts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Compile every script
+        run: |
+          python3 --version
+          git ls-files -z '*.py' | xargs -0 python3 -m py_compile
+      - name: Script unit tests
+        run: |
+          python3 -m unittest discover -v -s .github/scripts -p 'test_*.py'
+          python3 -m unittest discover -v -s tools -p 'test_*.py'
+      - name: CHANGELOG parses for the website
+        run: python3 tools/website-behind-the-build.py --check

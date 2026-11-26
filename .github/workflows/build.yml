@@ -21,6 +21,7 @@ on:
       - '.github/workflows/screenshots.yml'
       - '.github/workflows/cleanup-agent-branches.yml'
       - '.github/workflows/coverage.yml'
+      - '.github/workflows/script-tests.yml'
   pull_request:
     paths-ignore:
       - '**/*.md'
@@ -31,6 +32,7 @@ on:
       - '.github/workflows/screenshots.yml'
       - '.github/workflows/cleanup-agent-branches.yml'
       - '.github/workflows/coverage.yml'
+      - '.github/workflows/script-tests.yml'
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
