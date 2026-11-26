@@ -568,6 +568,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
   → Owner (2026-11-25, B5): Accept → BACKLOG Inbox "Import resource limits"
 - ⚔️ [Attack] A shared file's `imageURL` (any http URL, `RecipeFileExporter.decode`) is fetched when the recipe shows, so the sender can learn when it was opened (Information disclosure) — alternative: drop or ask before loading a shared file's remote image — not done: existed before this change, out of scope — cost if wrong: a read receipt the cook didn't agree to.
   → Owner (2026-11-25): Accept → BACKLOG Inbox 🐞 drop remote imageURL on file import
+  → Builder 2026-11-26: image-only fix built (agent/shared-file-image) but parked — the file's `sourceURL` is auto-refreshed on every open (same receipt) and the missing image makes the refresh sheet nag → BACKLOG Needs owner "Shared recipe file read receipt"
 
 ## 2026-11-17 (item pass: Tester 1 slice 2 — Badges from Today; fixed: mid-transition cover, untestable scroll, badge row kept after all earned)
 - ⚔️ [Strategy] "Your cooking" now has two chevron buttons that both lead to badges (stats → Cooking sheet with every cooking badge; next-badge row → the shelf) — alternative: whole card → shelf on the next badge, streak explanation moved to the shelf — not done: the Cooking sheet is the streak's only explainer and the tester asked for the badge link, not for the sheet to go — cost if wrong: Today keeps one more tap target (ties to the daily challenger's "six tappables" point above).

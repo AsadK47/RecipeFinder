@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+⏸ Inbox 🐞 shared recipe file read receipt → Needs owner (builder 2026-11-26): image-only fix on `agent/shared-file-image` (4601ae9) + red tests `agent/shared-file-image-red` (8ca86a9), both unmerged — rework per the owner's (a)/(b)/(c); the fix alone makes the refresh sheet offer "Hero Image" on every open, so don't land it as is. Next: first open Inbox 🔴/🐞 needing no owner, else Launch lane (a) *Recipes in our own words*.
 ✅ Inbox 🐞 copy merge losing hero landed 6543b14..9f45133 (builder 2026-11-26; leftover branches agent/merge-hero-photo auto-cleanup, agent/merge-hero-photo-red unmerged — delete). Next: Inbox 🐞 shared recipe file import — drop the remote `imageURL` on file import (CHALLENGES 498; read receipt to the sender).
 ✅ Inbox 🐞 step timer phrases landed ff80a1c..33ab63f (builder 2026-11-26; leftover branches agent/timer-phrases red unmerged — delete, agent/timer-phrases-fix auto-cleanup). Next: Inbox 🐞 `mergeSyncedRecipeCopies` losing hero `imageName` → move it into `photoNames` (iCloud sync, two reviewers).
 ✅ Inbox 🐞 difficulty parser landed 3d1c5d1..c07ac7a (builder 2026-11-26; leftover branches agent/difficulty-parser auto-cleanup, agent/difficulty-parser-red unmerged — delete). Next: Inbox 🐞 `CookingPlan.swift` `timerRegex` ("an hour", "1½ hours", ranges → lower bound) — fixture-first.
