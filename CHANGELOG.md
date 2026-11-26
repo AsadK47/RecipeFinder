@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox CI hardening · 4318d7c
+- For you: Every build now uses the exact versions of the app's picture, confetti and test libraries we checked, so updates arrive when we choose them.
+- Behind the build: the build tools are pinned to fixed versions and reviewed weekly, the build stops if a library drifts, and a reviewer and a challenger read the change.
+
 ## 2026-11-26 · Inbox store recovery waits for unlock · cc506b3
 - For you: If your phone opens the app in the background while it's still locked, your recipes now stay safely in place and open as soon as you unlock.
 - Behind the build: a new test that failed on the old code checks a locked device leaves the recipe store untouched; a reviewer and a challenger both caught that iCloud sync could pause, fixed before landing.

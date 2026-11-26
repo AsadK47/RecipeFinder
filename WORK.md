@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 CI hardening (2) landed 757fa39..4318d7c (builder 2026-11-26; leftover branch agent/ci-hardening auto-cleanup). Next: Inbox 🐞 CI hardening (3) — one ubuntu job runs `.github/scripts/test_*.py` + `tools/website-behind-the-build.py --check` on script changes; then Inbox 🐞 Import resource limits.
 ✅ Inbox 🔴 store recovery waits for unlock landed cc506b3..f869bee (builder 2026-11-26; leftover branches agent/store-recovery-unlock auto-cleanup, agent/store-recovery-unlock-red unmerged — delete). Next: Inbox 🐞 CI hardening (2) — commit `Package.resolved`, pin `uses:` to SHAs, `dependabot.yml` + `SECURITY.md` (first open Inbox item after it).
 ✅ Inbox 🔴 Reset clears Kingfisher's picture cache landed 40a86b8..262c952 (builder 2026-11-26; leftover branches agent/reset-picture-cache auto-cleanup, agent/reset-picture-cache-red unmerged — delete). Next: Inbox 🔴 `PersistenceController.swift:154` `attemptStoreRecovery` — check `isProtectedDataAvailable` before moving a store aside (data loss; two reviewers).
 ✅ Inbox 🟡 Apple Jalebi title/tag landed 6c4cf6b..82b2213 (builder 2026-11-25; also Tangzhong + lasagne titles, history pin test; leftover branches agent/jalebi-title auto-cleanup, agent/jalebi-title-red unmerged — delete). Next: Inbox 🔴 `DataManagementSettingsView.swift` `resetToDefault` clears Kingfisher's disk cache (Privacy 4.3; two reviewers).

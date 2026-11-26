@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **CI hardening (2)** (757fa39..4318d7c, builder 2026-11-26): lockfile holds today's resolved versions so nothing
+  changes in the build; `project.pbxproj` keeps upToNextMajor ranges so Dependabot can propose bumps (the lockfile +
+  `-onlyUsePackageVersionsFromResolvedFile` is the pin). Actions pinned to the commit the floating `v4` tag already
+  pointed at (no behaviour change). Lockfile hand-written as v2 (no Xcode here) — CI accepts it; Xcode may rewrite it
+  to v3 on the owner's Mac, which is fine to commit. Rejected: a `git diff --exit-code` guard (would trip on that v3
+  rewrite); dropping the swift Dependabot entry (supported for .xcodeproj since March 2026).
 - **Store recovery waits for unlock** (cc506b3..f869bee, builder 2026-11-26): a failed open while `isProtectedDataAvailable` is false leaves the store in
   place and reopens it on `protectedDataDidBecomeAvailable` (backup-before-upgrade re-checked then too); a store that
   still won't open after unlock is recovered as before. Rejected: never recovering while locked without a retry
