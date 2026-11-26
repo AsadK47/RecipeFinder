@@ -91,13 +91,19 @@ enum RecipeFileExporter {
     ) throws -> RecipeModel {
         let didAccess = access.start(url)
         defer { if didAccess { access.stop(url) } }
+        // Coordinated so a Files / iCloud Drive placeholder is downloaded first; read the URL the coordinator hands over.
+        let data = try coordination.read(url, readCapped)
+        return try decode(data)
+    }
+
+    /// Reads at most `maxFileBytes`, one byte past the cap so a huge file is never loaded whole, whatever size it reports.
+    private static func readCapped(_ url: URL) throws -> Data {
         let handle = try FileHandle(forReadingFrom: url)
         // A failed close of a read-only handle loses nothing; the bytes are already read or the read already threw.
         defer { try? handle.close() }
-        // Read one byte past the cap so a huge file is never loaded whole, whatever size it reports.
         let data = try handle.read(upToCount: maxFileBytes + 1) ?? Data()
         guard data.count <= maxFileBytes else { throw RecipeFileError.tooLarge }
-        return try decode(data)
+        return data
     }
 
     /// Decodes `data` into a fresh `RecipeModel` with a new UUID; personal data reset to defaults.
