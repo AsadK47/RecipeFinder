@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-26 · Inbox Reset clears the picture cache · 40a86b8
+- For you: Reset in Data Management now also clears the copies of pictures the app keeps for quick drawing, website pictures included, as the Privacy Policy describes.
+- Behind the build: a new test stores pictures in a scratch cache and checks Reset's clear empties both memory and disk, and it failed with the clear switched off; a reviewer and a challenger read the change.
+
 ## 2026-11-25 · Inbox Apple Jalebi title/tag · 6c4cf6b
 - For you: Three bundled recipe titles now match their labels: Vegan Apple Jalebi, Oat Milk Tangzhong Bread and Meat Lasagne. If you haven't changed your copy, it updates on its own and keeps your favourite and rating.
 - Behind the build: a new test that failed on the old titles checks no bundled title promises a diet its labels don't carry, and another makes sure recipe fixes always reach your copies; a reviewer and a challenger both found the lasagne.

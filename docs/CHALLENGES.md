@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-26 (item pass: Inbox 🔴 Reset clears Kingfisher's picture cache — fixed: async `store` overload made the test uncompilable)
+- ⚔️ [Tests] No test fails if Reset's `Task { await RecipeImageStore.clearPictureCache() }` (`DataManagementSettingsView.swift:309`) is removed — the helper is tested, the view call isn't; same gap as `clearSharedSessionData()` — accepted until Reset becomes a tested use case (Inbox 🟡 *Test seams* (1)).
+- ⚔️ [Break] The disk clear finishes after the "cleared" confirmation; if the app is killed in that instant the copies stay until Kingfisher's 7-day expiry — accepted: a sub-second window, and Kingfisher's own clear is just as unawaited.
+
 ## 2026-11-25 (item pass: Inbox 🟡 refreshStaleSamples wiring test — fixed: tests use the real bundle loader so a broken default fails)
 - ⚔️ [Tests] The refresh marks its version only after `updateRecipesInBackground` succeeds, but no test makes the save fail, so moving the mark before the save passes. Not fixed: needs a failing-persistence seam for one line; low value. `load()` dropping the call → Inbox 🟡.
 
