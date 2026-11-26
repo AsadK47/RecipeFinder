@@ -17,6 +17,10 @@ anything else between entries):
 - For you: Shuffle on Today now keeps going past the quick recipes with longer ones for the same meal, each marked with how long it takes.
 - Behind the build: a new test failed on the old Shuffle first; a reviewer caught longer picks crowding out Plan tomorrow and drifting into the wrong meal, fixed before it shipped.
 
+## 2026-11-26 · Inbox Import resource limits · 719e3ef
+- For you: Opening a shared recipe file from Files or iCloud Drive now fetches it from iCloud first when it isn't on your phone yet, and tells you clearly if it isn't ready to open.
+- Behind the build: the file is read through the system's file coordinator with a 30-second limit, checked by tests that failed on the old code; a reviewer and a challenger read the change.
+
 ## 2026-11-26 · Groceries store filter · 257c3c4
 - For you: Picking a store on To buy now shows that store's items first, then the things you can buy anywhere; if nothing is set to the store yet, Choose items gets you started.
 - Behind the build: the filter worked, but items with no store show everywhere, so the list looked the same; a reviewer caught the list rebuilding on the first assignment, fixed before it shipped.

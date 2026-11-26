@@ -1,7 +1,6 @@
-# WORK.md — handoff (2026-11-25, builder agent)
+# WORK.md — handoff (2026-11-26, builder agent)
 
 ## In progress
-- Inbox 🐞 **Import resource limits**: ✅ slice 1 landed 6fe121d..78686c7 (builder 2026-11-26; leftover branches agent/import-page-limits auto-cleanup, agent/import-page-limits-red unmerged — delete). Slice 2 left: `NSFileCoordinator` coordinated read in `RecipeFileExporter.read(from:)`.
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -69,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 Import resource limits done — slice 2 landed 719e3ef..9f86aa7 (builder 2026-11-26; leftover branches agent/import-file-coordinator auto-cleanup, agent/import-file-coordinator-red unmerged — delete). Next: Inbox 🐞 `NotificationManager.swift` `scheduleExpiryNotification` 18:00 past trigger (first open Inbox 🐞).
 ✅ Inbox 🐞 Import resource limits slice 1 landed 6fe121d..78686c7 (builder 2026-11-26). Next: slice 2 — `RecipeFileExporter.read(from:)` coordinated read via `NSFileCoordinator` (red test first), then tick the item.
 ✅ Inbox 🐞 CI hardening (3) script tests landed c3f1011..e74e395 (builder 2026-11-26; leftover branch agent/script-tests auto-cleanup). Next: Inbox 🐞 Import resource limits (`HTMLFetcher.swift:33` streamed ~5 MB cap + total timeout, `NSFileCoordinator` on file open).
 ✅ Inbox 🐞 CI hardening (2) landed 757fa39..4318d7c (builder 2026-11-26; leftover branch agent/ci-hardening auto-cleanup). Next: Inbox 🐞 CI hardening (3) — one ubuntu job runs `.github/scripts/test_*.py` + `tools/website-behind-the-build.py --check` on script changes; then Inbox 🐞 Import resource limits.
@@ -111,15 +111,6 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-
-- **Import resource limits (slice 1):** `URLSessionHTMLFetcher` streams with `session.bytes` (same loop as
-  `URLSessionRemoteImageFetcher`) and stops at 5 MB (`pageTooLarge`); a task group races a 60 s whole-fetch timeout
-  (`timedOut`) because `timeoutInterval` is only an idle timeout; idle `URLError.timedOut` maps to the same error; Share extension passes 15 s (it falls back to the app import, so waiting longer buys nothing). Cap counts decoded (decompressed) bytes; a declared
-  Content-Length over the cap is refused up front. Kept the loop inline rather than a shared helper (two 6-line copies;
-  a shared file would need registering in both targets). **Pre-mortem:** (1) a real recipe page > 5 MB is refused →
-  5 MB is ~2.5× the heaviest publisher HTML; message offers paste-the-text; (2) the timeout fires after success or
-  swallows a network error → `okResponse…`, `networkErrorPropagates` stay green; (3) the cap never trips (Content-Length
-  absent, drip) → `bodyOverCapThrowsPageTooLarge`, `drippingPageTimesOut`, seen red on `-red`.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

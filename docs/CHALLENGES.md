@@ -56,6 +56,11 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-26 (item pass: Inbox 🐞 Import resource limits slice 2 — fixed: offline placeholder could block a thread forever → 30 s cancel; copy assumed iCloud → reworded)
+- ⚔️ [Break] The coordinator downloads the whole file before the 5 MB cap applies (RecipeFileExporter.swift `readCapped`), so a huge shared file costs that much data and storage — a `fileSizeKey` pre-check before coordinating would refuse it first; not fixed: a placeholder's size needs `ubiquitousItem` keys and the file is one the cook chose to open — cost if wrong: one large download.
+- ⚔️ [Break] `fileOpenTask?.cancel()` (ContentView.swift:85) doesn't reach the `Task.detached` read, so a second tap waits behind the first for up to 30 s — not fixed: the 30 s give-up bounds it; an async `coordinate(with:queue:)` + cancellation handler would remove it.
+- ⚔️ [Tests] The held-write test would hang (not fail) if `cancel()` stopped unblocking the read — accepted: CI's job timeout surfaces it.
+
 ## 2026-11-26 (item pass: Inbox 🐞 Import resource limits slice 1 — fixed: no test for a 60 s wait after success, idle timeout showed system text, Share extension waited 60 s)
 - ⚔️ [Break] A page over 5 MB fails outright, though its JSON-LD usually sits in the first KB of <head> — accepted: the largest real pages measured are 1.42 MB decompressed (Bon Appétit), about 3.5× headroom; truncate at the cap and parse the start if a tester hits it.
 - ⚔️ [Threat] Limits stop at the fetch: a 5 MB page then goes through `decodeHTML`, a String copy and `cleanHTML` → `decodeHTMLEntities` (NSAttributedString HTML import over the whole cleaned page, RecipeParser.swift:181,253), with no time limit, in the Share extension too — Later: measure peak memory on a 5 MB page in the extension before capping the parse input.
