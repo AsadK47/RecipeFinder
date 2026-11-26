@@ -236,6 +236,60 @@ import Foundation
         #expect(spy.stops == [url])
     }
 
+    // MARK: - Coordinated read (a Files / iCloud Drive placeholder downloads before it is read)
+
+    @Test func readGoesThroughFileCoordination() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
+        let coordinator = CoordinationSpy()
+        _ = try RecipeFileExporter.read(from: url, access: AccessSpy(grants: true).access, coordination: coordinator.coordination)
+        #expect(coordinator.coordinated == [url])
+    }
+
+    @Test func readUsesTheURLTheCoordinatorHandsOver() throws {
+        let opened = try writeTempFile(Data("not a recipe".utf8))
+        defer { removeTempFile(opened) }
+        let handedOver = try writeTempFile(try RecipeFileExporter.encode(makeRecipe(name: "Coordinated Curry")))
+        defer { removeTempFile(handedOver) }
+        let coordinator = CoordinationSpy(handsOver: handedOver)
+        let recipe = try RecipeFileExporter.read(from: opened, access: AccessSpy(grants: true).access, coordination: coordinator.coordination)
+        #expect(recipe.name == "Coordinated Curry")
+    }
+
+    @Test func coordinationFailureSurfacesAndStopsAccess() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
+        let spy = AccessSpy(grants: true)
+        let coordinator = CoordinationSpy(fails: CocoaError(.fileReadNoPermission))
+        #expect(throws: CocoaError.self) {
+            _ = try RecipeFileExporter.read(from: url, access: spy.access, coordination: coordinator.coordination)
+        }
+        #expect(spy.stops == [url])
+    }
+
+    @Test func scopedAccessIsHeldWhileCoordinating() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
+        let spy = AccessSpy(grants: true)
+        let coordinator = CoordinationSpy(onCoordinate: { #expect(spy.starts == [url] && spy.stops.isEmpty) })
+        _ = try RecipeFileExporter.read(from: url, access: spy.access, coordination: coordinator.coordination)
+        #expect(coordinator.coordinated == [url])
+    }
+
+    @Test func systemCoordinatorReadsAPlainFile() throws {
+        let url = try writeTempFile(try RecipeFileExporter.encode(makeRecipe()))
+        defer { removeTempFile(url) }
+        let recipe = try RecipeFileExporter.read(from: url, access: AccessSpy(grants: true).access, coordination: .fileCoordinator)
+        #expect(recipe.name == "Spaghetti Bolognese")
+    }
+
+    @Test func systemCoordinatorSurfacesAMissingFile() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).recipefinderrecipe")
+        #expect(throws: (any Error).self) {
+            _ = try RecipeFileExporter.read(from: url, access: AccessSpy(grants: true).access, coordination: .fileCoordinator)
+        }
+    }
+
     @Test func tooLargeErrorExplainsItself() {
         #expect(RecipeFileError.tooLarge.errorDescription?.isEmpty == false)
     }
@@ -258,5 +312,31 @@ private final class AccessSpy: @unchecked Sendable {
             start: { url in self.lock.withLock { self._starts.append(url) }; return self.grants },
             stop: { url in self.lock.withLock { self._stops.append(url) } }
         )
+    }
+}
+
+/// Stands in for `NSFileCoordinator`: records which URLs were coordinated and can hand over another URL or fail.
+private final class CoordinationSpy: @unchecked Sendable {
+    private let lock = NSLock()
+    private let handsOver: URL?
+    private let fails: (any Error)?
+    private let onCoordinate: @Sendable () -> Void
+    private var _coordinated: [URL] = []
+
+    init(handsOver: URL? = nil, fails: (any Error)? = nil, onCoordinate: @escaping @Sendable () -> Void = {}) {
+        self.handsOver = handsOver
+        self.fails = fails
+        self.onCoordinate = onCoordinate
+    }
+
+    var coordinated: [URL] { lock.withLock { _coordinated } }
+
+    var coordination: FileReadCoordination {
+        FileReadCoordination { url, body in
+            self.lock.withLock { self._coordinated.append(url) }
+            self.onCoordinate()
+            if let fails = self.fails { throw fails }
+            return try body(self.handsOver ?? url)
+        }
     }
 }

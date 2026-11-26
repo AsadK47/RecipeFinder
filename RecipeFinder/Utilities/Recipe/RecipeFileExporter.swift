@@ -84,7 +84,11 @@ enum RecipeFileExporter {
     static let maxFileBytes = 5 * 1024 * 1024
 
     /// Reads and decodes a `.recipefinderrecipe` file opened from Files, iCloud Drive or another app.
-    static func read(from url: URL, access: ScopedFileAccess = .securityScoped) throws -> RecipeModel {
+    static func read(
+        from url: URL,
+        access: ScopedFileAccess = .securityScoped,
+        coordination: FileReadCoordination = .fileCoordinator
+    ) throws -> RecipeModel {
         let didAccess = access.start(url)
         defer { if didAccess { access.stop(url) } }
         let handle = try FileHandle(forReadingFrom: url)
@@ -161,4 +165,23 @@ struct ScopedFileAccess: Sendable {
         start: { $0.startAccessingSecurityScopedResource() },
         stop: { $0.stopAccessingSecurityScopedResource() }
     )
+}
+
+// MARK: - Coordinated read
+
+/// Reads a file through `NSFileCoordinator`, which downloads an iCloud Drive placeholder before handing it over
+/// and keeps another app from writing it mid-read. A seam so tests can check the read goes through it.
+struct FileReadCoordination: Sendable {
+    let read: @Sendable (URL, (URL) throws -> Data) throws -> Data
+
+    static let fileCoordinator = FileReadCoordination { url, body in
+        var coordinationError: NSError?
+        var result: Result<Data, any Error>?
+        NSFileCoordinator(filePresenter: nil).coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
+            result = Result { try body(readURL) }
+        }
+        if let coordinationError { throw coordinationError }
+        guard let result else { throw CocoaError(.fileReadUnknown) }
+        return try result.get()
+    }
 }
