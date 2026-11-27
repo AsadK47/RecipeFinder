@@ -70,6 +70,20 @@ struct CookingModeTimerTests {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
     }
 
+    // Reviewer 2026-11-26: "and a half" was dropped or read alone ("1 and a half hours" → 30) — undercooking risk.
+    // Half a minute rounds to the nearest whole minute, as every other timer does.
+    @Test("'and a half' adds half of the amount's unit", arguments: [
+        ("Simmer for 1 and a half hours", 90),
+        ("Braise for 2 and a half hours", 150),
+        ("Roast for an hour and a half", 90),
+        ("Bake for 1 hour and a half, then rest", 90),
+        ("Cook for a minute and a half, stirring", 2),
+        ("Simmer 10 and a half minutes", 11),
+    ])
+    func andAHalf(text: String, minutes: Int) {
+        #expect(CookingPlan.timerMinutes(in: text) == minutes)
+    }
+
     @Test("words and numbers that aren't an amount of time stay nil", arguments: [
         "Leave for a few minutes",
         "Bring 2 to the boil",
