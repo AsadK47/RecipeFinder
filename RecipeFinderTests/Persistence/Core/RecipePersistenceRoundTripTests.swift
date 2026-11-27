@@ -479,7 +479,8 @@ struct RecipePersistenceRoundTripTests {
         ])
 
         let fetched = store.fetchRecipes()
-        #expect(ok == [a, b])
+        #expect(ok?.written == [a, b])
+        #expect(ok?.kept.isEmpty == true)
         #expect(fetched.count == 2)
         #expect(fetched.first { $0.id == a }?.name == "New A")
         #expect(fetched.first { $0.id == a }?.cookCount == 2)
@@ -507,7 +508,9 @@ struct RecipePersistenceRoundTripTests {
         )
 
         let fetched = store.fetchRecipes()
-        #expect(written == [a])
+        #expect(written?.written == [a])
+        #expect(Set(written?.kept.map(\.id) ?? []) == [b, c])
+        #expect(written?.kept.first { $0.id == b }?.rating == 4)
         #expect(fetched.first { $0.id == a }?.name == "New A")
         #expect(fetched.first { $0.id == b }?.name == "Old B")
         #expect(fetched.first { $0.id == b }?.isFavorite == true)

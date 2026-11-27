@@ -172,18 +172,21 @@ final class RecipeStore: RecipeStoring {
         // was read (an iCloud import mid-refresh) is skipped, and the version stays unmarked so the next launch
         // decides again from the copy as it is then.
         let snapshots = Dictionary(library.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        guard let written = await persistence.updateRecipesInBackground(refreshes, unlessChangedSince: snapshots) else {
+        guard let update = await persistence.updateRecipesInBackground(refreshes, unlessChangedSince: snapshots) else {
             return library
         }
-        if written.count == refreshes.count {
+        if update.written.count == refreshes.count {
             storage.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key)
         } else {
-            Self.logger.info("Skipped \(refreshes.count - written.count) sample recipes changed during the refresh")
+            Self.logger.info("Skipped \(refreshes.count - update.written.count) sample recipes changed during the refresh")
         }
-        guard !written.isEmpty else { return library }
-        let byID = Dictionary(refreshes.filter { written.contains($0.id) }.map { ($0.id, $0) },
-                              uniquingKeysWith: { first, _ in first })
-        Self.logger.info("Refreshed \(written.count) stale sample recipes")
+        // A skipped copy shows as the store holds it now, never the stale snapshot a later save would write back.
+        let byID = Dictionary(
+            refreshes.filter { update.written.contains($0.id) }.map { ($0.id, $0) } + update.kept.map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        guard !byID.isEmpty else { return library }
+        Self.logger.info("Refreshed \(update.written.count) stale sample recipes")
         return library.map { byID[$0.id] ?? $0 }
     }
 

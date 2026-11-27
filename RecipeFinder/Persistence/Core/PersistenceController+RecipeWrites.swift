@@ -1,6 +1,12 @@
 import CoreData
 import Foundation
 
+/// What `updateRecipesInBackground` did: ids rewritten, and the stored copies it left alone because they changed.
+struct BackgroundRecipeUpdate: Sendable {
+    var written: Set<UUID> = []
+    var kept: [RecipeModel] = []
+}
+
 /// Single-recipe create/update/delete/favorite/cook/rating writes, plus the background content refresh.
 extension PersistenceController {
 
@@ -34,36 +40,39 @@ extension PersistenceController {
     /// ~330 recipes one main-thread save at a time). Cook history is re-read from the store, never overwritten.
     /// Missing ids are skipped. With `snapshots`, a recipe whose stored copy no longer matches its snapshot (or has
     /// none) is skipped too — an edit, favourite or rating synced in from iCloud since the caller read it wins.
-    /// Returns the ids written, or nil if the save failed.
+    /// Returns the ids written plus the stored copy of each one skipped for a changed snapshot, or nil if the save failed.
     func updateRecipesInBackground(
         _ models: [RecipeModel], unlessChangedSince snapshots: [UUID: RecipeModel]? = nil
-    ) async -> Set<UUID>? {
-        guard !models.isEmpty else { return [] }
+    ) async -> BackgroundRecipeUpdate? {
+        guard !models.isEmpty else { return BackgroundRecipeUpdate() }
         guard ensureStoreIsReady() else { return nil }
         let container = self.container
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 do {
-                    var written = Set<UUID>()
+                    var result = BackgroundRecipeUpdate()
                     for model in models {
                         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
                         request.predicate = Self.recipeIdPredicate(model.id)
                         request.fetchLimit = 1
                         guard let object = try context.fetch(request).first else { continue }
                         if let snapshots {
+                            guard let stored = Self.mapToRecipeModel(object) else { continue }
                             guard let snapshot = snapshots[model.id],
-                                  let stored = Self.mapToRecipeModel(object),
-                                  BundledRecipeCatalog.isUnchanged(stored, since: snapshot) else { continue }
+                                  BundledRecipeCatalog.isUnchanged(stored, since: snapshot) else {
+                                result.kept.append(stored)
+                                continue
+                            }
                         }
                         let cookCount = object.value(forKey: RecipeKey.cookCount)
                         let lastCookedAt = object.value(forKey: RecipeKey.lastCookedAt)
                         guard Self.populate(object, from: RecipeSaveParameters(from: model)) else { continue }
                         object.setValue(cookCount, forKey: RecipeKey.cookCount)
                         object.setValue(lastCookedAt, forKey: RecipeKey.lastCookedAt)
-                        written.insert(model.id)
+                        result.written.insert(model.id)
                     }
                     try context.save()
-                    continuation.resume(returning: written)
+                    continuation.resume(returning: result)
                 } catch {
                     persistenceLogger.error("❌ Failed to batch-update recipes: \(error.localizedDescription)")
                     continuation.resume(returning: nil)

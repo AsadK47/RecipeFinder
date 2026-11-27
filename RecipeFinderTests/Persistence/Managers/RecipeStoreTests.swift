@@ -212,6 +212,8 @@ struct RecipeStoreTests {
         #expect(stored.isFavorite == false)
         #expect(stored.dietaryInfo.isGlutenFree == true)
         #expect(refreshed.first?.dietaryInfo.isGlutenFree == true)
+        // The list shows the synced copy, not the snapshot, so a later save can't write the old rating back.
+        #expect(refreshed.first?.rating == 5)
         #expect(storage.integer(forKey: Self.refreshKey) == 0)
 
         // Next launch reads the synced copy, which is still an untouched old version: refreshed, rating kept.
