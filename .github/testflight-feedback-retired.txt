@@ -1,3 +1,0 @@
-# TestFlight feedback notices deleted on purpose (Privacy 6.6) — fetch_testflight_feedback.py skips these submissions.
-# Before deleting a notice, add one line for it (a hash, so this public file holds no reference number):
-#   python3 .github/scripts/fetch_testflight_feedback.py --retire <submission id>   >> .github/testflight-feedback-retired.txt

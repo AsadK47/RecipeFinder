@@ -22,7 +22,7 @@ IDs or personal account details here.
 | Daily challenger | 05:40 | Devil's-advocate pass (strategy, security/MASVS, simplify/delete) | docs/CHALLENGES.md, Inbox |
 | Weekly CEO digest | Mon 07:50 | Shipped, health, decisions for the owner | docs/digest/ |
 | Public beta release | daily 06:23 UTC (GitHub Actions `testflight-promote.yml`) | Submits the newest build for Beta App Review and adds it to the Public Beta group | App Store Connect |
-| TestFlight feedback | hourly (GitHub Actions) | Files a content-free notice per new tester feedback, labelled `testflight-feedback`; before deleting one, add its `--retire` hash to `.github/testflight-feedback-retired.txt` or it is filed again | GitHub issues |
+| TestFlight feedback | hourly (GitHub Actions) | Files a content-free notice per new tester feedback, labelled `testflight-feedback`; close notices you're done with; on a deletion request delete the submission in App Store Connect first, and before deleting a notice add its submission id to the Actions variable `TF_RETIRED_IDS` (one per line) or it is filed again | GitHub issues |
 All push a short notification to the owner. Their full prompts live in the owner's Claude scheduled tasks, not here.
 
 ## If something breaks

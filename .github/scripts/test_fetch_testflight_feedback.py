@@ -1,14 +1,14 @@
-"""Tests for fetch_testflight_feedback's retired-id list. Run from the repo root:
+"""Tests for fetch_testflight_feedback's retired ids and notices. Run from the repo root:
 python3 -m unittest discover -s .github/scripts -p 'test_fetch_testflight_feedback.py'"""
 import os
 import sys
-import tempfile
 import unittest
+from unittest import mock
+
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from fetch_testflight_feedback import (  # noqa: E402
-    RETIRED_PATH, issue_for, new_submissions, read_retired, retired_line,
-)
+import fetch_testflight_feedback as ftf  # noqa: E402
+from fetch_testflight_feedback import issue_for, new_submissions, parse_retired  # noqa: E402
 
 
 def sub(sid, date="2026-11-25T10:00:00Z"):
@@ -16,35 +16,20 @@ def sub(sid, date="2026-11-25T10:00:00Z"):
 
 
 class RetiredIdTests(unittest.TestCase):
-    def write(self, text):
-        handle = tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False)
-        handle.write(text)
-        handle.close()
-        self.addCleanup(os.unlink, handle.name)
-        return handle.name
+    def test_parse_one_per_line_ignoring_blanks_and_spaces(self):
+        self.assertEqual(parse_retired("one\n\n  two  \r\nthree"), {"one", "two", "three"})
 
-    def test_retired_line_does_not_contain_the_id(self):
-        # The list is public; deleting a notice must not leave Apple's reference number behind (Privacy 6.6).
-        line = retired_line("AbC-123-submission")
-        self.assertNotIn("AbC-123-submission", line)
-        self.assertRegex(line, r"^[0-9a-f]{64}$")
+    def test_parse_strips_backticks_copied_from_a_notice(self):
+        # The notice shows the id as `id`; a copy with the backticks must still match.
+        self.assertEqual(parse_retired("`abc-123`, def-456"), {"abc-123", "def-456"})
 
-    def test_read_retired_skips_comments_and_blanks(self):
-        path = self.write(f"# header\n\n{retired_line('one')}\n  {retired_line('two')}  # note\n")
-        self.assertEqual(read_retired(path), {retired_line("one"), retired_line("two")})
-
-    def test_missing_file_is_empty(self):
-        self.assertEqual(read_retired("/nonexistent/retired.txt"), set())
-
-    def test_malformed_line_fails_loudly(self):
-        # A raw id pasted by mistake would sit in a public file; refuse it rather than skip silently.
-        path = self.write("raw-submission-id\n")
-        with self.assertRaises(ValueError):
-            read_retired(path)
+    def test_unset_variable_is_empty(self):
+        self.assertEqual(parse_retired(""), set())
+        self.assertEqual(parse_retired(None), set())
 
     def test_retired_submission_is_not_filed_again(self):
         subs = [sub("deleted-notice"), sub("fresh", "2026-11-26T10:00:00Z")]
-        out = new_submissions(subs, seen=set(), retired={retired_line("deleted-notice")})
+        out = new_submissions(subs, seen=set(), retired=parse_retired("`deleted-notice`"))
         self.assertEqual([s["id"] for s in out], ["fresh"])
 
     def test_seen_submission_is_not_filed_again(self):
@@ -55,10 +40,38 @@ class RetiredIdTests(unittest.TestCase):
         subs = [sub("b", "2026-11-26T10:00:00Z"), sub("a", "2026-11-25T10:00:00Z")]
         self.assertEqual([s["id"] for s in new_submissions(subs, set(), set())], ["a", "b"])
 
-    def test_committed_list_parses(self):
-        # The real file must always load, or the hourly job would stop filing notices.
-        self.assertIsInstance(read_retired(RETIRED_PATH), set)
-        self.assertTrue(os.path.exists(RETIRED_PATH))
+    def test_workflow_passes_the_variable(self):
+        # Without this env line the list is silently empty and deleted notices come back.
+        root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "workflows", "testflight-feedback.yml")
+        with open(root, encoding="utf-8") as handle:
+            self.assertIn("TF_RETIRED_IDS: ${{ vars.TF_RETIRED_IDS }}", handle.read())
+
+
+class MainWiringTests(unittest.TestCase):
+    def test_main_skips_ids_in_the_variable(self):
+        posted = []
+
+        def fake_call(method, url, token):
+            if "/apps?" in url:
+                return {"data": [{"id": "app"}]}
+            if "Screenshot" in url:
+                return {"data": [sub("retired-one"), sub("kept-one")]}
+            return {"data": []}
+
+        def fake_github(method, path, body=None):
+            if method == "POST":
+                posted.append(body)
+                return {"number": len(posted)}
+            return []
+
+        env = {"ASC_KEY_ID": "k", "ASC_ISSUER_ID": "i", "ASC_KEY_PATH": "p", "GITHUB_TOKEN": "t",
+               "GITHUB_REPOSITORY": "o/r", "TF_RETIRED_IDS": "retired-one"}
+        with mock.patch.dict(os.environ, env), mock.patch.object(ftf, "make_token", return_value="tok"), \
+                mock.patch.object(ftf, "call", side_effect=fake_call), \
+                mock.patch.object(ftf, "github", side_effect=fake_github), \
+                mock.patch("sys.stdout"):
+            self.assertEqual(ftf.main(), 0)
+        self.assertEqual([b["body"].count("<!-- tf:kept-one -->") for b in posted], [1])
 
 
 class NoticeTests(unittest.TestCase):
