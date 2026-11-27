@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+🚧 builder agent 2026-11-27 Inbox 🐞 `MealPlanningView+Actions.swift:240` empty take-off toast — branch `agent/takeoff-empty-toast` (de1c146), waiting on Build & Test.
 ✅ Inbox 🐞 `MealPlanningManager.swift:217` same-dish take-off fallback landed f738f0a..ac6a6ae (builder 2026-11-27; leftover branches agent/same-dish-takeoff auto-cleanup may miss it — pre-rebase SHAs, agent/same-dish-takeoff-red unmerged — delete both). Next: Inbox 🐞 `MealPlanningView+Actions.swift:240` — skip the "taken off" toast when the take-off removed nothing (`tookOff == nil`); now likelier since stale taps remove nothing — manager/model test first.
 ✅ Inbox 🐞 `fetch_testflight_feedback.py` retired ids landed d969266..49dfdd1 (builder 2026-11-27; leftover branch agent/feedback-retired-ids auto-cleanup). Next: Inbox 🐞 `MealPlanningManager.swift:217` same-dish fallback (same-recipe stale take-off test first), then 🐞 MealPlanningView+Actions.swift:240 empty take-off toast.
 ✅ Inbox 🔴 Privacy 6.5/7.3/10.2 wording landed 208d252..d23f5d9 (builder 2026-11-27; leftover branch agent/privacy-share-photo auto-cleanup). Website session: mirror 6.5/7.3/10.2 + 27 Nov date into `privacy.html`. Next: Inbox 🐞 `fetch_testflight_feedback.py` retired submission ids (first open 🔴/🐞 needing no owner), then 🐞 MealPlanningManager.swift:217 same-dish fallback.
@@ -128,6 +129,13 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **Empty take-off toast:** new `MealPlanTakeOff.toast(…)` returns nil when nothing has come off in the row, and
+  `takeOff` returns before touching the toast state. Kept `after` non-optional (its 12 tests and the shared-Undo row
+  stay as they are). Rejected: dropping only the Undo button (the toast would still claim a meal came off).
+  **Pre-mortem:** (1) first stale tap still shows a toast → `aFirstTapThatChangesNothingShowsNoToast`; (2) a stale tap
+  while the toast is up loses the earlier Undo → `aStaleTapWhileTheToastIsUpKeepsTheEarlierToast`; (3) a real
+  take-off stops showing its toast → `aTakeOffThatChangesSomethingShowsTheToast` + existing take-off UI tests.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
