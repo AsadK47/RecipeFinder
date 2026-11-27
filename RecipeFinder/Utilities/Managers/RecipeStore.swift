@@ -332,21 +332,23 @@ final class RecipeStore: RecipeStoring {
     /// libraries — ids already present are skipped). Returns the refetched library, or nil if nothing was seeded.
     /// Flags are set before awaiting so a concurrent load doesn't seed twice, and reset if the save fails so the
     /// next launch retries instead of stranding the user with an empty library.
-    /// Internal so tests can run it with an isolated `storage` and stand-in bundled recipes.
+    /// Internal so tests can run it with an isolated `storage`, a stand-in sync state and stand-in bundled recipes.
     func seedIfNeeded(
         existing: [RecipeModel],
         storage: LocalStore = .shared,
+        isSyncing: Bool? = nil,
         bundled: @escaping @Sendable () -> [RecipeModel] = { BundledRecipeCatalog.load() }
     ) async -> [RecipeModel]? {
         let startersKey = "seedRecipesLoaded"
         let bundledKey = "bundledRecipesSeeded_v1"
         // The flags belong to the store file the seeds went into: a fresh file (recovery moved an unreadable store
         // aside) is empty again and seeds again. Installs from before this key adopt the open file as theirs, so
-        // recipes the cook deleted don't come back with the update.
+        // recipes the cook deleted don't come back with the update. With sync on, iCloud refills a fresh file —
+        // seeding fixed ids there would export recipes the cook deleted back to every device.
         let fileKey = "seededStoreFileID"
         if let file = persistence.storeFileID {
             let recorded = storage.string(forKey: fileKey)
-            if let recorded, recorded != file {
+            if let recorded, recorded != file, !(isSyncing ?? persistence.isSyncing) {
                 storage.set(false, forKey: startersKey)
                 storage.set(false, forKey: bundledKey)
             }

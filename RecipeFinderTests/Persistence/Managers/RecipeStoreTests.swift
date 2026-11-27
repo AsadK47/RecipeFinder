@@ -340,10 +340,11 @@ struct RecipeStoreTests {
         let storage = try isolatedStorage()
         storage.set(true, forKey: Self.startersKey)
         storage.set(true, forKey: Self.bundledKey)
+        let extra = makeRecipe(name: "Bundled Dal")
 
         // Bundled recipes the cook deleted on this file must not come back with the update.
         let seeded = await RecipeStore(persistence: persistence)
-            .seedIfNeeded(existing: [], storage: storage, bundled: { [makeRecipe(name: "Bundled Dal")] })
+            .seedIfNeeded(existing: [], storage: storage, bundled: { [extra] })
 
         #expect(seeded == nil)
         #expect(await persistence.fetchRecipesAsync().isEmpty)
@@ -362,13 +363,30 @@ struct RecipeStoreTests {
         _ = await RecipeStore(persistence: first).seedIfNeeded(existing: [], storage: storage, bundled: { [] })
         let firstFile = try #require(first.storeFileID)
 
-        // The cook deleted every recipe; a relaunch opens the same file, which keeps its identifier.
-        for recipe in await first.fetchRecipesAsync() { first.deleteRecipe(withId: recipe.id) }
+        // The cook deleted every recipe (`existing: []`); a relaunch opens the same file, which keeps its identifier.
         let relaunched = PersistenceController(storeURL: storeURL)
         let seeded = await RecipeStore(persistence: relaunched)
             .seedIfNeeded(existing: [], storage: storage, bundled: { [] })
 
         #expect(relaunched.storeFileID == firstFile)
         #expect(seeded == nil)
+    }
+
+    @Test("with iCloud sync on, a fresh store file waits for iCloud instead of seeding deleted recipes back")
+    func freshSyncingFileDoesNotSeed() async throws {
+        let storage = try isolatedStorage()
+        let extra = makeRecipe(name: "Bundled Dal")
+        _ = await RecipeStore(persistence: PersistenceController(inMemory: true))
+            .seedIfNeeded(existing: [], storage: storage, bundled: { [extra] })
+
+        // Seeded fixed ids would export as new records and bring back recipes the cook deleted on every device.
+        let recovered = PersistenceController(inMemory: true)
+        let seeded = await RecipeStore(persistence: recovered)
+            .seedIfNeeded(existing: [], storage: storage, isSyncing: true, bundled: { [extra] })
+
+        #expect(seeded == nil)
+        #expect(await recovered.fetchRecipesAsync().isEmpty)
+        #expect(storage.bool(forKey: Self.startersKey))
+        #expect(storage.bool(forKey: Self.bundledKey))
     }
 }
