@@ -1240,6 +1240,23 @@ struct UndoTakeOffTests {
         #expect(skipped.map(\.id) == [dal.id])
     }
 
+    /// Put back by Undo, then folded into its twin: taking it off again still finds the same dish.
+    @Test func aMealPutBackByUndoCanBeTakenOffViaItsFoldTwin() {
+        let sut = makeManager()
+        let recipe = UUID()
+        let dal = plan("Dal", on: day(2), recipe: recipe)
+        sut.addMealPlan(dal)
+        sut.restore(sut.takeOff(dal)?.before ?? [])
+        sut.removeMealPlan(dal) // an iCloud fold keeps the other device's copy instead
+        let twin = plan("Dal", on: day(2), recipe: recipe)
+        sut.addMealPlan(twin)
+
+        let tookOff = sut.takeOff(dal)
+
+        #expect(tookOff?.removed.id == twin.id)
+        #expect(sut.mealPlans.isEmpty)
+    }
+
     /// An iCloud fold kept the other device's copy of the same dish while the hold menu showed ours: it comes off.
     @Test func takeOffFindsTheSameDishWhenAFoldKeptItsTwin() {
         let sut = makeManager()

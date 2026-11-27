@@ -247,6 +247,7 @@ final class MealPlanningManager: MealPlanningManaging {
             restored.append(plan)
         }
         guard !restored.isEmpty else { return skipped }
+        takenOffIDs.subtract(restored.map(\.id)) // back on the plan, so a later take-off may find its fold twin again
         saveMealPlans()
         for plan in restored { syncReminder(for: plan) }
         syncSeriesReminders()
