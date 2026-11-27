@@ -66,7 +66,7 @@ final class MealPlanningManager: MealPlanningManaging {
     @ObservationIgnored private let reminders: any MealReminderScheduling
     @ObservationIgnored private let planNudges: any PlanNudgeScheduling
     @ObservationIgnored private let storage: LocalStore
-    /// Ids already taken off: a stale tap on one of them is spent, so the same-dish fallback mustn't find a newer copy.
+    /// Ids already removed (any route): a stale tap on one is spent, so the same-dish fallback mustn't find a newer copy.
     @ObservationIgnored private var takenOffIDs: Set<UUID> = []
 
     static let blobKey = "mealPlansStorage"
@@ -225,7 +225,7 @@ final class MealPlanningManager: MealPlanningManaging {
                     $0.isSlot(plan.date, plan.mealTime) && $0.recipeId == plan.recipeId
                 }))
         else { return nil }
-        takenOffIDs.formUnion([plan.id, current.id])
+        takenOffIDs.insert(plan.id) // a folded-away copy: its twin comes off now, so a second tap on it is spent too
         let before = plansChangedByRemoving(current)
         removeMealPlan(current)
         return (current, before)
@@ -258,6 +258,7 @@ final class MealPlanningManager: MealPlanningManaging {
     /// earlier week and the meal can never be taken off.
     private func remove(where matches: (MealPlanModel) -> Bool) {
         let removed = mealPlans.filter(matches)
+        takenOffIDs.formUnion(removed.map(\.id))
         for plan in removed { cancelReminder(for: plan) }
         mealPlans.removeAll(where: matches)
         for plan in removed where plan.isRecurring { stopSeries(of: plan) }
@@ -273,6 +274,7 @@ final class MealPlanningManager: MealPlanningManaging {
         let inSeries = { (other: MealPlanModel) in other.isRecurring && SeriesKey(other, calendar: .current) == key }
         let later = mealPlans.filter { inSeries($0) && $0.date > plan.date && $0.id != plan.id }
         for copy in later { cancelReminder(for: copy) }
+        takenOffIDs.formUnion(later.map(\.id))
         mealPlans.removeAll { copy in later.contains { $0.id == copy.id } }
         for index in mealPlans.indices where inSeries(mealPlans[index]) {
             mealPlans[index].isRecurring = false

@@ -1240,6 +1240,24 @@ struct UndoTakeOffTests {
         #expect(skipped.map(\.id) == [dal.id])
     }
 
+    /// Taking a weekly meal off also drops next week's copy; a stale tap on that copy leaves the dish planned again.
+    @Test func aStaleTakeOffOfADroppedWeeklyCopyLeavesTheSameDishPlannedAgain() throws {
+        let sut = makeManager()
+        let recipe = UUID()
+        let tacos = plan("Tacos", on: day(2), recurring: true, recipe: recipe)
+        sut.addMealPlan(tacos)
+        sut.propagateRecurring(toWeekStarting: Calendar.current.startOfDay(for: day(9)))
+        let nextWeek = try #require(sut.mealPlan(for: day(9), mealTime: .dinner))
+        sut.takeOff(tacos)
+        let again = plan("Tacos", on: day(9), recipe: recipe)
+        sut.addMealPlan(again)
+
+        let tookOff = sut.takeOff(nextWeek)
+
+        #expect(sut.mealPlans.map(\.id).contains(again.id))
+        #expect(tookOff == nil)
+    }
+
     /// Put back by Undo, then folded into its twin: taking it off again still finds the same dish.
     @Test func aMealPutBackByUndoCanBeTakenOffViaItsFoldTwin() {
         let sut = makeManager()
