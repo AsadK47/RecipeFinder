@@ -239,7 +239,6 @@ extension MealPlanningView {
 
     /// Takes a meal off at once — a weekly one stops repeating — with Undo on the toast instead of a confirm pop-up.
     func takeOff(_ plan: MealPlanModel) {
-        undoNoteDelay.callOff { undoNote = nil }
         var tookOff: (removed: MealPlanModel, before: [MealPlanModel])?
         withAnimation(.appGentle) {
             tookOff = mealPlanningManager.takeOff(plan)
@@ -248,6 +247,7 @@ extension MealPlanningView {
         // Nothing came off (already gone, e.g. synced away): no toast, since its Undo would do nothing.
         guard let result = MealPlanTakeOff.toast(taking: tookOff?.removed ?? plan, changed: tookOff?.before ?? [],
                                                  earlier: removalToast == nil ? nil : pendingTakeOff) else { return }
+        undoNoteDelay.callOff { undoNote = nil }
         pendingTakeOff = result
         weekShoppingFeedback = nil // one toast at a time: both sit at the bottom
         removalToast = result.message
