@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Seed gates per store file** (14277e8..7f538b7, builder 2026-11-27): the seed flags stay in UserDefaults but are tied to
+  the store file's identifier (`seededStoreFileID`, NSStoreUUID — same signal `CookingStreakManager` uses). A different
+  file clears them (recovery). No recorded key = adopt the open file, never re-seed: an update must not bring back
+  bundled recipes the cook deleted. Sync on: no re-seed on a fresh file — iCloud refills it, and seeding fixed ids
+  would export deleted ones back to every device (challenger). Accepted: a sync-on recovery with an empty iCloud stays
+  empty; installs already left empty by an earlier recovery adopt that file. Rejected: clearing flags in
+  `attemptStoreRecovery` (Persistence would reach into RecipeStore's keys).
 - **Dashed mixed-number timers** (aad6ef5..13693da, builder 2026-11-27): "1-1/2" is a US mixed number when the part after
   the dash is a proper fraction (→ 1½); a whole number or improper fraction after the dash stays a range (lower bound,
   owner 2026-11-25). Done as a first `amount` alternative so every other shape matches as before. Rejected for now:

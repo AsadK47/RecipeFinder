@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox seed gates vs a recovered store · 7f538b7
+- For you: If the app ever has to start your recipe library afresh after it couldn't be read, the starter and built-in recipes come straight back, so the app is ready to cook from; with iCloud sync on, your library returns from iCloud as before.
+- Behind the build: new tests failed on the old seeding first; two reviewers and a challenger read it, and caught that with sync on it would have brought back recipes you'd deleted, fixed before it shipped.
+
 ## 2026-11-27 · Inbox timer normalisation · 93c1f1b
 - For you: Cooking mode reads times copied from websites with special fraction and dash characters, like "1⁄2" or "1‑1/2 hours", so the step timer runs as long as the recipe says.
 - Behind the build: new tests failed on the old timer reader first; a reviewer found nothing and a challenger caught a superscript "1½" that would have read as 5½ hours, fixed before it shipped.
