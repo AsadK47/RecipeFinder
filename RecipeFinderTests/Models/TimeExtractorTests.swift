@@ -45,9 +45,25 @@ struct TimeExtractorTests {
         ("1-\u{BD} hours", 90),
         ("1 hr 30 min", 90),
         ("3/4 hour", 45),
+        // Reviewers 2026-11-27: ranges around fractions, and a slash meaning "or" is a range, never a fraction.
+        ("1/2-1 hour", 60),
+        ("1\u{BD}-2 hours", 120),
+        ("\u{BD}-1 hour", 60),
+        ("1/2 - 3/4 hour", 45),
+        ("10/12 minutes", 12),
+        ("6/8 hours", 480),
+        ("4/5 min per side", 5),
     ])
     func unicodeAndFractions(input: String, expected: Int) {
         #expect(TimeExtractor.extractMinutes(from: input) == expected)
+    }
+
+    @Test("Every fraction glyph the parsers know reads as part of an hour")
+    func everyFractionGlyph() {
+        for glyph in RecipeParser.unicodeFractionCharacters {
+            let minutes = TimeExtractor.extractMinutes(from: "\(glyph) hour")
+            #expect(minutes > 0 && minutes < 60, "\(glyph) hour → \(minutes)")
+        }
     }
 
     @Test("Non-durations extract to zero", arguments: ["N/A", "", "unknown"])

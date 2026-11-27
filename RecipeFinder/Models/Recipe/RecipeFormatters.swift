@@ -62,32 +62,44 @@ enum NumberText {
 }
 
 enum TimeExtractor {
-    /// "½" → " 1/2 ", spaced so a glued "1½" reads as the mixed number 1 1/2, not 11/2.
-    private static let vulgarFractions: [Character: String] = [
-        "¼": "1/4", "½": "1/2", "¾": "3/4", "⅓": "1/3", "⅔": "2/3", "⅛": "1/8", "⅜": "3/8", "⅝": "5/8", "⅞": "7/8",
-        "⅕": "1/5", "⅖": "2/5", "⅗": "3/5", "⅘": "4/5", "⅙": "1/6", "⅚": "5/6"
+    /// Fraction glyphs as values. A glyph is always a fraction (it can't mean "or"), so it skips the slash rule below.
+    private static let vulgarFractions: [Character: Double] = [
+        "¼": 1 / 4, "½": 1 / 2, "¾": 3 / 4, "⅓": 1 / 3, "⅔": 2 / 3, "⅛": 1 / 8, "⅜": 3 / 8, "⅝": 5 / 8, "⅞": 7 / 8,
+        "⅕": 1 / 5, "⅖": 2 / 5, "⅗": 3 / 5, "⅘": 4 / 5, "⅙": 1 / 6, "⅚": 5 / 6
     ]
+
+    /// ½, ⅓, ⅔, ¼, ¾ — the fractions a recipe time is written in; nil for anything else.
+    private static func timeFraction(top: Substring, bottom: Substring) -> Double? {
+        let allowed: Set<String> = ["1/2", "1/3", "2/3", "1/4", "3/4"]
+        guard allowed.contains("\(top)/\(bottom)"), let top = Double(top), let bottom = Double(bottom) else { return nil }
+        return top / bottom
+    }
 
     /// Sums hours and minutes in a free-form duration ("1 hr 30 min" → 90, "1.5 hours" → 90, "1 1/2 hours" → 90);
     /// bare number = minutes; unparseable = 0.
     static func extractMinutes(from timeString: String) -> Int {
         var text = NumberText.plain(timeString.lowercased())
         if text.contains(where: { vulgarFractions[$0] != nil }) {
+            // "1½", "1 ½", "1-½" are one amount (½ is below any whole number, so never a range); then a lone "½".
+            text = text.replacing(/(\d+)[\s-]*([¼½¾⅓⅔⅛⅜⅝⅞⅕⅖⅗⅘⅙⅚])/) { match in
+                guard let whole = Double(match.output.1), let glyph = match.output.2.first,
+                      let part = vulgarFractions[glyph] else { return String(match.output.0) }
+                return String(whole + part)
+            }
             text = text.map { character in vulgarFractions[character].map { " \($0) " } ?? String(character) }.joined()
         }
-        // Fractions as decimals: a mixed number ("1 1/2", US "1-1/2") is one amount when the fraction is below 1;
-        // then a lone "3/4" → 0.75. Without this the scanner reads "1 1/2 hours" as 1 + 1 + 2 hours.
+        // Fractions as decimals: a mixed number ("1 1/2", US "1-1/2") is one amount, then a lone "3/4" → 0.75. Without
+        // this the scanner reads "1 1/2 hours" as 1 + 1 + 2 hours. Only halves, thirds and quarters are time fractions;
+        // any other "a/b" is a slash for "or" ("10/12 minutes", "6/8 hours") and reads as the range a-b.
         if text.contains("/") {
-            text = text.replacing(/(\d+)[\s-]+(\d+)\/(\d+)/) { match in
-                guard let whole = Double(match.output.1), let top = Double(match.output.2),
-                      let bottom = Double(match.output.3), bottom > 0, top < bottom else { return String(match.output.0) }
-                return String(whole + top / bottom)
+            text = text.replacing(/(^|[^\d.\/])(\d+)[\s-]+(\d+)\/(\d+)/) { match in
+                guard let whole = Double(match.output.2),
+                      let part = timeFraction(top: match.output.3, bottom: match.output.4) else { return String(match.output.0) }
+                return "\(match.output.1)\(whole + part)"
             }
             text = text.replacing(/(\d+)\/(\d+)/) { match in
-                guard let top = Double(match.output.1), let bottom = Double(match.output.2), bottom > 0 else {
-                    return String(match.output.0)
-                }
-                return String(top / bottom)
+                timeFraction(top: match.output.1, bottom: match.output.2).map { String($0) }
+                    ?? "\(match.output.1)-\(match.output.2)"
             }
         }
         // Collapse a numeric range to its upper bound ("20-30 min" → "30 min") so the hyphen isn't scanned as a negative sign.
