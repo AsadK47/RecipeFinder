@@ -88,6 +88,59 @@ import UIKit
         #expect(try Self.preservedCopies(in: directory).isEmpty)
     }
 
+    /// Readers that found the store closed at launch hear when it opens after unlock.
+    @Test func unlockTellsWaitersTheStoreOpened() throws {
+        let directory = try Self.makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let storeURL = try Self.unreadableStore(in: directory)
+        let center = NotificationCenter()
+        let device = DeviceLock()
+        let controller = PersistenceController(
+            storeURL: storeURL, isProtectedDataAvailable: { device.isUnlocked }, notificationCenter: center
+        )
+        var heard = 0
+        controller.whenStoreOpensLate { heard += 1 }
+
+        device.isUnlocked = true
+        center.post(name: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil)
+
+        #expect(heard == 1)
+    }
+
+    /// A store that opened at launch never sends a late-open signal, so lists don't load twice.
+    @Test func aStoreOpenAtLaunchSendsNoLateOpen() throws {
+        let center = NotificationCenter()
+        let controller = PersistenceController(inMemory: true, notificationCenter: center)
+        var heard = 0
+        controller.whenStoreOpensLate { heard += 1 }
+
+        center.post(name: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil)
+
+        #expect(controller.isStoreLoaded)
+        #expect(heard == 0)
+    }
+
+    /// The library loads once the store opens after unlock, instead of staying empty until relaunch.
+    @Test func recipeStoreLoadsWhenTheStoreOpensAfterUnlock() async throws {
+        let directory = try Self.makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let storeURL = try Self.unreadableStore(in: directory)
+        let center = NotificationCenter()
+        let device = DeviceLock()
+        let controller = PersistenceController(
+            storeURL: storeURL, isProtectedDataAvailable: { device.isUnlocked }, notificationCenter: center
+        )
+        let store = RecipeStore(persistence: controller)
+
+        device.isUnlocked = true
+        center.post(name: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil)
+        for _ in 0..<1000 where store.isLoading {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        #expect(!store.isLoading)
+    }
+
     @MainActor private final class DeviceLock {
         var isUnlocked = false
     }

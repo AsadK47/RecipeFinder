@@ -60,6 +60,8 @@ final class RecipeStore: RecipeStoring {
         self.persistence = persistence
         self.imageStore = imageStore
         self.imageLocalizer = imageLocalizer
+        // The launch load gives up after a few retries; a store opened after unlock would leave the list empty.
+        persistence.whenStoreOpensLate { [weak self] in self?.load() }
     }
 
     /// Loads the library, seeding starter + bundled recipes on first run.

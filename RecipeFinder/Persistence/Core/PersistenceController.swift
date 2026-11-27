@@ -29,6 +29,8 @@ final class PersistenceController {
     private let notificationCenter: NotificationCenter
     private let backupDirectory: URL?
     private var unlockObserver: (any NSObjectProtocol)?
+    /// Run once the store opens after unlock: whoever read it at launch saw nothing and gave up.
+    private var lateOpenActions: [@MainActor () -> Void] = []
 
     /// The open store file's identifier; a fresh file (recovery, reinstall) gets a new one.
     var storeFileID: String? {
@@ -182,9 +184,18 @@ final class PersistenceController {
                 self.unlockObserver = nil
                 guard !self.isStoreLoaded else { return }
                 if let backupDirectory = self.backupDirectory { self.backUpBeforeMigration(into: backupDirectory) }
+                // Loads synchronously (recovery included), so the flag is final here.
                 self.loadStore()
+                guard self.isStoreLoaded else { return }
+                for action in self.lateOpenActions { action() }
             }
         }
+    }
+
+    /// `action` runs each time the store opens late (after unlock), so readers that found it closed at launch
+    /// read it again instead of showing an empty library until relaunch.
+    func whenStoreOpensLate(_ action: @escaping @MainActor () -> Void) {
+        lateOpenActions.append(action)
     }
 
     private func attemptStoreRecovery() {
