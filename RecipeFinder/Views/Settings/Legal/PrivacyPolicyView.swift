@@ -15,7 +15,7 @@ import SwiftUI
 // Updated 2026-11-25 (owner OK in chat): 6.5–6.6 — feedback stays in App Store Connect; public issues are content-free
 // notices (fetch_testflight_feedback.py `issue_for`), no artifacts.
 // Updated 2026-11-27 (BACKLOG Inbox, reviewer 2026-11-25): 6.5 Apple can link its reference number too; 7.3 the
-// My Cookbook card shows the dish photo and star rating (CookbookShareCard); 10.2 the Developer deletes the App Store
+// My Cookbook card shows the cook's latest photo (else the recipe picture or illustration) and stars (CookbookShareCard); 10.2 the Developer deletes the App Store
 // Connect copy on request.
 // (The 2026-11-23 public-issue/artifact design above is superseded by 2026-11-25.) Open legal questions: the US transfer
 // safeguard per provider, and a short written legitimate-interests assessment for beta feedback.
@@ -103,7 +103,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("7.2 You can turn iCloud sync off at any time in the same place; sync stops the next time you open the Application, and your data stays on your Device. Data already stored in iCloud stays in your iCloud account until you remove it, which you can do in your device's iCloud settings. While sync is on, deleting data in the Application, including through Reset, removes it from your iCloud account and from every device signed in to it. Reset keeps your iCloud sync choice. If you turn sync off, make changes (including deletions) and later turn it back on, the Application then sends those changes to your iCloud account and to every device signed in to it.")
 
-                BodyText("7.3 Sharing. Through the iOS share sheet you can share a recipe (as a recipe file or as text), your shopping list (as text) and a My Cookbook page (as a picture showing the recipe's photo, which may be one you took, with the dish's name, how many times you've made it and when, and your star rating if you gave one, plus a caption naming the dish, how many times you've made it and when). You can also save a backup file of your data wherever you choose (Section 9.1). What you share goes to the people and apps you choose, who can see and keep it, and is handled from then on under their terms; the Application does not send the Developer a copy. Any future feature that shares content in a new way will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
+                BodyText("7.3 Sharing. Through the iOS share sheet you can share a recipe (as a recipe file or as text), your shopping list (as text) and a My Cookbook page. A shared page is a picture of the dish (your latest photo of it if you've added one, otherwise the recipe's picture or an illustration) with its name, how many times you've made it and when you last made it, and your star rating if you gave one; a caption with the name, count and date goes with it. You can also save a backup file of your data wherever you choose (Section 9.1). What you share goes to the people and apps you choose, who can see and keep it, and is handled from then on under their terms; the Application does not send the Developer a copy. Any future feature that shares content in a new way will be off until you turn it on, and this Privacy Policy will be updated to describe it before it is released.")
             }
 
             Group {
@@ -126,7 +126,7 @@ struct PrivacyPolicyView: View {
 
                 BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the Developer does not collect or receive the information you enter, the Developer does not act as a data controller of that information for most purposes. For beta feedback you choose to send (Sections 6.4 to 6.6), the Developer is the data controller and relies on legitimate interests (fixing and improving the Application); your feedback stays in App Store Connect under Apple's retention, and the notice stays in the public project, each until you ask for it to be deleted. If another feature changes this, this Privacy Policy will set out the lawful basis, retention period and your rights for that feature.")
 
-                BodyText("10.2 For beta feedback, you can ask the Developer for a copy of it, to correct or delete it, or to stop using it, by contacting the Developer (Section 13). You can also complain to the Information Commissioner's Office (ico.org.uk). The Developer acts on the copy it controls, including deleting your feedback from App Store Connect when you ask; any copies Apple keeps for its own purposes are handled under Apple's privacy policy.")
+                BodyText("10.2 For beta feedback, you can ask the Developer for a copy of it, to correct or delete it, or to stop using it, by contacting the Developer (Section 13). You can also complain to the Information Commissioner's Office (ico.org.uk). The Developer acts on the copy it controls, including deleting your feedback from App Store Connect when you ask and it can be identified as yours; any copies Apple keeps for its own purposes are handled under Apple's privacy policy.")
 
                 SectionTitle("11. Children's Privacy")
 
