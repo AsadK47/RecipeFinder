@@ -80,21 +80,27 @@ struct CookingPlan: Equatable {
     }
 
     // Only counts an amount followed by a time unit, so "350°F"/"2 eggs" aren't read as durations. An amount is a
-    // number (with an optional "½", " 1/2" or " and a half"), a lone fraction, or the words "a"/"an"/"half an"/
-    // "a half". A range keeps its lower bound in group 1 (owner 2026-11-25): an unspaced dash ("10-15", "1-1½") or a
+    // number or number word to twelve (with an optional "½", " 1/2" or " and a half"), a lone fraction, or the words
+    // "a"/"an"/"half an"/"a half". A range keeps its lower bound in group 1 (owner 2026-11-25): an unspaced dash ("10-15", "1-1½") or a
     // spaced "to"/"or" ("2 to 3", "20 or 25"); a spaced dash is punctuation ("gas mark 4 - 25 minutes"). Group 3 is
     // an "and a half" after the unit ("an hour and a half"). Compiled once.
-    private static let amount = #"(?:(?:\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?)"#
-        + #"(?:\s+and\s+a\s+half\b)?|[½¼¾⅓⅔])"#
+    private static let numberWords = ["one": 1.0, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+                                      "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12]
+    private static let amount = #"(?:(?:\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|\b(?:"#
+        + numberWords.keys.sorted().joined(separator: "|") + #")\b)(?:\s+and\s+a\s+half\b)?|[½¼¾⅓⅔])"#
+    // A lone "a half" never follows "and" ("fifteen and a half hours" is not half an hour), and a trailing "and a
+    // half" that starts the next amount ("20 minutes and a half cup of stock") isn't part of the time.
     private static let timerRegex = try? NSRegularExpression(
-        pattern: #"(\bhalf an?\b|\ban? half\b|\ban?\b|"# + amount + #")(?:(?:[-–—]|\s+(?:to|or)\s+)"# + amount + #")?"#
-            + #"\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b(\s+and\s+a\s+half\b)?"#,
+        pattern: #"(\bhalf an?\b|(?<!\band )\ban? half\b|\ban?\b|"# + amount + #")(?:(?:[-–—]|\s+(?:to|or)\s+)"#
+            + amount + #")?\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#
+            + #"(\s+and\s+a\s+half\b(?!\s+(?:cups?|tsps?|tbsps?|teaspoons?|tablespoons?|pints?|lit[er]{2}s?|pounds?|lbs?|kg|g|ml|oz|ounces?)\b))?"#,
         options: [.caseInsensitive]
     )
 
     private static let fractions: [Character: Double] = ["½": 0.5, "¼": 0.25, "¾": 0.75, "⅓": 1.0 / 3, "⅔": 2.0 / 3]
 
-    /// The number an amount stands for: "an" → 1, "half an"/"a half" → 0.5, "1½" / "1 1/2" → 1.5, "½" → 0.5.
+    /// The number an amount stands for: "an" → 1, "half an"/"a half" → 0.5, "1½" / "1 1/2" → 1.5, "½" → 0.5,
+    /// "two and a half" → 2.5.
     private static func value(ofAmount text: String) -> Double {
         let words = text.lowercased()
         // "1 and a half" → 1 + ½ (checked before the "half" suffix below, which would read it as a lone ½).
@@ -106,6 +112,7 @@ struct CookingPlan: Equatable {
         var total = 0.0
         for token in words.split(whereSeparator: \.isWhitespace) {
             var digits = ""
+            if let number = numberWords[String(token)] { total += number; continue }
             for character in token {
                 if let part = fractions[character] { total += part } else { digits.append(character) }
             }

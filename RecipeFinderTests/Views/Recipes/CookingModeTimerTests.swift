@@ -79,6 +79,9 @@ struct CookingModeTimerTests {
         ("Bake for 1 hour and a half, then rest", 90),
         ("Cook for a minute and a half, stirring", 2),
         ("Simmer 10 and a half minutes", 11),
+        ("Braise for two and a half hours", 150),
+        ("Simmer for one and a half hours", 90),
+        ("Simmer 20 minutes and a half cup of stock", 20),
     ])
     func andAHalf(text: String, minutes: Int) {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
@@ -90,6 +93,7 @@ struct CookingModeTimerTests {
         "Cut into 2-3 cm pieces",
         "Serve with a handful of herbs",
         "Add half the sugar",
+        "Simmer for fifteen and a half hours",
     ])
     func notADuration(text: String) {
         #expect(CookingPlan.timerMinutes(in: text) == nil)
