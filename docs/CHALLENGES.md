@@ -1031,4 +1031,4 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 ## 2026-11-27 (item pass: timer normalisation — fixed: U+2012/FE63/FF0D dashes missed (challenger); flattened superscript "11⁄2 hours" → 330 (challenger) → split before "/"; U+2010 and U+2011+½ untested → pinned)
 - ⚔️ [Simplify] Don't replace `normalisedForTimers` with NFKC: it turns "1½" into "11⁄2" (→ 5½ h). Kept the dashed-mixed-number branch in `value(ofAmount:)`; the normaliser feeds it.
 - ⚔️ [Break] Em dash before ½ ("1—½") stays a range (→ 60) — em dash is typographically a range; superscript digits ("1 ¹⁄₂") and hyphenated units ("a 10-minute rest") give no timer (fail safe); "19⁄2" splits as 1 9/2 (rare).
-- ⚔️ [Out of scope] `TimeExtractor.extractMinutes` (RecipeFormatters.swift:44) and `IngredientLineParser.normaliseUnicodeFractions` share the U+2044/U+2011/U+2212 gap ("20‑30 min" → 50) → Inbox 🐞.
+- ⚔️ [Out of scope] `TimeExtractor.extractMinutes` (Models/Recipe/RecipeFormatters.swift:44) and `IngredientLineParser.normaliseUnicodeFractions` share the U+2044/U+2011/U+2212 gap ("20‑30 min" → 50) → Inbox 🐞.
