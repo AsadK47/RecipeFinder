@@ -27,6 +27,29 @@ struct TimeExtractorTests {
         #expect(TimeExtractor.extractMinutes(from: input) == expected)
     }
 
+    // Challenger 2026-11-27: imported times use U+2011/U+2212 dashes, U+2044 fraction slashes and mixed numbers;
+    // "20‑30 min" summed to 50, "1 1/2 hours" to 122. One shared normaliser with CookingPlan's timers.
+    @Test("Unicode dashes, fraction slashes and mixed numbers read as the plain amount", arguments: [
+        ("20\u{2011}30 min", 30),
+        ("20\u{2212}30 min", 30),
+        ("20\u{2010}30 min", 30),
+        ("1 1/2 hours", 90),
+        ("1-1/2 hours", 90),
+        ("1\u{2011}1/2 hours", 90),
+        ("1/2 hour", 30),
+        ("1\u{2044}2 hour", 30),
+        ("1 1\u{2044}2 hours", 90),
+        ("11\u{2044}2 hours", 90),
+        ("1\u{BD} hours", 90),
+        ("\u{BD} hour", 30),
+        ("1-\u{BD} hours", 90),
+        ("1 hr 30 min", 90),
+        ("3/4 hour", 45),
+    ])
+    func unicodeAndFractions(input: String, expected: Int) {
+        #expect(TimeExtractor.extractMinutes(from: input) == expected)
+    }
+
     @Test("Non-durations extract to zero", arguments: ["N/A", "", "unknown"])
     func nonDuration_returnsZero(input: String) {
         #expect(TimeExtractor.extractMinutes(from: input) == 0)

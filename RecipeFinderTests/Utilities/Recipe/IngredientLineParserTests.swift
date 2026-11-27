@@ -47,6 +47,21 @@ import Foundation
         #expect(p.name == name)
     }
 
+    // Challenger 2026-11-27: web/JSON-LD text writes "1⁄2" with U+2044 and "1‑1/2" with U+2011 — same normaliser as timers.
+    @Test("Fraction slashes and non-ASCII hyphens read as plain amounts", arguments: [
+        ("1\u{2044}2 cup milk", 0.5, "cup", "milk"),
+        ("1 1\u{2044}2 cups flour", 1.5, "cup", "flour"),
+        ("11\u{2044}2 cups flour", 1.5, "cup", "flour"),
+        ("1\u{2011}1/2 teaspoons lemon zest", 1.5, "tsp", "lemon zest"),
+        ("3\u{2044}4 cup sugar", 0.75, "cup", "sugar"),
+    ])
+    func unicodeSlashesAndHyphens(input: String, quantity: Double, unit: String, name: String) {
+        let p = IngredientLineParser.parse(input)
+        #expect(p.quantity == quantity)
+        #expect(p.unit == unit)
+        #expect(p.name == name)
+    }
+
     @Test(
         "Parses amounts written in other languages and scripts (tester feedback: foreign recipes)",
         arguments: [
