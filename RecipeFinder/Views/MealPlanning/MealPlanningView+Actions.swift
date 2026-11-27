@@ -245,8 +245,9 @@ extension MealPlanningView {
             tookOff = mealPlanningManager.takeOff(plan)
             updateSelectedMealTimes(for: selectedDate)
         }
-        let result = MealPlanTakeOff.after(taking: tookOff?.removed ?? plan, changed: tookOff?.before ?? [],
-                                           earlier: removalToast == nil ? nil : pendingTakeOff)
+        // Nothing came off (already gone, e.g. synced away): no toast, since its Undo would do nothing.
+        guard let result = MealPlanTakeOff.toast(taking: tookOff?.removed ?? plan, changed: tookOff?.before ?? [],
+                                                 earlier: removalToast == nil ? nil : pendingTakeOff) else { return }
         pendingTakeOff = result
         weekShoppingFeedback = nil // one toast at a time: both sit at the bottom
         removalToast = result.message

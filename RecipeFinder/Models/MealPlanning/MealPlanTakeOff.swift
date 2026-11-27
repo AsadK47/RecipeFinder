@@ -31,4 +31,13 @@ struct MealPlanTakeOff: Equatable {
         return MealPlanTakeOff(undo: undo, meals: meals, named: named,
                                message: meals > 1 ? "\(meals) meals taken off" : single)
     }
+
+    /// The toast to show after a take-off, or nil when nothing has come off in this row (a stale first tap):
+    /// a toast naming a meal with an Undo that does nothing would only mislead.
+    static func toast(taking plan: MealPlanModel,
+                      changed: [MealPlanModel],
+                      earlier: MealPlanTakeOff?) -> MealPlanTakeOff? {
+        let result = after(taking: plan, changed: changed, earlier: earlier)
+        return result.meals > 0 ? result : nil
+    }
 }

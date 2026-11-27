@@ -371,4 +371,27 @@ struct MealPlanTakeOffTests {
         #expect(result.message == "Dal taken off")
         #expect(result.undo == [dal])
     }
+
+    /// A first tap that took nothing off (already gone) shows no toast — its Undo would do nothing.
+    @Test func aFirstTapThatChangesNothingShowsNoToast() {
+        let dal = plan("Dal")
+        #expect(MealPlanTakeOff.toast(taking: dal, changed: [], earlier: nil) == nil)
+    }
+
+    @Test func aTakeOffThatChangesSomethingShowsTheToast() throws {
+        let dal = plan("Dal")
+        let result = try #require(MealPlanTakeOff.toast(taking: dal, changed: [dal], earlier: nil))
+        #expect(result.message == "Dal taken off")
+        #expect(result.undo == [dal])
+    }
+
+    /// A stale tap while the toast is up keeps the earlier take-off's toast and its Undo.
+    @Test func aStaleTapWhileTheToastIsUpKeepsTheEarlierToast() throws {
+        let dal = plan("Dal")
+        let curry = plan("Curry", week: 1)
+        let first = MealPlanTakeOff.after(taking: dal, changed: [dal], earlier: nil)
+        let result = try #require(MealPlanTakeOff.toast(taking: curry, changed: [], earlier: first))
+        #expect(result.message == "Dal taken off")
+        #expect(result.undo == [dal])
+    }
 }
