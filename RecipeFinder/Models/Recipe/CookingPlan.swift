@@ -133,10 +133,20 @@ struct CookingPlan: Equatable {
         return total
     }
 
+    /// Web and JSON-LD text writes "1⁄2" with U+2044 and dashes as U+2010/U+2011/U+2212: read them as "/" and "-".
+    /// A dash before "½" joins a mixed number ("1-½" → "1½"); ½ is below any whole number, so it is never a range.
+    private static func normalisedForTimers(_ text: String) -> String {
+        let plain = text
+            .replacingOccurrences(of: "\u{2044}", with: "/")
+            .replacingOccurrences(of: "[\u{2010}\u{2011}\u{2212}]", with: "-", options: .regularExpression)
+        return plain.replacingOccurrences(of: #"(\d)[-–]([½¼¾⅓⅔])"#, with: "$1$2", options: .regularExpression)
+    }
+
     /// Minutes for the text's FIRST duration. A compound like "1 hour 30 minutes" is combined, but separate mentions
     /// ("chill 6 hours, up to 48 hours"; "broil 4-5 minutes… within 6 minutes") are not summed into one huge timer.
     static func timerMinutes(in text: String) -> Int? {
         guard let regex = timerRegex else { return nil }
+        let text = normalisedForTimers(text)
         let ns = text as NSString
         // "a"/"an" before "second" is the ordinal ("in a second bowl"), never a one-second timer.
         let matches = regex.matches(in: text, range: NSRange(location: 0, length: ns.length)).filter { match in
