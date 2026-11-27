@@ -98,13 +98,14 @@ import UIKit
         let controller = PersistenceController(
             storeURL: storeURL, isProtectedDataAvailable: { device.isUnlocked }, notificationCenter: center
         )
-        var heard = 0
-        controller.whenStoreOpensLate { heard += 1 }
+        var openWhenHeard: [Bool] = []
+        controller.whenStoreOpensLate { openWhenHeard.append(controller.isStoreLoaded) }
 
         device.isUnlocked = true
         center.post(name: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil)
 
-        #expect(heard == 1)
+        // Once, and only after the store is open — an early call would read it closed again.
+        #expect(openWhenHeard == [true])
     }
 
     /// A store that opened at launch never sends a late-open signal, so lists don't load twice.
@@ -121,6 +122,8 @@ import UIKit
     }
 
     /// The library loads once the store opens after unlock, instead of staying empty until relaunch.
+    /// Exemption: runs the real `RecipeStore.load()`, which reads/writes `LocalStore.shared` launch flags (same as
+    /// `RecipeImageLocalizerTests.launchKeepsExistingImports`) — goes away with Inbox 🟡 RecipeStore `storage` seam.
     @Test func recipeStoreLoadsWhenTheStoreOpensAfterUnlock() async throws {
         let directory = try Self.makeDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
