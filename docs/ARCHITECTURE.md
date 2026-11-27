@@ -200,7 +200,8 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
   edited ones; bump `BundledRecipeCatalog.sampleRefreshVersion` when shipped fixes should reach existing installs
   (`historyChangeBumpsRefreshVersion` pins the history file's hash to the version, so a regenerated history fails until both move).
 - `SeedRecipeProvider` holds starter recipes with fixed UUIDs. `RecipeStore.seedIfNeeded` seeds starters into an
-  empty library and the bundled collection once (flags `seedRecipesLoaded`, `bundledRecipesSeeded_v1`).
+  empty library and the bundled collection once per store file (flags `seedRecipesLoaded`, `bundledRecipesSeeded_v1`,
+  tied to `seededStoreFileID`: a fresh file after `attemptStoreRecovery` seeds again).
   When a starter changes, add its old copy to `SeedRecipeProvider.shippedVersions` (the starters' history) and bump
   `sampleRefreshVersion` so untouched copies on existing installs pick it up.
 - `RecipeArt/<recipe id>.jpg` — illustrations made with `tools/RecipeArt` and compressed by

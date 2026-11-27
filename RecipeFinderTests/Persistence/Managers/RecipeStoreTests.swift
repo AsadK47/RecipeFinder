@@ -350,4 +350,25 @@ struct RecipeStoreTests {
         #expect(persistence.storeFileID != nil)
         #expect(storage.string(forKey: Self.seededFileKey) == persistence.storeFileID)
     }
+
+    @Test("relaunching on the same store file doesn't seed again")
+    func relaunchOnTheSameFileSeedsOnce() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let storeURL = directory.appendingPathComponent("RecipeModel.sqlite")
+        let storage = try isolatedStorage()
+        let first = PersistenceController(storeURL: storeURL)
+        _ = await RecipeStore(persistence: first).seedIfNeeded(existing: [], storage: storage, bundled: { [] })
+        let firstFile = try #require(first.storeFileID)
+
+        // The cook deleted every recipe; a relaunch opens the same file, which keeps its identifier.
+        for recipe in await first.fetchRecipesAsync() { first.deleteRecipe(withId: recipe.id) }
+        let relaunched = PersistenceController(storeURL: storeURL)
+        let seeded = await RecipeStore(persistence: relaunched)
+            .seedIfNeeded(existing: [], storage: storage, bundled: { [] })
+
+        #expect(relaunched.storeFileID == firstFile)
+        #expect(seeded == nil)
+    }
 }
