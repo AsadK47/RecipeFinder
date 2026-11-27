@@ -1023,3 +1023,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 ## 2026-11-27 (item pass: "and a half" step timers — fixed: number words ("two and a half hours" → 30) (both reviewers); trailing "and a half cup" added to the time (both))
 - ⚔️ [Data] Half-minute ties round up ("a minute and a half" → 2, "10 and a half minutes" → 11), 30 s past the text — reviewer wanted ties down to match "ranges take the lower bound"; challenger noted it matches how "1½ minutes" already rounds. Kept: one rounding rule for every timer; owner may prefer ties down.
 - ⚔️ [Break] Number words stop at twelve ("fifteen and a half hours" → no timer rather than a wrong one); "one second" reads as 1/60 min → no timer.
+
+## 2026-11-27 (item pass: dashed mixed-number step timers — fixed: improper fraction after a dash untested (challenger) → pinned "1-3/2 hours" → 60)
+- ⚔️ [Break] U+2044 fraction slash ("1-1⁄2 hours" → 120, overcook), U+2011 hyphen ("1‑1/2" → 30), "1-½" (→ 60), em dash (→ 60) and hyphenated units ("a 20-minute simmer" → none) are pre-existing gaps — first three → Inbox 🐞 (normalise once at the top of `timerMinutes(in:)`); hyphenated units fail safe (no timer).
+- ⚔️ [Simplify] Challenger preferred normalising "1-1/2" → "1 1/2" over a new regex branch; kept the branch for this fix (tested, no regressions), the Inbox normalisation item can fold it in.

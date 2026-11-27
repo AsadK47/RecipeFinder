@@ -5,6 +5,10 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Dashed mixed-number timers** (aad6ef5..13693da, builder 2026-11-27): "1-1/2" is a US mixed number when the part after
+  the dash is a proper fraction (→ 1½); a whole number or improper fraction after the dash stays a range (lower bound,
+  owner 2026-11-25). Done as a first `amount` alternative so every other shape matches as before. Rejected for now:
+  the challenger's normalise-first rewrite (also fixes U+2044/U+2011) — queued as its own Inbox 🐞.
 - **Sample refresh vs synced edits** (5b18b43..addaf9b, builder 2026-11-27): the background save re-reads each starter and
   skips it unless `BundledRecipeCatalog.isUnchanged(stored, since: snapshot)` (text + favourite, rating, photos, tags,
   hero, servings, sample flag; cook history is re-read on write anyway). Any skip leaves the version unmarked so the
