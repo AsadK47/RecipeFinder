@@ -80,13 +80,13 @@ struct CookingPlan: Equatable {
     }
 
     // Only counts an amount followed by a time unit, so "350°F"/"2 eggs" aren't read as durations. An amount is a
-    // number or number word to twelve (with an optional "½", " 1/2" or " and a half"), a lone fraction, or the words
+    // number or number word to twelve (with an optional "½", " 1/2", US "-1/2" or " and a half"), a lone fraction, or the words
     // "a"/"an"/"half an"/"a half". A range keeps its lower bound in group 1 (owner 2026-11-25): an unspaced dash ("10-15", "1-1½") or a
     // spaced "to"/"or" ("2 to 3", "20 or 25"); a spaced dash is punctuation ("gas mark 4 - 25 minutes"). Group 3 is
     // an "and a half" after the unit ("an hour and a half"). Compiled once.
     private static let numberWords = ["one": 1.0, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
                                       "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12]
-    private static let amount = #"(?:(?:\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|\b(?:"#
+    private static let amount = #"(?:(?:\d+[-–]\d+/\d+|\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|\b(?:"#
         + numberWords.keys.sorted().joined(separator: "|") + #")\b)(?:\s+and\s+a\s+half\b)?|[½¼¾⅓⅔])"#
     // A lone "a half" never follows "and" ("fifteen and a half hours" is not half an hour), and a trailing "and a
     // half" that starts the next amount ("20 minutes and a half cup of stock") isn't part of the time.
@@ -106,6 +106,13 @@ struct CookingPlan: Equatable {
         // "1 and a half" → 1 + ½ (checked before the "half" suffix below, which would read it as a lone ½).
         if let suffix = words.range(of: #"\s+and\s+a\s+half$"#, options: .regularExpression) {
             return value(ofAmount: String(words[..<suffix.lowerBound])) + 0.5
+        }
+        // US "1-1/2" → 1 + ½. A dash before a whole number or an improper fraction ("1-3/2") is a range: keep its
+        // lower bound (owner 2026-11-25).
+        let dashParts = words.split(whereSeparator: { $0 == "-" || $0 == "–" })
+        if dashParts.count == 2, let whole = Double(dashParts[0]) {
+            let fraction = value(ofAmount: String(dashParts[1]))
+            return fraction < 1 ? whole + fraction : whole
         }
         if words.hasSuffix("half") || words.hasPrefix("half") { return 0.5 }
         if words == "a" || words == "an" { return 1 }
