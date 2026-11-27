@@ -80,13 +80,15 @@ struct CookingPlan: Equatable {
     }
 
     // Only counts an amount followed by a time unit, so "350°F"/"2 eggs" aren't read as durations. An amount is a
-    // number (with an optional "½" or " 1/2" fraction), a lone fraction, or the words "a"/"an"/"half an"/"a half". A
-    // range keeps its lower bound in group 1 (owner 2026-11-25): an unspaced dash ("10-15", "1-1½") or a spaced
-    // "to"/"or" ("2 to 3", "20 or 25"); a spaced dash is punctuation ("gas mark 4 - 25 minutes"). Compiled once.
-    private static let amount = #"(?:\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|[½¼¾⅓⅔])"#
+    // number (with an optional "½", " 1/2" or " and a half"), a lone fraction, or the words "a"/"an"/"half an"/
+    // "a half". A range keeps its lower bound in group 1 (owner 2026-11-25): an unspaced dash ("10-15", "1-1½") or a
+    // spaced "to"/"or" ("2 to 3", "20 or 25"); a spaced dash is punctuation ("gas mark 4 - 25 minutes"). Group 3 is
+    // an "and a half" after the unit ("an hour and a half"). Compiled once.
+    private static let amount = #"(?:(?:\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?)"#
+        + #"(?:\s+and\s+a\s+half\b)?|[½¼¾⅓⅔])"#
     private static let timerRegex = try? NSRegularExpression(
         pattern: #"(\bhalf an?\b|\ban? half\b|\ban?\b|"# + amount + #")(?:(?:[-–—]|\s+(?:to|or)\s+)"# + amount + #")?"#
-            + #"\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#,
+            + #"\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b(\s+and\s+a\s+half\b)?"#,
         options: [.caseInsensitive]
     )
 
@@ -95,6 +97,10 @@ struct CookingPlan: Equatable {
     /// The number an amount stands for: "an" → 1, "half an"/"a half" → 0.5, "1½" / "1 1/2" → 1.5, "½" → 0.5.
     private static func value(ofAmount text: String) -> Double {
         let words = text.lowercased()
+        // "1 and a half" → 1 + ½ (checked before the "half" suffix below, which would read it as a lone ½).
+        if let suffix = words.range(of: #"\s+and\s+a\s+half$"#, options: .regularExpression) {
+            return value(ofAmount: String(words[..<suffix.lowerBound])) + 0.5
+        }
         if words.hasSuffix("half") || words.hasPrefix("half") { return 0.5 }
         if words == "a" || words == "an" { return 1 }
         var total = 0.0
@@ -127,7 +133,8 @@ struct CookingPlan: Equatable {
         guard let first = matches.first else { return nil }
 
         func minutes(of match: NSTextCheckingResult) -> (value: Double, rank: Int) {
-            let value = Self.value(ofAmount: ns.substring(with: match.range(at: 1)))
+            var value = Self.value(ofAmount: ns.substring(with: match.range(at: 1)))
+            if match.range(at: 3).location != NSNotFound { value += 0.5 } // "an hour and a half"
             let unit = ns.substring(with: match.range(at: 2)).lowercased()
             if unit.hasPrefix("h") { return (value * 60, 2) }
             if unit.hasPrefix("s") { return (value / 60, 0) }
