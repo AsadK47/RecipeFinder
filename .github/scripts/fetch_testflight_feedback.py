@@ -7,8 +7,13 @@ The repo is public, so an issue carries no tester content: no comment, screensho
 in App Store Connect / TestFlight and writes what to fix on the issue in their own words before adding `owner-ok`
 (BACKLOG top). Each issue body embeds `<!-- tf:<submission id> -->` so nothing is filed twice.
 
+Deleting a notice removes that marker, so before deleting one (Privacy 6.6) add its id to `RETIRED_PATH` as a
+SHA-256 hash — `python3 .github/scripts/fetch_testflight_feedback.py --retire <submission id>` prints the line — and
+the job skips it while App Store Connect still lists the submission. The file is public, so it never holds raw ids.
+
 Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, BUNDLE_ID, GITHUB_TOKEN, GITHUB_REPOSITORY.
 """
+import hashlib
 import json
 import os
 import re
@@ -22,6 +27,7 @@ from asc import API, call, make_token  # noqa: E402
 
 LABEL = "testflight-feedback"
 GITHUB_API = "https://api.github.com"
+RETIRED_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "testflight-feedback-retired.txt")
 KINDS = {"betaFeedbackScreenshotSubmissions": "screenshot", "betaFeedbackCrashSubmissions": "crash"}
 
 
@@ -56,6 +62,35 @@ def filed_submission_ids(repo: str) -> set:
         page += 1
 
 
+def retired_line(submission_id: str) -> str:
+    """The line to add to RETIRED_PATH for a deleted notice: a hash, so the public file holds no reference number."""
+    return hashlib.sha256(submission_id.encode()).hexdigest()
+
+
+def read_retired(path: str) -> set:
+    """Hashes of submissions whose notice was deleted. `#` starts a comment; anything else must be a hash."""
+    try:
+        with open(path, encoding="utf-8") as handle:
+            lines = handle.read().splitlines()
+    except FileNotFoundError:
+        return set()
+    hashes = set()
+    for number, line in enumerate(lines, 1):
+        entry = line.split("#", 1)[0].strip()
+        if not entry:
+            continue
+        if not re.fullmatch(r"[0-9a-f]{64}", entry):
+            raise ValueError(f"{path}:{number}: not a SHA-256 hash — use --retire <id> to make the line")
+        hashes.add(entry)
+    return hashes
+
+
+def new_submissions(submissions: list, seen: set, retired: set) -> list:
+    """Submissions with no notice yet, oldest first: not filed (`seen`) and not deleted on purpose (`retired`)."""
+    fresh = [s for s in submissions if s["id"] not in seen and retired_line(s["id"]) not in retired]
+    return sorted(fresh, key=lambda s: s.get("attributes", {}).get("createdDate") or "")
+
+
 def issue_for(kind: str, sub: dict) -> dict:
     """A notice with no tester content: kind, date and the App Store Connect submission id."""
     date = (sub.get("attributes", {}).get("createdDate") or "")[:10] or "unknown date"
@@ -71,6 +106,10 @@ def issue_for(kind: str, sub: dict) -> dict:
 
 
 def main() -> int:
+    if len(sys.argv) == 3 and sys.argv[1] == "--retire":
+        print(retired_line(sys.argv[2]))
+        return 0
+    retired = read_retired(RETIRED_PATH)
     token = make_token(os.environ["ASC_KEY_ID"], os.environ["ASC_ISSUER_ID"], os.environ["ASC_KEY_PATH"])
     bundle_id = os.environ.get("BUNDLE_ID", "com.asadkhan.recipefinder")
 
@@ -90,10 +129,7 @@ def main() -> int:
         except urllib.error.HTTPError as err:
             print(f"Could not list {endpoint}: HTTP {err.code} {err.read()[:300]!r}", file=sys.stderr)
             return 1
-        for sub in sorted(submissions, key=lambda s: s.get("attributes", {}).get("createdDate") or ""):
-            if sub["id"] in seen:
-                continue
-            new_issues.append(issue_for(kind, sub))
+        new_issues += [issue_for(kind, sub) for sub in new_submissions(submissions, seen, retired)]
 
     for issue in new_issues:
         created = github("POST", f"/repos/{repo}/issues", issue)
