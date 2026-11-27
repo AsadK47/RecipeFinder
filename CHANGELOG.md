@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox same-dish take-off fallback · ac6a6ae
+- For you: Taking a meal off from a screen that hadn't caught up yet now leaves the same dish you've planned again that night right where it is.
+- Behind the build: a new test failed on the old take-off first; a reviewer and a challenger read it, and the reviewer caught next week's dropped copy of a weekly meal, fixed before it shipped.
+
 ## 2026-11-27 · Inbox Privacy sharing and feedback wording · d23f5d9
 - For you: The Privacy Policy now describes exactly what a shared My Cookbook page shows, your photo, the dish's name, how often you've made it and your stars, and how beta feedback is deleted on request.
 - Behind the build: each sentence was checked against the share card and feedback code; a reviewer and a challenger both caught the photo order, fixed before it shipped.
