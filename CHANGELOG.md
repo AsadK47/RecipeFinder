@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox and a half step timers · f976eaa
+- For you: Cooking mode reads "an hour and a half", "1 and a half hours" or "two and a half hours" as the full time, so the step timer runs as long as the recipe says.
+- Behind the build: new tests failed on the old timer reader first; a reviewer and a challenger both caught spelled-out numbers still coming out short, fixed before it shipped.
+
 ## 2026-11-27 · Inbox sample refresh keeps synced changes · addaf9b
 - For you: When a built-in recipe updates itself, a rating, favourite or edit you made on another device in the same moment stays as you left it.
 - Behind the build: the update now re-checks each recipe right before saving it; a reviewer and a challenger both caught that a skipped recipe briefly showed its older copy, fixed before it shipped.

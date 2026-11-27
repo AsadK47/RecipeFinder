@@ -1009,3 +1009,7 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Break] An import landing between the background fetch and `save()` fails the whole batch (default error merge policy) — safe (nothing written, retried next launch), untested; could repeat during a long first import.
 - ⚔️ [Simplify] `isUnchanged` repeats the user-state list `staleSampleRefreshes` carries over — a new carried field must be added to both (`isUnchangedSinceSnapshot` covers today's list).
 - ⚔️ [Data] A newer load whose fetch predates an older load's duplicate deletion can show the deleted copies for a session (generation guard now always drops the older result) — pre-existing class of race, heals on the next load.
+
+## 2026-11-27 (item pass: "and a half" step timers — fixed: number words ("two and a half hours" → 30) (both reviewers); trailing "and a half cup" added to the time (both))
+- ⚔️ [Data] Half-minute ties round up ("a minute and a half" → 2, "10 and a half minutes" → 11), 30 s past the text — reviewer wanted ties down to match "ranges take the lower bound"; challenger noted it matches how "1½ minutes" already rounds. Kept: one rounding rule for every timer; owner may prefer ties down.
+- ⚔️ [Break] Number words stop at twelve ("fifteen and a half hours" → no timer rather than a wrong one); "one second" reads as 1/60 min → no timer.
