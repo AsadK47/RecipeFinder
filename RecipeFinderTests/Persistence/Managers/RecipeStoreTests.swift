@@ -193,6 +193,36 @@ struct RecipeStoreTests {
         #expect(storage.integer(forKey: Self.refreshKey) == BundledRecipeCatalog.sampleRefreshVersion)
     }
 
+    @Test("a starter rated on another device during the refresh keeps the rating, and the refresh retries next launch")
+    func launchRefreshKeepsChangesSyncedInMeanwhile() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let library = try await storedOldGreekSalad(in: persistence)
+        let storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+        // The snapshot says untouched; the store now holds a copy synced in from iCloud after it was read.
+        var synced = try #require(library.first)
+        synced.rating = 5
+        synced.isFavorite = false
+        #expect(persistence.updateRecipe(synced))
+
+        let refreshed = await RecipeStore(persistence: persistence)
+            .refreshStaleSamples(in: library, storage: storage)
+
+        let stored = try #require(await persistence.fetchRecipesAsync().first)
+        #expect(stored.rating == 5)
+        #expect(stored.isFavorite == false)
+        #expect(stored.dietaryInfo.isGlutenFree == true)
+        #expect(refreshed.first?.dietaryInfo.isGlutenFree == true)
+        #expect(storage.integer(forKey: Self.refreshKey) == 0)
+
+        // Next launch reads the synced copy, which is still an untouched old version: refreshed, rating kept.
+        let again = await RecipeStore(persistence: persistence)
+            .refreshStaleSamples(in: await persistence.fetchRecipesAsync(), storage: storage)
+        #expect(again.first?.dietaryInfo.isGlutenFree == false)
+        #expect(again.first?.rating == 5)
+        #expect(await persistence.fetchRecipesAsync().first?.rating == 5)
+        #expect(storage.integer(forKey: Self.refreshKey) == BundledRecipeCatalog.sampleRefreshVersion)
+    }
+
     @Test("missing bundle data leaves the starter copy as it was and the refresh unmarked")
     func launchRefreshWaitsForBundleData() async throws {
         let persistence = PersistenceController(inMemory: true)
