@@ -94,6 +94,7 @@ struct CookingModeTimerTests {
         ("Simmer 2-1/2 hours, stirring now and then", 150),
         ("Roast 1–1/4 hours", 75),
         ("Braise for 1-1/2 to 2 hours", 90),
+        ("Braise for 1-3/2 hours", 60),
         ("Simmer 10-15 minutes", 10),
         ("Braise for 3 1/2-4 hours", 210),
     ])
