@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox empty take-off toast · 96d4bbe
+- For you: Taking off a meal that was already gone, say after a sync, no longer shows a "taken off" message with an Undo that does nothing.
+- Behind the build: new tests cover the toast before it shows; a reviewer and a challenger both caught a tap that removed nothing hiding the "stayed off" note, fixed before it shipped.
+
 ## 2026-11-27 · Inbox same-dish take-off fallback · ac6a6ae
 - For you: Taking a meal off from a screen that hadn't caught up yet now leaves the same dish you've planned again that night right where it is.
 - Behind the build: a new test failed on the old take-off first; a reviewer and a challenger read it, and the reviewer caught next week's dropped copy of a weekly meal, fixed before it shipped.
