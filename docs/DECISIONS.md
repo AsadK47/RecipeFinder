@@ -5,6 +5,15 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Sample refresh vs synced edits** (5b18b43..addaf9b, builder 2026-11-27): the background save re-reads each starter and
+  skips it unless `BundledRecipeCatalog.isUnchanged(stored, since: snapshot)` (text + favourite, rating, photos, tags,
+  hero, servings, sample flag; cook history is re-read on write anyway). Any skip leaves the version unmarked so the
+  next launch decides from the copy as it is then — rejected marking it done (a favourite-only sync would strand that
+  starter on stale text, e.g. an allergen fix, for good). Tradeoff: a copy that mismatches every launch re-runs the
+  pass each launch (cheap, safe). Load-generation guard added before assigning `recipes`. **Pre-mortem:** (1) a synced
+  rating is overwritten → `launchRefreshKeepsChangesSyncedInMeanwhile`, `updateRecipesInBackground_skipsChangedSinceSnapshot`;
+  (2) the skipped starter never refreshes → same test's second launch; (3) a field compared that the refresh doesn't
+  carry, or one missed → `isUnchangedSinceSnapshot`. Reviewer + challenger: skipped ids now return the stored copy, not the snapshot (otherwise the generation guard could publish a newer load's pre-refresh copies).
 - **Store opened after unlock** (f1b15a8..5c3ef30, builder 2026-11-27): a closure list on `PersistenceController`
   (`whenStoreOpensLate`), not a `NotificationCenter` name — testable through the injected controller, no global name; run
   after the synchronous `loadStore()` in the unlock observer, so recovery-after-unlock counts too. `RecipeStore` only; other

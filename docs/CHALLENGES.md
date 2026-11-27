@@ -1002,3 +1002,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Assumption] Difficulty parser (c07ac7a): "Easy for advanced cooks" reads as a range → Intermediate; "Hard to mess up" → Expert; "Showing off" (Jamie Oliver) and numeric labels ("3/5", "Level 2") → Intermediate — kept: rare, and the middle is the safe default.
 - ⚔️ [Product] "Not difficult" / "not too hard" → Intermediate, not Basic — a negated level means the middle by design (safe claim either way); flip to one step down if testers disagree.
 - ⚔️ [Data] Stored labels like "Harder" (Expert either way now) or "Easyish" (was Basic, now Intermediate) can move filter bucket silently; the card shows the raw text — accepted, the old buckets came from substring accidents.
+
+## 2026-11-27 (item pass: sample refresh keeps synced changes — fixed: skipped ids showed the stale snapshot (both reviewers); partial-skip version rule untested (challenger) → `launchRefreshRetriesAfterAPartialSkip`)
+- ⚔️ [Tests] No test fails if the post-refresh `generation == loadGeneration` guard (RecipeStore.swift) is removed — needs two overlapping loads; accepted for now.
+- ⚔️ [Break] Two same-id rows whose merge keeps failing can make the unsorted `fetchLimit 1` read the other row and skip that starter every launch — costs a bundle decode per launch, no data lost.
+- ⚔️ [Break] An import landing between the background fetch and `save()` fails the whole batch (default error merge policy) — safe (nothing written, retried next launch), untested; could repeat during a long first import.
+- ⚔️ [Simplify] `isUnchanged` repeats the user-state list `staleSampleRefreshes` carries over — a new carried field must be added to both (`isUnchangedSinceSnapshot` covers today's list).
+- ⚔️ [Data] A newer load whose fetch predates an older load's duplicate deletion can show the deleted copies for a session (generation guard now always drops the older result) — pre-existing class of race, heals on the next load.
