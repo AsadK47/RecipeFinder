@@ -40,11 +40,12 @@ class RetiredIdTests(unittest.TestCase):
         subs = [sub("b", "2026-11-26T10:00:00Z"), sub("a", "2026-11-25T10:00:00Z")]
         self.assertEqual([s["id"] for s in new_submissions(subs, set(), set())], ["a", "b"])
 
-    def test_workflow_passes_the_variable(self):
-        # Without this env line the list is silently empty and deleted notices come back.
+    def test_workflow_passes_the_secret(self):
+        # Without this env line the list is silently empty and deleted notices come back; a `vars.` value would be
+        # printed in the public run log, so it must be a secret.
         root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "workflows", "testflight-feedback.yml")
         with open(root, encoding="utf-8") as handle:
-            self.assertIn("TF_RETIRED_IDS: ${{ vars.TF_RETIRED_IDS }}", handle.read())
+            self.assertIn("TF_RETIRED_IDS: ${{ secrets.TF_RETIRED_IDS }}", handle.read())
 
 
 class MainWiringTests(unittest.TestCase):

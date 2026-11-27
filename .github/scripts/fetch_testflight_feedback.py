@@ -10,9 +10,10 @@ in App Store Connect / TestFlight and writes what to fix on the issue in their o
 Closing a notice keeps the marker (closed issues count), so close one that is no longer needed. For a deletion
 request (Privacy 6.6/10.2), delete the submission in App Store Connect first — the API then stops listing it.
 Deleting a notice removes its marker, so before deleting one whose submission App Store Connect still lists, the
-owner adds its submission id, one per line, to the repository Actions variable `TF_RETIRED_IDS` (Settings → Secrets
-and variables → Actions → Variables); the job skips those ids. A variable, not a file: the repo is public and
-its history permanent, so a deleted notice leaves no public trace, and the change counts from the next run.
+owner first saves its submission id in the repository Actions secret `TF_RETIRED_IDS` (Settings → Secrets and
+variables → Actions; one line, ids separated by spaces or commas — a secret can't be read back, so re-enter the
+whole list), then deletes the notice; the job skips those ids. A secret, not a file or a variable: the repo and its
+run logs are public (a variable is printed in the step's env; a one-line secret is masked), so no trace is left.
 
 Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, BUNDLE_ID, GITHUB_TOKEN, GITHUB_REPOSITORY, TF_RETIRED_IDS (optional).
 """
@@ -64,8 +65,8 @@ def filed_submission_ids(repo: str) -> set:
 
 
 def parse_retired(text: str) -> set:
-    """Submission ids whose notice was deleted on purpose, from `TF_RETIRED_IDS`: one per line (commas and spaces also
-    separate), backticks as copied from a notice ignored. Never printed — the variable is private."""
+    """Submission ids whose notice was deleted on purpose, from `TF_RETIRED_IDS`: one line, separated by spaces or
+    commas (newlines work too), backticks as copied from a notice ignored. Never printed: the list is a secret."""
     return {token for token in re.split(r"[\s,`]+", text or "") if token}
 
 

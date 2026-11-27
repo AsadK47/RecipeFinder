@@ -42,8 +42,9 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           BUNDLE_ID: com.asadkhan.recipefinder
           GITHUB_TOKEN: ${{ github.token }}
-          # Ids of notices deleted on purpose (Privacy 6.6), so they aren't filed again; private, never printed.
-          TF_RETIRED_IDS: ${{ vars.TF_RETIRED_IDS }}
+          # Ids of notices deleted on purpose (Privacy 6.6), so they aren't filed again. A secret, not a variable: step env
+          # values are printed in the public run log unless they are secrets (masked).
+          TF_RETIRED_IDS: ${{ secrets.TF_RETIRED_IDS }}
         run: python3 .github/scripts/fetch_testflight_feedback.py
 
       - name: Remove API key
