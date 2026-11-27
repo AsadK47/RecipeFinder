@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox Privacy sharing and feedback wording · d23f5d9
+- For you: The Privacy Policy now describes exactly what a shared My Cookbook page shows, your photo, the dish's name, how often you've made it and your stars, and how beta feedback is deleted on request.
+- Behind the build: each sentence was checked against the share card and feedback code; a reviewer and a challenger both caught the photo order, fixed before it shipped.
+
 ## 2026-11-27 · Inbox TimeExtractor dash/fraction normalisation · 227fa51
 - For you: Recipe times copied from websites, like "1 1/2 hours", "1½ hours" or "20‑30 min", now show the right length, and amounts written "1⁄2 cup" read as half a cup.
 - Behind the build: new tests failed on the old reader first; a reviewer and a challenger both caught "10/12 minutes" reading as one minute, fixed before it shipped.

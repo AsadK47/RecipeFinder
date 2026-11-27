@@ -68,7 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
-🚧 builder agent 2026-11-27 Inbox 🔴 Privacy 6.5/7.3/10.2 wording (PrivacyPolicyView.swift:107) on `agent/privacy-share-photo`.
+✅ Inbox 🔴 Privacy 6.5/7.3/10.2 wording landed 208d252..d23f5d9 (builder 2026-11-27; leftover branch agent/privacy-share-photo auto-cleanup). Website session: mirror 6.5/7.3/10.2 + 27 Nov date into `privacy.html`. Next: Inbox 🐞 `fetch_testflight_feedback.py` retired submission ids (first open 🔴/🐞 needing no owner), then 🐞 MealPlanningManager.swift:217 same-dish fallback.
 ✅ Inbox 🐞 TimeExtractor dash/fraction normalisation landed 12a06e9..227fa51 (builder 2026-11-27; leftover branches agent/time-extractor-normalise auto-cleanup, agent/time-extractor-normalise-red unmerged — delete). Next: first open Inbox 🔴/🐞 needing no owner, else Launch lane (a) *Recipes in our own words*.
 ✅ Inbox 🐞 seed gates vs a recovered store landed 14277e8..7f538b7 (builder 2026-11-27; leftover branches agent/seed-recovered-store auto-cleanup, agent/seed-recovered-store-red unmerged — delete). Next: Inbox 🐞 `RecipeFormatters.swift:44` `TimeExtractor` dash/fraction normalisation — share `CookingPlan.normalisedForTimers`, red tests first.
 ✅ Inbox 🐞 timer normalisation landed 89f41e3..93c1f1b (builder 2026-11-27; leftover branches agent/timer-normalise auto-cleanup, agent/timer-normalise-red unmerged — delete). Next: Inbox 🐞 `RecipeStore.swift:337` `seedIfNeeded` gates vs a recovered store (data — two reviewers), then 🐞 `TimeExtractor` dash/fraction normalisation.
