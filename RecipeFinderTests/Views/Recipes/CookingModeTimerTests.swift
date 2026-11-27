@@ -87,6 +87,20 @@ struct CookingModeTimerTests {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
     }
 
+    // Reviewer 2026-11-26: US recipes write 1½ as "1-1/2"; it was read as the range 1–½ → a 60-min timer for 90.
+    // A dash before a proper fraction joins a mixed number; a dash before a whole number is still a range.
+    @Test("a dash before a fraction is a mixed number, not a range", arguments: [
+        ("Bake for 1-1/2 hours", 90),
+        ("Simmer 2-1/2 hours, stirring now and then", 150),
+        ("Roast 1–1/4 hours", 75),
+        ("Braise for 1-1/2 to 2 hours", 90),
+        ("Simmer 10-15 minutes", 10),
+        ("Braise for 3 1/2-4 hours", 210),
+    ])
+    func dashedMixedNumber(text: String, minutes: Int) {
+        #expect(CookingPlan.timerMinutes(in: text) == minutes)
+    }
+
     @Test("words and numbers that aren't an amount of time stay nil", arguments: [
         "Leave for a few minutes",
         "Bring 2 to the boil",
