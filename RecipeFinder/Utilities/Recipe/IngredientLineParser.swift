@@ -234,7 +234,8 @@ enum IngredientLineParser {
             ("⅕", "1/5"), ("⅖", "2/5"), ("⅗", "3/5"), ("⅘", "4/5"),
             ("⅙", "1/6"), ("⅚", "5/6")
         ]
-        var result = s
+        // "1⁄2" (U+2044) and "1‑1/2" (U+2011) as ASCII first, the same reading as timers and recipe times.
+        var result = NumberText.plain(s)
         for (char, replacement) in map {
             // Surround with spaces so "1½" → "1 1/2 " rather than "11/2 ".
             result = result.replacingOccurrences(of: String(char), with: " \(replacement) ")

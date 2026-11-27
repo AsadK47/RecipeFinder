@@ -133,17 +133,10 @@ struct CookingPlan: Equatable {
         return total
     }
 
-    /// Web and JSON-LD text writes "1⁄2" with U+2044 and dashes as U+2010/U+2011/U+2012/U+2212 (or their small and
-    /// full-width forms): read them as "/" and "-". A superscript fraction flattened to text ("1¹⁄₂" → "11⁄2") puts the
-    /// whole number right against a one-digit numerator: split it ("1 1/2"), or "11/2" reads as 5½ hours.
-    /// A dash before "½" joins a mixed number ("1-½" → "1½"); ½ is below any whole number, so it is never a range.
-    /// Not NFKC: that turns "1½" into "11⁄2".
+    /// Dashes and fraction slashes as ASCII first (`NumberText.plain`). A dash before "½" joins a mixed number
+    /// ("1-½" → "1½"); ½ is below any whole number, so it is never a range. Not NFKC: that turns "1½" into "11⁄2".
     private static func normalisedForTimers(_ text: String) -> String {
-        let plain = text
-            .replacingOccurrences(of: "(\\d)([1-9])\u{2044}([2-9])(?!\\d)", with: "$1 $2/$3", options: .regularExpression)
-            .replacingOccurrences(of: "\u{2044}", with: "/")
-            .replacingOccurrences(of: "[\u{2010}\u{2011}\u{2012}\u{2212}\u{FE63}\u{FF0D}]", with: "-",
-                                  options: .regularExpression)
+        let plain = NumberText.plain(text)
         return plain.replacingOccurrences(of: #"(\d)[-–]([½¼¾⅓⅔])"#, with: "$1$2", options: .regularExpression)
     }
 
