@@ -15,8 +15,8 @@ import SwiftUI
 // Updated 2026-11-25 (owner OK in chat): 6.5–6.6 — feedback stays in App Store Connect; public issues are content-free
 // notices (fetch_testflight_feedback.py `issue_for`), no artifacts.
 // Updated 2026-11-27 (BACKLOG Inbox, reviewer 2026-11-25): 6.5 Apple can link its reference number too; 7.3 the
-// My Cookbook card shows the cook's latest photo (else the recipe picture or illustration) and stars (CookbookShareCard); 10.2 the Developer deletes the App Store
-// Connect copy on request.
+// My Cookbook card shows the cook's latest photo (else the recipe picture or an illustration) and stars
+// (CookbookShareCard); 10.2 the Developer deletes the App Store Connect copy on request.
 // (The 2026-11-23 public-issue/artifact design above is superseded by 2026-11-25.) Open legal questions: the US transfer
 // safeguard per provider, and a short written legitimate-interests assessment for beta feedback.
 // Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
