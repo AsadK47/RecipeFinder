@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 TimeExtractor dash/fraction normalisation landed 12a06e9..227fa51 (builder 2026-11-27; leftover branches agent/time-extractor-normalise auto-cleanup, agent/time-extractor-normalise-red unmerged — delete). Next: first open Inbox 🔴/🐞 needing no owner, else Launch lane (a) *Recipes in our own words*.
 ✅ Inbox 🐞 seed gates vs a recovered store landed 14277e8..7f538b7 (builder 2026-11-27; leftover branches agent/seed-recovered-store auto-cleanup, agent/seed-recovered-store-red unmerged — delete). Next: Inbox 🐞 `RecipeFormatters.swift:44` `TimeExtractor` dash/fraction normalisation — share `CookingPlan.normalisedForTimers`, red tests first.
 ✅ Inbox 🐞 timer normalisation landed 89f41e3..93c1f1b (builder 2026-11-27; leftover branches agent/timer-normalise auto-cleanup, agent/timer-normalise-red unmerged — delete). Next: Inbox 🐞 `RecipeStore.swift:337` `seedIfNeeded` gates vs a recovered store (data — two reviewers), then 🐞 `TimeExtractor` dash/fraction normalisation.
 ✅ Inbox 🐞 nightly `testCaptureTodayPlanned` clock dependence landed 03690b9..1eb0dd7 (builder 2026-11-27; also TodayTimes afternoon 15:00 → 17:00; leftover branch agent/today-planned-clock auto-cleanup). Next: Inbox 🐞 timer normalisation (`CookingPlan.swift:89` U+2044 / U+2011 / "1-½") — red tests first.

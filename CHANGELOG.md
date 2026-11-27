@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox TimeExtractor dash/fraction normalisation · 227fa51
+- For you: Recipe times copied from websites, like "1 1/2 hours", "1½ hours" or "20‑30 min", now show the right length, and amounts written "1⁄2 cup" read as half a cup.
+- Behind the build: new tests failed on the old reader first; a reviewer and a challenger both caught "10/12 minutes" reading as one minute, fixed before it shipped.
+
 ## 2026-11-27 · Inbox seed gates vs a recovered store · 7f538b7
 - For you: If the app ever has to start your recipe library afresh after it couldn't be read, the starter and built-in recipes come straight back, so the app is ready to cook from; with iCloud sync on, your library returns from iCloud as before.
 - Behind the build: new tests failed on the old seeding first; two reviewers and a challenger read it, and caught that with sync on it would have brought back recipes you'd deleted, fixed before it shipped.
