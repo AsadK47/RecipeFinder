@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+🚧 builder agent 2026-11-27 Inbox 🐞 store opened after unlock never reloads recipes — `agent/store-late-open` (fix + tests), red run on `agent/store-late-open-red` (fix's call sites removed). Next: both CI runs → land, tick both duplicate Inbox lines (RecipeStore.swift:70-76 and PersistenceController.swift:174).
 ⏸ Inbox 🐞 shared recipe file read receipt → Needs owner (builder 2026-11-26): image-only fix on `agent/shared-file-image` (4601ae9) + red tests `agent/shared-file-image-red` (8ca86a9), both unmerged — rework per the owner's (a)/(b)/(c); the fix alone makes the refresh sheet offer "Hero Image" on every open, so don't land it as is. Next: first open Inbox 🔴/🐞 needing no owner, else Launch lane (a) *Recipes in our own words*.
 ✅ Inbox 🐞 copy merge losing hero landed 6543b14..9f45133 (builder 2026-11-26; leftover branches agent/merge-hero-photo auto-cleanup, agent/merge-hero-photo-red unmerged — delete). Next: Inbox 🐞 shared recipe file import — drop the remote `imageURL` on file import (CHALLENGES 498; read receipt to the sender).
 ✅ Inbox 🐞 step timer phrases landed ff80a1c..33ab63f (builder 2026-11-26; leftover branches agent/timer-phrases red unmerged — delete, agent/timer-phrases-fix auto-cleanup). Next: Inbox 🐞 `mergeSyncedRecipeCopies` losing hero `imageName` → move it into `photoNames` (iCloud sync, two reviewers).
@@ -117,6 +118,14 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **Store opened after unlock (2026-11-27):** a closure list on `PersistenceController` (`whenStoreOpensLate`), not a
+  `NotificationCenter` name — testable through the already-injected controller, no global name. Run after the
+  synchronous `loadStore()` in the unlock observer, so recovery-after-unlock counts too. Scope: `RecipeStore` only;
+  other managers + the iCloud reloader stay with Inbox 🟡 "A store opened late". **Pre-mortem:** (1) unlock opens the
+  store but the list stays empty → `recipeStoreLoadsWhenTheStoreOpensAfterUnlock`; (2) a normal launch loads twice →
+  `aStoreOpenAtLaunchSendsNoLateOpen`; (3) recovery after unlock (still unreadable) skips the reload → the
+  RecipeStore test uses an unreadable file, so it goes through recovery.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
