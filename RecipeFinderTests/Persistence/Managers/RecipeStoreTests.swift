@@ -225,6 +225,33 @@ struct RecipeStoreTests {
         #expect(storage.integer(forKey: Self.refreshKey) == BundledRecipeCatalog.sampleRefreshVersion)
     }
 
+    @Test("one starter changed during the refresh leaves the version unmarked while the other is still refreshed")
+    func launchRefreshRetriesAfterAPartialSkip() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let salad = try #require(SeedRecipeProvider.shippedVersions.first { $0.name == "Greek Salad" })
+        let toast = try #require(SeedRecipeProvider.shippedVersions.first { $0.name == "Avocado Toast" })
+        #expect(await persistence.seedRecipes([salad, toast]))
+        let library = await persistence.fetchRecipesAsync()
+        let storage = LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+        var synced = try #require(library.first { $0.id == toast.id })
+        synced.rating = 4
+        #expect(persistence.updateRecipe(synced))
+
+        let refreshed = await RecipeStore(persistence: persistence)
+            .refreshStaleSamples(in: library, storage: storage)
+
+        #expect(refreshed.first { $0.id == salad.id }?.dietaryInfo.isGlutenFree == false)
+        #expect(refreshed.first { $0.id == toast.id }?.dietaryInfo.isVegan == true)
+        #expect(refreshed.first { $0.id == toast.id }?.rating == 4)
+        #expect(storage.integer(forKey: Self.refreshKey) == 0)
+
+        let again = await RecipeStore(persistence: persistence)
+            .refreshStaleSamples(in: await persistence.fetchRecipesAsync(), storage: storage)
+        #expect(again.first { $0.id == toast.id }?.dietaryInfo.isVegan == false)
+        #expect(again.first { $0.id == toast.id }?.rating == 4)
+        #expect(storage.integer(forKey: Self.refreshKey) == BundledRecipeCatalog.sampleRefreshVersion)
+    }
+
     @Test("missing bundle data leaves the starter copy as it was and the refresh unmarked")
     func launchRefreshWaitsForBundleData() async throws {
         let persistence = PersistenceController(inMemory: true)
