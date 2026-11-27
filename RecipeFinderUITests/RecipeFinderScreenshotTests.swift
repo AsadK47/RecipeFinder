@@ -559,9 +559,11 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
     /// Today+ 1/3: the Tonight card's time-aware line in the morning, afternoon and evening (DEBUG `-today-time` pins
     /// Today's clock), picking a later dinner time, and Shuffle stepping to another pick. Sorts after `testCaptureTodayPlanned`; seeds the same plan.
+    /// The afternoon is 17:00, inside the 4–9pm dinner window: before 4pm Today leads lunch with ideas (09453d3), so
+    /// a 15:00 pin had no Tonight card or "Dinner at" pill whenever a lunch idea was available.
     @MainActor
     func testCaptureTodayTimes() {
-        for (time, shot) in [("08:30", "24-today-morning"), ("15:00", "25-today-afternoon"), ("21:00", "27-today-evening")] {
+        for (time, shot) in [("08:30", "24-today-morning"), ("17:00", "25-today-afternoon"), ("21:00", "27-today-evening")] {
             let app = XCUIApplication()
             app.launchArguments += ["-ui-testing", "-seed-tonight-plan", "-today-time", time]
             app.launch()
@@ -589,7 +591,7 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                     "Evening should say when tonight's pick would be ready: \(label)"
                 )
             }
-            if time == "15:00" {
+            if time == "17:00" {
                 // Slice 2: the "Dinner at" pill picks when dinner is; the start time follows.
                 let timing = app.buttons["today.hero.eatAt"]
                 XCTAssertTrue(timing.waitForExistence(timeout: 5), "The Tonight card should offer a dinner time.")
