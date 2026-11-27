@@ -5,6 +5,7 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **TestFlight retired ids** (d969266..49dfdd1, builder 2026-11-27): the skip list is an Actions *secret*, not a committed file or a variable — the repo and its run logs are public; a hashed file left a permanent pseudonymous record of who asked for deletion (unsalted, Apple holds every id) and one bad line stopped the job; a `vars.` value is printed in the step's env block. One-line secret (multi-line masking is unreliable). Primary path stays docs: close notices; delete in App Store Connect first (API stops listing it); the secret is the fallback. Rejected: docs-only (challenger's first pick) — doesn't catch a delete done in the wrong order, the 25 Nov failure.
 - **Seed gates per store file** (14277e8..7f538b7, builder 2026-11-27): the seed flags stay in UserDefaults but are tied to
   the store file's identifier (`seededStoreFileID`, NSStoreUUID — same signal `CookingStreakManager` uses). A different
   file clears them (recovery). No recorded key = adopt the open file, never re-seed: an update must not bring back
