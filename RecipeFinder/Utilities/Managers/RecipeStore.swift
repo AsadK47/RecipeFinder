@@ -341,19 +341,7 @@ final class RecipeStore: RecipeStoring {
     ) async -> [RecipeModel]? {
         let startersKey = "seedRecipesLoaded"
         let bundledKey = "bundledRecipesSeeded_v1"
-        // The flags belong to the store file the seeds went into: a fresh file (recovery moved an unreadable store
-        // aside) is empty again and seeds again. Installs from before this key adopt the open file as theirs, so
-        // recipes the cook deleted don't come back with the update. With sync on, iCloud refills a fresh file —
-        // seeding fixed ids there would export recipes the cook deleted back to every device.
-        let fileKey = "seededStoreFileID"
-        if let file = persistence.storeFileID {
-            let recorded = storage.string(forKey: fileKey)
-            if let recorded, recorded != file, !(isSyncing ?? persistence.isSyncing) {
-                storage.set(false, forKey: startersKey)
-                storage.set(false, forKey: bundledKey)
-            }
-            if recorded != file { storage.set(file, forKey: fileKey) }
-        }
+        _ = isSyncing
         let seedStarters = existing.isEmpty && !storage.bool(forKey: startersKey)
         let seedBundled = !storage.bool(forKey: bundledKey)
         guard seedStarters || seedBundled else { return nil }
