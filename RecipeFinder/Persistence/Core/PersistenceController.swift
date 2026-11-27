@@ -187,7 +187,6 @@ final class PersistenceController {
                 // Loads synchronously (recovery included), so the flag is final here.
                 self.loadStore()
                 guard self.isStoreLoaded else { return }
-                for action in self.lateOpenActions { action() }
             }
         }
     }
