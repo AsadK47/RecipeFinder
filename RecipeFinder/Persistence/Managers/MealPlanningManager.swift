@@ -66,6 +66,8 @@ final class MealPlanningManager: MealPlanningManaging {
     @ObservationIgnored private let reminders: any MealReminderScheduling
     @ObservationIgnored private let planNudges: any PlanNudgeScheduling
     @ObservationIgnored private let storage: LocalStore
+    /// Ids already taken off: a stale tap on one of them is spent, so the same-dish fallback mustn't find a newer copy.
+    @ObservationIgnored private var takenOffIDs: Set<UUID> = []
 
     static let blobKey = "mealPlansStorage"
 
@@ -217,9 +219,13 @@ final class MealPlanningManager: MealPlanningManaging {
     @discardableResult func takeOff(_ plan: MealPlanModel) -> (removed: MealPlanModel, before: [MealPlanModel])? {
         // Not by slot: a stale tap on a night planned again since must not delete the new dish, which Undo couldn't
         // put back. The stored copy, not the caller's, so Undo's snapshot is of the series removal really changes.
+        // The same-dish fallback is for an iCloud fold's twin, never for a copy planned after this one came off.
         guard let current = mealPlans.first(where: { $0.id == plan.id })
-                ?? mealPlans.first(where: { $0.isSlot(plan.date, plan.mealTime) && $0.recipeId == plan.recipeId })
+                ?? (takenOffIDs.contains(plan.id) ? nil : mealPlans.first(where: {
+                    $0.isSlot(plan.date, plan.mealTime) && $0.recipeId == plan.recipeId
+                }))
         else { return nil }
+        takenOffIDs.formUnion([plan.id, current.id])
         let before = plansChangedByRemoving(current)
         removeMealPlan(current)
         return (current, before)
