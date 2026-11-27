@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox store opened after unlock · f1b15a8
+- For you: If iPhone starts RecipeFinder while it's still locked, your recipes appear as soon as you unlock, so you don't need to restart the app.
+- Behind the build: new tests failed on the old code first; a reviewer and a challenger read the change and tightened one test.
+
 ## 2026-11-26 · Inbox copy merge keeps the losing hero · 9f45133
 - For you: When iCloud brings two of your devices together, a photo you set as a built-in recipe's main picture on one of them stays as that recipe's main picture.
 - Behind the build: new tests failed on the old merge first; a reviewer and a challenger both caught that the first draft put the photo where the next main picture would overwrite it, fixed before it shipped.

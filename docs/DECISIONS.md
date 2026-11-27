@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Store opened after unlock** (f1b15a8..5c3ef30, builder 2026-11-27): a closure list on `PersistenceController`
+  (`whenStoreOpensLate`), not a `NotificationCenter` name — testable through the injected controller, no global name; run
+  after the synchronous `loadStore()` in the unlock observer, so recovery-after-unlock counts too. `RecipeStore` only; other
+  managers + the iCloud reloader (reads `isSyncing` once) stay with Inbox 🟡 "A store opened late". The RecipeStore test runs
+  the real `load()` (LocalStore.shared flags, exemption noted) until the RecipeStore `storage` seam lands.
 - **Copy merge keeps the losing hero** (6543b14..9f45133, builder 2026-11-26): the losing copy's own hero takes the kept copy's
   hero slot when that slot holds no own photo (none / web / bundled art), rather than joining `photoNames` as the Inbox line
   said — every hero is saved at `RecipeImages/<recipe id>.jpg`, so as a gallery entry the next hero would overwrite the file
