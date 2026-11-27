@@ -1027,3 +1027,8 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 ## 2026-11-27 (item pass: dashed mixed-number step timers — fixed: improper fraction after a dash untested (challenger) → pinned "1-3/2 hours" → 60)
 - ⚔️ [Break] U+2044 fraction slash ("1-1⁄2 hours" → 120, overcook), U+2011 hyphen ("1‑1/2" → 30), "1-½" (→ 60), em dash (→ 60) and hyphenated units ("a 20-minute simmer" → none) are pre-existing gaps — first three → Inbox 🐞 (normalise once at the top of `timerMinutes(in:)`); hyphenated units fail safe (no timer).
 - ⚔️ [Simplify] Challenger preferred normalising "1-1/2" → "1 1/2" over a new regex branch; kept the branch for this fix (tested, no regressions), the Inbox normalisation item can fold it in.
+
+## 2026-11-27 (item pass: timer normalisation — fixed: U+2012/FE63/FF0D dashes missed (challenger); flattened superscript "11⁄2 hours" → 330 (challenger) → split before "/"; U+2010 and U+2011+½ untested → pinned)
+- ⚔️ [Simplify] Don't replace `normalisedForTimers` with NFKC: it turns "1½" into "11⁄2" (→ 5½ h). Kept the dashed-mixed-number branch in `value(ofAmount:)`; the normaliser feeds it.
+- ⚔️ [Break] Em dash before ½ ("1—½") stays a range (→ 60) — em dash is typographically a range; superscript digits ("1 ¹⁄₂") and hyphenated units ("a 10-minute rest") give no timer (fail safe); "19⁄2" splits as 1 9/2 (rare).
+- ⚔️ [Out of scope] `TimeExtractor.extractMinutes` (RecipeFormatters.swift:44) and `IngredientLineParser.normaliseUnicodeFractions` share the U+2044/U+2011/U+2212 gap ("20‑30 min" → 50) → Inbox 🐞.

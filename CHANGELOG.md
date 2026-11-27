@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-27 · Inbox timer normalisation · 93c1f1b
+- For you: Cooking mode reads times copied from websites with special fraction and dash characters, like "1⁄2" or "1‑1/2 hours", so the step timer runs as long as the recipe says.
+- Behind the build: new tests failed on the old timer reader first; a reviewer found nothing and a challenger caught a superscript "1½" that would have read as 5½ hours, fixed before it shipped.
+
 ## 2026-11-27 · Inbox dashed mixed-number step timers · 13693da
 - For you: Cooking mode reads times written the American way, like "1-1/2 hours", as the full hour and a half, so the step timer runs as long as the recipe says.
 - Behind the build: new tests failed on the old timer reader first; a reviewer and a challenger traced the change by hand and the challenger's one untested case got its own test.
