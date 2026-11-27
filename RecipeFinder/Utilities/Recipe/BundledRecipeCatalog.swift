@@ -111,6 +111,19 @@ enum BundledRecipeCatalog {
         }
     }
 
+    /// Whether `stored` is still the copy `snapshot` was read as: same text and the same user state the refresh carries
+    /// over (favourite, rating, photos, tags, hero, servings). Cook history is re-read on write, so it isn't compared.
+    static func isUnchanged(_ stored: RecipeModel, since snapshot: RecipeModel) -> Bool {
+        hasSameContent(stored, snapshot)
+            && stored.isFavorite == snapshot.isFavorite
+            && stored.rating == snapshot.rating
+            && stored.photoNames == snapshot.photoNames
+            && stored.tags == snapshot.tags
+            && stored.imageName == snapshot.imageName
+            && stored.currentServings == snapshot.currentServings
+            && stored.isSampleRecipe == snapshot.isSampleRecipe
+    }
+
     /// Whether two copies have the same user-editable text (ingredient ids and hero image ignored).
     static func hasSameContent(_ a: RecipeModel, _ b: RecipeModel) -> Bool {
         ContentKey(a) == ContentKey(b)

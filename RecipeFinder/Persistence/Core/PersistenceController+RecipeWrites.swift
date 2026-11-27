@@ -32,30 +32,41 @@ extension PersistenceController {
 
     /// Rewrites existing recipes' content on a background context in one save (the stale-sample refresh touched up to
     /// ~330 recipes one main-thread save at a time). Cook history is re-read from the store, never overwritten.
-    /// Missing ids are skipped. Returns `true` only if the save succeeded.
-    func updateRecipesInBackground(_ models: [RecipeModel]) async -> Bool {
-        guard !models.isEmpty else { return true }
-        guard ensureStoreIsReady() else { return false }
+    /// Missing ids are skipped. With `snapshots`, a recipe whose stored copy no longer matches its snapshot (or has
+    /// none) is skipped too — an edit, favourite or rating synced in from iCloud since the caller read it wins.
+    /// Returns the ids written, or nil if the save failed.
+    func updateRecipesInBackground(
+        _ models: [RecipeModel], unlessChangedSince snapshots: [UUID: RecipeModel]? = nil
+    ) async -> Set<UUID>? {
+        guard !models.isEmpty else { return [] }
+        guard ensureStoreIsReady() else { return nil }
         let container = self.container
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 do {
+                    var written = Set<UUID>()
                     for model in models {
                         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
                         request.predicate = Self.recipeIdPredicate(model.id)
                         request.fetchLimit = 1
                         guard let object = try context.fetch(request).first else { continue }
+                        if let snapshots {
+                            guard let snapshot = snapshots[model.id],
+                                  let stored = Self.mapToRecipeModel(object),
+                                  BundledRecipeCatalog.isUnchanged(stored, since: snapshot) else { continue }
+                        }
                         let cookCount = object.value(forKey: RecipeKey.cookCount)
                         let lastCookedAt = object.value(forKey: RecipeKey.lastCookedAt)
                         guard Self.populate(object, from: RecipeSaveParameters(from: model)) else { continue }
                         object.setValue(cookCount, forKey: RecipeKey.cookCount)
                         object.setValue(lastCookedAt, forKey: RecipeKey.lastCookedAt)
+                        written.insert(model.id)
                     }
                     try context.save()
-                    continuation.resume(returning: true)
+                    continuation.resume(returning: written)
                 } catch {
                     persistenceLogger.error("❌ Failed to batch-update recipes: \(error.localizedDescription)")
-                    continuation.resume(returning: false)
+                    continuation.resume(returning: nil)
                 }
             }
         }

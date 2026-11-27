@@ -479,10 +479,39 @@ struct RecipePersistenceRoundTripTests {
         ])
 
         let fetched = store.fetchRecipes()
-        #expect(ok)
+        #expect(ok == [a, b])
         #expect(fetched.count == 2)
         #expect(fetched.first { $0.id == a }?.name == "New A")
         #expect(fetched.first { $0.id == a }?.cookCount == 2)
         #expect(fetched.first { $0.id == b }?.name == "New B")
+    }
+
+    @Test("batch background update skips a recipe changed since its snapshot, and one with no snapshot")
+    func updateRecipesInBackground_skipsChangedSinceSnapshot() async {
+        let store = makeStore()
+        let a = UUID(), b = UUID(), c = UUID()
+        for (id, name) in [(a, "Old A"), (b, "Old B"), (c, "Old C")] {
+            #expect(store.saveRecipeModel(makeRecipe(id: id, name: name)) == true)
+        }
+        let snapshot = Dictionary(store.fetchRecipes().filter { $0.id != c }.map { ($0.id, $0) },
+                                  uniquingKeysWith: { first, _ in first })
+        // B is favourited and rated on another device after the snapshot was read (an iCloud import).
+        var synced = snapshot[b] ?? makeRecipe(id: b, name: "Old B")
+        synced.isFavorite = true
+        synced.rating = 4
+        #expect(store.updateRecipe(synced) == true)
+
+        let written = await store.updateRecipesInBackground(
+            [makeRecipe(id: a, name: "New A"), makeRecipe(id: b, name: "New B"), makeRecipe(id: c, name: "New C")],
+            unlessChangedSince: snapshot
+        )
+
+        let fetched = store.fetchRecipes()
+        #expect(written == [a])
+        #expect(fetched.first { $0.id == a }?.name == "New A")
+        #expect(fetched.first { $0.id == b }?.name == "Old B")
+        #expect(fetched.first { $0.id == b }?.isFavorite == true)
+        #expect(fetched.first { $0.id == b }?.rating == 4)
+        #expect(fetched.first { $0.id == c }?.name == "Old C")
     }
 }

@@ -646,4 +646,23 @@ struct BundledRecipeCatalogTests {
         #expect(updates.first?.instructions == current.instructions)
         #expect(updates.first?.imageName == nil)
     }
+
+    @Test("a copy is unchanged since its snapshot only if its text and carried-over user state match")
+    func isUnchangedSinceSnapshot() throws {
+        let snapshot = try #require(SeedRecipeProvider.recipes.first)
+        #expect(BundledRecipeCatalog.isUnchanged(snapshot, since: snapshot))
+        let changes: [(inout RecipeModel) -> Void] = [
+            { $0.ingredients = [] }, { $0.isFavorite.toggle() }, { $0.rating = 3 }, { $0.photoNames.append("p.jpg") },
+            { $0.tags.append("weeknight") }, { $0.imageName = "mine.jpg" }, { $0.currentServings += 1 },
+            { $0.isSampleRecipe.toggle() }
+        ]
+        for change in changes {
+            var stored = snapshot
+            change(&stored)
+            #expect(!BundledRecipeCatalog.isUnchanged(stored, since: snapshot))
+        }
+        var cooked = snapshot
+        cooked.cookCount += 1
+        #expect(BundledRecipeCatalog.isUnchanged(cooked, since: snapshot))
+    }
 }

@@ -107,7 +107,10 @@ final class RecipeStore: RecipeStoring {
             // Repair flags first: dedupe only removes sample copies, and legacy samples lacked the flag.
             let repaired = await repairLegacySampleFlags(in: fetched)
             let deduped = removeDuplicateCopies(from: repaired)
-            recipes = await refreshStaleSamples(in: deduped)
+            let refreshed = await refreshStaleSamples(in: deduped)
+            // The repair and refresh await too; a newer load's library wins.
+            guard generation == loadGeneration else { return }
+            recipes = refreshed
             isLoading = false
             keepWebPictures(of: recipes)
             clearPhotosErasedElsewhere()
@@ -165,12 +168,22 @@ final class RecipeStore: RecipeStoring {
         }.value
         // Bundle data missing or unreadable: leave the version unmarked so the next launch retries.
         guard let refreshes else { return library }
-        // One background save; on failure keep the old copies and retry next launch.
-        guard await persistence.updateRecipesInBackground(refreshes) else { return library }
-        storage.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key)
-        guard !refreshes.isEmpty else { return library }
-        let byID = Dictionary(refreshes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        Self.logger.info("Refreshed \(refreshes.count) stale sample recipes")
+        // One background save; on failure keep the old copies and retry next launch. A copy changed since `library`
+        // was read (an iCloud import mid-refresh) is skipped, and the version stays unmarked so the next launch
+        // decides again from the copy as it is then.
+        let snapshots = Dictionary(library.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        guard let written = await persistence.updateRecipesInBackground(refreshes, unlessChangedSince: snapshots) else {
+            return library
+        }
+        if written.count == refreshes.count {
+            storage.set(BundledRecipeCatalog.sampleRefreshVersion, forKey: key)
+        } else {
+            Self.logger.info("Skipped \(refreshes.count - written.count) sample recipes changed during the refresh")
+        }
+        guard !written.isEmpty else { return library }
+        let byID = Dictionary(refreshes.filter { written.contains($0.id) }.map { ($0.id, $0) },
+                              uniquingKeysWith: { first, _ in first })
+        Self.logger.info("Refreshed \(written.count) stale sample recipes")
         return library.map { byID[$0.id] ?? $0 }
     }
 
