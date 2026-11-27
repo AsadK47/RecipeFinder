@@ -113,6 +113,12 @@ struct CookingModeTimerTests {
         ("Bake 2\u{2013}\u{BC} hours", 135),
         ("Simmer 10\u{2011}15 minutes", 10),
         ("Simmer 10\u{2212}15 minutes", 10),
+        ("Simmer 10\u{2012}15 minutes", 10),
+        ("Roast 1\u{2010}1/2 hours", 90),
+        ("Bake 1\u{2011}\u{BD} hours", 90),
+        ("Bake 11\u{2044}2 hours", 90),
+        ("Bake 13\u{2044}4 hours", 105),
+        ("Rest 3\u{2044}4 hour", 45),
     ])
     func unicodeFractionsAndDashes(text: String, minutes: Int) {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
