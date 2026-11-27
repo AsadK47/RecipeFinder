@@ -332,8 +332,12 @@ final class RecipeStore: RecipeStoring {
     /// libraries — ids already present are skipped). Returns the refetched library, or nil if nothing was seeded.
     /// Flags are set before awaiting so a concurrent load doesn't seed twice, and reset if the save fails so the
     /// next launch retries instead of stranding the user with an empty library.
-    private func seedIfNeeded(existing: [RecipeModel]) async -> [RecipeModel]? {
-        let storage = LocalStore.shared
+    /// Internal so tests can run it with an isolated `storage` and stand-in bundled recipes.
+    func seedIfNeeded(
+        existing: [RecipeModel],
+        storage: LocalStore = .shared,
+        bundled: @escaping @Sendable () -> [RecipeModel] = { BundledRecipeCatalog.load() }
+    ) async -> [RecipeModel]? {
         let startersKey = "seedRecipesLoaded"
         let bundledKey = "bundledRecipesSeeded_v1"
         let seedStarters = existing.isEmpty && !storage.bool(forKey: startersKey)
@@ -345,9 +349,9 @@ final class RecipeStore: RecipeStoring {
         var toSeed = seedStarters ? SeedRecipeProvider.recipes : []
         if seedBundled {
             // Decode the bundled JSON off the main actor — it's a few hundred recipes.
-            let bundled = await Task.detached(priority: .userInitiated) { BundledRecipeCatalog.load() }.value
+            let catalog = await Task.detached(priority: .userInitiated) { bundled() }.value
             let existingIDs = Set(existing.map(\.id))
-            toSeed += bundled.filter { !existingIDs.contains($0.id) }
+            toSeed += catalog.filter { !existingIDs.contains($0.id) }
         }
         guard !toSeed.isEmpty else { return nil }
         guard await persistence.seedRecipes(toSeed) else {

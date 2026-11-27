@@ -279,4 +279,75 @@ struct RecipeStoreTests {
         #expect(refreshed.first?.dietaryInfo.isGlutenFree == true)
         #expect(await persistence.fetchRecipesAsync().first?.dietaryInfo.isGlutenFree == true)
     }
+
+    // MARK: - Seeding vs the store file
+
+    private static let startersKey = "seedRecipesLoaded"
+    private static let bundledKey = "bundledRecipesSeeded_v1"
+    private static let seededFileKey = "seededStoreFileID"
+
+    private func isolatedStorage() throws -> LocalStore {
+        LocalStore(userDefaults: try #require(UserDefaults(suiteName: UUID().uuidString)))
+    }
+
+    @Test("a brand-new library seeds the starters and the bundled recipes")
+    func firstLaunchSeeds() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let storage = try isolatedStorage()
+        let extra = makeRecipe(name: "Bundled Dal")
+
+        let seeded = await RecipeStore(persistence: persistence)
+            .seedIfNeeded(existing: [], storage: storage, bundled: { [extra] })
+
+        #expect(seeded?.count == SeedRecipeProvider.recipes.count + 1)
+        #expect(storage.bool(forKey: Self.startersKey))
+        #expect(storage.bool(forKey: Self.bundledKey))
+    }
+
+    @Test("the same store file isn't seeded twice")
+    func sameFileSeedsOnce() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let storage = try isolatedStorage()
+        let store = RecipeStore(persistence: persistence)
+        _ = await store.seedIfNeeded(existing: [], storage: storage, bundled: { [] })
+
+        // The cook deleted every recipe: an empty library on the same file stays empty.
+        let again = await store.seedIfNeeded(existing: [], storage: storage, bundled: { [] })
+
+        #expect(again == nil)
+    }
+
+    @Test("after a store recovery opens a fresh file, the empty library is seeded again")
+    func freshStoreFileSeedsAgain() async throws {
+        let storage = try isolatedStorage()
+        let extra = makeRecipe(name: "Bundled Dal")
+        _ = await RecipeStore(persistence: PersistenceController(inMemory: true))
+            .seedIfNeeded(existing: [], storage: storage, bundled: { [extra] })
+
+        // `attemptStoreRecovery` moved the unreadable file aside: a new, empty store with its own identifier.
+        let recovered = PersistenceController(inMemory: true)
+        let seeded = await RecipeStore(persistence: recovered)
+            .seedIfNeeded(existing: [], storage: storage, bundled: { [extra] })
+
+        #expect(seeded?.count == SeedRecipeProvider.recipes.count + 1)
+        #expect(await recovered.fetchRecipesAsync().count == SeedRecipeProvider.recipes.count + 1)
+        #expect(storage.string(forKey: Self.seededFileKey) == recovered.storeFileID)
+    }
+
+    @Test("an install seeded before the file was recorded adopts its open file and doesn't seed again")
+    func legacyFlagsAdoptTheOpenFile() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let storage = try isolatedStorage()
+        storage.set(true, forKey: Self.startersKey)
+        storage.set(true, forKey: Self.bundledKey)
+
+        // Bundled recipes the cook deleted on this file must not come back with the update.
+        let seeded = await RecipeStore(persistence: persistence)
+            .seedIfNeeded(existing: [], storage: storage, bundled: { [makeRecipe(name: "Bundled Dal")] })
+
+        #expect(seeded == nil)
+        #expect(await persistence.fetchRecipesAsync().isEmpty)
+        #expect(persistence.storeFileID != nil)
+        #expect(storage.string(forKey: Self.seededFileKey) == persistence.storeFileID)
+    }
 }
