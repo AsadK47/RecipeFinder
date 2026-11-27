@@ -526,10 +526,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
 
     /// Tabs 2/3: Today's "Planned for tonight" hero + prep-ahead nudge, with tonight's and tomorrow's dinners seeded
     /// via the DEBUG `-seed-tonight-plan` flag. Sorts after `testCaptureScreenshots`, so `16-today` stays the unplanned day (the plan persists).
+    /// `-today-time 17:30` pins Today's clock to the evening: before 4pm Today leads breakfast/lunch with ideas, so the
+    /// 03:00 UTC nightly saw no "Planned for tonight" hero (run 45931745156).
     @MainActor
     func testCaptureTodayPlanned() {
         let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing", "-seed-tonight-plan"]
+        app.launchArguments += ["-ui-testing", "-seed-tonight-plan", "-today-time", "17:30"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15), "App should reach the main tabs.")
         // Planning a meal can unlock a badge whose sheet would cover the shot.
