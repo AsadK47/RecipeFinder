@@ -1196,6 +1196,22 @@ struct UndoTakeOffTests {
         #expect(tookOff == nil) // nothing came off, so nothing for Undo
     }
 
+    /// Same dish planned again that night: the slot fallback must not take the new copy for the stale tap's.
+    @Test func aStaleTakeOffLeavesTheSameDishPlannedAgainSince() {
+        let sut = makeManager()
+        let recipe = UUID()
+        let dal = plan("Dal", on: day(2), recipe: recipe)
+        sut.addMealPlan(dal)
+        sut.takeOff(dal)
+        let again = plan("Dal", on: day(2), recipe: recipe)
+        sut.addMealPlan(again)
+
+        let tookOff = sut.takeOff(dal) // a second tap from a screen that still showed the first dal
+
+        #expect(sut.mealPlans.map(\.id) == [again.id])
+        #expect(tookOff == nil)
+    }
+
     @Test func aStaleTakeOffOfAWeeklyMealLeavesTheDishPlannedSince() {
         let sut = makeManager()
         let tacos = plan("Tacos", on: day(2), recurring: true)
