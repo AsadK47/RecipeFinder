@@ -102,6 +102,22 @@ struct CookingModeTimerTests {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
     }
 
+    // Challenger 2026-11-27: web/JSON-LD text writes fractions with U+2044 "⁄" and dashes as U+2011 "‑" / U+2212 "−";
+    // they fell through to the wrong amount (1-1⁄2 → 120 min, 1‑1/2 → 30, 1-½ → 60).
+    @Test("fraction slashes, non-breaking hyphens and a dash before ½ read as the plain amount", arguments: [
+        ("Bake 1-1\u{2044}2 hours", 90),
+        ("Bake 1 1\u{2044}2 hours", 90),
+        ("Roast 1\u{2011}1/2 hours", 90),
+        ("Roast 1\u{2212}1/2 hours", 90),
+        ("Bake 1-\u{BD} hours", 90),
+        ("Bake 2\u{2013}\u{BC} hours", 135),
+        ("Simmer 10\u{2011}15 minutes", 10),
+        ("Simmer 10\u{2212}15 minutes", 10),
+    ])
+    func unicodeFractionsAndDashes(text: String, minutes: Int) {
+        #expect(CookingPlan.timerMinutes(in: text) == minutes)
+    }
+
     @Test("words and numbers that aren't an amount of time stay nil", arguments: [
         "Leave for a few minutes",
         "Bring 2 to the boil",
