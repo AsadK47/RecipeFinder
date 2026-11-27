@@ -1260,14 +1260,16 @@ struct UndoTakeOffTests {
 
     /// Put back by Undo, then folded into its twin: taking it off again still finds the same dish.
     @Test func aMealPutBackByUndoCanBeTakenOffViaItsFoldTwin() {
-        let sut = makeManager()
+        let store = InMemoryMealPlanStore()
+        let sut = MealPlanningManager(storage: storage, mealPlanStore: store, reminders: reminders)
         let recipe = UUID()
         let dal = plan("Dal", on: day(2), recipe: recipe)
         sut.addMealPlan(dal)
         sut.restore(sut.takeOff(dal)?.before ?? [])
-        sut.removeMealPlan(dal) // an iCloud fold keeps the other device's copy instead
         let twin = plan("Dal", on: day(2), recipe: recipe)
-        sut.addMealPlan(twin)
+        store.plans = [twin] // an iCloud fold kept the other device's copy instead
+        sut.reload()
+        #expect(sut.mealPlans.map(\.id) == [twin.id])
 
         let tookOff = sut.takeOff(dal)
 
