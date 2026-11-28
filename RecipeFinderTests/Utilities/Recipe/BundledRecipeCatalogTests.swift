@@ -268,9 +268,9 @@ struct BundledRecipeCatalogTests {
     // MARK: - Own words
 
     /// Lower-cased runs of `length` consecutive words, URLs ignored (the source link is credit, not method text).
-    /// Eight words is a copied clause; shorter runs are stock kitchen phrases and ingredient lists ("oven to 180C
-    /// 160C fan gas 4"), which say facts nobody owns.
-    static func wordRuns(_ text: String, length: Int = 8) -> Set<String> {
+    /// Seven words is a copied clause; at six the hits are stock kitchen phrases and ingredient lists ("oven to
+    /// 180C 160C fan gas"), facts nobody owns. A pass is a floor, not proof: a reviewer still reads each batch.
+    static func wordRuns(_ text: String, length: Int = 7) -> Set<String> {
         let words = text.replacingOccurrences(of: #"https?://\S+"#, with: " ", options: .regularExpression)
             .lowercased()
             .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
@@ -279,32 +279,34 @@ struct BundledRecipeCatalogTests {
         return Set((0...(words.count - length)).map { words[$0..<($0 + length)].joined(separator: " ") })
     }
 
-    @Test("an 8-word run matches across case and punctuation; a reworded sentence shares none")
+    @Test("a 7-word run matches across case and punctuation; a reworded sentence shares none")
     func wordRunsFindCopiedClauses() {
-        let source = Self.wordRuns("Heat the oil in a large pan over a medium heat. https://example.com/a/b/c/d/e/f/g/h")
-        #expect(!Self.wordRuns("HEAT the oil, in a large pan; over a").isDisjoint(with: source))
+        let source = Self.wordRuns("Heat the oil in a large pan over a medium heat. https://example.com/a/b/c/d/e/f")
+        #expect(!Self.wordRuns("HEAT the oil, in a large pan;").isDisjoint(with: source))
         #expect(Self.wordRuns("Warm the oil in a big pan on a medium heat.").isDisjoint(with: source))
-        #expect(Self.wordRuns("example com a b c d e f").isDisjoint(with: source))
+        #expect(Self.wordRuns("example com a b c d e").isDisjoint(with: source))
         #expect(Self.wordRuns("Too short to count.").isEmpty)
     }
 
-    @Test("a method rewritten in our own words shares no 8-word run with its source text")
+    @Test("a method rewritten in our own words shares no 7-word run with any of its source texts")
     func ownWordsMethodsCopyNoSourceRun() throws {
         let curated = try Self.loadCurated()
-        var checked = Set<String>()
+        // A duplicated name has several source texts (often different sites); the method must copy none of them.
+        var sourceRuns: [String: Set<String>] = [:]
         for entry in try Self.loadSource() {
             guard let prefill = TextRecipeParser.parse(entry.rawText) else { continue }
             let id = Self.makeModel(from: prefill, entry: entry).id.uuidString
-            // The generator keeps the first entry of a duplicated name, so that's the source to compare with.
-            guard let review = curated[id], review.ownWords == true, let recipe = review.recipe,
-                  checked.insert(id).inserted else { continue }
-            let source = Self.wordRuns(entry.rawText)
+            guard curated[id]?.ownWords == true else { continue }
+            sourceRuns[id, default: []].formUnion(Self.wordRuns(entry.rawText))
+        }
+        for (id, source) in sourceRuns {
+            let recipe = try #require(curated[id]?.recipe)
             let copied = (recipe.prePrep + recipe.steps + [recipe.notes])
                 .flatMap { Self.wordRuns($0).intersection(source) }
             #expect(copied.isEmpty, "\(recipe.name) still repeats its source: \(copied.sorted().prefix(3))")
         }
-        // Batch 1 (25 recipes); raise this with each batch so a lost flag can't quietly shrink the count.
-        #expect(checked.count >= 25, "only \(checked.count) recipes are marked ownWords")
+        // Batch 1 (25) + the two renamed in 513679a; raise this with each batch so a lost flag can't shrink it.
+        #expect(sourceRuns.count >= 27, "only \(sourceRuns.count) recipes are marked ownWords")
     }
 
     // MARK: - Generator behaviour
@@ -591,8 +593,8 @@ struct BundledRecipeCatalogTests {
     func historyChangeBumpsRefreshVersion() throws {
         let url = try #require(Bundle.main.url(forResource: "recipes_seed_history", withExtension: "json"))
         let digest = SHA256.hash(data: try Data(contentsOf: url)).map { String(format: "%02x", $0) }.joined()
-        #expect(BundledRecipeCatalog.sampleRefreshVersion == 11)
-        #expect(digest == "cad42e4487dd62e67e066dc2c3a146064b053b66e078310c96bf53bab7e2b7d6",
+        #expect(BundledRecipeCatalog.sampleRefreshVersion == 12)
+        #expect(digest == "c891b6693284199ab6eb791d365967aa6d3f867974ce0fce1e8f3dc883d0a7f3",
                 "recipes_seed_history.json changed: bump sampleRefreshVersion and update both pins")
     }
 
@@ -623,6 +625,21 @@ struct BundledRecipeCatalogTests {
         #expect(refreshed.id == old.id)
         #expect(refreshed.name == today.name)
         #expect(!refreshed.name.contains("'s"))
+        #expect(refreshed.instructions == today.instructions)
+        #expect(refreshed.instructions != old.instructions)
+    }
+
+    @Test("an untouched copy of a recipe rewritten in our own words refreshes to the new method",
+          arguments: ["A7171E82-38B8-5C8D-91F6-8F004D896647", "3F5C06D9-1262-54CD-A359-6D37A3FD3BCE"])
+    func ownWordsCopyRefreshes(id: String) throws {
+        let history = BundledRecipeCatalog.loadHistory()
+        let current = BundledRecipeCatalog.load()
+        let today = try #require(current.first { $0.id.uuidString == id })
+        // The newest shipped version is the one most installs hold: history is written oldest first.
+        var old = try #require(history.last { $0.id == today.id }, "history should hold \(today.name)'s copied method")
+        old.isSampleRecipe = true
+        let refreshed = try #require(BundledRecipeCatalog.staleSampleRefreshes(library: [old], current: current, history: history).first)
+        #expect(refreshed.id == today.id)
         #expect(refreshed.instructions == today.instructions)
         #expect(refreshed.instructions != old.instructions)
     }
