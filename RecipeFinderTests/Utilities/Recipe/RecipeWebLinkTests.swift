@@ -3,7 +3,7 @@ import Foundation
 @testable import RecipeFinder
 
 /// Which link a shared caption or pasted text hands to the importer: the first web page link, never an email.
-@Suite struct RecipeLinkTests {
+@Suite struct RecipeWebLinkTests {
 
     @Test(arguments: [
         ("https://www.bbcgoodfood.com/recipes/lemon-drizzle", "https://www.bbcgoodfood.com/recipes/lemon-drizzle"),
@@ -13,7 +13,7 @@ import Foundation
         ("https://a.example.com/1 https://b.example.com/2", "https://a.example.com/1"),
     ])
     func findsTheFirstWebLink(text: String, expected: String) {
-        #expect(RecipeLink.first(in: text)?.absoluteString == expected)
+        #expect(RecipeWebLink.first(in: text)?.absoluteString == expected)
     }
 
     @Test(arguments: [
@@ -27,6 +27,6 @@ import Foundation
         "www.example.com/stew",
     ])
     func ignoresTextWithoutAWebLink(text: String) {
-        #expect(RecipeLink.first(in: text) == nil)
+        #expect(RecipeWebLink.first(in: text) == nil)
     }
 }

@@ -4,7 +4,7 @@ import Foundation
 enum ClipboardRecipeLink {
     /// The first http(s) link in the pasted items — captions and messages often wrap the link in other words.
     static func url(in pasted: [String]) -> URL? {
-        pasted.lazy.compactMap(RecipeLink.first(in:)).first
+        pasted.lazy.compactMap(RecipeWebLink.first(in:)).first
     }
 
     /// Show the card while the clipboard holds a link the user hasn't already pasted or dismissed. `changeCount`

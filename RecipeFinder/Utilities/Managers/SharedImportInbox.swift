@@ -94,7 +94,7 @@ enum SharedImportInbox {
         }
 
         if let text, !text.isEmpty {
-            if let link = RecipeLink.first(in: text) {
+            if let link = RecipeWebLink.first(in: text) {
                 return .url(link.absoluteString)
             }
             return .text(text)

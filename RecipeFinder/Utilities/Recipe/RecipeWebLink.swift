@@ -4,7 +4,7 @@ import Foundation
 /// (`mailto:`) and other schemes, and a recipe imports from a web page, so everything but http(s) is skipped.
 /// The text must spell the scheme out: the detector also turns bare words like "nan.s" or "example.com" into
 /// links, and the "+" paste box would then send a short recipe note to the link importer.
-enum RecipeLink {
+enum RecipeWebLink {
     private static let schemes = ["http://", "https://"]
 
     /// The first http(s) link in `text`, or nil when it has none.

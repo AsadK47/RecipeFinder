@@ -113,7 +113,7 @@ final class ShareViewController: UIViewController {
 
         // A caption with an embedded recipe link can still be fetched here;
         // otherwise hand the raw text to the app's text parser.
-        if let url = RecipeLink.first(in: text) {
+        if let url = RecipeWebLink.first(in: text) {
             importInExtension(from: url, rawURLFallback: url.absoluteString)
         } else {
             SharedImportInbox.storeText(text)
