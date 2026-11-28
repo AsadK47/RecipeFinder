@@ -73,7 +73,18 @@ struct ShoppingListGroupingTests {
 
         #expect(text.hasPrefix("🛒 Groceries\n\n"))
         #expect(text.contains("Dairy\n"))
-        #expect(text.contains("○ (3) Apples\n"))
+        #expect(text.contains("○ 3 Apples\n"))
         #expect(text.contains("✓ Milk\n"))
+    }
+
+    @Test("Share text shows each amount as the list row does: unit included, count units pluralised, 1 kg kept",
+          arguments: [
+              (200, "g", "○ 200 g Flour\n"), (1, "kg", "○ 1 kg Flour\n"), (2, "cup", "○ 2 cups Flour\n"),
+              (1, "", "○ Flour\n"), (4, "", "○ 4 Flour\n"),
+          ])
+    func shareTextShowsAmountWithUnit(quantity: Int, unit: String, expected: String) {
+        let flour = ShoppingListModel(name: "Flour", quantity: quantity, unit: unit, category: "Pantry")
+        let text = ShoppingListGrouping.shareText(for: ShoppingListGrouping.grouped([flour]))
+        #expect(text.contains(expected))
     }
 }
