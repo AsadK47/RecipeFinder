@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-28 (builder — own words batch 1 challenge pass, not fixed)
+- ⚔️ [Taste] Rewritten methods give Celsius only where the source was US Fahrenheit (Chilli Chicken 160-175°C, Dan Dan 160°C, Fish Curry 63°C core); conversions verified, but US cooks lose the °F figure. — Alternative: "160°C (325°F)" in the step — cost if we're wrong: an American tester reads a thermometer in °F and converts by hand.
+  → Owner: Accept / Reject (why) / Later
+
 ## 2026-11-28 (daily challenger — sync-on recovery, timer churn continued, lane (a) at zero, WORK.md drift; methods 1, 2, 3 (DoS/Tampering on the store), 6, 7, 8 + strategy)
 - ⚔️ [Break] The 11-27 recovery fix leaves the empty library for any cook whose sync is "on" but has no iCloud to refill from: `seedIfNeeded` skips re-seeding when `persistence.isSyncing` (RecipeStore.swift:351), and `isSyncing` only means "the store opened with `cloudKitContainerOptions`" (PersistenceController.swift:41-43), not "signed in / has data". `hasICloudAccount()` (CloudSyncStore.swift:23) is a separate async check nobody consults here. Traced: sync wanted (default for existing syncers, SyncPreference.swift:25) + signed out of iCloud, or offline/new device with an empty private DB → store corrupts → recovery → fresh file ID → flags kept true (sync branch) → nothing seeded → empty Recipes/Today/Plan, principle 4 broken again. Would the tests notice? Tests pin sync-on = no reseed with a stub `isSyncing: true`; none covers "sync on, no account" — flipping the guard to `false` fails only the one test that asserts the opposite. — Alternative: when sync is on, seed after a short wait only if the store is still empty and `hasICloudAccount() != true` — cost if we're wrong: the exact cook the fix was for (corrupt store, no iCloud) still sees an empty app.
   → Owner: Accept / Reject (why) / Later

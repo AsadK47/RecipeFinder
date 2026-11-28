@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Own words batch 1** (d17d1eb..ff14a1a, builder 2026-11-28): curated entries carry `"ownWords": true`;
+  `ownWordsMethodsCopyNoSourceRun` fails if a flagged method shares any 7-word run with any source `rawText` of its id
+  (duplicate names unioned; URLs ignored). 7 not 6: at 6 the hits are oven settings and ingredient lists, facts nobody
+  owns; 8 let source clauses through (challenger). The gate is a floor — a reviewer still reads each batch. Batches go
+  most-copied first. Facts kept, °F → °C (US cooks lose the °F figure — owner taste, CHALLENGES 28 Nov). Coriander
+  Chickpea Bowl's unlisted "coconut cream" dropped. History regenerated after squashing the branch so it holds only
+  shipped versions.
 - **Seconds-first step timer** (204c240..32fabc8, builder 2026-11-28): an under-a-minute first duration gives way to a
   ≥1-minute later one only as the next step — after "then" or a new sentence (".;!" + capital, so "approx. 2" isn't
   one) — and never past a limit/note word in the gap (within, up to, before, after, keeps, ready, total, ahead,

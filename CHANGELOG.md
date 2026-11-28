@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-28 · Recipes in our own words, batch 1 · ff14a1a
+- For you: Twenty-seven bundled recipes, from Citrus Bars to Chicken 65, have freshly written methods with clearer steps, and a few now say when the food is properly hot through.
+- Behind the build: a new test checks every rewritten method against its original text; a fact-checker and a challenger read all of them and caught small slips, fixed before it shipped.
+
 ## 2026-11-28 · Inbox seconds-first step timer · 32fabc8
 - For you: Steps that start with a quick stir, like "Stir for 30 seconds, then simmer 10 minutes", now offer a timer for the simmer.
 - Behind the build: new tests failed on the old timer first; a reviewer and a challenger both caught ranges and make-ahead notes taking over, fixed before it shipped.
