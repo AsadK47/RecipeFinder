@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 `CookingPlan.swift:184` seconds-first timer landed 204c240..32fabc8 (builder 2026-11-28; leftover branches agent/seconds-first-timer auto-cleanup, agent/seconds-first-timer-red unmerged — delete). Next: Inbox 🐞 `RecipeFormatters.swift:84` TimeExtractor en dash (red test first) — but see CHALLENGES 28 Nov [Strategy] timer-regex freeze, unanswered.
 ✅ Inbox 🐞 `IngredientLineParser.swift:229` dash before a fraction glyph landed 8de9423..a44107d (builder 2026-11-28; leftover branch agent/dash-glyph-mixed-number auto-cleanup). Next: Inbox 🐞 `CookingPlan.swift:184` seconds-first timer (red test first), then 🐞 `RecipeFormatters.swift:84` TimeExtractor en dash.
 ✅ Inbox 🐞 `CookingPlan.swift:89` tens number words landed 8a40350..791d7a6 (builder 2026-11-28; leftover branches agent/tens-timer-words auto-cleanup, agent/tens-timer-words-red unmerged — delete). Next: Inbox 🐞 `IngredientLineParser.swift:229` "1-½ cups" read as a range (red test first), then 🐞 `CookingPlan.swift:184` seconds-first timer.
 ✅ Inbox 🐞 `recipes_curated.json:247` Vegetable Lo Mein vegan note landed d13c03d..4988956 (builder 2026-11-28; also Hakka + Chow Mein vegetarian notes; leftover branch agent/lomein-vegan-note auto-cleanup). Next: Inbox 🐞 `CookingPlan.swift:89` tens number words ("forty-five minutes" → 5) — red test first.
@@ -132,12 +133,6 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
-
-- **Seconds-first step timer (🚧 builder agent 2026-11-28, agent/seconds-first-timer):** an under-a-minute first
-  duration gives way to the next separate ≥1-minute one; alone it stands (so "Stir for 30 seconds" keeps its 1-min
-  timer — no behaviour change for one-duration steps). Rejected: always the longest duration (would pick "up to 48
-  hours"). Pre-mortem: (1) later duration is a hold/limit not a cook time → reviewers probe phrasings; (2) compound
-  "1 minute 30 seconds" split → test; (3) seconds-only steps lose/gain a timer → secondsOnly + "Stir for 30 seconds" tests.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave

@@ -91,3 +91,6 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 39. **The share extension compiles the import parser.** 2026-11-26: `Difficulty.swift` joined only the app target, and
    `RecipeParser+TextMetadata.swift` (also in `RecipeShareExtension`) couldn't find it — a type the parser calls joins both
    Sources phases. Check: Build & Test compiles the extension (caught it, run 45861210860).
+40. **A step's note can put its word after the time.** 2026-11-28: the seconds-first timer checked stop words only
+   between the two durations, so "Can be made 2 hours ahead." still took over (run 46117645596). Read the rest of the
+   later duration's sentence too. Check: `CookingModeTimerTests.secondsFirstKept` ("ahead", "in advance").

@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-28 · Inbox seconds-first step timer · 32fabc8
+- For you: Steps that start with a quick stir, like "Stir for 30 seconds, then simmer 10 minutes", now offer a timer for the simmer.
+- Behind the build: new tests failed on the old timer first; a reviewer and a challenger both caught ranges and make-ahead notes taking over, fixed before it shipped.
+
 ## 2026-11-28 · Inbox dash before a fraction glyph · a44107d
 - For you: Amounts written like "1-½ cups" now come in as one and a half cups, and the amount field takes them too, so scaling and groceries add up right.
 - Behind the build: a new test failed on the old parser first; a reviewer and a challenger both caught the em dash, and step timers now read amounts the same way.

@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Seconds-first step timer** (204c240..32fabc8, builder 2026-11-28): an under-a-minute first duration gives way to a
+  ≥1-minute later one only as the next step — after "then" or a new sentence (".;!" + capital, so "approx. 2" isn't
+  one) — and never past a limit/note word in the gap (within, up to, before, after, keeps, ready, total, ahead,
+  alternatively) or "ahead"/"in advance"/"in total" after it. Rejected: any later duration (reviewer + challenger:
+  "30 seconds to 2 minutes" → 2, "keeps up to 48 hours" → 2880); "then" only (seed scan: loses "…until hot. Leave 5
+  minutes" ×3). One-duration steps unchanged ("Stir for 30 seconds" → 1).
 - **Dash before a fraction glyph** (8de9423..a44107d, builder 2026-11-28): joined in `normaliseUnicodeFractions` (so
   parse, wizard amount and validator all gain it) via one `NumberText.joiningDashedFractions`, shared with timers —
   a third hand-copied glyph list rejected; `NumberText.fractionGlyphs` lives in Models (Utilities may depend on Models,
