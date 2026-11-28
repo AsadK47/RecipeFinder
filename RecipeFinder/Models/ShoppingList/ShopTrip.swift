@@ -7,14 +7,20 @@ struct ShopTrip: Equatable {
 
     /// One thing to pick up: every list item with this name (case and spaces ignored), in aisle order.
     struct Row: Identifiable, Equatable {
+        /// The first of `items` in list order — not tick order, so the row keeps its id and amount as it's ticked.
+        let first: ShoppingListModel
         let items: [ShoppingListModel]
 
-        /// The first item's id, so the row keeps its identity when a duplicate joins or leaves.
-        var id: UUID { items.first?.id ?? UUID() }
-        var name: String { items.first?.name ?? "" }
-        var category: String { items.first?.category ?? "" }
+        init(first: ShoppingListModel, rest: [ShoppingListModel] = []) {
+            self.first = first
+            items = [first] + rest
+        }
+
+        var id: UUID { first.id }
+        var name: String { first.name }
+        var category: String { first.category }
         /// In the basket once every item in it is ticked.
-        var isChecked: Bool { !items.isEmpty && items.allSatisfy(\.isChecked) }
+        var isChecked: Bool { items.allSatisfy(\.isChecked) }
         /// Same units add up ("2 cups" + "1 cup" → "3 cups"); different ones join ("454 g + 2 cups").
         var amount: String {
             var totals: [(unit: String, key: String, quantity: Int)] = []
@@ -55,7 +61,13 @@ struct ShopTrip: Equatable {
             if byKey[key] == nil { keys.append(key) }
             byKey[key, default: []].append(item)
         }
-        rows = keys.map { Row(items: byKey[$0] ?? []) }
+        // Within a row, list order: grouped() puts unticked first, which would flip the row's id and amount on a tick.
+        let position = Dictionary(items.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
+        rows = keys.compactMap { key in
+            let group = (byKey[key] ?? []).sorted { (position[$0.id] ?? 0) < (position[$1.id] ?? 0) }
+            guard let first = group.first else { return nil }
+            return Row(first: first, rest: Array(group.dropFirst()))
+        }
         toGet = rows.filter { !$0.isChecked }
         inBasket = rows.filter { $0.isChecked }
         let ticked = visible.filter(\.isChecked)
