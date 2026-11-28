@@ -313,7 +313,13 @@ enum CategoryClassifier {
     /// How an item is sold decides its aisle before what it is: "frozen peas" are Frozen, "canned tuna" Canned & Jarred.
     private static let storageFormRules: [(String, [String])] = [
         ("Frozen",                    ["frozen", "ice cream"]),
-        ("Canned & Jarred",           ["canned", "jarred"]),
+        ("Canned & Jarred",           ["canned", "jarred", "tinned", "tin"]),
+    ]
+
+    /// The last word names the food, whatever comes before it: "peanut butter cookies" are a bake, "red pepper paste" a paste.
+    private static let lastWordRules: [(String, [String])] = [
+        ("Bakery",                    ["bread", "cake", "cookie", "bun", "roll", "muffin"]),
+        ("Sauces & Condiments",       ["paste", "sauce"]),
     ]
 
     // Built once — avoids rebuilding on every categorize() call. The longest matching keyword wins; on a tie in
@@ -322,6 +328,8 @@ enum CategoryClassifier {
         // "white bread" and "whole wheat bread" are also Grains & Pasta keywords (kitchen); listed here to tie and stay Bakery.
         ("Bakery",                    ["bread", "white bread", "whole wheat bread", "baguette", "croissant", "bagel",
                                        "muffin", "donut", "pastry", "cake", "cookie", "pie", "tart", "scone"]),
+        // Sold in tins (UK shoppers find them by the tinned tomatoes); ties with the kitchen's Sauces keyword and wins.
+        ("Canned & Jarred",           ["coconut milk", "coconut cream"]),
         ("Sweeteners",                kitchenIngredientKeywords["Sweeteners"]               ?? []),
         ("Poultry",                   kitchenIngredientKeywords["Poultry"]                  ?? []),
         ("Seafood",                   kitchenIngredientKeywords["Seafood"]                  ?? []),
@@ -340,7 +348,7 @@ enum CategoryClassifier {
         ("Dairy & Eggs",              kitchenIngredientKeywords["Dairy & Eggs"]             ?? []),
         ("Sauces & Condiments",       kitchenIngredientKeywords["Sauces & Condiments"]      ?? []),
         ("Grains & Pasta",            kitchenIngredientKeywords["Grains & Pasta"]           ?? []),
-        ("Baking Supplies",           ["baking powder", "baking soda", "yeast", "cornstarch",
+        ("Baking Supplies",           ["baking powder", "baking soda", "yeast", "cornstarch", "corn starch",
                                        "gelatin", "cocoa powder"]),
     ]
 
@@ -349,25 +357,50 @@ enum CategoryClassifier {
 
         return categoryCache.value(for: lowercased) { normalized in
             // Whole-word match so "graham" isn't Meat via "ham"
-            let itemWords = IngredientWordMatcher.words(in: normalized)
-
-            func matches(_ keywords: [String]) -> Bool {
-                keywords.contains { IngredientWordMatcher.matches(textWords: itemWords, keyword: $0) }
+            let lineWords = IngredientWordMatcher.words(in: withoutNotes(normalized))
+            let foodWords = IngredientWordMatcher.words(in: foodClause(of: normalized))
+            func matches(_ keywords: [String], in words: [String]) -> Bool {
+                keywords.contains { IngredientWordMatcher.matches(textWords: words, keyword: $0) }
             }
 
-            if let form = storageFormRules.first(where: { matches($0.1) }) { return form.0 }
-
-            // Most specific keyword wins: "baking soda" is Baking Supplies, not Beverages via "soda". A keyword listed
-            // under two rules goes to the earlier one, so keep each in the rule for its aisle.
-            var best: (category: String, length: Int)?
-            for (category, keywords) in categorizationRules {
-                for keyword in keywords where IngredientWordMatcher.matches(textWords: itemWords, keyword: keyword) {
-                    let length = IngredientWordMatcher.words(in: keyword).count
-                    if length > (best?.length ?? 0) { best = (category, length) }
-                }
+            // How it's sold decides first, wherever the line says it ("prawns, frozen, peeled").
+            if let form = storageFormRules.first(where: { matches($0.1, in: lineWords) }) { return form.0 }
+            if let lastWord = foodWords.last,
+               let last = lastWordRules.first(where: { matches($0.1, in: [lastWord]) }) {
+                return last.0
             }
-            return best?.category ?? "Other"
+            // The food's own words, then the rest of the line ("besan (gram flour)", "skinless, boneless chicken").
+            return mostSpecificCategory(in: foodWords) ?? mostSpecificCategory(in: lineWords) ?? "Other"
         }
+    }
+
+    /// An ingredient line without a " for " / " if " note: "salt, if using unsalted butter" → "salt,".
+    static func withoutNotes(_ text: String) -> String {
+        var clause = Substring(text)
+        for marker in [" for ", " if "] {
+            if let range = clause.range(of: marker) { clause = clause[..<range.lowerBound] }
+        }
+        return String(clause).trimmed
+    }
+
+    /// The words that name the food: the note-free line up to its first comma or bracket.
+    static func foodClause(of text: String) -> String {
+        let line = withoutNotes(text)
+        let clause = line.firstIndex(where: { $0 == "," || $0 == "(" }).map { line[..<$0] } ?? Substring(line)
+        return String(clause).trimmed
+    }
+
+    /// Most specific keyword wins: "baking soda" is Baking Supplies, not Beverages via "soda". A keyword listed
+    /// under two rules goes to the earlier one, so keep each in the rule for its aisle. nil when nothing matches.
+    private static func mostSpecificCategory(in itemWords: [String]) -> String? {
+        var best: (category: String, length: Int)?
+        for (category, keywords) in categorizationRules {
+            for keyword in keywords where IngredientWordMatcher.matches(textWords: itemWords, keyword: keyword) {
+                let length = IngredientWordMatcher.words(in: keyword).count
+                if length > (best?.length ?? 0) { best = (category, length) }
+            }
+        }
+        return best?.category
     }
 
     static func suggestCategory(for partialInput: String) -> String {
