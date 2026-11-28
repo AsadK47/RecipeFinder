@@ -167,6 +167,28 @@ struct CookingModeTimerTests {
         #expect(CookingPlan.timerMinutes(in: text) == nil)
     }
 
+    // Reviewer 2026-11-28: a short seconds-only beat before the real timer hid it ("twenty seconds" → nil,
+    // "30 seconds" → 1). An under-a-minute first duration gives way to the next separate one; alone, it stays.
+    @Test("a seconds-only first duration gives way to a later real one", arguments: [
+        ("Whisk for twenty seconds, then simmer for 10 minutes", 10),
+        ("Stir for 30 seconds, then simmer 10 minutes", 10),
+        ("Fry for 45 seconds, rest 2 minutes, then bake 30 minutes", 2),
+        ("Toast for 1 minute 30 seconds, then rest 5 minutes", 2),
+        ("Microwave for 1 minute, then 30 seconds more", 1),
+        ("Stir for 30 seconds", 1),
+    ])
+    func secondsFirst(text: String, minutes: Int) {
+        #expect(CookingPlan.timerMinutes(in: text) == minutes)
+    }
+
+    @Test("seconds-only durations with no longer one stay as before", arguments: [
+        "Blitz for 20 seconds",
+        "Blitz for 20 seconds, then 20 seconds more",
+    ])
+    func secondsOnly(text: String) {
+        #expect(CookingPlan.timerMinutes(in: text) == nil)
+    }
+
     @Test("compound durations joined by 'and' still combine")
     func compoundWithAnd() {
         #expect(CookingPlan.timerMinutes(in: "Roast 1 hr and 15 mins") == 75)
