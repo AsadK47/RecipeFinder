@@ -221,8 +221,6 @@ struct CategoryClassifierSpecificityTests {
     @Test("A compound keyword beats a shorter one from an earlier rule", arguments: [
         ("Baking Soda", "Baking Supplies"),
         ("baking soda, optional", "Baking Supplies"),
-        ("Coconut Milk", "Sauces & Condiments"),
-        ("full-fat coconut milk", "Sauces & Condiments"),
         ("chicken stock", "Sauces & Condiments"),
         ("oyster sauce", "Sauces & Condiments"),
         ("fish sauce", "Sauces & Condiments"),
@@ -261,6 +259,37 @@ struct CategoryClassifierSpecificityTests {
         ("milk", "Dairy & Eggs"),
     ])
     func tiesKeepAisle(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
+    @Test("A note after the food doesn't decide its aisle", arguments: [
+        ("salt, if using unsalted butter", "Dried Spices & Seasonings"),
+        ("salt (0.75 tsp if using unsalted butter)", "Dried Spices & Seasonings"),
+        ("lukewarm water, for dipping the rice paper", "Beverages"),
+        ("flour for dusting the butter", "Grains & Pasta"),
+    ])
+    func noteIgnored(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
+
+    @Test("The last word names the food: a paste, a sauce or a bake", arguments: [
+        ("hot red pepper paste", "Sauces & Condiments"),
+        ("peanut butter cookies", "Bakery"),
+        ("almond butter cookies", "Bakery"),
+        ("cream cheese bagel buns", "Bakery"),
+    ])
+    func lastWordNamesFood(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
+
+    @Test("Tins and coconut milk are in the tins aisle", arguments: [
+        ("tinned tomatoes", "Canned & Jarred"),
+        ("tin of chickpeas", "Canned & Jarred"),
+        ("Coconut Milk", "Canned & Jarred"),
+        ("full-fat coconut milk", "Canned & Jarred"),
+        ("Coconut Cream", "Canned & Jarred"),
+        ("condensed milk, or condensed coconut milk", "Dairy & Eggs"),
+    ])
+    func tinsAisle(name: String, expected: String) {
         #expect(CategoryClassifier.categorize(name) == expected)
     }
 }
