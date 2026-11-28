@@ -198,6 +198,7 @@ struct CookingModeTimerTests {
         ("Blend for 30 seconds until smooth. The dressing keeps in the fridge for up to 48 hours.", 1),
         ("Sear for 30 seconds. Ready in 20 minutes in total.", 1),
         ("Whisk 30 seconds. Can be made 2 hours ahead.", 1),
+        ("Whisk 30 seconds. Make the sauce up to a day in advance, or 2 hours in advance.", 1),
         ("Fry 45 seconds. Alternatively, bake for 10 minutes.", 1),
         ("Sear 30 secs, approx. 2 mins per side", 1),
     ])

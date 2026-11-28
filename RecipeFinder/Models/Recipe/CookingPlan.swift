@@ -207,8 +207,14 @@ struct CookingPlan: Equatable {
             let gap = ns.substring(with: NSRange(location: previousEnd, length: matches[index].range.location - previousEnd))
             // A sentence ends before a capital ("hot. Leave"), not an abbreviation ("approx. 2 mins").
             let nextStep = gap.range(of: #"\b[Tt]hen\b|[.;!]\s+[A-Z]"#, options: .regularExpression) != nil
-            return nextStep && gap.range(of: #"\b(?:within|up to|before|after|keeps|ready|total|ahead|alternatively)\b"#,
-                                         options: [.regularExpression, .caseInsensitive]) == nil
+            // A make-ahead note puts its word after the time ("2 hours ahead"), so read the rest of that sentence too.
+            let afterStart = matches[index].range.location + matches[index].range.length
+            let after = ns.substring(from: afterStart).prefix { !".;!".contains($0) }
+            return nextStep
+                && gap.range(of: #"\b(?:within|up to|before|after|keeps|ready|total|ahead|alternatively)\b"#,
+                             options: [.regularExpression, .caseInsensitive]) == nil
+                && after.range(of: #"\b(?:ahead|in advance|in total)\b"#,
+                               options: [.regularExpression, .caseInsensitive]) == nil
         }
 
         let first = duration(from: 0)
