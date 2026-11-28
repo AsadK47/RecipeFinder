@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-28 · Inbox shop mode same-name rows · ba89a33
+- For you: In shop mode, the same item from two recipes now shows as one row, like "Carrots · 454 g + 2 cups", and one tap puts it all in the basket.
+- Behind the build: new tests cover merged amounts, ticking and aisles; a reviewer and a challenger caught a row jumping when half-ticked and items in two aisles, fixed before it shipped.
+
 ## 2026-11-28 · Inbox shop mode plural units · a8be9f1
 - For you: Groceries and shop mode now read naturally, with "16 cloves", "2 cups" and "4 handfuls" for anything you buy more than one of.
 - Behind the build: a new test covers count units, weights and spoons; a challenger read every place amounts show or are spoken before it shipped.
