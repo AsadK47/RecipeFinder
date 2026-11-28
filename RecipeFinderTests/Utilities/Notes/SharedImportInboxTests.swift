@@ -62,6 +62,20 @@ import Foundation
         #expect(payload == .text("just a plain recipe note"))
     }
 
+    @Test func emailBeforeLink_importsTheLink() {
+        let payload = SharedImportInbox.resolvePayload(
+            recipeData: nil, urlString: nil,
+            text: "Questions? cook@example.com — recipe: https://cooking.test/stew"
+        )
+        #expect(payload == .url("https://cooking.test/stew"))
+    }
+
+    @Test func emailWithNoLink_staysText() {
+        let text = "Send your version to cook@example.com"
+        let payload = SharedImportInbox.resolvePayload(recipeData: nil, urlString: nil, text: text)
+        #expect(payload == .text(text))
+    }
+
     @Test func nothing_returnsNil() {
         #expect(SharedImportInbox.resolvePayload(recipeData: nil, urlString: nil, text: nil) == nil)
     }
