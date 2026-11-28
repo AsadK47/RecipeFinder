@@ -316,9 +316,16 @@ enum CategoryClassifier {
         ("Canned & Jarred",           ["canned", "jarred", "tinned", "tin"]),
     ]
 
+    /// Kitchen equipment that names a tin or foil ("cake tin, greased") is no food to shop for.
+    private static let equipmentPhrases = ["cake tin", "baking tin", "loaf tin", "roasting tin", "muffin tin",
+                                           "tart tin", "tin foil", "baking tray", "baking paper"]
+
+    /// UK spellings folded to the keyword spelling before matching.
+    private static let spellingVariants = [("chilli", "chili"), ("chillies", "chilies"), ("yoghurt", "yogurt")]
+
     /// The last word names the food, whatever comes before it: "peanut butter cookies" are a bake, "red pepper paste" a paste.
     private static let lastWordRules: [(String, [String])] = [
-        ("Bakery",                    ["bread", "cake", "cookie", "bun", "roll", "muffin"]),
+        ("Bakery",                    ["bread", "cake", "cookie", "bun", "muffin"]),
         ("Sauces & Condiments",       ["paste", "sauce"]),
     ]
 
@@ -349,13 +356,19 @@ enum CategoryClassifier {
         ("Sauces & Condiments",       kitchenIngredientKeywords["Sauces & Condiments"]      ?? []),
         ("Grains & Pasta",            kitchenIngredientKeywords["Grains & Pasta"]           ?? []),
         ("Baking Supplies",           ["baking powder", "baking soda", "yeast", "cornstarch", "corn starch",
-                                       "gelatin", "cocoa powder"]),
+                                       "gelatin", "cocoa powder", "vanilla extract", "vanilla bean paste",
+                                       "almond paste", "agar"]),
+        // A bare "oil" is cooking oil; the named oils above are longer and keep their own match.
+        ("Oils & Fats",               ["oil"]),
     ]
 
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased().trimmed
 
-        return categoryCache.value(for: lowercased) { normalized in
+        return categoryCache.value(for: lowercased) { raw in
+            let normalized = spellingVariants.reduce(raw) { text, pair in
+                text.replacingOccurrences(of: "\\b\(pair.0)\\b", with: pair.1, options: .regularExpression)
+            }
             // Whole-word match so "graham" isn't Meat via "ham"
             let lineWords = IngredientWordMatcher.words(in: withoutNotes(normalized))
             let foodWords = IngredientWordMatcher.words(in: foodClause(of: normalized))
@@ -363,8 +376,14 @@ enum CategoryClassifier {
                 keywords.contains { IngredientWordMatcher.matches(textWords: words, keyword: $0) }
             }
 
+            if matches(equipmentPhrases, in: lineWords) { return "Other" }
             // How it's sold decides first, wherever the line says it ("prawns, frozen, peeled").
             if let form = storageFormRules.first(where: { matches($0.1, in: lineWords) }) { return form.0 }
+            // A compound keyword ending in the food's last word ("vanilla bean paste") beats the last-word rule.
+            if let lastWord = foodWords.last, let best = mostSpecificMatch(in: foodWords), best.length > 1,
+               IngredientWordMatcher.words(in: best.keyword).last == lastWord {
+                return best.category
+            }
             if let lastWord = foodWords.last,
                let last = lastWordRules.first(where: { matches($0.1, in: [lastWord]) }) {
                 return last.0
@@ -393,14 +412,18 @@ enum CategoryClassifier {
     /// Most specific keyword wins: "baking soda" is Baking Supplies, not Beverages via "soda". A keyword listed
     /// under two rules goes to the earlier one, so keep each in the rule for its aisle. nil when nothing matches.
     private static func mostSpecificCategory(in itemWords: [String]) -> String? {
-        var best: (category: String, length: Int)?
+        mostSpecificMatch(in: itemWords)?.category
+    }
+
+    private static func mostSpecificMatch(in itemWords: [String]) -> (category: String, keyword: String, length: Int)? {
+        var best: (category: String, keyword: String, length: Int)?
         for (category, keywords) in categorizationRules {
             for keyword in keywords where IngredientWordMatcher.matches(textWords: itemWords, keyword: keyword) {
                 let length = IngredientWordMatcher.words(in: keyword).count
-                if length > (best?.length ?? 0) { best = (category, length) }
+                if length > (best?.length ?? 0) { best = (category, keyword, length) }
             }
         }
-        return best?.category
+        return best
     }
 
     static func suggestCategory(for partialInput: String) -> String {

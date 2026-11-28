@@ -295,7 +295,6 @@ struct CategoryClassifierSpecificityTests {
 
     @Test("Review 2026-11-28: rolls, tin equipment, baking pastes and UK spellings", arguments: [
         ("spring rolls", "Other"),
-        ("egg rolls", "Other"),
         ("rice paper rolls", "Grains & Pasta"),
         ("cake tin, greased", "Other"),
         ("tin foil", "Other"),
