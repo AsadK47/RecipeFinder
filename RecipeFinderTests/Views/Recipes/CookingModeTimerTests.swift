@@ -172,7 +172,12 @@ struct CookingModeTimerTests {
     @Test("a seconds-only first duration gives way to a later real one", arguments: [
         ("Whisk for twenty seconds, then simmer for 10 minutes", 10),
         ("Stir for 30 seconds, then simmer 10 minutes", 10),
-        ("Fry for 45 seconds, rest 2 minutes, then bake 30 minutes", 2),
+        ("Fry for 45 seconds, then rest 2 minutes, then bake 30 minutes", 2),
+        ("Blitz 20 seconds, then 15 seconds more, then simmer 5 minutes", 5),
+        ("Whisk 20 seconds, then 40 seconds, then simmer 10 minutes", 10),
+        ("Stir 30 seconds, then keep stirring for 5 minutes", 5),
+        ("Warm the milk for 30 seconds until hot. Sprinkle over the yeast and leave 5 minutes until foamy.", 5),
+        ("Knock back for 10 seconds, divide into 8. Cover and rise for 1 hour until doubled.", 60),
         ("Toast for 1 minute 30 seconds, then rest 5 minutes", 2),
         ("Microwave for 1 minute, then 30 seconds more", 1),
         ("Stir for 30 seconds", 1),
@@ -181,9 +186,29 @@ struct CookingModeTimerTests {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
     }
 
-    @Test("seconds-only durations with no longer one stay as before", arguments: [
+    @Test("a seconds first duration keeps its timer before a range end or a limit", arguments: [
+        ("Toast the spices 30 seconds to 2 minutes, until fragrant", 1),
+        ("Cook 45 seconds or 3 minutes", 1),
+        ("Whisk 30 seconds until frothy; serve within 10 minutes", 1),
+        ("Whisk 30 seconds, then serve within 10 minutes", 1),
+        ("Rest for 30 seconds before serving in 2 minutes", 1),
+        ("Fry for 45 seconds, rest 2 minutes", 1),
+        ("Sear for 45 seconds to 2 minutes per side", 1),
+        ("Blanch 30 seconds to 1½ minutes", 1),
+        ("Blend for 30 seconds until smooth. The dressing keeps in the fridge for up to 48 hours.", 1),
+        ("Sear for 30 seconds. Ready in 20 minutes in total.", 1),
+        ("Whisk 30 seconds. Can be made 2 hours ahead.", 1),
+        ("Fry 45 seconds. Alternatively, bake for 10 minutes.", 1),
+        ("Sear 30 secs, approx. 2 mins per side", 1),
+    ])
+    func secondsFirstKept(text: String, minutes: Int) {
+        #expect(CookingPlan.timerMinutes(in: text) == minutes)
+    }
+
+    @Test("seconds-only durations with no longer next step stay as before", arguments: [
         "Blitz for 20 seconds",
         "Blitz for 20 seconds, then 20 seconds more",
+        "Blitz 20 seconds; the dressing keeps up to 2 hours",
     ])
     func secondsOnly(text: String) {
         #expect(CookingPlan.timerMinutes(in: text) == nil)
