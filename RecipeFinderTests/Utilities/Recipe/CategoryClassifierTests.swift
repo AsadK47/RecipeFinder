@@ -292,4 +292,23 @@ struct CategoryClassifierSpecificityTests {
     func tinsAisle(name: String, expected: String) {
         #expect(CategoryClassifier.categorize(name) == expected)
     }
+
+    @Test("Review 2026-11-28: rolls, tin equipment, baking pastes and UK spellings", arguments: [
+        ("spring rolls", "Other"),
+        ("egg rolls", "Other"),
+        ("rice paper rolls", "Grains & Pasta"),
+        ("cake tin, greased", "Other"),
+        ("tin foil", "Other"),
+        ("vanilla bean paste", "Baking Supplies"),
+        ("almond paste", "Baking Supplies"),
+        ("vanilla extract, for the cake", "Baking Supplies"),
+        ("chilli powder, for raita", "Dried Spices & Seasonings"),
+        ("full-fat yoghurt", "Dairy & Eggs"),
+        ("oil, for the rice", "Oils & Fats"),
+        ("agar agar powder", "Baking Supplies"),
+        ("tin chopped tomatoes", "Canned & Jarred"),
+    ])
+    func reviewCases(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
 }
