@@ -119,7 +119,7 @@ struct ShopModeView: View {
             .padding(.vertical, AppTheme.spacing20)
     }
 
-    private func row(_ item: ShoppingListModel) -> some View {
+    private func row(_ item: ShopTrip.Row) -> some View {
         Button { toggle(item) } label: {
             HStack(spacing: AppTheme.spacing16) {
                 Image(systemName: item.isChecked ? "checkmark.circle.fill" : "circle")
@@ -131,7 +131,7 @@ struct ShopModeView: View {
                     .adaptiveForegroundColor()
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text(ShopTrip.amount(item))
+                Text(item.amount)
                     .font(.title3)
                     .adaptiveSecondaryForeground()
                     .lineLimit(1)
@@ -147,15 +147,19 @@ struct ShopModeView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(item.name)
-        .accessibilityValue(item.isChecked ? "In the basket, \(ShopTrip.amount(item))" : ShopTrip.amount(item))
+        .accessibilityValue(item.isChecked ? "In the basket, \(item.amount)" : item.amount)
         .accessibilityAddTraits(item.isChecked ? [.isButton, .isSelected] : .isButton)
         .accessibilityIdentifier("shop.row")
     }
 
-    private func toggle(_ item: ShoppingListModel) {
-        guard let index = shopping.items.firstIndex(where: { $0.id == item.id }) else { return }
-        tripTicks.toggled(item, at: Date())
-        shopping.toggleItem(at: index)
+    /// A merged row ticks (or unticks) every item in it, so "Carrots 454 g + 2 cups" goes in the basket in one tap.
+    private func toggle(_ row: ShopTrip.Row) {
+        let now = Date()
+        for id in row.idsToToggle {
+            guard let index = shopping.items.firstIndex(where: { $0.id == id }) else { continue }
+            tripTicks.toggled(shopping.items[index], at: now)
+            shopping.toggleItem(at: index)
+        }
     }
 
     private func finish() {

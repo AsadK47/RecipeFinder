@@ -84,6 +84,51 @@ struct ShopTripTests {
         #expect(ShopTrip.amount(item("Garlic", "Produce", quantity: quantity, unit: unit)) == expected)
     }
 
+    @Test("Same-name items share one row whose amount joins their units; same units add up")
+    func sameNameItemsMerge() {
+        let items = [item("Carrots", "Produce", quantity: 454, unit: "g"), item("Onion", "Produce"),
+                     item("carrots ", "Produce", quantity: 2, unit: "cups"), item("Milk", "Dairy & Eggs", quantity: 1, unit: "cup"),
+                     item("Milk", "Dairy & Eggs", quantity: 2, unit: "cups")]
+        let trip = ShopTrip(items: items, store: nil)
+        let carrots = trip.rows.first { $0.name == "Carrots" }
+        let milk = trip.rows.first { $0.name == "Milk" }
+
+        #expect(trip.rows.count == 3)
+        #expect(trip.total == 3)
+        #expect(carrots?.amount == "454 g + 2 cups")
+        #expect(carrots?.items.count == 2)
+        #expect(milk?.amount == "3 cups")
+        #expect(trip.rows.first { $0.name == "Onion" }?.amount == "1")
+    }
+
+    @Test("A merged row is in the basket only once every item in it is ticked; a tap flips what's left, then all")
+    func mergedRowTicksTogether() {
+        let grams = item("Carrots", "Produce", quantity: 454, unit: "g")
+        let cups = item("Carrots", "Produce", checked: true, quantity: 2, unit: "cups")
+        let partly = ShopTrip(items: [grams, cups], store: nil)
+
+        #expect(partly.toGet.count == 1)
+        #expect(partly.inBasket.isEmpty)
+        #expect(partly.rows.first?.idsToToggle == [grams.id])
+        #expect(partly.progressText == "0 of 1 in the basket")
+
+        var both = grams
+        both.isChecked = true
+        let ticked = ShopTrip(items: [both, cups], store: nil)
+        #expect(ticked.isDone)
+        #expect(ticked.progressText == "1 of 1 in the basket")
+        #expect(Set(ticked.rows.first?.idsToToggle ?? []) == [grams.id, cups.id])
+        #expect(ticked.basketIDs == [grams.id, cups.id])
+        #expect(ticked.doneTitle == "Done · put 1 away")
+    }
+
+    @Test("Items with different names stay on their own rows")
+    func differentNamesStayApart() {
+        let trip = ShopTrip(items: [item("Lemon", "Produce"), item("Lemon Juice", "Produce")], store: nil)
+        #expect(trip.rows.count == 2)
+        #expect(Set(trip.rows.map { $0.name }) == ["Lemon", "Lemon Juice"])
+    }
+
     @MainActor @Test("Done in one store puts away only that store's basket; other stores' ticks stay ticked")
     func finishInAStoreLeavesOtherStores() {
         let defaults = UserDefaults(suiteName: UUID().uuidString) ?? .standard
