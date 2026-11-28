@@ -62,7 +62,6 @@ struct TodayHeroCard: View {
             if let menu = lines.menu {
                 eatTimeMenu(menu)
                     .padding(.horizontal, AppTheme.spacing16)
-                    .padding(.top, AppTheme.spacing6)
             }
 
             // Side by side when they fit; at large text sizes Shuffle drops below "Cook this".
@@ -113,7 +112,8 @@ struct TodayHeroCard: View {
             }
         } label: {
             HStack(spacing: AppTheme.spacing6) {
-                Label(text, systemImage: "clock")
+                // A fork for "Dinner at", so it doesn't read as a twin of a clock note above it.
+                Label(text, systemImage: text == timing ? "clock" : "fork.knife")
                     .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.leading)
                 Image(systemName: "chevron.down")
@@ -122,6 +122,9 @@ struct TodayHeroCard: View {
             }
             .font(.subheadline.weight(.medium))
             .adaptiveForegroundColor()
+            // A full-height tap target (the old pill's padding), not just the line of text.
+            .padding(.vertical, AppTheme.spacing10)
+            .frame(minHeight: 44)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
