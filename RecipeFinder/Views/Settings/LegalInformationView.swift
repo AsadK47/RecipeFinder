@@ -45,6 +45,7 @@ struct LegalInformationView: View {
                         }
                     }
 
+                    // Badge wording mirrors Privacy Policy 10.1 ("designed to comply"); version and © live in About.
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             HStack {
@@ -52,7 +53,7 @@ struct LegalInformationView: View {
                                     .font(.title2)
                                     .adaptiveForegroundColor()
 
-                                Text("Regulatory Compliance")
+                                Text("Data Protection")
                                     .font(.title3)
                                     .fontWeight(.semibold)
                                     .adaptiveForegroundColor()
@@ -62,35 +63,21 @@ struct LegalInformationView: View {
                                 .padding(.vertical, AppTheme.spacing4)
 
                             ComplianceBadge(
-                                icon: "checkmark.seal.fill",
+                                icon: "lock.shield.fill",
                                 title: "UK GDPR",
-                                description: "Compliant with UK General Data Protection Regulation",
+                                description: "Designed to comply with the UK General Data Protection Regulation",
                                 color: AppTheme.textColor()
                             )
 
                             ComplianceBadge(
                                 icon: "lock.shield.fill",
                                 title: "Data Protection Act 2018",
-                                description: "Adherence to UK data protection legislation",
+                                description: "Designed to comply with the Data Protection Act 2018",
                                 color: AppTheme.textColor()
                             )
                         }
                         .padding(AppTheme.spacing24)
                     }
-
-                    VStack(spacing: AppTheme.spacing4) {
-                        Text("RecipeFinder")
-                            .font(.caption)
-                            .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
-                        Text("Version 1.0.0 (Build 1)")
-                            .font(.caption2)
-                            .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
-                        Text("© 2025 Asad Khan")
-                            .font(.caption2)
-                            .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
-                    }
-                    .padding(.top, AppTheme.spacing24)
-                    .padding(.bottom, AppTheme.spacing40)
                 }
                 .padding(AppTheme.spacing24)
             }
