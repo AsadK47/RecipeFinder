@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Today's time-aware Tonight line: morning prep, afternoon start-by, evening "start now" or "pick something quicker".
+/// Today's time-aware Tonight line: morning prep, afternoon start-by, evening "start now" or "takes …", and how the hero card splits them into a note and the eat-time Menu.
 @Suite struct TonightTimingTests {
 
     private func recipe(prep: String = "10 min", cook: String = "30 min", steps: [String] = ["Cook"]) -> RecipeModel {
@@ -55,13 +55,50 @@ import Foundation
 
     @Test func eveningWithALongRecipeSuggestsSomethingQuicker() {
         let hero = TodayFeed.Hero(recipe: recipe(prep: "1 hr", cook: "10 min"), reason: .kitchenMatch(have: 3, total: 4))
-        #expect(TonightTiming.line(hero: hero, minuteOfDay: at(19)) == "Takes 1 hr 10 min · Shuffle for something quicker")
+        #expect(TonightTiming.line(hero: hero, minuteOfDay: at(19)) == "Takes 1 hr 10 min")
     }
 
-    @Test(arguments: [(45, "Start now to eat by 7:45"), (46, "Takes 46 min · Shuffle for something quicker")])
+    @Test(arguments: [(45, "Start now to eat by 7:45"), (46, "Takes 46 min")])
     func eveningQuickLimitIsFortyFiveMinutes(minutes: Int, expected: String) {
         let hero = TodayFeed.Hero(recipe: recipe(prep: "", cook: "\(minutes) min"), reason: .kitchenMatch(have: 1, total: 2))
         #expect(TonightTiming.line(hero: hero, minuteOfDay: at(19)) == expected)
+    }
+
+    @Test func aLineNamingTheEatTimeBecomesTheMenu() {
+        let lines = TonightTiming.heroLines(timing: "Start by 6 to eat at 7", asksEatTime: true, eatAt: at(19))
+        #expect(lines == .init(note: nil, menu: "Start by 6 to eat at 7"))
+    }
+
+    @Test func aHalfHourEatTimeStillNamesItself() {
+        let lines = TonightTiming.heroLines(timing: "Start by 7:50 to eat at 8:30", asksEatTime: true, eatAt: at(20, 30))
+        #expect(lines == .init(note: nil, menu: "Start by 7:50 to eat at 8:30"))
+    }
+
+    @Test func noTimingLineStillOffersDinnerAt() {
+        let lines = TonightTiming.heroLines(timing: nil, asksEatTime: true, eatAt: at(20))
+        #expect(lines == .init(note: nil, menu: "Dinner at 8 pm"))
+    }
+
+    @Test(arguments: ["Takes 1 hr 10 min", "Start now to eat by 7:25", "Defrost this morning for tonight"])
+    func aLineTheEatTimeDoesNotNameStaysAPlainNote(timing: String) {
+        let lines = TonightTiming.heroLines(timing: timing, asksEatTime: true, eatAt: at(19))
+        #expect(lines == .init(note: timing, menu: "Dinner at 7 pm"))
+    }
+
+    @Test func notAskingTheEatTimeHasNoMenu() {
+        let lines = TonightTiming.heroLines(timing: "Start now to eat by 7:40", asksEatTime: false, eatAt: at(19))
+        #expect(lines == .init(note: "Start now to eat by 7:40", menu: nil))
+        let empty = TonightTiming.heroLines(timing: nil, asksEatTime: false, eatAt: at(19))
+        #expect(empty == .init(note: nil, menu: nil))
+    }
+
+    /// The real afternoon line feeds the Menu end to end (catches a copy change that breaks the suffix match).
+    @Test func theAfternoonStartLineBecomesTheMenu() {
+        let hero = planned(recipe(prep: "40 min", cook: "40 min"))
+        let line = TonightTiming.line(hero: hero, minuteOfDay: at(15), eatAt: at(20))
+        let asks = TonightTiming.asksEatTime(for: hero)
+        let lines = TonightTiming.heroLines(timing: line, asksEatTime: asks, eatAt: at(20))
+        #expect(lines == .init(note: nil, menu: "Start by 6:40 to eat at 8"))
     }
 
     @Test(arguments: [(45, "45 min"), (60, "1 hr"), (70, "1 hr 10 min"), (125, "2 hr 5 min")])

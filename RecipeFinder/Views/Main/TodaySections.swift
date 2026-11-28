@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 /// Today's next-meal card: the hero recipe's photo, why it was picked and, for dinner, when to start. Tapping the card opens the
-/// recipe; "Cook this" goes straight into cooking mode; Shuffle steps to the next pick (separate buttons — a button
-/// nested in a button's label never fires).
+/// recipe; the eat-time Menu picks when dinner is; "Cook this" goes straight into cooking mode; Shuffle steps to the
+/// next pick (separate controls — a button nested in a button's label never fires).
 struct TodayHeroCard: View {
     let hero: TodayFeed.Hero
     /// The meal it's for ("Tonight", "Breakfast", "Tomorrow's breakfast") — VoiceOver hears it first.
@@ -12,9 +12,9 @@ struct TodayHeroCard: View {
     let caption: String
     /// Time-aware hint ("Start by 5:40 to eat at 7"), when there's one.
     let timing: String?
-    /// Whether the "Dinner at" pill shows (`TonightTiming.asksEatTime`).
+    /// Whether the eat-time Menu shows (`TonightTiming.asksEatTime`).
     let asksEatTime: Bool
-    /// When dinner is eaten (minutes since midnight), picked from the "Dinner at" pill.
+    /// When dinner is eaten (minutes since midnight), picked from the eat-time Menu.
     @Binding var eatAt: Int
     /// Nil when there's nothing else to shuffle to.
     let onShuffle: (() -> Void)?
@@ -40,8 +40,8 @@ struct TodayHeroCard: View {
                             .adaptiveForegroundColor()
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
-                        if let timing {
-                            Label(timing, systemImage: "clock")
+                        if let note = lines.note {
+                            Label(note, systemImage: "clock")
                                 .font(.subheadline.weight(.medium))
                                 .adaptiveForegroundColor()
                                 .fixedSize(horizontal: false, vertical: true)
@@ -58,7 +58,14 @@ struct TodayHeroCard: View {
             .accessibilityHint("Opens the recipe")
             .accessibilityIdentifier("today.hero")
 
-            // Side by side when they fit; at large text sizes the lesser pills drop below "Cook this".
+            // Outside the open button (a control in a button's label never fires) and its own VoiceOver element.
+            if let menu = lines.menu {
+                eatTimeMenu(menu)
+                    .padding(.horizontal, AppTheme.spacing16)
+                    .padding(.top, AppTheme.spacing6)
+            }
+
+            // Side by side when they fit; at large text sizes Shuffle drops below "Cook this".
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: AppTheme.spacing12) {
                     cookButton
@@ -95,31 +102,36 @@ struct TodayHeroCard: View {
         .accessibilityIdentifier("today.hero.cook")
     }
 
+    /// The timing line that names the eat time ("Start by 6 to eat at 7 ▾"), or "Dinner at 7 pm ▾" when there's
+    /// none, so a passed eat time can always be changed back.
+    private func eatTimeMenu(_ text: String) -> some View {
+        Menu {
+            Picker("Dinner at", selection: $eatAt) {
+                ForEach(TonightTiming.eatTimeChoices, id: \.self) { minute in
+                    Text("\(TonightTiming.clock(minute)) pm").tag(minute)
+                }
+            }
+        } label: {
+            HStack(spacing: AppTheme.spacing6) {
+                Label(text, systemImage: "clock")
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.semibold))
+                    .accessibilityHidden(true)
+            }
+            .font(.subheadline.weight(.medium))
+            .adaptiveForegroundColor()
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(text)
+        .accessibilityHint("Changes when you eat dinner")
+        .accessibilityIdentifier("today.hero.eatAt")
+    }
+
     @ViewBuilder
     private var secondaryActions: some View {
-        // Its own control (not inside the open button, where it wouldn't fire), shown even when there's no
-        // timing line, so a passed eat time can always be changed back.
-        if asksEatTime {
-            Menu {
-                Picker("Dinner at", selection: $eatAt) {
-                    ForEach(TonightTiming.eatTimeChoices, id: \.self) { minute in
-                        Text("\(TonightTiming.clock(minute)) pm").tag(minute)
-                    }
-                }
-            } label: {
-                Label("\(TonightTiming.clock(eatAt)) pm", systemImage: "fork.knife")
-                    .font(.subheadline.weight(.semibold))
-                    .adaptiveForegroundColor()
-                    .padding(.horizontal, AppTheme.spacing12)
-                    .padding(.vertical, AppTheme.spacing10)
-                    .appCard(in: Capsule())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Dinner at \(TonightTiming.clock(eatAt)) pm")
-            .accessibilityHint("Changes when you eat dinner")
-            .accessibilityIdentifier("today.hero.eatAt")
-        }
-
         if let onShuffle {
             Button(action: onShuffle) {
                 Label("Shuffle", systemImage: "shuffle")
@@ -137,7 +149,12 @@ struct TodayHeroCard: View {
     }
 
     private var accessibilityText: String {
-        ["\(title): \(hero.recipe.name)", caption, timing].compactMap { $0 }.joined(separator: ". ")
+        // The Menu speaks its own line; only a plain note joins the card's label.
+        ["\(title): \(hero.recipe.name)", caption, lines.note].compactMap { $0 }.joined(separator: ". ")
+    }
+
+    private var lines: TonightTiming.HeroLines {
+        TonightTiming.heroLines(timing: timing, asksEatTime: asksEatTime, eatAt: eatAt)
     }
 
     private var icon: String {

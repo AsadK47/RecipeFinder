@@ -31,7 +31,7 @@ enum TonightTiming {
     /// - Before the start time: "Start by 5:40 to eat at 7" (prep + cook back from `eatAt`).
     /// - Past the start time but before `eatAt`: "Start now to eat by 7:25".
     /// - Evening (6–10pm, or from an hour before a later `eatAt`), unless a planned dinner can still be timed: about
-    ///   *this* recipe — "Start now to eat by 7:40", or for a long one "Takes 1 hr 10 min · Shuffle for something quicker".
+    ///   *this* recipe — "Start now to eat by 7:40", or for a long one "Takes 1 hr 10 min" (Shuffle sits beside it).
     ///   (A library-wide count like "12 under 30 min" read as gibberish to the owner — it named nothing to act on.)
     /// - A planned lunch/breakfast/snack before evening: nothing (its time isn't dinner's).
     /// - `forDinner` false (the next meal is breakfast, lunch or tomorrow): only a planned dinner tonight gets a line.
@@ -63,7 +63,22 @@ enum TonightTiming {
     private static func eveningLine(minutes: Int, now: Int) -> String? {
         guard minutes > 0, now < eveningEndsAt else { return nil }
         if minutes <= eveningQuickLimit { return "Start now to eat by \(clock(now + minutes))" }
-        return "Takes \(duration(minutes)) · Shuffle for something quicker"
+        return "Takes \(duration(minutes))"
+    }
+
+    /// The hero card's two timing texts. `menu` labels the eat-time Menu: the timing line itself when it names the eat
+    /// time ("Start by 6 to eat at 7", the choice it changes), else "Dinner at 7 pm" so the control never vanishes.
+    /// `note` is a line the eat time doesn't name ("Takes 1 hr", "Defrost this morning…"), shown as plain text:
+    /// a Menu on a line it doesn't change confused the 2026-11-11 fold (docs/DECISIONS.md, Today+ 1/3 slice 2).
+    struct HeroLines: Equatable {
+        let note: String?
+        let menu: String?
+    }
+
+    static func heroLines(timing: String?, asksEatTime: Bool, eatAt: Int) -> HeroLines {
+        guard asksEatTime else { return HeroLines(note: timing, menu: nil) }
+        if let timing, timing.hasSuffix("to eat at \(clock(eatAt))") { return HeroLines(note: nil, menu: timing) }
+        return HeroLines(note: timing, menu: "Dinner at \(clock(eatAt)) pm")
     }
 
     /// "45 min", "1 hr", "1 hr 10 min".

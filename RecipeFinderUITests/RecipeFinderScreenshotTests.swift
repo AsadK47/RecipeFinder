@@ -592,15 +592,17 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                 )
             }
             if time == "17:00" {
-                // Slice 2: the "Dinner at" pill picks when dinner is; the start time follows.
+                // The timing line is the eat-time Menu ("Start by 6 to eat at 7 ▾"); the start time follows the pick.
                 let timing = app.buttons["today.hero.eatAt"]
                 XCTAssertTrue(timing.waitForExistence(timeout: 5), "The Tonight card should offer a dinner time.")
+                XCTAssertTrue(timing.label.contains("eat at 7"), "The timing line should be the Menu: \(timing.label)")
+                XCTAssertFalse(hero.label.contains("eat at"), "The card shouldn't repeat the Menu's line: \(hero.label)")
                 timing.tap()
                 let eight = app.buttons["8 pm"]
-                XCTAssertTrue(eight.waitForExistence(timeout: 5), "The pill should offer dinner times.")
+                XCTAssertTrue(eight.waitForExistence(timeout: 5), "The Menu should offer dinner times.")
                 eight.tap()
                 settle(1)
-                XCTAssertTrue(hero.label.contains("eat at 8"), "Start time should count back from 8pm: \(hero.label)")
+                XCTAssertTrue(timing.label.contains("eat at 8"), "Start time should count back from 8pm: \(timing.label)")
                 snap(app, "28-today-eat-at-8")
                 // Put 7pm back: the choice persists in the shared simulator.
                 timing.tap()
