@@ -54,6 +54,12 @@ import Foundation
         ("11\u{2044}2 cups flour", 1.5, "cup", "flour"),
         ("1\u{2011}1/2 teaspoons lemon zest", 1.5, "tsp", "lemon zest"),
         ("3\u{2044}4 cup sugar", 0.75, "cup", "sugar"),
+        // Reviewer 2026-11-27: a dash before a fraction glyph is a mixed number, as timers read it — never a range.
+        ("1-½ cups flour", 1.5, "cup", "flour"),
+        ("1\u{2011}½ cups flour", 1.5, "cup", "flour"),
+        ("1–½ cups flour", 1.5, "cup", "flour"),
+        ("2-¾ tsp salt", 2.75, "tsp", "salt"),
+        ("10-⅓ oz cheese", 10.0 + 1.0 / 3.0, "oz", "cheese"),
     ])
     func unicodeSlashesAndHyphens(input: String, quantity: Double, unit: String, name: String) {
         let p = IngredientLineParser.parse(input)

@@ -387,6 +387,13 @@ struct RecipeWizardBuilderTests {
         #expect(items[7].name == "onion, diced")
     }
 
+    @Test("A dash before a fraction glyph in the amount field is a mixed number", arguments: [
+        ("1-½", 1.5), ("1\u{2011}½", 1.5), ("2–¾", 2.75)
+    ])
+    func dashedGlyphAmount(text: String, amount: Double) {
+        #expect(RecipeWizardBuilder.parseAmount(text) == amount)
+    }
+
     @Test("rows → text → rows keeps every amount, unit and name")
     func ingredientTextRoundTrip() {
         let original = IngredientTextBlock.items(from: "200 g flour\n2 eggs\nsalt, to taste\n1 1/2 cup milk")
