@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Tens number-word timers** (8a40350..791d7a6, builder 2026-11-28): added teens + tens words (and "fourty") to the
+  existing word list rather than only a `(?<![\w-]|ty )` guard — a guard would give no timer for "forty-five minutes",
+  words give the right one. Compound separator is a dash (-–—) or spaces, not `\s` (no joining across lines). Hundreds
+  rejected by lookbehind (nil, not a wrong 20). "fifteen and a half hours" moved from the nil list to 930 (it is now a
+  real amount); "umpteen and a half hours" keeps the lone-"a half"-after-"and" check. **Pre-mortem:** (1) "forty-five"
+  still read as 5 → `tensNumberWords`; (2) "hundred and twenty" → 20 → `notADuration`; (3) "forty-five-minute rest"
+  gives a timer → `notADuration`.
 - **Swap notes name every swap** (d13c03d..4988956, builder 2026-11-28): one parameterised test (vegan / vegetarian) reads
   notes that offer a swap ("make it vegan", "for a vegetarian version") minus the source URL, and needs each ruled-out
   ingredient named by one of its own words. Word presence, not sentence parsing (accepted: a stray mention passes).

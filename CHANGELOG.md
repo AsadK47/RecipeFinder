@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-28 · Inbox tens number-word step timers · 791d7a6
+- For you: Steps that spell out their time, like "forty-five minutes" or "twenty-one minutes", now offer a timer for the full time.
+- Behind the build: a new test failed on the old timer first; a reviewer and a challenger both caught "a hundred and twenty minutes" and dashed words, fixed before it shipped.
+
 ## 2026-11-28 · Inbox Vegetable Lo Mein vegan note · 4988956
 - For you: The Vegetable Lo Mein, Hakka Noodles and Cantonese Chow Mein notes now name every swap you need for a vegan or vegetarian version, egg-free noodles and vegetarian oyster sauce included.
 - Behind the build: a new test checks every vegan or vegetarian tip against the recipe's ingredients; a reviewer and a challenger both asked for the vegetarian check, which found the other two notes.
