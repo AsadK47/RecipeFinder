@@ -213,3 +213,53 @@ struct CategoryClassifierCitrusTests {
         #expect(CategoryClassifier.categorize("orange juice") == "Beverages")
     }
 }
+
+/// The most specific (longest) matching keyword decides, so a short keyword in an earlier rule ("soda", "coconut",
+/// "chicken") can't claim a compound that names its own aisle ("baking soda", "coconut milk", "chicken stock").
+@Suite("CategoryClassifier most specific keyword")
+struct CategoryClassifierSpecificityTests {
+    @Test("A compound keyword beats a shorter one from an earlier rule", arguments: [
+        ("Baking Soda", "Baking Supplies"),
+        ("baking soda, optional", "Baking Supplies"),
+        ("Coconut Milk", "Sauces & Condiments"),
+        ("full-fat coconut milk", "Sauces & Condiments"),
+        ("chicken stock", "Sauces & Condiments"),
+        ("oyster sauce", "Sauces & Condiments"),
+        ("red wine vinegar", "Sauces & Condiments"),
+        ("tomato paste", "Sauces & Condiments"),
+        ("sesame oil", "Oils & Fats"),
+        ("coconut oil", "Oils & Fats"),
+        ("red bell pepper, diced", "Produce"),
+        ("green beans", "Produce"),
+        ("oyster mushrooms", "Produce"),
+        ("egg noodles", "Grains & Pasta"),
+    ])
+    func compoundWins(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
+
+    @Test("How it's sold (frozen, canned) still decides the aisle", arguments: [
+        ("Frozen Chicken Breasts", "Frozen"),
+        ("frozen green beans", "Frozen"),
+        ("Canned Coconut Milk", "Canned & Jarred"),
+        ("Canned Tuna", "Canned & Jarred"),
+        ("canned chickpeas, drained", "Canned & Jarred"),
+    ])
+    func storageFormWins(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
+
+    @Test("Ties and single words keep their aisle", arguments: [
+        ("White Bread", "Bakery"),
+        ("Whole Wheat Bread", "Bakery"),
+        ("bread", "Bakery"),
+        ("Lemon Juice", "Produce"),
+        ("orange juice", "Beverages"),
+        ("soda water", "Beverages"),
+        ("coconut", "Produce"),
+        ("milk", "Dairy & Eggs"),
+    ])
+    func tiesKeepAisle(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
+}
