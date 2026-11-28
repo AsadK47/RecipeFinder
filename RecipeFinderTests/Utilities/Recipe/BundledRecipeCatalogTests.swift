@@ -46,6 +46,9 @@ struct BundledRecipeCatalogTests {
     struct CuratedEntry: Decodable {
         let action: String          // keep | fix | drop
         let recipe: CuratedRecipe?
+        /// The method (pre-prep, steps, notes) is written in our own words, not the source's (BACKLOG
+        /// "Recipes in our own words"); `ownWordsMethodsCopyNoSourceRun` holds it to that.
+        var ownWords: Bool? = nil
     }
 
     struct CuratedRecipe: Decodable {
@@ -260,6 +263,48 @@ struct BundledRecipeCatalogTests {
             .filter { curated[$0.id.uuidString] == nil }
             .map(\.name)
         #expect(unreviewed.isEmpty, "Review these (tools/recipe-review/BRIEF.md) and add them to recipes_curated.json: \(unreviewed)")
+    }
+
+    // MARK: - Own words
+
+    /// Lower-cased runs of `length` consecutive words, URLs ignored (the source link is credit, not method text).
+    /// Eight words is a copied clause; shorter runs are stock kitchen phrases and ingredient lists ("oven to 180C
+    /// 160C fan gas 4"), which say facts nobody owns.
+    static func wordRuns(_ text: String, length: Int = 8) -> Set<String> {
+        let words = text.replacingOccurrences(of: #"https?://\S+"#, with: " ", options: .regularExpression)
+            .lowercased()
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .map(String.init)
+        guard words.count >= length else { return [] }
+        return Set((0...(words.count - length)).map { words[$0..<($0 + length)].joined(separator: " ") })
+    }
+
+    @Test("an 8-word run matches across case and punctuation; a reworded sentence shares none")
+    func wordRunsFindCopiedClauses() {
+        let source = Self.wordRuns("Heat the oil in a large pan over a medium heat. https://example.com/a/b/c/d/e/f/g/h")
+        #expect(!Self.wordRuns("HEAT the oil, in a large pan; over a").isDisjoint(with: source))
+        #expect(Self.wordRuns("Warm the oil in a big pan on a medium heat.").isDisjoint(with: source))
+        #expect(Self.wordRuns("example com a b c d e f").isDisjoint(with: source))
+        #expect(Self.wordRuns("Too short to count.").isEmpty)
+    }
+
+    @Test("a method rewritten in our own words shares no 8-word run with its source text")
+    func ownWordsMethodsCopyNoSourceRun() throws {
+        let curated = try Self.loadCurated()
+        var checked = Set<String>()
+        for entry in try Self.loadSource() {
+            guard let prefill = TextRecipeParser.parse(entry.rawText) else { continue }
+            let id = Self.makeModel(from: prefill, entry: entry).id.uuidString
+            // The generator keeps the first entry of a duplicated name, so that's the source to compare with.
+            guard let review = curated[id], review.ownWords == true, let recipe = review.recipe,
+                  checked.insert(id).inserted else { continue }
+            let source = Self.wordRuns(entry.rawText)
+            let copied = (recipe.prePrep + recipe.steps + [recipe.notes])
+                .flatMap { Self.wordRuns($0).intersection(source) }
+            #expect(copied.isEmpty, "\(recipe.name) still repeats its source: \(copied.sorted().prefix(3))")
+        }
+        // Batch 1 (25 recipes); raise this with each batch so a lost flag can't quietly shrink the count.
+        #expect(checked.count >= 25, "only \(checked.count) recipes are marked ownWords")
     }
 
     // MARK: - Generator behaviour

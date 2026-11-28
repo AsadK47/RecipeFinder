@@ -782,6 +782,7 @@
    "notes leaked into steps",
    "URL in notes"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 180,
@@ -1466,6 +1467,7 @@
    "equipment listed",
    "nutrition/author lines in source"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 12,
@@ -6385,6 +6387,7 @@
    "marinade/sauce steps split into fragments",
    "invented prep/cook times"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Starter",
    "cookMinutes": 30,
@@ -6665,6 +6668,7 @@
    "URL in notes",
    "servings missing"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 8,
@@ -7296,6 +7300,7 @@
    "'For the marinade' heading lost context",
    "units glued to numbers"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 15,
@@ -7940,6 +7945,7 @@
    "ranges and dual measurements",
    "notes and air-fryer instructions mixed into method"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 30,
@@ -8860,6 +8866,7 @@
    "invented prep/cook times",
    "URL in notes"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 35,
@@ -11200,6 +11207,7 @@
    "storage/serving text as steps",
    "garbled title"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 15,
@@ -11741,6 +11749,7 @@
    "invented 10/30 min times",
    "chickpea tin size garbled"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 15,
@@ -12533,6 +12542,7 @@
    "section headings/brand chatter in ingredients",
    "notes, air-fryer variant and nutrition leaking"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 40,
@@ -12930,6 +12940,7 @@
    "equipment and nutrition leaked",
    "overly fragmented steps"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 45,
@@ -13310,6 +13321,7 @@
    "Step N headings and chef tip/FAQ leaked into steps",
    "cook time invented (total 30, prep 20)"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 10,
@@ -13561,6 +13573,7 @@
    "pickle amounts differ between list and method",
    "invented 10/30 min times"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 30,
@@ -14898,6 +14911,7 @@
    "'divided, or to taste' in names",
    "nutrition disclaimer"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 7,
@@ -17291,6 +17305,7 @@
    "numbered steps",
    "long notes and nutrition leaking"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 30,
@@ -18549,6 +18564,7 @@
    "equipment/nutrition leaking",
    "category Main for a dessert"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 5,
@@ -20326,6 +20342,7 @@
    "nutrition block leaked",
    "freezing tips mixed into steps"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 60,
@@ -20408,6 +20425,7 @@
    "servings 4 vs makes 18",
    "URL in notes"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 35,
@@ -22184,6 +22202,7 @@
    "footnote markers and storage tips in steps",
    "nutrition leaking"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 25,
@@ -22625,6 +22644,7 @@
    "invented times",
    "category wrong"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 20,
@@ -23238,6 +23258,7 @@
    "nutrition leaked",
    "invented prep time"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 90,
@@ -24705,6 +24726,7 @@
    "units/prep not separated",
    "'Video' leaking"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 40,
@@ -27344,6 +27366,7 @@
    "steps split mid-sentence",
    "make-ahead tip in steps"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 55,
@@ -29603,6 +29626,7 @@
    "salt from method missing from ingredients",
    "flour range and tips unresolved"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Dessert",
    "cookMinutes": 10,
@@ -31551,6 +31575,7 @@
    "invented 10/30 min times (source gives 45 min total only)",
    "prep steps mixed into method"
   ],
+  "ownWords": true,
   "recipe": {
    "category": "Main",
    "cookMinutes": 45,
