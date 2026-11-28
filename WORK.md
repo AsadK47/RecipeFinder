@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+🚧 builder agent 2026-11-28 Inbox 🐞 Shop mode slice 2 — merge same-name rows (`ShopTrip.Row`), branch agent/shop-merge-rows.
 ✅ Inbox 🐞 Shop mode slice 1 plural units landed a8be9f1 (builder 2026-11-28; leftover branch agent/shop-unit-plurals unmerged pre-rebase SHA — delete). Next: Shop mode slice 2 — merge same-name rows in `ShopTrip` (Carrots 454 g + 2 cups → one row, tick toggles both; model test first), unless Declutter 1/2 / Baking Soda lanes (other sessions) still need landing.
 ✅ Launch lane (a) *Recipes in our own words* batch 2 landed 7ba1220..981d2db (builder 2026-11-28; 52/332 flagged; leftover branches agent/own-words-2 + agent/own-words-2b unmerged — delete, agent/own-words-2-land auto-cleanup). Next: batch 3 — next 25 by 7-word overlap (method in docs/DECISIONS.md *Own words batch 2*), raise the `>= 52` pin; squash before regenerating history.
 ✅ Launch lane (a) *Recipes in our own words* batch 1 landed d17d1eb..ff14a1a (builder 2026-11-28; 27/332 flagged; leftover branches agent/own-words-1 auto-cleanup, agent/own-words-1-red unmerged — delete). Next: batch 2 — next 25 by 7-word source overlap (local script idea: map curated id → source via URL, name-match the 107 without a URL), raise the `>= 27` pin; keep lane (a) ahead of agent-found timer 🐞s until the owner answers CHALLENGES 28 Nov [Strategy].
@@ -136,6 +137,7 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+- **Shop mode slice 2 merge rows** (2026-11-28): rows key on trimmed lowercased name (not name+category — same food in two aisles still one pick-up); same canonical unit sums, others join " + "; row ticked = all items ticked; tap ticks the rest, or unticks all; progress/Done count rows. Kept `toggleItem(at:)` per id (one conformer, no protocol change). List view (ShoppingListItemRow) unchanged — separate slice. Pre-mortem: (1) tap ticks only one item → `mergedRowTicksTogether`; (2) mixed units summed wrongly → `sameNameItemsMerge`; (3) Lemon/Lemon Juice merged → `differentNamesStayApart`; UI shard 59 still ticks +1.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
