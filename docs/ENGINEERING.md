@@ -9,7 +9,7 @@ changing them asks the owner). Built 2026-11-28 from web research and the projec
 | Practice | Rule's home | Evidence | Check · status |
 |---|---|---|---|
 | One fact, one home; copies that must exist get a parity test | CLAUDE.md Harness decay · this file | [Docs as code](https://www.writethedocs.org/guide/docs-as-code/), [contract tests](https://martinfowler.com/bliki/ContractTest.html); BACKLOG Inbox "dup sweep 2026-11-28" (copies already disagreeing) | legal app↔website parity · Queued (e) |
-| Logic lives once | RecipeFinder/CLAUDE.md DRY · BACKLOG Smells | same sweep: plurals, fractions, ingredient text copied 3–7× with different output | Smells items · Prose |
+| Logic lives once: grep for prior art before writing, extend it | RecipeFinder/CLAUDE.md DRY · BACKLOG Smells | same sweep: plurals, fractions, ingredient text copied 3–7× with different output | clone check on new code · Queued (i) |
 | Check the premise both ways; know why a fence is there before removing it | AGENT_LESSONS 1 · BACKLOG step 6d | [Chesterton's fence](https://www.chesterton.org/taking-a-fence-down/) | Prose |
 | Fix-without-asking needs evidence (deductive or inductive) | CLAUDE.md hard constraints | — | Log line names the proof · Prose |
 | A finding is acted on when two reviewers agree or it's verified in code; reviewers read-only, correctness not style; count scales with risk | BACKLOG step 6c · docs/PRODUCT.md | [Google review standard](https://google.github.io/eng-practices/review/reviewer/standard.html), [Claude Code best practices](https://code.claude.com/docs/en/best-practices) | Prose |

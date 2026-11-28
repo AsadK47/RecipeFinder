@@ -26,7 +26,7 @@ Visual language + shared UI tokens live in `RecipeFinder/DesignSystem.md` (livin
 
 **SOLID:** SRP (one type, one reason to change), OCP (extend via new types, not modifying working code), LSP (subtypes must be substitutable), ISP (small focused protocols), DIP (depend on protocols not concrete types).
 
-**Foundational:** YAGNI (build what's needed now), DRY (one home for every piece of logic), KISS (simplest solution for actual cases), SoC (separate UI from logic from persistence), Boy Scout (leave files better than found).
+**Foundational:** YAGNI (build what's needed now), DRY (one home for every piece of logic — before writing a parser, formatter, matcher or view, grep for prior art and extend it; a near-copy is a bug), KISS (simplest solution for actual cases), SoC (separate UI from logic from persistence), Boy Scout (leave files better than found).
 
 **Design:** Composition over inheritance. CQS — a function either returns a value or changes state, not both. Law of Demeter — talk to direct collaborators only. Fail fast — surface invalid state immediately.
 
