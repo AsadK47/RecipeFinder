@@ -343,6 +343,27 @@ struct BundledRecipeCatalogTests {
         #expect(claiming.isEmpty, "Titles claim an untagged diet: \(claiming.map(\.name))")
     }
 
+    @Test("a note offering a vegan swap names every non-vegan ingredient")
+    func veganSwapNotesNameEveryAnimalIngredient() throws {
+        // "Use vegetarian oyster sauce to make it vegan" on a recipe with egg noodles sends a vegan cook wrong
+        // (reviewer 2026-11-25). Each non-vegan line must be named by one of its animal words in the note.
+        let offer = try Regex(#"(?i)\b(make (it|this)( \w+)? vegan|vegan version|keep it vegan|for a vegan)"#)
+        let animalWords = DietaryInference.meatWords.union(DietaryInference.animalProductWords)
+        let unnamed = BundledRecipeCatalog.load().compactMap { recipe -> String? in
+            guard recipe.notes.contains(offer) else { return nil }
+            let noteWords = Set(DietaryInference.words(in: recipe.notes))
+            let missed = recipe.ingredients.map(\.name).filter { name in
+                let words = DietaryInference.words(in: name)
+                guard DietaryInference.containsMeat(words) || DietaryInference.containsAnimalProduct(words) else {
+                    return false
+                }
+                return !words.contains { animalWords.contains($0) && noteWords.contains($0) }
+            }
+            return missed.isEmpty ? nil : "\(recipe.name): \(missed)"
+        }
+        #expect(unnamed.isEmpty, "Vegan swap notes miss ingredients: \(unnamed)")
+    }
+
     @Test("no bundled title names a person or brand with a possessive (Mary Berry's, Pret's)")
     func titlesNameNoPersonOrBrand() throws {
         // A person's or shop's name in a title implies their endorsement (owner 2026-11-26). Family words are fine.
