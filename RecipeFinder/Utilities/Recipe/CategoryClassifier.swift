@@ -310,11 +310,18 @@ enum CategoryClassifier {
         }
     }
     
-    // Built once — avoids rebuilding on every categorize() call
-    private static let categorizationRules: [(String, [String])] = [
+    /// How an item is sold decides its aisle before what it is: "frozen peas" are Frozen, "canned tuna" Canned & Jarred.
+    private static let storageFormRules: [(String, [String])] = [
         ("Frozen",                    ["frozen", "ice cream"]),
-        ("Bakery",                    ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
-                                       "pastry", "cake", "cookie", "pie", "tart", "scone"]),
+        ("Canned & Jarred",           ["canned", "jarred"]),
+    ]
+
+    // Built once — avoids rebuilding on every categorize() call. The longest matching keyword wins; on a tie in
+    // length the earlier rule wins, so the order still settles single words ("bread" is Bakery, not Grains & Pasta).
+    private static let categorizationRules: [(String, [String])] = [
+        // "white bread" and "whole wheat bread" are also Grains & Pasta keywords (kitchen); listed here to tie and stay Bakery.
+        ("Bakery",                    ["bread", "white bread", "whole wheat bread", "baguette", "croissant", "bagel",
+                                       "muffin", "donut", "pastry", "cake", "cookie", "pie", "tart", "scone"]),
         ("Sweeteners",                kitchenIngredientKeywords["Sweeteners"]               ?? []),
         ("Poultry",                   kitchenIngredientKeywords["Poultry"]                  ?? []),
         ("Seafood",                   kitchenIngredientKeywords["Seafood"]                  ?? []),
@@ -323,8 +330,7 @@ enum CategoryClassifier {
         ("Dried Spices & Seasonings", kitchenIngredientKeywords["Dried Spices & Seasonings"] ?? []),
         ("Nuts & Seeds",              kitchenIngredientKeywords["Nuts & Seeds"]             ?? []),
         ("Legumes & Pulses",          kitchenIngredientKeywords["Legumes & Pulses"]         ?? []),
-        ("Canned & Jarred",           ["canned", "jarred"]),
-        // Cooking citrus juice is bought as fruit, not as a drink — must precede the generic "juice" rule.
+        // Cooking citrus juice is bought as fruit, not as a drink — longer than the generic "juice" keyword.
         ("Produce",                   ["lemon juice", "lime juice"]),
         ("Beverages",                 ["juice", "water", "soda", "coffee", "tea", "beer", "wine",
                                        "vodka", "whiskey", "rum", "lemonade", "smoothie"]),
@@ -349,7 +355,17 @@ enum CategoryClassifier {
                 keywords.contains { IngredientWordMatcher.matches(textWords: itemWords, keyword: $0) }
             }
 
-            return categorizationRules.first { matches($0.1) }?.0 ?? "Other"
+            if let form = storageFormRules.first(where: { matches($0.1) }) { return form.0 }
+
+            // Most specific keyword wins: "baking soda" is Baking Supplies, not Beverages via "soda".
+            var best: (category: String, length: Int)?
+            for (category, keywords) in categorizationRules {
+                for keyword in keywords where IngredientWordMatcher.matches(textWords: itemWords, keyword: keyword) {
+                    let length = IngredientWordMatcher.words(in: keyword).count
+                    if length > (best?.length ?? 0) { best = (category, length) }
+                }
+            }
+            return best?.category ?? "Other"
         }
     }
 
