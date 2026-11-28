@@ -47,6 +47,11 @@ import Foundation
         #expect(p.name == name)
     }
 
+    @Test("The dash-joining glyph set is the parsers' glyph list")
+    func dashJoinGlyphsMatchParserGlyphs() {
+        #expect(NumberText.fractionGlyphs == Set(RecipeParser.unicodeFractionCharacters))
+    }
+
     // Challenger 2026-11-27: web/JSON-LD text writes "1⁄2" with U+2044 and "1‑1/2" with U+2011 — same normaliser as timers.
     @Test("Fraction slashes and non-ASCII hyphens read as plain amounts", arguments: [
         ("1\u{2044}2 cup milk", 0.5, "cup", "milk"),
@@ -60,6 +65,8 @@ import Foundation
         ("1–½ cups flour", 1.5, "cup", "flour"),
         ("2-¾ tsp salt", 2.75, "tsp", "salt"),
         ("10-⅓ oz cheese", 10.0 + 1.0 / 3.0, "oz", "cheese"),
+        ("1—½ cups flour", 1.5, "cup", "flour"),
+        ("½-1 cup milk", 1.0, "cup", "milk"),                  // a glyph first is still a range → upper bound
     ])
     func unicodeSlashesAndHyphens(input: String, quantity: Double, unit: String, name: String) {
         let p = IngredientLineParser.parse(input)

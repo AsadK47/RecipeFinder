@@ -235,12 +235,7 @@ enum IngredientLineParser {
             ("⅙", "1/6"), ("⅚", "5/6")
         ]
         // "1⁄2" (U+2044) and "1‑1/2" (U+2011) as ASCII first, the same reading as timers and recipe times.
-        // A dash before a glyph joins a mixed number ("1-½" → "1½"): a glyph is below any whole, so never a range.
-        var result = NumberText.plain(s)
-        if result.contains("-") || result.contains("–") {
-            result = result.replacingOccurrences(of: #"(\d)[-–]([¼½¾⅓⅔⅛⅜⅝⅞⅕⅖⅗⅘⅙⅚])"#, with: "$1$2",
-                                                 options: .regularExpression)
-        }
+        var result = NumberText.joiningDashedFractions(NumberText.plain(s))
         for (char, replacement) in map {
             // Surround with spaces so "1½" → "1 1/2 " rather than "11/2 ".
             result = result.replacingOccurrences(of: String(char), with: " \(replacement) ")

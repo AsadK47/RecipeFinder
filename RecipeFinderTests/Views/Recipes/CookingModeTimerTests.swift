@@ -116,6 +116,7 @@ struct CookingModeTimerTests {
         ("Simmer 10\u{2012}15 minutes", 10),
         ("Roast 1\u{2010}1/2 hours", 90),
         ("Bake 1\u{2011}\u{BD} hours", 90),
+        ("Bake 1\u{2014}\u{BD} hours", 90),                     // em dash, as ingredient amounts read it
         ("Bake 11\u{2044}2 hours", 90),
         ("Bake 13\u{2044}4 hours", 105),
         ("Rest 3\u{2044}4 hour", 45),

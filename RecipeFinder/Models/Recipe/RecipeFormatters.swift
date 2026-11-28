@@ -50,6 +50,17 @@ enum NumberText {
         "\u{2044}", "\u{2010}", "\u{2011}", "\u{2012}", "\u{2212}", "\u{FE63}", "\u{FF0D}"
     ]
 
+    /// Every unicode fraction glyph the parsers map to ASCII (kept in step with `IngredientLineParser`'s map by a test).
+    static let fractionGlyphs: Set<Character> = ["¼", "½", "¾", "⅓", "⅔", "⅛", "⅜", "⅝", "⅞", "⅕", "⅖", "⅗", "⅘", "⅙", "⅚"]
+
+    /// A dash between a digit and a glyph joins a mixed number ("1-½" → "1½"): a glyph is below any whole number,
+    /// so it is never a range. Run after `plain`, which folds the other hyphens to "-".
+    static func joiningDashedFractions(_ text: String) -> String {
+        guard text.contains(where: fractionGlyphs.contains) else { return text }
+        let glyphs = String(fractionGlyphs.sorted())
+        return text.replacingOccurrences(of: "(\\d)[-–—](?=[\(glyphs)])", with: "$1", options: .regularExpression)
+    }
+
     static func plain(_ text: String) -> String {
         // Most text has none of these; skip the regex work (cards parse times hundreds of times per rebuild).
         guard text.unicodeScalars.contains(where: { unusualScalars.contains($0) }) else { return text }

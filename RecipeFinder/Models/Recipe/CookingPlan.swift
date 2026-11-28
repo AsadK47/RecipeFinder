@@ -149,11 +149,10 @@ struct CookingPlan: Equatable {
         return total
     }
 
-    /// Dashes and fraction slashes as ASCII first (`NumberText.plain`). A dash before "½" joins a mixed number
-    /// ("1-½" → "1½"); ½ is below any whole number, so it is never a range. Not NFKC: that turns "1½" into "11⁄2".
+    /// Dashes and fraction slashes as ASCII first, then "1-½" as "1½" — the same reading as ingredient amounts.
+    /// Not NFKC: that turns "1½" into "11⁄2".
     private static func normalisedForTimers(_ text: String) -> String {
-        let plain = NumberText.plain(text)
-        return plain.replacingOccurrences(of: #"(\d)[-–]([½¼¾⅓⅔])"#, with: "$1$2", options: .regularExpression)
+        NumberText.joiningDashedFractions(NumberText.plain(text))
     }
 
     /// Minutes for the text's FIRST duration. A compound like "1 hour 30 minutes" is combined, but separate mentions
