@@ -124,6 +124,23 @@ struct CookingModeTimerTests {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
     }
 
+    // Reviewer 2026-11-27: number words stopped at twelve, so "forty-five minutes" matched "five" → a 5-min timer.
+    @Test("teens, tens and hyphenated or spaced compounds read as the whole number", arguments: [
+        ("Roast for forty-five minutes", 45),
+        ("Simmer twenty-one minutes", 21),
+        ("Bake for forty five minutes", 45),
+        ("Rest for fifteen minutes", 15),
+        ("Braise for ninety minutes", 90),
+        ("Simmer for thirty to forty minutes", 30),
+        ("Cook twenty-five or thirty minutes", 25),
+        ("Bake for thirty-five and a half minutes", 36),
+        ("Prove for sixty minutes", 60),
+        ("Rest for Twenty-Five Minutes", 25),
+    ])
+    func tensNumberWords(text: String, minutes: Int) {
+        #expect(CookingPlan.timerMinutes(in: text) == minutes)
+    }
+
     @Test("words and numbers that aren't an amount of time stay nil", arguments: [
         "Leave for a few minutes",
         "Bring 2 to the boil",
