@@ -80,14 +80,24 @@ struct CookingPlan: Equatable {
     }
 
     // Only counts an amount followed by a time unit, so "350°F"/"2 eggs" aren't read as durations. An amount is a
-    // number or number word to twelve (with an optional "½", " 1/2", US "-1/2" or " and a half"), a lone fraction, or the words
+    // number or number word to ninety-nine (with an optional "½", " 1/2", US "-1/2" or " and a half"), a lone fraction, or the words
     // "a"/"an"/"half an"/"a half". A range keeps its lower bound in group 1 (owner 2026-11-25): an unspaced dash ("10-15", "1-1½") or a
     // spaced "to"/"or" ("2 to 3", "20 or 25"); a spaced dash is punctuation ("gas mark 4 - 25 minutes"). Group 3 is
     // an "and a half" after the unit ("an hour and a half"). Compiled once.
-    private static let numberWords = ["one": 1.0, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
-                                      "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12]
-    private static let amount = #"(?:(?:\d+[-–]\d+/\d+|\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|\b(?:"#
-        + numberWords.keys.sorted().joined(separator: "|") + #")\b)(?:\s+and\s+a\s+half\b)?|[½¼¾⅓⅔])"#
+    private static let onesWords = ["one": 1.0, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+                                    "eight": 8, "nine": 9]
+    private static let teensWords = ["ten": 10.0, "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
+                                     "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19]
+    private static let tensWords = ["twenty": 20.0, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60,
+                                    "seventy": 70, "eighty": 80, "ninety": 90]
+    private static let numberWords = onesWords.merging(teensWords) { $1 }.merging(tensWords) { $1 }
+    private static func wordGroup(_ words: [String: Double]) -> String { words.keys.sorted().joined(separator: "|") }
+    // A tens word with an optional hyphenated or spaced ones word ("forty-five", "twenty one") is tried before a lone
+    // word, so "forty-five" is never read as "five" (reviewer 2026-11-27).
+    private static let numberWordPattern = #"\b(?:(?:"# + wordGroup(tensWords) + #")(?:(?:-|\s+)(?:"#
+        + wordGroup(onesWords) + #"))?|"# + wordGroup(onesWords.merging(teensWords) { $1 }) + #")\b"#
+    private static let amount = #"(?:(?:\d+[-–]\d+/\d+|\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|"#
+        + numberWordPattern + #")(?:\s+and\s+a\s+half\b)?|[½¼¾⅓⅔])"#
     // A lone "a half" never follows "and" ("fifteen and a half hours" is not half an hour), and a trailing "and a
     // half" that starts the next amount ("20 minutes and a half cup of stock") isn't part of the time.
     private static let timerRegex = try? NSRegularExpression(
@@ -117,7 +127,9 @@ struct CookingPlan: Equatable {
         if words.hasSuffix("half") || words.hasPrefix("half") { return 0.5 }
         if words == "a" || words == "an" { return 1 }
         var total = 0.0
-        for token in words.split(whereSeparator: \.isWhitespace) {
+        // "forty-five" → "forty five" → 40 + 5.
+        let spaced = words.replacingOccurrences(of: #"([a-z])-([a-z])"#, with: "$1 $2", options: .regularExpression)
+        for token in spaced.split(whereSeparator: \.isWhitespace) {
             var digits = ""
             if let number = numberWords[String(token)] { total += number; continue }
             for character in token {
