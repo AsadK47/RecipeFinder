@@ -593,8 +593,8 @@ struct BundledRecipeCatalogTests {
     func historyChangeBumpsRefreshVersion() throws {
         let url = try #require(Bundle.main.url(forResource: "recipes_seed_history", withExtension: "json"))
         let digest = SHA256.hash(data: try Data(contentsOf: url)).map { String(format: "%02x", $0) }.joined()
-        #expect(BundledRecipeCatalog.sampleRefreshVersion == 12)
-        #expect(digest == "c891b6693284199ab6eb791d365967aa6d3f867974ce0fce1e8f3dc883d0a7f3",
+        #expect(BundledRecipeCatalog.sampleRefreshVersion == 13)
+        #expect(digest == "ff5f9cf3030a67456b18dca93c9ca63a7b99081610a2f4cfd4ed9b066ea5780a",
                 "recipes_seed_history.json changed: bump sampleRefreshVersion and update both pins")
     }
 
