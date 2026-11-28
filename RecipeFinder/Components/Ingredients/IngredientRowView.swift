@@ -25,7 +25,7 @@ struct IngredientRowView: View {
     }
 
     var body: some View {
-        let amount = Self.amount(for: ingredient, scaleFactor: scaleFactor, system: measurementSystem)
+        let amount = IngredientLineText.amount(for: ingredient, scaleFactor: scaleFactor, system: measurementSystem)
         HStack(alignment: .center, spacing: AppTheme.spacing12) {
             // The whole row (circle, amount, name) is one tick target; amounts are edited from the pencil or by
             // long-pressing the row.
@@ -176,41 +176,9 @@ struct IngredientRowView: View {
         }
     }
 
-    /// The amount column exactly as shown — one function shared by the row and the bundled-recipe render audit.
-    static func amount(for ingredient: Ingredient, scaleFactor: Double, system: MeasurementSystem) -> (quantity: String?, unit: String?) {
-        let converted = UnitConversion.convert(
-            value: ingredient.scaledQuantity(for: scaleFactor),
-            unit: ingredient.unit,
-            to: system,
-            ingredientName: ingredient.name
-        )
-        let quantity = converted.quantity > 0 ? FractionFormatter.format(prettyQuantity(converted.quantity)) : nil
-        let unit = converted.unit.isEmpty ? nil : displayUnit(converted.unit, quantity: converted.quantity)
-        return (quantity, unit)
-    }
-
     /// An "Add amount" button replaces the dropped amount column when a needed amount is missing and editing is wired.
     nonisolated static func showsAddAmount(for ingredient: Ingredient, amount: (quantity: String?, unit: String?), canEdit: Bool) -> Bool {
         canEdit && amount.quantity == nil && amount.unit == nil && ingredient.isMissingAmount
-    }
-
-    // Snaps converted quantities to cooking-sensible precision so conversions don't surface ugly values like "14.79 ml".
-    /// Nearest of the fractions cooks use — eighths/quarters OR thirds, whichever is closer (⅓ used to become ⅜).
-    static func prettyQuantity(_ q: Double) -> Double {
-        guard q > 0 else { return q }
-        if q >= 100 { return (q / 5).rounded() * 5 }
-        if q >= 10 { return q.rounded() }
-        let binary = q >= 1 ? (q * 4).rounded() / 4 : (q * 8).rounded() / 8
-        let thirds = (q * 3).rounded() / 3
-        return abs(thirds - q) < abs(binary - q) ? thirds : binary
-    }
-
-    /// "L" (not "l", which reads as "I") and plural cups ("2 cups", not "2 cup").
-    static func displayUnit(_ unit: String, quantity: Double) -> String {
-        let lower = unit.lowercased()
-        if lower == "l" { return "L" }
-        if lower == "cup", quantity > 1 { return "cups" }
-        return lower
     }
 }
 

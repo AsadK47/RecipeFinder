@@ -3,7 +3,6 @@ import Testing
 
 /// The cook-mode step-timer extractor only counts numbers with an explicit time
 /// unit, so temperatures and counts don't get read as a duration.
-// @MainActor: `CookingIngredientChecklist.line` is a static on a View (main-actor), like BundledRecipeRenderAuditTests.
 @MainActor
 @Suite("CookingMode step timer + checklist")
 struct CookingModeTimerTests {
@@ -225,19 +224,19 @@ struct CookingModeTimerTests {
     @Test("an ingredient with an amount reads quantity, unit, then name")
     func ingredientLineWithAmount() {
         let flour = Ingredient(baseQuantity: 200, unit: "g", name: "flour")
-        let line = CookingIngredientChecklist.line(for: flour, scaleFactor: 1, system: .metric)
+        let line = IngredientLineText.line(for: flour, scaleFactor: 1, system: .metric)
         #expect(line == "200 g \(flour.displayName)")
     }
 
     @Test("an ingredient with no amount is just its name")
     func ingredientLineWithoutAmount() {
         let salt = Ingredient(baseQuantity: 0, unit: "", name: "salt")
-        #expect(CookingIngredientChecklist.line(for: salt, scaleFactor: 1, system: .metric) == salt.displayName)
+        #expect(IngredientLineText.line(for: salt, scaleFactor: 1, system: .metric) == salt.displayName)
     }
 
     @Test("the line follows the recipe's scale factor")
     func ingredientLineScales() {
         let eggs = Ingredient(baseQuantity: 2, unit: "", name: "eggs")
-        #expect(CookingIngredientChecklist.line(for: eggs, scaleFactor: 2, system: .metric).hasPrefix("4 "))
+        #expect(IngredientLineText.line(for: eggs, scaleFactor: 2, system: .metric).hasPrefix("4 "))
     }
 }

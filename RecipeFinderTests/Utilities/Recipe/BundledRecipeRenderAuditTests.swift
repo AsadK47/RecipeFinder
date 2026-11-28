@@ -3,7 +3,7 @@ import Foundation
 @testable import RecipeFinder
 
 /// Renders EVERY bundled recipe through the same display code the screens use (`Ingredient.displayParts`,
-/// `IngredientRowView.amount`, time labels) in Metric and Imperial, and lints what a user would actually read.
+/// `IngredientLineText.amount`, time labels) in Metric and Imperial, and lints what a user would actually read.
 /// Fails listing each offending recipe; the full rendering of flagged recipes is written to /tmp for review.
 @MainActor
 @Suite("Bundled recipe render audit")
@@ -18,7 +18,7 @@ struct BundledRecipeRenderAuditTests {
     // MARK: - Rendering (what the screen shows)
 
     static func renderedIngredient(_ ingredient: Ingredient, system: MeasurementSystem) -> (amount: String, name: String, note: String?) {
-        let amount = IngredientRowView.amount(for: ingredient, scaleFactor: 1, system: system)
+        let amount = IngredientLineText.amount(for: ingredient, scaleFactor: 1, system: system)
         let parts = ingredient.displayParts
         return ([amount.quantity, amount.unit].compactMap { $0 }.joined(separator: " "), parts.name, parts.note)
     }
@@ -63,7 +63,7 @@ struct BundledRecipeRenderAuditTests {
                 let r = renderedIngredient(ingredient, system: system)
                 let label = "\(system == .metric ? "M" : "I") \"\(r.amount) \(r.name)\(r.note.map { ", " + $0 } ?? "")\""
                 if r.amount.contains(".") { problems.append("decimal amount \(label)") }
-                let amountUnit = IngredientRowView.amount(for: ingredient, scaleFactor: 1, system: system)
+                let amountUnit = IngredientLineText.amount(for: ingredient, scaleFactor: 1, system: system)
                 if amountUnit.quantity == nil, let unit = amountUnit.unit, measuredUnits.contains(unit) {
                     problems.append("unit without amount \(label)")
                 }

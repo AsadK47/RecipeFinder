@@ -40,25 +40,6 @@ struct Ingredient: Identifiable, Codable, Hashable {
         baseQuantity * scaleFactor
     }
     
-    func formattedQuantity(for scaleFactor: Double) -> String {
-        FractionFormatter.format(scaledQuantity(for: scaleFactor))
-    }
-    
-    func converted(to system: MeasurementSystem, scaleFactor: Double = 1.0) -> (quantity: Double, unit: String) {
-        let scaledQty = scaledQuantity(for: scaleFactor)
-        return UnitConversion.convert(value: scaledQty, unit: unit, to: system, ingredientName: name)
-    }
-    
-    func formattedWithUnit(for scaleFactor: Double, system: MeasurementSystem) -> String {
-        let converted = converted(to: system, scaleFactor: scaleFactor)
-        // A zero/unspecified amount shows no fabricated "1" — just the unit, if any.
-        guard converted.quantity > 0 else {
-            return converted.unit
-        }
-        let formattedValue = FractionFormatter.format(converted.quantity)
-        return converted.unit.isEmpty ? formattedValue : "\(formattedValue) \(converted.unit)"
-    }
-    
     var displayName: String {
         // From the stored name — `name` is Title-Cased for matching/grocery use, which read badly in recipes.
         IngredientNameFormatter.formatForDisplay(_name)

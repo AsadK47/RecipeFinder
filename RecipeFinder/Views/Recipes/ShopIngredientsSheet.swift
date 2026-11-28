@@ -53,8 +53,7 @@ struct ShopIngredientsSheet: View {
     private func row(_ index: Int) -> some View {
         let ingredient = recipe.ingredients[index]
         let isOn = selected.contains(index)
-        let amount = IngredientRowView.amount(for: ingredient, scaleFactor: recipe.scaleFactor, system: measurementSystem)
-        let qty = [amount.quantity, amount.unit].compactMap { $0 }.joined(separator: " ")
+        let line = IngredientLineText.line(for: ingredient, scaleFactor: recipe.scaleFactor, system: measurementSystem)
         return Button {
             if isOn { selected.remove(index) } else { selected.insert(index) }
             HapticManager.shared.selection()
@@ -63,7 +62,7 @@ struct ShopIngredientsSheet: View {
                 Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
                     .foregroundStyle(isOn ? AppTheme.accentColor : Color.secondary)
-                Text(qty.isEmpty ? ingredient.displayName : "\(qty) \(ingredient.displayName)")
+                Text(line)
                     .font(.body)
                     .adaptiveForegroundColor()
                     .opacity(isOn ? 1 : 0.5)

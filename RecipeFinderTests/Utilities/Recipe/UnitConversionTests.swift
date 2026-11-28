@@ -268,14 +268,14 @@ struct IngredientDisplayTests {
         (0.33, "⅓"), (0.67, "⅔"), (1.33, "1⅓"), (0.375, "⅜"), (1.25, "1¼"),
     ])
     func thirdsStayThirds(value: Double, expected: String) {
-        #expect(FractionFormatter.format(IngredientRowView.prettyQuantity(value)) == expected)
+        #expect(FractionFormatter.format(IngredientLineText.prettyQuantity(value)) == expected)
     }
 
     @Test("Units read naturally: litres as L, plural cups")
     func displayUnits() {
-        #expect(IngredientRowView.displayUnit("l", quantity: 1) == "L")
-        #expect(IngredientRowView.displayUnit("cup", quantity: 2) == "cups")
-        #expect(IngredientRowView.displayUnit("cup", quantity: 0.5) == "cup")
+        #expect(IngredientLineText.displayUnit("l", quantity: 1) == "L")
+        #expect(IngredientLineText.displayUnit("cup", quantity: 2) == "cups")
+        #expect(IngredientLineText.displayUnit("cup", quantity: 0.5) == "cup")
     }
 
     @Test("Recipe rows split name and note once, keeping words, order and brackets as written")

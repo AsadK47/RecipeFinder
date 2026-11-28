@@ -30,13 +30,6 @@ struct CookingIngredientChecklist: View {
     @Binding var completed: Set<Int>
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
 
-    /// Same amount text as the recipe screen (it used to differ: "13 g" vs "12½ g").
-    static func line(for ingredient: Ingredient, scaleFactor: Double, system: MeasurementSystem) -> String {
-        let amount = IngredientRowView.amount(for: ingredient, scaleFactor: scaleFactor, system: system)
-        let qty = [amount.quantity, amount.unit].compactMap { $0 }.joined(separator: " ")
-        return qty.isEmpty ? ingredient.displayName : "\(qty) \(ingredient.displayName)"
-    }
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -67,7 +60,7 @@ struct CookingIngredientChecklist: View {
                     .foregroundStyle(isChecked ? .green : .white.opacity(0.6))
                     .frame(width: AppTheme.iconSize28)
 
-                Text(Self.line(for: recipe.ingredients[i], scaleFactor: recipe.scaleFactor, system: measurementSystem))
+                Text(IngredientLineText.line(for: recipe.ingredients[i], scaleFactor: recipe.scaleFactor, system: measurementSystem))
                     .font(.body)
                     .adaptiveForegroundColor()
                     .strikethrough(isChecked, color: .secondary)
@@ -178,7 +171,7 @@ struct CookingStepIngredients: View {
             let ingredient = ingredients[use.index]
             return use.stepGivesAmount
                 ? ingredient.displayName
-                : CookingIngredientChecklist.line(for: ingredient, scaleFactor: scaleFactor, system: system)
+                : IngredientLineText.line(for: ingredient, scaleFactor: scaleFactor, system: system)
         }
     }
 
