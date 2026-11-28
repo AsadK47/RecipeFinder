@@ -111,6 +111,8 @@ struct ShopTripTests {
         #expect(partly.inBasket.isEmpty)
         #expect(partly.rows.first?.idsToToggle == [grams.id])
         #expect(partly.progressText == "0 of 1 in the basket")
+        #expect(partly.basketIDs.isEmpty)
+        #expect(partly.doneTitle == "Done")
 
         var both = grams
         both.isChecked = true
@@ -135,6 +137,13 @@ struct ShopTripTests {
         #expect(after?.id == grams.id)
         #expect(before?.amount == "454 g + 2 cups")
         #expect(after?.amount == "454 g + 2 cups")
+    }
+
+    @Test("The same food filed in two aisles stays two rows, each in its own aisle")
+    func sameNameInTwoAislesStaysApart() {
+        let trip = ShopTrip(items: [item("Carrots", "Pantry"), item("Carrots", "Produce")], store: nil)
+        #expect(trip.rows.count == 2)
+        #expect(Set(trip.rows.map { $0.category }) == ["Pantry", "Produce"])
     }
 
     @Test("Items with different names stay on their own rows")

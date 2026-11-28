@@ -5,24 +5,18 @@ import Foundation
 struct ShopTrip: Equatable {
     static let empty = ShopTrip(items: [], store: nil)
 
-    /// One thing to pick up: every list item with this name (case and spaces ignored), in aisle order.
+    /// One thing to pick up: every list item with this name (case and spaces ignored) in this aisle.
     struct Row: Identifiable, Equatable {
         /// The first of `items` in list order — not tick order, so the row keeps its id and amount as it's ticked.
         let first: ShoppingListModel
         let items: [ShoppingListModel]
 
+        /// Same units add up ("2 cups" + "1 cup" → "3 cups"); different ones join ("454 g + 2 cups").
+        let amount: String
+
         init(first: ShoppingListModel, rest: [ShoppingListModel] = []) {
             self.first = first
             items = [first] + rest
-        }
-
-        var id: UUID { first.id }
-        var name: String { first.name }
-        var category: String { first.category }
-        /// In the basket once every item in it is ticked.
-        var isChecked: Bool { items.allSatisfy(\.isChecked) }
-        /// Same units add up ("2 cups" + "1 cup" → "3 cups"); different ones join ("454 g + 2 cups").
-        var amount: String {
             var totals: [(unit: String, key: String, quantity: Int)] = []
             for item in items {
                 let key = UnitConversion.canonicalUnit(item.unit)
@@ -32,8 +26,14 @@ struct ShopTrip: Equatable {
                     totals.append((item.unit, key, item.quantity))
                 }
             }
-            return totals.map { ShopTrip.amount(quantity: $0.quantity, unit: $0.unit) }.joined(separator: " + ")
+            amount = totals.map { ShopTrip.amount(quantity: $0.quantity, unit: $0.unit) }.joined(separator: " + ")
         }
+
+        var id: UUID { first.id }
+        var name: String { first.name }
+        var category: String { first.category }
+        /// In the basket once every item in it is ticked.
+        var isChecked: Bool { items.allSatisfy(\.isChecked) }
         /// The items a tap flips: unticked ones when the row isn't done yet, else all of them (untick the row).
         var idsToToggle: [UUID] {
             isChecked ? items.map(\.id) : items.filter { !$0.isChecked }.map(\.id)
@@ -43,9 +43,10 @@ struct ShopTrip: Equatable {
     let rows: [Row]
     let toGet: [Row]
     let inBasket: [Row]
-    /// Ticked one-offs, which Done moves At home (staples stay on the list for next time); a merged row counts once.
+    /// Basket rows holding a one-off, which Done moves At home (staples stay on the list for next time).
     private let goingAway: Int
-    /// Every ticked item on the trip — what Done puts away (this store's ticks only).
+    /// The basket rows' items — what Done puts away (this store's ticks only). A partly ticked row isn't in the basket,
+    /// so its ticked half stays on the list until the row is done.
     let basketIDs: Set<UUID>
 
     /// `store` nil = every item; otherwise items set to another store stay off the trip, as on To buy. Aisles follow
@@ -57,7 +58,7 @@ struct ShopTrip: Equatable {
         var keys: [String] = []
         var byKey: [String: [ShoppingListModel]] = [:]
         for item in visible {
-            let key = Self.rowKey(item.name)
+            let key = Self.rowKey(item)
             if byKey[key] == nil { keys.append(key) }
             byKey[key, default: []].append(item)
         }
@@ -70,9 +71,8 @@ struct ShopTrip: Equatable {
         }
         toGet = rows.filter { !$0.isChecked }
         inBasket = rows.filter { $0.isChecked }
-        let ticked = visible.filter(\.isChecked)
-        basketIDs = Set(ticked.map(\.id))
-        goingAway = Set(ticked.filter { !$0.isRecurring }.map { Self.rowKey($0.name) }).count
+        basketIDs = Set(inBasket.flatMap { $0.items.map(\.id) })
+        goingAway = inBasket.filter { $0.items.contains { !$0.isRecurring } }.count
     }
 
     var total: Int { rows.count }
@@ -89,7 +89,8 @@ struct ShopTrip: Equatable {
         unit.isEmpty ? "\(quantity)" : "\(quantity) \(UnitConversion.unitText(unit, quantity: quantity))"
     }
 
-    private static func rowKey(_ name: String) -> String {
-        name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    /// Name and aisle: the same food filed in two aisles stays two rows, each where the cook walks past it.
+    private static func rowKey(_ item: ShoppingListModel) -> String {
+        item.category + "\u{1F}" + item.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 }
