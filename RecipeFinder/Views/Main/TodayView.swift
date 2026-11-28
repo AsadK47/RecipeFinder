@@ -266,9 +266,12 @@ struct TodayView: View {
         }
 
         // A new user's Today stays on adding a first recipe + Starters; the strip arrives with their own recipes or a plan.
-        if !feed.isNewUser || snapshot.day.meals.contains(where: { $0.recipeID != nil }) {
+        // Nothing left beside the hero (owner 2026-11-28) → no card.
+        let stripMeals = snapshot.day.meals(beside: shown)
+        if !stripMeals.isEmpty && (!feed.isNewUser || snapshot.day.meals.contains(where: { $0.recipeID != nil })) {
             TodayDayStripCard(
                 strip: snapshot.day,
+                meals: stripMeals,
                 onPlan: { time in planningDay = PlanningDay(date: snapshot.day.date, mealTime: time) },
                 onOpen: openRecipe
             )
