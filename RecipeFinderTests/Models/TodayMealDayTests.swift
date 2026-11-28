@@ -226,13 +226,60 @@ import Foundation
         #expect(!strip.isTomorrow)
     }
 
-    @Test func anUnplannedMealThatsGoneBySaysSo() {
+    /// Owner 2026-11-28: a meal that's gone by with nothing planned is left off the strip (it was a dimmed "—").
+    @Test func anUnplannedMealThatsGoneByIsLeftOff() {
         let strip = TodayDayStrip.make(plans: [], recipes: [], nextMeal: next(at(19)), day: at(19), calendar: cal)
-        #expect(strip.meals.map(\.state) == [.passed, .passed, .open])
-        #expect(strip.summary == "Breakfast —. Lunch —. Dinner: plan it")
-        #expect(strip.meals.map(\.spokenText) == [
-            "Breakfast, nothing planned", "Lunch, nothing planned", "Dinner, nothing planned yet",
-        ])
+        #expect(strip.meals.map(\.time) == [.dinner])
+        #expect(strip.summary == "Dinner: plan it")
+        #expect(strip.meals.map(\.spokenText) == ["Dinner, nothing planned yet"])
+    }
+
+    @Test func aCookedMealStaysOnTheStripAfterItsTime() {
+        let porridge = recipe("Porridge")
+        let strip = TodayDayStrip.make(
+            plans: [plan(porridge, .breakfast, done: true)], recipes: [porridge],
+            nextMeal: next(at(19)), day: at(19), calendar: cal
+        )
+        #expect(strip.meals.map(\.text) == ["Breakfast ✓", "Dinner: plan it"])
+    }
+
+    /// Owner 2026-11-28: the hero already names the planned dinner, so the strip doesn't repeat it.
+    @Test func theMealTheHeroShowsIsLeftOffTheStrip() {
+        let porridge = recipe("Porridge"), curry = recipe("Curry")
+        let strip = TodayDayStrip.make(
+            plans: [plan(porridge, .breakfast), plan(curry, .dinner)], recipes: [porridge, curry],
+            nextMeal: next(at(8)), day: at(8), calendar: cal
+        )
+        let hero = TodayFeed.Hero(recipe: curry, reason: .planned(.dinner))
+        #expect(strip.meals(beside: hero).map(\.text) == ["Breakfast: Porridge", "Lunch: plan it"])
+        #expect(strip.meals(beside: nil).count == 3)
+    }
+
+    @Test func aSuggestionKeepsItsMealsPlanItOnTheStrip() {
+        let pasta = recipe("Pasta")
+        let strip = TodayDayStrip.make(plans: [], recipes: [pasta], nextMeal: next(at(17)), day: at(17), calendar: cal)
+        let hero = TodayFeed.Hero(recipe: pasta, reason: .quick(minutes: 15))
+        #expect(strip.meals(beside: hero).map(\.text) == ["Dinner: plan it"])
+    }
+
+    @Test func tomorrowsPlannedBreakfastInTheHeroIsLeftOffTomorrowsStrip() {
+        let porridge = recipe("Porridge")
+        let strip = TodayDayStrip.make(
+            plans: [plan(porridge, .breakfast, dayOffset: 1)], recipes: [porridge],
+            nextMeal: next(at(22)), day: at(0, dayOffset: 1), calendar: cal
+        )
+        let hero = TodayFeed.Hero(recipe: porridge, reason: .plannedTomorrow(.breakfast))
+        #expect(strip.meals(beside: hero).map(\.time) == [.lunch, .dinner])
+        // Today's plan of the same recipe doesn't hide tomorrow's.
+        #expect(strip.meals(beside: TodayFeed.Hero(recipe: porridge, reason: .planned(.breakfast))).count == 3)
+    }
+
+    @Test func theStripHasNothingLeftWhenTheHeroShowsTheLastMeal() {
+        let curry = recipe("Curry")
+        let strip = TodayDayStrip.make(
+            plans: [plan(curry, .dinner)], recipes: [curry], nextMeal: next(at(19)), day: at(19), calendar: cal
+        )
+        #expect(strip.meals(beside: TodayFeed.Hero(recipe: curry, reason: .planned(.dinner))).isEmpty)
     }
 
     @Test func anOpenPlanWinsOverATickedOneAtTheSameMeal() {

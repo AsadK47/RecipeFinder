@@ -147,6 +147,9 @@ struct TodayDayStrip: Equatable {
         return TodayDayStrip(date: calendar.startOfDay(for: day), isTomorrow: nextMeal.isTomorrow, meals: meals)
     }
 
+    /// The meals to show beside the hero card. Stub: the declutter rules land in the next commit.
+    func meals(beside hero: TodayFeed.Hero?) -> [Meal] { meals }
+
     /// "Breakfast ✓. Lunch: Soup. Dinner: plan it" — the strip as one line (tests; the card labels each meal).
     var summary: String {
         let line = meals.map(\.text).joined(separator: ". ")
