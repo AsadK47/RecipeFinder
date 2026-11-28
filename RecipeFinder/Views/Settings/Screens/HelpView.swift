@@ -154,7 +154,7 @@ struct HelpView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                         FAQItem(
                             question: "Is RecipeFinder free to use?",
-                            answer: "Yes! Every feature in RecipeFinder is free for everyone."
+                            answer: "Yes! RecipeFinder is free to download and use."
                         )
 
                         FAQItem(
