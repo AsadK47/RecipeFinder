@@ -73,4 +73,18 @@ struct IngredientWordMatcherTests {
     func emptyKeyword() {
         #expect(!IngredientWordMatcher.matches(text: "anything", keyword: ""))
     }
+
+    @Test(
+        "Plurals beyond s/es match their singular",
+        arguments: [
+            ("blueberries", "blueberry"),
+            ("anchovies", "anchovy"),
+            ("bay leaves", "bay leaf"),
+            ("cheeses", "cheese"),
+            ("cookies", "cookie")
+        ]
+    )
+    func irregularPluralsMatch(text: String, keyword: String) {
+        #expect(IngredientWordMatcher.matches(text: text, keyword: keyword))
+    }
 }

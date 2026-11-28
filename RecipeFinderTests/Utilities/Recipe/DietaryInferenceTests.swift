@@ -155,4 +155,14 @@ struct DietaryInferenceTests {
             return words[index]
         }
     }
+
+    @Test("a plural the word lists don't spell out still rules the tag out", arguments: [
+        ("2 whole chickens", false, false), ("duck legs", false, false), ("turkeys", false, false),
+        ("soft cheeses", true, false), ("double creams", true, false),
+    ])
+    func pluralsStillCount(ingredient: String, vegetarian: Bool, vegan: Bool) {
+        let info = Self.infer(["onion", ingredient])
+        #expect(info.isVegetarian == vegetarian)
+        #expect(info.isVegan == vegan)
+    }
 }

@@ -129,4 +129,18 @@ struct KitchenRecipeMatcherTests {
         #expect(prepared == recipe.missingIngredients(from: pantry).map(\.name))
         #expect(prepared.map { $0.lowercased() } == ["chives"])
     }
+
+    @Test("A plural in the recipe matches the singular in the kitchen", arguments: [
+        ("cheeses", "cheese"), ("cookies", "cookie"), ("brownies", "brownie"), ("chillies", "chilli"),
+        ("bread loaves", "loaf"),
+    ])
+    func pluralsMatchTheirSingular(recipeTerm: String, kitchenTerm: String) {
+        #expect(KitchenRecipeMatcher.ingredientMatches(recipeTerm, kitchenTerm))
+    }
+
+    @Test("A shared \"leaf\" is no shared food")
+    func leafAloneDoesNotMatch() {
+        #expect(!KitchenRecipeMatcher.ingredientMatches("fresh mint leaves", "bay leaf"))
+        #expect(KitchenRecipeMatcher.ingredientMatches("bay leaves", "bay leaf"))
+    }
 }

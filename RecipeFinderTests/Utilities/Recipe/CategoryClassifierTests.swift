@@ -310,4 +310,30 @@ struct CategoryClassifierSpecificityTests {
     func reviewCases(name: String, expected: String) {
         #expect(CategoryClassifier.categorize(name) == expected)
     }
+
+    @Test("A plural of any shape finds its singular keyword", arguments: [
+        ("Blueberries", "Produce"),
+        ("Cherries", "Produce"),
+        ("strawberries, hulled", "Produce"),
+        ("Anchovies", "Seafood"),
+        ("bay leaves", "Herbs & Fresh Spices"),
+        ("fresh curry leaves", "Herbs & Fresh Spices"),
+        ("peaches", "Produce"),
+    ])
+    func irregularPluralsFindTheirAisle(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
+
+    @Test("A word that only looks plural keeps its aisle", arguments: [
+        ("hummus", "Sauces & Condiments"),
+        ("asparagus", "Produce"),
+        ("couscous", "Grains & Pasta"),
+        ("molasses", "Sweeteners"),
+        ("swiss chard", "Produce"),
+        ("green chillies", "Produce"),
+        ("olives", "Sauces & Condiments"),
+    ])
+    func lookalikePluralsKeepTheirAisle(name: String, expected: String) {
+        #expect(CategoryClassifier.categorize(name) == expected)
+    }
 }
