@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-28, builder agent)
 
 ## In progress
+- 🚧 builder agent 2026-11-28 Launch lane (a) **Recipes in our own words** batch 1 (25 most-copied methods) — branch `agent/own-words-1` (red: `agent/own-words-1-red`). Taken ahead of Inbox timer 🐞s per Launch lane order + CHALLENGES 27/28 Nov [Strategy].
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -133,6 +134,15 @@ auto-cleanup). ✅ 🟡 seen-red runs recorded (run 45013327147; leftover unmerg
 no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swift` to `privacy.html`.
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
+
+- **Own words batch 1:** curated entries carry `"ownWords": true`; `ownWordsMethodsCopyNoSourceRun` fails if a flagged
+  method shares any 8-word run with its source `rawText` (URLs ignored) and if fewer than 25 are flagged (raise per
+  batch). 8 not 6: at 6 the hits were oven settings and ingredient lists ("oven to 180C 160C fan gas"), facts nobody
+  owns. Batches go most-copied first (6-word overlap with source). Facts kept (times, temps, order); °F → °C converted.
+  Coriander Chickpea Bowl's unlisted "coconut cream" dropped. Recipes without a source URL in notes (107) need
+  name matching for the local overlap script — later batches. **Pre-mortem:** (1) a fact changes (time/temp) → fact-check
+  reviewer vs old curated text; (2) installs keep the copied text → `ownWordsCopyRefreshes` + v12 history pin;
+  (3) a step loses its timer → durations kept as digits, CookingPlan tests unchanged.
 
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
