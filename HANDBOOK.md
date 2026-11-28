@@ -28,6 +28,7 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 - [AGENT_LESSONS.md](AGENT_LESSONS.md) — lessons from AI-assisted sessions (verify premises, proportionate fixes, test cadence).
 - [CHANGELOG.md](CHANGELOG.md) — what changed for you, one entry per change that ships in a TestFlight build; feeds the website's "Behind the build" page.
 - [docs/LOG.md](docs/LOG.md) — the team's Log lines older than 7 days.
+- [docs/ENGINEERING.md](docs/ENGINEERING.md) — index of engineering practices: where each rule lives, the evidence for it and the check that enforces it.
 - [SHIP_BAR.md](SHIP_BAR.md) — the bar a change clears before it ships.
 
 ## History
