@@ -343,25 +343,28 @@ struct BundledRecipeCatalogTests {
         #expect(claiming.isEmpty, "Titles claim an untagged diet: \(claiming.map(\.name))")
     }
 
-    @Test("a note offering a vegan swap names every non-vegan ingredient")
-    func veganSwapNotesNameEveryAnimalIngredient() throws {
+    @Test("a note offering a vegan or vegetarian swap names every ingredient it has to swap",
+          arguments: [("vegan", true), ("vegetarian", false)])
+    func swapNotesNameEveryIngredientToSwap(diet: String, vegan: Bool) throws {
         // "Use vegetarian oyster sauce to make it vegan" on a recipe with egg noodles sends a vegan cook wrong
-        // (reviewer 2026-11-25). Each non-vegan line must be named by one of its animal words in the note.
-        let offer = try Regex(#"(?i)\b(make (it|this)( \w+)? vegan|vegan version|keep it vegan|for a vegan)"#)
-        let animalWords = DietaryInference.meatWords.union(DietaryInference.animalProductWords)
+        // (reviewer 2026-11-25). Each line the diet rules out must be named by one of its words in the note.
+        let offer = try Regex("(?i)\\b(make (it|this)( \\w+)? \(diet)|\(diet) version|keep it \(diet)|for a \(diet))")
+        var swapWords = DietaryInference.meatWords.union(DietaryInference.stockWords)
+        if vegan { swapWords.formUnion(DietaryInference.animalProductWords) }
         let unnamed = BundledRecipeCatalog.load().compactMap { recipe -> String? in
-            guard recipe.notes.contains(offer) else { return nil }
-            let noteWords = Set(DietaryInference.words(in: recipe.notes))
+            // The source URL's slug ("…/vegetable-lo-mein") isn't advice the cook reads.
+            let note = recipe.notes.components(separatedBy: "http").first ?? ""
+            guard note.contains(offer) else { return nil }
+            let noteWords = Set(DietaryInference.words(in: note))
             let missed = recipe.ingredients.map(\.name).filter { name in
                 let words = DietaryInference.words(in: name)
-                guard DietaryInference.containsMeat(words) || DietaryInference.containsAnimalProduct(words) else {
-                    return false
-                }
-                return !words.contains { animalWords.contains($0) && noteWords.contains($0) }
+                let ruledOut = DietaryInference.containsMeat(words)
+                    || (vegan && DietaryInference.containsAnimalProduct(words))
+                return ruledOut && !words.contains { swapWords.contains($0) && noteWords.contains($0) }
             }
             return missed.isEmpty ? nil : "\(recipe.name): \(missed)"
         }
-        #expect(unnamed.isEmpty, "Vegan swap notes miss ingredients: \(unnamed)")
+        #expect(unnamed.isEmpty, "\(diet) swap notes miss ingredients: \(unnamed)")
     }
 
     @Test("no bundled title names a person or brand with a possessive (Mary Berry's, Pret's)")
@@ -544,7 +547,7 @@ struct BundledRecipeCatalogTests {
         let url = try #require(Bundle.main.url(forResource: "recipes_seed_history", withExtension: "json"))
         let digest = SHA256.hash(data: try Data(contentsOf: url)).map { String(format: "%02x", $0) }.joined()
         #expect(BundledRecipeCatalog.sampleRefreshVersion == 11)
-        #expect(digest == "2cdeceb7994fc169ac498791548849c46a03d1211466f6de51dbacc21eaa415d",
+        #expect(digest == "cad42e4487dd62e67e066dc2c3a146064b053b66e078310c96bf53bab7e2b7d6",
                 "recipes_seed_history.json changed: bump sampleRefreshVersion and update both pins")
     }
 
