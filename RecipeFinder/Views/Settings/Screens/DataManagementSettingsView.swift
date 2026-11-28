@@ -83,7 +83,7 @@ struct DataManagementSettingsView: View {
                         icon: "trash.fill",
                         iconColor: .red,
                         title: "Ask before deleting recipes",
-                        subtitle: skipDeleteConfirmation ? "Recipes delete immediately on swipe" : "You'll be asked to confirm first",
+                        subtitle: skipDeleteConfirmation ? "Recipes delete straight away" : "You'll be asked to confirm first",
                         isOn: Binding(
                             get: { !skipDeleteConfirmation },
                             set: { skipDeleteConfirmation = !$0 }
