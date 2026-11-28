@@ -82,7 +82,7 @@ enum CategoryClassifier {
             "sardine", "anchovy", "snapper", "catfish", "monkfish",
             "shrimp", "prawn", "lobster", "crab", "crayfish", "crawfish",
             "scallop", "mussel", "clam", "oyster", "squid", "octopus", "calamari",
-            "caviar", "roe", "fish eggs", "seafood", "fish sauce"
+            "caviar", "roe", "fish eggs", "seafood"
         ],
         
         "Vegetables": [
@@ -357,7 +357,8 @@ enum CategoryClassifier {
 
             if let form = storageFormRules.first(where: { matches($0.1) }) { return form.0 }
 
-            // Most specific keyword wins: "baking soda" is Baking Supplies, not Beverages via "soda".
+            // Most specific keyword wins: "baking soda" is Baking Supplies, not Beverages via "soda". A keyword listed
+            // under two rules goes to the earlier one, so keep each in the rule for its aisle.
             var best: (category: String, length: Int)?
             for (category, keywords) in categorizationRules {
                 for keyword in keywords where IngredientWordMatcher.matches(textWords: itemWords, keyword: keyword) {

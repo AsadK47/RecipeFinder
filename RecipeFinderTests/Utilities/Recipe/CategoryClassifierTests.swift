@@ -225,6 +225,7 @@ struct CategoryClassifierSpecificityTests {
         ("full-fat coconut milk", "Sauces & Condiments"),
         ("chicken stock", "Sauces & Condiments"),
         ("oyster sauce", "Sauces & Condiments"),
+        ("fish sauce", "Sauces & Condiments"),
         ("red wine vinegar", "Sauces & Condiments"),
         ("tomato paste", "Sauces & Condiments"),
         ("sesame oil", "Oils & Fats"),
