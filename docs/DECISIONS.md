@@ -263,7 +263,7 @@ survives after the handoff is cleared. Read the entry for an area before "fixing
   Suggestions say their meal ("For breakfast · Ready in 15 minutes"); "Start by…"/"Dinner at" only for tonight's
   dinner (a breakfast idea at 8am said "Start by 6:40 to eat at 7" — the owner's "not time aware"). Day strip: one
   card, three tappable meals (open → pick a recipe for that meal; planned/cooked → open it; passed unplanned → dimmed
-  "—"). Rejected: a new `MealSlot` case for "tomorrow" (it drives category filters; the day is a separate fact).
+  "—"; owner 2026-11-28 overrode: passed empty slots and the hero's planned meal are left off, the card hides when empty). Rejected: a new `MealSlot` case for "tomorrow" (it drives category filters; the day is a separate fact).
   TodayFeedTests' `now` pinned to 6pm (it used the real clock, so meal-aware ordering would depend on CI time).
   **Pre-mortem:** (1) 9:30pm with dinner not cooked yet flips to breakfast → `anOpenPlannedDinnerKeepsTheEveningOnTonight`
   + UI 21:00 evening-line assertion; (2) morning pick still shows dinner timing → `breakfastAndLunchIdeasGetNoDinnerClock`;
