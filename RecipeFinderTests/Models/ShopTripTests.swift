@@ -73,6 +73,17 @@ struct ShopTripTests {
         #expect(ShopTrip.amount(item("Lemon", "Produce", quantity: 2)) == "2")
     }
 
+    @Test("More than one of a count unit reads as a plural; weights, volumes and spoons stay as they are",
+          arguments: [
+              (16, "clove", "16 cloves"), (2, "cup", "2 cups"), (4, "handful", "4 handfuls"), (3, "pinch", "3 pinches"),
+              (2, "bunch", "2 bunches"), (2, "box", "2 boxes"), (2, "leaf", "2 leaves"), (2, "Can", "2 Cans"),
+              (1, "clove", "1 clove"), (1, "cup", "1 cup"), (3, "cups", "3 cups"),
+              (454, "g", "454 g"), (2, "tbsp", "2 tbsp"), (2, "lb", "2 lb"), (500, "ml", "500 ml"),
+          ])
+    func amountPluralisesCountUnits(quantity: Int, unit: String, expected: String) {
+        #expect(ShopTrip.amount(item("Garlic", "Produce", quantity: quantity, unit: unit)) == expected)
+    }
+
     @MainActor @Test("Done in one store puts away only that store's basket; other stores' ticks stay ticked")
     func finishInAStoreLeavesOtherStores() {
         let defaults = UserDefaults(suiteName: UUID().uuidString) ?? .standard

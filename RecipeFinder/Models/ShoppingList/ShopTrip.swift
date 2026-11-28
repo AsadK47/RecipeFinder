@@ -27,9 +27,9 @@ struct ShopTrip: Equatable {
     var progressText: String { "\(inBasket.count) of \(total) in the basket" }
     var doneTitle: String { goingAway == 0 ? "Done" : "Done · put \(goingAway) away" }
 
-    /// "200 g", not "200" — a bare number read as 200 items.
+    /// "200 g", not "200" — a bare number read as 200 items; "16 cloves", not "16 clove".
     static func amount(_ item: ShoppingListModel) -> String {
-        item.unit.isEmpty ? "\(item.quantity)" : "\(item.quantity) \(item.unit)"
+        item.unit.isEmpty ? "\(item.quantity)" : "\(item.quantity) \(UnitConversion.unitText(item.unit, quantity: item.quantity))"
     }
 
     /// The basket's ids — what Done puts away (this store's ticks only).
