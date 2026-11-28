@@ -186,7 +186,7 @@ text / OCR / PDF ──► RecipeTextImportRouter ──► interpreter or TextR
 - `Views/Main/TodayView.swift` reads recipes, meal plans, kitchen, cooking streak and badges from the environment and
   rebuilds a `TodaySnapshot` (`Models/Engagement/TodaySnapshot.swift`) on each data change, not in `body`.
 - `TodaySnapshot.make` composes pure parts: `TodayFeed` (next-meal hero + Shuffle alternatives, one
-  `TodayNudge` — tomorrow's prep-ahead or something to use up, shown by `TodayNudgeCard` — and new-user starters), `TodayDayStrip` (today's three meals), `TodayWeek` (seven-day strip) and `TodayProgress`. Browsing lives on Recipes → Discover.
+  `TodayNudge` — tomorrow's prep-ahead or something to use up, shown by `TodayNudgeCard` — and new-user starters), `TodayDayStrip` (the next meal's day; `meals(beside:)` leaves off the hero's planned meal), `TodayWeek` (seven-day strip) and `TodayProgress`. Browsing lives on Recipes → Discover.
 - `TodayFeed.NextMeal` (`TodayMealDay.swift`) picks the hero's meal by clock — from 9pm, or once tonight's dinner is
   cooked, tomorrow's breakfast; an open planned dinner keeps tonight. The hero picks in order: plans, kitchen matches, then quick recipes. Quick picks use a stable
   per-day/meal rank (`dailyRank`, FNV-1a) and `MealSlot` by clock (breakfast 5–11, lunch 11–16, dinner 16–21, else breakfast).

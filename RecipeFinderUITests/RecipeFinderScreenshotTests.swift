@@ -571,13 +571,16 @@ final class RecipeFinderScreenshotTests: XCTestCase {
             dismissBadgeSheet(app)
             let hero = app.descendants(matching: .any).matching(identifier: "today.hero").firstMatch
             XCTAssertTrue(hero.waitForExistence(timeout: 10), "Today should lead with a Tonight card at \(time).")
-            // Slice 2: the one-line day strip sits under the hero all day.
+            // Declutter 1: the strip leaves off the planned dinner the hero shows and the meals gone by unplanned, so
+            // from 5pm (seeded dinner in the hero, breakfast and lunch passed) nothing is left and the card goes.
             let strip = app.descendants(matching: .any).matching(identifier: "today.day").firstMatch
-            XCTAssertTrue(strip.waitForExistence(timeout: 5), "Today should show the day strip at \(time).")
             if time == "08:30" {
+                XCTAssertTrue(strip.waitForExistence(timeout: 5), "Today should show the day strip at \(time).")
                 let breakfast = app.buttons["today.day.breakfast"]
                 XCTAssertTrue(breakfast.isEnabled && breakfast.label.contains("nothing planned yet"),
                               "Breakfast should be open to plan at 8:30: \(breakfast.label)")
+            } else {
+                XCTAssertFalse(strip.exists, "With the planned dinner in the hero, the strip should be gone at \(time): \(hero.label)")
             }
             settle()
             snap(app, shot)

@@ -74,6 +74,7 @@ extension TodayFeed {
 }
 
 /// Today's one-line day strip — "Breakfast ✓ · Lunch: Soup · Dinner: plan it" — for the day the next meal is on.
+/// A meal that's gone by with nothing planned is left off (owner 2026-11-28: nothing to do about it now).
 /// Pure so the rules are testable; TodaySnapshot builds it on each data change.
 struct TodayDayStrip: Equatable {
     enum State: Equatable {
@@ -82,8 +83,6 @@ struct TodayDayStrip: Equatable {
         case planned(String)
         /// Nothing planned yet and still ahead — tapping plans it.
         case open
-        /// Earlier today with nothing planned: nothing to do about it now.
-        case passed
     }
 
     struct Meal: Equatable, Identifiable {
@@ -100,7 +99,6 @@ struct TodayDayStrip: Equatable {
             case .done: "\(time.rawValue) ✓"
             case .planned(let name): "\(time.rawValue): \(name)"
             case .open: "\(time.rawValue): plan it"
-            case .passed: "\(time.rawValue) —"
             }
         }
 
@@ -110,7 +108,6 @@ struct TodayDayStrip: Equatable {
             case .done(let name): "\(time.rawValue), cooked: \(name)"
             case .planned(let name): "\(time.rawValue): \(name)"
             case .open: "\(time.rawValue), nothing planned yet"
-            case .passed: "\(time.rawValue), nothing planned"
             }
         }
     }
@@ -128,7 +125,7 @@ struct TodayDayStrip: Equatable {
         plans: [MealPlanModel], recipes: [RecipeModel], nextMeal: TodayFeed.NextMeal, day: Date, calendar: Calendar
     ) -> TodayDayStrip {
         let next = nextMeal.mealTime.sortOrder
-        let meals = mealTimes.map { time -> Meal in
+        let meals = mealTimes.compactMap { time -> Meal? in
             let atTime = plans.filter { $0.mealTime == time }.compactMap { plan in
                 plan.recipe(in: recipes).map { (plan: plan, recipe: $0) }
             }
@@ -141,14 +138,30 @@ struct TodayDayStrip: Equatable {
                 return Meal(time: time, state: .done(done.recipe.name), recipeID: done.recipe.id,
                             isNext: time == nextMeal.mealTime)
             }
-            let isPast = !nextMeal.isTomorrow && time.sortOrder < next
-            return Meal(time: time, state: isPast ? .passed : .open, recipeID: nil, isNext: time == nextMeal.mealTime)
+            if !nextMeal.isTomorrow && time.sortOrder < next { return nil }
+            return Meal(time: time, state: .open, recipeID: nil, isNext: time == nextMeal.mealTime)
         }
         return TodayDayStrip(date: calendar.startOfDay(for: day), isTomorrow: nextMeal.isTomorrow, meals: meals)
     }
 
-    /// The meals to show beside the hero card. Stub: the declutter rules land in the next commit.
-    func meals(beside hero: TodayFeed.Hero?) -> [Meal] { meals }
+    /// The meals to show beside the hero card: the planned meal the hero already names is left off (owner
+    /// 2026-11-28). A suggestion's meal keeps its "plan it", and a cooked one its ✓. Empty → Today hides the strip.
+    func meals(beside hero: TodayFeed.Hero?) -> [Meal] {
+        guard let hero, let heroMeal = Self.plannedMeal(hero.reason, isTomorrow: isTomorrow) else { return meals }
+        return meals.filter { meal in
+            guard case .planned = meal.state else { return true }
+            return !(meal.time == heroMeal && meal.recipeID == hero.recipe.id)
+        }
+    }
+
+    /// The meal a planned hero is for, when it's on the strip's day.
+    private static func plannedMeal(_ reason: TodayFeed.HeroReason, isTomorrow: Bool) -> MealTime? {
+        switch reason {
+        case .planned(let time): isTomorrow ? nil : time
+        case .plannedTomorrow(let time): isTomorrow ? time : nil
+        case .kitchenMatch, .quick, .longer: nil
+        }
+    }
 
     /// "Breakfast ✓. Lunch: Soup. Dinner: plan it" — the strip as one line (tests; the card labels each meal).
     var summary: String {
