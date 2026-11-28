@@ -63,7 +63,7 @@ struct ShopTrip: Equatable {
         }
         // Within a row, list order: grouped() puts unticked first, which would flip the row's id and amount on a tick.
         let position = Dictionary(items.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
-        rows = keys.compactMap { key in
+        rows = keys.compactMap { key -> Row? in
             let group = (byKey[key] ?? []).sorted { (position[$0.id] ?? 0) < (position[$1.id] ?? 0) }
             guard let first = group.first else { return nil }
             return Row(first: first, rest: Array(group.dropFirst()))
