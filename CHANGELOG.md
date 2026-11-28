@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-28 · Inbox dash before a fraction glyph · a44107d
+- For you: Amounts written like "1-½ cups" now come in as one and a half cups, and the amount field takes them too, so scaling and groceries add up right.
+- Behind the build: a new test failed on the old parser first; a reviewer and a challenger both caught the em dash, and step timers now read amounts the same way.
+
 ## 2026-11-28 · Inbox tens number-word step timers · 791d7a6
 - For you: Steps that spell out their time, like "forty-five minutes" or "twenty-one minutes", now offer a timer for the full time.
 - Behind the build: a new test failed on the old timer first; a reviewer and a challenger both caught "a hundred and twenty minutes" and dashed words, fixed before it shipped.

@@ -66,6 +66,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 - ⚔️ [Break] Number words stop at twelve (CookingPlan.swift:87-88): "ten minutes" and "twelve minutes" get a timer, "fifteen minutes", "twenty minutes", "thirty minutes", "forty-five minutes" — the commonest spelled-out durations in imported recipe text — get none, and nothing says so. The same comment block defends "fifteen and a half hours" yet "fifteen" isn't a number word. Not seen in the seed (0 hits), so it only bites imports. — Alternative: add 13–20, 30, 40, 45, 60 or drop the number-word feature (see the Strategy entry) — cost if we're wrong: an imported "simmer twenty minutes" has no timer button and the cook uses their phone's.
   → Owner: Accept / Reject (why) / Later
 
+## 2026-11-28 (item pass: dash before a fraction glyph — fixed: em dash "1—½" still a range (both), glyph list copied a third time (challenger) → shared `NumberText.joiningDashedFractions` + set-equality test)
+- ⚔️ [Data] Spaced "1 - ½ cup" still reads as the range → ½ — kept: timers treat a spaced dash as punctuation ("gas mark 4 - 25 minutes"), and joining it is a reading choice; rare at line start.
+- ⚔️ [Data] "1-½-inch piece ginger" leaves the name "-inch piece ginger"; "100-½ g" → ½ via the scrape-artifact rule — both pre-existing, unchanged by this item.
+
 ## 2026-11-28 (item pass: tens number-word step timers — fixed: "a hundred and twenty minutes" → 20 (both reviewers), "forty–five" en/em dash → 40 (both), "twenty\nOne hour later" joined across a line break → 1260, "fourty-five" → 5 (challenger))
 - ⚔️ [Break] A seconds amount first hides the real timer: "Whisk for twenty seconds, then simmer for 10 minutes" → none, "thirty seconds…" → 1 — pre-existing for digits ("30 seconds" → 1), now reaches word amounts → Inbox 🐞.
 - ⚔️ [Data] "Cook for twenty one minute bursts" → 21 (may mean 20 one-minute bursts) — kept: rare, and "twenty one minutes" is the likelier reading.

@@ -5,6 +5,11 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Dash before a fraction glyph** (8de9423..a44107d, builder 2026-11-28): joined in `normaliseUnicodeFractions` (so
+  parse, wizard amount and validator all gain it) via one `NumberText.joiningDashedFractions`, shared with timers —
+  a third hand-copied glyph list rejected; `NumberText.fractionGlyphs` lives in Models (Utilities may depend on Models,
+  not the reverse) and a test pins it to `RecipeParser.unicodeFractionCharacters`. Guard is "has a glyph", not "has a
+  dash" (6% of seed lines have dashes, ~0 have glyphs). Spaced "1 - ½" kept as a range (see CHALLENGES 28 Nov).
 - **Tens number-word timers** (8a40350..791d7a6, builder 2026-11-28): added teens + tens words (and "fourty") to the
   existing word list rather than only a `(?<![\w-]|ty )` guard — a guard would give no timer for "forty-five minutes",
   words give the right one. Compound separator is a dash (-–—) or spaces, not `\s` (no joining across lines). Hundreds

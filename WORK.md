@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 `IngredientLineParser.swift:229` dash before a fraction glyph landed 8de9423..a44107d (builder 2026-11-28; leftover branch agent/dash-glyph-mixed-number auto-cleanup). Next: Inbox 🐞 `CookingPlan.swift:184` seconds-first timer (red test first), then 🐞 `RecipeFormatters.swift:84` TimeExtractor en dash.
 ✅ Inbox 🐞 `CookingPlan.swift:89` tens number words landed 8a40350..791d7a6 (builder 2026-11-28; leftover branches agent/tens-timer-words auto-cleanup, agent/tens-timer-words-red unmerged — delete). Next: Inbox 🐞 `IngredientLineParser.swift:229` "1-½ cups" read as a range (red test first), then 🐞 `CookingPlan.swift:184` seconds-first timer.
 ✅ Inbox 🐞 `recipes_curated.json:247` Vegetable Lo Mein vegan note landed d13c03d..4988956 (builder 2026-11-28; also Hakka + Chow Mein vegetarian notes; leftover branch agent/lomein-vegan-note auto-cleanup). Next: Inbox 🐞 `CookingPlan.swift:89` tens number words ("forty-five minutes" → 5) — red test first.
 ✅ Inbox 🐞 `MealPlanningView+Actions.swift:240` empty take-off toast landed de1c146..96d4bbe (builder 2026-11-27; leftover branch agent/takeoff-empty-toast auto-cleanup). Next: Inbox 🐞 `recipes_curated.json:247` Vegetable Lo Mein vegan note (egg noodles) — regenerate the seed; then 🐞 `CookingPlan.swift:89` tens number words.
