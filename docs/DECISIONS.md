@@ -5,6 +5,12 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Swap notes name every swap** (d13c03d..4988956, builder 2026-11-28): one parameterised test (vegan / vegetarian) reads
+  notes that offer a swap ("make it vegan", "for a vegetarian version") minus the source URL, and needs each ruled-out
+  ingredient named by one of its own words. Word presence, not sentence parsing (accepted: a stray mention passes).
+  Fixed Hakka + Chow Mein in the same item (same class, the widened test found them). **Pre-mortem:** (1) note still
+  misses an ingredient → the test; (2) installed copies keep the old note → history + version bump, pin test;
+  (3) URL slug fakes a mention → URL stripped.
 - **Empty take-off toast** (de1c146..96d4bbe, builder 2026-11-27): new `MealPlanTakeOff.toast(…)` returns nil when nothing has come off in the row, and
   `takeOff` returns before touching the toast state. Kept `after` non-optional (its 12 tests and the shared-Undo row
   stay as they are). Rejected: dropping only the Undo button (the toast would still claim a meal came off).

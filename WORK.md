@@ -1,4 +1,4 @@
-# WORK.md — handoff (2026-11-26, builder agent)
+# WORK.md — handoff (2026-11-28, builder agent)
 
 ## In progress
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
@@ -68,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 `recipes_curated.json:247` Vegetable Lo Mein vegan note landed d13c03d..4988956 (builder 2026-11-28; also Hakka + Chow Mein vegetarian notes; leftover branch agent/lomein-vegan-note auto-cleanup). Next: Inbox 🐞 `CookingPlan.swift:89` tens number words ("forty-five minutes" → 5) — red test first.
 ✅ Inbox 🐞 `MealPlanningView+Actions.swift:240` empty take-off toast landed de1c146..96d4bbe (builder 2026-11-27; leftover branch agent/takeoff-empty-toast auto-cleanup). Next: Inbox 🐞 `recipes_curated.json:247` Vegetable Lo Mein vegan note (egg noodles) — regenerate the seed; then 🐞 `CookingPlan.swift:89` tens number words.
 ✅ Inbox 🐞 `MealPlanningManager.swift:217` same-dish take-off fallback landed f738f0a..ac6a6ae (builder 2026-11-27; leftover branches agent/same-dish-takeoff auto-cleanup may miss it — pre-rebase SHAs, agent/same-dish-takeoff-red unmerged — delete both). Next: Inbox 🐞 `MealPlanningView+Actions.swift:240` — skip the "taken off" toast when the take-off removed nothing (`tookOff == nil`); now likelier since stale taps remove nothing — manager/model test first.
 ✅ Inbox 🐞 `fetch_testflight_feedback.py` retired ids landed d969266..49dfdd1 (builder 2026-11-27; leftover branch agent/feedback-retired-ids auto-cleanup). Next: Inbox 🐞 `MealPlanningManager.swift:217` same-dish fallback (same-recipe stale take-off test first), then 🐞 MealPlanningView+Actions.swift:240 empty take-off toast.
