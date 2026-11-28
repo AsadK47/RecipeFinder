@@ -34,6 +34,31 @@ enum IngredientLineText {
         line(amount(for: ingredient, scaleFactor: scaleFactor, system: system), name: ingredient.displayName)
     }
 
+    /// The amount as the recipe gives it — unscaled, unconverted — for share, print, the import preview and the
+    /// amount-estimate prompt, which all describe the recipe as written. A zero amount is nil, never "0".
+    static func writtenAmount(for ingredient: Ingredient) -> Amount {
+        let unit = ingredient.unit.trimmingCharacters(in: .whitespaces)
+        return (ingredient.baseQuantity > 0 ? FractionFormatter.format(ingredient.baseQuantity) : nil,
+                unit.isEmpty ? nil : displayUnit(unit, quantity: ingredient.baseQuantity))
+    }
+
+    /// "200 g Plain flour", "Salt and pepper, to taste" — the recipe as written.
+    static func writtenLine(for ingredient: Ingredient) -> String {
+        line(writtenAmount(for: ingredient), name: ingredient.displayName)
+    }
+
+    /// One line of the editor's ingredient box, which the editor parses back on save: the stored amount, unit and name
+    /// unchanged, so saving an untouched recipe doesn't rewrite it (it used to save "Salt And Pepper, To Taste").
+    static func editorLine(for ingredient: Ingredient) -> String {
+        let unit = ingredient.unit.trimmingCharacters(in: .whitespaces)
+        let quantity = ingredient.baseQuantity > 0 ? FractionFormatter.format(ingredient.baseQuantity) : nil
+        let written = line((quantity, unit.isEmpty ? nil : unit), name: ingredient.writtenName)
+        guard quantity == nil else { return written }
+        // No amount is left out ("salt, to taste") unless the parser would then lift a number in the name as one
+        // ("rice, about 200g" → 200 g): there a leading 0 keeps the amount empty, as before.
+        return IngredientLineParser.parse(written).quantityText.isEmpty ? written : "0 \(written)"
+    }
+
     // Snaps converted quantities to cooking-sensible precision so conversions don't surface ugly values like "14.79 ml".
     /// Nearest of the fractions cooks use — eighths/quarters OR thirds, whichever is closer (⅓ used to become ⅜).
     static func prettyQuantity(_ q: Double) -> Double {

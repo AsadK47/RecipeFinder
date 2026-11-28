@@ -44,8 +44,7 @@ struct AmountEstimateRequest: Equatable, Sendable {
     private static func amountText(_ ingredient: Ingredient) -> String {
         if ingredient.isMissingAmount { return "MISSING" }
         guard ingredient.baseQuantity > 0 else { return "no amount needed" }
-        let quantity = FractionFormatter.format(ingredient.baseQuantity)
-        return ingredient.unit.isEmpty ? quantity : "\(quantity) \(ingredient.unit)"
+        return IngredientLineText.text(IngredientLineText.writtenAmount(for: ingredient))
     }
 }
 

@@ -40,6 +40,9 @@ struct Ingredient: Identifiable, Codable, Hashable {
         baseQuantity * scaleFactor
     }
     
+    /// The name exactly as stored — for text the editor parses back, so a save never rewrites it.
+    var writtenName: String { _name }
+
     var displayName: String {
         // From the stored name — `name` is Title-Cased for matching/grocery use, which read badly in recipes.
         IngredientNameFormatter.formatForDisplay(_name)

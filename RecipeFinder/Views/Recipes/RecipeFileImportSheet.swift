@@ -113,13 +113,11 @@ struct RecipeFileImportSheet: View {
                     Circle()
                         .fill(AppTheme.accentColor.opacity(0.4))
                         .frame(width: 5, height: 5)
-                    Text(ingredient.name)
+                    Text(ingredient.displayName)
                         .font(.subheadline)
                         .adaptiveForegroundColor()
                     Spacer()
-                    let qty = FractionFormatter.format(ingredient.baseQuantity)
-                    let unit = ingredient.unit.isEmpty ? "" : " \(ingredient.unit)"
-                    Text("\(qty)\(unit)")
+                    Text(IngredientLineText.text(IngredientLineText.writtenAmount(for: ingredient)))
                         .font(.subheadline)
                         .adaptiveSecondaryForeground()
                 }

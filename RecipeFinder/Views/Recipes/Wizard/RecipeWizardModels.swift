@@ -95,9 +95,8 @@ extension RecipeWizardView.PrefilledRecipeData {
         self.init(
             name: recipe.name,
             description: nil,
-            // FractionFormatter shows ⅓ rather than "0.333333"; the editor's save path parses fractions back.
             ingredients: IngredientSections.lines(recipe.ingredients, section: \.section) {
-                "\(FractionFormatter.format($0.baseQuantity)) \($0.unit) \($0.name)"
+                IngredientLineText.editorLine(for: $0)
             },
             instructions: recipe.instructions,
             prePrepInstructions: recipe.prePrepInstructions,

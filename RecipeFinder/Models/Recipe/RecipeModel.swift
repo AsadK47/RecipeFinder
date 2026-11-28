@@ -341,9 +341,7 @@ extension RecipeModel {
             lines.append("")
             lines.append("Ingredients:")
             for ingredient in ingredients {
-                let quantity = FractionFormatter.format(ingredient.baseQuantity)
-                let unit = ingredient.unit.isEmpty ? "" : " \(ingredient.unit)"
-                lines.append("• \(quantity)\(unit) \(ingredient.name)")
+                lines.append("• \(IngredientLineText.writtenLine(for: ingredient))")
             }
         }
         

@@ -39,11 +39,9 @@ enum RecipePrintFormatter {
         ].compactMap { $0 }
         let meta = metaParts.joined(separator: " · ")
 
-        let ingredientItems = recipe.ingredients.map { ingredient -> String in
-            let qty = FractionFormatter.format(ingredient.baseQuantity)
-            let unit = ingredient.unit.isEmpty ? "" : " \(ingredient.unit.htmlEscaped)"
-            return "<li>\(qty)\(unit) \(ingredient.name.htmlEscaped)</li>"
-        }.joined(separator: "\n")
+        let ingredientItems = recipe.ingredients
+            .map { "<li>\(IngredientLineText.writtenLine(for: $0).htmlEscaped)</li>" }
+            .joined(separator: "\n")
 
         var body = ""
 
