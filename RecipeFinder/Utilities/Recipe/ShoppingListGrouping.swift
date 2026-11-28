@@ -62,7 +62,8 @@ enum ShoppingListGrouping {
         return !items.contains { $0.stores.contains(store) }
     }
 
-    /// A plain-text rendering of the grouped shopping list, suitable for sharing.
+    /// A plain-text rendering of the grouped shopping list, suitable for sharing. Amounts read as the list row does
+    /// (`ShopTrip.amount`: "200 g Flour", "2 cups Milk"); a lone "1" with no unit is left off ("Lemons", not "1 Lemons").
     static func shareText(for groups: [(key: String, value: [ShoppingListModel])]) -> String {
         var text = "🛒 Groceries\n\n"
 
@@ -70,7 +71,7 @@ enum ShoppingListGrouping {
             text += "\(group.key)\n"
             for item in group.value {
                 let checkbox = item.isChecked ? "✓" : "○"
-                let qty = item.quantity > 1 ? "(\(item.quantity)) " : ""
+                let qty = item.quantity == 1 && item.unit.isEmpty ? "" : "\(ShopTrip.amount(item)) "
                 text += "\(checkbox) \(qty)\(item.name)\n"
             }
             text += "\n"
