@@ -5,6 +5,13 @@ discovered. Newest first. Each entry moves here from `WORK.md` Decisions when it
 survives after the handoff is cleared. Read the entry for an area before "fixing" something that looks odd there.
 
 ## Item decisions
+- **Own words batch 2** (7ba1220..981d2db, builder 2026-11-28): ranked by copied 7-word runs with a local script —
+  curated id → source by `stableUUID(lowercased source name)` (SHA-256 of `bundled-recipe:<key>`, v5 bits, as the
+  generator), plus source URL ↔ seed notes URL; 327 of 332 matched. Seed patched in Python (only
+  `instructions`/`prePrepInstructions`/`notes` + URL line), re-encoded Swift-style (indent 2, `" : "`, sorted keys,
+  empty arrays as `[\n\n  ]`) — byte-identical round trip checked first. Kept from the fact-check: Tamil dal's
+  "lemon or lime" dropped (not in the ingredients, as batch 1's coconut cream). Close paraphrase (sentence order kept,
+  synonyms swapped) passes the 7-word gate — same standard as batch 1; structure isn't measured (CHALLENGES).
 - **Own words batch 1** (d17d1eb..ff14a1a, builder 2026-11-28): curated entries carry `"ownWords": true`;
   `ownWordsMethodsCopyNoSourceRun` fails if a flagged method shares any 7-word run with any source `rawText` of its id
   (duplicate names unioned; URLs ignored). 7 not 6: at 6 the hits are oven settings and ingredient lists, facts nobody

@@ -56,6 +56,10 @@ Pick the methods that fit what's being challenged; every run covers at least **1
 
 <!-- challenger adds new entries at the top, right below this line -->
 
+## 2026-11-28 (builder — own words batch 2 challenge pass, not fixed)
+- ⚔️ [Taste] Harissa Fish Pie, Chicken Chow Mein, Rice Noodle Rolls, Air Fryer Doughnuts and Aloo Gosht keep the source's sentence order with synonyms swapped; 0 shared 7-word runs, 19 stock 6-word phrases. The gate can't measure structure. — Alternative: a human (or second-model) read of each batch against the source before the 14 Dec freeze, reordering where it reads like a paraphrase — cost if we're wrong: a rights holder sees their method reworded rather than rewritten.
+  → Owner: Accept / Reject (why) / Later
+
 ## 2026-11-28 (builder — own words batch 1 challenge pass, not fixed)
 - ⚔️ [Taste] Rewritten methods give Celsius only where the source was US Fahrenheit (Chilli Chicken 160-175°C, Dan Dan 160°C, Fish Curry 63°C core); conversions verified, but US cooks lose the °F figure. — Alternative: "160°C (325°F)" in the step — cost if we're wrong: an American tester reads a thermometer in °F and converts by hand.
   → Owner: Accept / Reject (why) / Later
