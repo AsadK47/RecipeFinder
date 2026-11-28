@@ -1,7 +1,6 @@
 # WORK.md — handoff (2026-11-28, builder agent)
 
 ## In progress
-- 🚧 builder agent 2026-11-28 Inbox 🐞 **Shop mode** slice 1 (plural count units, "16 cloves") — branch `agent/shop-unit-plurals`. Left: merge same-name rows (Carrots 454 g + 2 cups), Done-bar bottom inset (unverified — needs a scrolled-to-end shot). Declutter 1/2 + Baking Soda are other live sessions' (branches pushed 12:2x–12:35).
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.
@@ -69,6 +68,7 @@ Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLO
   (leftover branch agent/theme-symbols, auto-cleanup).
 
 ## Next action
+✅ Inbox 🐞 Shop mode slice 1 plural units landed a8be9f1 (builder 2026-11-28; leftover branch agent/shop-unit-plurals unmerged pre-rebase SHA — delete). Next: Shop mode slice 2 — merge same-name rows in `ShopTrip` (Carrots 454 g + 2 cups → one row, tick toggles both; model test first), unless Declutter 1/2 / Baking Soda lanes (other sessions) still need landing.
 ✅ Launch lane (a) *Recipes in our own words* batch 2 landed 7ba1220..981d2db (builder 2026-11-28; 52/332 flagged; leftover branches agent/own-words-2 + agent/own-words-2b unmerged — delete, agent/own-words-2-land auto-cleanup). Next: batch 3 — next 25 by 7-word overlap (method in docs/DECISIONS.md *Own words batch 2*), raise the `>= 52` pin; squash before regenerating history.
 ✅ Launch lane (a) *Recipes in our own words* batch 1 landed d17d1eb..ff14a1a (builder 2026-11-28; 27/332 flagged; leftover branches agent/own-words-1 auto-cleanup, agent/own-words-1-red unmerged — delete). Next: batch 2 — next 25 by 7-word source overlap (local script idea: map curated id → source via URL, name-match the 107 without a URL), raise the `>= 27` pin; keep lane (a) ahead of agent-found timer 🐞s until the owner answers CHALLENGES 28 Nov [Strategy].
 ✅ Inbox 🐞 `CookingPlan.swift:184` seconds-first timer landed 204c240..32fabc8 (builder 2026-11-28; leftover branches agent/seconds-first-timer auto-cleanup, agent/seconds-first-timer-red unmerged — delete). Next: Inbox 🐞 `RecipeFormatters.swift:84` TimeExtractor en dash (red test first) — but see CHALLENGES 28 Nov [Strategy] timer-regex freeze, unanswered.

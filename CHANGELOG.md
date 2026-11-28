@@ -13,6 +13,10 @@ anything else between entries):
 - Behind the build: one sentence on how it was made or checked — tests, reviews, what was tricky.
 ```
 
+## 2026-11-28 · Inbox shop mode plural units · a8be9f1
+- For you: Groceries and shop mode now read naturally, with "16 cloves", "2 cups" and "4 handfuls" for anything you buy more than one of.
+- Behind the build: a new test covers count units, weights and spoons; a challenger read every place amounts show or are spoken before it shipped.
+
 ## 2026-11-28 · Recipes in our own words, batch 2 · 981d2db
 - For you: Twenty-five more bundled recipes, from Chicken Chow Mein to Harissa Fish Pie, have freshly written methods with clear, friendly steps.
 - Behind the build: every rewrite is checked against its original text by a test; a fact-checker and a challenger read all 25 and their catches were fixed before it shipped.
