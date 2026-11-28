@@ -25,7 +25,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "magnifyingglass",
                             title: "Finding Recipes",
-                            description: "Search by name, ingredients, or browse categories. Use the burger menu to access filters and sorting options."
+                            description: "Search by name, or tap the menu at the top right of Recipes to sort and to filter by ingredient, category, cuisine and more."
                         )
 
                         HelpItem(
@@ -55,7 +55,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "timer",
                             title: "Cooking Timers",
-                            description: "Start a recipe timer from the toolbar and control it with pause, resume, or stop."
+                            description: "Start a timer at the top of a recipe's Instructions, then tap it to pause, resume, or stop."
                         )
 
                         HelpItem(
@@ -82,7 +82,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "frying.pan",
                             title: "Cook mode",
-                            description: "Open a recipe and tap the pan icon in the toolbar for a big, glanceable step-by-step layout."
+                            description: "Open a recipe and tap Cook under its title for a big, glanceable step-by-step layout."
                         )
 
                         HelpItem(
@@ -103,7 +103,7 @@ struct HelpView: View {
                         HelpItem(
                             icon: "square.and.arrow.up",
                             title: "Sharing Recipes",
-                            description: "Tap the share button on any recipe to send as text or a beautiful PDF."
+                            description: "Open a recipe's ⋯ menu and tap Share to send it as text or a recipe file, or Print for a paper copy."
                         )
 
                         HelpItem(
@@ -115,13 +115,13 @@ struct HelpView: View {
                         HelpItem(
                             icon: "star",
                             title: "Smart Filters",
-                            description: "Use the burger menu in Recipes to filter by difficulty, prep time, or category."
+                            description: "Tap the menu at the top right of Recipes to filter by difficulty, cooking time, diet, category, and more."
                         )
 
                         HelpItem(
                             icon: "link",
                             title: "Import Recipes",
-                            description: "Paste any recipe URL in the burger menu to automatically import it into your collection."
+                            description: "Tap + in Recipes to paste a link, search the web, scan a photo or PDF, or bring recipes from another app."
                         )
                     }
                     .padding(AppTheme.spacing20)
@@ -154,7 +154,7 @@ struct HelpView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                         FAQItem(
                             question: "Is RecipeFinder free to use?",
-                            answer: "Yes! RecipeFinder is free with optional premium features coming soon."
+                            answer: "Yes! Every feature in RecipeFinder is free for everyone."
                         )
 
                         FAQItem(
@@ -164,7 +164,7 @@ struct HelpView: View {
 
                         FAQItem(
                             question: "Can I import my own recipes?",
-                            answer: "Absolutely! Use the recipe import feature in the burger menu to paste any recipe URL, or create recipes manually."
+                            answer: "Absolutely! Tap + in Recipes to paste a link, scan a photo or PDF, bring your collection from another app, or write your own."
                         )
 
                         FAQItem(
@@ -174,7 +174,7 @@ struct HelpView: View {
 
                         FAQItem(
                             question: "Can I share recipes with friends?",
-                            answer: "Yes! Use the share button on any recipe to export as text or PDF that you can send via any app."
+                            answer: "Yes! Open a recipe's ⋯ menu and tap Share to send it as text or a recipe file through any app."
                         )
 
                         FAQItem(
