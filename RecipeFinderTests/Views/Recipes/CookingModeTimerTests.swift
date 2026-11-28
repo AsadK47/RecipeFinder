@@ -137,6 +137,15 @@ struct CookingModeTimerTests {
         ("Prove for sixty minutes", 60),
         ("Rest for Twenty-Five Minutes", 25),
         ("Simmer for fifteen and a half hours", 930),
+        ("Roast forty\u{2013}five minutes", 45),
+        ("Roast forty\u{2014}five minutes", 45),
+        ("Roast for 1 hour forty-five minutes", 105),
+        ("Simmer for thirty to forty-five minutes", 30),
+        ("Roast for fourty-five minutes", 45),
+        ("Rest thirteen minutes", 13), ("Rest fourteen minutes", 14), ("Rest sixteen minutes", 16),
+        ("Rest seventeen minutes", 17), ("Rest eighteen minutes", 18), ("Rest nineteen minutes", 19),
+        ("Roast fifty minutes", 50), ("Roast seventy minutes", 70), ("Roast eighty minutes", 80),
+        ("Shape into twenty\nOne hour later bake", 60),
     ])
     func tensNumberWords(text: String, minutes: Int) {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
@@ -149,6 +158,9 @@ struct CookingModeTimerTests {
         "Serve with a handful of herbs",
         "Add half the sugar",
         "Simmer for umpteen and a half hours",
+        "Roast for a hundred and twenty minutes",
+        "Roast for one hundred twenty minutes",
+        "Leave for a forty-five-minute rest",
     ])
     func notADuration(text: String) {
         #expect(CookingPlan.timerMinutes(in: text) == nil)

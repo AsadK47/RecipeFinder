@@ -89,13 +89,17 @@ struct CookingPlan: Equatable {
     private static let teensWords = ["ten": 10.0, "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
                                      "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19]
     private static let tensWords = ["twenty": 20.0, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60,
-                                    "seventy": 70, "eighty": 80, "ninety": 90]
-    private static let numberWords = onesWords.merging(teensWords) { $1 }.merging(tensWords) { $1 }
+                                    "seventy": 70, "eighty": 80, "ninety": 90,
+                                    "fourty": 40] // a common misspelling, else "fourty-five" reads as "five"
+    private static let loneWords = onesWords.merging(teensWords) { $1 }
+    private static let numberWords = loneWords.merging(tensWords) { $1 }
     private static func wordGroup(_ words: [String: Double]) -> String { words.keys.sorted().joined(separator: "|") }
-    // A tens word with an optional hyphenated or spaced ones word ("forty-five", "twenty one") is tried before a lone
-    // word, so "forty-five" is never read as "five" (reviewer 2026-11-27).
-    private static let numberWordPattern = #"\b(?:(?:"# + wordGroup(tensWords) + #")(?:(?:-|\s+)(?:"#
-        + wordGroup(onesWords) + #"))?|"# + wordGroup(onesWords.merging(teensWords) { $1 }) + #")\b"#
+    // A tens word takes an optional dashed or spaced ones word ("forty-five", "forty–five", "twenty one"), so with `\b`
+    // and leftmost matching "forty-five" is never read as "five" (reviewer 2026-11-27). Spaces, not `\s`: a line break
+    // never joins "twenty" to "One hour later". Hundreds aren't read: "a hundred and twenty minutes" gives no timer.
+    private static let numberWordPattern = #"(?<!hundred )(?<!hundred and )\b(?:(?:"# + wordGroup(tensWords)
+        + #")(?:(?:[-–—]| +)(?:"#
+        + wordGroup(onesWords) + #"))?|"# + wordGroup(loneWords) + #")\b"#
     private static let amount = #"(?:(?:\d+[-–]\d+/\d+|\d+\s+\d+/\d+|\d+/\d+|\d+(?:\.\d+)?(?:\s*[½¼¾⅓⅔])?|"#
         + numberWordPattern + #")(?:\s+and\s+a\s+half\b)?|[½¼¾⅓⅔])"#
     // A lone "a half" never follows "and" ("fifteen and a half hours" is not half an hour), and a trailing "and a
@@ -127,8 +131,8 @@ struct CookingPlan: Equatable {
         if words.hasSuffix("half") || words.hasPrefix("half") { return 0.5 }
         if words == "a" || words == "an" { return 1 }
         var total = 0.0
-        // "forty-five" → "forty five" → 40 + 5.
-        let spaced = words.replacingOccurrences(of: #"([a-z])-([a-z])"#, with: "$1 $2", options: .regularExpression)
+        // "forty-five" / "forty–five" → "forty five" → 40 + 5.
+        let spaced = words.replacingOccurrences(of: #"([a-z])[-–—]([a-z])"#, with: "$1 $2", options: .regularExpression)
         for token in spaced.split(whereSeparator: \.isWhitespace) {
             var digits = ""
             if let number = numberWords[String(token)] { total += number; continue }
