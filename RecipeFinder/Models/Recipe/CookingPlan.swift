@@ -157,8 +157,8 @@ struct CookingPlan: Equatable {
 
     /// Minutes for the text's FIRST duration. A compound like "1 hour 30 minutes" is combined, but separate mentions
     /// ("chill 6 hours, up to 48 hours"; "broil 4-5 minutes… within 6 minutes") are not summed into one huge timer.
-    /// A first duration under a minute ("stir for 30 seconds, then simmer 10 minutes") gives way to the next separate
-    /// one that is a minute or more; with none, it stands (reviewer 2026-11-28).
+    /// A first duration under a minute ("stir for 30 seconds, then simmer 10 minutes") gives way to a minute-or-more
+    /// one that follows it with "then"; otherwise it stands (reviewer 2026-11-28).
     static func timerMinutes(in text: String) -> Int? {
         guard let regex = timerRegex else { return nil }
         let text = normalisedForTimers(text)
@@ -200,12 +200,23 @@ struct CookingPlan: Equatable {
             return (totalMinutes, index)
         }
 
+        // A later duration takes over only as the next thing to do ("…, then simmer 10 minutes"), not as a range end
+        // ("30 seconds to 2 minutes" keeps its lower bound) or a limit ("serve within 10 minutes").
+        func followsAsNextStep(_ index: Int, after previousEnd: Int) -> Bool {
+            let gap = ns.substring(with: NSRange(location: previousEnd, length: matches[index].range.location - previousEnd))
+            return gap.range(of: #"\bthen\b"#, options: [.regularExpression, .caseInsensitive]) != nil
+                && gap.range(of: #"\b(?:within|up to|before|after|until)\b"#,
+                             options: [.regularExpression, .caseInsensitive]) == nil
+        }
+
         let first = duration(from: 0)
         var chosen = first.minutes
         var next = first.next
-        while chosen < 1, next < matches.count {
+        var previousEnd = matches[next - 1].range.location + matches[next - 1].range.length
+        while chosen < 1, next < matches.count, followsAsNextStep(next, after: previousEnd) {
             let later = duration(from: next)
             if later.minutes >= 1 { chosen = later.minutes; break }
+            previousEnd = matches[later.next - 1].range.location + matches[later.next - 1].range.length
             next = later.next
         }
         let rounded = Int(chosen.rounded())
