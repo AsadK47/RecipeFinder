@@ -122,6 +122,21 @@ struct ShopTripTests {
         #expect(ticked.doneTitle == "Done · put 1 away")
     }
 
+    @Test("Ticking the rest of a partly ticked row keeps its id and amount, so it doesn't jump under the thumb")
+    func mergedRowKeepsIdentityAsTicked() {
+        let grams = item("Carrots", "Produce", checked: true, quantity: 454, unit: "g")
+        let cups = item("Carrots", "Produce", quantity: 2, unit: "cups")
+        var cupsTicked = cups
+        cupsTicked.isChecked = true
+        let before = ShopTrip(items: [grams, cups], store: nil).rows.first
+        let after = ShopTrip(items: [grams, cupsTicked], store: nil).rows.first
+
+        #expect(before?.id == grams.id)
+        #expect(after?.id == grams.id)
+        #expect(before?.amount == "454 g + 2 cups")
+        #expect(after?.amount == "454 g + 2 cups")
+    }
+
     @Test("Items with different names stay on their own rows")
     func differentNamesStayApart() {
         let trip = ShopTrip(items: [item("Lemon", "Produce"), item("Lemon Juice", "Produce")], store: nil)

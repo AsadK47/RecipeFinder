@@ -157,7 +157,8 @@ struct ShopModeView: View {
         let now = Date()
         for id in row.idsToToggle {
             guard let index = shopping.items.firstIndex(where: { $0.id == id }) else { continue }
-            tripTicks.toggled(shopping.items[index], at: now)
+            // Aisle learning hears this row's aisle only: a same-name item filed elsewhere wasn't walked here.
+            if shopping.items[index].category == row.category { tripTicks.toggled(shopping.items[index], at: now) }
             shopping.toggleItem(at: index)
         }
     }
