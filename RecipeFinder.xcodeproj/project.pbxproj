@@ -268,6 +268,7 @@
 		F3B7D8E0306947ED00991908 /* MealTimeReorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */; };
 		F3B7D8E23069CA3900991908 /* ImportAccuracyHarnessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8E13069CA3900991908 /* ImportAccuracyHarnessTests.swift */; };
 		F3B7D8E4306A6B3A00991908 /* IngredientNameFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8E3306A6B3A00991908 /* IngredientNameFormatterTests.swift */; };
+		AB1E7E570000000000000002 /* IngredientLineTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1E7E570000000000000001 /* IngredientLineTextTests.swift */; };
 		264092CC986499C9916D2F88 /* IngredientAmountGapsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB53BD087538D6CA70B5BBF5 /* IngredientAmountGapsTests.swift */; };
 		F3B7D8E8306D0F3000991908 /* SocialCaptionImportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8E7306D0F3000991908 /* SocialCaptionImportTests.swift */; };
 		F3B7D8F2306E8C7E00991908 /* MealReminderScheduling.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8F1306E8C7E00991908 /* MealReminderScheduling.swift */; };
@@ -929,6 +930,7 @@
 		F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeReorderTests.swift; sourceTree = "<group>"; };
 		F3B7D8E13069CA3900991908 /* ImportAccuracyHarnessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportAccuracyHarnessTests.swift; sourceTree = "<group>"; };
 		F3B7D8E3306A6B3A00991908 /* IngredientNameFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNameFormatterTests.swift; sourceTree = "<group>"; };
+		AB1E7E570000000000000001 /* IngredientLineTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientLineTextTests.swift; sourceTree = "<group>"; };
 		FB53BD087538D6CA70B5BBF5 /* IngredientAmountGapsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientAmountGapsTests.swift; sourceTree = "<group>"; };
 		F3B7D8E7306D0F3000991908 /* SocialCaptionImportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialCaptionImportTests.swift; sourceTree = "<group>"; };
 		F3B7D8F1306E8C7E00991908 /* MealReminderScheduling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealReminderScheduling.swift; sourceTree = "<group>"; };
@@ -1528,6 +1530,7 @@
 				F3AD2EE53065440500274E33 /* RecipeHeroImageTests.swift */,
 				F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */,
 				F3B7D8E3306A6B3A00991908 /* IngredientNameFormatterTests.swift */,
+				AB1E7E570000000000000001 /* IngredientLineTextTests.swift */,
 				FB53BD087538D6CA70B5BBF5 /* IngredientAmountGapsTests.swift */,
 				F3B7D906307005D500991908 /* CookingStreakTests.swift */,
 				F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */,
@@ -3339,6 +3342,7 @@
 				F3B7D9213079DADA00991908 /* ReviewPromptTests.swift in Sources */,
 				F3B837EA3055FD5C0003AEF8 /* RecipeFilterIntegrationTests.swift in Sources */,
 				F3B7D8E4306A6B3A00991908 /* IngredientNameFormatterTests.swift in Sources */,
+				AB1E7E570000000000000002 /* IngredientLineTextTests.swift in Sources */,
 				264092CC986499C9916D2F88 /* IngredientAmountGapsTests.swift in Sources */,
 				F3D04F30305F3A80005A930D /* KitchenItemToggleTests.swift in Sources */,
 				F3D04F2E305F3A72005A930D /* RecipeTipsTests.swift in Sources */,
