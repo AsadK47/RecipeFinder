@@ -69,6 +69,21 @@ struct UnitConversion {
         "لتر": "l", "مل": "ml", "فص": "clove", "فصوص": "clove", "رشة": "pinch"
     ]
 
+    /// Count units a cook says in the plural ("16 cloves", "2 cups"). Abbreviations (g, ml, tbsp, lb) never change.
+    static let countUnitPlurals: [String: String] = [
+        "cup": "cups", "clove": "cloves", "piece": "pieces", "slice": "slices", "pinch": "pinches", "dash": "dashes",
+        "stick": "sticks", "can": "cans", "tin": "tins", "package": "packages", "packet": "packets", "bunch": "bunches",
+        "sprig": "sprigs", "handful": "handfuls", "inch": "inches", "jar": "jars", "box": "boxes", "bag": "bags",
+        "bottle": "bottles", "head": "heads", "stalk": "stalks", "leaf": "leaves", "fillet": "fillets",
+    ]
+
+    /// `unit` as it reads after `quantity`: the plural for more than one of a count unit, keeping a leading capital.
+    static func unitText(_ unit: String, quantity: Int) -> String {
+        guard quantity > 1, let plural = countUnitPlurals[unit.lowercased()] else { return unit }
+        guard let first = unit.first, first.isUppercase else { return plural }
+        return plural.prefix(1).uppercased() + plural.dropFirst()
+    }
+
     /// Canonical token for any spelling ("Tablespoons" → "tbsp", "lb" → "lbs"); unknown units come back lowercased/trimmed.
     static func canonicalUnit(_ unit: String) -> String {
         let key = unit.trimmed.lowercased()

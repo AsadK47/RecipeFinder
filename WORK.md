@@ -1,6 +1,7 @@
 # WORK.md — handoff (2026-11-28, builder agent)
 
 ## In progress
+- 🚧 builder agent 2026-11-28 Inbox 🐞 **Shop mode** slice 1 (plural count units, "16 cloves") — branch `agent/shop-unit-plurals`. Left: merge same-name rows (Carrots 454 g + 2 cups), Done-bar bottom inset (unverified — needs a scrolled-to-end shot). Declutter 1/2 + Baking Soda are other live sessions' (branches pushed 12:2x–12:35).
 Three parallel lanes (owner 2026-11-15), batch landing via `agent/batch` (BACKLOG step 7):
 - Data: `agent/recently-deleted` (6dcdf77) green + 3 review rounds done — CloudKit Production schema has model 17 + model 18 `CD_Recipe.CD_deletedAt` (owner 2026-11-25) — unblocked; branch is from 15 Nov, rebase on main before landing. If model 18's field differs from `deletedAt` Date on `Recipe`, deploy again.
 - Cook: ✅ slice 1 landed (85bfddf). Next slice: cooking mode one step per screen + Next, progress, per-step ingredients, timers, resume, last step → Made it.

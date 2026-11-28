@@ -135,7 +135,7 @@ struct ShoppingListItemRow: View {
                     .disabled(item.quantity <= 1)
                     
                     // Show the unit too — "200" alone (for 200 g) read as 200 items.
-                    Text(item.unit.isEmpty ? "\(item.quantity)" : "\(item.quantity) \(item.unit)")
+                    Text(ShopTrip.amount(item))
                         .font(.callout)
                         .fontWeight(.semibold)
                         .adaptiveForegroundColor()
