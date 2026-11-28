@@ -205,9 +205,10 @@ struct CookingPlan: Equatable {
         // bound) or a limit or note ("serve within 10 minutes"; "keeps for up to 48 hours").
         func followsAsNextStep(_ index: Int, after previousEnd: Int) -> Bool {
             let gap = ns.substring(with: NSRange(location: previousEnd, length: matches[index].range.location - previousEnd))
-            return gap.range(of: #"\bthen\b|[.;!](?:\s|$)"#, options: [.regularExpression, .caseInsensitive]) != nil
-                && gap.range(of: #"\b(?:within|up to|before|after|keeps?|ready|total)\b"#,
-                             options: [.regularExpression, .caseInsensitive]) == nil
+            // A sentence ends before a capital ("hot. Leave"), not an abbreviation ("approx. 2 mins").
+            let nextStep = gap.range(of: #"\b[Tt]hen\b|[.;!]\s+[A-Z]"#, options: .regularExpression) != nil
+            return nextStep && gap.range(of: #"\b(?:within|up to|before|after|keeps|ready|total|ahead|alternatively)\b"#,
+                                         options: [.regularExpression, .caseInsensitive]) == nil
         }
 
         let first = duration(from: 0)

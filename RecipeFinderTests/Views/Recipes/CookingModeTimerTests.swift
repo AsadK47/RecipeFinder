@@ -175,6 +175,7 @@ struct CookingModeTimerTests {
         ("Fry for 45 seconds, then rest 2 minutes, then bake 30 minutes", 2),
         ("Blitz 20 seconds, then 15 seconds more, then simmer 5 minutes", 5),
         ("Whisk 20 seconds, then 40 seconds, then simmer 10 minutes", 10),
+        ("Stir 30 seconds, then keep stirring for 5 minutes", 5),
         ("Warm the milk for 30 seconds until hot. Sprinkle over the yeast and leave 5 minutes until foamy.", 5),
         ("Knock back for 10 seconds, divide into 8. Cover and rise for 1 hour until doubled.", 60),
         ("Toast for 1 minute 30 seconds, then rest 5 minutes", 2),
@@ -196,6 +197,9 @@ struct CookingModeTimerTests {
         ("Blanch 30 seconds to 1½ minutes", 1),
         ("Blend for 30 seconds until smooth. The dressing keeps in the fridge for up to 48 hours.", 1),
         ("Sear for 30 seconds. Ready in 20 minutes in total.", 1),
+        ("Whisk 30 seconds. Can be made 2 hours ahead.", 1),
+        ("Fry 45 seconds. Alternatively, bake for 10 minutes.", 1),
+        ("Sear 30 secs, approx. 2 mins per side", 1),
     ])
     func secondsFirstKept(text: String, minutes: Int) {
         #expect(CookingPlan.timerMinutes(in: text) == minutes)
