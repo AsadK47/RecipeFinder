@@ -119,7 +119,7 @@ struct DietaryInferenceTests {
 
     /// Steps that name a dairy word but call for a plant one (the ingredient list says which) or a cooker setting.
     private static let plantStepExceptions: Set<String> = [
-        "Coriander Chickpea Bowl|cream", "Wild West Wings|milk", "Instant Pot Idli Dosa Batter|yogurt"
+        "Instant Pot Idli Dosa Batter|yogurt"
     ]
 
     @Test("a bundled recipe tagged Vegan never asks for an animal product in its method")
