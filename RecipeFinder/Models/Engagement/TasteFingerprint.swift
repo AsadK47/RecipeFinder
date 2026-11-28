@@ -227,9 +227,7 @@ private struct Words {
         var words = Set<String>()
         for part in parts {
             words.insert(part)
-            if part.hasSuffix("ies") { words.insert(String(part.dropLast(3)) + "y") }
-            if part.hasSuffix("es") { words.insert(String(part.dropLast(2))) }
-            if part.hasSuffix("s") { words.insert(String(part.dropLast())) }
+            words.insert(EnglishPlural.singular(part))
         }
         self.words = words
     }

@@ -47,31 +47,17 @@ enum KitchenRecipeMatcher {
     }
 
     /// Whole words worth matching on (≥3 chars to drop filler like "of"), singularised so "egg" matches "eggs".
+    /// "Leaf" names a form, not a food: "bay leaf" in the kitchen is no "mint leaves" for the recipe.
     fileprivate static func words(_ term: String) -> Set<String> {
         Set(
             term.split(separator: " ")
                 .map(String.init)
                 .filter { $0.count >= 3 }
-                .map(singularized)
-        )
+                .map(EnglishPlural.singular)
+        ).subtracting(formWords)
     }
 
-    /// Conservative English singularisation: only reshapes clear plural endings, else returns unchanged so it can't collide distinct ingredients ("ice"/"rice").
-    private static func singularized(_ word: String) -> String {
-        if word.count > 4, word.hasSuffix("ies") {
-            return String(word.dropLast(3)) + "y"            // berries → berry
-        }
-        if word.count > 4,
-           word.hasSuffix("ches") || word.hasSuffix("shes")
-            || word.hasSuffix("oes") || word.hasSuffix("ses")
-            || word.hasSuffix("xes") || word.hasSuffix("zes") {
-            return String(word.dropLast(2))                  // tomatoes → tomato, boxes → box
-        }
-        if word.count > 3, word.hasSuffix("s"), !word.hasSuffix("ss") {
-            return String(word.dropLast())                   // eggs → egg, carrots → carrot
-        }
-        return word
-    }
+    private static let formWords: Set<String> = ["leaf"]
 
     /// How many of `recipe`'s ingredients match any of `kitchenIngredients` (used as-supplied; caller decides normalisation).
     static func matchCount(recipe: RecipeModel, kitchenIngredients: Set<String>) -> Int {

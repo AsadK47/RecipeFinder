@@ -59,12 +59,19 @@ enum DietaryInference {
         text.lowercased().split(whereSeparator: { !$0.isLetter }).map(String.init)
     }
 
+    /// A word or its singular is in `list`, so a plural the list doesn't spell out ("whole chickens", "cheeses")
+    /// still rules the tag out.
+    private static func listed(_ word: String, in list: Set<String>) -> Bool {
+        list.contains(word) || list.contains(EnglishPlural.singular(word))
+    }
+
     static func containsMeat(_ words: [String]) -> Bool {
-        if words.contains(where: stockWords.contains), !words.contains(where: vegetableStockWords.contains) {
+        if words.contains(where: { listed($0, in: stockWords) }),
+           !words.contains(where: { listed($0, in: vegetableStockWords) }) {
             return true
         }
         return words.indices.contains { index in
-            guard meatWords.contains(words[index]) else { return false }
+            guard listed(words[index], in: meatWords) else { return false }
             let next = words.indices.contains(index + 1) ? words[index + 1] : ""
             // "oyster mushrooms", "seafood mushrooms", "quail eggs"
             if ["mushroom", "mushrooms"].contains(next) { return false }
@@ -75,7 +82,7 @@ enum DietaryInference {
 
     static func containsAnimalProduct(_ words: [String]) -> Bool {
         words.indices.contains { index in
-            guard animalProductWords.contains(words[index]) else { return false }
+            guard listed(words[index], in: animalProductWords) else { return false }
             if index > 0, plantQualifiers.contains(words[index - 1]) { return false }
             // "full-fat coconut milk": the fat is described, the next word decides.
             if words[index] == "fat", index > 0, ["full", "half", "low", "reduced"].contains(words[index - 1]) {

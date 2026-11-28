@@ -1,6 +1,6 @@
 import Foundation
 
-/// Word-boundary-aware ingredient/keyword matching to kill the `String.contains` bug class ("ham" in "graham", "gin" in "ginger"); supports contiguous multi-word keywords and simple s/es plurals. Does NOT resolve semantic collisions like "sugar" in "sugar snap peas".
+/// Word-boundary-aware ingredient/keyword matching to kill the `String.contains` bug class ("ham" in "graham", "gin" in "ginger"); supports contiguous multi-word keywords and English plurals (`EnglishPlural`). Does NOT resolve semantic collisions like "sugar" in "sugar snap peas".
 enum IngredientWordMatcher {
 
     /// Whether `text` contains `keyword` as a run of whole words.
@@ -33,13 +33,9 @@ enum IngredientWordMatcher {
             .map(String.init)
     }
 
-    /// Two words are equal ignoring a trailing simple English plural on either side.
+    /// Two words are equal when their singulars are ("blueberries" / "blueberry", "bay leaves" / "bay leaf").
     private static func wordsEqual(_ a: String, _ b: String) -> Bool {
-        a == b || isPlural(a, of: b) || isPlural(b, of: a)
-    }
-
-    /// Whether `plural` is `singular` with an "s" / "es" suffix.
-    private static func isPlural(_ plural: String, of singular: String) -> Bool {
-        plural == singular + "s" || plural == singular + "es"
+        // Every plural shares its singular's first letter: skip the folding for the many pairs that can't match.
+        a == b || (a.first == b.first && EnglishPlural.singular(a) == EnglishPlural.singular(b))
     }
 }
