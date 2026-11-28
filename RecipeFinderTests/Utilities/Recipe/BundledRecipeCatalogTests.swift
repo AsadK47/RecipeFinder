@@ -305,8 +305,8 @@ struct BundledRecipeCatalogTests {
                 .flatMap { Self.wordRuns($0).intersection(source) }
             #expect(copied.isEmpty, "\(recipe.name) still repeats its source: \(copied.sorted().prefix(3))")
         }
-        // Batch 1 (25) + the two renamed in 513679a; raise this with each batch so a lost flag can't shrink it.
-        #expect(sourceRuns.count >= 27, "only \(sourceRuns.count) recipes are marked ownWords")
+        // Batches 1–2 (25 each) + the two renamed in 513679a; raise this with each batch so a lost flag can't shrink it.
+        #expect(sourceRuns.count >= 52, "only \(sourceRuns.count) recipes are marked ownWords")
     }
 
     // MARK: - Generator behaviour
