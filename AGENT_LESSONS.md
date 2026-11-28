@@ -96,7 +96,7 @@ recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
    later duration's sentence too. Check: `CookingModeTimerTests.secondsFirstKept` ("ahead", "in advance").
 41. **Diff a heuristic over the real corpus before landing.** 2026-11-28: the Baking Soda classifier fix passed its tests but
    moved 212 of 2,409 bundled ingredient names; only an old-vs-new run over the corpus plus a reviewer showed spring rolls →
-   Bakery and cake tin → Canned (agent/baking-soda-category, runs 46147651905 → 46149083222). Check: queued — Kaizen (b).
+   Bakery and cake tin → Canned (agent/baking-soda-category, red 46147651905, 46150310982 → green 46154576912). Check: queued — Kaizen (b).
 42. **A test is not weakened to get green.** Agents edit tests or scoring to pass (METR 2025 reward-hacking report);
    deleting, disabling or `withKnownIssue`-wrapping a test needs the owner's OK in the Log line. Check: queued — Kaizen (g).
 43. **Three fixes in one area means the spec is wrong.** ~25 `fix(plan)` commits on take-off/undo (22–27 Nov) and ~22 on the
