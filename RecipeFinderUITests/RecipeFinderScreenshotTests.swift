@@ -580,9 +580,12 @@ final class RecipeFinderScreenshotTests: XCTestCase {
                 XCTAssertTrue(breakfast.isEnabled && breakfast.label.contains("nothing planned yet"),
                               "Breakfast should be open to plan at 8:30: \(breakfast.label)")
             } else {
-                XCTAssertFalse(strip.exists, "With the planned dinner in the hero, the strip should be gone at \(time): \(hero.label)")
+                XCTAssertTrue(hero.label.contains("Planned for tonight"), "The seeded dinner should lead at \(time): \(hero.label)")
             }
             settle()
+            if time != "08:30" {
+                XCTAssertFalse(strip.exists, "With the planned dinner in the hero, the strip should be gone at \(time).")
+            }
             snap(app, shot)
 
             if time == "21:00" {
