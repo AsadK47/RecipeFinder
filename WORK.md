@@ -133,6 +133,12 @@ no shop chosen") + §4.3 clause and date 22 Nov 2026 from `PrivacyPolicyView.swi
 
 ## Decisions (why) — active items only; move an entry to `docs/DECISIONS.md` when its item lands
 
+- **Seconds-first step timer (🚧 builder agent 2026-11-28, agent/seconds-first-timer):** an under-a-minute first
+  duration gives way to the next separate ≥1-minute one; alone it stands (so "Stir for 30 seconds" keeps its 1-min
+  timer — no behaviour change for one-duration steps). Rejected: always the longest duration (would pick "up to 48
+  hours"). Pre-mortem: (1) later duration is a hold/limit not a cook time → reviewers probe phrasings; (2) compound
+  "1 minute 30 seconds" split → test; (3) seconds-only steps lose/gain a timer → secondsOnly + "Stir for 30 seconds" tests.
+
 - **Plan deck up = tonight (slice 3):** built as "plan this dish for tonight while tonight is open" (pre-mortem and
   tests on the branch's WORK.md). Challenger showed tonight's card deals first, so up is reachable only after *Leave
   tonight open* → parked for the owner rather than landed. Rejected: up *replacing* a planned tonight (drops the cook's
