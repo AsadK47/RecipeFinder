@@ -593,8 +593,8 @@ struct BundledRecipeCatalogTests {
     func historyChangeBumpsRefreshVersion() throws {
         let url = try #require(Bundle.main.url(forResource: "recipes_seed_history", withExtension: "json"))
         let digest = SHA256.hash(data: try Data(contentsOf: url)).map { String(format: "%02x", $0) }.joined()
-        #expect(BundledRecipeCatalog.sampleRefreshVersion == 12)
-        #expect(digest == "c891b6693284199ab6eb791d365967aa6d3f867974ce0fce1e8f3dc883d0a7f3",
+        #expect(BundledRecipeCatalog.sampleRefreshVersion == 13)
+        #expect(digest == "ff5f9cf3030a67456b18dca93c9ca63a7b99081610a2f4cfd4ed9b066ea5780a",
                 "recipes_seed_history.json changed: bump sampleRefreshVersion and update both pins")
     }
 
@@ -629,8 +629,10 @@ struct BundledRecipeCatalogTests {
         #expect(refreshed.instructions != old.instructions)
     }
 
+    /// The two renamed in 513679a, then one from batch 2 (Chicken Chow Mein) so a history built from the wrong lineage fails.
     @Test("an untouched copy of a recipe rewritten in our own words refreshes to the new method",
-          arguments: ["A7171E82-38B8-5C8D-91F6-8F004D896647", "3F5C06D9-1262-54CD-A359-6D37A3FD3BCE"])
+          arguments: ["A7171E82-38B8-5C8D-91F6-8F004D896647", "3F5C06D9-1262-54CD-A359-6D37A3FD3BCE",
+                      "6A2A2B42-B113-5303-A512-E1C97CD1E9A1"])
     func ownWordsCopyRefreshes(id: String) throws {
         let history = BundledRecipeCatalog.loadHistory()
         let current = BundledRecipeCatalog.load()
