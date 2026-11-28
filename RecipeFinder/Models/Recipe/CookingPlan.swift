@@ -157,6 +157,8 @@ struct CookingPlan: Equatable {
 
     /// Minutes for the text's FIRST duration. A compound like "1 hour 30 minutes" is combined, but separate mentions
     /// ("chill 6 hours, up to 48 hours"; "broil 4-5 minutes… within 6 minutes") are not summed into one huge timer.
+    /// A first duration under a minute ("stir for 30 seconds, then simmer 10 minutes") gives way to the next separate
+    /// one that is a minute or more; with none, it stands (reviewer 2026-11-28).
     static func timerMinutes(in text: String) -> Int? {
         guard let regex = timerRegex else { return nil }
         let text = normalisedForTimers(text)
@@ -167,7 +169,7 @@ struct CookingPlan: Equatable {
             let unit = ns.substring(with: match.range(at: 2)).lowercased()
             return !((amount == "a" || amount == "an") && unit.hasPrefix("s"))
         }
-        guard let first = matches.first else { return nil }
+        guard !matches.isEmpty else { return nil }
 
         func minutes(of match: NSTextCheckingResult) -> (value: Double, rank: Int) {
             var value = Self.value(ofAmount: ns.substring(with: match.range(at: 1)))
@@ -178,19 +180,35 @@ struct CookingPlan: Equatable {
             return (value, 1)
         }
 
-        var (totalMinutes, lastRank) = minutes(of: first)
-        var previousEnd = first.range.location + first.range.length
-        for match in matches.dropFirst() {
-            // Continue only for an adjacent, smaller unit ("1 hour 30 minutes", "1 hr and 15 mins").
-            let gap = ns.substring(with: NSRange(location: previousEnd, length: match.range.location - previousEnd))
-            let joiner = gap.trimmingCharacters(in: .whitespaces).lowercased()
-            let part = minutes(of: match)
-            guard joiner.isEmpty || joiner == "and" || joiner == ",", part.rank < lastRank else { break }
-            totalMinutes += part.value
-            lastRank = part.rank
-            previousEnd = match.range.location + match.range.length
+        // One duration starting at `start`: its minutes and the index of the next separate mention.
+        func duration(from start: Int) -> (minutes: Double, next: Int) {
+            var (totalMinutes, lastRank) = minutes(of: matches[start])
+            var previousEnd = matches[start].range.location + matches[start].range.length
+            var index = start + 1
+            while index < matches.count {
+                // Continue only for an adjacent, smaller unit ("1 hour 30 minutes", "1 hr and 15 mins").
+                let match = matches[index]
+                let gap = ns.substring(with: NSRange(location: previousEnd, length: match.range.location - previousEnd))
+                let joiner = gap.trimmingCharacters(in: .whitespaces).lowercased()
+                let part = minutes(of: match)
+                guard joiner.isEmpty || joiner == "and" || joiner == ",", part.rank < lastRank else { break }
+                totalMinutes += part.value
+                lastRank = part.rank
+                previousEnd = match.range.location + match.range.length
+                index += 1
+            }
+            return (totalMinutes, index)
         }
-        let rounded = Int(totalMinutes.rounded())
+
+        let first = duration(from: 0)
+        var chosen = first.minutes
+        var next = first.next
+        while chosen < 1, next < matches.count {
+            let later = duration(from: next)
+            if later.minutes >= 1 { chosen = later.minutes; break }
+            next = later.next
+        }
+        let rounded = Int(chosen.rounded())
         return rounded > 0 ? rounded : nil
     }
 }
