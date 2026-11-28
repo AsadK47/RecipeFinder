@@ -94,20 +94,12 @@ enum SharedImportInbox {
         }
 
         if let text, !text.isEmpty {
-            if let link = firstURL(in: text) {
-                return .url(link)
+            if let link = RecipeLink.first(in: text) {
+                return .url(link.absoluteString)
             }
             return .text(text)
         }
 
         return nil
-    }
-
-    private static func firstURL(in text: String) -> String? {
-        guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else {
-            return nil
-        }
-        let range = NSRange(text.startIndex..., in: text)
-        return detector.firstMatch(in: text, options: [], range: range)?.url?.absoluteString
     }
 }

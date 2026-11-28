@@ -113,8 +113,8 @@ final class ShareViewController: UIViewController {
 
         // A caption with an embedded recipe link can still be fetched here;
         // otherwise hand the raw text to the app's text parser.
-        if let link = firstURL(in: text), let url = URL(string: link) {
-            importInExtension(from: url, rawURLFallback: link)
+        if let url = RecipeLink.first(in: text) {
+            importInExtension(from: url, rawURLFallback: url.absoluteString)
         } else {
             SharedImportInbox.storeText(text)
             finish(message: "Saved — open RecipeFinder to import")
@@ -143,14 +143,6 @@ final class ShareViewController: UIViewController {
                 finish(message: "Saved — open RecipeFinder to import")
             }
         }
-    }
-
-    private func firstURL(in text: String) -> String? {
-        guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else {
-            return nil
-        }
-        let range = NSRange(text.startIndex..., in: text)
-        return detector.firstMatch(in: text, options: [], range: range)?.url?.absoluteString
     }
 
     private func finish(message: String) {
